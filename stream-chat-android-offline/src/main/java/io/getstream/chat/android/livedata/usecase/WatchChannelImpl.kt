@@ -28,12 +28,12 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
         val channelController = domainImpl.channel(cid)
 
         if (messageLimit> 0) {
-            domainImpl.scopeIO.launch {
+            domainImpl.scope.launch {
                 channelController.watch(messageLimit)
             }
         }
 
-        return CoroutineCall(domainImpl.scopeIO) {
+        return CoroutineCall(domainImpl.scope) {
             Result(channelController, null)
         }
     }

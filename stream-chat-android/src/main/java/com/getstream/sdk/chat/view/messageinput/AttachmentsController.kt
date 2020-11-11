@@ -7,12 +7,12 @@ import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.enums.MessageInputType
-import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,7 +21,6 @@ internal class AttachmentsController(
     private val rootController: MessageInputController,
     private val permissionChecker: PermissionChecker,
     private val storageHelper: StorageHelper,
-    private val dispatchersProvider: DispatchersProvider,
     private val view: MessageInputView,
     private val totalMediaAttachmentAdapter: MediaAttachmentAdapter,
     private val selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter,
@@ -44,9 +43,9 @@ internal class AttachmentsController(
     }
 
     private fun fillTotalMediaAttachmentsView(messageInputType: MessageInputType?) {
-        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
+        GlobalScope.launch(DispatcherProvider.Main) {
             view.showLoadingTotalAttachments(true)
-            totalAttachments = withContext(dispatchersProvider.ioDispatcher) {
+            totalAttachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getMediaAttachments(view.context).toSet()
             }
             if (totalAttachments.isEmpty()) {
@@ -168,9 +167,9 @@ internal class AttachmentsController(
     }
 
     internal fun selectAttachmentsFromUriList(uriList: List<Uri>) {
-        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
+        GlobalScope.launch(DispatcherProvider.Main) {
             setSelectedFileAttachmentAdapter()
-            val attachments = withContext(dispatchersProvider.ioDispatcher) {
+            val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getAttachmentsFromUriList(view.context, uriList)
             }
             selectFileAttachments(attachments)

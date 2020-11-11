@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -49,7 +50,7 @@ internal class ThreadControllerImpl(
     // TODO: offline storage for thread load more
 
     private suspend fun loadMessages(call: Call<List<Message>>, limit: Int): Result<List<Message>> =
-        withContext(domain.dispatcherIO) {
+        withContext(DispatcherProvider.IO) {
             call.execute().apply {
                 val data = this.takeIf { it.isSuccess }
                     ?.data()

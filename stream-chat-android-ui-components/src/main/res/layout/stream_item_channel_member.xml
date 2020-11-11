@@ -5,13 +5,15 @@
     android:layout_height="match_parent"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         style="@style/StreamGroupActionsAvatarStyle"
         android:layout_width="@dimen/stream_avatar_size_large"
-        android:layout_height="@dimen/stream_avatar_size_large" />
+        android:layout_height="@dimen/stream_avatar_size_large"
+        />
 
     <TextView
         android:id="@+id/userNameTextView"
@@ -22,6 +24,7 @@
         android:textColor="@color/stream_text_black"
         android:textSize="@dimen/stream_text_small"
         android:textStyle="bold"
-        tools:text="Bruker" />
+        tools:text="Bruker"
+        />
 
 </LinearLayout>

@@ -86,6 +86,7 @@ internal class ChannelControllerImpl(
 ) :
     ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
+
     private val _messages = MutableStateFlow<Map<String, Message>?>(null)
     private val _watcherCount = MutableStateFlow<Int>(0)
     private val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
@@ -102,9 +103,11 @@ internal class ChannelControllerImpl(
     private val _loadingNewerMessages = MutableStateFlow(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>?>(emptyMap())
+    private val lastMessageAt = MutableStateFlow<Date?>(null)
+
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages: LiveData<List<Message>?> = _messages.map {
-        if (it == null) { null } else { it.values.toList() }
+        it?.values?.toList()
     }.asLiveData()
 
     /** a list of messages sorted by message.createdAt */
@@ -206,7 +209,7 @@ internal class ChannelControllerImpl(
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client, domainImpl)
-            .also { domainImpl.scope.launch(domainImpl.dispatcherIO) { it.watch() } }
+            .also { domainImpl.scope.launch { it.watch() } }
     }
 
     private fun getConfig(): Config {
@@ -404,11 +407,11 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        val queryOfflineJob = domainImpl.scopeIO.async { runChannelQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            domainImpl.scopeIO.async { runChannelQueryOnline(pagination) }
+            domainImpl.scope.async { runChannelQueryOnline(pagination) }
         } else {
             null
         }
@@ -1144,6 +1147,7 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
+        lastMessageAt.setOnUi(c.lastMessageAt)
     }
 
     private suspend fun updateOldMessagesFromChannel(c: Channel) {
@@ -1200,7 +1204,7 @@ internal class ChannelControllerImpl(
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
-            val job = domainImpl.scope.async(domainImpl.dispatcherIO) { domainImpl.runAndRetry(runnable) }
+            val job = domainImpl.scope.async { domainImpl.runAndRetry(runnable) }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -1274,7 +1278,8 @@ internal class ChannelControllerImpl(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
-        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.lastMessageAt =
+            lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
         return channel

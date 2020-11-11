@@ -30,15 +30,10 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestCall
+import io.getstream.chat.android.livedata.utils.TestCoroutineRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -48,22 +43,7 @@ import java.util.Date
 import java.util.concurrent.Executors
 
 /**
- * BaseDomainTest2 creates an easy to use test environment
- *
- * - Sets up a chat Domain object with a mocked Chat Client.
- * - We pass a TestCoroutineDispatcher to the chatDomain to correctly handle new coroutines starting
- * - The val rule = InstantTaskExecutorRule() ensures that architecture components immediately
- * - Use Executors.newSingleThreadExecutor to prevent room transactions from causing deadlocks
- * execute instead of running on a different thread
- *
- * Handling Room and Coroutines is unfortunately quite tricky.
- * * https://www.youtube.com/watch?v=KMb0Fs8rCRs&feature=youtu.be
- * * https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
- * * https://medium.com/androiddevelopers/threading-models-in-coroutines-and-android-sqlite-api-6cab11f7eb90
- * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
- * * https://codelabs.developers.google.com/codelabs/kotlin-coroutines#9
- * * https://craigrussell.io/2019/11/unit-testing-coroutine-suspend-functions-using-testcoroutinedispatcher/
- * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
+ * Sets up a ChatDomain object with a mocked ChatClient.
  */
 internal open class BaseDomainTest2 {
 
@@ -72,6 +52,7 @@ internal open class BaseDomainTest2 {
 
     /** the chat domain impl */
     lateinit var chatDomainImpl: ChatDomainImpl
+
     /** the chat domain interface */
     lateinit var chatDomain: ChatDomain
 
@@ -83,6 +64,7 @@ internal open class BaseDomainTest2 {
 
     /** a queryControllerImpl for the query */
     lateinit var queryControllerImpl: QueryChannelsControllerImpl
+
     /** the query used for the default queryController */
     lateinit var query: QueryChannelsSpec
 
@@ -91,33 +73,23 @@ internal open class BaseDomainTest2 {
 
     private lateinit var db: ChatDatabase
 
-    // the code below is used to ensure that coroutines execute the right way during tests
-    internal val testIODispatcher = TestCoroutineDispatcher()
-    internal val testIOExecutor = testIODispatcher.asExecutor()
-    internal val testIOScope = TestCoroutineScope(testIODispatcher)
-
-    internal val testMainDispatcher = TestCoroutineDispatcher()
-    internal val testMainExecutor = testMainDispatcher.asExecutor()
-    internal val testMainScope = TestCoroutineScope(testMainDispatcher)
-
-    val singleThreadExecutor = Executors.newSingleThreadExecutor()
-
+    /** single threaded arch components operations */
     @get:Rule
-    val rule = InstantTaskExecutorRule()
+    val testCoroutines = TestCoroutineRule()
+
+    /** single threaded coroutines via DispatcherProvider */
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     open fun setup() {
-        Dispatchers.setMain(testMainDispatcher)
         clientMock = createClientMock()
         db = createRoomDb()
         createChatDomain(clientMock, db)
     }
 
     @After
-    open fun tearDown() = runBlocking(Dispatchers.IO) {
-        Dispatchers.resetMain()
-        testIODispatcher.cleanupTestCoroutines()
-        testMainDispatcher.cleanupTestCoroutines()
+    open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
         db.close()
     }
@@ -141,7 +113,6 @@ internal open class BaseDomainTest2 {
     }
 
     internal fun createClientMock(isConnected: Boolean = true): ChatClient {
-
         val connectedEvent = if (isConnected) {
             ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
         } else {
@@ -171,7 +142,7 @@ internal open class BaseDomainTest2 {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -196,22 +167,28 @@ internal open class BaseDomainTest2 {
     }
 
     internal fun createRoomDb(): ChatDatabase {
-        return Room.inMemoryDatabaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            ChatDatabase::class.java
-        )
+        return Room
+            .inMemoryDatabaseBuilder(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                ChatDatabase::class.java
+            )
             .allowMainThreadQueries()
-            .setTransactionExecutor(singleThreadExecutor)
-            // .setTransactionExecutor(testIOExecutor)
-            .setQueryExecutor(singleThreadExecutor)
+            // Use a separate thread for Room transactions to avoid deadlocks
+            // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
+            // and have to simply use runBlocking instead
+            .setTransactionExecutor(Executors.newSingleThreadExecutor())
+            .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
             .build()
     }
 
-    internal fun createChatDomain(client: ChatClient, db: ChatDatabase) {
+    internal fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
 
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client).database(db).offlineEnabled()
-            .userPresenceEnabled().withIODispatcher(testIODispatcher).withMainDispatcher(testMainDispatcher).buildImpl()
+        chatDomainImpl = ChatDomain.Builder(context, client)
+            .database(db)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .buildImpl()
 
         // TODO: a chat domain without a user set should raise a clear error
         client.setUser(
@@ -239,11 +216,11 @@ internal open class BaseDomainTest2 {
             }
         )
 
-        testIOScope.launch {
-            chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
-            channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-            channelControllerImpl.updateLiveDataFromChannel(data.channel1)
-        }
+        chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
+
+        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+
+        channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
 

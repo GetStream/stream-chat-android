@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.models.User;
 
 
 public class ChannelListView extends RecyclerView {
-
     private ChannelListViewStyle style;
+
     // our connection to the channel scope
     private UserClickListener userClickListener;
     private ChannelClickListener channelClickListener;
@@ -69,8 +69,9 @@ public class ChannelListView extends RecyclerView {
         if (style.getAvatarBorderColor() == -1) {
             int color = Color.WHITE;
             Drawable background = this.getBackground();
-            if (background instanceof ColorDrawable)
+            if (background instanceof ColorDrawable) {
                 color = ((ColorDrawable) background).getColor();
+            }
             style.setAvatarBorderColor(color);
         }
     }

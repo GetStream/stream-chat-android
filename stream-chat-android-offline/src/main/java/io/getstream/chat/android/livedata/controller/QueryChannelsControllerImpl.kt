@@ -122,7 +122,11 @@ internal class QueryChannelsControllerImpl(
             // - suspend/wait for a few seconds (yuck, lets not do that)
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
+<<<<<<< HEAD
             domainImpl.scope.launch(Dispatchers.Main) {
+=======
+            domainImpl.scope.launch {
+>>>>>>> testing
                 refreshChannel(event.cid)
             }
         }
@@ -218,7 +222,11 @@ internal class QueryChannelsControllerImpl(
         val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
+<<<<<<< HEAD
             domainImpl.scopeIO.async { runQueryOnline(pagination) }
+=======
+            domainImpl.scope.async { runQueryOnline(pagination) }
+>>>>>>> testing
         } else {
             null
         }

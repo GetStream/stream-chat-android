@@ -45,7 +45,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     protected TextView tv_name, tv_last_message, tv_date;
-    protected ReadStateView<ChannelListViewStyle> read_state;
+    protected ReadStateView read_state;
     protected AvatarView avatarView;
     protected ImageView iv_attachment_type;
     protected View click_area;
@@ -120,7 +120,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected void configAvatarView(Channel channel) {
         List<User> otherUsers = LlcMigrationUtils.getOtherUsers(channel.getMembers());
-        avatarView.setChannelAndLastActiveUsers(channel, otherUsers, style);
+        avatarView.setChannelAndLastActiveUsers(channel, otherUsers, style.getAvatarStyle());
         // click listeners
         avatarView.setOnClickListener(view -> {
             // if there is 1 user
@@ -219,7 +219,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected void configReadState(Channel channel) {
         List<ChannelUserRead> lastMessageReads = LlcMigrationUtils.getLastMessageReads(channel);
-        read_state.setReads(lastMessageReads, true, style);
+        read_state.setReads(lastMessageReads, true, style.getReadStateStyle(), style.getAvatarStyle());
     }
 
     protected void configClickListeners(Channel channel) {
@@ -238,9 +238,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void applyStyle(Channel channel) {
-        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.getSize());
-        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.getSize());
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.getSize());
+        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleText().getSize());
+        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastMessage().getSize());
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleText().getSize());
 
         User currentUser = ChatDomain.instance().getCurrentUser();
         String currentUserId = currentUser.getId();
@@ -257,24 +257,24 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected void applyReadStyle() {
         // channel name
-        style.channelTitleText.apply(tv_name);
+        style.getChannelTitleText().apply(tv_name);
         // last messsage
-        style.lastMessage.apply(tv_last_message);
-        style.lastMessageDateText.apply(tv_date);
+        style.getLastMessage().apply(tv_last_message);
+        style.getLastMessageDateText().apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.getColor());
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getLastMessage().getColor());
     }
 
     protected void applyUnreadStyle() {
         // channel name
-        style.channelTitleUnreadText.apply(tv_name);
+        style.getChannelTitleUnreadText().apply(tv_name);
         // last message
-        style.lastMessageUnread.apply(tv_last_message);
-        style.lastMessageDateUnreadText.apply(tv_date);
+        style.getLastMessageUnread().apply(tv_last_message);
+        style.getLastMessageDateUnreadText().apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessageUnread.getColor());
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getLastMessageUnread().getColor());
     }
 
 }

@@ -2,11 +2,9 @@
 
 package com.getstream.sdk.chat.utils
 
-import kotlinx.coroutines.Dispatchers
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -18,7 +16,10 @@ internal class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Af
     val scope = TestCoroutineScope(dispatcher)
 
     override fun beforeAll(context: ExtensionContext) {
-        Dispatchers.setMain(dispatcher)
+        DispatcherProvider.set(
+            mainDispatcher = dispatcher,
+            ioDispatcher = dispatcher,
+        )
     }
 
     override fun afterEach(context: ExtensionContext) {
@@ -26,6 +27,6 @@ internal class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Af
     }
 
     override fun afterAll(context: ExtensionContext) {
-        Dispatchers.resetMain()
+        DispatcherProvider.reset()
     }
 }

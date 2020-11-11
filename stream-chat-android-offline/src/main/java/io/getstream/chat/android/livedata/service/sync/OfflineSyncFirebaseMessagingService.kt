@@ -9,12 +9,12 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.livedata.ChatDomain
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
@@ -37,7 +37,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             syncConfig?.let {
                 val config = it
                 val user = User(id = config.userId)
-                GlobalScope.launch(Dispatchers.IO) {
+                GlobalScope.launch(DispatcherProvider.IO) {
                     val client = initClient(
                         this@OfflineSyncFirebaseMessagingService,
                         user,
@@ -59,7 +59,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         val channelType = data["channel_type"].toString()
         val cid = "$channelType:$channelId"
 
-        GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(DispatcherProvider.IO) {
             if (ChatDomain.isInitialized) {
                 performSync(ChatDomain.instance(), cid)
 

@@ -17,8 +17,8 @@ import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
 import coil.transform.RoundedCornersTransformation
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.internal.InternalStreamChatApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import coil.loadAny as coilLoadAny
 
@@ -28,7 +28,7 @@ public object ImageLoader {
         context: Context,
         url: String,
         transformation: ImageTransformation = ImageTransformation.None
-    ): Bitmap? = withContext(Dispatchers.IO) {
+    ): Bitmap? = withContext(DispatcherProvider.IO) {
         url.takeUnless { it.isBlank() }
             ?.let {
                 (

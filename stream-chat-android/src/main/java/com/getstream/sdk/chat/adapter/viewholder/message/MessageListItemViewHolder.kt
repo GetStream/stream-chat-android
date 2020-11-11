@@ -36,7 +36,7 @@ internal class MessageListItemViewHolder(
     reactionViewClickListener: ReactionViewClickListener,
     userClickListener: MessageListView.UserClickListener,
     readStateClickListener: ReadStateClickListener,
-    private val binding: StreamItemMessageBinding =
+    binding: StreamItemMessageBinding =
         StreamItemMessageBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
 
@@ -69,7 +69,7 @@ internal class MessageListItemViewHolder(
         )
         val indicatorConfigurator = IndicatorConfigurator(
             binding,
-            style,
+            style.readStateStyle,
             readStateClickListener
         )
         val reactionConfigurator = ReactionConfigurator(

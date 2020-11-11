@@ -30,7 +30,7 @@ public class ChannelViewHolderFactory {
         // get the style object
         ChannelListViewStyle style = adapter.getStyle();
         // inflate the layout specified in the style
-        View v = LayoutInflater.from(parent.getContext()).inflate(style.channelPreviewLayout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(style.getChannelPreviewLayout(), parent, false);
 
         // configure the viewholder
         ChannelListItemViewHolder holder = new ChannelListItemViewHolder(v);

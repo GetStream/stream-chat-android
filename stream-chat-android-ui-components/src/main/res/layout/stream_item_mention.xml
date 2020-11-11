@@ -8,7 +8,8 @@
     android:paddingStart="@dimen/stream_spacing_medium"
     android:paddingTop="@dimen/stream_spacing_small"
     android:paddingEnd="@dimen/stream_spacing_medium"
-    android:paddingBottom="@dimen/stream_spacing_small">
+    android:paddingBottom="@dimen/stream_spacing_small"
+    >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
@@ -17,7 +18,8 @@
         android:layout_height="@dimen/stream_avatar_size_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/usernameTextView"
@@ -29,7 +31,8 @@
         app:layout_constraintBottom_toTopOf="@id/mentionNameTextView"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Rebel Titan" />
+        tools:text="Rebel Titan"
+        />
 
     <TextView
         android:id="@+id/mentionNameTextView"
@@ -40,7 +43,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/usernameTextView"
-        tools:text="\@rebel" />
+        tools:text="\@rebel"
+        />
 
     <ImageView
         android:layout_width="@dimen/stream_mention_icon_size"
@@ -50,6 +54,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

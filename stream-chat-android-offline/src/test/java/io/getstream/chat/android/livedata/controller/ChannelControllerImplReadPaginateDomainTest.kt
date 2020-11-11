@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -18,7 +17,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
      * test that a message added only to the local storage is picked up
      */
     @Test
-    fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
+    fun watchSetsMessagesAndChannelOffline() = runBlocking {
         chatDomainImpl.setOffline()
         // add a message to local storage
         chatDomainImpl.repos.users.insertUser(data.user1)
@@ -51,7 +50,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
      * test that a message added only to the local storage is picked up
      */
     @Test
-    fun watchSetsMessagesAndChannelOnline() = runBlocking(Dispatchers.IO) {
+    fun watchSetsMessagesAndChannelOnline() = runBlocking {
         chatDomainImpl.setOnline()
         // setup an online message
         val message = data.createMessage()
@@ -70,7 +69,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
 
     @Test
     @Ignore("mock me")
-    fun recovery() = runBlocking(Dispatchers.IO) {
+    fun recovery() = runBlocking {
         // running recover should trigger channels to show up for active queries and channels
         chatDomainImpl.connectionRecovered(true)
 
