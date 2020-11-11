@@ -43,18 +43,18 @@
         <attr name="streamMessageInputTextFont" format="reference" />
         <attr name="streamMessageInputTextFontAssets" format="string" />
         <attr name="streamMessageInputTextStyle" format="enum">
-            <enum name="normal" value="0"/>
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
         </attr>
 
         <!--Send Button-->
-        <attr name="streamSendButtonEnabledIconColor" format="color|reference"/>
-        <attr name="streamSendButtonDisabledIconColor" format="color|reference"/>
-        <attr name="streamSendButtonPressedIconColor" format="color|reference"/>
-        <attr name="streamSendButtonEnabledIcon" format="reference"/>
-        <attr name="streamSendButtonDisabledIcon" format="reference"/>
-        <attr name="streamSendButtonWidth" format="dimension|reference"/>
-        <attr name="streamSendButtonHeight" format="dimension|reference"/>
+        <attr name="streamSendButtonEnabledIconColor" format="color|reference" />
+        <attr name="streamSendButtonDisabledIconColor" format="color|reference" />
+        <attr name="streamSendButtonPressedIconColor" format="color|reference" />
+        <attr name="streamSendButtonEnabledIcon" format="reference" />
+        <attr name="streamSendButtonDisabledIcon" format="reference" />
+        <attr name="streamSendButtonWidth" format="dimension|reference" />
+        <attr name="streamSendButtonHeight" format="dimension|reference" />
     </declare-styleable>
 </resources>

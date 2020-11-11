@@ -22,7 +22,7 @@ internal class MarginConfigurator(
     }
 
     private fun configMarginStartEnd(view: View) {
-        val avatarWidth = style.avatarWidth
+        val avatarWidth = style.avatarStyle.avatarWidth
 
         view.updateLayoutParams<ConstraintLayout.LayoutParams> {
             when (view) {

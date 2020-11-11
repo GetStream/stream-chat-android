@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_white">
+    android:background="@color/stream_white"
+    >
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_open_attachment"
@@ -16,7 +17,8 @@
         app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
-        tools:src="@drawable/stream_ic_attach" />
+        tools:src="@drawable/stream_ic_attach"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_open_emojis"
@@ -28,7 +30,8 @@
         app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
         app:layout_constraintStart_toEndOf="@id/iv_open_attachment"
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
-        tools:src="@drawable/stream_ic_lightning" />
+        tools:src="@drawable/stream_ic_lightning"
+        />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_message_text_input"
@@ -51,7 +54,8 @@
         app:layout_constraintEnd_toStartOf="@id/iv_send_message"
         app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Hi. I am a text, did you notice?" />
+        tools:text="Hi. I am a text, did you notice?"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_send_message"
@@ -65,6 +69,7 @@
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
         android:visibility="visible"
         tools:src="@drawable/stream_ic_filled_right_arrow"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
