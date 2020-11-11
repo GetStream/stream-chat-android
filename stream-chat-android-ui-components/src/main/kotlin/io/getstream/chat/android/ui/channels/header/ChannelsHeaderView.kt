@@ -102,11 +102,11 @@ public class ChannelsHeaderView : ConstraintLayout {
             layoutParams = layoutParams.apply {
                 height = typedArray.getDimensionPixelSize(
                     R.styleable.ChannelsHeaderView_streamAddChannelButtonHeight,
-                    40.dpToPx()
+                    DEFAULT_ADD_CHANNEL_BUTTON_SIZE
                 )
                 width = typedArray.getDimensionPixelSize(
                     R.styleable.ChannelsHeaderView_streamAddChannelButtonWidth,
-                    40.dpToPx()
+                    DEFAULT_ADD_CHANNEL_BUTTON_SIZE
                 )
             }
             iconTint = typedArray.getColorStateList(R.styleable.ChannelsHeaderView_streamAddChannelButtonTint)
@@ -190,5 +190,9 @@ public class ChannelsHeaderView : ConstraintLayout {
 
     public fun interface AddChannelButtonClickListener {
         public fun onAddChannelClick()
+    }
+
+    private companion object {
+        private val DEFAULT_ADD_CHANNEL_BUTTON_SIZE = 40.dpToPx()
     }
 }
