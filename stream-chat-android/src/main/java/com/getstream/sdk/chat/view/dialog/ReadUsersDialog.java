@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.User;
 
 public class ReadUsersDialog extends Dialog {
 
-    List<ChannelUserRead>reads;
+    List<ChannelUserRead> reads;
     MessageListViewStyle style;
 
     public ReadUsersDialog(@NonNull Context context) {
@@ -58,7 +58,7 @@ public class ReadUsersDialog extends Dialog {
         for (ChannelUserRead read : reads){
             users.add(read.getUser());
         }
-        CommandMentionListItemAdapter reactionAdapter = new CommandMentionListItemAdapter(getContext(), users, style, false);
+        CommandMentionListItemAdapter reactionAdapter = new CommandMentionListItemAdapter(getContext(), users, style);
         lv_read_user.setAdapter(reactionAdapter);
     }
 }

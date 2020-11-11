@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * An Activity playing attachments such as stream_ic_audio and videos.

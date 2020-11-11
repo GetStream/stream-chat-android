@@ -26,6 +26,6 @@
     <dimen name="stream_channel_actions_corners_radius">16dp</dimen>
     <dimen name="stream_channel_actions_item_height">56dp</dimen>
     <dimen name="stream_channel_actions_member_height">80dp</dimen>
-  
+
     <dimen name="stream_text_size_input">6sp</dimen>
 </resources>

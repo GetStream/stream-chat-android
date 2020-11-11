@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -413,7 +414,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     }
 
     public fun showMessage(@StringRes messageResId: Int) {
-        Utils.showMessage(context, messageResId)
+        Toast.makeText(context, messageResId, Toast.LENGTH_SHORT).show()
     }
 
     public interface TypeListener {

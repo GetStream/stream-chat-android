@@ -8,7 +8,8 @@
     android:paddingStart="@dimen/stream_spacing_medium"
     android:paddingTop="@dimen/stream_spacing_small"
     android:paddingEnd="@dimen/stream_spacing_medium"
-    android:paddingBottom="@dimen/stream_spacing_small">
+    android:paddingBottom="@dimen/stream_spacing_small"
+    >
 
     <ImageView
         android:id="@+id/commandIconImageView"
@@ -18,7 +19,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/commandNameTextView"
@@ -31,7 +33,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/commandIconImageView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Giphy" />
+        tools:text="Giphy"
+        />
 
     <TextView
         android:id="@+id/commandQueryTextView"
@@ -44,7 +47,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/commandNameTextView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="/giphy [query]" />
+        tools:text="/giphy [query]"
+        />
 
     <ImageView
         android:id="@+id/instantCommandImageView"
@@ -54,6 +58,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
