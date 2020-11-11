@@ -13,11 +13,15 @@ Added new MessageInputView structure
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
+- Added MarkAllReadEvent
 
 ## stream-chat-android-offline
 - Update `totalUnreadCount` when user is connected
 - Update `channelUnreadCount` when user is connected
 - Fix bug when channels could be shown without names
+- Added support for marking all channels as read for the current user.
+    - Can be accessed via `ChatDomain`'s use cases (`chatDomain.useCases.markAllRead()...`).
+- Fix bug when local channels could be sorted not properly
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts

@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -100,6 +101,10 @@ internal class QueryChannelsControllerImpl(
             addChannelIfFilterMatches(event.channel)
         }
 
+        if (event is MarkAllReadEvent) {
+            refreshAllChannels()
+        }
+
         if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
@@ -111,7 +116,7 @@ internal class QueryChannelsControllerImpl(
             // refresh the channels
             // Careful, it's easy to have a race condition here.
             //
-            // The reason is that we are on the IO thread and update ChannelControlelr using postValue()
+            // The reason is that we are on the IO thread and update ChannelController using postValue()
             //  ChannelController.toChannel() can read the old version of the data using livedata.value
             // Solutions:
             // - suspend/wait for a few seconds (yuck, lets not do that)
@@ -285,6 +290,14 @@ internal class QueryChannelsControllerImpl(
      */
     fun refreshChannel(cId: String) {
         refreshChannels(listOf(cId))
+    }
+
+    /**
+     * Refreshes all channels returned in this query.
+     * Supports use cases like marking all channels as read.
+     */
+    private fun refreshAllChannels() {
+        refreshChannels(queryChannelsSpec.cids)
     }
 
     /**

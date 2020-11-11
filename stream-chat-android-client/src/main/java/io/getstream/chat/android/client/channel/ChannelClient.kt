@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -212,7 +213,8 @@ public class ChannelClient internal constructor(
             is ConnectedEvent,
             is ConnectingEvent,
             is DisconnectedEvent,
-            is ErrorEvent -> false
+            is ErrorEvent,
+            is MarkAllReadEvent -> false
         }
     }
 
