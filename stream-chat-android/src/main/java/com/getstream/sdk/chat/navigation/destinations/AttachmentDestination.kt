@@ -2,9 +2,9 @@ package com.getstream.sdk.chat.navigation.destinations
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer
 import com.getstream.sdk.chat.view.activity.AttachmentActivity
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
@@ -47,7 +47,7 @@ internal class AttachmentDestination(
         }
 
         if (url.isNullOrEmpty()) {
-            Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_url))
+            Toast.makeText(context, context.getString(R.string.stream_attachment_invalid_url), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -64,10 +64,11 @@ internal class AttachmentDestination(
 
         if (mimeType == null) {
             ChatLogger.instance.logE("AttachmentDestination", "MimeType is null for url $url")
-            Utils.showMessage(
+            Toast.makeText(
                 context,
-                context.getString(R.string.stream_attachment_invalid_mime_type, attachment.name)
-            )
+                context.getString(R.string.stream_attachment_invalid_mime_type, attachment.name),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -105,7 +106,7 @@ internal class AttachmentDestination(
             }
 
         if (imageUrls.isEmpty()) {
-            Utils.showMessage(context, "Invalid image(s)!")
+            Toast.makeText(context, "Invalid image(s)!", Toast.LENGTH_SHORT).show()
             return
         }
 

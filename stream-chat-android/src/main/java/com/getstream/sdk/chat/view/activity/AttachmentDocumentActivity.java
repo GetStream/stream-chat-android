@@ -3,14 +3,17 @@ package com.getstream.sdk.chat.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.*;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.Utils;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.getstream.sdk.chat.R;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -89,7 +92,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
                 } else {
                     progressBar.setVisibility(View.GONE);
                     String errorMsg = AttachmentDocumentActivity.this.getString(R.string.stream_attachment_load_failed_unknown);
-                    Utils.showMessage(AttachmentDocumentActivity.this, errorMsg);
+                    Toast.makeText(AttachmentDocumentActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -103,7 +106,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
                 return;
             }
 
-            Utils.showMessage(AttachmentDocumentActivity.this, error.toString());
+            Toast.makeText(AttachmentDocumentActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 }
