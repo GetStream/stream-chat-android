@@ -3,9 +3,11 @@
     <item
         android:id="@+id/channels_fragment"
         android:icon="@drawable/ic_chats"
-        android:title="@string/home_bottom_nav_chats" />
+        android:title="@string/home_bottom_nav_chats"
+        />
     <item
         android:id="@+id/mentions_fragment"
         android:icon="@drawable/ic_mentions"
-        android:title="@string/home_bottom_nav_mentions" />
+        android:title="@string/home_bottom_nav_mentions"
+        />
 </menu>

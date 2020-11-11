@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSuggestions"
@@ -15,7 +16,8 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_composer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/stream_item_mention" />
+        tools:listitem="@layout/stream_item_mention"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_title"
@@ -26,7 +28,8 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:id="@+id/tv_title"
@@ -35,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/tv_command"
@@ -45,7 +49,8 @@
             android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintStart_toEndOf="@+id/tv_title"
-            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+            app:layout_constraintTop_toTopOf="@+id/tv_title"
+            />
 
         <Button
             android:id="@+id/btn_close"
@@ -57,7 +62,8 @@
             app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+            app:layout_constraintTop_toTopOf="@+id/tv_title"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -69,7 +75,8 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_composer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_title">
+        app:layout_constraintTop_toBottomOf="@+id/cl_title"
+        >
 
         <LinearLayout
             android:id="@+id/select_media"
@@ -80,24 +87,28 @@
             android:orientation="horizontal"
             android:paddingStart="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
             <FrameLayout
                 android:layout_width="30dp"
-                android:layout_height="30dp">
+                android:layout_height="30dp"
+                >
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/stream_round_thread_close"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
 
                 <TextView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"
                     android:background="@drawable/stream_ic_image_black"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
 
                 <ImageView
                     android:id="@+id/iv_media_permission"
@@ -105,7 +116,8 @@
                     android:layout_height="12dp"
                     android:layout_gravity="end"
                     android:layout_margin="3dp"
-                    android:src="@drawable/stream_ic_error" />
+                    android:src="@drawable/stream_ic_error"
+                    />
             </FrameLayout>
 
             <TextView
@@ -114,7 +126,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="@string/stream_input_upload_media" />
+                android:text="@string/stream_input_upload_media"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -127,24 +140,28 @@
             android:orientation="horizontal"
             android:paddingStart="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/select_media">
+            app:layout_constraintTop_toBottomOf="@+id/select_media"
+            >
 
             <FrameLayout
                 android:layout_width="30dp"
-                android:layout_height="30dp">
+                android:layout_height="30dp"
+                >
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/stream_round_thread_close"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
 
                 <TextView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"
                     android:background="@drawable/stream_ic_camera"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
 
                 <ImageView
                     android:id="@+id/iv_camera_permission"
@@ -152,7 +169,8 @@
                     android:layout_height="12dp"
                     android:layout_gravity="end"
                     android:layout_margin="3dp"
-                    android:src="@drawable/stream_ic_error" />
+                    android:src="@drawable/stream_ic_error"
+                    />
             </FrameLayout>
 
             <TextView
@@ -161,7 +179,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="@string/stream_input_take_picture" />
+                android:text="@string/stream_input_take_picture"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -175,24 +194,28 @@
             android:paddingStart="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/select_camera">
+            app:layout_constraintTop_toBottomOf="@+id/select_camera"
+            >
 
             <FrameLayout
                 android:layout_width="30dp"
-                android:layout_height="30dp">
+                android:layout_height="30dp"
+                >
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/stream_round_thread_close"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
 
                 <TextView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"
                     android:background="@drawable/stream_ic_folder"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    />
             </FrameLayout>
 
             <TextView
@@ -201,7 +224,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="@string/stream_input_upload_file" />
+                android:text="@string/stream_input_upload_file"
+                />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -216,7 +240,8 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_composer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_title">
+        app:layout_constraintTop_toBottomOf="@+id/cl_title"
+        >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_media"
@@ -226,7 +251,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/stream_item_select_photo" />
+            tools:listitem="@layout/stream_item_select_photo"
+            />
 
         <ProgressBar
             android:id="@+id/progressBar_file_loader"
@@ -235,7 +261,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -246,7 +273,8 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        >
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -254,7 +282,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="10dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginEnd="10dp"
+            >
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/media_composer"
@@ -263,7 +292,8 @@
                 android:layout_marginTop="5dp"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                />
 
             <ListView
                 android:id="@+id/file_composer"
@@ -271,7 +301,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:divider="@null"
-                android:visibility="gone" />
+                android:visibility="gone"
+                />
         </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -283,7 +314,8 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <com.getstream.sdk.chat.view.PreviewMessageView
                 android:id="@+id/vPreviewMessage"
@@ -292,7 +324,8 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <ImageView
                 android:id="@+id/iv_openAttach"
@@ -301,7 +334,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="13dp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.getstream.sdk.chat.utils.GifEditText
                 android:id="@+id/message_text_input"
@@ -317,7 +351,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                 app:layout_constraintEnd_toStartOf="@+id/sendButton"
                 app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
-                app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage" />
+                app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage"
+                />
 
             <ImageView
                 android:id="@+id/sendButton"
@@ -326,7 +361,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="13dp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                />
 
             <CheckBox
                 android:id="@+id/cbSendAlsoToChannel"
@@ -335,7 +371,8 @@
                 android:text="@string/stream_input_also_send_to_channel"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

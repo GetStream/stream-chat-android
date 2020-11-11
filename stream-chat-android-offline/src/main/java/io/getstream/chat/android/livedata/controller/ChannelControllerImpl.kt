@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -55,6 +56,7 @@ import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.extensions.setOnUi
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
@@ -237,9 +239,14 @@ internal class ChannelControllerImpl(
         return Result(false, null)
     }
 
-    fun markRead(): Result<Boolean> {
+    /**
+     * Marks the channel as read by the current user
+     *
+     * @return whether the channel was marked as read or not
+     */
+    internal suspend fun markRead(): Boolean {
         if (!getConfig().isReadEvents) {
-            return Result(false, null)
+            return false
         }
 
         // throttle the mark read
@@ -247,28 +254,28 @@ internal class ChannelControllerImpl(
 
         if (messages.isEmpty()) {
             logger.logI("No messages; nothing to mark read.")
-            return Result(false, null)
+            return false
         }
 
-        val last = messages.last()
-        val lastMessageDate = last.let { it.createdAt ?: it.createdLocallyAt }
-        val shouldUpdate =
-            lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
+        return messages
+            .last()
+            .let { it.createdAt ?: it.createdLocallyAt }
+            .let { lastMessageDate ->
+                val shouldUpdate =
+                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
 
-        if (!shouldUpdate) {
-            logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-            return Result(false, null)
-        }
+                if (!shouldUpdate) {
+                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
+                    return false
+                }
 
-        lastMarkReadEvent = lastMessageDate
+                lastMarkReadEvent = lastMessageDate
 
-        // optimistic UI update via LiveData
-        updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+                // update live data with new read
+                updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
 
-        // generates MessageReadEvent & triggers offline storage updates
-        client.markMessageRead(channelType, channelId, last.id).execute()
-
-        return Result(true, null)
+                shouldUpdate
+            }
     }
 
     private fun sortedMessages(): List<Message> {
@@ -282,7 +289,7 @@ internal class ChannelControllerImpl(
         return messages
     }
 
-    private fun removeMessagesBefore(date: Date) {
+    private suspend fun removeMessagesBefore(date: Date) {
         val copy = _messages.value ?: mutableMapOf()
         // start off empty
         _messages.postValue(mutableMapOf())
@@ -396,7 +403,11 @@ internal class ChannelControllerImpl(
         val queryOfflineJob = domainImpl.scope.async(domainImpl.dispatcherIO) { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
-        val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async(domainImpl.dispatcherIO) { runChannelQueryOnline(pagination) } } else { null }
+        val queryOnlineJob = if (domainImpl.isOnline()) {
+            domainImpl.scopeIO.async { runChannelQueryOnline(pagination) }
+        } else {
+            null
+        }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
@@ -766,18 +777,18 @@ internal class ChannelControllerImpl(
         return Result(currentMessage, null)
     }
 
-    fun setWatcherCount(watcherCount: Int) {
+    private suspend fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != _watcherCount.value) {
             _watcherCount.postValue(watcherCount)
         }
     }
 
     // This one needs to be public for flows such as running a message action
-    override fun upsertMessage(message: Message) {
+    internal suspend fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 
-    private fun upsertEventMessage(message: Message) {
+    private suspend fun upsertEventMessage(message: Message) {
         // make sure we don't lose ownReactions
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
@@ -825,8 +836,9 @@ internal class ChannelControllerImpl(
         return copy + messages.map { it.copy() }.associateBy(Message::id)
     }
 
-    private fun upsertMessages(messages: List<Message>) {
-        parseMessages(messages).let(_messages::postValue)
+    private suspend fun upsertMessages(messages: List<Message>) {
+        val newMessages = parseMessages(messages)
+        _messages.setOnUi(newMessages)
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
@@ -879,7 +891,7 @@ internal class ChannelControllerImpl(
         }
     }
 
-    fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         // livedata actually batches many frequent updates after each other
         // we might not need a more optimized handleEvents implementation.. TBD.
         for (event in events) {
@@ -891,7 +903,7 @@ internal class ChannelControllerImpl(
         return _hidden.value ?: false
     }
 
-    fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
@@ -980,6 +992,10 @@ internal class ChannelControllerImpl(
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
             }
+
+            is MarkAllReadEvent -> {
+                updateRead(ChannelUserRead(event.user, event.createdAt))
+            }
         }
     }
 
@@ -999,7 +1015,7 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private fun upsertUser(user: User) {
+    private suspend fun upsertUser(user: User) {
         upsertUserPresence(user)
         // channels have users
         val userId = user.id
@@ -1060,7 +1076,7 @@ internal class ChannelControllerImpl(
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
-    fun updateReads(reads: List<ChannelUserRead>) {
+    private suspend fun updateReads(reads: List<ChannelUserRead>) {
         val currentUserId = domainImpl.currentUser.id
         val previousUserIdToReadMap = _reads.value ?: mapOf()
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -1088,32 +1104,32 @@ internal class ChannelControllerImpl(
                 return@let // no need to post the incoming read value to the UI if it isn't newer
             }
 
-            _read.postValue(incomingRead)
+            _read.setOnUi(incomingRead)
         }
 
         // always post the newly updated map
-        _reads.postValue(previousUserIdToReadMap + incomingUserIdToReadMap)
+        _reads.setOnUi(previousUserIdToReadMap + incomingUserIdToReadMap)
     }
 
-    fun updateRead(
+    private suspend fun updateRead(
         read: ChannelUserRead
     ) {
         updateReads(listOf(read))
     }
 
-    internal fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    internal suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateLiveDataFromChannel(localChannel)
     }
 
-    internal fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    internal suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)
     }
 
-    fun updateLiveDataFromChannel(c: Channel) {
+    suspend fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1126,7 +1142,7 @@ internal class ChannelControllerImpl(
         upsertMessages(c.messages)
     }
 
-    private fun updateOldMessagesFromChannel(c: Channel) {
+    private suspend fun updateOldMessagesFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1139,17 +1155,16 @@ internal class ChannelControllerImpl(
         upsertOldMessages(c.messages)
     }
 
-    private fun setMembers(members: List<Member>) {
-        val copy = _members.value ?: mapOf()
-        _members.postValue(copy + members.associateBy(Member::getUserId))
+    private suspend fun setMembers(members: List<Member>) {
+        _members.setOnUi((_members.value ?: mapOf()) + members.associateBy(Member::getUserId))
     }
 
-    fun updateChannelData(channel: Channel) {
-        _channelData.postValue(ChannelData(channel))
+    private suspend fun updateChannelData(channel: Channel) {
+        _channelData.setOnUi(ChannelData(channel))
     }
 
-    fun setWatchers(watchers: List<User>) {
-        _watchers.postValue((_watchers.value ?: mapOf()) + watchers.associateBy { it.id })
+    private suspend fun setWatchers(watchers: List<User>) {
+        _watchers.setOnUi((_watchers.value ?: mapOf()) + watchers.associateBy { it.id })
     }
 
     suspend fun editMessage(message: Message): Result<Message> {

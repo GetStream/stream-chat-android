@@ -98,6 +98,12 @@ class ChannelsFragment : Fragment() {
                     viewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
                     true
                 }
+
+                R.id.mark_all_read -> {
+                    viewModel.markAllRead()
+                    true
+                }
+
                 else -> false
             }
         }

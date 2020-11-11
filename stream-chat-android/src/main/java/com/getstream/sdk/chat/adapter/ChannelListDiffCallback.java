@@ -5,9 +5,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
 
-import static com.getstream.sdk.chat.utils.LlcMigrationUtils.computeLastMessage;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.currentUserRead;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastMessageDate;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsName;
@@ -67,19 +65,12 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-
         ChannelItemPayloadDiff diff = new ChannelItemPayloadDiff();
 
         Channel oldChannel = oldList.get(oldItemPosition);
         Channel newChannel = newList.get(newItemPosition);
 
-        Message oldLastMessage = computeLastMessage(oldChannel);
-        Message newLastMessage = computeLastMessage(newChannel);
-
-        if (oldLastMessage != null && newLastMessage != null) {
-            diff.lastMessage = !oldLastMessage.getId().equals(newLastMessage.getId());
-        }
-
+        diff.lastMessage = !lastMessagesAreTheSame(oldChannel, newChannel);
         diff.name = !equalsName(newChannel, oldChannel);
         diff.avatarView = !equalsUserLists(getOtherUsers(oldChannel.getMembers()), getOtherUsers(newChannel.getMembers()));
         diff.readState = currentUserRead(oldChannel, newChannel);

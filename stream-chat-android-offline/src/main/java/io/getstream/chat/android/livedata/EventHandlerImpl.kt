@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -135,7 +136,8 @@ internal class EventHandlerImpl(
                 is ChannelUserBannedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
-                is ChannelUserUnbannedEvent -> Unit
+                is ChannelUserUnbannedEvent,
+                is MarkAllReadEvent -> Unit
                 is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
@@ -302,24 +304,39 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
 
-                is MessageReadEvent -> {
-                    // get the channel, update reads, write the channel
-                    batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                // we use syncState to store the last markAllRead date for a given
+                // user since it makes more sense to write to the database once instead of N times.
+                is MarkAllReadEvent -> {
+                    event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
+                    event.unreadChannels.let(domainImpl::setChannelUnreadCount)
+
+                    // only update sync state if the incoming "mark all read" date is newer
+                    // this supports using event handler to restore mark all read state in setUser
+                    // without redundant db writes.
+                    val syncStateRepo = domainImpl.repos.syncState
+
+                    syncStateRepo.select(event.user.id)?.let { state ->
+                        if (state.markedAllReadAt == null || state.markedAllReadAt?.before(event.createdAt) == true) {
+                            syncStateRepo.insert(state.copy(markedAllReadAt = event.createdAt))
                         }
-                        batch.addChannel(updatedChannel)
                     }
                 }
-                is NotificationMarkReadEvent -> {
-                    event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
 
-                    batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
+                // get the channel, update reads, write the channel
+                is MessageReadEvent ->
+                    batch.getCurrentChannel(event.cid)
+                        ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
-                        batch.addChannel(updatedChannel)
-                    }
+                        ?.let(batch::addChannel)
+
+                is NotificationMarkReadEvent -> {
+                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
+                    batch.getCurrentChannel(event.cid)
+                        ?.apply {
+                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        }
+                        ?.let(batch::addChannel)
                 }
                 is UserMutedEvent -> {
                     batch.addUser(event.targetUser)
@@ -379,14 +396,12 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>) {
-        events.sortedBy { it.createdAt }
-        updateOfflineStorageFromEvents(events)
+        val sortedEvents = events.sortedBy { it.createdAt }
+        updateOfflineStorageFromEvents(sortedEvents)
 
         // step 3 - forward the events to the active channels
-
-        events.filterIsInstance<CidEvent>()
+        sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
-            .filterNot { it.key.isBlank() }
             .forEach {
                 val (cid, eventList) = it
                 if (domainImpl.isActiveChannel(cid)) {
@@ -394,14 +409,21 @@ internal class EventHandlerImpl(
                 }
             }
 
+        // mark all read applies to all channels
+        sortedEvents.filterIsInstance<MarkAllReadEvent>().firstOrNull()?.let { markAllRead ->
+            domainImpl.allActiveChannels().forEach { channelController ->
+                channelController.handleEvent(markAllRead)
+            }
+        }
+
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         for (queryRepo in domainImpl.getActiveQueries()) {
-            queryRepo.handleEvents(events)
+            queryRepo.handleEvents(sortedEvents)
         }
 
         // send out the connect events
-        for (event in events) {
+        for (event in sortedEvents) {
 
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {

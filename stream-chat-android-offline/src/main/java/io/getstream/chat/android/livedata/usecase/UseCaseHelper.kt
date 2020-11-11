@@ -128,6 +128,10 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      */
     public val markRead: MarkRead = MarkReadImpl(chatDomainImpl)
     /**
+     * markAllRead marks all messages on a channel as read
+     */
+    public val markAllRead: MarkAllRead = MarkAllReadImpl(chatDomainImpl)
+    /**
      * hideChannel hides the channel till a new message event is received
      */
     public val hideChannel: HideChannel = HideChannelImpl(chatDomainImpl)

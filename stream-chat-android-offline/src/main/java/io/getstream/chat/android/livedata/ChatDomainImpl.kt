@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -102,7 +103,25 @@ internal class ChatDomainImpl internal constructor(
     internal val customerDispatcherMain: CoroutineDispatcher? = null
 ) :
     ChatDomain {
-    internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
+    internal constructor(
+        client: ChatClient,
+        handler: Handler,
+        offlineEnabled: Boolean,
+        recoveryEnabled: Boolean,
+        userPresence: Boolean,
+        backgroundSyncEnabled: Boolean,
+        appContext: Context
+    ) : this(
+        client,
+        null,
+        null,
+        handler,
+        offlineEnabled,
+        recoveryEnabled,
+        userPresence,
+        backgroundSyncEnabled,
+        appContext
+    )
 
     internal var dispatcherMain: CoroutineDispatcher
     internal var dispatcherIO: CoroutineDispatcher
@@ -240,15 +259,19 @@ internal class ChatDomainImpl internal constructor(
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
             // set active channels and recover
-            syncState?.let {
-                for (channelId in it.activeChannelIds) {
-                    channel(channelId)
+            syncState?.let { state ->
+                // restore channels
+                state.activeChannelIds.forEach { channel(it) }
+
+                // restore queries
+                repos.queryChannels.selectById(state.activeQueryIds).forEach { spec ->
+                    queryChannels(spec.filter, spec.sort)
                 }
-                // queries
-                val queries = repos.queryChannels.selectById(it.activeQueryIds)
-                for (queryChannelsSpec in queries) {
-                    queryChannels(queryChannelsSpec.filter, queryChannelsSpec.sort)
-                }
+
+                // retrieve the last time the user marked all as read and handle it as an event
+                state.markedAllReadAt
+                    ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                    ?.let { eventHandler.handleEvent(it) }
             }
             syncState
         }
@@ -500,6 +523,9 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.getValue(cid)
     }
 
+    internal fun allActiveChannels(): List<ChannelControllerImpl> =
+        activeChannelMapImpl.values.toList()
+
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }
@@ -593,24 +619,28 @@ internal class ChatDomainImpl internal constructor(
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        val queriesToRetry = activeQueryMapImpl.values
+            .toList()
+            .filter { it.recoveryNeeded || recoveryNeeded }
+            .take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(
-                QueryChannelsPaginationRequest(
-                    QuerySort<Channel>(),
-                    INITIAL_CHANNEL_OFFSET,
-                    CHANNEL_LIMIT,
-                    MESSAGE_LIMIT,
-                    MEMBER_LIMIT
-                )
+            val pagination = QueryChannelsPaginationRequest(
+                QuerySort<Channel>(),
+                INITIAL_CHANNEL_OFFSET,
+                CHANNEL_LIMIT,
+                MESSAGE_LIMIT,
+                MEMBER_LIMIT
             )
+            val response = queryRepo.runQueryOnline(pagination)
             if (response.isSuccess) {
+                queryRepo.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }
+        val cids = activeChannelMapImpl.entries.toList()
+            .filter { it.value.recoveryNeeded || recoveryNeeded }
             .filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")

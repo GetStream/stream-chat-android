@@ -14,6 +14,8 @@ import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 
@@ -63,43 +65,50 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
     @Before
     override fun setup() {
-        if (Companion.client == null) {
-            // do one time setup here
-            // doing this here since context is not available in before all
-            // see https://github.com/android/android-test/issues/409
-            Companion.client = Companion.createClient()
-            runBlocking {
-                waitForSetUser(
-                    Companion.client!!,
-                    Companion.data.user1,
-                    Companion.data.user1Token
-                )
+        Dispatchers.setMain(testCoroutineDispatcher)
+        runBlocking {
+            if (Companion.client == null) {
+                // do one time setup here
+                // doing this here since context is not available in before all
+                // see https://github.com/android/android-test/issues/409
+                Companion.client = Companion.createClient()
+                runBlocking {
+                    waitForSetUser(
+                        Companion.client!!,
+                        Companion.data.user1,
+                        Companion.data.user1Token
+                    )
+                }
+                Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
             }
-            Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
+
+            client = Companion.client!!
+            // start from a clean db everytime
+            chatDomainImpl = setupChatDomain(client)
+            println("setup")
+
+            // setup channel controller and query controllers for tests
+            runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+            channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+            channelControllerImpl.updateLiveDataFromChannel(data.channel1)
+            query = QueryChannelsSpec(data.filter1, QuerySort())
+
+            queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
+
+            Truth.assertThat(client.isSocketConnected()).isTrue()
+
+            Truth.assertThat(chatDomainImpl.isOnline()).isTrue()
         }
-
-        client = Companion.client!!
-        // start from a clean db everytime
-        chatDomainImpl = setupChatDomain(client)
-        println("setup")
-
-        // setup channel controller and query controllers for tests
-        runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
-        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-        channelControllerImpl.updateLiveDataFromChannel(data.channel1)
-        query = QueryChannelsSpec(data.filter1, QuerySort())
-
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
-
-        Truth.assertThat(client.isSocketConnected()).isTrue()
-
-        Truth.assertThat(chatDomainImpl.isOnline()).isTrue()
     }
 
     @After
-    override fun tearDown() = runBlocking(Dispatchers.IO) {
-        // things to do after each test
-        println("tearDown")
-        chatDomainImpl.disconnect()
+    override fun tearDown() {
+        runBlocking(Dispatchers.IO) {
+            // things to do after each test
+            println("tearDown")
+            chatDomainImpl.disconnect()
+        }
+        Dispatchers.resetMain()
+        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 }

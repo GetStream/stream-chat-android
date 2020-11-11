@@ -3,13 +3,14 @@ package com.getstream.sdk.chat
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import androidx.annotation.RawRes
 import coil.Coil
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.load
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.transform.BlurTransformation
@@ -19,6 +20,7 @@ import coil.transform.RoundedCornersTransformation
 import io.getstream.chat.android.client.internal.InternalStreamChatApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import coil.loadAny as coilLoadAny
 
 @InternalStreamChatApi
 public object ImageLoader {
@@ -41,13 +43,28 @@ public object ImageLoader {
             }
     }
 
-    public fun ImageView.loadWithGifSupport(
+    public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int) {
+        loadAny(drawableResId)
+    }
+
+    public fun ImageView.load(uri: Uri?): Unit = loadAny(uri)
+
+    @JvmStatic
+    @JvmOverloads
+    public fun ImageView.load(
         uri: String?,
-        @DrawableRes placeholderResId: Int?,
+        @DrawableRes placeholderResId: Int? = null,
+        onStart: () -> Unit = {},
+        onComplete: () -> Unit = {},
+    ): Unit = loadAny(uri, placeholderResId, onStart, onComplete)
+
+    private fun ImageView.loadAny(
+        data: Any?,
+        @DrawableRes placeholderResId: Int? = null,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
     ) {
-        load(uri, getImageLoaderWithGifSupport(context)) {
+        coilLoadAny(data, getImageLoaderWithGifSupport(context)) {
             placeholderResId?.let { placeholder(it) }
             listener(
                 onStart = { onStart() },
@@ -105,6 +122,7 @@ public object ImageLoader {
             public val radius: Float = 10f,
             public val sampling: Float = 1f
         ) : ImageTransformation()
+
         public class RoundedCorners(public val radius: Float) : ImageTransformation()
     }
 }

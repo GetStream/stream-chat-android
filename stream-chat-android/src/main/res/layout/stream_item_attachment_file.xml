@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="1dp"
-    android:paddingBottom="1dp">
+    android:paddingBottom="1dp"
+    >
 
 
     <ImageView
@@ -20,7 +21,8 @@
         android:src="@drawable/stream_ic_file_pdf"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/tv_file_title"
@@ -37,7 +39,8 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"
-        app:layout_constraintTop_toTopOf="@+id/iv_file_thumb" />
+        app:layout_constraintTop_toTopOf="@+id/iv_file_thumb"
+        />
 
     <TextView
         android:id="@+id/tv_file_size"
@@ -48,7 +51,8 @@
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/tv_file_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_file_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_file_title"
+        />
 
     <TextView
         android:id="@+id/tv_close"
@@ -60,7 +64,8 @@
         android:background="@drawable/stream_attach_close"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ImageView
         android:id="@+id/iv_select_mark"
@@ -71,7 +76,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -81,6 +87,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
