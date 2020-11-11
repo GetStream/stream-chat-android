@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="64dp">
+    android:layout_height="64dp"
+    >
 
     <View
         android:id="@+id/avatarPlaceholder"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/shape_shimmer"
         android:layout_marginStart="@dimen/spacing_small"
+        android:background="@drawable/shape_shimmer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <View
         android:id="@+id/titlePlaceholder"
@@ -23,19 +25,21 @@
         android:layout_marginEnd="@dimen/spacing_small"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
-        app:layout_constraintTop_toTopOf="@id/avatarPlaceholder" />
+        app:layout_constraintTop_toTopOf="@id/avatarPlaceholder"
+        />
 
     <View
         android:id="@+id/subtitlePlaceholder"
         android:layout_width="0dp"
         android:layout_height="16dp"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_small"
         android:layout_marginStart="@dimen/spacing_small"
+        android:layout_marginTop="@dimen/spacing_small"
         android:background="@drawable/shape_shimmer"
-        app:layout_constraintEnd_toStartOf="@+id/datePlaceholder"
         app:layout_constraintBottom_toBottomOf="@id/avatarPlaceholder"
-        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder" />
+        app:layout_constraintEnd_toStartOf="@+id/datePlaceholder"
+        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
+        />
 
     <View
         android:id="@+id/datePlaceholder"
@@ -47,7 +51,8 @@
         android:background="@drawable/shape_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/subtitlePlaceholder"
-        app:layout_constraintTop_toTopOf="@id/subtitlePlaceholder" />
+        app:layout_constraintTop_toTopOf="@id/subtitlePlaceholder"
+        />
 
     <View
         android:id="@+id/separator"
@@ -57,6 +62,6 @@
         android:background="@drawable/shape_shimmer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

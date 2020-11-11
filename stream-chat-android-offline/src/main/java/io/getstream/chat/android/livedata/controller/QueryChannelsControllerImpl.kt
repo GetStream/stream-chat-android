@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -42,8 +43,10 @@ internal class QueryChannelsControllerImpl(
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
+
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
+    override var channels: LiveData<List<Channel>> =
+        Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -75,7 +78,11 @@ internal class QueryChannelsControllerImpl(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
+<<<<<<< HEAD
     override suspend fun addChannelIfFilterMatches(
+=======
+    internal suspend fun addChannelIfFilterMatches(
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         channel: Channel
     ) {
         if (newChannelEventFilter(channel, filter)) {
@@ -95,6 +102,10 @@ internal class QueryChannelsControllerImpl(
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
+        }
+
+        if (event is MarkAllReadEvent) {
+            refreshAllChannels()
         }
 
         if (event is CidEvent) {
@@ -145,6 +156,7 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
+<<<<<<< HEAD
         val queryChannelsSpec =
             domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
 
@@ -152,6 +164,13 @@ internal class QueryChannelsControllerImpl(
             domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
                 logger.logI("found ${it.size} channels in offline storage")
             }
+=======
+        val query = domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
+            ?: return null
+
+        return domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
+            logger.logI("found ${it.size} channels in offline storage")
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         }
     }
 
@@ -212,8 +231,12 @@ internal class QueryChannelsControllerImpl(
         val queryOfflineJob = domainImpl.scopeIO.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
+<<<<<<< HEAD
 
             domainImpl.scopeIO.async { runQueryOnline(pagination) }
+=======
+            domainImpl.scope.async { runQueryOnline(pagination) }
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         } else {
             null
         }
@@ -252,7 +275,10 @@ internal class QueryChannelsControllerImpl(
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    internal suspend fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+    internal suspend fun updateChannelsAndQueryResults(
+        channels: List<Channel>?,
+        isFirstPage: Boolean
+    ) {
         if (channels != null) {
             val cIds = channels.map { it.cid }
             // initialize channel repos for all of these channels
@@ -282,6 +308,14 @@ internal class QueryChannelsControllerImpl(
      */
     fun refreshChannel(cId: String) {
         refreshChannels(listOf(cId))
+    }
+
+    /**
+     * Refreshes all channels returned in this query.
+     * Supports use cases like marking all channels as read.
+     */
+    private fun refreshAllChannels() {
+        refreshChannels(queryChannelsSpec.cids)
     }
 
     /**

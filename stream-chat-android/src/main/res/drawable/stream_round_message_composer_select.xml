@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+    android:shape="rectangle"
+    >
 
     <solid android:color="@color/stream_input_message_box_background" />
     <stroke
         android:width="@dimen/stream_composer_stroke_width"
-        android:color="@color/stream_input_message_box_stroke_select" />
+        android:color="@color/stream_input_message_box_stroke_select"
+        />
     <corners android:radius="@dimen/stream_composer_corner_radius" />
 </shape>

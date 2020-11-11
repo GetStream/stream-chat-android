@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+    android:shape="rectangle"
+    >
 
     <solid android:color="@color/stream_white" />
     <stroke
         android:width="@dimen/stream_message_stroke"
-        android:color="@color/stream_message_stroke" />
+        android:color="@color/stream_message_stroke"
+        />
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
         android:topLeftRadius="@dimen/stream_thread_toolbar_radius"
-        android:topRightRadius="@dimen/stream_thread_toolbar_radius" />
+        android:topRightRadius="@dimen/stream_thread_toolbar_radius"
+        />
 </shape>
-

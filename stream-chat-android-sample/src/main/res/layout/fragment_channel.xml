@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <com.getstream.sdk.chat.view.ChannelHeaderView
         android:id="@+id/channelHeaderView"
@@ -10,25 +11,26 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <com.getstream.sdk.chat.view.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/padding_medium"
         app:layout_constraintBottom_toTopOf="@+id/messageInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/channelHeaderView"
-        app:streamMessageDateShow="true"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/padding_medium"
-        app:streamScrollButtonBackground="@drawable/stream_shape_round"
-        app:streamNewMessagesTextSingle="@string/new_messages_single"
-        app:streamNewMessagesTextPlural="@string/new_messages_plural"
-        app:streamNewMessagesBehaviour="count_new_messages"
-        app:streamDefaultScrollButtonEnabled="true"
         app:streamButtonIcon="@drawable/stream_bottom_arrow"
+        app:streamDefaultScrollButtonEnabled="true"
+        app:streamMessageDateShow="true"
+        app:streamNewMessagesBehaviour="count_new_messages"
+        app:streamNewMessagesTextPlural="@string/new_messages_plural"
+        app:streamNewMessagesTextSingle="@string/new_messages_single"
+        app:streamScrollButtonBackground="@drawable/stream_shape_round"
         />
 
     <ProgressBar
@@ -39,7 +41,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <com.getstream.sdk.chat.view.messageinput.MessageInputView
         android:id="@+id/messageInputView"
@@ -47,6 +50,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
-    android:padding="@dimen/padding_medium">
+    android:padding="@dimen/padding_medium"
+    >
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/avatarImageView"
@@ -12,7 +13,8 @@
         android:layout_height="@dimen/login_avatar_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/nameTextView"
@@ -22,7 +24,8 @@
         android:paddingRight="@dimen/padding_medium"
         android:text="@string/user_login_advanced_options"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        />
 
     <TextView
         android:id="@+id/subtitleTextView"
@@ -32,7 +35,8 @@
         android:paddingRight="@dimen/padding_medium"
         android:text="@string/user_login_user_subtitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/grey_dark" />
+        android:textColor="@color/grey_dark"
+        />
 
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/flow"
@@ -46,7 +50,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/arrowImageView"
         app:layout_constraintStart_toEndOf="@+id/avatarImageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/arrowImageView"
@@ -57,6 +62,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/flow"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

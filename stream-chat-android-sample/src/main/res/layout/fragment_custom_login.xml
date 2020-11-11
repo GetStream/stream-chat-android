@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="MissingConstraints">
+    tools:ignore="MissingConstraints"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -14,14 +15,16 @@
         android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/user_login_advanced_options"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -42,19 +45,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintVertical_bias="0"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/apiKeyInputLayout"
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/custom_login_field_api_key_hint">
+        android:hint="@string/custom_login_field_api_key_hint"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/apiKeyEditText"
             style="@style/LoginEditText"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,12 +69,14 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/custom_login_field_user_id_hint">
+        android:hint="@string/custom_login_field_user_id_hint"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userIdEditText"
             style="@style/LoginEditText"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -77,14 +85,16 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/custom_login_field_user_token">
+        android:hint="@string/custom_login_field_user_token"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userTokenEditText"
             style="@style/LoginEditText"
             android:inputType="textMultiLine"
             android:singleLine="false"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,13 +103,15 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/custom_login_field_user_name_hint">
+        android:hint="@string/custom_login_field_user_name_hint"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userNameEditText"
             style="@style/LoginEditText"
             android:imeOptions="actionDone"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,7 +131,8 @@
         app:cornerRadius="24dp"
         app:layout_constraintBottom_toTopOf="@id/sdkVersion"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
         android:id="@+id/sdkVersion"
@@ -132,7 +145,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/sdk_version_template" />
+        tools:text="@string/sdk_version_template"
+        />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -142,6 +156,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

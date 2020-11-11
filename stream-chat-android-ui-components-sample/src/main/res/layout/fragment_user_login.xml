@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <ImageView
         android:id="@+id/streamLogoImageView"
@@ -14,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/titleTextView"
@@ -27,7 +29,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/streamLogoImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/streamLogoImageView"
+        />
 
     <TextView
         android:id="@+id/summaryTextView"
@@ -40,19 +43,22 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/usersList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="60dp"
         android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginBottom="60dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/summaryTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/summaryTextView"
+        tools:listitem="@layout/item_user"
+        />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -62,7 +68,8 @@
         app:layout_constraintBottom_toTopOf="@+id/sdkVersion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/summaryTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/summaryTextView"
+        />
 
     <TextView
         android:id="@+id/sdkVersion"
@@ -70,12 +77,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:gravity="center"
+        android:padding="@dimen/spacing_medium"
         android:textColor="@color/grey"
         android:textSize="16sp"
-        android:padding="@dimen/spacing_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/sdk_version_template" />
-
+        tools:text="@string/sdk_version_template"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

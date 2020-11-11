@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -55,6 +56,7 @@ import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.extensions.setOnUi
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
@@ -242,9 +244,18 @@ internal class ChannelControllerImpl(
         return Result(false, null)
     }
 
+<<<<<<< HEAD
     internal suspend fun markRead(): Result<Boolean> {
+=======
+    /**
+     * Marks the channel as read by the current user
+     *
+     * @return whether the channel was marked as read or not
+     */
+    internal suspend fun markRead(): Boolean {
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         if (!getConfig().isReadEvents) {
-            return Result(false, null)
+            return false
         }
 
         // throttle the mark read
@@ -252,28 +263,28 @@ internal class ChannelControllerImpl(
 
         if (messages.isEmpty()) {
             logger.logI("No messages; nothing to mark read.")
-            return Result(false, null)
+            return false
         }
 
-        val last = messages.last()
-        val lastMessageDate = last.let { it.createdAt ?: it.createdLocallyAt }
-        val shouldUpdate =
-            lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
+        return messages
+            .last()
+            .let { it.createdAt ?: it.createdLocallyAt }
+            .let { lastMessageDate ->
+                val shouldUpdate =
+                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
 
-        if (!shouldUpdate) {
-            logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-            return Result(false, null)
-        }
+                if (!shouldUpdate) {
+                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
+                    return false
+                }
 
-        lastMarkReadEvent = lastMessageDate
+                lastMarkReadEvent = lastMessageDate
 
-        // optimistic UI update via LiveData
-        updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+                // update live data with new read
+                updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
 
-        // generates MessageReadEvent & triggers offline storage updates
-        client.markMessageRead(channelType, channelId, last.id).execute()
-
-        return Result(true, null)
+                shouldUpdate
+            }
     }
 
     private fun sortedMessages(): List<Message> {
@@ -401,8 +412,16 @@ internal class ChannelControllerImpl(
         val queryOfflineJob = domainImpl.scopeIO.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
+<<<<<<< HEAD
         val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scopeIO.async { runChannelQueryOnline(pagination) } } else { null }
 
+=======
+        val queryOnlineJob = if (domainImpl.isOnline()) {
+            domainImpl.scope.async { runChannelQueryOnline(pagination) }
+        } else {
+            null
+        }
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
@@ -779,7 +798,11 @@ internal class ChannelControllerImpl(
     }
 
     // This one needs to be public for flows such as running a message action
+<<<<<<< HEAD
     override suspend fun upsertMessage(message: Message) {
+=======
+    internal suspend fun upsertMessage(message: Message) {
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         upsertMessages(listOf(message))
     }
 
@@ -833,7 +856,11 @@ internal class ChannelControllerImpl(
 
     private suspend fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
+<<<<<<< HEAD
         _messages.value = newMessages
+=======
+        _messages.setOnUi(newMessages)
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
@@ -986,6 +1013,10 @@ internal class ChannelControllerImpl(
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
             }
+
+            is MarkAllReadEvent -> {
+                updateRead(ChannelUserRead(event.user, event.createdAt))
+            }
         }
     }
 
@@ -1094,11 +1125,19 @@ internal class ChannelControllerImpl(
                 return@let // no need to post the incoming read value to the UI if it isn't newer
             }
 
+<<<<<<< HEAD
             _read.value = incomingRead
         }
 
         // always post the newly updated map
         _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+=======
+            _read.setOnUi(incomingRead)
+        }
+
+        // always post the newly updated map
+        _reads.setOnUi(previousUserIdToReadMap + incomingUserIdToReadMap)
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
     }
 
     private suspend fun updateRead(

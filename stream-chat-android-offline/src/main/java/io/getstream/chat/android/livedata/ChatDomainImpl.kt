@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -259,15 +260,19 @@ internal class ChatDomainImpl internal constructor(
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
             // set active channels and recover
-            syncState?.let {
-                for (channelId in it.activeChannelIds) {
-                    channel(channelId)
+            syncState?.let { state ->
+                // restore channels
+                state.activeChannelIds.forEach { channel(it) }
+
+                // restore queries
+                repos.queryChannels.selectById(state.activeQueryIds).forEach { spec ->
+                    queryChannels(spec.filter, spec.sort)
                 }
-                // queries
-                val queries = repos.queryChannels.selectById(it.activeQueryIds)
-                for (queryChannelsSpec in queries) {
-                    queryChannels(queryChannelsSpec.filter, queryChannelsSpec.sort)
-                }
+
+                // retrieve the last time the user marked all as read and handle it as an event
+                state.markedAllReadAt
+                    ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                    ?.let { eventHandler.handleEvent(it) }
             }
             syncState
         }
@@ -518,6 +523,9 @@ internal class ChatDomainImpl internal constructor(
         }
         return activeChannelMapImpl.getValue(cid)
     }
+
+    internal fun allActiveChannels(): List<ChannelControllerImpl> =
+        activeChannelMapImpl.values.toList()
 
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()

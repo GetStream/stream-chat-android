@@ -63,9 +63,12 @@ public interface ChannelController {
     public fun clean()
     public fun toChannel(): Channel
     public fun getMessage(messageId: String): Message?
+<<<<<<< HEAD
     // This one needs to be public for flows such as running a message action
     // TODO: this is for handling actions, think we should expose this in a different way
     public suspend fun upsertMessage(message: Message)
+=======
+>>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
 
     public val hidden: LiveData<Boolean>
     public val muted: LiveData<Boolean>
