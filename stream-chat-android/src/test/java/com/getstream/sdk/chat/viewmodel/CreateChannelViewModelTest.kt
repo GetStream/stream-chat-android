@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
+import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.getstream.sdk.chat.utils.TestCoroutineExtension
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
@@ -31,7 +31,7 @@ private val CURRENT_USER = createUser(online = true)
 private val CHANNEL = createChannel(CID)
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class CreateChannelViewModelTest {
 
     @JvmField
