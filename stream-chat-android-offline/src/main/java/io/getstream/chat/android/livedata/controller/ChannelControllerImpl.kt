@@ -101,6 +101,8 @@ internal class ChannelControllerImpl(
     private val _loadingNewerMessages = MutableLiveData(false)
     private val _channelData = MutableLiveData<ChannelData>()
     private val _oldMessages = MutableLiveData<Map<String, Message>>()
+    private val lastMessageAt = MutableLiveData<Date?>()
+
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages: LiveData<List<Message>> =
         Transformations.map(_messages) { it.values.toList() }
@@ -1140,6 +1142,7 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
+        lastMessageAt.setOnUi(c.lastMessageAt)
     }
 
     private suspend fun updateOldMessagesFromChannel(c: Channel) {
@@ -1268,7 +1271,8 @@ internal class ChannelControllerImpl(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
-        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.lastMessageAt =
+            lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
         return channel
