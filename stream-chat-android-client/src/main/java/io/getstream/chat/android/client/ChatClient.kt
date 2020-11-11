@@ -795,7 +795,6 @@ public class ChatClient internal constructor(
             if (it.isSuccess) {
                 clientStateService.onTokenReceived(it.data())
             } else {
-                // TODO what should be there???
                 clientStateService.onTokenReceived("")
             }
             connect()
