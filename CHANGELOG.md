@@ -16,11 +16,8 @@ Added new MessageInputView structure
 - Update `totalUnreadCount` when user is connected
 - Update `channelUnreadCount` when user is connected
 - Fix bug when channels could be shown without names
-<<<<<<< HEAD
-=======
 - Added support for marking all channels as read for the current user.
     - Can be accessed via `ChatDomain`'s use cases (`chatDomain.useCases.markAllRead()...`).
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
