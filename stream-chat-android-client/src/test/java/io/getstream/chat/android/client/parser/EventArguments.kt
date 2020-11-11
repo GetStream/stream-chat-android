@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.createConnectedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserBannedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createHealthEventStringJson
+import io.getstream.chat.android.client.createMarkAllReadEventStringJson
 import io.getstream.chat.android.client.createMemberAddedEventStringJson
 import io.getstream.chat.android.client.createMemberRemovedEventStringJson
 import io.getstream.chat.android.client.createMemberUpdatedEventStringJson
@@ -66,6 +67,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -231,6 +233,7 @@ internal object EventArguments {
     private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
     private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
     private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, mapOf("type" to "some.unknown.type", "created_at" to dateString))
+    private val markAllReadEvent = MarkAllReadEvent(EventType.NOTIFICATION_MARK_READ, date, user)
 
     private fun eventArguments() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
@@ -283,7 +286,8 @@ internal object EventArguments {
         Arguments.of(createNotificationMutesUpdatedEventStringJson(), notificationMutesUpdatedEvent),
         Arguments.of(createNewMessageEventStringJson(), newMessageEvent),
         Arguments.of(createUnknownEventStringJson(), unknownEvent),
-        Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent)
+        Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent),
+        Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent),
     )
 
     @JvmStatic

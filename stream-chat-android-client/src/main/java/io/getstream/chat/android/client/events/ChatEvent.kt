@@ -265,6 +265,15 @@ public data class NotificationMarkReadEvent(
     @SerializedName("unread_channels") val unreadChannels: Int?
 ) : CidEvent(), UserEvent
 
+public data class MarkAllReadEvent(
+    override val type: String = "",
+    @SerializedName("created_at") override val createdAt: Date,
+    override val user: User,
+    @SerializedName("unread_count") val unreadCount: Int = 0,
+    @SerializedName("total_unread_count") val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") val unreadChannels: Int = 0
+) : ChatEvent(), UserEvent
+
 public data class NotificationMessageNewEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,

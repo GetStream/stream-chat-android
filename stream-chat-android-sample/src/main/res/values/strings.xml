@@ -10,6 +10,7 @@
     <string name="new_messages_single">%s New Message</string>
     <string name="new_messages_plural">%s New Messages</string>
     <string name="sdk_version_template">Stream SDK v %s</string>
+    <string name="mark_all_read">Mark All Read</string>
 
     <string name="hide_channel_dialog">Would you like to hide this channel?</string>
     <string name="deny">No</string>

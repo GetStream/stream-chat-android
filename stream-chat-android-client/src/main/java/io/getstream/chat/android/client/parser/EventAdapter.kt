@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -111,8 +112,9 @@ internal class EventAdapter(
             EventType.MESSAGE_UPDATED -> {
                 gson.fromJson(data, MessageUpdatedEvent::class.java).apply { message.cid = cid }
             }
-            EventType.MESSAGE_READ -> {
-                gson.fromJson(data, MessageReadEvent::class.java)
+            EventType.MESSAGE_READ -> when {
+                mapData.containsKey("cid") -> gson.fromJson(data, MessageReadEvent::class.java)
+                else -> gson.fromJson(data, MarkAllReadEvent::class.java)
             }
 
             //region Typing
@@ -204,8 +206,9 @@ internal class EventAdapter(
                 gson.fromJson(data, NotificationAddedToChannelEvent::class.java)
             }
 
-            EventType.NOTIFICATION_MARK_READ -> {
-                gson.fromJson(data, NotificationMarkReadEvent::class.java)
+            EventType.NOTIFICATION_MARK_READ -> when {
+                mapData.containsKey("cid") -> gson.fromJson(data, NotificationMarkReadEvent::class.java)
+                else -> gson.fromJson(data, MarkAllReadEvent::class.java)
             }
 
             EventType.NOTIFICATION_MESSAGE_NEW -> {
