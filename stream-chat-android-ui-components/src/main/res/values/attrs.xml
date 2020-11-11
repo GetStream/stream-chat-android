@@ -58,7 +58,7 @@
         <attr name="streamSendButtonHeight" format="dimension|reference" />
     </declare-styleable>
 
-    <!--MessageInputViewNew-->
+    <!--ChannelsHeaderView-->
     <declare-styleable name="ChannelsHeaderView">
         <attr name="streamAvatarWidth" />
         <attr name="streamAvatarHeight" />

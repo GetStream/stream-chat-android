@@ -5,12 +5,14 @@
     android:layout_height="wrap_content"
     android:divider="@drawable/stream_divider"
     android:orientation="vertical"
-    android:showDividers="middle">
+    android:showDividers="middle"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <TextView
             android:id="@+id/channelMembersTextView"
@@ -23,7 +25,8 @@
             android:textColor="@color/stream_text_black"
             android:singleLine="true"
             android:textSize="@dimen/stream_text_large"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            />
 
         <TextView
             android:id="@+id/membersInfoTextView"
@@ -33,7 +36,8 @@
             android:layout_marginTop="4dp"
             android:singleLine="true"
             android:textColor="@color/stream_text_grey"
-            android:textSize="@dimen/stream_text_small" />
+            android:textSize="@dimen/stream_text_small"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -48,7 +52,8 @@
             android:paddingStart="@dimen/stream_reaction_margin"
             android:paddingEnd="@dimen/stream_reaction_margin"
             android:scrollbars="none"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
 
     </LinearLayout>
 
@@ -57,20 +62,23 @@
         style="@style/StreamChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_leave_group"
         android:text="@string/stream_channel_actions_leave_group"
-        android:textColor="@color/stream_black" />
+        android:textColor="@color/stream_black"
+        />
 
     <TextView
         android:id="@+id/deleteChannelButton"
         style="@style/StreamChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_delete"
         android:text="@string/stream_channel_actions_leave_group"
-        android:textColor="@color/stream_text_red" />
+        android:textColor="@color/stream_text_red"
+        />
 
     <TextView
         android:id="@+id/deleteContactButton"
         style="@style/StreamChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_delete"
         android:text="@string/stream_channel_actions_delete_contact"
-        android:textColor="@color/stream_text_red" />
+        android:textColor="@color/stream_text_red"
+        />
 
 </LinearLayout>

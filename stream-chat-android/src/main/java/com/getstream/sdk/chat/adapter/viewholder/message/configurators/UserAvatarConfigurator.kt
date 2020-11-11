@@ -31,7 +31,7 @@ internal class UserAvatarConfigurator(
 
         binding.avatar.apply {
             isVisible = isBottomPosition
-            setUser(message.user, style)
+            setUser(message.user, style.avatarStyle)
             setOnClickListener {
                 userClickListener.onUserClick(message.user)
             }
