@@ -90,11 +90,21 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment"
             app:destination="@id/componentBrowserAvatarViewFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment"
+            app:destination="@id/componentBrowserChannelsHeaderViewFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/componentBrowserAvatarViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment"
         android:label="ComponentBrowserAvatarViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserChannelsHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.channels.ComponentBrowserChannelsHeaderViewFragment"
+        android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
 </navigation>

@@ -47,4 +47,37 @@
             android:layout_height="64dp"
             />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/channelsHeaderViewContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/shape_component_browser_item_background"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/avatarViewContainer"
+        >
+
+        <TextView
+            android:id="@+id/channelsHeaderViewLabel"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="ChannelsHeaderView"
+            />
+
+
+        <io.getstream.chat.android.ui.channels.header.ChannelsHeaderView
+            android:id="@+id/channelsHeaderView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

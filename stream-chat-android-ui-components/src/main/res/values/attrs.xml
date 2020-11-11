@@ -57,4 +57,50 @@
         <attr name="streamSendButtonWidth" format="dimension|reference" />
         <attr name="streamSendButtonHeight" format="dimension|reference" />
     </declare-styleable>
+
+    <!--ChannelsHeaderView-->
+    <declare-styleable name="ChannelsHeaderView">
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
+        <attr name="streamShowUserAvatar" format="boolean" />
+
+        <attr name="streamOnlineTitleText" format="string|reference" />
+        <attr name="streamOnlineTitleTextSize" format="dimension|reference" />
+        <attr name="streamOnlineTitleTextColor" format="color|reference" />
+        <attr name="streamOnlineTitleTextFont" format="reference" />
+        <attr name="streamOnlineTitleFontAssets" format="string" />
+        <attr name="streamOnlineTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamOfflineTitleText" format="string|reference" />
+        <attr name="streamOfflineTitleTextSize" format="dimension|reference" />
+        <attr name="streamOfflineTitleTextColor" format="color|reference" />
+        <attr name="streamOfflineTitleTextFont" format="reference" />
+        <attr name="streamOfflineTitleFontAssets" format="string" />
+        <attr name="streamOfflineTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamShowOfflineProgressBar" format="boolean" />
+        <attr name="streamOfflineProgressBarTint" format="color|reference" />
+
+        <attr name="streamShowAddChannelButton" format="boolean" />
+        <attr name="streamAddChannelButtonHeight" format="dimension|reference" />
+        <attr name="streamAddChannelButtonWidth" format="dimension|reference" />
+        <attr name="streamAddChannelButtonIcon" format="reference" />
+        <attr name="streamAddChannelButtonTint" format="color|reference" />
+        <attr name="streamAddChannelBackgroundTint" format="color|reference" />
+    </declare-styleable>
 </resources>
