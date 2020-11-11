@@ -381,7 +381,7 @@
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
-        <attr name="streamChannelHeaderAvatarShow" format="boolean" />
+        <attr name="streamChannelHeaderAvatarShow" format="boolean"/>
         <attr name="streamAvatarWidth" />
         <attr name="streamAvatarHeight" />
         <attr name="streamAvatarBorderWidth" />
@@ -392,6 +392,8 @@
         <attr name="streamAvatarTextFont" />
         <attr name="streamAvatarTextFontAssets" />
         <attr name="streamAvatarTextStyle" />
+
+        <!-- ChannelHeaderView -->
         <attr name="streamChannelWithOutNameTitleText" />
         <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
         <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />

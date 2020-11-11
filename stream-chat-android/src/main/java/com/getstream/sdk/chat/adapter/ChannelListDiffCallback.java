@@ -1,9 +1,10 @@
 package com.getstream.sdk.chat.adapter;
 
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
+
+import java.util.List;
+
 import io.getstream.chat.android.client.models.Channel;
 
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.currentUserRead;
