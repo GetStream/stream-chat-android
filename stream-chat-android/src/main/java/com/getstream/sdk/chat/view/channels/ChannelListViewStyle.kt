@@ -21,7 +21,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public val lastMessageUnread: TextStyle
     public val lastMessageDateText: TextStyle
     public val lastMessageDateUnreadText: TextStyle
-    public var avatarStyle: AvatarStyle = AvatarStyle()
+    public var avatarStyle: AvatarStyle
     public val readStateStyle: ReadStateStyle
     private val resources = context.resources
 

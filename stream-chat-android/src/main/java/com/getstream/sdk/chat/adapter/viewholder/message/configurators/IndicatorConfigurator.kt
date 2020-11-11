@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
-    private val readStateStyle: ReadStateStyle = ReadStateStyle(),
+    private val readStateStyle: ReadStateStyle,
     private val readStateClickListener: MessageListView.ReadStateClickListener
 ) : Configurator {
 

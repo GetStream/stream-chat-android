@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView
 import com.getstream.sdk.chat.view.messages.AvatarStyle
@@ -18,8 +19,8 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
 
 public class ReadStateView : RelativeLayout {
-    private var readStateStyle: ReadStateStyle = ReadStateStyle()
-    private var avatarStyle: AvatarStyle = AvatarStyle()
+    private var readStateStyle: ReadStateStyle = defaultReadStateStyle
+    private var avatarStyle: AvatarStyle = defaultAvatarStyle
     private var isIncoming = false
     private var reads: List<ChannelUserRead> = emptyList()
 
@@ -34,8 +35,8 @@ public class ReadStateView : RelativeLayout {
     public fun setReads(
         reads: List<ChannelUserRead>,
         isIncoming: Boolean,
-        readStateStyle: ReadStateStyle = ReadStateStyle(),
-        avatarStyle: AvatarStyle = AvatarStyle()
+        readStateStyle: ReadStateStyle = defaultReadStateStyle,
+        avatarStyle: AvatarStyle = defaultAvatarStyle
     ) {
         this.reads = reads
         this.readStateStyle = readStateStyle
@@ -118,5 +119,23 @@ public class ReadStateView : RelativeLayout {
         textView.layoutParams = textParams
         addView(textView)
         addView(imageView)
+    }
+
+    private companion object {
+        private val defaultAvatarStyle = AvatarStyle(
+            avatarWidth = 0,
+            avatarHeight = 0,
+            avatarBorderWidth = 0,
+            avatarBorderColor = 0,
+            avatarBackgroundColor = 0,
+            avatarInitialText = TextStyle()
+        )
+        private val defaultReadStateStyle = ReadStateStyle(
+            readStateText = TextStyle(),
+            isReadStateEnabled = false,
+            isDeliveredIndicatorEnabled = false,
+            readStateAvatarWidth = 0,
+            readStateAvatarHeight = 0
+        )
     }
 }

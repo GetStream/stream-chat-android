@@ -8,12 +8,12 @@ import androidx.annotation.DimenRes
 import androidx.annotation.StyleableRes
 import com.getstream.sdk.chat.style.TextStyle
 
-public data class ReadStateStyle(
-    public val readStateText: TextStyle = TextStyle(),
-    public val isReadStateEnabled: Boolean = false,
-    public val isDeliveredIndicatorEnabled: Boolean = false,
-    public val readStateAvatarWidth: Int = 0,
-    public val readStateAvatarHeight: Int = 0,
+public data class ReadStateStyle internal constructor(
+    public val readStateText: TextStyle,
+    public val isReadStateEnabled: Boolean,
+    public val isDeliveredIndicatorEnabled: Boolean,
+    public val readStateAvatarWidth: Int,
+    public val readStateAvatarHeight: Int,
 ) {
     internal class Builder(private val a: TypedArray, c: Context) {
         private val res = c.resources

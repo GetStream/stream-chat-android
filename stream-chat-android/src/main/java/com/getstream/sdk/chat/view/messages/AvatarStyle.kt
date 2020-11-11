@@ -9,13 +9,13 @@ import androidx.annotation.StyleableRes
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
 
-public data class AvatarStyle(
-    public val avatarWidth: Int = 0,
-    public val avatarHeight: Int = 0,
-    public val avatarBorderWidth: Int = 0,
-    public val avatarBorderColor: Int = 0,
-    public val avatarBackgroundColor: Int = 0,
-    public val avatarInitialText: TextStyle = TextStyle()
+public data class AvatarStyle internal constructor(
+    public val avatarWidth: Int,
+    public val avatarHeight: Int,
+    public val avatarBorderWidth: Int,
+    public val avatarBorderColor: Int,
+    public val avatarBackgroundColor: Int,
+    public val avatarInitialText: TextStyle,
 ) {
     internal class Builder(private val a: TypedArray, c: Context) {
         private val res = c.resources
