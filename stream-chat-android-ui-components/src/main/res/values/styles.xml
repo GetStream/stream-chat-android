@@ -62,4 +62,12 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
     </style>
+
+    <style name="StreamChannelsHeaderTitleStyle">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">@dimen/stream_text_large</item>
+        <item name="android:textColor">@color/stream_black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+    </style>
 </resources>
