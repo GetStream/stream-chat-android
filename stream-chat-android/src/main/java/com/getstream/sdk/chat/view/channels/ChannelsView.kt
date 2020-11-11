@@ -7,12 +7,14 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory
 import com.getstream.sdk.chat.view.channels.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
@@ -110,6 +112,10 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun setPaginationEnabled(enabled: Boolean) {
         channelListView.setPaginationEnabled(enabled)
+    }
+
+    public fun showTypingInChannel(channelId: String, users: List<User>) {
+        Toast.makeText(context, "Typing in: $channelId", Toast.LENGTH_SHORT).show()
     }
 
     private fun defaultChildLayoutParams() =

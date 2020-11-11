@@ -5,7 +5,9 @@ import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.room.Room
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
@@ -518,6 +520,23 @@ internal class ChatDomainImpl internal constructor(
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }
+
+    override val typingUpdates: LiveData<Pair<String, List<User>>>
+        get() {
+            val typingEvents: List<LiveData<Pair<String, List<User>>>> = allActiveChannels().map { channelController ->
+                channelController.typing.map { userList ->
+                    channelController.channelId to userList
+                }
+            }
+
+            val merger: MediatorLiveData<Pair<String, List<User>>> = MediatorLiveData()
+
+            typingEvents.forEach { liveData ->
+                merger.addSource(liveData) { merger.postValue(it) }
+            }
+
+            return merger
+        }
 
     internal fun setOffline() {
         isOnline = false
