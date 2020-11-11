@@ -12,8 +12,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
+import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
+import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.getColorList
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
@@ -45,9 +49,18 @@ public class StreamMessageInputView : ConstraintLayout {
     private var currentAnimatorSet: AnimatorSet? = null
 
     private lateinit var binding: StreamMessageInputBinding
+    private lateinit var suggestionListController: SuggestionListController
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
+
+    public fun configureMembers(members: List<Member>) {
+        suggestionListController.members = members
+    }
+
+    public fun configureCommands(commands: List<Command>) {
+        suggestionListController.commands = commands
+    }
 
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
@@ -170,6 +183,12 @@ public class StreamMessageInputView : ConstraintLayout {
     }
 
     private fun configTextInput(typedArray: TypedArray) {
+        suggestionListController = SuggestionListController(binding.suggestionListView, binding.etMessageTextInput)
+
+        binding.etMessageTextInput.doAfterTextChanged {
+            suggestionListController.onTextChanged(it.toString())
+        }
+
         TextInputHandler.bindEditText(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
 
         binding.etMessageTextInput.run {
