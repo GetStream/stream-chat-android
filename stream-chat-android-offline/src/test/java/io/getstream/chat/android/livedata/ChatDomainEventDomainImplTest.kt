@@ -7,6 +7,7 @@ import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -106,7 +107,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Test
     fun `state flow should convert to LiveData and still update counts`() =
-        runBlocking {
+        runBlockingTest {
             val count = MutableStateFlow(1)
             val ld = count.asLiveData()
             count.value = 2
