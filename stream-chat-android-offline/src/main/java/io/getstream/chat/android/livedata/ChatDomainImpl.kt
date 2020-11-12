@@ -520,8 +520,6 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.getValue(cid)
     }
 
-
-
     internal fun allActiveChannels(): List<ChannelControllerImpl> =
         activeChannelMapImpl.values.toList()
 
