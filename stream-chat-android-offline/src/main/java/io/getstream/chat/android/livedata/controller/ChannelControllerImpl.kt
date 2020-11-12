@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.controller
 import NEVER
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -117,41 +116,38 @@ internal class ChannelControllerImpl(
     override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
 
     private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): LiveData<List<Message>> {
-        return Transformations.map(messages.asLiveData()) { messageMap ->
-            if (messageMap == null) { null } else {
-                messageMap.values
-                    .asSequence()
-                    .filter { it.parentId == null || it.showInChannel }
-                    .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-                    .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                    .toList()
-                    .map { it.copy() }
-            }
-        }
+        return messages.map { messageMap ->
+            messageMap.values
+                .asSequence()
+                .filter { it.parentId == null || it.showInChannel }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .toList()
+        }.asLiveData()
     }
 
     /** the number of people currently watching the channel */
     override val watcherCount: LiveData<Int> = _watcherCount.asLiveData()
 
     /** the list of users currently watching this channel */
-    override val watchers: LiveData<List<User>> = Transformations.map(_watchers.asLiveData()) {
-        it.values.sortedBy { user -> user.createdAt }
-    }
+    override val watchers: LiveData<List<User>> = _watchers
+        .map { it.values.sortedBy { user -> user.createdAt } }
+        .asLiveData()
 
     /** who is currently typing (current user is excluded from this) */
-    override val typing: LiveData<List<User>> = Transformations.map(_typing.asLiveData()) {
-        it.values
-            .sortedBy { event -> event.createdAt }
-            .mapNotNull { event ->
-                (event as? TypingStartEvent)?.user
-                    ?: (event as? TypingStopEvent)?.user
-            }
-    }
+    override val typing: LiveData<List<User>> = _typing
+        .map {
+            it.values
+                .sortedBy(ChatEvent::createdAt)
+                .mapNotNull { event ->
+                    (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
+                }
+        }.asLiveData()
 
     /** how far every user in this channel has read */
-    override val reads: LiveData<List<ChannelUserRead>> = Transformations.map(_reads.asLiveData()) {
-        it.values.sortedBy { userRead -> userRead.lastRead }
-    }
+    override val reads: LiveData<List<ChannelUserRead>> = _reads
+        .map { it.values.sortedBy(ChannelUserRead::lastRead) }
+        .asLiveData()
 
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
@@ -167,9 +163,9 @@ internal class ChannelControllerImpl(
         )
 
     /** the list of members of this channel */
-    override val members: LiveData<List<Member>> = Transformations.map(_members.asLiveData()) {
-        it.values.sortedBy { member -> member.createdAt }
-    }
+    override val members: LiveData<List<Member>> = _members
+        .map { it.values.sortedBy(Member::createdAt) }
+        .asLiveData()
 
     /** LiveData object with the channel data */
     override val channelData: LiveData<ChannelData> = _channelData.filterNotNull().asLiveData()
