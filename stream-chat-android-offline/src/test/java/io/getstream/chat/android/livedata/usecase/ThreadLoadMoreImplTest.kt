@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,7 +12,7 @@ import org.junit.runner.RunWith
 internal class ThreadLoadMoreImplTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun loadMoreForThread() = runBlocking(Dispatchers.IO) {
+    fun loadMoreForThread() = runBlocking {
         // start a new thread
         val message1 = data.createMessage()
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()

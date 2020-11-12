@@ -33,14 +33,11 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestCall
+import io.getstream.chat.android.livedata.utils.TestCoroutineRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -61,8 +58,6 @@ internal open class BaseDomainTest {
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
-    protected val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
             Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
@@ -78,7 +73,10 @@ internal open class BaseDomainTest {
     var data = TestDataHelper()
 
     @get:Rule
-    val rule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val testCoroutines = TestCoroutineRule()
 
     fun setupWorkManager() {
         val config = Configuration.Builder()
@@ -94,17 +92,14 @@ internal open class BaseDomainTest {
 
     @Before
     open fun setup() {
-        Dispatchers.setMain(testCoroutineDispatcher)
         client = createDisconnectedMockClient()
         setupChatDomain(client, false)
     }
 
     @After
-    open fun tearDown() = runBlocking(Dispatchers.IO) {
+    open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
         db.close()
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 
     fun createClient(): ChatClient {
@@ -259,7 +254,7 @@ internal open class BaseDomainTest {
             }
         )
 
-        runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+        chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 

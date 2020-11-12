@@ -64,20 +64,14 @@ import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.extensions.setMember
 import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 internal class EventHandlerImpl(
-    private val domainImpl: ChatDomainImpl,
-    private val runAsync: Boolean = true
+    private val domainImpl: ChatDomainImpl
 ) {
 
-    fun handleEvents(events: List<ChatEvent>) {
-        if (runAsync) {
-            domainImpl.scope.launch(domainImpl.scope.coroutineContext) {
-                handleEventsInternal(events)
-            }
-        } else {
-            runBlocking(domainImpl.scope.coroutineContext) { handleEventsInternal(events) }
+    internal fun handleEvents(events: List<ChatEvent>) {
+        domainImpl.scope.launch {
+            handleEventsInternal(events)
         }
     }
 

@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.usecase
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import assertions.`should be equal to result`
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -21,6 +20,7 @@ import io.getstream.chat.android.livedata.randomFiles
 import io.getstream.chat.android.livedata.randomImageFile
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomString
+import io.getstream.chat.android.livedata.utils.`should be equal to result`
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When

@@ -2,19 +2,24 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.BaseDomainTest
-import kotlinx.coroutines.Dispatchers
+import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.livedata.utils.TestCall
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.When
+import org.amshove.kluent.calling
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class ChannelRepositoryTest : BaseDomainTest() {
+internal class ChannelRepositoryTest : BaseDomainTest2() {
     val repo by lazy { chatDomainImpl.repos.channels }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+    fun `inserting a channel and reading it should be equal`() = runBlocking {
         repo.insertChannel(data.channel1)
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
@@ -26,7 +31,7 @@ internal class ChannelRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testInsertAndDelete() = runBlocking(Dispatchers.IO) {
+    fun `deleting a channel should work`() = runBlocking {
         repo.insertChannel(data.channel1)
         repo.delete(data.channel1.cid)
         val entity = repo.select(data.channel1.cid)
@@ -35,7 +40,7 @@ internal class ChannelRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
+    fun `updating a channel should work as intended`() = runBlocking {
         repo.insertChannel(data.channel1)
         repo.insertChannel(data.channel1Updated)
         val entity = repo.select(data.channel1.cid)
@@ -50,7 +55,7 @@ internal class ChannelRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
+    fun `sync needed is used for our offline to online recovery flow`() = runBlocking {
         data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
         data.channel2.syncStatus = SyncStatus.COMPLETED
 
@@ -60,6 +65,7 @@ internal class ChannelRepositoryTest : BaseDomainTest() {
         Truth.assertThat(channels.size).isEqualTo(1)
         Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
+        When calling clientMock.createChannel(any(), any(), any(), any()) doReturn TestCall(Result(data.channel1))
         channels = repo.retryChannels()
         Truth.assertThat(channels.size).isEqualTo(1)
         Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)

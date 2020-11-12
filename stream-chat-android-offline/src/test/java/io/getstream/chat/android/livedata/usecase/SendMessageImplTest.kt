@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -16,7 +15,7 @@ internal class SendMessageImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("Flaky test. The list of messages into the livedata has some messages with a `createdAt` date in the future and break our test logic")
-    fun sendMessageUseCase() = runBlocking(Dispatchers.Main) {
+    fun sendMessageUseCase() = runBlocking {
         val message1 = data.createMessage()
         message1.extraData = mutableMapOf("location" to "Amsterdam")
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()

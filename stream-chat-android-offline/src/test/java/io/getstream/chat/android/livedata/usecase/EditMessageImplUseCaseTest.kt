@@ -2,32 +2,43 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.When
+import org.amshove.kluent.calling
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
-internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
+internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
 
     @Test
-    fun editMessageUseCase() = runBlocking(Dispatchers.IO) {
+    fun `edit message use case full example`() = runBlocking {
+        // TODO: this test is slow for unknown reasons
         val originalMessage = data.createMessage()
+
+        When calling channelClientMock.sendMessage(any()) doReturn TestCall(Result(originalMessage))
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
-        var messages = channelControllerImpl.messages.getOrAwaitValue()
+        var messages = channelControllerImpl.messages.getOrAwaitValue(10, TimeUnit.MILLISECONDS)
         val lastMessage = messages.last()
         Truth.assertThat(lastMessage.id).isEqualTo(originalMessage.id)
 
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
 
+        When calling clientMock.updateMessage(any()) doReturn TestCall(Result(updatedMessage))
         val result2 = channelControllerImpl.editMessage(updatedMessage)
+
         assertSuccess(result2)
-        messages = channelControllerImpl.messages.getOrAwaitValue()
+        messages = channelControllerImpl.messages.getOrAwaitValue(10, TimeUnit.MILLISECONDS)
         val liveLastMessage = messages.last()
         Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
         Truth.assertThat(liveLastMessage.extraData).containsAtLeastEntriesIn(updatedMessage.extraData)

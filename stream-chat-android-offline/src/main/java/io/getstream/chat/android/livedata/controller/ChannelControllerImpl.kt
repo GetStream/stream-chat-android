@@ -203,7 +203,7 @@ internal class ChannelControllerImpl(
     private val messageHelper = MessageHelper()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
-        ThreadControllerImpl(threadId, this, client)
+        ThreadControllerImpl(threadId, this, client, domainImpl)
             .also { domainImpl.scope.launch { it.watch() } }
     }
 
@@ -1171,6 +1171,7 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun editMessage(message: Message): Result<Message> {
+        // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
         var editedMessage = message.copy()
 
