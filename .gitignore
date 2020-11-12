@@ -87,7 +87,6 @@ lint/tmp/
 
 /.idea/*
 !/.idea/compiler.xml
-!/.idea/misc.xml
 !/.idea/codeStyles/
 !/.idea/inspectionProfiles/
 .DS_Store
