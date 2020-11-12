@@ -36,16 +36,13 @@ internal class ClientStateService {
             defaultHandler { state, event -> state.inappropriateStateError("handling event $event") }
 
             state<ClientState.Idle> {
-                onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
-            }
-
-            state<ClientState.Idle> {
                 onEvent<ChatClientEvent.SetUserEvent> { _, event ->
                     ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken(event.user)
                 }
                 onEvent<ChatClientEvent.SetAnonymousUserEvent> { _, _ ->
                     ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithoutToken
                 }
+                onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
             }
 
             state<ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken> {
@@ -116,7 +113,8 @@ internal class ClientStateService {
         }
     }
 
-    internal val state = stateMachine.state
+    internal val state
+        get() = stateMachine.state
 
     private sealed class ChatClientEvent : Event {
         class SetUserEvent(val user: User) : ChatClientEvent()
