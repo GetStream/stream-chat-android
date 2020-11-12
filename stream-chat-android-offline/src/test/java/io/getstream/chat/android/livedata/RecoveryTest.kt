@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,14 +33,12 @@ internal class ConnectedRecoveryTest : BaseDomainTest2() {
 
     @Test
     fun `Active channels should be stored in sync state`(): Unit = runBlocking {
-        launch {
-            val cid = "messaging:myspecialchannel"
-            chatDomainImpl.channel(cid)
-            chatDomainImpl.initJob.await()
-            val syncState1 = chatDomainImpl.storeSyncState()
-            val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
-            Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
-        }
+        val cid = "messaging:myspecialchannel"
+        chatDomainImpl.channel(cid)
+        chatDomainImpl.initJob.await()
+        val syncState1 = chatDomainImpl.storeSyncState()
+        val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
+        Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
     }
 
     @Test

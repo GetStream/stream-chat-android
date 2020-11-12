@@ -21,7 +21,6 @@ import org.amshove.kluent.`with message`
 import org.amshove.kluent.calling
 import org.amshove.kluent.invoking
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -73,7 +72,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     }
 
     @Test
-    @Ignore("Mockito matchers dont seem to work/ we are using them wrong")
     fun `Should return message sending files`() = testCoroutines.scope.runBlockingTest {
         val message = randomMessage()
         message.cid = channelControllerImpl.cid
@@ -184,7 +182,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     }
 
     @Test
-    @Ignore("Mockito matchers dont seem to work/ we are using them wrong")
     fun `Errors should still return the attachments`() = testCoroutines.scope.runBlockingTest {
 
         val message = randomMessage()
