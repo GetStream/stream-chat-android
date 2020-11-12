@@ -5,8 +5,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KClass
 
-internal typealias StateFunction<S, E> = FiniteStateMachine<S, E>.(S, E) -> S
+private typealias StateFunction<S, E> = FiniteStateMachine<S, E>.(S, E) -> S
 
+/**
+ * This class represents Finite State Machine concept. It can be only in one possible state of the set possible
+ * states S. It can handle events from the set E.
+ *
+ * @param initialState the first initial state of FSM.
+ * @property stateFunctions a map of states and possible event handlers for it.
+ * @property defaultEventHandler a function of state and event for a case if in [stateFunctions] there is not such handler.
+ */
 internal class FiniteStateMachine<S : State, E : Event>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
@@ -23,11 +31,17 @@ internal class FiniteStateMachine<S : State, E : Event>(
         }
     }
 
+    /**
+     * Return value of the current state.
+     */
     public val state: S
         get() = runBlocking {
             mutex.withLockIfNot { _state }
         }
 
+    /**
+     * An entry point to change FSM state. Sends event to state machine
+     */
     fun sendEvent(event: E) = runBlocking {
         mutex.withLock {
             val currentState = state
@@ -40,7 +54,9 @@ internal class FiniteStateMachine<S : State, E : Event>(
     }
 
     /**
-     * Keeps current FSM into the current state.
+     * Makes transition to some new state.
+     *
+     * @param state new target state value.
      */
     fun transitionTo(state: S) = runBlocking {
         mutex.withLockIfNot {
@@ -48,6 +64,14 @@ internal class FiniteStateMachine<S : State, E : Event>(
         }
     }
 
+    /**
+     * Keeps current FSM into the current state.
+     * Usually used when for such event handling it's not needed to make transition.
+     *
+     * onEvent<SomeEvent> { state, event -> stay() }
+     *
+     * @return the current state value.
+     */
     fun stay(): S = state
 
     companion object {
