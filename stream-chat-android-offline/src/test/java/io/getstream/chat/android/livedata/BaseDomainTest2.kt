@@ -1,13 +1,10 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import androidx.work.Configuration
-import androidx.work.testing.SynchronousExecutor
-import androidx.work.testing.WorkManagerTestInitHelper
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -25,9 +22,9 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -35,8 +32,7 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.TestCoroutineRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
-import io.getstream.chat.android.livedata.utils.waitForSetUser
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
@@ -46,54 +42,50 @@ import org.junit.Rule
 import java.util.Date
 import java.util.concurrent.Executors
 
-internal open class BaseDomainTest {
-    lateinit var channelClientMock: ChannelClient
-    lateinit var database: ChatDatabase
-    lateinit var chatDomainImpl: ChatDomainImpl
-    lateinit var chatDomain: ChatDomain
-    lateinit var client: ChatClient
-    lateinit var channelControllerImpl: io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-    lateinit var db: ChatDatabase
-    lateinit var queryControllerImpl: QueryChannelsControllerImpl
-    lateinit var query: QueryChannelsSpec
-    lateinit var filter: FilterObject
+/**
+ * Sets up a ChatDomain object with a mocked ChatClient.
+ */
+internal open class BaseDomainTest2 {
 
-    fun assertSuccess(result: Result<*>) {
-        if (result.isError) {
-            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
-        }
-    }
-
-    fun assertFailure(result: Result<*>) {
-        if (!result.isError) {
-            Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
-        }
-    }
-
+    /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
 
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    /** the chat domain impl */
+    lateinit var chatDomainImpl: ChatDomainImpl
 
+    /** the chat domain interface */
+    lateinit var chatDomain: ChatDomain
+
+    /** the mock for the chat client */
+    lateinit var clientMock: ChatClient
+
+    /** a channel controller for data.channel1 */
+    lateinit var channelControllerImpl: ChannelControllerImpl
+
+    /** a queryControllerImpl for the query */
+    lateinit var queryControllerImpl: QueryChannelsControllerImpl
+
+    /** the query used for the default queryController */
+    lateinit var query: QueryChannelsSpec
+
+    /** a mock for the channel client */
+    lateinit var channelClientMock: ChannelClient
+
+    private lateinit var db: ChatDatabase
+
+    /** single threaded arch components operations */
     @get:Rule
     val testCoroutines = TestCoroutineRule()
 
-    fun setupWorkManager() {
-        val config = Configuration.Builder()
-            // Set log level to Log.DEBUG to make it easier to debug
-            .setMinimumLoggingLevel(Log.DEBUG)
-            // Use a SynchronousExecutor here to make it easier to write tests
-            .setExecutor(SynchronousExecutor())
-            .build()
-
-        // Initialize WorkManager for instrumentation tests.
-        WorkManagerTestInitHelper.initializeTestWorkManager(getApplicationContext(), config)
-    }
+    /** single threaded coroutines via DispatcherProvider */
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     open fun setup() {
-        client = createDisconnectedMockClient()
-        setupChatDomain(client, false)
+        clientMock = createClientMock()
+        db = createRoomDb()
+        createChatDomain(clientMock, db)
     }
 
     @After
@@ -102,66 +94,30 @@ internal open class BaseDomainTest {
         db.close()
     }
 
-    fun createClient(): ChatClient {
-        val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
-        return ChatClient.Builder(data.apiKey, getApplicationContext())
-            .logLevel(logLevel)
-            .loggerHandler(TestLoggerHandler())
-            .build()
+    /**
+     * checks if a response is succesful and raises a clear error message if it's not
+     */
+    fun assertSuccess(result: Result<*>) {
+        if (result.isError) {
+            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
+        }
     }
 
-    fun createDisconnectedMockClient(): ChatClient {
-
-        val connectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()).apply {
+    /**
+     * checks if a response failed and raises a clear error message if it succeeded
+     */
+    fun assertFailure(result: Result<*>) {
+        if (!result.isError) {
+            Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
         }
-
-        val result = Result(listOf(data.channel1), null)
-        channelClientMock = mock {
-            on { sendMessage(any()) } doReturn TestCall(
-                Result(
-                    data.message1,
-                    null
-                )
-            )
-        }
-        val events = listOf<ChatEvent>()
-        val eventResults = Result(events)
-
-        val client: ChatClient = mock {
-            on { subscribe(any()) } doAnswer { invocation ->
-                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
-                listener.invoke(connectedEvent)
-                object : Disposable {
-                    override val isDisposed: Boolean = true
-                    override fun dispose() { }
-                }
-            }
-            on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
-            on { queryChannels(any()) } doReturn TestCall(result)
-            on { channel(any(), any()) } doReturn channelClientMock
-            on { channel(any()) } doReturn channelClientMock
-            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
-            on { getSyncHistory(any(), anyOrNull()) } doReturn TestCall(data.replayEventsResult)
-            on {
-                createChannel(
-                    any(),
-                    any<String>(),
-                    any<Map<String, Any>>()
-                )
-            } doReturn TestCall(Result(data.channel1, null))
-            on { sendReaction(any()) } doReturn TestCall(
-                Result(
-                    data.reaction1,
-                    null
-                )
-            )
-        }
-        return client
     }
 
-    fun createConnectedMockClient(): ChatClient {
-
-        val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
+    internal fun createClientMock(isConnected: Boolean = true): ChatClient {
+        val connectedEvent = if (isConnected) {
+            ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
+        } else {
+            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+        }
 
         val result = Result(listOf(data.channel1), null)
         channelClientMock = mock {
@@ -186,7 +142,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -210,31 +166,37 @@ internal open class BaseDomainTest {
         return client
     }
 
-    fun createRoomDb(): ChatDatabase {
-        return Room.inMemoryDatabaseBuilder(
-            getApplicationContext(),
-            ChatDatabase::class.java
-        )
+    internal fun createRoomDb(): ChatDatabase {
+        return Room
+            .inMemoryDatabaseBuilder(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                ChatDatabase::class.java
+            )
+            .allowMainThreadQueries()
+            // Use a separate thread for Room transactions to avoid deadlocks
+            // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
+            // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
+            .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
             .build()
     }
 
-    fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
+    internal fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
 
-        if (setUser) {
-            runBlocking {
-                waitForSetUser(
-                    client,
-                    data.user1,
-                    data.user1Token
-                )
-            }
-        }
+        val context = ApplicationProvider.getApplicationContext() as Context
+        chatDomainImpl = ChatDomain.Builder(context, client)
+            .database(db)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .buildImpl()
 
-        db = createRoomDb()
-        val context = getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
-            .userPresenceEnabled().buildImpl()
+        // TODO: a chat domain without a user set should raise a clear error
+        client.setUser(
+            data.user1,
+            data.user1Token
+        )
+        // manually configure the user since client is mocked
+        chatDomainImpl.setUser(data.user1)
 
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {
@@ -255,7 +217,9 @@ internal open class BaseDomainTest {
         )
 
         chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
+
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())

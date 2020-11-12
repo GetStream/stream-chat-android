@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -15,7 +14,7 @@ internal class WatchChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("Flaky test. The list of messages into the livedata has some messages with a `createdAt` date in the future and break our test logic")
-    fun watchChannelUseCase() = runBlocking(Dispatchers.IO) {
+    fun watchChannelUseCase() = runBlocking {
         // use case style syntax
         val message1 = data.createMessage()
         val result0 = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute()

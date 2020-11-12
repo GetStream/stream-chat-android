@@ -13,11 +13,11 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
 import com.getstream.sdk.chat.view.messages.AvatarStyle
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -55,7 +55,7 @@ internal class AvatarView @JvmOverloads constructor(
         style: AvatarStyle,
         generateAvatarDrawable: suspend () -> AvatarDrawable
     ) {
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(DispatcherProvider.Main) {
             layoutParams?.apply {
                 width = style.avatarWidth
                 height = style.avatarHeight

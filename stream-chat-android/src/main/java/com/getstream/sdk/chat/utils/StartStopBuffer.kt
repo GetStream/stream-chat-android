@@ -1,17 +1,14 @@
 package com.getstream.sdk.chat.utils
 
-import kotlinx.coroutines.Dispatchers
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.CoroutineContext
 
-internal class StartStopBuffer<T>(
-    private val ioDispatcher: CoroutineContext = Dispatchers.IO
-) {
+internal class StartStopBuffer<T> {
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
@@ -30,10 +27,10 @@ internal class StartStopBuffer<T>(
     }
 
     private fun propagateData() {
-        GlobalScope.launch(ioDispatcher) {
+        GlobalScope.launch(DispatcherProvider.IO) {
             while (active.get() && events.isNotEmpty()) {
                 events.poll()?.let {
-                    withContext(Dispatchers.Main) {
+                    withContext(DispatcherProvider.Main) {
                         func?.invoke(it)
                     }
                 }

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createChannel
@@ -8,6 +7,7 @@ import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomCID
+import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -39,7 +39,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageInputViewModelTest {
 
     private val CID = randomCID()

@@ -1,6 +1,6 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-package com.getstream.sdk.chat.utils
+package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.internal.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -18,7 +18,7 @@ internal class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Af
     override fun beforeAll(context: ExtensionContext) {
         DispatcherProvider.set(
             mainDispatcher = dispatcher,
-            ioDispatcher = dispatcher,
+            ioDispatcher = dispatcher
         )
     }
 

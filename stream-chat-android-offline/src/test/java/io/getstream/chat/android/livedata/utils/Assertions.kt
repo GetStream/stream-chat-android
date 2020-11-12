@@ -1,4 +1,4 @@
-package assertions
+package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.utils.Result
 import org.amshove.kluent.shouldBeEqualTo
