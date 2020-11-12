@@ -94,6 +94,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment"
             app:destination="@id/componentBrowserChannelsHeaderViewFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment"
+            app:destination="@id/componentBrowserSearchViewFragment"
+            />
     </fragment>
 
     <fragment
@@ -107,4 +111,11 @@
         android:name="io.getstream.chat.ui.sample.feature.component_browser.channels.ComponentBrowserChannelsHeaderViewFragment"
         android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
+
+    <fragment
+        android:id="@+id/componentBrowserSearchViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.search.ComponentBrowserSearchViewFragment"
+        android:label="ComponentBrowserSearchViewFragment"
+        />
+
 </navigation>

@@ -60,7 +60,7 @@ internal class MessageInputController(
     private fun configureThreadInputMode() {
         binding.vPreviewMessage.isVisible = false
         binding.ivOpenAttach.isVisible = style.isShowAttachmentButton
-        binding.cbSendAlsoToChannel.isVisible = true
+        binding.cbSendAlsoToChannel.isVisible = style.sendAlsoToChannelCheckboxEnabled
         binding.cbSendAlsoToChannel.isChecked = false
     }
 
