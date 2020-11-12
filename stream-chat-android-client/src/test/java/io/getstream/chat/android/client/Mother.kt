@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.User
 
 internal object Mother {
     private val fixture = JFixture()
+    private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
@@ -23,5 +24,11 @@ internal object Mother {
         return KFixture(fixture) {
             sameInstance(Mute::class.java, mock())
         } <User>().apply(userBuilder)
+    }
+
+    internal fun randomString(size: Int = 20): String = buildString(capacity = size) {
+        repeat(size) {
+            append(charPool.random())
+        }
     }
 }
