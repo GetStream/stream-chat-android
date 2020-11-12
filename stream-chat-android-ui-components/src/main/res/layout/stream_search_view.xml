@@ -24,6 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/stream_transparent"
         android:hint="@string/stream_search_view_hint"
         android:imeOptions="actionSearch"
