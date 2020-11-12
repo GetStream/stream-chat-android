@@ -6,25 +6,20 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.application.AppConfig
-import io.getstream.chat.sample.application.ChatInitializer
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.SampleUser
-import io.getstream.chat.sample.data.user.UserRepository
 import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
 
-class UserLoginViewModel(
-    private val appConfig: AppConfig,
-    private val chatInitializer: ChatInitializer,
-    private val userRepository: UserRepository
-) : ViewModel() {
+class UserLoginViewModel : ViewModel() {
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
     init {
-        _state.postValue(State.AvailableUsers(appConfig.availableUsers))
+        _state.postValue(State.AvailableUsers(AppConfig.availableUsers))
     }
 
     fun userClicked(user: SampleUser) {
@@ -39,11 +34,11 @@ class UserLoginViewModel(
      * reinitialize the Chat SDK here with the new API key.
      */
     private fun initChatSdk() {
-        chatInitializer.init(appConfig.apiKey)
+        App.instance.chatInitializer.init(AppConfig.apiKey)
     }
 
     private fun initChatUser(user: SampleUser, cid: String? = null) {
-        userRepository.user = user
+        App.instance.userRepository.user = user
         val chatUser = ChatUser().apply {
             id = user.id
             image = user.image
@@ -71,8 +66,8 @@ class UserLoginViewModel(
     }
 
     fun targetChannelDataReceived(cid: String) {
-        val user = userRepository.user
-        if (userRepository.user != SampleUser.None) {
+        val user = App.instance.userRepository.user
+        if (user != SampleUser.None) {
             initChatUser(user, cid)
         }
     }

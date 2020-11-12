@@ -15,7 +15,9 @@ import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.sample.R
+import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.common.navigateSafely
+import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.databinding.FragmentChannelsBinding
 
 class ChannelsFragment : Fragment() {
@@ -95,6 +97,7 @@ class ChannelsFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.item_log_out -> {
+                    App.instance.userRepository.user = SampleUser.None
                     viewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
                     true
                 }

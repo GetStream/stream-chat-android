@@ -6,18 +6,14 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.sample.application.ChatInitializer
+import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.application.FirebaseLogger
 import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.SampleUser
-import io.getstream.chat.sample.data.user.UserRepository
 import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
 
-class CustomLoginViewModel(
-    private val chatInitializer: ChatInitializer,
-    private val userRepository: UserRepository
-) : ViewModel() {
+class CustomLoginViewModel : ViewModel() {
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
@@ -38,7 +34,7 @@ class CustomLoginViewModel(
      * reinitialize the Chat SDK here with the new API key.
      */
     private fun initChatSdk(credentials: LoginCredentials) {
-        chatInitializer.init(credentials.apiKey)
+        App.instance.chatInitializer.init(credentials.apiKey)
     }
 
     private fun initChatUser(loginCredentials: LoginCredentials) {
@@ -46,7 +42,7 @@ class CustomLoginViewModel(
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        userRepository.user = SampleUser(
+        App.instance.userRepository.user = SampleUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
             token = loginCredentials.userToken
