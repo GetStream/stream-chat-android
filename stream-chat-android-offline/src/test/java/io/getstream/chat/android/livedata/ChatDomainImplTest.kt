@@ -1,34 +1,32 @@
 package io.getstream.chat.android.livedata
 
 import android.os.Handler
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import kotlinx.coroutines.Dispatchers
+import io.getstream.chat.android.livedata.utils.InstantTaskExecutorExtension
+import io.getstream.chat.android.livedata.utils.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplTest {
 
     private lateinit var sut: ChatDomainImpl
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
+
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
 
     @BeforeEach
     fun setUp() {
-        Dispatchers.setMain(testCoroutineDispatcher)
         val client: ChatClient = mock()
         val currentUser = randomUser()
         val db: ChatDatabase = mock {
@@ -47,15 +45,9 @@ internal class ChatDomainImplTest {
         sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled, false, mock())
     }
 
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
-    }
-
     @Test
     fun `When create a new channel without author should set current user as author and return channel with author`() =
-        runBlockingTest {
+        testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = User())
 
             val result = sut.createChannel(newChannel)

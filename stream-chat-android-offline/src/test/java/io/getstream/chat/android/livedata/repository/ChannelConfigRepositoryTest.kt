@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDomainTest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,14 +12,14 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.configs }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+    fun testInsertAndRead() = runBlocking {
         repo.insertConfigs(mutableMapOf("messaging" to data.config1))
         val config = repo.select("messaging")
         Truth.assertThat(config).isEqualTo(config)
     }
 
     @Test
-    fun testLoadAndRead() = runBlocking(Dispatchers.IO) {
+    fun testLoadAndRead() = runBlocking {
         repo.insertConfigs(mutableMapOf("messaging" to data.config1))
         repo.clearCache()
         var config = repo.select("messaging")
@@ -31,7 +30,7 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
+    fun testUpdate() = runBlocking {
         repo.insertConfigs(mutableMapOf("messaging" to data.config1))
         data.config1.maxMessageLength = 200
         repo.insertConfigs(mutableMapOf("messaging" to data.config1))

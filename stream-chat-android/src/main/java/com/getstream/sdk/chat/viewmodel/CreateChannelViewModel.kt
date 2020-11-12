@@ -5,21 +5,19 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 private val CHANNEL_NAME_REGEX = Regex("^!?[\\w-]*\$")
 
 public class CreateChannelViewModel @JvmOverloads constructor(
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance(),
-    private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -48,7 +46,7 @@ public class CreateChannelViewModel @JvmOverloads constructor(
             this.members = members
             this.createdBy = author
         }
-        viewModelScope.launch(ioDispatcher) {
+        viewModelScope.launch(DispatcherProvider.IO) {
             val result = domain.useCases.createChannel(channel).execute()
             when {
                 result.isSuccess -> {

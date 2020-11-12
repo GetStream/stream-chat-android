@@ -12,10 +12,7 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 
@@ -70,7 +67,6 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
 
     @Before
     override fun setup() {
-        Dispatchers.setMain(testCoroutineDispatcher)
         runBlocking {
             if (Companion.client == null) {
                 // do one time setup here
@@ -86,7 +82,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
             println("setup")
 
             // setup channel controller and query controllers for tests
-            runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+            chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateLiveDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
@@ -101,12 +97,10 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
 
     @After
     override fun tearDown() {
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             // things to do after each test
             println("tearDown")
             chatDomainImpl.disconnect()
         }
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 }

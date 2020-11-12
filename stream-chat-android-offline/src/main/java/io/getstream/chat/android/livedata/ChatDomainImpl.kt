@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -47,8 +48,6 @@ import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
@@ -98,7 +97,7 @@ internal class ChatDomainImpl internal constructor(
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
-    internal var appContext: Context
+    internal var appContext: Context,
 ) :
     ChatDomain {
     internal constructor(
@@ -197,9 +196,6 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    internal val job = SupervisorJob()
-    internal val scope = CoroutineScope(Dispatchers.IO + job)
-
     internal lateinit var repos: RepositoryHelper
     private var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
@@ -250,7 +246,7 @@ internal class ChatDomainImpl internal constructor(
         repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
 
         // load channel configs from Room into memory
-        initJob = scope.async(scope.coroutineContext) {
+        initJob = scope.async {
             // fetch the configs for channels
             repos.configs.load()
 
@@ -282,6 +278,9 @@ internal class ChatDomainImpl internal constructor(
         initClean()
     }
 
+    internal val job = SupervisorJob()
+    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
@@ -299,7 +298,7 @@ internal class ChatDomainImpl internal constructor(
             }
             // disconnect if the low level client disconnects
             client.disconnectListeners.add {
-                GlobalScope.launch {
+                scope.launch {
                     disconnect()
                 }
             }

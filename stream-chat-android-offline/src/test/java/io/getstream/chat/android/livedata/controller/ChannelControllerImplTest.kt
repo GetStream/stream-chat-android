@@ -15,12 +15,11 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.TestCall
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When
@@ -40,7 +39,7 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Ignore("broken due to usage of spy")
-internal class ChannelControllerImplTest : BaseDomainTest() {
+internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     private val chatClient: ChatClient = spy()
     private val channelType: String = randomString()
@@ -55,152 +54,136 @@ internal class ChannelControllerImplTest : BaseDomainTest() {
     }
 
     @Test
-    fun `Should return successful result when sending an image`() {
-        runBlocking(Dispatchers.IO) {
-            val file = File(randomString())
-            val expectedResult = Result(randomString())
-            When calling call.execute() doReturn expectedResult
-            When calling chatClient.sendImage(channelType, channelId, file) doReturn call
+    fun `Should return successful result when sending an image`(): Unit = runBlocking {
+        val file = File(randomString())
+        val expectedResult = Result(randomString())
+        When calling call.execute() doReturn expectedResult
+        When calling chatClient.sendImage(channelType, channelId, file) doReturn call
 
-            val result = channelController.sendImage(file)
+        val result = channelController.sendImage(file)
 
-            result `should be` expectedResult
-            Verify on chatClient that chatClient.sendImage(
-                eq(channelType),
-                eq(channelId),
-                eq(file)
-            ) was called
+        result `should be` expectedResult
+        Verify on chatClient that chatClient.sendImage(
+            eq(channelType),
+            eq(channelId),
+            eq(file)
+        ) was called
+    }
+
+    @Test
+    fun `Should return successful result when sending a file`(): Unit = runBlocking {
+        val file = File(randomString())
+        val expectedResult = Result(randomString())
+        When calling call.execute() doReturn expectedResult
+        When calling chatClient.sendFile(channelType, channelId, file) doReturn call
+
+        val result = channelController.sendFile(file)
+
+        result `should be` expectedResult
+        Verify on chatClient that chatClient.sendFile(
+            eq(channelType),
+            eq(channelId),
+            eq(file)
+        ) was called
+    }
+
+    @Test
+    fun `Should return failure result when sending an image`() = runBlocking {
+        val file = File(randomString())
+        val expectedResult = Result<String>(ChatError(randomString()))
+        When calling call.execute() doReturn expectedResult
+        When calling chatClient.sendImage(channelType, channelId, file) doReturn call
+
+        val result = channelController.sendImage(file)
+
+        result `should be` expectedResult
+        Verify on chatClient that chatClient.sendImage(
+            eq(channelType),
+            eq(channelId),
+            eq(file)
+        ) was called
+    }
+
+    @Test
+    fun `Should return failure result when sending a file`(): Unit = runBlocking {
+        val file = File(randomString())
+        val expectedResult = Result<String>(ChatError(randomString()))
+        When calling call.execute() doReturn expectedResult
+        When calling chatClient.sendFile(channelType, channelId, file) doReturn call
+
+        val result = channelController.sendFile(file)
+
+        result `should be` expectedResult
+        Verify on chatClient that chatClient.sendFile(
+            eq(channelType),
+            eq(channelId),
+            eq(file)
+        ) was called
+    }
+
+    @Test
+    fun `Should return an empty channel when data is not present`(): Unit = runBlocking {
+        val expectedResult = Channel().apply {
+            id = channelId
+            type = channelType
+            cid = channelController.cid
+        }
+
+        val result = channelController.toChannel()
+
+        assertEquals(expectedResult.id, result.id)
+        assertEquals(expectedResult.type, result.type)
+        assertEquals(expectedResult.cid, result.cid)
+
+        assertEquals(result.messages, emptyList<Message>())
+        assertEquals(result.watchers, emptyList<User>())
+        assertEquals(result.members, emptyList<Member>())
+        assertEquals(result.messages, emptyList<Message>())
+    }
+
+    @Test
+    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runBlocking {
+        val error = ChatError("")
+        val attachment = randomAttachmentsWithFile(size = 1).first()
+        givenMockedFileUploads(Result(error))
+
+        val result = channelController.uploadAttachment(attachment)
+
+        with(result.data()) {
+            name shouldBeEqualTo attachment.upload!!.name
+            fileSize.shouldNotBeNull()
+            type.shouldNotBeNull()
+            mimeType.shouldNotBeNull()
+            uploadState shouldBeEqualTo Attachment.UploadState.Failed(error)
+            url.shouldBeNull()
+            imageUrl.shouldBeNull()
+            assetUrl.shouldBeNull()
         }
     }
 
     @Test
-    fun `Should return successful result when sending a file`() {
-        runBlocking(Dispatchers.IO) {
-            val file = File(randomString())
-            val expectedResult = Result(randomString())
-            When calling call.execute() doReturn expectedResult
-            When calling chatClient.sendFile(channelType, channelId, file) doReturn call
+    fun `Should return attachment with properly filled data when successfully sent file`(): Unit = runBlocking {
+        val attachment = randomAttachmentsWithFile(size = 1).first()
+        val url = "url"
+        givenMockedFileUploads(Result(url))
 
-            val result = channelController.sendFile(file)
+        val result = channelController.uploadAttachment(attachment)
 
-            result `should be` expectedResult
-            Verify on chatClient that chatClient.sendFile(
-                eq(channelType),
-                eq(channelId),
-                eq(file)
-            ) was called
+        with(result.data()) {
+            name shouldBeEqualTo attachment.upload!!.name
+            url shouldBeEqualTo url
+            fileSize.shouldNotBeNull()
+            type.shouldNotBeNull()
+            mimeType.shouldNotBeNull()
+            uploadState shouldBeEqualTo Attachment.UploadState.Success
         }
     }
 
     @Test
-    fun `Should return failure result when sending an image`() {
-        runBlocking(Dispatchers.IO) {
-            val file = File(randomString())
-            val expectedResult = Result<String>(ChatError(randomString()))
-            When calling call.execute() doReturn expectedResult
-            When calling chatClient.sendImage(channelType, channelId, file) doReturn call
+    fun `Should include hidden property in the toChannel method`(): Unit = runBlocking {
+        When calling chatClient.hideChannel(any(), any(), any()) doReturn TestCall(Result(Unit))
 
-            val result = channelController.sendImage(file)
-
-            result `should be` expectedResult
-            Verify on chatClient that chatClient.sendImage(
-                eq(channelType),
-                eq(channelId),
-                eq(file)
-            ) was called
-        }
-    }
-
-    @Test
-    fun `Should return failure result when sending a file`() {
-        runBlocking(Dispatchers.IO) {
-            val file = File(randomString())
-            val expectedResult = Result<String>(ChatError(randomString()))
-            When calling call.execute() doReturn expectedResult
-            When calling chatClient.sendFile(channelType, channelId, file) doReturn call
-
-            val result = channelController.sendFile(file)
-
-            result `should be` expectedResult
-            Verify on chatClient that chatClient.sendFile(
-                eq(channelType),
-                eq(channelId),
-                eq(file)
-            ) was called
-        }
-    }
-
-    @Test
-    fun `Should return an empty channel when data is not present`() {
-        runBlocking(Dispatchers.IO) {
-            val expectedResult = Channel().apply {
-                id = channelId
-                type = channelType
-                cid = channelController.cid
-            }
-
-            val result = channelController.toChannel()
-
-            assertEquals(expectedResult.id, result.id)
-            assertEquals(expectedResult.type, result.type)
-            assertEquals(expectedResult.cid, result.cid)
-
-            assertEquals(result.messages, emptyList<Message>())
-            assertEquals(result.watchers, emptyList<User>())
-            assertEquals(result.members, emptyList<Member>())
-            assertEquals(result.messages, emptyList<Message>())
-        }
-    }
-
-    @Test
-    fun `Should return attachment with properly filled data when sending file has failed`() {
-        runBlocking(Dispatchers.IO) {
-            val error = ChatError("")
-            val attachment = randomAttachmentsWithFile(size = 1).first()
-            givenMockedFileUploads(Result(error))
-
-            val result = channelController.uploadAttachment(attachment)
-
-            with(result.data()) {
-                name shouldBeEqualTo attachment.upload!!.name
-                fileSize.shouldNotBeNull()
-                type.shouldNotBeNull()
-                mimeType.shouldNotBeNull()
-                uploadState shouldBeEqualTo Attachment.UploadState.Failed(error)
-                url.shouldBeNull()
-                imageUrl.shouldBeNull()
-                assetUrl.shouldBeNull()
-            }
-        }
-    }
-
-    @Test
-    fun `Should return attachment with properly filled data when successfully sent file`() {
-        runBlocking(Dispatchers.IO) {
-            val attachment = randomAttachmentsWithFile(size = 1).first()
-            val url = "url"
-            givenMockedFileUploads(Result(url))
-
-            val result = channelController.uploadAttachment(attachment)
-
-            with(result.data()) {
-                name shouldBeEqualTo attachment.upload!!.name
-                url shouldBeEqualTo url
-                fileSize.shouldNotBeNull()
-                type.shouldNotBeNull()
-                mimeType.shouldNotBeNull()
-                uploadState shouldBeEqualTo Attachment.UploadState.Success
-            }
-        }
-    }
-
-    @Test
-    fun `Should include hidden property in the toChannel method`() {
-        runBlocking(Dispatchers.IO) {
-            When calling chatClient.hideChannel(any(), any(), any()) doReturn TestCall(Result(Unit))
-
-            channelController.toChannel().hidden shouldBeEqualTo false
-        }
+        channelController.toChannel().hidden shouldBeEqualTo false
     }
 
     private fun givenMockedFileUploads(result: Result<String>) {

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createChannel
@@ -8,6 +7,7 @@ import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
 import com.getstream.sdk.chat.createUser
+import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
 import com.getstream.sdk.chat.viewmodel.observeAll
 import com.nhaarman.mockitokotlin2.any
@@ -63,7 +63,7 @@ private val THREAD_MESSAGES = createMessageList {
     )
 }
 
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListViewModelTest {
     private val domain: ChatDomain = mock()
     private val client: ChatClient = mock()

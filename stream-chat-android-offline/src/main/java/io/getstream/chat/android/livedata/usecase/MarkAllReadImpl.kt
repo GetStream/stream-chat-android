@@ -2,9 +2,9 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
@@ -16,7 +16,7 @@ internal data class MarkAllReadImpl(private val domain: ChatDomainImpl) : MarkAl
     override fun invoke(): Call<Boolean> = CoroutineCall(domain.scope) {
         // update the UI first
         domain.allActiveChannels().map { channel ->
-            domain.scope.async(Dispatchers.Main) {
+            domain.scope.async(DispatcherProvider.Main) {
                 channel.markRead()
             }
         }.awaitAll() // wait for the UI updates to avoid races

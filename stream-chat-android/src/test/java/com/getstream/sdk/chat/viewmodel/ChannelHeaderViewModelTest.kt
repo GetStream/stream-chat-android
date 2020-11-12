@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createMember
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createUser
+import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource
 private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
 
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelHeaderViewModelTest {
 
     private val chatDomain: ChatDomain = mock()

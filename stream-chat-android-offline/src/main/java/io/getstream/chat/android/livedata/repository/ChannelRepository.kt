@@ -78,9 +78,9 @@ internal class ChannelRepository(
         val channelEntities = selectSyncNeeded()
 
         for (channelEntity in channelEntities) {
-            // TODO: what about channel.members
+            val members = channelEntity.members.keys.toList()
             val result =
-                client.createChannel(channelEntity.type, channelEntity.channelId, channelEntity.extraData).execute()
+                client.createChannel(channelEntity.type, channelEntity.channelId, members, channelEntity.extraData).execute()
             if (result.isSuccess) {
                 channelEntity.syncStatus = SyncStatus.COMPLETED
                 insert(channelEntity)

@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.utils.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -45,7 +45,7 @@ internal class ZipCall<A : Any, B : Any>(
 
     override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
         suspend fun performCallback(result: Result<Pair<A, B>>) {
-            withContext(Dispatchers.Main) { callback(result) }
+            withContext(DispatcherProvider.Main) { callback(result) }
         }
 
         job = GlobalScope.launch {

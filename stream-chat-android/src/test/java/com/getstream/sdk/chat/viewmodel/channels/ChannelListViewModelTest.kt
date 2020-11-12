@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.viewmodel.channels
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createUser
+import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -26,7 +26,7 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
 
     @Test

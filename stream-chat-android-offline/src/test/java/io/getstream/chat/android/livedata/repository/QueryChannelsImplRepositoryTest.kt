@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +14,7 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.queryChannels }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+    fun testInsertAndRead() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
         repo.insert(queryChannelsSpec)
@@ -24,7 +23,7 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
+    fun testUpdate() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
         repo.insert(queryChannelsSpec)

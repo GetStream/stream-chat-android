@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,7 +11,7 @@ import org.junit.runner.RunWith
 internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 
     @Test
-    fun replayEventsForActiveChannels() = runBlocking(Dispatchers.IO) {
+    fun replayEventsForActiveChannels() = runBlocking {
         // - when you receive a push notification you want to sync all data for the specific channel you received the push on
         // - alternatively we could sync all channels you are interested in
         // - in theory (new channel) you could not be watching the channel yet
@@ -30,10 +29,10 @@ internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 }
 
 @RunWith(AndroidJUnit4::class)
-internal class ConnectedRecoveryTest : BaseConnectedMockedTest() {
+internal class ConnectedRecoveryTest : BaseDomainTest2() {
 
     @Test
-    fun storeSyncState() = runBlocking(Dispatchers.IO) {
+    fun `Active channels should be stored in sync state`(): Unit = runBlocking {
         val cid = "messaging:myspecialchannel"
         chatDomainImpl.channel(cid)
         chatDomainImpl.initJob.await()
@@ -43,7 +42,7 @@ internal class ConnectedRecoveryTest : BaseConnectedMockedTest() {
     }
 
     @Test
-    fun connectionRecovered() = runBlocking(Dispatchers.IO) {
+    fun `Connection recovery should not raise an error`() = runBlocking {
         // when the connection is lost and we recover the connection we do the following
         // - query all active channels
         // - repeat all active queries

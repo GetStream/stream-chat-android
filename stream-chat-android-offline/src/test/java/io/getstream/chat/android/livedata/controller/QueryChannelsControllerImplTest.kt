@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -13,6 +12,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.utils.InstantTaskExecutorExtension
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class QueryChannelsControllerImplTest {
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =

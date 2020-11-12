@@ -58,6 +58,7 @@ class ComponentBrowserHomeFragment : Fragment() {
 
         setupAvatarView()
         setupChannelsHeaderView()
+        setupSearchView()
     }
 
     private fun setupAvatarView() {
@@ -77,6 +78,12 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.channelsHeaderView.showOnlineTitle()
         binding.channelsHeaderViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)
+        }
+    }
+
+    private fun setupSearchView() {
+        binding.searchViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
         }
     }
 }

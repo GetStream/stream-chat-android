@@ -10,7 +10,6 @@ import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -21,7 +20,7 @@ import java.lang.Thread.sleep
 internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun reactionStorage() = runBlocking(Dispatchers.IO) {
+    fun reactionStorage() = runBlocking {
         val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
         chatDomainImpl.repos.reactions.insert(reactionEntity)
@@ -30,7 +29,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     }
 
     @Test
-    fun sendReaction() = runBlocking(Dispatchers.IO) {
+    fun sendReaction() = runBlocking {
         // ensure the message exists
         chatDomainImpl.createChannel(data.channel1)
         val message1 = data.createMessage()
@@ -54,7 +53,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
     @Test
     @Ignore("This test is not stable due to usage of setOffline")
-    fun deleteReaction() = runBlocking(Dispatchers.IO) {
+    fun deleteReaction() = runBlocking {
         chatDomainImpl.setOffline()
 
         channelControllerImpl.sendReaction(data.reaction1)
@@ -71,7 +70,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
     @Test
     @Ignore("Needs a mock, message id already exists")
-    fun sendMessage() = runBlocking(Dispatchers.IO) {
+    fun sendMessage() = runBlocking {
         // send the message while offline
         chatDomainImpl.createChannel(data.channel1)
         chatDomainImpl.setOffline()
@@ -126,7 +125,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     }
 
     @Test
-    fun insertQuery() = runBlocking(Dispatchers.IO) {
+    fun insertQuery() = runBlocking {
         val filter = Filters.eq("type", "messaging")
         val query = QueryChannelsSpec(filter, QuerySort())
         query.cids = listOf("messaging:123", "messaging:234")
@@ -134,7 +133,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     }
 
     @Test
-    fun insertReaction() = runBlocking(Dispatchers.IO) {
+    fun insertReaction() = runBlocking {
         // check DAO layer and converters
         val reactionEntity = ReactionEntity(data.reaction1)
         chatDomainImpl.repos.reactions.insert(reactionEntity)
@@ -152,7 +151,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     }
 
     @Test
-    fun typing() = runBlocking(Dispatchers.IO) {
+    fun typing() = runBlocking {
         // second typing keystroke after each other should not resend the typing event
         Truth.assertThat(chatDomainImpl.useCases.keystroke(data.channel1.cid).execute().data()).isTrue()
         Truth.assertThat(chatDomainImpl.useCases.keystroke(data.channel1.cid).execute().data())
@@ -163,7 +162,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     }
 
     @Test
-    fun markRead() = runBlocking(Dispatchers.IO) {
+    fun markRead() = runBlocking {
         // ensure there is at least one message
         channelControllerImpl.upsertMessage(data.message1)
         Truth.assertThat(channelControllerImpl.markRead()).isTrue()
