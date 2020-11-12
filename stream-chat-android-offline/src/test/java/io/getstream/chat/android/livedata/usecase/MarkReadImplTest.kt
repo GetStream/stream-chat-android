@@ -20,7 +20,7 @@ internal class MarkReadImplTest : BaseConnectedIntegrationTest() {
 
         val result = chatDomain.useCases.markRead(data.channel1.cid).execute()
         assertSuccess(result)
-        val lastRead = channelControllerImpl.read.getOrAwaitValue()!!.lastRead
+        val lastRead = channelControllerImpl.read.getOrAwaitValue().lastRead
         Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
         unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
         Truth.assertThat(unreadCount).isEqualTo(0)

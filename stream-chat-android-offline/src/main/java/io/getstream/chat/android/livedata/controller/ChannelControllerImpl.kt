@@ -64,6 +64,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import wasCreatedAfter
@@ -87,35 +88,35 @@ internal class ChannelControllerImpl(
     ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
-    private val _messages = MutableStateFlow<Map<String, Message>?>(null)
+    private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _watcherCount = MutableStateFlow<Int>(0)
     private val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
     private val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
     private val _read = MutableStateFlow<ChannelUserRead?>(null)
-    private val _endOfNewerMessages = MutableStateFlow(false)
-    private val _endOfOlderMessages = MutableStateFlow(false)
-    private val _loading = MutableStateFlow(false)
-    private val _hidden = MutableStateFlow(false)
-    private val _muted = MutableStateFlow(false)
+    private val _endOfNewerMessages = MutableStateFlow<Boolean>(false)
+    private val _endOfOlderMessages = MutableStateFlow<Boolean>(false)
+    private val _loading = MutableStateFlow<Boolean>(false)
+    private val _hidden = MutableStateFlow<Boolean>(false)
+    private val _muted = MutableStateFlow<Boolean>(false)
     private val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
-    private val _loadingOlderMessages = MutableStateFlow(false)
-    private val _loadingNewerMessages = MutableStateFlow(false)
+    private val _loadingOlderMessages = MutableStateFlow<Boolean>(false)
+    private val _loadingNewerMessages = MutableStateFlow<Boolean>(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
-    private val _oldMessages = MutableStateFlow<Map<String, Message>?>(emptyMap())
+    private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
 
     internal var hideMessagesBefore: Date? = null
-    val unfilteredMessages: LiveData<List<Message>?> = _messages.map {
-        it?.values?.toList()
-    }.asLiveData()
+    val unfilteredMessages: LiveData<List<Message>> = _messages
+        .map { it.values.toList() }
+        .asLiveData()
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
 
     override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>?>): LiveData<List<Message>> {
+    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): LiveData<List<Message>> {
         return Transformations.map(messages.asLiveData()) { messageMap ->
             if (messageMap == null) { null } else {
                 messageMap.values
@@ -153,7 +154,7 @@ internal class ChannelControllerImpl(
     }
 
     /** read status for the current user */
-    override val read: LiveData<ChannelUserRead?> = _read.asLiveData()
+    override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
 
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
@@ -171,7 +172,7 @@ internal class ChannelControllerImpl(
     }
 
     /** LiveData object with the channel data */
-    override val channelData: LiveData<ChannelData?> = _channelData.asLiveData()
+    override val channelData: LiveData<ChannelData> = _channelData.filterNotNull().asLiveData()
 
     /** if the channel is currently hidden */
     override val hidden: LiveData<Boolean> = _hidden.asLiveData()
@@ -288,7 +289,7 @@ internal class ChannelControllerImpl(
     private fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         var messages = emptyList<Message>()
-        _messages.value?.let { mapOfMessages ->
+        _messages.value.let { mapOfMessages ->
             messages = mapOfMessages.values
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
@@ -297,7 +298,7 @@ internal class ChannelControllerImpl(
     }
 
     private suspend fun removeMessagesBefore(date: Date) {
-        val copy = _messages.value ?: mutableMapOf()
+        val copy = _messages.value
         // start off empty
         _messages.value = mutableMapOf()
         // call upsert with the messages that are recent
@@ -376,7 +377,7 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        if (_loadingOlderMessages.value == true) {
+        if (_loadingOlderMessages.value) {
             logger.logI("Another request to load older messages is in progress. Ignoring this request.")
             return Result(
                 null,
@@ -682,11 +683,11 @@ internal class ChannelControllerImpl(
         }
     }
 
-    suspend fun sendImage(file: File): Result<String> {
+    fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).execute()
     }
 
-    suspend fun sendFile(file: File): Result<String> {
+    fun sendFile(file: File): Result<String> {
         return client.sendFile(channelType, channelId, file).execute()
     }
 
@@ -784,7 +785,7 @@ internal class ChannelControllerImpl(
         return Result(currentMessage, null)
     }
 
-    private suspend fun setWatcherCount(watcherCount: Int) {
+    private fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != _watcherCount.value) {
             _watcherCount.value = watcherCount
         }
@@ -805,7 +806,7 @@ internal class ChannelControllerImpl(
     }
 
     override fun getMessage(messageId: String): Message? {
-        val copy = _messages.value ?: emptyMap()
+        val copy = _messages.value
         var message = copy[messageId]
 
         if (hideMessagesBefore != null) {
@@ -818,7 +819,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val copy = _messages.value ?: emptyMap()
+        val copy = _messages.value
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -844,19 +845,17 @@ internal class ChannelControllerImpl(
         return copy + messages.map { it.copy() }.associateBy(Message::id)
     }
 
-    private suspend fun upsertMessages(messages: List<Message>) {
+    private fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
         _messages.value = newMessages
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
-        val parsedMessages = parseMessages(messages)
-        _oldMessages.value = parsedMessages
+        _oldMessages.value = parseMessages(messages)
     }
 
     private fun removeLocalMessage(message: Message) {
-        val messages = _messages.value ?: emptyMap()
-        _messages.value = messages - message.id
+        _messages.value = _messages.value - message.id
     }
 
     override fun clean() {
@@ -867,7 +866,7 @@ internal class ChannelControllerImpl(
         }
 
         // Cleanup typing events that are older than 15 seconds
-        var copy = _typing.value ?: mapOf()
+        var copy = _typing.value
         var changed = false
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -15)
@@ -1009,8 +1008,8 @@ internal class ChannelControllerImpl(
     private fun upsertUserPresence(user: User) {
         val userId = user.id
         // members and watchers have users
-        val members = _members.value ?: mutableMapOf()
-        val watchers = _watchers.value ?: mutableMapOf()
+        val members = _members.value
+        val watchers = _watchers.value
         val member = members[userId]
         val watcher = watchers[userId]
         if (member != null) {
@@ -1036,7 +1035,7 @@ internal class ChannelControllerImpl(
         // updating messages is harder
         // user updates don't happen frequently, it's probably ok for this update to be sluggish
         // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = _messages.value ?: mutableMapOf()
+        val messages = _messages.value
         val changedMessages = mutableListOf<Message>()
         for (message in messages.values) {
             var changed = false
@@ -1072,20 +1071,18 @@ internal class ChannelControllerImpl(
     }
 
     private fun deleteMember(userId: String) {
-        val copy = _members.value
-        _members.value = copy - userId
+        _members.value = _members.value - userId
     }
 
     fun upsertMembers(members: List<Member>) {
-        val channelMembers = _members.value
-        _members.value = channelMembers + members.associateBy { it.user.id }
+        _members.value = _members.value + members.associateBy { it.user.id }
     }
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
-    private suspend fun updateReads(reads: List<ChannelUserRead>) {
+    private fun updateReads(reads: List<ChannelUserRead>) {
         val currentUserId = domainImpl.currentUser.id
-        val previousUserIdToReadMap = _reads.value ?: mapOf()
+        val previousUserIdToReadMap = _reads.value
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
         /*
@@ -1118,7 +1115,7 @@ internal class ChannelControllerImpl(
         _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
     }
 
-    private suspend fun updateRead(
+    private fun updateRead(
         read: ChannelUserRead
     ) {
         updateReads(listOf(read))
@@ -1136,7 +1133,7 @@ internal class ChannelControllerImpl(
         updateOldMessagesFromChannel(localChannel)
     }
 
-    suspend fun updateLiveDataFromChannel(c: Channel) {
+    fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1150,7 +1147,7 @@ internal class ChannelControllerImpl(
         lastMessageAt.value = c.lastMessageAt
     }
 
-    private suspend fun updateOldMessagesFromChannel(c: Channel) {
+    private fun updateOldMessagesFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1164,8 +1161,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun setMembers(members: List<Member>) {
-        val copy = _members.value
-        _members.value = (copy + members.associateBy(Member::getUserId))
+        _members.value = (_members.value + members.associateBy(Member::getUserId))
     }
 
     private fun updateChannelData(channel: Channel) {
@@ -1273,7 +1269,7 @@ internal class ChannelControllerImpl(
         val members = _members.value.values.toList()
         val watchers = _watchers.value.values.toList()
         val reads = _reads.value.values.toList()
-        val watcherCount = _watcherCount.value ?: 0
+        val watcherCount = _watcherCount.value
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
