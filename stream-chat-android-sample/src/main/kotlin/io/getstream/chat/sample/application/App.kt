@@ -7,7 +7,7 @@ class App : Application() {
 
     // done for simplicity, a DI framework should be used in the real app
     val chatInitializer = ChatInitializer(this)
-    var userRepository = UserRepository()
+    val userRepository = UserRepository()
 
     override fun onCreate() {
         instance = this
