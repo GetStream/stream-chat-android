@@ -121,12 +121,6 @@ dependencies {
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
-    implementation Dependencies.koinAndroidxExt
-    implementation Dependencies.koinAndroidxScope
-    implementation Dependencies.koinAndroidxViewmodel
-    implementation Dependencies.koinCore
-    implementation Dependencies.koinCoreExt
-
     implementation Dependencies.coil
 
     implementation Dependencies.timber
