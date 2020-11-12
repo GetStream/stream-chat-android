@@ -20,5 +20,4 @@ class App : Application() {
         lateinit var instance: App
             private set
     }
-
 }
