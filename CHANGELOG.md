@@ -11,6 +11,7 @@ Added new MessageInputView structure
     - Use composition with `AvatarStyle` and `ReadStateStyle` instead of inheriting from `BaseStyle`.
     - Convert to kotlin: `ReadStateView`, `MessageListViewStyle`
 - Add `streamShowSendAlsoToChannelCheckbox` attr to `MessageInputView` controlling visibility of "send also to channel" checkbox
+- The sample app no longer uses Koin for dependency injection
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
