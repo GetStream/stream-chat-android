@@ -106,9 +106,7 @@ internal class ChannelControllerImpl(
     private val lastMessageAt = MutableStateFlow<Date?>(null)
 
     internal var hideMessagesBefore: Date? = null
-    val unfilteredMessages: LiveData<List<Message>> = _messages
-        .map { it.values.toList() }
-        .asLiveData()
+    val unfilteredMessages = _messages.map { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
@@ -206,7 +204,7 @@ internal class ChannelControllerImpl(
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client, domainImpl)
-            .also { domainImpl.scope.launch { it.watch() } }
+            .also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 
     private fun getConfig(): Config {
@@ -1275,6 +1273,20 @@ internal class ChannelControllerImpl(
         channel.hidden = _hidden.value
 
         return channel
+    }
+
+    internal fun loadOlderThreadMessages(threadId: String, limit: Int, firstMessage: Message? = null): Result<List<Message>> {
+        val result = if (firstMessage != null) {
+            client.getRepliesMore(threadId, firstMessage.id, limit).execute()
+        } else {
+            client.getReplies(threadId, limit).execute()
+        }
+        if (result.isSuccess) {
+            val newMessages = result.data()
+            upsertMessages(newMessages)
+            // Note that we don't handle offline storage for threads at the moment.
+        }
+        return result
     }
 
     companion object {

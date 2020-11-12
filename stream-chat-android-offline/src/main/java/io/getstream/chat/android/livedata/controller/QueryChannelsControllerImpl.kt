@@ -1,8 +1,7 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
@@ -21,6 +20,8 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 private const val MESSAGE_LIMIT = 10
@@ -39,22 +40,21 @@ internal class QueryChannelsControllerImpl(
 
     val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
-    private val _endOfChannels = MutableLiveData(false)
-    override val endOfChannels: LiveData<Boolean> = _endOfChannels
+    private val _endOfChannels = MutableStateFlow(false)
+    override val endOfChannels: LiveData<Boolean> = _endOfChannels.asLiveData()
 
-    private val _channels = MutableLiveData<Map<String, Channel>>()
+    private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
 
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> =
-        Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
+    override var channels: LiveData<List<Channel>> = _channels.map { it.values.sortedWith(sort.comparator) }.asLiveData()
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
-    private val _loading = MutableLiveData(false)
-    override val loading: LiveData<Boolean> = _loading
+    private val _loading = MutableStateFlow(false)
+    override val loading: LiveData<Boolean> = _loading.asLiveData()
 
-    private val _loadingMore = MutableLiveData(false)
-    override val loadingMore: LiveData<Boolean> = _loadingMore
+    private val _loadingMore = MutableStateFlow(false)
+    override val loadingMore: LiveData<Boolean> = _loadingMore.asLiveData()
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
@@ -171,7 +171,7 @@ internal class QueryChannelsControllerImpl(
             // store the results in the database
             val channelsResponse = response.data()
             if (channelsResponse.size < pagination.channelLimit) {
-                _endOfChannels.postValue(true)
+                _endOfChannels.value = true
             }
             // first things first, store the configs
             val configEntities = channelsResponse.associateBy { it.type }.values.map {
@@ -204,14 +204,14 @@ internal class QueryChannelsControllerImpl(
         } else {
             _loadingMore
         }
-        if (loader.value == true) {
+        if (loader.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
             return Result(
                 null,
                 ChatError("Another query channels request is in progress. Ignoring this request.")
             )
         }
-        loader.postValue(true)
+        loader.value = true
         // start by getting the query results from offline storage
 
         val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
@@ -244,7 +244,7 @@ internal class QueryChannelsControllerImpl(
             channels?.let { Result(it) }
                 ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
-        loader.postValue(false)
+        loader.value = false
         return output
     }
 
@@ -315,7 +315,7 @@ internal class QueryChannelsControllerImpl(
             existingChannelMap[channel.cid] = channel
         }
 
-        _channels.postValue(existingChannelMap)
+        _channels.value = existingChannelMap
     }
 
     /**

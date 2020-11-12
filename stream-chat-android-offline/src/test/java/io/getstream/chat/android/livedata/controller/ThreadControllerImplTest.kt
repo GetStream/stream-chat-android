@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -15,6 +14,7 @@ import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.`should be equal to result`
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
@@ -37,7 +37,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     fun `should return only one parent message`() = testCoroutines.scope.runBlockingTest {
         val parentMessage = randomMessage(id = threadId, parentId = null)
         val channelMessages = (randomMessages() + parentMessage).shuffled()
-        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableStateFlow(channelMessages)
         val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, mock())
         threadController.messages.observeForever { }
 
@@ -55,7 +55,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
                 createdAt = Date((it).toLong())
             )
         }
-        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableStateFlow(channelMessages)
         When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
             Result(
                 replies
@@ -65,7 +65,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         threadController.messages.observeForever { }
         threadController.endOfOlderMessages.observeForever { }
 
-        val result = threadController.watch(limit)
+        val result = threadController.loadOlderMessages(limit)
 
         result `should be equal to result` Result(replies)
         threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
@@ -83,7 +83,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
                 createdAt = Date((it).toLong())
             )
         }
-        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableStateFlow(channelMessages)
         When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
             Result(
                 replies
@@ -93,7 +93,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         threadController.messages.observeForever { }
         threadController.endOfOlderMessages.observeForever { }
 
-        val result = threadController.watch(limit)
+        val result = threadController.loadOlderMessages(limit)
 
         result `should be equal to result` Result(replies)
         threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
