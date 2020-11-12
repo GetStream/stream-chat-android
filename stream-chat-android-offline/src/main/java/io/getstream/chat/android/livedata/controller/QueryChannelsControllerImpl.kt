@@ -121,7 +121,6 @@ internal class QueryChannelsControllerImpl(
             // - suspend/wait for a few seconds (yuck, lets not do that)
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
-
             domainImpl.scope.launch {
                 refreshChannel(event.cid)
             }
