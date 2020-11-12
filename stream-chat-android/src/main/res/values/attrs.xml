@@ -114,8 +114,11 @@
         <!-- Text of the empty state label -->
         <attr name="streamChannelsEmptyStateLabelText" format="string" />
     </declare-styleable>
+
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
+        <!-- Thread mode "send also to channel" CheckBox -->
+        <attr name="streamShowSendAlsoToChannelCheckbox" format="boolean" />
         <!--AvatarGroupView(automention)-->
         <attr name="streamAvatarWidth" />
         <attr name="streamAvatarHeight" />
