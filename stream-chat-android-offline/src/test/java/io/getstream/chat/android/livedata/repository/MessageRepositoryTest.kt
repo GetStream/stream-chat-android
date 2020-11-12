@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +22,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+    fun testInsertAndRead() = runBlocking {
         repo.insert(data.message1)
         val message = repo.select(data.message1.id, data.userMap)
         // ignore the channel field, we don't have that information at the message repository level
@@ -31,7 +30,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testMessageObject() = runBlocking(Dispatchers.IO) {
+    fun testMessageObject() = runBlocking {
         val messagea = Message(text = "hi").apply { reactionCounts = mutableMapOf("like" to 10) }
         val messageb = Message(text = "hi")
         Truth.assertThat(messagea).isNotEqualTo(messageb)
@@ -42,7 +41,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testMessageObjectWithExtraData() = runBlocking(Dispatchers.IO) {
+    fun testMessageObjectWithExtraData() = runBlocking {
         val extra = mutableMapOf("int" to 10, "string" to "green", "list" to listOf("a", "b"))
         val messageIn = data.createMessage().apply { extraData = extra; id = "testMessageObjectWithExtraData" }
         repo.insert(messageIn, true)
@@ -51,7 +50,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
+    fun testUpdate() = runBlocking {
         repo.insert(data.message1, true)
         repo.insert(data.message1Updated, true)
 
@@ -62,7 +61,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testSelectMessagesForChannel() = runBlocking(Dispatchers.IO) {
+    fun testSelectMessagesForChannel() = runBlocking {
         val message1 = data.createMessage().apply {
             id = "testSelectMessagesForChannel1"; text = "message1"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =
                 calendar(2019, 11, 1)

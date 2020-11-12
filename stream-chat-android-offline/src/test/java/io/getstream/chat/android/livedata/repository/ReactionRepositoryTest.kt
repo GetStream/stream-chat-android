@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,7 +13,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.reactions }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+    fun testInsertAndRead() = runBlocking {
         repo.insertReaction(data.reaction1)
         val entity =
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
@@ -23,7 +22,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
+    fun testSyncNeeded() = runBlocking {
         data.reaction1.syncStatus = SyncStatus.FAILED_PERMANENTLY
         val reaction2 =
             data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
@@ -41,7 +40,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
+    fun testUpdate() = runBlocking {
         val reaction1Updated =
             data.reaction1.copy().apply { extraData = mutableMapOf("theanswer" to 42.0) }
         repo.insertReaction(data.reaction1)

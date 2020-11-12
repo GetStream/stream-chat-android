@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,7 +11,7 @@ import org.junit.runner.RunWith
 internal class DeleteReactionImplTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun reactionUseCase() = runBlocking(Dispatchers.IO) {
+    fun reactionUseCase() = runBlocking {
         val channelController =
             chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()

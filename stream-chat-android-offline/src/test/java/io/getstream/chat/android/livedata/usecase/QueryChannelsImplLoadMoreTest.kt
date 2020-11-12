@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -16,7 +15,7 @@ internal class QueryChannelsImplLoadMoreTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("mock me")
-    fun loadMoreTest() = runBlocking(Dispatchers.IO) {
+    fun loadMoreTest() = runBlocking {
         // use case style syntax
         val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0).execute()
         assertSuccess(queryChannelResult)

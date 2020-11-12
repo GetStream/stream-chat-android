@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.enums.label
-import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
@@ -40,7 +39,6 @@ internal class MessageInputController(
             this,
             PermissionChecker(),
             storageHelper,
-            DispatchersProvider(),
             view,
             MediaAttachmentAdapter(),
             MediaAttachmentSelectedAdapter(),

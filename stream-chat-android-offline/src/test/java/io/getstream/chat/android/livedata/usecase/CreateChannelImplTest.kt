@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -15,7 +14,7 @@ import org.junit.runner.RunWith
 internal class CreateChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun createChannel() = runBlocking(Dispatchers.IO) {
+    fun createChannel() = runBlocking {
         // use case style syntax
         val channel = chatDomain.useCases.createChannel(data.channel1).execute()
         Truth.assertThat(channel.isSuccess).isTrue()
@@ -23,7 +22,7 @@ internal class CreateChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("mock me")
-    fun createChannelWithMembers() = runBlocking(Dispatchers.IO) {
+    fun createChannelWithMembers() = runBlocking {
         val channelCreateResult = chatDomain.useCases.createChannel(data.channel4).execute()
         assertSuccess(channelCreateResult)
         val request = QueryChannelRequest().withMembers(10, 0)
@@ -34,7 +33,7 @@ internal class CreateChannelImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun createChannelOffline() = runBlocking(Dispatchers.IO) {
+    fun createChannelOffline() = runBlocking {
         // 1. create channel in the db
         // - verify it's added to existing queries
         // 2. send a message on this channel

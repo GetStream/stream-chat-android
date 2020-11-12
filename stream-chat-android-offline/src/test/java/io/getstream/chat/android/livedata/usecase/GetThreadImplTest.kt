@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import assertions.`should be equal to result`
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.utils.Result
@@ -11,6 +10,7 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.randomCID
 import io.getstream.chat.android.livedata.randomString
+import io.getstream.chat.android.livedata.utils.`should be equal to result`
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.`should throw`
