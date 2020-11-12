@@ -29,6 +29,8 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     val attachmentButtonHeight: Int
     val attachmentCloseButtonBackground: Drawable?
     val inputSendAlsoToChannelTextColor: Int
+    val sendAlsoToChannelCheckboxEnabled: Boolean
+
     private var inputHint = ""
     private val attachmentButtonIcon: Int
     private val attachmentButtonDefaultIconColor: Int
@@ -264,6 +266,10 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                 "MessageInputStyle",
                 Context.MODE_PRIVATE
             )
+
+            sendAlsoToChannelCheckboxEnabled =
+                getBoolean(R.styleable.MessageInputView_streamShowSendAlsoToChannelCheckbox, true)
+
             recycle()
         }
     }
