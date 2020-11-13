@@ -7,6 +7,14 @@
     android:background="@color/stream_white"
     >
 
+    <io.getstream.chat.android.ui.suggestions.SuggestionListView
+        android:id="@+id/suggestionListView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_open_attachment"
         android:layout_width="@dimen/stream_attachment_button_width"
@@ -38,22 +46,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/stream_shape_edit_text_round"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLines="7"
         android:paddingStart="16dp"
-        android:paddingTop="10dp"
+        android:paddingTop="18dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="18dp"
         android:textColor="@color/stream_black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fl_send_button_container"
         app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/suggestionListView"
         tools:text="Hi. I am a text, did you notice?"
         />
 
