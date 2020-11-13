@@ -1,6 +1,7 @@
-package io.getstream.chat.core.functional.fsm
+package io.getstream.chat.core.internal.fsm
 
-import io.getstream.chat.core.functional.fsm.builder.FSMBuilder
+import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.core.internal.fsm.builder.FSMBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -15,6 +16,7 @@ import kotlin.reflect.KClass
  * @property defaultEventHandler called when [stateFunctions] has no handler for
  *                               a given state/event combination
  */
+@InternalStreamChatApi
 public class FiniteStateMachine<S : State, E : Event>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
