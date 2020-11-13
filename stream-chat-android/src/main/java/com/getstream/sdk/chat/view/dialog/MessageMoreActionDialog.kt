@@ -73,6 +73,7 @@ internal class MessageMoreActionDialog(
                 dismiss()
             }
         }
+        binding.flagMessageButton.isVisible = style.flagMessageActionEnabled
 
         if (canReactOnMessage()) {
             binding.reactionsContainer.background = DrawableBuilder()
@@ -87,15 +88,23 @@ internal class MessageMoreActionDialog(
         } else {
             binding.reactionsContainer.visibility = View.GONE
         }
-        binding.startThreadButton.setOnClickListener {
-            onStartThreadHandler(message)
-            dismiss()
+
+        binding.startThreadButton.apply {
+            isVisible = style.startThreadMessageActionEnabled
+            setOnClickListener {
+                onStartThreadHandler(message)
+                dismiss()
+            }
         }
-        binding.copyMessageButton.setOnClickListener {
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("label", message.text)
-            clipboard.setPrimaryClip(clip)
-            dismiss()
+
+        binding.copyMessageButton.apply {
+            isVisible = style.copyMessageActionEnabled
+            setOnClickListener {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("label", message.text)
+                clipboard.setPrimaryClip(clip)
+                dismiss()
+            }
         }
     }
 

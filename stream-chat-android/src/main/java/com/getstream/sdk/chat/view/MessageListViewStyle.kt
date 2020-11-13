@@ -79,6 +79,11 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
     public val avatarStyle: AvatarStyle
     public val readStateStyle: ReadStateStyle
 
+    // MessageMoreActionDialog
+    public val startThreadMessageActionEnabled: Boolean
+    public val copyMessageActionEnabled: Boolean
+    public val flagMessageActionEnabled: Boolean
+
     public fun getMessageBubbleDrawable(isMine: Boolean): Int {
         return if (isMine) messageBubbleDrawableMine else messageBubbleDrawableTheirs
     }
@@ -553,6 +558,14 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
             a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1)
         isUserNameShow = a.getBoolean(R.styleable.MessageListView_streamUserNameShow, true)
         isMessageDateShow = a.getBoolean(R.styleable.MessageListView_streamMessageDateShow, true)
+
+        startThreadMessageActionEnabled = a.getBoolean(
+            R.styleable.MessageListView_streamStartThreadMessageActionEnabled,
+            true
+        )
+        copyMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamCopyMessageActionEnabled, true)
+        flagMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamFlagMessageActionEnabled, true)
+
         a.recycle()
     }
 }
