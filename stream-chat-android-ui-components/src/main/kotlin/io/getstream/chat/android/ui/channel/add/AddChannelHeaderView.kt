@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.channel.add
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -40,18 +39,6 @@ internal class AddChannelHeaderView : FrameLayout {
         binding.inputEditText.doAfterTextChanged {
             membersInputListener?.onInputChanged(query)
         }
-        // Just for testing purposes - will be removed
-        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    membersInputListener?.onMemberAdded(query)
-                    binding.inputEditText.setText("")
-                    Utils.hideSoftKeyboard(binding.inputEditText)
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     fun setMembers(members: List<User>) {
@@ -66,7 +53,9 @@ internal class AddChannelHeaderView : FrameLayout {
     }
 
     fun hideInput() {
+        binding.inputEditText.setText("")
         binding.inputEditText.isVisible = false
+        Utils.hideSoftKeyboard(binding.inputEditText)
     }
 
     fun showAddMemberButton() {
@@ -83,9 +72,6 @@ internal class AddChannelHeaderView : FrameLayout {
 
     interface Listener {
         fun onInputChanged(query: String)
-
-        // Just for testing purposes - will be removed
-        fun onMemberAdded(query: String)
     }
 
     fun interface AddMemberButtonClickListener {
