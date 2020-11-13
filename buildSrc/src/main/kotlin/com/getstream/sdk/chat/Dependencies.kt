@@ -66,6 +66,7 @@ private const val SHIMMER_VERSION = "0.5.0"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1"
 private const val WORK_VERSION = "2.4.0"
+private const val LOTTIE_VERSION = "3.5.0"
 
 object Dependencies {
     const val activityKtx = "androidx.activity:activity-ktx:$ACTIVITY_KTX_VERSION"
@@ -160,6 +161,7 @@ object Dependencies {
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:$WORK_VERSION"
     const val workTesting = "androidx.work:work-testing:$WORK_VERSION"
+    const val lottie = "com.airbnb.android:lottie:$LOTTIE_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
