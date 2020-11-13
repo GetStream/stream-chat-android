@@ -27,12 +27,6 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android-client/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-client/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android_offline:
     name: stream-chat-android-offline
