@@ -19,7 +19,6 @@ private const val MESSAGE_LIMIT = 30
  */
 public class ChannelHeaderViewModel @JvmOverloads constructor(
     cid: String,
-    messageLimit: Int = MESSAGE_LIMIT,
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
 

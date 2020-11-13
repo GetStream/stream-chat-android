@@ -345,6 +345,7 @@ internal class ChatApi(
         val map = users.associateBy({ it.id }, { user -> user })
 
         return retrofitApi.updateUsers(
+            apiKey,
             connectionId,
             UpdateUsersRequest(map)
         )

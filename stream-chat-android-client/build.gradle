@@ -35,6 +35,9 @@ android {
             consumerProguardFiles 'consumer-proguard-rules.pro'
         }
     }
+
+    resourcePrefix 'stream_'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

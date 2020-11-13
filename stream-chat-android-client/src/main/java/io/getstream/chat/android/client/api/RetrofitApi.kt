@@ -205,6 +205,7 @@ internal interface RetrofitApi {
 
     @POST("/users")
     fun updateUsers(
+        @Query("api_key") apiKey: String,
         @Query("connection_id") connectionId: String,
         @Body body: UpdateUsersRequest
     ): RetrofitCall<UpdateUsersResponse>

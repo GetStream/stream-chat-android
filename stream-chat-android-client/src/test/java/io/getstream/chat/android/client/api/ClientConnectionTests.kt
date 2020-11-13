@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -91,15 +90,11 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
-        val mockedContext: Context = mock()
-
         client = ChatClient(
             config,
             api,
             socket,
             notificationsManager,
-            mockedContext,
-            ChatNotificationHandler(context),
             tokenManager = FakeTokenManager(token)
         )
     }

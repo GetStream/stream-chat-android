@@ -95,7 +95,7 @@
             android:id="@+id/defaultEmptyStateView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/messages_empty_state_label"
+            android:text="@string/stream_messages_empty_state_label"
             tools:text="No messages"
             />
     </FrameLayout>
