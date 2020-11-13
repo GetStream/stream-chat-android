@@ -33,7 +33,7 @@ internal class ClientStateService {
         FiniteStateMachine {
             initialState(ClientState.Idle)
 
-            defaultHandler { state, event -> state.inappropriateStateError("handling event $event") }
+            defaultHandler { state, event -> state.failedToHandleEvent(event) }
 
             state<ClientState.Idle> {
                 onEvent<ClientStateEvent.SetUserEvent> { _, event -> ClientState.User.Pending.WithoutToken(event.user) }
@@ -125,11 +125,14 @@ internal class ClientStateService {
     internal val state
         get() = stateMachine.state
 
+    private fun ClientState.failedToHandleEvent(event: ClientStateEvent): Nothing =
+        error("Cannot handle event $event while being in inappropriate state $this")
+
     private sealed class ClientStateEvent : Event {
-        class SetUserEvent(val user: User) : ClientStateEvent()
+        data class SetUserEvent(val user: User) : ClientStateEvent()
         object SetAnonymousUserEvent : ClientStateEvent()
-        class TokenReceivedEvent(val token: String) : ClientStateEvent()
-        class ConnectedEvent(val user: User, val connectionId: String) : ClientStateEvent()
+        data class TokenReceivedEvent(val token: String) : ClientStateEvent()
+        data class ConnectedEvent(val user: User, val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()
         object DisconnectedEvent : ClientStateEvent()
     }

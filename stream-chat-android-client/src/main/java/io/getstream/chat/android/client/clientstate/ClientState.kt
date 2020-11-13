@@ -60,6 +60,3 @@ internal sealed class ClientState : State {
         else -> error("This state doesn't contain connectionId")
     }
 }
-
-internal fun ClientState.inappropriateStateError(actionName: String): Nothing =
-    error("Cannot $actionName while being in inappropriate state $this")
