@@ -10,6 +10,8 @@ import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
+import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.name
@@ -17,8 +19,6 @@ import io.getstream.chat.android.ui.channel.list.ChannelsView
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelsViewModel
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelsViewModelFactory
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding

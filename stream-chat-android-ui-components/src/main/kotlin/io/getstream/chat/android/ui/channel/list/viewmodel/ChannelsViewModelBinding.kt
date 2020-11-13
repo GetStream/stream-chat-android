@@ -3,6 +3,7 @@
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import io.getstream.chat.android.ui.channel.list.ChannelsView
 
 @JvmName("bind")
