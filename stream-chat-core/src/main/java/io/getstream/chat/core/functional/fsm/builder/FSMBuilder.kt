@@ -6,9 +6,10 @@ import io.getstream.chat.core.functional.fsm.State
 import io.getstream.chat.core.functional.fsm.StateFunction
 import kotlin.reflect.KClass
 
+@FSMBuilderMarker
 public class FSMBuilder<S : State, E : Event> {
     private lateinit var _initialState: S
-    public var stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>> = emptyMap()
+    public val stateFunctions: MutableMap<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>> = mutableMapOf()
     private var _defaultHandler: (S, E) -> Unit = { _, _ -> Unit }
 
     public fun initialState(state: S) {
@@ -19,15 +20,12 @@ public class FSMBuilder<S : State, E : Event> {
         _defaultHandler = defaultHandler
     }
 
-    public inline fun <reified S1 : S> state(stateHandlerBuilder: StateHandler<S, S1, E>.() -> Unit) {
-        stateFunctions =
-            stateFunctions + (S1::class to StateHandler<S, S1, E>().apply(stateHandlerBuilder).get())
+    public inline fun <reified S1 : S> state(stateHandlerBuilder: StateHandlerBuilder<S, E, S1>.() -> Unit) {
+        stateFunctions[S1::class] = StateHandlerBuilder<S, E, S1>().apply(stateHandlerBuilder).get()
     }
 
     internal fun build(): FiniteStateMachine<S, E> {
-        if (this::_initialState.isInitialized.not()) {
-            error("Initial state must be set!")
-        }
+        check(this::_initialState.isInitialized) { "Initial state must be set!" }
         return FiniteStateMachine(_initialState, stateFunctions, _defaultHandler)
     }
 }
