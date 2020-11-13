@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_channel_list_item_height"
+    android:id="@+id/content_root">
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/avatar_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/channel_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="sans-serif-black"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/last_message_label"
+        app:layout_constraintStart_toEndOf="@+id/avatar_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Gebruiker, Usuario, Benutzer" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/last_message_label"
+        app:layout_constraintStart_toStartOf="@+id/channel_name_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/channel_name_label"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a."
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="12.5sp"
+        app:layout_constraintEnd_toStartOf="@+id/message_status_image_view"
+        android:layout_marginEnd="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/last_message_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp"
+        android:textSize="12sp"
+        tools:text="3:00PM"
+        app:layout_constraintBottom_toBottomOf="@+id/message_status_image_view"
+        app:layout_constraintTop_toTopOf="@+id/message_status_image_view" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_icon_check_all"
+        android:id="@+id/message_status_image_view"
+        app:layout_constraintTop_toTopOf="@+id/last_message_label"
+        app:layout_constraintBottom_toBottomOf="@+id/last_message_label"
+        app:layout_constraintEnd_toStartOf="@+id/last_message_time_label"
+        android:layout_marginEnd="3dp" />
+
+    <ImageView
+        android:id="@+id/unread_badge_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
+        app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
+        app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
