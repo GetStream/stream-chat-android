@@ -516,7 +516,7 @@ internal class ChatDomainImpl internal constructor(
                     this
                 )
             activeChannelMapImpl[cid] = channelRepo
-            GlobalScope.launch(Dispatchers.Main) {
+            GlobalScope.launch(DispatcherProvider.Main) {
                 addTypingChannel(channelRepo)
             }
         }
@@ -536,14 +536,6 @@ internal class ChatDomainImpl internal constructor(
         }
 
         _typingChannels.addSource(typingEvent, _typingChannels::postValue)
-    }
-
-    private fun removeTypingChannel(channelController: ChannelControllerImpl) {
-        val typingEvent: LiveData<Pair<String, List<User>>> = channelController.typing.map { userList ->
-            channelController.channelId to userList
-        }
-
-        _typingChannels.removeSource(typingEvent)
     }
 
     internal fun setOffline() {
