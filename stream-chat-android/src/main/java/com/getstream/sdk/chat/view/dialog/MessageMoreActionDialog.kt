@@ -90,20 +90,26 @@ internal class MessageMoreActionDialog(
         }
 
         binding.startThreadButton.apply {
-            isVisible = style.startThreadMessageActionEnabled
-            setOnClickListener {
-                onStartThreadHandler(message)
-                dismiss()
+            val enabled = style.startThreadMessageActionEnabled
+            isVisible = enabled
+            if (enabled) {
+                setOnClickListener {
+                    onStartThreadHandler(message)
+                    dismiss()
+                }
             }
         }
 
         binding.copyMessageButton.apply {
-            isVisible = style.copyMessageActionEnabled
-            setOnClickListener {
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("label", message.text)
-                clipboard.setPrimaryClip(clip)
-                dismiss()
+            val enabled = style.copyMessageActionEnabled
+            isVisible = enabled
+            if (enabled) {
+                setOnClickListener {
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("label", message.text)
+                    clipboard.setPrimaryClip(clip)
+                    dismiss()
+                }
             }
         }
     }
