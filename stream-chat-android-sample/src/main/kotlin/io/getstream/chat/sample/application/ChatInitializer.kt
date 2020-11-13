@@ -10,8 +10,8 @@ import io.getstream.chat.sample.R
 
 class ChatInitializer(private val context: Context) {
 
+    @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
-
         val notificationConfig =
             NotificationConfig(
                 firebaseMessageIdKey = "message_id",

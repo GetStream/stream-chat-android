@@ -47,7 +47,7 @@ internal class EventsParser(
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         // Treat as failure and reconnect, socket shouldn't be closed by server
-        onFailure(webSocket, ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED), null)
+        onFailure(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED))
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -56,7 +56,7 @@ internal class EventsParser(
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
-    private fun onFailure(webSocket: WebSocket, chatError: ChatError, response: Response?) {
+    private fun onFailure(chatError: ChatError) {
         logger.logE("onFailure $chatError", chatError)
         // Called when socket is disconnected by client also (client.disconnect())
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))

@@ -16,6 +16,7 @@ public class QuerySort<T : Any> {
     private val SortSpecification<T>.comparator: Comparator<T>?
         get() = (this.sortAttribute as? FieldSortAttribute<T>)?.field?.comparator(this.sortDirection)
 
+    @Suppress("UNCHECKED_CAST")
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T>? =
         this.let { compareProperty ->
             Comparator { c0, c1 ->
@@ -32,11 +33,11 @@ public class QuerySort<T : Any> {
         return this
     }
 
-    public fun asc(field: KProperty1<T, out Comparable<*>?>): QuerySort<T> {
+    public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(SortSpecification(FieldSortAttribute(field, field.name.camelCaseToSnakeCase()), SortDirection.ASC))
     }
 
-    public fun desc(field: KProperty1<T, out Comparable<*>?>): QuerySort<T> {
+    public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(SortSpecification(FieldSortAttribute(field, field.name.camelCaseToSnakeCase()), SortDirection.DESC))
     }
 
@@ -71,6 +72,7 @@ public class QuerySort<T : Any> {
     public fun toList(): List<Pair<String, SortDirection>> = sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     private fun getSortFeature(fieldName: String, javaClass: Class<T>): SortAttribute<T> {
+        @Suppress("UNCHECKED_CAST")
         val kClass = Reflection.createKotlinClass(javaClass) as KClass<T>
         return getSortFeature(fieldName, kClass)
     }

@@ -49,6 +49,7 @@ internal class SocketFactory(
     }
 
     private fun buildUserDetailJson(user: User?): String {
+        @Suppress("NAME_SHADOWING")
         val user = user ?: User(ANONYMOUS_USER_ID)
         val data = mapOf(
             "user_details" to user,
