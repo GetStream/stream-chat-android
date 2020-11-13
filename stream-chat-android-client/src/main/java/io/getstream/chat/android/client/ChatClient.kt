@@ -233,15 +233,6 @@ public class ChatClient internal constructor(
         return api.deleteImage(channelType, channelId, url)
     }
 
-    public fun replayEvents(
-        channelIds: List<String>,
-        since: Date?,
-        limit: Int,
-        offset: Int
-    ): Call<List<ChatEvent>> {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
-    }
-
     //region Reactions
     public fun getReactions(
         messageId: String,
