@@ -19,7 +19,7 @@ import io.getstream.chat.android.ui.utils.extensions.getIntArray
 import kotlin.math.abs
 
 internal class AvatarBitmapFactory(private val context: Context) {
-    private val gradientBaseColors = context.getIntArray(R.array.avatar_gradient_colors)
+    private val gradientBaseColors = context.getIntArray(R.array.stream_avatar_gradient_colors)
 
     internal suspend fun createUserBitmap(user: User, style: AvatarStyle): Bitmap {
         return ImageLoader.getBitmap(context, user.image)
