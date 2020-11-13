@@ -514,7 +514,7 @@ internal class ChatDomainImpl internal constructor(
                     this
                 )
             activeChannelMapImpl[cid] = channelRepo
-            GlobalScope.launch(DispatcherProvider.Main) {
+            scope.launch(DispatcherProvider.Main) {
                 addTypingChannel(channelRepo)
             }
         }
