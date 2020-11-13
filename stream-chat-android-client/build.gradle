@@ -66,6 +66,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
+    implementation project(':stream-chat-core')
+
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
 

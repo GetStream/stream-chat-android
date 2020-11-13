@@ -1,3 +1,4 @@
+include ':stream-chat-core'
 include (
 		':stream-chat-android',
 		':stream-chat-android-sample',

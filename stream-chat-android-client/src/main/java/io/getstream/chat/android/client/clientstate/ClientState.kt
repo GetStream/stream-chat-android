@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.utils.State
+import io.getstream.chat.core.functional.fsm.State
 
 private typealias UserModel = io.getstream.chat.android.client.models.User
 
