@@ -11,6 +11,7 @@ public class StateHandlerBuilder<S : Any, E : Any, S1 : S> {
     @PublishedApi
     internal val eventHandlers: MutableMap<KClass<out E>, FiniteStateMachine<S, E>.(S1, E) -> S> = mutableMapOf()
 
+    @FSMBuilderMarker
     public inline fun <reified E1 : E> onEvent(noinline func: FiniteStateMachine<S, E>.(S1, E1) -> S) {
         @Suppress("UNCHECKED_CAST")
         eventHandlers[E1::class] = func as FiniteStateMachine<S, E>.(S1, E) -> S

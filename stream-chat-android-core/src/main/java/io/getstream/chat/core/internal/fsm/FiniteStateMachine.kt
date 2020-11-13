@@ -2,6 +2,7 @@ package io.getstream.chat.core.internal.fsm
 
 import io.getstream.chat.core.internal.InternalStreamChatApi
 import io.getstream.chat.core.internal.fsm.builder.FSMBuilder
+import io.getstream.chat.core.internal.fsm.builder.FSMBuilderMarker
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -71,6 +72,7 @@ public class FiniteStateMachine<S : Any, E : Any>(
     public fun stay(): S = state
 
     public companion object {
+        @FSMBuilderMarker
         public operator fun <S : Any, E : Any> invoke(builder: FSMBuilder<S, E>.() -> Unit): FiniteStateMachine<S, E> {
             return FSMBuilder<S, E>().apply(builder).build()
         }
