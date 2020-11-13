@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.suggestions
 
 import android.widget.EditText
 import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import java.util.regex.Pattern
@@ -11,7 +10,7 @@ internal class SuggestionListController(
     private val suggestionListView: SuggestionListView,
     private val messageTextInput: EditText
 ) {
-    var members: List<Member> = emptyList()
+    var users: List<User> = emptyList()
     var commands: List<Command> = emptyList()
 
     private var messageText: String
@@ -57,7 +56,7 @@ internal class SuggestionListController(
 
     private fun String.getMentionSuggestions(): SuggestionListView.Suggestions.MentionSuggestions {
         val namePattern = substringAfterLast("@")
-        return members.map { it.user }
+        return users
             .filter { it.name.contains(namePattern, true) }
             .let { SuggestionListView.Suggestions.MentionSuggestions(it) }
     }

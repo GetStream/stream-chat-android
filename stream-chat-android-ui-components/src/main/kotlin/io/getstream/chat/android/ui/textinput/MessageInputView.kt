@@ -55,7 +55,7 @@ public class MessageInputView : ConstraintLayout {
     private var iconEnabledSendButtonDrawable: Drawable? = null
 
     public fun configureMembers(members: List<Member>) {
-        suggestionListController.members = members
+        suggestionListController.users = members.map { it.user }
     }
 
     public fun configureCommands(commands: List<Command>) {
