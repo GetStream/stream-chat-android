@@ -7,7 +7,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -149,7 +148,6 @@ internal open class BaseDomainTest2 {
             on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
             on { sendReaction(any()) } doReturn TestCall(
                 Result(
                     data.reaction1,

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client
 
-import android.content.Context
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -12,7 +11,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
@@ -49,9 +47,6 @@ internal class MockClientBuilder {
     private lateinit var client: ChatClient
 
     fun build(): ChatClient {
-
-        val context = mock<Context>()
-
         val config = ChatClientConfig(
             apiKey,
             "hello.http",
@@ -82,8 +77,6 @@ internal class MockClientBuilder {
             api,
             socket,
             notificationsManager,
-            mock(),
-            ChatNotificationHandler(context),
         )
 
         client.setUser(user, token)

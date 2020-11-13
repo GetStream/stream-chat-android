@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import org.amshove.kluent.shouldBeEqualTo
@@ -57,8 +56,6 @@ internal class ChatClientTest {
             api = mock(),
             socket = socket,
             notifications = mock(),
-            appContext = mock(),
-            notificationsHandler = ChatNotificationHandler(mock()),
             tokenManager = FakeTokenManager("")
         )
         result = mutableListOf()
