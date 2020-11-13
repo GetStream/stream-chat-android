@@ -11,7 +11,15 @@ internal class SuggestionListController(
     private val messageTextInput: EditText
 ) {
     var users: List<User> = emptyList()
+        set(value) {
+            field = value
+            onTextChanged(messageText)
+        }
     var commands: List<Command> = emptyList()
+        set(value) {
+            field = value
+            onTextChanged(messageText)
+        }
 
     private var messageText: String
         get() = messageTextInput.text.toString()
