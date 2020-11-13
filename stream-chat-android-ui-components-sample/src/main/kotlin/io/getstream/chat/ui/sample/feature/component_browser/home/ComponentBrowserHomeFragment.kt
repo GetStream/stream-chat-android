@@ -59,6 +59,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupAvatarView()
         setupChannelsHeaderView()
         setupSearchView()
+        setupAddChannelView()
     }
 
     private fun setupAvatarView() {
@@ -84,6 +85,12 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
+        }
+    }
+
+    private fun setupAddChannelView() {
+        binding.addChannelViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAddChannelViewFragment)
         }
     }
 }
