@@ -97,13 +97,13 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
         )
 
         binding.avatarViewSmallIndicator.apply {
-            setUserData(randomUser())
+            setUserData(randomUser(isOnline = true))
         }
         binding.avatarViewMediumIndicator.apply {
-            setUserData(randomUser())
+            setUserData(randomUser(isOnline = true))
         }
         binding.avatarViewLargeIndicator.apply {
-            setUserData(randomUser())
+            setUserData(randomUser(isOnline = true))
         }
     }
 
@@ -114,12 +114,18 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
             return "https://randomuser.me/api/portraits/$category/$index.jpg"
         }
 
-        internal fun randomUser(withImage: Boolean = true): User {
+        internal fun randomUser(
+            withImage: Boolean = true,
+            isOnline: Boolean = false,
+        ): User {
             return User().apply {
                 name = "${('A'..'Z').random()} ${('A'..'Z').random()}"
 
                 if (withImage) {
                     image = randomImageUrl()
+                }
+                if (isOnline) {
+                    online = true
                 }
             }
         }
