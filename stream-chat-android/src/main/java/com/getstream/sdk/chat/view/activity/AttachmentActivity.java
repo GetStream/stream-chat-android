@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.logger.TaggedLogger;
  */
 public class AttachmentActivity extends AppCompatActivity {
 
-    private final String TAG = AttachmentActivity.class.getSimpleName();
     WebView webView;
 
     ImageView iv_image;
@@ -51,7 +50,7 @@ public class AttachmentActivity extends AppCompatActivity {
         String type = intent.getStringExtra("type");
         String url = intent.getStringExtra("url");
         if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
-            Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT).show();
             return;
         }
         showAttachment(type, url);
