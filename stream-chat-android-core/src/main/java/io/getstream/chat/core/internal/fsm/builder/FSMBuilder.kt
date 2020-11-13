@@ -1,15 +1,13 @@
 package io.getstream.chat.core.internal.fsm.builder
 
 import io.getstream.chat.core.internal.InternalStreamChatApi
-import io.getstream.chat.core.internal.fsm.Event
 import io.getstream.chat.core.internal.fsm.FiniteStateMachine
-import io.getstream.chat.core.internal.fsm.State
 import io.getstream.chat.core.internal.fsm.StateFunction
 import kotlin.reflect.KClass
 
 @InternalStreamChatApi
 @FSMBuilderMarker
-public class FSMBuilder<S : State, E : Event> {
+public class FSMBuilder<S : Any, E : Any> {
     private lateinit var _initialState: S
     public val stateFunctions: MutableMap<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>> = mutableMapOf()
     private var _defaultHandler: (S, E) -> Unit = { _, _ -> Unit }

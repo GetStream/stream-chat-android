@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  *                               a given state/event combination
  */
 @InternalStreamChatApi
-public class FiniteStateMachine<S : State, E : Event>(
+public class FiniteStateMachine<S : Any, E : Any>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
     private val defaultEventHandler: (S, E) -> Unit,
@@ -71,7 +71,7 @@ public class FiniteStateMachine<S : State, E : Event>(
     public fun stay(): S = state
 
     public companion object {
-        public operator fun <S : State, E : Event> invoke(builder: FSMBuilder<S, E>.() -> Unit): FiniteStateMachine<S, E> {
+        public operator fun <S : Any, E : Any> invoke(builder: FSMBuilder<S, E>.() -> Unit): FiniteStateMachine<S, E> {
             return FSMBuilder<S, E>().apply(builder).build()
         }
     }

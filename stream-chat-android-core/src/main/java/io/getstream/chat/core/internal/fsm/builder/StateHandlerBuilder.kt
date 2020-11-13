@@ -1,15 +1,13 @@
 package io.getstream.chat.core.internal.fsm.builder
 
 import io.getstream.chat.core.internal.InternalStreamChatApi
-import io.getstream.chat.core.internal.fsm.Event
 import io.getstream.chat.core.internal.fsm.FiniteStateMachine
-import io.getstream.chat.core.internal.fsm.State
 import io.getstream.chat.core.internal.fsm.StateFunction
 import kotlin.reflect.KClass
 
 @InternalStreamChatApi
 @FSMBuilderMarker
-public class StateHandlerBuilder<S : State, E : Event, S1 : S> {
+public class StateHandlerBuilder<S : Any, E : Any, S1 : S> {
     @PublishedApi
     internal val eventHandlers: MutableMap<KClass<out E>, FiniteStateMachine<S, E>.(S1, E) -> S> = mutableMapOf()
 
@@ -20,5 +18,6 @@ public class StateHandlerBuilder<S : State, E : Event, S1 : S> {
 
     @PublishedApi
     @Suppress("UNCHECKED_CAST")
-    internal fun get(): Map<KClass<out E>, StateFunction<S, E>> = eventHandlers as Map<KClass<out E>, StateFunction<S, E>>
+    internal fun get(): Map<KClass<out E>, StateFunction<S, E>> =
+        eventHandlers as Map<KClass<out E>, StateFunction<S, E>>
 }

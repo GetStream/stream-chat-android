@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.core.internal.fsm.Event
 import io.getstream.chat.core.internal.fsm.FiniteStateMachine
 
 internal class ClientStateService {
@@ -128,7 +127,7 @@ internal class ClientStateService {
     private fun ClientState.failedToHandleEvent(event: ClientStateEvent): Nothing =
         error("Cannot handle event $event while being in inappropriate state $this")
 
-    private sealed class ClientStateEvent : Event {
+    private sealed class ClientStateEvent {
         data class SetUserEvent(val user: User) : ClientStateEvent()
         object SetAnonymousUserEvent : ClientStateEvent()
         data class TokenReceivedEvent(val token: String) : ClientStateEvent()

@@ -1,10 +1,8 @@
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.core.internal.fsm.State
-
 private typealias UserModel = io.getstream.chat.android.client.models.User
 
-internal sealed class ClientState : State {
+internal sealed class ClientState {
     object Idle : ClientState()
     sealed class Anonymous : ClientState() {
         sealed class Pending : Anonymous() {
