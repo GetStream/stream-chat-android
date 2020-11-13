@@ -52,7 +52,6 @@ internal class SuggestionListController(
         val commandPattern = removePrefix("/")
         return commands
             .filter { it.name.startsWith(commandPattern) }
-            .toList()
             .let { SuggestionListView.Suggestions.CommandSuggestions(it) }
     }
 
@@ -60,7 +59,6 @@ internal class SuggestionListController(
         val namePattern = substringAfterLast("@")
         return members.map { it.user }
             .filter { it.name.contains(namePattern, true) }
-            .toList()
             .let { SuggestionListView.Suggestions.MentionSuggestions(it) }
     }
 

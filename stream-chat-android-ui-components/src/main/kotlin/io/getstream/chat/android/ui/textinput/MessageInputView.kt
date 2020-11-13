@@ -28,7 +28,7 @@ private const val NO_ICON_MESSAGE_ENABLED_STATE =
 
 private const val ANIMATION_DURATION = 100L
 
-public class StreamMessageInputView : ConstraintLayout {
+public class MessageInputView : ConstraintLayout {
 
     public constructor(context: Context) : super(context) {
         init(context)
