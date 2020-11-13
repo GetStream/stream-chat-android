@@ -7,10 +7,9 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamAddChannelHeaderViewBinding
-import io.getstream.chat.android.ui.utils.extensions.hideKeyboard
-import io.getstream.chat.android.ui.utils.extensions.showKeyboard
 
 internal class AddChannelHeaderView : FrameLayout {
 
@@ -47,7 +46,7 @@ internal class AddChannelHeaderView : FrameLayout {
                 EditorInfo.IME_ACTION_DONE -> {
                     membersInputListener?.onMemberAdded(query)
                     binding.inputEditText.setText("")
-                    binding.inputEditText.hideKeyboard()
+                    Utils.hideSoftKeyboard(binding.inputEditText)
                     true
                 }
                 else -> false
@@ -63,7 +62,7 @@ internal class AddChannelHeaderView : FrameLayout {
     fun showInput() {
         binding.inputEditText.isVisible = true
         binding.inputEditText.requestFocus()
-        binding.inputEditText.showKeyboard()
+        Utils.showSoftKeyboard(binding.inputEditText)
     }
 
     fun hideInput() {
