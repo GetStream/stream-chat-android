@@ -216,7 +216,8 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun configInputEditTextError() {
         if (isMessageTooLong()) {
-            binding.messageTextInput.error = "Max message length ($maxMessageLength) exceeded."
+            binding.messageTextInput.error =
+                String.format(context.getString(R.string.stream_message_length_exceeded_error), maxMessageLength)
         } else {
             binding.messageTextInput.error = null
         }
