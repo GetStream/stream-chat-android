@@ -55,13 +55,14 @@ internal class MessageMoreActionDialog(
         setCanceledOnTouchOutside(true)
         binding.startThreadButton.isVisible = canThreadOnMessage()
         binding.copyMessageButton.isVisible = canCopyOnMessage()
-        if (isMessageCreatedByCurrentUser()) {
+        if (isMessageNotCreatedByCurrentUser()) {
             binding.editMessageButton.visibility = View.GONE
             binding.deleteMessageButton.visibility = View.GONE
             binding.flagMessageButton.setOnClickListener {
                 onMessageFlagHandler(message)
                 dismiss()
             }
+            binding.flagMessageButton.isVisible = style.flagMessageActionEnabled
         } else {
             binding.flagMessageButton.visibility = View.GONE
             binding.editMessageButton.setOnClickListener {
@@ -87,19 +88,33 @@ internal class MessageMoreActionDialog(
         } else {
             binding.reactionsContainer.visibility = View.GONE
         }
-        binding.startThreadButton.setOnClickListener {
-            onStartThreadHandler(message)
-            dismiss()
+
+        binding.startThreadButton.apply {
+            val enabled = style.startThreadMessageActionEnabled
+            isVisible = enabled
+            if (enabled) {
+                setOnClickListener {
+                    onStartThreadHandler(message)
+                    dismiss()
+                }
+            }
         }
-        binding.copyMessageButton.setOnClickListener {
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("label", message.text)
-            clipboard.setPrimaryClip(clip)
-            dismiss()
+
+        binding.copyMessageButton.apply {
+            val enabled = style.copyMessageActionEnabled
+            isVisible = enabled
+            if (enabled) {
+                setOnClickListener {
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("label", message.text)
+                    clipboard.setPrimaryClip(clip)
+                    dismiss()
+                }
+            }
         }
     }
 
-    private fun isMessageCreatedByCurrentUser() = message.user.id != currentUser.id
+    private fun isMessageNotCreatedByCurrentUser() = message.user.id != currentUser.id
 
     private fun canCopyOnMessage(): Boolean {
         return !(

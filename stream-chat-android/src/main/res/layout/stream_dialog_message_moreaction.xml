@@ -37,16 +37,10 @@
         android:background="#FAFAFA"
         android:orientation="vertical"
         android:paddingTop="10dp"
-        android:paddingBottom="19dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         >
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp"
-            />
 
         <LinearLayout
             android:id="@+id/startThreadButton"
@@ -202,10 +196,5 @@
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="19dp"
-            />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
