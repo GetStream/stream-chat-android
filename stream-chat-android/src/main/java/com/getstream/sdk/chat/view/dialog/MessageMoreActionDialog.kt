@@ -55,13 +55,14 @@ internal class MessageMoreActionDialog(
         setCanceledOnTouchOutside(true)
         binding.startThreadButton.isVisible = canThreadOnMessage()
         binding.copyMessageButton.isVisible = canCopyOnMessage()
-        if (isMessageCreatedByCurrentUser()) {
+        if (isMessageNotCreatedByCurrentUser()) {
             binding.editMessageButton.visibility = View.GONE
             binding.deleteMessageButton.visibility = View.GONE
             binding.flagMessageButton.setOnClickListener {
                 onMessageFlagHandler(message)
                 dismiss()
             }
+            binding.flagMessageButton.isVisible = style.flagMessageActionEnabled
         } else {
             binding.flagMessageButton.visibility = View.GONE
             binding.editMessageButton.setOnClickListener {
@@ -73,7 +74,6 @@ internal class MessageMoreActionDialog(
                 dismiss()
             }
         }
-        binding.flagMessageButton.isVisible = style.flagMessageActionEnabled
 
         if (canReactOnMessage()) {
             binding.reactionsContainer.background = DrawableBuilder()
@@ -108,7 +108,7 @@ internal class MessageMoreActionDialog(
         }
     }
 
-    private fun isMessageCreatedByCurrentUser() = message.user.id != currentUser.id
+    private fun isMessageNotCreatedByCurrentUser() = message.user.id != currentUser.id
 
     private fun canCopyOnMessage(): Boolean {
         return !(
