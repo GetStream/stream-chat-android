@@ -17,6 +17,7 @@ Added new MessageInputView structure
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
 - Added MarkAllReadEvent
+- Fix UpdateUsers call
 
 ## stream-chat-android-offline
 - Update `totalUnreadCount` when user is connected
