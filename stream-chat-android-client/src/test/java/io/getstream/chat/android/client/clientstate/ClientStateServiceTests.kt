@@ -93,6 +93,15 @@ internal class ClientStateServiceTests {
     }
 
     @Test
+    fun `Given user connected When connect Should stay in connected state`() {
+        val sut = Fixture().givenUserConnectedState().please()
+
+        sut.onConnected(Mother.randomUser(), "connectionId")
+
+        sut.state shouldBeInstanceOf ClientState.User.Authorized.Connected::class
+    }
+
+    @Test
     fun `Given user disconnected state When disconnected Should stay in the same state`() {
         val user = Mother.randomUser()
         val sut = Fixture().givenUserDisconnectedState(user, "token", "connectionId").please()
@@ -170,6 +179,15 @@ internal class ClientStateServiceTests {
         sut.onDisconnectRequested()
 
         sut.state shouldBeEqualTo ClientState.Idle
+    }
+
+    @Test
+    fun `Given anonymous user connected When connect Should stay in connected state`() {
+        val sut = Fixture().givenAnonymousUserConnectedState().please()
+
+        sut.onConnected(Mother.randomUser(), "connectionId")
+
+        sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Connected::class
     }
 
     @Test

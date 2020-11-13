@@ -61,6 +61,7 @@ internal class ChatClientTest {
             notificationsHandler = ChatNotificationHandler(mock()),
             tokenManager = FakeTokenManager("")
         )
+            .apply { setUser(User(), "someToken") }
         result = mutableListOf()
     }
 

@@ -68,6 +68,7 @@ internal class ClientStateService {
                     )
                 }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
             state<ClientState.User.Authorized.Disconnected> {
@@ -105,6 +106,7 @@ internal class ClientStateService {
                     )
                 }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
             state<ClientState.Anonymous.Authorized.Disconnected> {
