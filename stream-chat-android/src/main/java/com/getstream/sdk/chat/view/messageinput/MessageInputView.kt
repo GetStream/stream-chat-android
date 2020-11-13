@@ -66,6 +66,8 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             binding.messageTextInput.setSelection(binding.messageTextInput.text.length)
         }
 
+    public var maxMessageLength: Int = Integer.MAX_VALUE
+
     public var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
         override fun sendMessage(messageText: String) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -209,13 +211,24 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             .whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
             .whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
         configSendButtonEnableState()
+        configInputEditTextError()
+    }
+
+    private fun configInputEditTextError() {
+        if (isMessageTooLong()) {
+            binding.messageTextInput.error = "Max message length ($maxMessageLength) exceeded."
+        } else {
+            binding.messageTextInput.error = null
+        }
     }
 
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
         val notEmptyMessage = !messageText.isNullOrBlank() || attachments.isNotEmpty()
-        binding.sendButton.isVisible = notEmptyMessage
+        binding.sendButton.isVisible = notEmptyMessage && !isMessageTooLong()
     }
+
+    private fun isMessageTooLong() = messageText.length > maxMessageLength
 
     private fun configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
