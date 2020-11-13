@@ -186,7 +186,7 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController = SuggestionListController(binding.suggestionListView, binding.etMessageTextInput)
 
         binding.etMessageTextInput.doAfterTextChanged {
-            suggestionListController.onTextChanged(it.toString())
+            suggestionListController.onTextChanged(it?.toString() ?: "")
         }
 
         TextInputHandler.bindEditText(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
