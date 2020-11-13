@@ -29,8 +29,8 @@ class HomeFragmentViewModel : ViewModel() {
             .getTotalUnreadCount()
             .execute()
             .data()
-        _state.addSource(totalUnreadCount) { totalUnreadCount ->
-            setState { copy(totalUnreadCount = totalUnreadCount) }
+        _state.addSource(totalUnreadCount) { count ->
+            setState { copy(totalUnreadCount = count) }
         }
     }
 

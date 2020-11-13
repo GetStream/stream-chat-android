@@ -94,8 +94,8 @@ internal class ChatSocketListener(
                 event.unreadChannels?.let(onUnreadChannels)
             }
             is MarkAllReadEvent -> {
-                event.totalUnreadCount?.let(onTotalUnreadCountListener)
-                event.unreadChannels?.let(onUnreadChannels)
+                event.totalUnreadCount.let(onTotalUnreadCountListener)
+                event.unreadChannels.let(onUnreadChannels)
             }
             is ConnectedEvent -> {
                 onConnected(event)

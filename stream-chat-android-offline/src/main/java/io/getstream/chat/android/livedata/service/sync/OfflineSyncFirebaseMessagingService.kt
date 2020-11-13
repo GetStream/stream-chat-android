@@ -31,7 +31,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
     override fun onNewToken(token: String) {
         if (ChatClient.isInitialized) {
-            ChatClient.instance().onNewTokenReceived(token, this)
+            ChatClient.instance().onNewTokenReceived(token)
         } else {
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
             syncConfig?.let {
@@ -44,7 +44,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                         config.userToken,
                         config.apiKey
                     )
-                    client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
+                    client.onNewTokenReceived(token)
                 }
             }
         }
@@ -65,7 +65,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
                 if (ChatClient.isInitialized) {
                     ChatClient.instance()
-                        .onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                        .onMessageReceived(message)
                 }
             }
 
@@ -83,7 +83,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                     )
                     val domain = initDomain(user, client)
                     performSync(domain, cid)
-                    client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                    client.onMessageReceived(message)
                 }
             }
 
@@ -117,7 +117,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     private fun initDomain(user: User, client: ChatClient): ChatDomain {
-        return ChatDomain.Builder(applicationContext, client, user).build()!!
+        return ChatDomain.Builder(applicationContext, client, user).build()
     }
 
     private suspend fun initClient(
