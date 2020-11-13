@@ -38,17 +38,23 @@ internal class SuggestionListView : FrameLayout {
     }
 
     fun setSuggestions(suggestions: Suggestions) {
-        if (!binding.suggestionsCardView.isVisible) {
-            binding.suggestionsCardView.isVisible = true
-        }
+        binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {
-                mentionsAdapter.submitList(suggestions.users)
-                binding.commandsTitleTextView.isVisible = false
+                if (suggestions.users.isEmpty()) {
+                    clearSuggestions()
+                } else {
+                    mentionsAdapter.submitList(suggestions.users)
+                    binding.commandsTitleTextView.isVisible = false
+                }
             }
             is Suggestions.CommandSuggestions -> {
-                commandsAdapter.submitList(suggestions.commands)
-                binding.commandsTitleTextView.isVisible = true
+                if (suggestions.commands.isEmpty()) {
+                    clearSuggestions()
+                } else {
+                    commandsAdapter.submitList(suggestions.commands)
+                    binding.commandsTitleTextView.isVisible = true
+                }
             }
         }
     }
