@@ -64,14 +64,13 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     public fun sendMessageWithAttachments(
-        message: String,
+        messageText: String,
         attachmentFiles: List<File>,
         messageTransformer: Message.() -> Unit = { }
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
         val attachments = attachmentFiles.map { Attachment(upload = it) }.toMutableList()
-        val message =
-            Message(cid = cid, text = message, attachments = attachments).apply(messageTransformer)
+        val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
         chatDomain.useCases.sendMessage(message).enqueue()
     }
 

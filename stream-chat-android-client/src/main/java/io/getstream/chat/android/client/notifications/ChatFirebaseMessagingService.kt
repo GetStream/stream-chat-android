@@ -10,10 +10,10 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         logger.logD("onMessageReceived(): $remoteMessage")
-        ChatClient.instance().onMessageReceived(remoteMessage, this)
+        ChatClient.instance().onMessageReceived(remoteMessage)
     }
 
     override fun onNewToken(token: String) {
-        ChatClient.instance().onNewTokenReceived(token, this)
+        ChatClient.instance().onNewTokenReceived(token)
     }
 }

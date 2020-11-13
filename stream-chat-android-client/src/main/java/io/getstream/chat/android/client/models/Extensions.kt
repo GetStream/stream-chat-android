@@ -75,6 +75,7 @@ internal fun <A, B> Map<A, B>.get(key: A, default: B): B {
 
 internal fun String.initials(): String {
     return trim()
-        ?.split("\\s+".toRegex())
-        ?.take(2)?.joinToString(separator = "") { it.take(1).toUpperCase() }
+        .split("\\s+".toRegex())
+        .take(2)
+        .joinToString(separator = "") { it.take(1).toUpperCase() }
 }

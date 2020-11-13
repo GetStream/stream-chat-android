@@ -64,9 +64,6 @@ public class ChatClient internal constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
-    private var appContext: Context,
-    private val notificationsHandler: ChatNotificationHandler,
-    private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl()
 ) : LifecycleObserver {
 
@@ -154,9 +151,9 @@ public class ChatClient internal constructor(
             return
         }
         state.user = user
-        // fire a handler here that the chatDomain and chatUX can use
-        for (listener in preSetUserListeners) {
-            listener(user)
+        // fire a handler here that the chatDomain and chatUI can use
+        for (preSetUserListener in preSetUserListeners) {
+            preSetUserListener(user)
         }
         connectionListener = listener
         config.isAnonymous = false
@@ -421,7 +418,7 @@ public class ChatClient internal constructor(
 
     public fun disconnect() {
 
-        // fire a handler here that the chatDomain and chatUX can use
+        // fire a handler here that the chatDomain and chatUI can use
         for (listener in disconnectListeners) {
             listener(state.user)
         }
@@ -689,11 +686,11 @@ public class ChatClient internal constructor(
 
     //endregion
 
-    public fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
+    public fun onMessageReceived(remoteMessage: RemoteMessage) {
         notifications.onFirebaseMessage(remoteMessage)
     }
 
-    public fun onNewTokenReceived(token: String, context: Context) {
+    public fun onNewTokenReceived(token: String) {
         notifications.setFirebaseToken(token)
     }
 
@@ -921,9 +918,6 @@ public class ChatClient internal constructor(
                 module.api(),
                 module.socket(),
                 module.notifications(),
-                appContext,
-                notificationsHandler,
-                fileUploader,
                 tokenManager
             )
             instance = result
