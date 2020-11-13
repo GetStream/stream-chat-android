@@ -25,44 +25,44 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given Idle state When set user Should move to state UserAuthorizationPendingWithoutToken`() {
+    fun `Given Idle state When set user Should move to state user pending without token`() {
         val sut = Fixture().please()
         val user = Mother.randomUser()
 
         sut.onSetUser(user)
 
-        sut.state shouldBeInstanceOf ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken::class
-        (sut.state as ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken).user shouldBeEqualTo user
+        sut.state shouldBeInstanceOf ClientState.User.Pending.WithoutToken::class
+        (sut.state as ClientState.User.Pending.WithoutToken).user shouldBeEqualTo user
     }
 
     @Test
-    fun `Given Idle state When set anonymous user Should move to state AnonymousPendingWithoutToken`() {
+    fun `Given Idle state When set anonymous user Should move to state anonymous pending without token`() {
         val sut = Fixture().please()
 
         sut.onSetAnonymousUser()
 
-        sut.state shouldBeEqualTo ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithoutToken
+        sut.state shouldBeEqualTo ClientState.Anonymous.Pending.WithoutToken
     }
 
     @Test
-    fun `Given user authorization pending without token state When token received Should move to state AuthorizationPendingWithToken`() {
+    fun `Given user pending without token state When token received Should move to state user pending with token`() {
         val sut = Fixture().givenUserAuthorizationPendingWithoutTokenState().please()
 
         sut.onTokenReceived("someToken")
 
-        sut.state shouldBeInstanceOf ClientState.UserState.AuthorizationPending.AuthorizationPendingWithToken::class
-        (sut.state as ClientState.UserState.AuthorizationPending.AuthorizationPendingWithToken).token shouldBeEqualTo "someToken"
+        sut.state shouldBeInstanceOf ClientState.User.Pending.WithToken::class
+        (sut.state as ClientState.User.Pending.WithToken).token shouldBeEqualTo "someToken"
     }
 
     @Test
-    fun `Given authorization pending with token state When connected Should move to user connected state`() {
+    fun `Given user pending with token state When connected Should move to user connected state`() {
         val user = Mother.randomUser()
         val sut = Fixture().givenUserAuthorizationPendingWithTokenState("token").please()
 
         sut.onConnected(user, "connectionId")
 
-        sut.state shouldBeInstanceOf ClientState.UserState.UserAuthorized.Connected::class
-        val connectedState = sut.state as ClientState.UserState.UserAuthorized.Connected
+        sut.state shouldBeInstanceOf ClientState.User.Authorized.Connected::class
+        val connectedState = sut.state as ClientState.User.Authorized.Connected
         connectedState.token shouldBeEqualTo "token"
         connectedState.user shouldBeEqualTo user
         connectedState.connectionId shouldBeEqualTo "connectionId"
@@ -75,8 +75,8 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnected()
 
-        sut.state shouldBeInstanceOf ClientState.UserState.UserAuthorized.Disconnected::class
-        val state = (sut.state as ClientState.UserState.UserAuthorized.Disconnected)
+        sut.state shouldBeInstanceOf ClientState.User.Authorized.Disconnected::class
+        val state = sut.state as ClientState.User.Authorized.Disconnected
         state.connectionId shouldBeEqualTo "connectionId"
         state.token shouldBeEqualTo "token"
         state.user shouldBeEqualTo user
@@ -119,32 +119,31 @@ internal class ClientStateServiceTests {
 
         sut.onConnected(user, "someConnectionId")
 
-        sut.state shouldBeInstanceOf ClientState.UserState.UserAuthorized.Connected::class
-        val connectedState = (sut.state as ClientState.UserState.UserAuthorized.Connected)
+        sut.state shouldBeInstanceOf ClientState.User.Authorized.Connected::class
+        val connectedState = sut.state as ClientState.User.Authorized.Connected
         connectedState.user shouldBeEqualTo user
         connectedState.connectionId shouldBeEqualTo "someConnectionId"
     }
 
     @Test
     fun `Given anonymous pending without token state When token received Should move to state anonymous pending with token`() {
-        val sut = Fixture().givenAnonymousAuthorizationPendingWithoutTokenState().please()
+        val sut = Fixture().givenAnonymousPendingWithoutTokenState().please()
 
         sut.onTokenReceived("someToken")
 
-        sut.state shouldBeInstanceOf ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithToken::class
-        (sut.state as ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithToken).token shouldBeEqualTo "someToken"
+        sut.state shouldBeInstanceOf ClientState.Anonymous.Pending.WithToken::class
+        (sut.state as ClientState.Anonymous.Pending.WithToken).token shouldBeEqualTo "someToken"
     }
 
     @Test
     fun `Given anonymous pending with token state When connected Should move to state anonymous user connected`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenAnonymousAuthorizationPendingWithTokenState("token").please()
+        val sut = Fixture().givenAnonymousPendingWithTokenState("token").please()
 
         sut.onConnected(user, "connectionId")
 
-        sut.state shouldBeInstanceOf ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected::class
-        val connectedState =
-            (sut.state as ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected)
+        sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Connected::class
+        val connectedState = sut.state as ClientState.Anonymous.Authorized.Connected
         connectedState.token shouldBeEqualTo "token"
         connectedState.connectionId shouldBeEqualTo "connectionId"
         connectedState.anonymousUser shouldBeEqualTo user
@@ -157,8 +156,8 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnected()
 
-        sut.state shouldBeInstanceOf ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected::class
-        val disconnectedState = sut.state as ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected
+        sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Disconnected::class
+        val disconnectedState = sut.state as ClientState.Anonymous.Authorized.Disconnected
         disconnectedState.anonymousUser shouldBeEqualTo user
         disconnectedState.connectionId shouldBeEqualTo "connectionId"
         disconnectedState.token shouldBeEqualTo "token"
@@ -199,8 +198,8 @@ internal class ClientStateServiceTests {
 
         sut.onConnected(user, "someConnectionId")
 
-        sut.state shouldBeInstanceOf ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected::class
-        val connectedState = sut.state as ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected
+        sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Connected::class
+        val connectedState = sut.state as ClientState.Anonymous.Authorized.Connected
         connectedState.token shouldBeEqualTo "token"
         connectedState.connectionId shouldBeEqualTo "someConnectionId"
         connectedState.anonymousUser shouldBeEqualTo user
@@ -242,13 +241,13 @@ internal class ClientStateServiceTests {
             return this
         }
 
-        fun givenAnonymousAuthorizationPendingWithoutTokenState(): Fixture {
+        fun givenAnonymousPendingWithoutTokenState(): Fixture {
             clientStateService.onSetAnonymousUser()
             return this
         }
 
-        fun givenAnonymousAuthorizationPendingWithTokenState(token: String = Mother.randomString()): Fixture {
-            givenAnonymousAuthorizationPendingWithoutTokenState()
+        fun givenAnonymousPendingWithTokenState(token: String = Mother.randomString()): Fixture {
+            givenAnonymousPendingWithoutTokenState()
             clientStateService.onTokenReceived(token)
             return this
         }
@@ -258,7 +257,7 @@ internal class ClientStateServiceTests {
             token: String = Mother.randomString(),
             connectionId: String = Mother.randomString()
         ): Fixture {
-            givenAnonymousAuthorizationPendingWithTokenState(token)
+            givenAnonymousPendingWithTokenState(token)
             clientStateService.onConnected(anonymousUser, connectionId)
             return this
         }

@@ -710,8 +710,8 @@ public class ChatClient internal constructor(
 
     public fun isSocketConnected(): Boolean {
         return clientStateService.state.let {
-            it is ClientState.UserState.UserAuthorized.Connected ||
-                it is ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected
+            it is ClientState.User.Authorized.Connected ||
+                it is ClientState.Anonymous.Authorized.Connected
         }
     }
 

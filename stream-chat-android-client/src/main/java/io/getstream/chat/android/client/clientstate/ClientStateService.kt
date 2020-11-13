@@ -6,81 +6,53 @@ import io.getstream.chat.android.client.utils.FiniteStateMachine
 
 internal class ClientStateService {
     fun onConnected(user: User, connectionId: String) {
-        stateMachine.sendEvent(ChatClientEvent.ConnectedEvent(user, connectionId))
+        stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(user, connectionId))
     }
 
     fun onDisconnected() {
-        stateMachine.sendEvent(ChatClientEvent.DisconnectedEvent)
+        stateMachine.sendEvent(ClientStateEvent.DisconnectedEvent)
     }
 
     fun onSetUser(user: User) {
-        stateMachine.sendEvent(ChatClientEvent.SetUserEvent(user))
+        stateMachine.sendEvent(ClientStateEvent.SetUserEvent(user))
     }
 
     fun onSetAnonymousUser() {
-        stateMachine.sendEvent(ChatClientEvent.SetAnonymousUserEvent)
+        stateMachine.sendEvent(ClientStateEvent.SetAnonymousUserEvent)
     }
 
     fun onTokenReceived(token: String) {
-        stateMachine.sendEvent(ChatClientEvent.TokenReceivedEvent(token))
+        stateMachine.sendEvent(ClientStateEvent.TokenReceivedEvent(token))
     }
 
     fun onDisconnectRequested() {
-        stateMachine.sendEvent(ChatClientEvent.DisconnectRequestedEvent)
+        stateMachine.sendEvent(ClientStateEvent.DisconnectRequestedEvent)
     }
 
-    private val stateMachine: FiniteStateMachine<ClientState, ChatClientEvent> by lazy {
+    private val stateMachine: FiniteStateMachine<ClientState, ClientStateEvent> by lazy {
         FiniteStateMachine {
             initialState(ClientState.Idle)
 
             defaultHandler { state, event -> state.inappropriateStateError("handling event $event") }
 
             state<ClientState.Idle> {
-                onEvent<ChatClientEvent.SetUserEvent> { _, event ->
-                    ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken(event.user)
-                }
-                onEvent<ChatClientEvent.SetAnonymousUserEvent> { _, _ ->
-                    ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithoutToken
-                }
-                onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.SetUserEvent> { _, event -> ClientState.User.Pending.WithoutToken(event.user) }
+                onEvent<ClientStateEvent.SetAnonymousUserEvent> { _, _ -> ClientState.Anonymous.Pending.WithoutToken }
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
             }
 
-            state<ClientState.UserState.AuthorizationPending.AuthorizationPendingWithoutToken> {
-                onEvent<ChatClientEvent.TokenReceivedEvent> { state, event ->
-                    ClientState.UserState.AuthorizationPending.AuthorizationPendingWithToken(state.user, event.token)
-                }
-            }
-
-            state<ClientState.UserState.AuthorizationPending.AuthorizationPendingWithToken> {
-                onEvent<ChatClientEvent.ConnectedEvent> { state, event ->
-                    ClientState.UserState.UserAuthorized.Connected(event.connectionId, event.user, state.token)
+            state<ClientState.User.Pending.WithoutToken> {
+                onEvent<ClientStateEvent.TokenReceivedEvent> { state, event ->
+                    ClientState.User.Pending.WithToken(
+                        state.user,
+                        event.token
+                    )
                 }
             }
 
-            state<ClientState.UserState.UserAuthorized.Connected> {
-                onEvent<ChatClientEvent.DisconnectedEvent> { state, _ ->
-                    ClientState.UserState.UserAuthorized.Disconnected(state.connectionId, state.user, state.token)
-                }
-                onEvent<ChatClientEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-            }
-
-            state<ClientState.UserState.UserAuthorized.Disconnected> {
-                onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ChatClientEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ChatClientEvent.ConnectedEvent> { state, event ->
-                    ClientState.UserState.UserAuthorized.Connected(event.connectionId, event.user, state.token)
-                }
-            }
-
-            state<ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithoutToken> {
-                onEvent<ChatClientEvent.TokenReceivedEvent> { _, event ->
-                    ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithToken(event.token)
-                }
-            }
-
-            state<ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithToken> {
-                onEvent<ChatClientEvent.ConnectedEvent> { state, event ->
-                    ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected(
+            state<ClientState.User.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                    ClientState.User.Authorized.Connected(
                         event.connectionId,
                         event.user,
                         state.token
@@ -88,22 +60,59 @@ internal class ClientStateService {
                 }
             }
 
-            state<ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected> {
-                onEvent<ChatClientEvent.DisconnectedEvent> { state, _ ->
-                    ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected(
+            state<ClientState.User.Authorized.Connected> {
+                onEvent<ClientStateEvent.DisconnectedEvent> { state, _ ->
+                    ClientState.User.Authorized.Disconnected(
+                        state.connectionId,
+                        state.user,
+                        state.token
+                    )
+                }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+            }
+
+            state<ClientState.User.Authorized.Disconnected> {
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                    ClientState.User.Authorized.Connected(
+                        event.connectionId,
+                        event.user,
+                        state.token
+                    )
+                }
+            }
+
+            state<ClientState.Anonymous.Pending.WithoutToken> {
+                onEvent<ClientStateEvent.TokenReceivedEvent> { _, event -> ClientState.Anonymous.Pending.WithToken(event.token) }
+            }
+
+            state<ClientState.Anonymous.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                    ClientState.Anonymous.Authorized.Connected(
+                        event.connectionId,
+                        event.user,
+                        state.token
+                    )
+                }
+            }
+
+            state<ClientState.Anonymous.Authorized.Connected> {
+                onEvent<ClientStateEvent.DisconnectedEvent> { state, _ ->
+                    ClientState.Anonymous.Authorized.Disconnected(
                         state.connectionId,
                         state.anonymousUser,
                         state.token
                     )
                 }
-                onEvent<ChatClientEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
             }
 
-            state<ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected> {
-                onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ChatClientEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ChatClientEvent.ConnectedEvent> { state, event ->
-                    ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected(
+            state<ClientState.Anonymous.Authorized.Disconnected> {
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                    ClientState.Anonymous.Authorized.Connected(
                         event.connectionId,
                         event.user,
                         state.token
@@ -116,12 +125,12 @@ internal class ClientStateService {
     internal val state
         get() = stateMachine.state
 
-    private sealed class ChatClientEvent : Event {
-        class SetUserEvent(val user: User) : ChatClientEvent()
-        object SetAnonymousUserEvent : ChatClientEvent()
-        class TokenReceivedEvent(val token: String) : ChatClientEvent()
-        class ConnectedEvent(val user: User, val connectionId: String) : ChatClientEvent()
-        object DisconnectRequestedEvent : ChatClientEvent()
-        object DisconnectedEvent : ChatClientEvent()
+    private sealed class ClientStateEvent : Event {
+        class SetUserEvent(val user: User) : ClientStateEvent()
+        object SetAnonymousUserEvent : ClientStateEvent()
+        class TokenReceivedEvent(val token: String) : ClientStateEvent()
+        class ConnectedEvent(val user: User, val connectionId: String) : ClientStateEvent()
+        object DisconnectRequestedEvent : ClientStateEvent()
+        object DisconnectedEvent : ClientStateEvent()
     }
 }
