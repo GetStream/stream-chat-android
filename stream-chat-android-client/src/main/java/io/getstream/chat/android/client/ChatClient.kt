@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -69,6 +70,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService()
 ) : LifecycleObserver {
+    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService)
 
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -479,22 +481,11 @@ public class ChatClient internal constructor(
         request: QueryChannelRequest
     ): Call<Channel> {
         // for convenience we add the message.cid field
-        return api.queryChannel(channelType, channelId, request)
-            .map { channel ->
-                channel.messages.forEach { message -> message.cid = channel.cid }
-                channel
-            }
+        return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
     }
 
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request).map { channels ->
-            channels.map { channel ->
-                channel.messages.forEach { message ->
-                    message.cid = channel.cid
-                }
-            }
-            channels
-        }
+        return queryChannelsPostponeHelper.queryChannels(request)
     }
 
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
