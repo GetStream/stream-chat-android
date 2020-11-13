@@ -46,6 +46,7 @@ internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId
     var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** create a reactionEntity from a reaction object */
+    @Suppress("USELESS_ELVIS")
     constructor(r: Reaction) : this(r.messageId, r.fetchUserId(), r.type) {
         score = r.score
         createdAt = r.createdAt
@@ -55,6 +56,7 @@ internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId
     }
 
     /** converts a reaction entity into a Reaction */
+    @Suppress("USELESS_ELVIS")
     fun toReaction(userMap: Map<String, User>): Reaction {
         val r = Reaction(messageId, type, score)
         r.userId = userId

@@ -66,9 +66,6 @@ public class ChatClient internal constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
-    private var appContext: Context,
-    private val notificationsHandler: ChatNotificationHandler,
-    private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService()
 ) : LifecycleObserver {
@@ -152,8 +149,8 @@ public class ChatClient internal constructor(
         }
         clientStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUX can use
-        for (listener in preSetUserListeners) {
-            listener(user)
+        for (preSetUserListener in preSetUserListeners) {
+            preSetUserListener(user)
         }
         connectionListener = listener
         config.isAnonymous = false
@@ -232,15 +229,6 @@ public class ChatClient internal constructor(
 
     public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteImage(channelType, channelId, url)
-    }
-
-    public fun replayEvents(
-        channelIds: List<String>,
-        since: Date?,
-        limit: Int,
-        offset: Int
-    ): Call<List<ChatEvent>> {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     //region Reactions
@@ -418,7 +406,7 @@ public class ChatClient internal constructor(
 
     public fun disconnect() {
 
-        // fire a handler here that the chatDomain and chatUX can use
+        // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             clientStateService.state.userOrError().let { user ->
                 disconnectListeners.forEach { listener -> listener(user) }
@@ -688,11 +676,11 @@ public class ChatClient internal constructor(
 
     //endregion
 
-    public fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
+    public fun onMessageReceived(remoteMessage: RemoteMessage) {
         notifications.onFirebaseMessage(remoteMessage)
     }
 
-    public fun onNewTokenReceived(token: String, context: Context) {
+    public fun onNewTokenReceived(token: String) {
         notifications.setFirebaseToken(token)
     }
 
@@ -925,9 +913,6 @@ public class ChatClient internal constructor(
                 module.api(),
                 module.socket(),
                 module.notifications(),
-                appContext,
-                notificationsHandler,
-                fileUploader,
                 tokenManager
             )
             instance = result

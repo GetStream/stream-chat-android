@@ -35,6 +35,8 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    resourcePrefix 'stream_'
+
     buildFeatures {
         viewBinding true
     }

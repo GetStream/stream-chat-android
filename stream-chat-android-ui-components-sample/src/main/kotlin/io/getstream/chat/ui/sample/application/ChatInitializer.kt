@@ -10,6 +10,7 @@ import io.getstream.chat.ui.sample.R
 
 class ChatInitializer(private val context: Context) {
 
+    @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         val notificationConfig =
             NotificationConfig(
