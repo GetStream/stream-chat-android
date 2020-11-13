@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.channel.list.adapter
 
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -15,12 +14,6 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     public companion object {
         public val DEFAULT_DIFF: ChannelItemDiff = ChannelItemDiff()
     }
-
-    override var userClickListener: ChannelListView.UserClickListener? = null
-
-    override var channelClickListener: ChannelListView.ChannelClickListener? = null
-
-    override var channelLongClickListener: ChannelListView.ChannelClickListener? = null
 
     public var viewHolderFactory: BaseChannelViewHolderFactory<out BaseChannelListItemViewHolder>? = null
 
