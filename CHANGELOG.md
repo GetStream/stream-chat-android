@@ -2,6 +2,15 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android-ui-component
+
+## stream-chat-android
+
+## stream-chat-android-client
+
+## stream-chat-android-offline
+
+# Nov 13th, 2020 - 4.4.2
+## stream-chat-android-ui-component
 Added new MessageInputView structure
 
 ## stream-chat-android
@@ -12,10 +21,15 @@ Added new MessageInputView structure
     - Convert to kotlin: `ReadStateView`, `MessageListViewStyle`
 - Add `streamShowSendAlsoToChannelCheckbox` attr to `MessageInputView` controlling visibility of "send also to channel" checkbox
 - The sample app no longer uses Koin for dependency injection
+- Add `streamCopyMessageActionEnabled`, `streamFlagMessageActionEnabled`, and `streamStartThreadMessageActionEnabled` attrs to `MessageListView`
+- Validate message text length in MessageInputView.
+    - Add property `MessageInputView.maxMessageLength: Int` and show warning once the char limit is exceeded
+    - Expose `MessageInputViewModel.maxMessageLength: Int` informing about text length limit of the Channel
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
 - Added MarkAllReadEvent
+- Fix UpdateUsers call
 
 ## stream-chat-android-offline
 - Update `totalUnreadCount` when user is connected

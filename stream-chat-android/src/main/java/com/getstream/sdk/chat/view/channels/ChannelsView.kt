@@ -19,7 +19,7 @@ public class ChannelsView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    private val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
+    private val CHANNEL_LIST_VIEW_ID = R.id.stream_channels_list_view_id
 
     private var emptyStateView: View = defaultEmptyStateView()
     private var loadingView: View = defaultLoadingView()

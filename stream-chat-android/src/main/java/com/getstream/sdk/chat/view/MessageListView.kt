@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -368,14 +369,13 @@ public class MessageListView : ConstraintLayout {
                     if (!::layoutManager.isInitialized || currentList.isEmpty()) {
                         return
                     }
-
                     val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
                     val currentLastVisible = layoutManager.findLastVisibleItemPosition()
 
                     hasScrolledUp = currentLastVisible < lastPosition()
                     firstVisiblePosition = currentFirstVisible
 
-                    val realLastVisibleMessage = max(currentLastVisible, lastSeenMessagePosition())
+                    val realLastVisibleMessage = min(max(currentLastVisible, lastSeenMessagePosition()), currentList.size)
                     lastSeenMessage = currentList[realLastVisibleMessage]
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage

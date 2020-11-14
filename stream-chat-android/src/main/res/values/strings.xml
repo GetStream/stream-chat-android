@@ -23,6 +23,7 @@
     <string name="stream_input_type_command">Commands matching</string>
     <string name="stream_input_type_auto_mention">Searching for people</string>
     <string name="stream_input_camera_title">Capture Image or Video</string>
+    <string name="stream_message_length_exceeded_error">"Max message length (%s) exceeded."</string>
 
     <string name="stream_permissions_camera_title">Camera and Storage Access Permission</string>
     <string name="stream_permissions_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
@@ -81,6 +82,6 @@
     <string name="stream_channels_empty_state_label">No channels available</string>
 
     <!-- Message list view -->
-    <string name="messages_empty_state_label">No messages</string>
+    <string name="stream_messages_empty_state_label">No messages</string>
 
 </resources>

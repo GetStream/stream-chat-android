@@ -26,6 +26,8 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    resourcePrefix 'stream_'
+
     buildFeatures {
         viewBinding true
     }
@@ -81,5 +83,4 @@ dependencies {
     implementation Dependencies.materialComponents
     implementation Dependencies.fragmentKtx
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.constraintLayout
 }

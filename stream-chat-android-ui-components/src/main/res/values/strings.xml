@@ -2,7 +2,7 @@
 <resources>
     <!--Command Suggestions-->
     <string name="stream_commands_instant_commands">Instant Commands</string>
-    <string name="stream_command_command_template">/%s %s</string>
+    <string name="stream_command_command_template">/%1$s %2$s</string>
 
     <!--Mention Suggestions-->
     <string name="stream_mention_user_name_template">\@%s</string>
@@ -25,4 +25,11 @@
     <string name="stream_search_view_hint">Search</string>
     <string name="stream_search_view_search_icon_description">Search</string>
     <string name="stream_search_view_clear_input_description">Clear</string>
+
+    <!--Add Channel-->
+    <string name="stream_add_channel_back_icon_description">Back</string>
+    <string name="stream_add_channel_add_member_icon_description">Add member</string>
+    <string name="stream_add_channel_title">New Chat</string>
+    <string name="stream_add_member_title">TO:</string>
+    <string name="stream_add_member_hint">Type a name</string>
 </resources>
