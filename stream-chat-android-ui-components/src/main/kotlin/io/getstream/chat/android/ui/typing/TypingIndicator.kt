@@ -10,6 +10,12 @@ public class TypingIndicator : LinearLayout {
 
     private lateinit var binding: StreamTyppingIndicatorViewBinding
 
+    public var message: String
+        get() = binding.tvUserTyping.text.toString()
+        set(value) {
+            binding.tvUserTyping.text = value
+        }
+
     public constructor(context: Context?) : super(context) {
         init()
     }
