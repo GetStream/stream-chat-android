@@ -52,12 +52,6 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android-offline/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-offline/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android:
     name: stream-chat-android
@@ -79,12 +73,6 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android_ui_components:
     name: stream-chat-android-ui-components
@@ -106,9 +94,3 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android-ui-components/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-ui-components/build/reports/tests/testReleaseUnitTest
