@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -113,10 +114,13 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun eventUpdatedChannel() = runBlockingTest {
+    fun eventUpdatedChannel() = runBlocking {
+        val channel1 = channelControllerImpl.channelData.getOrAwaitValue()
+        Truth.assertThat(channel1.extraData["color"]).isNull()
+
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
-        val channel = channelControllerImpl.channelData.getOrAwaitValue()
-        Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
+        val channel2 = channelControllerImpl.channelData.getOrAwaitValue()
+        Truth.assertThat(channel2.extraData["color"]).isEqualTo("green")
     }
 
     @Test

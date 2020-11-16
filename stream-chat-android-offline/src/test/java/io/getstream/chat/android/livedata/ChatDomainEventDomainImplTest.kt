@@ -101,17 +101,6 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             Truth.assertThat(channelData.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
         }
 
-    @Ignore
-    @Test
-    fun `test the online and initialization livedata`() = runBlocking {
-        chatDomainImpl.eventHandler.handleEvent(data.connectedEvent)
-        Truth.assertThat(chatDomainImpl.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(chatDomainImpl.online.getOrAwaitValue()).isTrue()
-        chatDomainImpl.eventHandler.handleEvent(data.disconnectedEvent)
-        Truth.assertThat(chatDomainImpl.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(chatDomainImpl.online.getOrAwaitValue()).isFalse()
-    }
-
     @Test
     fun `the current user information should be stored using users insertMe`() = runBlocking {
         data.user1.extraData = mutableMapOf("snack" to "icecream")

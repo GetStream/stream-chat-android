@@ -365,7 +365,8 @@ public class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (!::layoutManager.isInitialized) {
+                    val currentList = adapter.currentList.toList()
+                    if (!::layoutManager.isInitialized || currentList.isEmpty()) {
                         return
                     }
                     val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
@@ -374,7 +375,6 @@ public class MessageListView : ConstraintLayout {
                     hasScrolledUp = currentLastVisible < lastPosition()
                     firstVisiblePosition = currentFirstVisible
 
-                    val currentList = adapter.currentList
                     val realLastVisibleMessage = min(max(currentLastVisible, lastSeenMessagePosition()), currentList.size)
                     lastSeenMessage = currentList[realLastVisibleMessage]
 
