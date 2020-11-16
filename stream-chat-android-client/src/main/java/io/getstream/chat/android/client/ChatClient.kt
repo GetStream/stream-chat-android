@@ -148,7 +148,7 @@ public class ChatClient internal constructor(
             return
         }
         clientStateService.onSetUser(user)
-        // fire a handler here that the chatDomain and chatUX can use
+        // fire a handler here that the chatDomain and chatUI can use
         for (preSetUserListener in preSetUserListeners) {
             preSetUserListener(user)
         }
