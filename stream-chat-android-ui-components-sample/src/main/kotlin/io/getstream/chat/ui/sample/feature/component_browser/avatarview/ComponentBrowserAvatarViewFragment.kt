@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserAvatarViewBinding
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
 class ComponentBrowserAvatarViewFragment : Fragment() {
 
@@ -104,36 +102,6 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
         }
         binding.avatarViewLargeIndicator.apply {
             setUserData(randomUser(isOnline = true))
-        }
-    }
-
-    companion object {
-        private fun randomImageUrl(): String {
-            val category = listOf("men", "women").random()
-            val index = (0..99).random()
-            return "https://randomuser.me/api/portraits/$category/$index.jpg"
-        }
-
-        internal fun randomUser(
-            withImage: Boolean = true,
-            isOnline: Boolean = false,
-        ): User {
-            return User().apply {
-                name = "${('A'..'Z').random()} ${('A'..'Z').random()}"
-
-                if (withImage) {
-                    image = randomImageUrl()
-                }
-                if (isOnline) {
-                    online = true
-                }
-            }
-        }
-
-        internal fun randomChannel(): Channel {
-            return Channel().apply {
-                name = "Sample Channel"
-            }
         }
     }
 }
