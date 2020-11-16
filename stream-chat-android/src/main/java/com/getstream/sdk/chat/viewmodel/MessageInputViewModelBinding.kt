@@ -72,4 +72,5 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
     }
     members.observe(lifecycleOwner) { view.configureMembers(it) }
     commands.observe(lifecycleOwner) { view.configureCommands(it) }
+    view.maxMessageLength = this.maxMessageLength
 }
