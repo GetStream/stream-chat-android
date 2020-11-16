@@ -14,28 +14,30 @@ import java.util.Date
 public data class ChannelData(
     var type: String,
     var channelId: String,
-    val cooldown: Int = 0
-) {
-    var cid: String = "%s:%s".format(type, channelId)
+    var cid: String = "%s:%s".format(type, channelId),
 
     /** created by user */
-    var createdBy: User = User()
+    var createdBy: User = User(),
+
+    var cooldown: Int = 0,
 
     /** if the channel is frozen or not (new messages wont be allowed) */
-    var frozen: Boolean = false
+    var frozen: Boolean = false,
 
     /** when the channel was created */
-    var createdAt: Date? = null
+    var createdAt: Date? = null,
     /** when the channel was updated */
-    var updatedAt: Date? = null
+    var updatedAt: Date? = null,
     /** when the channel was deleted */
-    var deletedAt: Date? = null
+    var deletedAt: Date? = null,
     /** all the custom data provided for this channel */
     var extraData: MutableMap<String, Any> = mutableMapOf()
+) {
 
     /** create a ChannelData object from a Channel object */
-    public constructor(c: Channel) : this(c.type, c.id, c.cooldown) {
+    public constructor(c: Channel) : this(c.type, c.id) {
         frozen = c.frozen
+        cooldown = c.cooldown
         createdAt = c.createdAt
         updatedAt = c.updatedAt
         deletedAt = c.deletedAt
