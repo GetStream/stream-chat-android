@@ -4,16 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/stream_white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     >
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animating_dots"
-        android:layout_width="30dp"
+        android:layout_width="20dp"
         android:layout_height="wrap_content"
-        android:background="@color/stream_gray_dark"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/typing_dots"
@@ -23,8 +21,7 @@
         android:id="@+id/text_blah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="One user is typing"
-        android:textColor="@color/stream_black"
+        android:layout_marginStart="8dp"
         tools:text="One user is typing"
         />
 
