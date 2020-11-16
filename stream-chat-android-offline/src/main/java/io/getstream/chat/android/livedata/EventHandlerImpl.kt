@@ -428,13 +428,13 @@ internal class EventHandlerImpl(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
-                    domainImpl.postOffline()
+                    domainImpl.setOffline()
                 }
                 is ConnectedEvent -> {
                     val recovered = domainImpl.isInitialized()
 
-                    domainImpl.postOnline()
-                    domainImpl.postInitialized()
+                    domainImpl.setOnline()
+                    domainImpl.setInitialized()
                     if (recovered && domainImpl.recoveryEnabled) {
                         domainImpl.connectionRecovered(true)
                     } else {

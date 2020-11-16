@@ -6,6 +6,7 @@ import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
@@ -52,6 +53,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
@@ -120,8 +122,9 @@ internal class ChatDomainImpl internal constructor(
         appContext
     )
 
-    private val _initialized = MutableLiveData(false)
-    private val _online = MutableLiveData(false)
+    private val _initialized = MutableStateFlow(false)
+    private val _online = MutableStateFlow(false)
+
     private val _totalUnreadCount = MutableLiveData<Int>()
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
@@ -137,12 +140,12 @@ internal class ChatDomainImpl internal constructor(
     var defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
     /** if the client connection has been initialized */
-    override val initialized: LiveData<Boolean> = _initialized
+    override val initialized: LiveData<Boolean> = _initialized.asLiveData()
 
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    override val online: LiveData<Boolean> = _online
+    override val online: LiveData<Boolean> = _online.asLiveData()
 
     /**
      * The total unread message count for the current user.
@@ -200,15 +203,13 @@ internal class ChatDomainImpl internal constructor(
     private var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
-    private var isOnline = false
-
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
     private fun clearState() {
-        _initialized.postValue(false)
-        _online.postValue(false)
+        _initialized.value = false
+        _online.value = false
         _totalUnreadCount.postValue(0)
         _channelUnreadCount.postValue(0)
         _banned.postValue(false)
@@ -272,7 +273,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            postOnline()
+            setOnline()
         }
         startListening()
         initClean()
@@ -520,31 +521,23 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setOffline() {
-        isOnline = false
         _online.value = false
     }
 
-    internal fun postOffline() {
-        isOnline = false
-        _online.postValue(false)
-    }
-
     internal fun setOnline() {
-        isOnline = true
         _online.value = true
     }
 
-    internal fun postOnline() {
-        isOnline = true
-        _online.postValue(true)
+    internal fun setInitialized() {
+        _initialized.value = true
     }
 
-    override fun isOnline(): Boolean = isOnline
+    override fun isOnline(): Boolean = _online.value
 
-    override fun isOffline(): Boolean = !isOnline
+    override fun isOffline(): Boolean = !_online.value
 
     override fun isInitialized(): Boolean {
-        return _initialized.value ?: false
+        return _initialized.value
     }
 
     override fun getActiveQueries(): List<QueryChannelsControllerImpl> {
@@ -765,10 +758,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun getChannelConfig(channelType: String): Config {
         return repos.configs.select(channelType) ?: defaultConfig
-    }
-
-    fun postInitialized() {
-        _initialized.postValue(true)
     }
 
     companion object {
