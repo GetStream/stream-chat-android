@@ -123,6 +123,7 @@
         <attr name="streamAvatarWidth" />
         <attr name="streamAvatarHeight" />
         <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarBorderColor" />
         <attr name="streamAvatarTextSize" />
         <attr name="streamAvatarTextColor" />
         <attr name="streamAvatarTextFont" />
