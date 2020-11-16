@@ -2,6 +2,15 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android-ui-component
+
+## stream-chat-android
+
+## stream-chat-android-client
+
+## stream-chat-android-offline
+
+# Nov 13th, 2020 - 4.4.2
+## stream-chat-android-ui-component
 Added new MessageInputView structure
 
 ## stream-chat-android
