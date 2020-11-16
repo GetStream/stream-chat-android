@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.utils
 
 import io.getstream.chat.android.client.internal.DispatcherProvider
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
@@ -27,7 +27,7 @@ internal class StartStopBuffer<T> {
     }
 
     private fun propagateData() {
-        GlobalScope.launch(DispatcherProvider.IO) {
+        CoroutineScope(DispatcherProvider.IO).launch {
             while (active.get() && events.isNotEmpty()) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
