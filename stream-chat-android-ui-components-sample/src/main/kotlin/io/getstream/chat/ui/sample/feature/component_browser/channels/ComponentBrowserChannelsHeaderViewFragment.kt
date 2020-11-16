@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
-import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserChannelsHeaderViewBinding
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
 class ComponentBrowserChannelsHeaderViewFragment : Fragment() {
 
@@ -32,31 +29,26 @@ class ComponentBrowserChannelsHeaderViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sampleUser = AppConfig.availableUsers.first()
-        val user = User().apply {
-            id = sampleUser.id
-            image = sampleUser.image
-            name = sampleUser.name
-        }
-        binding.headerOnlineStatus.setUser(user)
+
+        binding.headerOnlineStatus.setUser(randomUser())
         binding.headerOnlineStatus.showOnlineTitle()
 
-        binding.headerOfflineStatus.setUser(user)
+        binding.headerOfflineStatus.setUser(randomUser())
         binding.headerOfflineStatus.showOfflineTitle()
 
-        binding.headerOfflineStatusWithoutProgress.setUser(user)
+        binding.headerOfflineStatusWithoutProgress.setUser(randomUser())
         binding.headerOfflineStatusWithoutProgress.showOfflineTitle()
 
-        binding.headerWithoutStatus.setUser(user)
+        binding.headerWithoutStatus.setUser(randomUser())
         binding.headerWithoutStatus.hideTitle()
 
-        binding.headerWithoutUserAvatar.setUser(user)
+        binding.headerWithoutUserAvatar.setUser(randomUser())
         binding.headerWithoutUserAvatar.showOfflineTitle()
 
-        binding.headerWithoutAddChannel.setUser(user)
+        binding.headerWithoutAddChannel.setUser(randomUser())
         binding.headerWithoutAddChannel.showOfflineTitle()
 
-        binding.headerWithoutUserAvatarAndAddChannel.setUser(user)
+        binding.headerWithoutUserAvatarAndAddChannel.setUser(randomUser())
         binding.headerWithoutUserAvatarAndAddChannel.showOfflineTitle()
     }
 }
