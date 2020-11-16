@@ -1,10 +1,10 @@
 package com.getstream.sdk.chat.utils
 
-internal object Constant {
-    const val USER_LIMIT = 30
+import io.getstream.chat.android.client.internal.InternalStreamChatApi
 
-    // File Attach
-    const val MEDIA_TYPE_IMAGE = 1
-    const val MEDIA_TYPE_VIDEO = 3
-    const val MAX_UPLOAD_FILE_SIZE = 1024 * 1024 * 20 // 20 MB
+@InternalStreamChatApi
+public object Constant {
+    public const val MEDIA_TYPE_IMAGE: Int = 1
+    public const val MEDIA_TYPE_VIDEO: Int = 3
+    public const val MAX_UPLOAD_FILE_SIZE: Long = 1024 * 1024 * 20 // 20 MB
 }

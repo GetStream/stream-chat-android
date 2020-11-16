@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="stream_blue">#006CFF</color>
+    <color name="stream_grey">#808080</color>
+    <color name="stream_grey_light">#F5F5F5</color>
 
     <color name="stream_text_black">@color/stream_black</color>
-    <color name="stream_text_grey">#808080</color>
+    <color name="stream_text_grey">@color/stream_grey</color>
     <color name="stream_text_red">#FF3742</color>
 
     <color name="stream_avatar_gradient_orange">#FF8A65</color>
@@ -26,4 +28,6 @@
         <item>@color/stream_avatar_gradient_yellow</item>
         <item>@color/stream_avatar_gradient_red</item>
     </array>
+
+    <color name="stream_attachment_dialog_selection_overlay">#80000000</color>
 </resources>

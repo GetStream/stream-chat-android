@@ -32,4 +32,10 @@
     <string name="stream_add_channel_title">New Chat</string>
     <string name="stream_add_member_title">TO:</string>
     <string name="stream_add_member_hint">Type a name</string>
+
+    <!--Attachment Dialog-->
+    <string name="stream_attachment_dialog_recent_files">Recent Files</string>
+    <string name="stream_attachment_dialog_permission_camera">Allow access to your Camera</string>
+    <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
+    <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
 </resources>

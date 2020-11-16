@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
+import io.getstream.chat.android.client.internal.InternalStreamChatApi
 
-internal class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
+@InternalStreamChatApi
+public class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
 
     override fun createIntent(
         context: Context,
