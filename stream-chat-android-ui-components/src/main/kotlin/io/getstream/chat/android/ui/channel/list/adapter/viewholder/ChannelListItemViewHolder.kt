@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
+import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserRead
@@ -54,13 +55,13 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                 }
 
                 if (lastMessageChanged) {
-                    lastMessageLabel.text = channel.getLastMessage().let { lastMessage ->
+                    lastMessageLabel.text = channel.getLastMessage()?.let { lastMessage ->
                         context.getString(
                             R.string.stream_channel_item_last_message_template,
-                            lastMessage?.getDisplayName(),
-                            lastMessage?.text
+                            lastMessage.getDisplayName(),
+                            lastMessage.text
                         )
-                    }
+                    } ?: String.EMPTY
 
                     channel.getLastMessageTime()
                         ?.let(TIME_FORMAT::format)
