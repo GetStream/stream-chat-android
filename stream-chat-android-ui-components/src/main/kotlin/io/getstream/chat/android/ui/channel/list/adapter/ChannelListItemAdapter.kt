@@ -1,40 +1,46 @@
 package io.getstream.chat.android.ui.channel.list.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
 public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
+    public var viewHolderFactory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder> =
+        ChannelViewHolderFactory()
+
     public companion object {
         public val DEFAULT_DIFF: ChannelItemDiff = ChannelItemDiff()
     }
 
-    public var viewHolderFactory: BaseChannelViewHolderFactory<out BaseChannelListItemViewHolder>? = null
-
     public override var style: ChannelListViewStyle? = null
 
+    /**
+     * Returns the layout for the channel items.
+     * Its behavior is such that specifying a layout in the [BaseChannelViewHolderFactory] takes precedence.
+     * If the layout is omitted, the layout specified in the style is used.
+     * If the style layout is omitted, our default layout resource is used.
+     *
+     * @return the resolved layout resource
+     */
     private fun getChannelItemLayout(): Int =
-        style?.channelPreviewLayout ?: R.layout.stream_channel_list_item_view
+        viewHolderFactory.viewHolderLayout
+            ?: style?.channelPreviewLayout
+            ?: R.layout.stream_channel_list_item_view
 
     override fun getItemCount(): Int = channels.count()
 
-    override fun getItemViewType(position: Int): Int =
-        viewHolderFactory?.getItemViewType(channels[position])
-            ?: throw IllegalStateException("Please provide a view holder factory")
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder =
-        viewHolderFactory?.createChannelViewHolder(getChannelItemLayout(), parent, viewType)?.also { vh ->
-            vh.style = style
-            vh.userClickListener = userClickListener
-            vh.channelLongClickListener = channelLongClickListener
-            vh.channelClickListener = channelClickListener
-        } ?: throw IllegalStateException("Please provide a view holder factory")
+        LayoutInflater.from(parent.context)
+            .inflate(getChannelItemLayout(), parent, false)
+            .let { viewHolderFactory.createChannelViewHolder(it) }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
         holder.bind(channels[position], position, payloads.firstOrDefault(DEFAULT_DIFF).cast())

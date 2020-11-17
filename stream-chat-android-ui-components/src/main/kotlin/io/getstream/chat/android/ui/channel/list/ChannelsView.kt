@@ -23,7 +23,8 @@ public class ChannelsView @JvmOverloads constructor(
 
     private var emptyStateView: View = defaultEmptyStateView()
     private var loadingView: View = defaultLoadingView()
-    private val channelListView: ChannelListView = ChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
+    private val channelListView: ChannelListView =
+        ChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
 
     init {
         addView(channelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -72,16 +73,20 @@ public class ChannelsView @JvmOverloads constructor(
         addView(loadingView, layoutParams)
     }
 
-    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<out BaseChannelListItemViewHolder>) {
-        this.channelListView.setViewHolderFactory(factory)
+    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
+        channelListView.setViewHolderFactory(factory)
     }
 
-    public fun setOnChannelClickListener(listener: (Channel) -> Unit) {
-        channelListView.setOnChannelClickListener(listener)
+    public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener) {
+        channelListView.setChannelClickListener(listener)
     }
 
-    public fun setOnLongClickListener(listener: ChannelListView.ChannelClickListener) {
-        channelListView.setOnLongClickListener(listener)
+    public fun setChannelLongClickListener(listener: ChannelListView.ChannelClickListener) {
+        channelListView.setChannelLongClickListener(listener)
+    }
+
+    public fun setUserClickListener(listener: ChannelListView.UserClickListener) {
+        channelListView.setUserClickListener(listener)
     }
 
     public fun setOnEndReachedListener(listener: () -> Unit) {

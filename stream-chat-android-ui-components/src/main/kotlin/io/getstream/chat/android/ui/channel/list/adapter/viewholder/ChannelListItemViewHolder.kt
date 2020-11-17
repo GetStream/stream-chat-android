@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.View
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
 import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
@@ -18,13 +19,19 @@ import io.getstream.chat.android.ui.utils.extensions.getUsers
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
+public class ChannelListItemViewHolder(
+    itemView: View,
+    public var channelClickListener: ChannelListView.ChannelClickListener? = null,
+    public var channelLongClickListener: ChannelListView.ChannelClickListener? = null,
+    public var userClickListener: ChannelListView.UserClickListener? = null,
+    public var style: ChannelListViewStyle? = null
+) : BaseChannelListItemViewHolder(itemView) {
 
     public companion object {
         @SuppressLint("ConstantLocale")
         private val DEFAULT_LOCALE: Locale = Locale.getDefault()
 
-        private val TIME_FORMAT = SimpleDateFormat("HH:mm", DEFAULT_LOCALE)
+        private val TIME_FORMAT = SimpleDateFormat("hh:mm", DEFAULT_LOCALE)
     }
 
     public override fun bind(channel: Channel, position: Int, diff: ChannelItemDiff?) {
