@@ -4,7 +4,8 @@ include (
 		':stream-chat-android-ui-components',
 		':stream-chat-android-ui-components-sample',
 		':stream-chat-android-offline',
-		':stream-chat-android-client'
+		':stream-chat-android-client',
+		':stream-chat-android-core',
 )
 
 buildCache {
