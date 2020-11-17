@@ -2,7 +2,7 @@
 
 package io.getstream.chat.android.livedata.utils
 
-import io.getstream.chat.android.client.internal.DispatcherProvider
+import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.rules.TestWatcher
