@@ -29,9 +29,12 @@
     <!--Add Channel-->
     <string name="stream_add_channel_back_icon_description">Back</string>
     <string name="stream_add_channel_add_member_icon_description">Add member</string>
+    <string name="stream_add_channel_user_checked_description">User checked</string>
     <string name="stream_add_channel_title">New Chat</string>
     <string name="stream_add_member_title">TO:</string>
     <string name="stream_add_member_hint">Type a name</string>
+    <string name="stream_create_group">Create a Group</string>
+    <string name="stream_add_channel_user_list_title">On the platform</string>
 
     <!--Attachment Dialog-->
     <string name="stream_attachment_dialog_recent_files">Recent Files</string>
