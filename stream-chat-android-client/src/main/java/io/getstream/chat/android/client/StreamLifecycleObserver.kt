@@ -1,11 +1,11 @@
-package com.getstream.sdk.chat
+package io.getstream.chat.android.client
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 
-internal class StreamLifecycleObserver(var handler: LifecycleHandler) : LifecycleObserver {
+internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : LifecycleObserver {
     private var recurringResumeEvent = false
 
     fun observe() {
@@ -34,4 +34,9 @@ internal class StreamLifecycleObserver(var handler: LifecycleHandler) : Lifecycl
     fun onStopped() {
         handler.stopped()
     }
+}
+
+internal interface LifecycleHandler {
+    fun resume()
+    fun stopped()
 }
