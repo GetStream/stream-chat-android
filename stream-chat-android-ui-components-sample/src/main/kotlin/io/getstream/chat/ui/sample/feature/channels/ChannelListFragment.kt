@@ -1,7 +1,6 @@
 package io.getstream.chat.ui.sample.feature.channels
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,18 +12,10 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.channel.list.ChannelsView
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
-import io.getstream.chat.ui.sample.databinding.SampleViewHolderBinding
 
 class ChannelListFragment : Fragment() {
 
@@ -63,40 +54,8 @@ class ChannelListFragment : Fragment() {
                 ChatLogger.instance.logD(it.name, "clicked!")
             }
 
-            // testCustomViewHolderAPI()
-
             viewModel.bindView(this, viewLifecycleOwner)
         }
-    }
-
-    private fun ChannelsView.testCustomViewHolderAPI() {
-        class TestViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
-            override fun bind(
-                channel: Channel,
-                diff: ChannelDiff?,
-                channelClickListener: ChannelListView.ChannelClickListener,
-                channelLongClickListener: ChannelListView.ChannelClickListener,
-                userClickListener: ChannelListView.UserClickListener,
-                style: ChannelListViewStyle?
-            ) {
-                itemView.setOnClickListener {
-                    channelClickListener.onClick(channel)
-                }
-
-                SampleViewHolderBinding.bind(itemView).apply {
-                    textView.text = channel.name
-                    style?.let {
-                        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, it.channelTitleText.size.toFloat())
-                    }
-                }
-            }
-        }
-
-        setViewHolderFactory(
-            object : BaseChannelViewHolderFactory<TestViewHolder>(R.layout.sample_view_holder) {
-                override fun createChannelViewHolder(itemView: View): TestViewHolder = TestViewHolder(itemView)
-            }
-        )
     }
 
     private fun setupOnClickListeners() {
