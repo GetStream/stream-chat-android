@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils
 
-import io.getstream.chat.android.client.internal.InternalStreamChatApi
+import io.getstream.chat.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public object Constant {

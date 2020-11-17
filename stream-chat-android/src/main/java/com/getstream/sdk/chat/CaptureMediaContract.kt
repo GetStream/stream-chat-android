@@ -9,7 +9,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.FileProvider
-import io.getstream.chat.android.client.internal.InternalStreamChatApi
+import io.getstream.chat.core.internal.InternalStreamChatApi
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
