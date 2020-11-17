@@ -6,6 +6,7 @@
 ## stream-chat-android
 
 ## stream-chat-android-client
+- There is no more the requirement to wait set user before querying channels
 
 ## stream-chat-android-offline
 
