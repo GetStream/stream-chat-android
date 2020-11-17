@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.TypeEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -133,13 +134,15 @@ internal class ChannelControllerImpl(
         .asLiveData()
 
     /** who is currently typing (current user is excluded from this) */
-    override val typing: LiveData<List<User>> = _typing
+    override val typing: LiveData<TypeEvent> = _typing
         .map {
-            it.values
+            val userList = it.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
                 }
+
+            TypeEvent(channelId, userList)
         }.asLiveData()
 
     /** how far every user in this channel has read */

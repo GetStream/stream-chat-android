@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.TypeEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
@@ -76,7 +77,7 @@ public interface ChatDomain {
     /** The retry policy for retrying failed requests */
     public var retryPolicy: RetryPolicy
 
-    public val typingUpdates: LiveData<Pair<String, List<User>>>
+    public val typingUpdates: LiveData<TypeEvent>
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     public val useCases: UseCaseHelper

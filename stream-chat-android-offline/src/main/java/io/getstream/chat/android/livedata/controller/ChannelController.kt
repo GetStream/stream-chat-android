@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypeEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
 
@@ -34,7 +35,7 @@ public interface ChannelController {
     /** the list of users currently watching this channel */
     public val watchers: LiveData<List<User>>
     /** who is currently typing (current user is excluded from this) */
-    public val typing: LiveData<List<User>>
+    public val typing: LiveData<TypeEvent>
     /** how far every user in this channel has read */
     public val reads: LiveData<List<ChannelUserRead>>
     /** read status for the current user */
