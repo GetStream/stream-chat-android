@@ -4,14 +4,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import io.getstream.chat.android.client.internal.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : LifecycleObserver {
     private var recurringResumeEvent = false
 
     fun observe() {
-        ProcessLifecycleOwner.get()
-            .lifecycle
-            .addObserver(this)
+        CoroutineScope(DispatcherProvider.Main).launch {
+            ProcessLifecycleOwner.get()
+                .lifecycle
+                .addObserver(this@StreamLifecycleObserver)
+        }
     }
 
     fun dispose() {
