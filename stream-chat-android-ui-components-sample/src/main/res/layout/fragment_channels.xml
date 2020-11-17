@@ -14,7 +14,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:streamChannelPreviewLayout="@layout/stream_channel_list_item_view"
-        app:streamChannelTitleTextSize="40dp"
         app:streamReadStateAvatarHeight="15dp"
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"

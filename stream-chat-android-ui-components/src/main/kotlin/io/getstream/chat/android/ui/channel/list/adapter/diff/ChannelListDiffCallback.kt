@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageReadCount
 import io.getstream.chat.android.ui.utils.extensions.getUsers
+
 public class ChannelListDiffCallback(
     private val oldList: List<Channel>,
     private val newList: List<Channel>
@@ -42,7 +43,7 @@ public class ChannelListDiffCallback(
         val oldChannel = oldList[oldItemPosition]
         val newChannel = newList[newItemPosition]
 
-        return ChannelItemDiff(
+        return ChannelDiff(
             nameChanged = !nameEqual(oldChannel, newChannel),
             avatarViewChanged = !userEqual(oldChannel, newChannel),
             readStateChanged = !lastReadEqual(oldChannel, newChannel),

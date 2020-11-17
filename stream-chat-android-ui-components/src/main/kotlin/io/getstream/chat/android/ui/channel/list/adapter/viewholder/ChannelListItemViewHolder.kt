@@ -4,28 +4,23 @@ import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.View
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
+import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserRead
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
-import io.getstream.chat.android.ui.utils.extensions.getLastMessageDisplayText
+import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
 import io.getstream.chat.android.ui.utils.extensions.getReadStatusDrawable
 import io.getstream.chat.android.ui.utils.extensions.getUsers
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-public class ChannelListItemViewHolder(
-    itemView: View,
-    public var channelClickListener: ChannelListView.ChannelClickListener? = null,
-    public var channelLongClickListener: ChannelListView.ChannelClickListener? = null,
-    public var userClickListener: ChannelListView.UserClickListener? = null,
-    public var style: ChannelListViewStyle? = null
-) : BaseChannelListItemViewHolder(itemView) {
+public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
 
     public companion object {
         @SuppressLint("ConstantLocale")
@@ -34,7 +29,14 @@ public class ChannelListItemViewHolder(
         private val TIME_FORMAT = SimpleDateFormat("hh:mm", DEFAULT_LOCALE)
     }
 
-    public override fun bind(channel: Channel, position: Int, diff: ChannelItemDiff?) {
+    public override fun bind(
+        channel: Channel,
+        diff: ChannelDiff?,
+        channelClickListener: ChannelListView.ChannelClickListener,
+        channelLongClickListener: ChannelListView.ChannelClickListener,
+        userClickListener: ChannelListView.UserClickListener,
+        style: ChannelListViewStyle?
+    ) {
         StreamChannelListItemViewBinding.bind(itemView).apply {
             diff?.run {
                 if (nameChanged) {
@@ -45,24 +47,27 @@ public class ChannelListItemViewHolder(
                     avatarView.setChannelData(channel, channel.getUsers())
                     avatarView.setOnClickListener {
                         when (channel.getUsers().size) {
-                            1 -> userClickListener?.onUserClick(channel.getCurrentUser())
-                            else -> channelClickListener?.onClick(channel)
+                            1 -> userClickListener.onUserClick(channel.getCurrentUser())
+                            else -> channelClickListener.onClick(channel)
                         }
                     }
                 }
 
                 if (lastMessageChanged) {
-                    lastMessageLabel.text = channel.getLastMessageDisplayText()
+                    lastMessageLabel.text = channel.getLastMessage().let { lastMessage ->
+                        context.getString(
+                            R.string.stream_channel_item_last_message_template,
+                            lastMessage?.getDisplayName(),
+                            lastMessage?.text
+                        )
+                    }
+
                     channel.getLastMessageTime()
                         ?.let(TIME_FORMAT::format)
                         ?.let { lastMessageTimeLabel.text = it }
 
                     channel.getCurrentUserRead()?.unreadMessages?.let { unreadCount ->
-//                        BadgeDrawable.create(context).apply {
-//                            number = unreadCount
-//                            badgeTextColor = ContextCompat.getColor(context, android.R.color.white)
-//                            backgroundColor = ContextCompat.getColor(context, android.R.color.holo_red_dark)
-//                        }
+                        // create badge
                     }
                 }
 
@@ -71,11 +76,11 @@ public class ChannelListItemViewHolder(
                 }
 
                 root.setOnClickListener {
-                    channelClickListener?.onClick(channel)
+                    channelClickListener.onClick(channel)
                 }
 
                 root.setOnLongClickListener {
-                    channelLongClickListener?.onClick(channel)
+                    channelLongClickListener.onClick(channel)
                     true
                 }
             }

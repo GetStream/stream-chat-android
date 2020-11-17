@@ -3,8 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
+import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelViewHolderFactory
@@ -17,10 +16,8 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         ChannelViewHolderFactory()
 
     public companion object {
-        public val DEFAULT_DIFF: ChannelItemDiff = ChannelItemDiff()
+        public val DEFAULT_DIFF: ChannelDiff = ChannelDiff()
     }
-
-    public override var style: ChannelListViewStyle? = null
 
     /**
      * Returns the layout for the channel items.
@@ -35,18 +32,30 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             ?: style?.channelPreviewLayout
             ?: R.layout.stream_channel_list_item_view
 
-    override fun getItemCount(): Int = channels.count()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder =
         LayoutInflater.from(parent.context)
             .inflate(getChannelItemLayout(), parent, false)
             .let { viewHolderFactory.createChannelViewHolder(it) }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
-        holder.bind(channels[position], position, payloads.firstOrDefault(DEFAULT_DIFF).cast())
+        holder.bind(
+            getItem(position),
+            payloads.firstOrDefault(DEFAULT_DIFF).cast(),
+            channelClickListener,
+            channelLongClickListener,
+            userClickListener,
+            style
+        )
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
-        holder.bind(channels[position], position)
+        holder.bind(
+            getItem(position),
+            null,
+            channelClickListener,
+            channelLongClickListener,
+            userClickListener,
+            style
+        )
     }
 }

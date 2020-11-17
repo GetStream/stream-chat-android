@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelsView
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelItemDiff
+import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
@@ -63,24 +63,24 @@ class ChannelListFragment : Fragment() {
                 ChatLogger.instance.logD(it.name, "clicked!")
             }
 
-            testCustomViewHolderAPI()
+            // testCustomViewHolderAPI()
 
             viewModel.bindView(this, viewLifecycleOwner)
         }
     }
 
     private fun ChannelsView.testCustomViewHolderAPI() {
-        class TestViewHolder(
-            itemView: View,
-            var channelClickListener: ChannelListView.ChannelClickListener? = null,
-            var channelLongClickListener: ChannelListView.ChannelClickListener? = null,
-            var userClickListener: ChannelListView.UserClickListener? = null,
-            var style: ChannelListViewStyle?,
-        ) : BaseChannelListItemViewHolder(itemView) {
-
-            override fun bind(channel: Channel, position: Int, diff: ChannelItemDiff?) {
+        class TestViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
+            override fun bind(
+                channel: Channel,
+                diff: ChannelDiff?,
+                channelClickListener: ChannelListView.ChannelClickListener,
+                channelLongClickListener: ChannelListView.ChannelClickListener,
+                userClickListener: ChannelListView.UserClickListener,
+                style: ChannelListViewStyle?
+            ) {
                 itemView.setOnClickListener {
-                    channelClickListener?.onClick(channel)
+                    channelClickListener.onClick(channel)
                 }
 
                 SampleViewHolderBinding.bind(itemView).apply {
@@ -92,23 +92,11 @@ class ChannelListFragment : Fragment() {
             }
         }
 
-        val vhFactory = object : BaseChannelViewHolderFactory<TestViewHolder>(
-            viewHolderLayout = R.layout.sample_view_holder,
-            channelClickListener = { channel ->
-                ChatLogger.get("ChannelsFragment").logD("${channel.name} clicked")
-            },
-            channelLongClickListener = { channel ->
-                ChatLogger.get("ChannelsFragment").logD("${channel.name} long clicked")
-            },
-            userClickListener = { user ->
-                ChatLogger.get("ChannelsFragment").logD("${user.name} clicked")
+        setViewHolderFactory(
+            object : BaseChannelViewHolderFactory<TestViewHolder>(R.layout.sample_view_holder) {
+                override fun createChannelViewHolder(itemView: View): TestViewHolder = TestViewHolder(itemView)
             }
-        ) {
-            override fun createChannelViewHolder(itemView: View): TestViewHolder =
-                TestViewHolder(itemView, channelClickListener, channelLongClickListener, userClickListener, style)
-        }
-
-        setViewHolderFactory(vhFactory)
+        )
     }
 
     private fun setupOnClickListeners() {

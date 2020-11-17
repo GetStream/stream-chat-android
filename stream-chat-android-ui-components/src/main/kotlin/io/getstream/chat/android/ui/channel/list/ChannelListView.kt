@@ -21,27 +21,24 @@ public class ChannelListView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : RecyclerView(context, attrs, defStyle) {
 
-    private lateinit var style: ChannelListViewStyle
     private var endReachedListener: EndReachedListener? = null
     private val layoutManager: LinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
 
     public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
-        requireAdapter().viewHolderFactory = factory.apply {
-            style = this@ChannelListView.style
-        }
+        requireAdapter().viewHolderFactory = factory
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener) {
-        requireAdapter().viewHolderFactory.channelClickListener = listener
+        requireAdapter().channelClickListener = listener
     }
 
     public fun setChannelLongClickListener(listener: ChannelClickListener) {
-        requireAdapter().viewHolderFactory.channelLongClickListener = listener
+        requireAdapter().channelLongClickListener = listener
     }
 
     public fun setUserClickListener(listener: UserClickListener) {
-        requireAdapter().viewHolderFactory.userClickListener = listener
+        requireAdapter().userClickListener = listener
     }
 
     init {
@@ -54,17 +51,17 @@ public class ChannelListView @JvmOverloads constructor(
 
     private fun parseStyleAttributes(context: Context, attrs: AttributeSet?) {
         // parse the attributes
-        style = ChannelListViewStyle(context, attrs)
-
-        // use the background color as a default for the avatar border
-        if (style.avatarBorderColor == -1) {
-            var color = Color.WHITE
-            val background = this.background
-            if (background is ColorDrawable) color = background.color
-            style.avatarBorderColor = color
+        requireAdapter().style = ChannelListViewStyle(context, attrs).apply {
+            // use the background color as a default for the avatar border
+            if (avatarBorderColor == -1) {
+                background.let { channelViewBackground ->
+                    avatarBorderColor = when (channelViewBackground) {
+                        is ColorDrawable -> channelViewBackground.color
+                        else -> Color.WHITE
+                    }
+                }
+            }
         }
-
-        requireAdapter().viewHolderFactory.style = style
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {
@@ -98,12 +95,12 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun setChannels(channels: List<Channel>) {
-        requireAdapter().replaceChannels(channels)
+        requireAdapter().submitList(channels)
     }
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
         super.onVisibilityChanged(view, visibility)
-        if (visibility == 0 && adapter != null) adapter!!.notifyDataSetChanged()
+        if (visibility == 0 && adapter != null) requireAdapter().notifyDataSetChanged()
     }
 
     public fun interface UserClickListener {

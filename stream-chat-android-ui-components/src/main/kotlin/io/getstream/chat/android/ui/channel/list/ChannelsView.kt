@@ -30,11 +30,11 @@ public class ChannelsView @JvmOverloads constructor(
         addView(channelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         emptyStateView.apply {
             isVisible = false
-            addView(this, defaultChildLayoutParams())
+            addView(this, defaultChildLayoutParams)
         }
         loadingView.apply {
             isVisible = false
-            addView(loadingView, defaultChildLayoutParams())
+            addView(loadingView, defaultChildLayoutParams)
         }
         parseAttrs(attrs)
     }
@@ -56,7 +56,7 @@ public class ChannelsView @JvmOverloads constructor(
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container ViewGroup.
      */
-    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
+    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
         removeView(this.emptyStateView)
         this.emptyStateView = view
         addView(emptyStateView, layoutParams)
@@ -67,7 +67,7 @@ public class ChannelsView @JvmOverloads constructor(
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container ViewGroup.
      */
-    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
+    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
         removeView(this.loadingView)
         this.loadingView = view
         addView(loadingView, layoutParams)
@@ -117,8 +117,15 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setPaginationEnabled(enabled)
     }
 
-    private fun defaultChildLayoutParams() =
-        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+    private companion object {
+        private val defaultChildLayoutParams: LayoutParams by lazy {
+            LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+        }
+    }
 
     private fun defaultLoadingView(): View = ProgressBar(context)
 

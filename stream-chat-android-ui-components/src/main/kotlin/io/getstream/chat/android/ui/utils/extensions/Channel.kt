@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -10,6 +11,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import java.util.Date
 
 internal fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
@@ -26,14 +28,11 @@ internal fun Channel.getDisplayName(): String = name.takeIf { it.isNotEmpty() }
     ?: getUsers().joinToString { it.name }
 
 internal fun Channel.getLastMessage(): Message? =
-    messages
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
-        .filter { it.type == "regular" } // migrate ModelType?
-        .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
-
-internal fun Channel.getLastMessageDisplayText(): String =
-    getLastMessage()?.let { "${it.getDisplayName()}: ${it.text}" } ?: String.EMPTY
+    messages.filter {
+        (it.createdAt != null || it.createdLocallyAt != null) &&
+            it.deletedAt == null &&
+            it.type == "regular"
+    }.maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
 
 internal fun Channel.getUnreadUsers(): List<ChannelUserRead> =
     read.filter { it.lastRead?.before(lastMessageAt) == true }
@@ -67,3 +66,21 @@ internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
 
 internal fun Channel.getCurrentUserRead(): ChannelUserRead? =
     read.firstOrNull { it.user.id == getCurrentUser().id }
+
+public val Channel.Companion.DIFF_CALLBACK: DiffUtil.ItemCallback<Channel>
+    get() = object : DiffUtil.ItemCallback<Channel>() {
+        override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid
+
+        override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
+            !oldItem.diff(newItem).hasDifference()
+
+        override fun getChangePayload(oldItem: Channel, newItem: Channel): Any? = oldItem.diff(newItem)
+    }
+
+internal fun Channel.diff(other: Channel): ChannelDiff =
+    ChannelDiff(
+        nameChanged = name != other.name,
+        avatarViewChanged = getUsers() != other.getUsers(),
+        readStateChanged = getLastMessageReadCount() != other.getLastMessageReadCount(),
+        lastMessageChanged = getLastMessage() != other.getLastMessage()
+    )
