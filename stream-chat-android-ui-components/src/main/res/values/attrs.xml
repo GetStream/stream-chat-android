@@ -117,7 +117,6 @@
         <attr name="streamAvatarTextStyle" />
         <attr name="streamShowUserAvatar" format="boolean" />
 
-        <attr name="streamOnlineTitleText" format="string|reference" />
         <attr name="streamOnlineTitleTextSize" format="dimension|reference" />
         <attr name="streamOnlineTitleTextColor" format="color|reference" />
         <attr name="streamOnlineTitleTextFont" format="reference" />
@@ -139,14 +138,25 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamShowOfflineProgressBar" format="boolean" />
-        <attr name="streamOfflineProgressBarTint" format="color|reference" />
+        <attr name="streamSearchingForNetworkText" format="string|reference" />
+        <attr name="streamSearchingForNetworkTextSize" format="dimension|reference" />
+        <attr name="streamSearchingForNetworkTextColor" format="color|reference" />
+        <attr name="streamSearchingForNetworkTextFont" format="reference" />
+        <attr name="streamSearchingForNetworkFontAssets" format="string" />
+        <attr name="streamSearchingForNetworkTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
 
-        <attr name="streamShowAddChannelButton" format="boolean" />
-        <attr name="streamAddChannelButtonHeight" format="dimension|reference" />
-        <attr name="streamAddChannelButtonWidth" format="dimension|reference" />
-        <attr name="streamAddChannelButtonIcon" format="reference" />
-        <attr name="streamAddChannelButtonTint" format="color|reference" />
-        <attr name="streamAddChannelBackgroundTint" format="color|reference" />
+        <attr name="streamShowSearchingForNetworkProgressBar" format="boolean" />
+        <attr name="streamSearchingForNetworkProgressBarTint" format="color|reference" />
+
+        <attr name="streamBackButtonDrawable" format="reference" />
+        <attr name="streamShowBackButton" format="boolean" />
+
+        <attr name="streamShowBackButtonBadge" format="boolean" />
+        <attr name="streamBackButtonBadgeBackgroundColor" format="color" />
+
     </declare-styleable>
 </resources>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_default_header_height"
+    >
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="8dp"
+        android:layout_height="14dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/stream_content_description_back_button"
+        android:src="@drawable/stream_arrow_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded"
+        />
+
+    <TextView
+        android:id="@+id/back_button_badge"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/stream_badge_bg"
+        android:backgroundTint="@color/stream_light_red"
+        android:gravity="center"
+        android:textColor="@color/stream_white"
+        android:textSize="11dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/back_button"
+        app:layout_constraintLeft_toRightOf="@+id/back_button"
+        tools:ignore="SpUsage"
+        tools:text="4"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:lineSpacingExtra="5sp"
+        android:textColor="@color/stream_text_black"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@+id/back_button"
+        app:layout_constraintRight_toRightOf="@+id/avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="User"
+        />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/back_button"
+        app:layout_constraintRight_toRightOf="@+id/avatar"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        >
+
+        <LinearLayout
+            android:id="@+id/searching_for_network_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ProgressBar
+                android:id="@+id/searching_for_network_progressbar"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                />
+
+            <TextView
+                android:id="@+id/searching_for_network_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stream_message_list_header_searching_for_network"
+                android:textColor="@color/stream_text_grey"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/offline_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/offline_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stream_message_list_header_offline"
+                android:textColor="@color/stream_text_grey"
+                />
+
+            <TextView
+                android:id="@+id/offline_retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stream_message_list_header_try_again"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/typing_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <!-- TODO: Replace with TypingView when ready -->
+            <View
+                android:layout_width="12dp"
+                android:layout_height="4dp"
+                android:background="@color/stream_text_grey"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/stream_text_grey"
+                tools:text="is typing"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/online_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/online_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/stream_text_grey"
+                tools:text="Online for 10 mins"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/stream_avatar_size_medium"
+        android:layout_height="@dimen/stream_avatar_size_medium"
+        android:layout_margin="8dp"
+        android:background="@color/stream_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
