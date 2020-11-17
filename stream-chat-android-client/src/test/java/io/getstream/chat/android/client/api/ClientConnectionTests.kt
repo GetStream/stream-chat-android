@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -108,7 +109,9 @@ internal class ClientConnectionTests {
 
     @Test
     fun `Should not connect and report error when user is already set`() {
+        client.setUser(user, token)
         socketListener.onEvent(connectedEvent)
+        reset(socket)
 
         client.setUser(user, token, initConnectionListener)
 
@@ -121,6 +124,7 @@ internal class ClientConnectionTests {
     @Test
     fun connectAndDisconnect() {
         client.setUser(user, token)
+        socketListener.onEvent(connectedEvent)
 
         client.disconnect()
 
