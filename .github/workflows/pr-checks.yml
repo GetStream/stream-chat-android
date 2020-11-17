@@ -16,7 +16,7 @@ jobs:
       - name: ktlint
         run: ./gradlew :stream-chat-android-client:ktlintCheck
       - name: Unit tests
-        run: ./gradlew :stream-chat-android-client:test --stacktrace
+        run: ./gradlew :stream-chat-android-client:testDebug --stacktrace
       - name: Coverage
         run: ./gradlew :stream-chat-android-client:jacocoTestReport
       - name: Upload Coverage
@@ -27,12 +27,6 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android-client/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-client/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android_offline:
     name: stream-chat-android-offline
@@ -47,7 +41,7 @@ jobs:
       - name: ktlint
         run: ./gradlew :stream-chat-android-offline:ktlintCheck
       - name: Unit tests
-        run: ./gradlew :stream-chat-android-offline:test --stacktrace
+        run: ./gradlew :stream-chat-android-offline:testDebug --stacktrace
       - name: Coverage
         run: ./gradlew :stream-chat-android-offline:jacocoTestReport
       - name: Upload Coverage
@@ -58,12 +52,6 @@ jobs:
         with:
           name: testDebugUnitTest
           path: stream-chat-android-offline/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-offline/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android:
     name: stream-chat-android
@@ -78,19 +66,13 @@ jobs:
       - name: ktlint
         run: ./gradlew :stream-chat-android:ktlintCheck :stream-chat-android-sample:ktlintCheck
       - name: Unit tests
-        run: ./gradlew :stream-chat-android:test :stream-chat-android-sample:test --stacktrace
+        run: ./gradlew :stream-chat-android:testDebug :stream-chat-android-sample:testDebug --stacktrace
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: testDebugUnitTest
           path: stream-chat-android/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android/build/reports/tests/testReleaseUnitTest
 
   stream_chat_android_ui_components:
     name: stream-chat-android-ui-components
@@ -105,16 +87,10 @@ jobs:
       - name: ktlint
         run: ./gradlew :stream-chat-android-ui-components:ktlintCheck :stream-chat-android-ui-components-sample:ktlintCheck
       - name: Unit tests
-        run: ./gradlew :stream-chat-android-ui-components:test :stream-chat-android-ui-components-sample:test --stacktrace
+        run: ./gradlew :stream-chat-android-ui-components:testDebug :stream-chat-android-ui-components-sample:testDebug --stacktrace
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: testDebugUnitTest
           path: stream-chat-android-ui-components/build/reports/tests/testDebugUnitTest
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testReleaseUnitTest
-          path: stream-chat-android-ui-components/build/reports/tests/testReleaseUnitTest
