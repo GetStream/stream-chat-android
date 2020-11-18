@@ -100,4 +100,30 @@ object ClientAndUsers {
             }
         )
     }
+
+    @Suppress("NAME_SHADOWING")
+    fun tokenExpiration() {
+        val user = User("user-id")
+        val tokenProvider = object : TokenProvider {
+            // Make a request here to your backend to generate a valid token for the user.
+            override fun loadToken(): String = yourTokenService.getToken(user)
+        }
+
+        client.setUser(
+            user,
+            tokenProvider,
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    val user: User = data.user
+                    val connectionId: String = data.connectionId
+
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                }
+
+                override fun onError(error: ChatError) {
+                    Log.e(TAG, "There was an error $error", error.cause)
+                }
+            }
+        )
+    }
 }

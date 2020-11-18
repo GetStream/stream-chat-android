@@ -109,4 +109,31 @@ public class ClientAndUsers {
             }
         });
     }
+
+    public static void tokenExpiration() {
+        User user = new User();
+        user.setId("user-id");
+        TokenProvider tokenProvider = new TokenProvider() {
+            @NotNull
+            @Override
+            public String loadToken() {
+                return yourTokenService.getToken(user);
+            }
+        };
+
+        client.setUser(user, tokenProvider, new InitConnectionListener() {
+            @Override
+            public void onSuccess(@NotNull ConnectionData data) {
+                User user = data.getUser();
+                String connectionId = data.getConnectionId();
+
+                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+            }
+        });
+    }
 }
