@@ -5,7 +5,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -69,12 +68,16 @@ public class ChatClient internal constructor(
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService()
-) : LifecycleObserver {
+) {
     private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService)
 
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
+    private val lifecycleHandler = object : LifecycleHandler {
+        override fun resume() = reconnectSocket()
+        override fun stopped() = disconnectSocket()
+    }
 
     public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User?) -> Unit>()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
@@ -100,21 +103,7 @@ public class ChatClient internal constructor(
                 }
             }
         }
-
-        // disconnect when the app is stopped
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-
         logger.logI("Initialised: " + getVersion())
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    public fun onResume() {
-        reconnectSocket()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    public fun onStopped() {
-        disconnectSocket()
     }
 
     //region Set user
@@ -154,7 +143,7 @@ public class ChatClient internal constructor(
         for (preSetUserListener in preSetUserListeners) {
             preSetUserListener(user)
         }
-        connectionListener = listener
+        connectionListener = wrapListener(listener)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
 
@@ -167,11 +156,22 @@ public class ChatClient internal constructor(
 
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
-        connectionListener = listener
+        connectionListener = wrapListener(listener)
         config.isAnonymous = true
         warmUp()
         getTokenAndConnect {
             socket.connectAnonymously()
+        }
+    }
+
+    private fun wrapListener(listener: InitConnectionListener?) = object : InitConnectionListener() {
+        override fun onSuccess(data: ConnectionData) {
+            StreamLifecycleObserver(lifecycleHandler).observe()
+            listener?.onSuccess(data)
+        }
+
+        override fun onError(error: ChatError) {
+            listener?.onError(error)
         }
     }
 
@@ -906,6 +906,7 @@ public class ChatClient internal constructor(
                 module.notifications(),
                 tokenManager
             )
+
             instance = result
 
             return result

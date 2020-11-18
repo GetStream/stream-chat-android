@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

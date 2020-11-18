@@ -13,11 +13,11 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
 import com.getstream.sdk.chat.view.messages.AvatarStyle
-import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
