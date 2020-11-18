@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.token.TokenProvider;
+import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.docs.TokenService;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
@@ -86,5 +87,26 @@ public class ClientAndUsers {
 
     public static void disconnect() {
         ChatClient.instance().disconnect();
+    }
+
+    public static void developmentToken() {
+        User user = new User();
+        user.setId("user-id");
+        String token = ChatUtils.devToken(user.getId());
+
+        client.setUser(user, token, new InitConnectionListener() {
+            @Override
+            public void onSuccess(@NotNull ConnectionData data) {
+                User user = data.getUser();
+                String connectionId = data.getConnectionId();
+
+                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+            }
+        });
     }
 }

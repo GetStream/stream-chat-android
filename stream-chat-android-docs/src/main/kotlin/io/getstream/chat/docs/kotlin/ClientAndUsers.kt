@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.ChatUtils
 import io.getstream.chat.docs.StaticInstances.TAG
 import io.getstream.chat.docs.TokenService
 
@@ -77,5 +78,26 @@ object ClientAndUsers {
 
     fun disconnect() {
         ChatClient.instance().disconnect()
+    }
+
+    fun developmentToken() {
+        val user: User = User("user-id")
+        val token: String = ChatUtils.devToken(user.id)
+        client.setUser(
+            user,
+            token,
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    val user: User = data.user
+                    val connectionId: String = data.connectionId
+
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                }
+
+                override fun onError(error: ChatError) {
+                    Log.e(TAG, "There was an error $error", error.cause)
+                }
+            }
+        )
     }
 }
