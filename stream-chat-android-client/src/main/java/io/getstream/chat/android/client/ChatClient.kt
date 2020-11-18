@@ -480,7 +480,6 @@ public class ChatClient internal constructor(
         channelId: String,
         request: QueryChannelRequest
     ): Call<Channel> {
-        // for convenience we add the message.cid field
         return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
     }
 

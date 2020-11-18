@@ -36,6 +36,7 @@ internal class QueryChannelsPostponeHelper(
 
     internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = runBlocking {
         doJob {
+            // for convenience we add the message.cid field
             api.queryChannels(request).map { channels ->
                 channels.map { channel ->
                     channel.messages.forEach { message ->
@@ -48,7 +49,9 @@ internal class QueryChannelsPostponeHelper(
     }
 
     private tailrec suspend fun <T> doJob(attemptCount: Int = attemptsCount, job: () -> T): T {
-        check(attemptCount > 0) { "Failed to perform job. Time out has reached" }
+        check(attemptCount > 0) {
+            "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
+        }
         return when (clientStateService.state) {
             is ClientState.Idle -> error("User must be set before querying channels")
             is ClientState.User.Authorized,
