@@ -17,6 +17,7 @@
         app:streamReadStateAvatarHeight="15dp"
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"
-        app:streamShowReadState="true" />
+        app:streamShowReadState="true"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,7 @@
     <!--ChannelsHeaderView-->
     <string name="stream_channels_header_view_online_title">Stream Chat</string>
     <string name="stream_channels_header_view_offline_title">Waiting for network</string>
-    
+
     <!--Channel List Item View-->
     <string name="stream_channel_item_last_message_template">%1$s: %2$s</string>
 
