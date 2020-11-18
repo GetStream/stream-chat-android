@@ -90,6 +90,7 @@ dependencies {
     debugImplementation Dependencies.flipperLoader
 
     // Tests
+    testImplementation project(':stream-chat-android-test')
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

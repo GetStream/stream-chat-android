@@ -1,10 +1,10 @@
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.test
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 
-internal class TestCall<T : Any>(val result: Result<T>) : Call<T> {
-    var cancelled = false
+public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
+    public var cancelled: Boolean = false
 
     override fun cancel() {
         cancelled = true

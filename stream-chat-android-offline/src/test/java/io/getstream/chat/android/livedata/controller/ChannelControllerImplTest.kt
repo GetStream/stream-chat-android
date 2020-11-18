@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomString
-import io.getstream.chat.android.livedata.utils.TestCall
+import io.getstream.chat.test.TestCall
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.Verify

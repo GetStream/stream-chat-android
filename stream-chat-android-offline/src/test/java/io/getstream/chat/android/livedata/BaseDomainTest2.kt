@@ -28,9 +28,10 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.TestDataHelper
+import io.getstream.chat.test.TestCall
 import io.getstream.chat.test.TestCoroutineRule
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
