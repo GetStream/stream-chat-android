@@ -11,9 +11,10 @@
         android:id="@+id/suggestionListView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_open_attachment"
@@ -67,11 +68,11 @@
         android:id="@+id/fl_send_button_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         >
 
         <androidx.appcompat.widget.AppCompatImageView

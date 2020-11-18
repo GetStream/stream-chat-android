@@ -42,9 +42,9 @@
 
             <io.getstream.chat.android.ui.search.SearchView
                 android:id="@+id/searchView2"
-                android:layout_marginTop="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 />
 
         </LinearLayout>

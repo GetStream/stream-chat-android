@@ -9,13 +9,19 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.use
 
-internal class AvatarStyle(context: Context, attrs: AttributeSet?) {
-    val avatarWidth: Int
-    val avatarHeight: Int
-    val avatarBorderWidth: Int
-    val avatarBorderColor: Int
-    val avatarInitialText: TextStyle
-    val onlineIndicatorEnabled: Boolean
+public class AvatarStyle internal constructor(context: Context, attrs: AttributeSet?) {
+    public var avatarWidth: Int
+        internal set
+    public var avatarHeight: Int
+        internal set
+    public var avatarBorderWidth: Int
+        internal set
+    public var avatarBorderColor: Int
+        internal set
+    public var avatarInitialText: TextStyle
+        internal set
+    public var onlineIndicatorEnabled: Boolean
+        internal set
 
     init {
         context.obtainStyledAttributes(

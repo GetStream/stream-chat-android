@@ -55,9 +55,9 @@ public class AvatarView : AppCompatImageView {
         setStyle(AvatarStyle(context, attrs))
     }
 
-    public fun setChannelData(channel: Channel, user: List<User>) {
+    public fun setChannelData(channel: Channel, users: List<User>) {
         configureImageDrawable {
-            AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, user, avatarStyle))
+            AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, users, avatarStyle))
         }
     }
 
