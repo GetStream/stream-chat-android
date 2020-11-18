@@ -67,6 +67,12 @@ internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
 internal fun Channel.getCurrentUserRead(): ChannelUserRead? =
     read.firstOrNull { it.user.id == getCurrentUser().id }
 
+internal fun Channel.getCurrentUserUnreadCount(): Int = getCurrentUserRead()?.lastRead?.let { currentRead ->
+    messages.count { message ->
+        message.createdAt?.after(currentRead) == true
+    }
+} ?: 0
+
 public val Channel.Companion.DIFF_CALLBACK: DiffUtil.ItemCallback<Channel>
     get() = object : DiffUtil.ItemCallback<Channel>() {
         override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid

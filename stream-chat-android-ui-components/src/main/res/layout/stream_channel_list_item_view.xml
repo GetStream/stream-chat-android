@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:fontFamily="sans-serif-black"
+        android:fontFamily="sans-serif-medium"
         android:textColor="@color/stream_black"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
@@ -71,16 +71,23 @@
         app:layout_constraintTop_toTopOf="@+id/last_message_label"
         />
 
-    <ImageView
-        android:id="@+id/unread_badge_image_view"
+    <TextView
+        android:id="@+id/unread_count_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/stream_shape_badge_background"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/stream_white"
+        android:textSize="@dimen/stream_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
         app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
         app:layout_constraintTop_toTopOf="parent"
         >
 
-    </ImageView>
+    </TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.View
+import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -12,7 +13,7 @@ import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
-import io.getstream.chat.android.ui.utils.extensions.getCurrentUserRead
+import io.getstream.chat.android.ui.utils.extensions.getCurrentUserUnreadCount
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
@@ -67,8 +68,11 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                         ?.let(TIME_FORMAT::format)
                         ?.let { lastMessageTimeLabel.text = it }
 
-                    channel.getCurrentUserRead()?.unreadMessages?.let { unreadCount ->
-                        // create badge
+                    channel.getCurrentUserUnreadCount().let { unreadCount ->
+                        unreadCountBadge.apply {
+                            isVisible = unreadCount > 0
+                            text = unreadCount.toString()
+                        }
                     }
                 }
 
