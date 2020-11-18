@@ -41,4 +41,5 @@
     <string name="stream_message_list_header_searching_for_network">Searching for network</string>
     <string name="stream_message_list_header_offline">Offline…</string>
     <string name="stream_message_list_header_try_again">Try Again</string>
+    <string name="stream_message_list_header_typing">is typing</string>
 </resources>

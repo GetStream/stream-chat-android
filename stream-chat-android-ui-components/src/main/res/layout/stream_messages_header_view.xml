@@ -4,39 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_default_header_height"
+    android:background="@color/stream_white"
     >
 
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="8dp"
-        android:layout_height="14dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/back_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:background="?selectableItemBackgroundBorderless"
-        android:contentDescription="@string/stream_content_description_back_button"
-        android:src="@drawable/stream_arrow_left"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded"
-        />
+        >
 
-    <TextView
-        android:id="@+id/back_button_badge"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="@drawable/stream_badge_bg"
-        android:backgroundTint="@color/stream_light_red"
-        android:gravity="center"
-        android:textColor="@color/stream_white"
-        android:textSize="11dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/back_button"
-        app:layout_constraintLeft_toRightOf="@+id/back_button"
-        tools:ignore="SpUsage"
-        tools:text="4"
-        />
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="8dp"
+            android:layout_height="14dp"
+            android:layout_marginLeft="16dp"
+            android:contentDescription="@string/stream_content_description_back_button"
+            android:src="@drawable/stream_arrow_left"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/back_button_badge"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/stream_badge_bg"
+            android:backgroundTint="@color/stream_light_red"
+            android:gravity="center"
+            android:textColor="@color/stream_white"
+            android:textSize="10dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/back_button"
+            app:layout_constraintLeft_toRightOf="@+id/back_button"
+            tools:ignore="SpUsage"
+            tools:text="23"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/title"
@@ -46,7 +58,7 @@
         android:lineSpacingExtra="5sp"
         android:textColor="@color/stream_text_black"
         android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@+id/back_button"
+        app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="User"
@@ -56,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/back_button"
+        app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
         app:layout_constraintTop_toBottomOf="@+id/title"
         >
@@ -65,13 +77,17 @@
             android:id="@+id/searching_for_network_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
+            android:visibility="gone"
             >
 
             <ProgressBar
                 android:id="@+id/searching_for_network_progressbar"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 />
 
             <TextView
@@ -87,7 +103,9 @@
             android:id="@+id/offline_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
+            android:visibility="gone"
             >
 
             <TextView
@@ -102,7 +120,11 @@
                 android:id="@+id/offline_retry_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
                 android:text="@string/stream_message_list_header_try_again"
+                android:textColor="@color/stream_blue"
                 />
         </LinearLayout>
 
@@ -110,17 +132,20 @@
             android:id="@+id/typing_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
+            android:visibility="gone"
             >
 
             <!-- TODO: Replace with TypingView when ready -->
-            <View
-                android:layout_width="12dp"
-                android:layout_height="4dp"
-                android:background="@color/stream_text_grey"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="..."
                 />
 
             <TextView
+                android:id="@+id/typing_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/stream_text_grey"
@@ -137,7 +162,7 @@
             >
 
             <TextView
-                android:id="@+id/online_subtitle"
+                android:id="@+id/online_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/stream_text_grey"
@@ -150,8 +175,7 @@
         android:id="@+id/avatar"
         android:layout_width="@dimen/stream_avatar_size_medium"
         android:layout_height="@dimen/stream_avatar_size_medium"
-        android:layout_margin="8dp"
-        android:background="@color/stream_black"
+        android:layout_marginRight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

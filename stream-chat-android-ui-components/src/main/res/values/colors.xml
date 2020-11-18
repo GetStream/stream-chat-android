@@ -4,6 +4,7 @@
     <color name="stream_light_red">#FF3742</color>
 
     <color name="stream_text_black">@color/stream_black</color>
+    <color name="stream_text_color_black_translucent">#88000000</color>
     <color name="stream_text_grey">#808080</color>
     <color name="stream_text_red">#FF3742</color>
 
