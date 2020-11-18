@@ -23,7 +23,7 @@ internal fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
             }
         }
 
-internal fun Channel.getDisplayName(): String = name.takeIf { it.isNotEmpty() }
+internal fun Channel.getSenderDisplayName(): String = name.takeIf { it.isNotEmpty() }
     ?: getUsers().joinToString { it.name }
 
 internal fun Channel.getLastMessage(): Message? =
@@ -52,8 +52,8 @@ internal fun Channel.currentUserHasReadLastMessage(): Boolean =
 
 internal fun Channel.getReadStatusDrawable(context: Context): Drawable? =
     when (getLastMessageReadCount()) {
-        0 -> ContextCompat.getDrawable(context, R.drawable.ic_icon_check)
-        else -> ContextCompat.getDrawable(context, R.drawable.ic_icon_check_all)
+        0 -> ContextCompat.getDrawable(context, R.drawable.stream_ic_check_gray)
+        else -> ContextCompat.getDrawable(context, R.drawable.stream_ic_check_all)
         // wip - need to figure out message pending status for clock icon
     }
 
