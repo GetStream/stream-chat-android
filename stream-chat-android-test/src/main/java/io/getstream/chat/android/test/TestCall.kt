@@ -18,3 +18,7 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
         return result
     }
 }
+
+public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result(valueProvider()))
+
+public fun <T : Any> T.asCall(): Call<T> = TestCall(Result(this))
