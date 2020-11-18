@@ -35,21 +35,21 @@
             android:padding="16dp"
             >
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerOnlineStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerOnlineNoBadgeStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerOnlineAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerOfflineAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerSearchingForNetwork"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerDeviceOffline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
                 android:id="@+id/headerTypingSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
