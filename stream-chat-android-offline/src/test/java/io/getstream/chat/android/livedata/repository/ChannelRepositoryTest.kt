@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest2
-import io.getstream.chat.test.TestCall
+import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.calling

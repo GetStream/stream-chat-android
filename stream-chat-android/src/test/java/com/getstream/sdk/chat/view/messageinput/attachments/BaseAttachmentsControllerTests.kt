@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.view.messageinput.MessageInputController
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.When
 import org.amshove.kluent.calling

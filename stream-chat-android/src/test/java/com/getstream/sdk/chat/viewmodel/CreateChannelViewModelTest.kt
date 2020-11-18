@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.usecase.CreateChannel
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldContainSame

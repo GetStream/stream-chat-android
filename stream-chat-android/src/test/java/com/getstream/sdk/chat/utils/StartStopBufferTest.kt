@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.utils
 
 import com.getstream.sdk.chat.randomString
-import io.getstream.chat.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
