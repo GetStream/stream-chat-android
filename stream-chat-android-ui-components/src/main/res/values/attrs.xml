@@ -105,58 +105,71 @@
     </declare-styleable>
 
     <!--MessageListHeaderView-->
-    <declare-styleable name="StreamMessageListHeaderView">
-        <attr name="streamAvatarWidth" />
-        <attr name="streamAvatarHeight" />
-        <attr name="streamAvatarBorderWidth" />
-        <attr name="streamAvatarBorderColor" />
-        <attr name="streamAvatarTextSize" />
-        <attr name="streamAvatarTextColor" />
-        <attr name="streamAvatarTextFont" />
-        <attr name="streamAvatarTextFontAssets" />
-        <attr name="streamAvatarTextStyle" />
-        <attr name="streamShowUserAvatar" format="boolean" />
+    <declare-styleable name="StreamMessagesHeaderView" parent="AvatarView">
+        <attr name="streamMessagesHeaderShowUserAvatar" format="boolean" />
 
-        <attr name="streamOnlineTitleTextSize" format="dimension|reference" />
-        <attr name="streamOnlineTitleTextColor" format="color|reference" />
-        <attr name="streamOnlineTitleTextFont" format="reference" />
-        <attr name="streamOnlineTitleFontAssets" format="string" />
-        <attr name="streamOnlineTitleTextStyle">
+        <attr name="streamMessagesHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamMessagesHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamMessagesHeaderTitleTextFont" format="reference" />
+        <attr name="streamMessagesHeaderTitleFontAssets" format="string" />
+        <attr name="streamMessagesHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamOfflineTitleText" format="string|reference" />
-        <attr name="streamOfflineTitleTextSize" format="dimension|reference" />
-        <attr name="streamOfflineTitleTextColor" format="color|reference" />
-        <attr name="streamOfflineTitleTextFont" format="reference" />
-        <attr name="streamOfflineTitleFontAssets" format="string" />
-        <attr name="streamOfflineTitleTextStyle">
+        <attr name="streamMessagesHeaderOfflineLabelText" format="string|reference" />
+        <attr name="streamMessagesHeaderOfflineLabelTextSize" format="dimension|reference" />
+        <attr name="streamMessagesHeaderOfflineLabelTextColor" format="color|reference" />
+        <attr name="streamMessagesHeaderOfflineLabelTextFont" format="reference" />
+        <attr name="streamMessagesHeaderOfflineLabelFontAssets" format="string" />
+        <attr name="streamMessagesHeaderOfflineLabelTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamSearchingForNetworkText" format="string|reference" />
-        <attr name="streamSearchingForNetworkTextSize" format="dimension|reference" />
-        <attr name="streamSearchingForNetworkTextColor" format="color|reference" />
-        <attr name="streamSearchingForNetworkTextFont" format="reference" />
-        <attr name="streamSearchingForNetworkFontAssets" format="string" />
-        <attr name="streamSearchingForNetworkTextStyle">
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelText" format="string|reference" />
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextSize" format="dimension|reference" />
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelColor" format="color|reference" />
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextFont" format="reference" />
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelFontAssets" format="string" />
+        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamShowSearchingForNetworkProgressBar" format="boolean" />
-        <attr name="streamSearchingForNetworkProgressBarTint" format="color|reference" />
+        <attr name="streamMessagesHeaderShowSearchingForNetworkProgressBar" format="boolean" />
+        <attr name="streamMessagesHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
 
-        <attr name="streamBackButtonDrawable" format="reference" />
-        <attr name="streamShowBackButton" format="boolean" />
+        <attr name="streamMessagesHeaderBackButtonDrawable" format="reference" />
+        <attr name="streamMessagesHeaderShowBackButton" format="boolean" />
 
-        <attr name="streamShowBackButtonBadge" format="boolean" />
-        <attr name="streamBackButtonBadgeBackgroundColor" format="color" />
+        <attr name="streamMessagesHeaderShowBackButtonBadge" format="boolean" />
+        <attr name="streamMessagesHeaderBackButtonBadgeBackgroundColor" format="color" />
+
+        <attr name="streamMessagesHeaderDefaultLabelText" format="string|reference" />
+        <attr name="streamMessagesHeaderDefaultLabelTextSize" format="dimension|reference" />
+        <attr name="streamMessagesHeaderDefaultLabelTextColor" format="color|reference" />
+        <attr name="streamMessagesHeaderDefaultLabelTextFont" format="reference" />
+        <attr name="streamMessagesHeaderDefaultLabelFontAssets" format="string" />
+        <attr name="streamMessagesHeaderDefaultLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamMessagesHeaderTypingLabelText" format="string|reference" />
+        <attr name="streamMessagesHeaderTypingLabelTextSize" format="dimension|reference" />
+        <attr name="streamMessagesHeaderTypingLabelTextColor" format="color|reference" />
+        <attr name="streamMessagesHeaderTypingLabelTextFont" format="reference" />
+        <attr name="streamMessagesHeaderTypingLabelFontAssets" format="string" />
+        <attr name="streamMessagesHeaderTypingLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
 
     </declare-styleable>
 </resources>
