@@ -25,4 +25,5 @@ dependencies {
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
+    implementation Dependencies.androidxAnnotations
 }

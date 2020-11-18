@@ -28,20 +28,23 @@ internal class ChatLoggerImpl constructor(
     }
 
     override fun logE(tag: Any, chatError: ChatError) {
+        val cause = chatError.cause
+        val message = chatError.message
         when {
-            chatError.cause != null && chatError.message != null -> logE(
+            cause != null && message != null -> logE(
                 tag,
-                chatError.message,
-                chatError.cause
+                message,
+                cause
             )
-            chatError.cause != null -> logE(tag, chatError.cause)
-            else -> logE(tag, chatError.message.orEmpty())
+            cause != null -> logE(tag, cause)
+            else -> logE(tag, message.orEmpty())
         }
     }
 
     override fun logE(tag: Any, message: String, chatError: ChatError) {
-        if (chatError.cause != null) {
-            logE(tag, message, chatError.cause)
+        val cause = chatError.cause
+        if (cause != null) {
+            logE(tag, message, cause)
         } else {
             logE(tag, message)
         }
