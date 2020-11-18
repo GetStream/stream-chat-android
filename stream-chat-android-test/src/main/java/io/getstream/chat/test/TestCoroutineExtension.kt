@@ -1,6 +1,6 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.test
 
 import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -10,10 +10,10 @@ import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-internal class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, AfterAllCallback {
+public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
-    val dispatcher = TestCoroutineDispatcher()
-    val scope = TestCoroutineScope(dispatcher)
+    public val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    public val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
 
     override fun beforeAll(context: ExtensionContext) {
         DispatcherProvider.set(

@@ -1,6 +1,6 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.test
 
 import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -8,12 +8,12 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-internal class TestCoroutineRule : TestWatcher() {
+public class TestCoroutineRule : TestWatcher() {
 
-    val dispatcher = TestCoroutineDispatcher()
-    val scope = TestCoroutineScope(dispatcher)
+    public val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    public val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
 
-    override fun starting(description: Description?) {
+    override fun starting(description: Description) {
         super.starting(description)
         DispatcherProvider.set(
             mainDispatcher = dispatcher,
@@ -21,7 +21,7 @@ internal class TestCoroutineRule : TestWatcher() {
         )
     }
 
-    override fun finished(description: Description?) {
+    override fun finished(description: Description) {
         super.finished(description)
         scope.cleanupTestCoroutines()
         DispatcherProvider.reset()

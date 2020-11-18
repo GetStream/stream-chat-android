@@ -5,12 +5,12 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.TestCoroutineExtension
 import com.getstream.sdk.chat.view.messageinput.AttachmentsController
 import com.getstream.sdk.chat.view.messageinput.MessageInputController
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.When
 import org.amshove.kluent.calling

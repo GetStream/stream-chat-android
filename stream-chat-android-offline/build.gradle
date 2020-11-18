@@ -100,6 +100,8 @@ dependencies {
     implementation Dependencies.gson
 
     // Tests
+    testImplementation project(":stream-chat-android-test")
+
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
