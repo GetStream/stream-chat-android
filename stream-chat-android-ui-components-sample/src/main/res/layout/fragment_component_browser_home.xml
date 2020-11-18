@@ -1,152 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <TextView
-        android:id="@+id/pageTitle"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Component Browser"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <LinearLayout
-        android:id="@+id/avatarViewContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pageTitle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         >
 
         <TextView
-            android:id="@+id/avatarViewLabel"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:id="@+id/pageTitle"
+            style="@style/TextAppearance.MaterialComponents.Headline4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="AvatarView"
+            android:layout_marginTop="24dp"
+            android:text="Component Browser"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             />
 
-        <io.getstream.chat.android.ui.avatar.AvatarView
-            android:id="@+id/avatarView"
-            style="@style/StreamGroupActionsAvatarStyle"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/channelsHeaderViewContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatarViewContainer"
-        >
-
-        <TextView
-            android:id="@+id/channelsHeaderViewLabel"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/avatarViewContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="ChannelsHeaderView"
-            />
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pageTitle"
+            >
 
+            <TextView
+                android:id="@+id/avatarViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="AvatarView"
+                />
 
-        <io.getstream.chat.android.ui.channels.header.ChannelsHeaderView
-            android:id="@+id/channelsHeaderView"
-            android:layout_width="match_parent"
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarView"
+                style="@style/StreamGroupActionsAvatarStyle"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/channelsHeaderViewContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarViewContainer"
+            >
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/channelsHeaderViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="ChannelsHeaderView"
+                />
 
-    <LinearLayout
-        android:id="@+id/searchViewContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:clickable="true"
-        android:descendantFocusability="blocksDescendants"
-        android:focusable="true"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/channelsHeaderViewContainer"
-        >
 
-        <TextView
-            android:id="@+id/searchViewLabel"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
-            android:layout_width="wrap_content"
+            <io.getstream.chat.android.ui.channels.header.ChannelsHeaderView
+                android:id="@+id/channelsHeaderView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/messagesHeaderViewContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="SearchView"
-            />
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/channelsHeaderViewContainer"
+            >
 
-        <io.getstream.chat.android.ui.search.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/messagesHeaderViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="MessagesHeaderView"
+                />
+
+
+            <io.getstream.chat.android.ui.MessagesHeaderView
+                android:id="@+id/messagesHeaderView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="12dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/searchViewContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
-            />
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/messagesHeaderViewContainer"
+            >
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/searchViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="SearchView"
+                />
 
-    <LinearLayout
-        android:id="@+id/addChannelViewContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:descendantFocusability="blocksDescendants"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchViewContainer"
-        >
+            <io.getstream.chat.android.ui.search.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                />
 
-        <TextView
-            android:id="@+id/addChannelViewLabel"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addChannelViewContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="AddChannelView"
-            />
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchViewContainer"
+            >
 
-        <io.getstream.chat.android.ui.channel.add.AddChannelView
-            android:id="@+id/addChannelView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
-            />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/addChannelViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="AddChannelView"
+                />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <io.getstream.chat.android.ui.channel.add.AddChannelView
+                android:id="@+id/addChannelView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
