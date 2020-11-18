@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -72,16 +71,6 @@ internal fun Channel.getCurrentUserUnreadCount(): Int = getCurrentUserRead()?.la
         message.createdAt?.after(currentRead) == true
     }
 } ?: 0
-
-public val Channel.Companion.DIFF_CALLBACK: DiffUtil.ItemCallback<Channel>
-    get() = object : DiffUtil.ItemCallback<Channel>() {
-        override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid
-
-        override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
-            !oldItem.diff(newItem).hasDifference()
-
-        override fun getChangePayload(oldItem: Channel, newItem: Channel): Any? = oldItem.diff(newItem)
-    }
 
 internal fun Channel.diff(other: Channel): ChannelDiff =
     ChannelDiff(
