@@ -2,7 +2,7 @@
 
 package io.getstream.chat.test
 
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.rules.TestWatcher

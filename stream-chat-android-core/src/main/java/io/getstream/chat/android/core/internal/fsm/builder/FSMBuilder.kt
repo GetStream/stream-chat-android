@@ -1,8 +1,8 @@
-package io.getstream.chat.core.internal.fsm.builder
+package io.getstream.chat.android.core.internal.fsm.builder
 
-import io.getstream.chat.core.internal.InternalStreamChatApi
-import io.getstream.chat.core.internal.fsm.FiniteStateMachine
-import io.getstream.chat.core.internal.fsm.StateFunction
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.chat.android.core.internal.fsm.StateFunction
 import kotlin.reflect.KClass
 
 @InternalStreamChatApi

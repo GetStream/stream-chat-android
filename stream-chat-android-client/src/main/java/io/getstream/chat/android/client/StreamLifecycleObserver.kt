@@ -4,7 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
