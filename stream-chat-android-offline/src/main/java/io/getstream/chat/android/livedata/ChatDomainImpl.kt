@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -47,6 +46,7 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -234,7 +234,7 @@ internal class ChatDomainImpl internal constructor(
         currentUser = user
 
         if (backgroundSyncEnabled && !isTestRunner()) {
-            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken())
+            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken() ?: "")
             if (config.isValid()) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
                     put(config)

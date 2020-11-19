@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_root"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_channel_list_item_height"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatar_view"
+        android:layout_width="@dimen/stream_avatar_size_medium"
+        android:layout_height="@dimen/stream_avatar_size_medium"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/channel_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/stream_black"
+        app:layout_constraintBottom_toTopOf="@+id/last_message_label"
+        app:layout_constraintStart_toEndOf="@+id/avatar_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Gebruiker, Usuario, Benutzer"
+        />
+
+    <TextView
+        android:id="@+id/last_message_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="@dimen/stream_avatar_text_size_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/message_status_image_view"
+        app:layout_constraintStart_toStartOf="@+id/channel_name_label"
+        app:layout_constraintTop_toBottomOf="@+id/channel_name_label"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a."
+        />
+
+    <TextView
+        android:id="@+id/last_message_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textSize="@dimen/stream_avatar_text_size_small"
+        app:layout_constraintBottom_toBottomOf="@+id/message_status_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/message_status_image_view"
+        tools:text="3:00PM"
+        />
+
+    <ImageView
+        android:id="@+id/message_status_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:src="@drawable/ic_icon_check_all"
+        app:layout_constraintBottom_toBottomOf="@+id/last_message_label"
+        app:layout_constraintEnd_toStartOf="@+id/last_message_time_label"
+        app:layout_constraintTop_toTopOf="@+id/last_message_label"
+        />
+
+    <TextView
+        android:id="@+id/unread_count_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stream_shape_badge_background"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/stream_white"
+        android:textSize="@dimen/stream_text_small"
+        app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
+        app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
+        app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+    </TextView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

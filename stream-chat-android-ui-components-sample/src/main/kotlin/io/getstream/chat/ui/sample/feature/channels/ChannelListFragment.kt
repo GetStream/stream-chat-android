@@ -4,16 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
-import io.getstream.chat.android.ui.bindView
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 
-class ChannelsFragment : Fragment() {
+class ChannelListFragment : Fragment() {
 
     private val viewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
 
@@ -35,22 +39,30 @@ class ChannelsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.bindView(binding.channelsListView, viewLifecycleOwner)
-        viewModel.state.observe(viewLifecycleOwner) {
-            binding.channelsLoadingView
-                .loadingViewContainer
-                .isVisible = it is ChannelsViewModel.State.Loading
-        }
+        setupOnClickListeners()
+        binding.channelsView.apply {
 
-        activity?.apply {
-            onBackPressedDispatcher.addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        activity?.finish()
-                    }
-                }
+            val loadingView = layoutInflater.inflate(
+                R.layout.channels_loading_view,
+                view as ViewGroup,
+                false
             )
+
+            setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+
+            setChannelClickListener {
+                ChatLogger.instance.logD(it.name, "clicked!")
+            }
+
+            viewModel.bindView(this, viewLifecycleOwner)
+        }
+    }
+
+    private fun setupOnClickListeners() {
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                finish()
+            }
         }
     }
 }

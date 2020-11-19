@@ -6,6 +6,7 @@
 ## stream-chat-android
 
 ## stream-chat-android-client
+- It's no longer required to wait for `setUser` to finish before querying channels
 
 ## stream-chat-android-offline
 

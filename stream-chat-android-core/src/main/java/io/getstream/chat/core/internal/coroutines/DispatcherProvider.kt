@@ -1,7 +1,6 @@
-package io.getstream.chat.android.client.internal
+package io.getstream.chat.core.internal.coroutines
 
-import io.getstream.chat.android.client.internal.DispatcherProvider.reset
-import io.getstream.chat.android.client.internal.DispatcherProvider.set
+import io.getstream.chat.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
