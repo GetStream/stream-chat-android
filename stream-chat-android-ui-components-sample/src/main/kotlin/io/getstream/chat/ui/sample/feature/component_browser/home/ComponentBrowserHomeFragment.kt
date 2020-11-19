@@ -45,6 +45,7 @@ class ComponentBrowserHomeFragment : Fragment() {
 
         setupAvatarView()
         setupChannelsHeaderView()
+        setupMessagesHeaderView()
         setupSearchView()
         setupAddChannelView()
     }
@@ -61,6 +62,16 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.channelsHeaderView.showOnlineTitle()
         binding.channelsHeaderViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)
+        }
+    }
+
+    private fun setupMessagesHeaderView() {
+        binding.messagesHeaderView.setAvatar(randomChannel(), listOf(randomUser()))
+        binding.messagesHeaderView.showBackButtonBadge("5")
+        binding.messagesHeaderView.setTitle("Chat title")
+        binding.messagesHeaderView.setOnlineStateSubtitle("Last active 10 min ago")
+        binding.messagesHeaderViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment)
         }
     }
 

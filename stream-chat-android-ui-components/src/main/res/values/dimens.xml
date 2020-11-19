@@ -29,6 +29,9 @@
 
     <dimen name="stream_text_size_input">6sp</dimen>
 
+    <!-- headers -->
+    <dimen name="stream_default_header_height">56dp</dimen>
+
     <!--Channel List Items-->
     <dimen name="stream_channel_list_item_height">64dp</dimen>
 </resources>
