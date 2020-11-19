@@ -164,8 +164,14 @@ internal class ChannelControllerImpl(
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
 
-    val _unreadCount = _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
-        computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
+    val _unreadCount = _read.combine(_messages) {
+        channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
+        val messages = messagesMap.values.toList()
+        if (messages.size <= 1 && channelUserRead != null) {
+            channelUserRead.unreadMessages
+        } else {
+            computeUnreadCount(domainImpl.currentUser, channelUserRead, messages)
+        }
     }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
 
     /**
@@ -1293,7 +1299,7 @@ internal class ChannelControllerImpl(
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
-        channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
+        channel.unreadCount = _unreadCount.value
         channel.lastMessageAt =
             lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
