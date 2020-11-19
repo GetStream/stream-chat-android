@@ -48,4 +48,7 @@
     <!--Selected Attachments-->
     <dimen name="stream_selected_attachment_corner_radius">12dp</dimen>
     <dimen name="stream_selected_attachment_media_height">104dp</dimen>
+
+    <!--Message Preview Items-->
+    <dimen name="stream_message_preview_item_height">64dp</dimen>
 </resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_root"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_message_preview_item_height"
+    android:background="@color/stream_alabaster"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        android:layout_width="@dimen/stream_avatar_size_medium"
+        android:layout_height="@dimen/stream_avatar_size_medium"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:streamAvatarHeight="@dimen/stream_avatar_size_medium"
+        app:streamAvatarWidth="@dimen/stream_avatar_size_medium"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <TextView
+        android:id="@+id/channelNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/stream_black"
+        android:textSize="@dimen/stream_text_large"
+        app:layout_constraintBottom_toTopOf="@+id/messageLabel"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="@tools:sample/full_names"
+        />
+
+    <TextView
+        android:id="@+id/messageLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/stream_text_color_black_translucent"
+        android:textSize="@dimen/stream_text_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/messageTimeLabel"
+        app:layout_constraintStart_toStartOf="@+id/channelNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/channelNameLabel"
+        tools:text="@tools:sample/lorem/random"
+        />
+
+    <TextView
+        android:id="@+id/messageTimeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/stream_text_color_black_translucent"
+        android:textSize="@dimen/stream_text_small"
+        app:layout_constraintBaseline_toBaselineOf="@+id/messageLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="3:00PM"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
