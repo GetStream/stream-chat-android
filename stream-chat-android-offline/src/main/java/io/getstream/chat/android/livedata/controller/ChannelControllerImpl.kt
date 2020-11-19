@@ -73,6 +73,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
+import kotlin.math.max
 
 private const val KEY_MESSAGE_ACTION = "image_action"
 private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
@@ -841,7 +842,19 @@ internal class ChannelControllerImpl(
 
     private fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
+        updateLastMessageAtByNewMessages(newMessages.values)
         _messages.value = newMessages
+    }
+
+    private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
+        if (newMessages.isEmpty()) {
+            return
+        }
+        val newLastMessageAt = newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOf(Date::getTime)
+        lastMessageAt.value = when (val currentLastMessageAt = lastMessageAt.value) {
+            null -> Date(newLastMessageAt)
+            else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
+        }
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
@@ -1275,7 +1288,11 @@ internal class ChannelControllerImpl(
         return channel
     }
 
-    internal fun loadOlderThreadMessages(threadId: String, limit: Int, firstMessage: Message? = null): Result<List<Message>> {
+    internal fun loadOlderThreadMessages(
+        threadId: String,
+        limit: Int,
+        firstMessage: Message? = null
+    ): Result<List<Message>> {
         val result = if (firstMessage != null) {
             client.getRepliesMore(threadId, firstMessage.id, limit).execute()
         } else {
