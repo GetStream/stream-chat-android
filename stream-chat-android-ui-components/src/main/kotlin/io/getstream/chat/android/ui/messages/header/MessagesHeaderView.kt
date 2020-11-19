@@ -154,10 +154,13 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     private fun getProgressbarTintList(attrs: TypedArray): ColorStateList? {
-        return (attrs.getColorStateList(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkProgressBarTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_blue))
+        return (
+            attrs.getColorStateList(
+                R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkProgressBarTint
+            )
+                ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
+            )
     }
-
 
     private fun getSearchingForNetworkTextStyle(attrs: TypedArray): TextStyle {
         return TextStyle.Builder(attrs).size(
