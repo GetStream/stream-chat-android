@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
@@ -90,7 +90,7 @@ internal class MessageListViewModelTest {
     private val messages = MutableLiveData<List<Message>>()
     private val oldMessages = MutableLiveData<List<Message>>()
     private val threadMessages = MutableLiveData<List<Message>>()
-    private val typing = MutableLiveData<List<User>>()
+    private val typing = MutableLiveData<TypingEvent>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
 
     @BeforeEach

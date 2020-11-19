@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -79,7 +80,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
         channelControllerImpl.handleEvent(data.user2TypingStarted)
         channelControllerImpl.handleEvent(data.user1TypingStop)
         val typing = channelControllerImpl.typing.getOrAwaitValue()
-        Truth.assertThat(typing).isEqualTo(listOf(data.user2))
+        Truth.assertThat(typing).isEqualTo(TypingEvent(channelControllerImpl.channelId, listOf(data.user2)))
     }
 
     @Test

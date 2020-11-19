@@ -74,10 +74,12 @@ public class ChatClient internal constructor(
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
-    private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() = reconnectSocket()
-        override fun stopped() = disconnectSocket()
-    }
+    private val lifecycleObserver = StreamLifecycleObserver(
+        object : LifecycleHandler {
+            override fun resume() = reconnectSocket()
+            override fun stopped() = disconnectSocket()
+        }
+    )
 
     public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User?) -> Unit>()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
@@ -94,6 +96,7 @@ public class ChatClient internal constructor(
                     clientStateService.onConnected(user, connectionId)
                     api.setConnection(user.id, connectionId)
                     callConnectionListener(event, null)
+                    lifecycleObserver.observe()
                 }
                 is ErrorEvent -> {
                     callConnectionListener(null, event.error)
@@ -143,7 +146,7 @@ public class ChatClient internal constructor(
         for (preSetUserListener in preSetUserListeners) {
             preSetUserListener(user)
         }
-        connectionListener = wrapListener(listener)
+        connectionListener = listener
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
 
@@ -156,22 +159,11 @@ public class ChatClient internal constructor(
 
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
-        connectionListener = wrapListener(listener)
+        connectionListener = listener
         config.isAnonymous = true
         warmUp()
         getTokenAndConnect {
             socket.connectAnonymously()
-        }
-    }
-
-    private fun wrapListener(listener: InitConnectionListener?) = object : InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            StreamLifecycleObserver(lifecycleHandler).observe()
-            listener?.onSuccess(data)
-        }
-
-        override fun onError(error: ChatError) {
-            listener?.onError(error)
         }
     }
 

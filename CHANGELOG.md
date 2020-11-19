@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android-ui-component
+- Add MessagesHeaderView
 
 ## stream-chat-android
 
@@ -9,6 +10,7 @@
 - It's no longer required to wait for `setUser` to finish before querying channels
 
 ## stream-chat-android-offline
+- Fix bug when channels with newer messages don't go to the first position in the list
 
 # Nov 13th, 2020 - 4.4.2
 ## stream-chat-android-ui-component
@@ -39,6 +41,7 @@ Added new MessageInputView structure
 - Added support for marking all channels as read for the current user.
     - Can be accessed via `ChatDomain`'s use cases (`chatDomain.useCases.markAllRead()...`).
 - Fix bug when local channels could be sorted not properly
+- Typing events can be all tracked with `ChatDomain.typingUpdates`
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
