@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.randomCID
 import io.getstream.chat.android.livedata.randomChannelEntity
 import io.getstream.chat.android.livedata.randomChannelUserReadEntity
 import io.getstream.chat.android.livedata.randomMemberEntity
@@ -12,6 +11,7 @@ import io.getstream.chat.android.livedata.randomMessageEntity
 import io.getstream.chat.android.livedata.randomReactionEntity
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest

@@ -37,6 +37,7 @@ import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.calling

@@ -14,13 +14,13 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.randomCID
-import io.getstream.chat.android.livedata.randomFile
-import io.getstream.chat.android.livedata.randomFiles
-import io.getstream.chat.android.livedata.randomImageFile
 import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.`should be equal to result`
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomFile
+import io.getstream.chat.android.test.randomFiles
+import io.getstream.chat.android.test.randomImageFile
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When

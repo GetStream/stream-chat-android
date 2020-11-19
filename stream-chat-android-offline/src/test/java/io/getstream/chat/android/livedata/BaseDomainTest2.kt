@@ -31,6 +31,7 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When

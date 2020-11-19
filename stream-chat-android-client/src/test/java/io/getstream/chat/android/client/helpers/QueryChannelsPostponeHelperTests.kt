@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
@@ -36,9 +37,9 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedResult = Mother.randomChannel()
         When calling api.queryChannel(any(), any(), any()) doReturn expectedResult.asCall()
         When calling clientStateService.state doReturn ClientState.User.Authorized.Connected(
-            Mother.randomString(),
+            randomString(),
             Mother.randomUser(),
-            Mother.randomString()
+            randomString()
         )
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().data()

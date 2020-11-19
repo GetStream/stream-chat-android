@@ -8,9 +8,9 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
-import io.getstream.chat.android.livedata.randomCID
-import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.`should be equal to result`
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.`should throw`
