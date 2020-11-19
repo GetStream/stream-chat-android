@@ -10,6 +10,7 @@
 - It's no longer required to wait for `setUser` to finish before querying channels
 
 ## stream-chat-android-offline
+- Fix bug when channels with newer messages don't go to the first position in the list
 
 # Nov 13th, 2020 - 4.4.2
 ## stream-chat-android-ui-component
