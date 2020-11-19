@@ -119,9 +119,9 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         channelControllerImpl.setTyping(data.user3.id, data.user3TypingStartedOld)
         channelControllerImpl.setTyping(data.user2.id, data.user2TypingStarted)
 
-        Truth.assertThat(channelControllerImpl.typing.getOrAwaitValue().size).isEqualTo(2)
+        Truth.assertThat(channelControllerImpl.typing.getOrAwaitValue().users.size).isEqualTo(2)
         channelControllerImpl.clean()
-        Truth.assertThat(channelControllerImpl.typing.getOrAwaitValue().size).isEqualTo(1)
+        Truth.assertThat(channelControllerImpl.typing.getOrAwaitValue().users.size).isEqualTo(1)
     }
 
     @Test
