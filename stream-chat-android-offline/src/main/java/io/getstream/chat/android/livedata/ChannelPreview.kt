@@ -6,5 +6,4 @@ import io.getstream.chat.android.client.models.User
 public data class ChannelPreview(
     val channel: Channel,
     val typing: List<User> = listOf(),
-    val unreadMessages: Int = 0
 )
