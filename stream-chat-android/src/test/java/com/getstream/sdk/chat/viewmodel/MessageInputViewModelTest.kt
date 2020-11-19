@@ -11,7 +11,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
@@ -26,6 +25,7 @@ import io.getstream.chat.android.livedata.usecase.SendMessageWithAttachments
 import io.getstream.chat.android.livedata.usecase.StopTyping
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomCID
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When
@@ -51,8 +51,8 @@ internal class MessageInputViewModelTest {
     private val editMessage: EditMessage = mock()
     private val keystroke: Keystroke = mock()
     private val stopTyping: StopTyping = mock()
-    private val channelControllerCall: Call<ChannelController> = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
+    private val channelControllerCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
     private val commands: List<Command> = createCommands()
     private val channel: Channel = createChannel(cid = CID, config = Config(commands = commands))
@@ -67,7 +67,7 @@ internal class MessageInputViewModelTest {
         When calling useCases.keystroke doReturn keystroke
         When calling useCases.stopTyping doReturn stopTyping
         When calling watchChannel(eq(CID), eq(0)) doReturn channelControllerCall
-        When calling channelControllerCall.execute() doReturn channelControllerResult
+        When calling channelControllerResult.isSuccess doReturn true
         When calling channelControllerResult.data() doReturn channelController
         When calling channelController.toChannel() doReturn channel
         When calling editMessage(any()) doReturn mock()
