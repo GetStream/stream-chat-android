@@ -64,6 +64,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -87,8 +88,7 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl
-) :
-    ChannelController {
+) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
@@ -136,7 +136,7 @@ internal class ChannelControllerImpl(
         .map { it.values.sortedBy { user -> user.createdAt } }
         .asLiveData()
 
-    val _typingUsers = _typing.map {
+    val _typingUsers: StateFlow<List<User>> = _typing.map {
         it.values
             .sortedBy(ChatEvent::createdAt)
             .mapNotNull { event ->
