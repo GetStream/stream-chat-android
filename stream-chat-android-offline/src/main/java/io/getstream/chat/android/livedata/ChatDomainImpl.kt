@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
@@ -22,6 +23,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
@@ -130,6 +132,7 @@ internal class ChatDomainImpl internal constructor(
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
     private val _banned = MutableLiveData(false)
     private val _mutedUsers = MutableLiveData<List<Mute>>()
+    private val _typingChannels = MediatorLiveData<TypingEvent>()
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(appContext) }
@@ -184,6 +187,8 @@ internal class ChatDomainImpl internal constructor(
 
     /** stores the mapping from cid to channelRepository */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+
+    override val typingUpdates: LiveData<TypingEvent> = _typingChannels
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
@@ -509,6 +514,9 @@ internal class ChatDomainImpl internal constructor(
                     this
                 )
             activeChannelMapImpl[cid] = channelRepo
+            scope.launch(DispatcherProvider.Main) {
+                addTypingChannel(channelRepo)
+            }
         }
         return activeChannelMapImpl.getValue(cid)
     }
@@ -518,6 +526,10 @@ internal class ChatDomainImpl internal constructor(
 
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()
+    }
+
+    private fun addTypingChannel(channelController: ChannelControllerImpl) {
+        _typingChannels.addSource(channelController.typing, _typingChannels::postValue)
     }
 
     internal fun setOffline() {

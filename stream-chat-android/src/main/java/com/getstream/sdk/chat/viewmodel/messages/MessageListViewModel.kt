@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.exhaustive
@@ -61,12 +62,14 @@ public class MessageListViewModel @JvmOverloads constructor(
         reads = channelController.reads
         loadMoreLiveData = channelController.loadingOlderMessages
 
+        val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
+
         messageListData = MessageListItemLiveData(
             currentUser,
             channelController.messages,
             channelController.oldMessages,
             reads,
-            channelController.typing,
+            typingIds,
             false,
             ::dateSeparator
         )
