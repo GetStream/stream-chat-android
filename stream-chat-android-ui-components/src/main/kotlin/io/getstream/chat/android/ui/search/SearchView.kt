@@ -8,13 +8,22 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.ui.databinding.StreamSearchViewBinding
+import io.getstream.chat.android.ui.utils.Debouncer
 
 public class SearchView : FrameLayout {
 
-    public var listener: Listener? = null
+    private companion object {
+        const val TYPING_DEBOUNCE_MS = 300L
+    }
 
     private val binding: StreamSearchViewBinding =
         StreamSearchViewBinding.inflate(LayoutInflater.from(context), this, true)
+
+    private var debouncedInputChangedListener: InputChangedListener? = null
+    private var continuousInputChangedListener: InputChangedListener? = null
+    private var searchStartedListener: SearchStartedListener? = null
+
+    private val inputDebouncer = Debouncer(debounceMs = TYPING_DEBOUNCE_MS)
 
     private val query: String
         get() = binding.inputField.text.trim().toString()
@@ -40,12 +49,16 @@ public class SearchView : FrameLayout {
 
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)
-            listener?.onInputChanged(query)
+            val newQuery = query
+            continuousInputChangedListener?.onInputChanged(newQuery)
+            inputDebouncer.submit {
+                debouncedInputChangedListener?.onInputChanged(newQuery)
+            }
         }
         binding.inputField.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
-                    listener?.onSearchStarted(query)
+                    searchStartedListener?.onSearchStarted(query)
                     true
                 }
                 else -> false
@@ -67,6 +80,11 @@ public class SearchView : FrameLayout {
         attrs ?: return
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        inputDebouncer.shutdown()
+    }
+
     /**
      * Updates the current input to the specified string.
      *
@@ -76,15 +94,34 @@ public class SearchView : FrameLayout {
         binding.inputField.setText(query.trim())
     }
 
-    public interface Listener {
-        /**
-         * Notifies observers of every individual change in the input, per character.
-         */
-        public fun onInputChanged(query: String)
+    /**
+     * Sets a listener for continuous input events. This listener is notified of each individual
+     * character change in the input as it changes.
+     */
+    public fun setContinuousInputChangedListener(inputChangedListener: InputChangedListener?) {
+        this.continuousInputChangedListener = inputChangedListener
+    }
 
-        /**
-         * Search was started with keyboard search button.
-         */
+    /**
+     * Sets a listener for debounced input events. Quick changes to the input will not be passed to
+     * this listener, it will only be invoked when the input has been stable for a short while.
+     */
+    public fun setDebouncedInputChangedListener(inputChangedListener: InputChangedListener?) {
+        this.debouncedInputChangedListener = inputChangedListener
+    }
+
+    /**
+     * Sets the listener to be called when search is triggered.
+     */
+    public fun setSearchStartedListener(searchStartedListener: SearchStartedListener?) {
+        this.searchStartedListener = searchStartedListener
+    }
+
+    public fun interface InputChangedListener {
+        public fun onInputChanged(query: String)
+    }
+
+    public fun interface SearchStartedListener {
         public fun onSearchStarted(query: String)
     }
 }
