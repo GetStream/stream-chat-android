@@ -198,12 +198,17 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
-        currentMode = Mode.Thread(parentMessage)
         val parentId: String = parentMessage.id
-        val threadController = domain.useCases.getThread(cid, parentId).execute().data()
-        threadMessages = threadController.messages
-        setThreadMessages(threadMessages)
-        domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
+        domain.useCases.getThread(cid, parentId).enqueue { threadControllerResult ->
+            if (threadControllerResult.isSuccess) {
+                threadControllerResult.data().run {
+                    currentMode = Mode.Thread(parentMessage)
+                    threadMessages = messages
+                    setThreadMessages(threadMessages)
+                    domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
+                }
+            }
+        }
     }
 
     private fun onNormalModeEntered() {
