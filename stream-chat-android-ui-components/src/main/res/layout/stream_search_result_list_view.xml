@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="LinearLayout"
+    >
+
+    <TextView
+        android:id="@+id/searchInfoBar"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/stream_search_info_bar_gradient"
+        android:paddingStart="8dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="8dp"
+        android:textSize="@dimen/stream_text_small"
+        tools:text="5 results"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:itemCount="15"
+        tools:listitem="@layout/stream_item_search_result"
+        />
+
+</merge>
