@@ -58,14 +58,16 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
@@ -134,6 +136,14 @@ internal class ChannelControllerImpl(
         .map { it.values.sortedBy { user -> user.createdAt } }
         .asLiveData()
 
+    val _typingUsers = _typing.map {
+        it.values
+            .sortedBy(ChatEvent::createdAt)
+            .mapNotNull { event ->
+                (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
+            }
+    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+
     /** who is currently typing (current user is excluded from this) */
     override val typing: LiveData<TypingEvent> = _typing
         .map {
@@ -154,15 +164,14 @@ internal class ChannelControllerImpl(
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
 
+    val _unreadCount = _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
+        computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
+    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
+
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
-    override val unreadCount: LiveData<Int> =
-        ChannelUnreadCountLiveData(
-            domainImpl.currentUser,
-            read,
-            messages
-        )
+    override val unreadCount: LiveData<Int> = _unreadCount.filterNotNull().asLiveData()
 
     /** the list of members of this channel */
     override val members: LiveData<List<Member>> = _members
