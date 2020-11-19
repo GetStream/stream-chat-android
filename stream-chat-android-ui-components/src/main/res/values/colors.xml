@@ -2,6 +2,7 @@
 <resources>
     <color name="stream_blue">#006CFF</color>
     <color name="stream_grey">#808080</color>
+    <color name="stream_grey_medium_light">#CCCCCC</color>
     <color name="stream_grey_light">#F5F5F5</color>
 
     <color name="stream_text_black">@color/stream_black</color>

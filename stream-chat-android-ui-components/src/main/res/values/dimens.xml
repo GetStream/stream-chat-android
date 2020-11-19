@@ -41,4 +41,8 @@
     <dimen name="stream_attachment_dialog_button_section_height">52dp</dimen>
     <dimen name="stream_attachment_dialog_permission_image_size">168dp</dimen>
     <dimen name="stream_attachment_dialog_selection_indicator_size">20dp</dimen>
+
+    <!--Selected Attachments-->
+    <dimen name="stream_selected_attachment_corner_radius">12dp</dimen>
+    <dimen name="stream_selected_attachment_media_height">104dp</dimen>
 </resources>

@@ -82,6 +82,7 @@ dependencies {
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.constraintLayout
     implementation Dependencies.materialComponents
+    implementation Dependencies.drawabletoolbox
     implementation Dependencies.fragmentKtx
     implementation Dependencies.androidxCoreKtx
 }
