@@ -62,11 +62,11 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     @JvmOverloads
-    public fun setData(channel: Channel, users: List<User> = channel.members.map { it.user }) {
+    public fun setAvatar(channel: Channel, users: List<User> = channel.members.map { it.user }) {
         binding.avatar.setChannelData(channel, users)
     }
 
-    public fun setData(user: User) {
+    public fun setAvatar(user: User) {
         binding.avatar.setUserData(user)
     }
 

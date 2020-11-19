@@ -34,40 +34,40 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
             showBackButtonBadge("23")
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomChannel())
+            setAvatar(randomChannel())
         }
         binding.headerOnlineNoBadgeStatus.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomChannel(), randomUsers())
+            setAvatar(randomChannel(), randomUsers())
             showBackButtonBadge("")
         }
         binding.headerOnlineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomUser(isOnline = true))
+            setAvatar(randomUser(isOnline = true))
         }
         binding.headerOfflineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomUser(isOnline = false))
+            setAvatar(randomUser(isOnline = false))
         }
         binding.headerSearchingForNetwork.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomUser(isOnline = false))
+            setAvatar(randomUser(isOnline = false))
             showSearchingForNetworkLabel()
         }
         binding.headerDeviceOffline.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomUser(isOnline = false))
+            setAvatar(randomUser(isOnline = false))
             showOfflineStateLabel()
         }
         binding.headerTypingSubtitle.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setData(randomUser(isOnline = false))
+            setAvatar(randomUser(isOnline = false))
             showTypingStateLabel()
         }
     }

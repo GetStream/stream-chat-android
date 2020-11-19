@@ -66,7 +66,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupMessagesHeaderView() {
-        binding.messagesHeaderView.setData(randomChannel(), listOf(randomUser()))
+        binding.messagesHeaderView.setAvatar(randomChannel(), listOf(randomUser()))
         binding.messagesHeaderView.showBackButtonBadge("5")
         binding.messagesHeaderView.setTitle("Chat title")
         binding.messagesHeaderView.setOnlineStateSubtitle("Last active 10 min ago")
