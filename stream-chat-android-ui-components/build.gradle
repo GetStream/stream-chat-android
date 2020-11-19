@@ -88,6 +88,7 @@ dependencies {
     implementation Dependencies.materialComponents
     implementation Dependencies.drawabletoolbox
     implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.lottie
 }
