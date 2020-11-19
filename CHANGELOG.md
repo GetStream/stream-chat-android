@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android-ui-component
+- Add MessagesHeaderView
 
 ## stream-chat-android
 
