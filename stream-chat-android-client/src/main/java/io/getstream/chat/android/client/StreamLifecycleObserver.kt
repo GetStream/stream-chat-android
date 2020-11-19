@@ -10,12 +10,16 @@ import kotlinx.coroutines.launch
 
 internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : LifecycleObserver {
     private var recurringResumeEvent = false
+    @Volatile private var isObserving = false
 
     fun observe() {
-        CoroutineScope(DispatcherProvider.Main).launch {
-            ProcessLifecycleOwner.get()
-                .lifecycle
-                .addObserver(this@StreamLifecycleObserver)
+        if (isObserving.not()) {
+            isObserving = true
+            CoroutineScope(DispatcherProvider.Main).launch {
+                ProcessLifecycleOwner.get()
+                    .lifecycle
+                    .addObserver(this@StreamLifecycleObserver)
+            }
         }
     }
 
@@ -25,6 +29,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
                 .lifecycle
                 .removeObserver(this@StreamLifecycleObserver)
         }
+        isObserving = false
         recurringResumeEvent = false
     }
 
