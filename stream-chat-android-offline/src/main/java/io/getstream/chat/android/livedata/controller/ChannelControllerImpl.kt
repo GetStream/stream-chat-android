@@ -59,11 +59,12 @@ import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -136,13 +137,13 @@ internal class ChannelControllerImpl(
         .map { it.values.sortedBy { user -> user.createdAt } }
         .asLiveData()
 
-    val _typingUsers = _typing.map {
+    val _typingUsers: StateFlow<List<User>> = _typing.map {
         it.values
             .sortedBy(ChatEvent::createdAt)
             .mapNotNull { event ->
                 (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
             }
-    }.stateIn(DispatcherProvider.IO, emptyMap())
+    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     /** who is currently typing (current user is excluded from this) */
     override val typing: LiveData<List<User>> = _typingUsers.asLiveData()
@@ -157,12 +158,12 @@ internal class ChannelControllerImpl(
 
     val _unreadCount = _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
         computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
-    }.stateIn(DispatcherProvider.IO, 0)
+    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
 
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
-    override val unreadCount: LiveData<Int> = _unreadCount.asLiveData()
+    override val unreadCount: LiveData<Int?> = _unreadCount.asLiveData()
 
     /** the list of members of this channel */
     override val members: LiveData<List<Member>> = _members
@@ -1280,7 +1281,8 @@ internal class ChannelControllerImpl(
     }
 
     fun toChannelPreview(): ChannelPreview {
-        return ChannelPreview(channel = toChannel(), _typingUsers.value, _unreadCount.value)
+
+        return ChannelPreview(channel = toChannel(), _typingUsers.value, _unreadCount.value ?: 0)
     }
 
     internal fun loadOlderThreadMessages(threadId: String, limit: Int, firstMessage: Message? = null): Result<List<Message>> {

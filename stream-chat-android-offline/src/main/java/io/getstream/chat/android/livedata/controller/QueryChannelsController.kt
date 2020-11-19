@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.livedata.ChannelPreview
 
 /**
  * The QueryChannelsController is a small helper to show a list of channels
@@ -49,4 +50,9 @@ public interface QueryChannelsController {
      * If we are currently loading more channels
      */
     public val loadingMore: LiveData<Boolean>
+
+    /**
+     * A list of channel preview objects, in addition to the regular channel information it contains unread counts and typing information
+     */
+    public var channelPreviews: LiveData<List<ChannelPreview>>
 }

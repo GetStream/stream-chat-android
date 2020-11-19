@@ -42,7 +42,7 @@ public interface ChannelController {
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
-    public val unreadCount: LiveData<Int>
+    public val unreadCount: LiveData<Int?>
     /** the list of members of this channel */
     public val members: LiveData<List<Member>>
     /** if we are currently loading */
