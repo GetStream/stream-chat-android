@@ -853,7 +853,8 @@ internal class ChannelControllerImpl(
         if (newMessages.isEmpty()) {
             return
         }
-        val newLastMessageAt = newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOf(Date::getTime)
+        val newLastMessageAt =
+            newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOfOrNull(Date::getTime) ?: return
         lastMessageAt.value = when (val currentLastMessageAt = lastMessageAt.value) {
             null -> Date(newLastMessageAt)
             else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
