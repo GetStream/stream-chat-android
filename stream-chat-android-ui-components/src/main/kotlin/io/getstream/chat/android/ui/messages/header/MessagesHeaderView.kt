@@ -79,16 +79,16 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.onlineLabel.text = subtitle
     }
 
-    public fun setBackButtonClickListener(onClick: () -> Unit) {
-        binding.backButtonContainer.setOnClickListener { onClick() }
+    public fun setBackButtonClickListener(listener: OnClickListener) {
+        binding.backButtonContainer.setOnClickListener { listener.onClick() }
     }
 
-    public fun setAvatarClickListener(onClick: () -> Unit) {
-        binding.avatar.setOnClickListener { onClick() }
+    public fun setAvatarClickListener(listener: OnClickListener) {
+        binding.avatar.setOnClickListener { listener.onClick() }
     }
 
-    public fun setRetryClickListener(onClick: () -> Unit) {
-        binding.offlineRetryButton.setOnClickListener { onClick() }
+    public fun setRetryClickListener(listener: OnClickListener) {
+        binding.offlineRetryButton.setOnClickListener { listener.onClick() }
     }
 
     public fun showBackButtonBadge(text: String) {
@@ -333,5 +333,9 @@ public class MessagesHeaderView : ConstraintLayout {
                 isClickable = false
             }
         }
+    }
+
+    public fun interface OnClickListener {
+        public fun onClick(): Unit
     }
 }
