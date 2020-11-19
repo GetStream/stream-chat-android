@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.header
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -148,11 +149,15 @@ public class MessagesHeaderView : ConstraintLayout {
                     R.styleable.StreamMessagesHeaderView_streamMessagesHeaderShowSearchingForNetworkProgressBar,
                     true
                 )
-            indeterminateTintList =
-                attrs.getColorStateList(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkProgressBarTint)
-                    ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
+            indeterminateTintList = getProgressbarTintList(attrs)
         }
     }
+
+    private fun getProgressbarTintList(attrs: TypedArray): ColorStateList? {
+        return (attrs.getColorStateList(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkProgressBarTint)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_blue))
+    }
+
 
     private fun getSearchingForNetworkTextStyle(attrs: TypedArray): TextStyle {
         return TextStyle.Builder(attrs).size(
