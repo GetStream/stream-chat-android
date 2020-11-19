@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -24,22 +25,7 @@ public class ChannelListView @JvmOverloads constructor(
     private var endReachedListener: EndReachedListener? = null
     private val layoutManager: LinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
-
-    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
-        requireAdapter().viewHolderFactory = factory
-    }
-
-    public fun setChannelClickListener(listener: ChannelClickListener) {
-        requireAdapter().channelClickListener = listener
-    }
-
-    public fun setChannelLongClickListener(listener: ChannelClickListener) {
-        requireAdapter().channelLongClickListener = listener
-    }
-
-    public fun setUserClickListener(listener: UserClickListener) {
-        requireAdapter().userClickListener = listener
-    }
+    private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
 
     init {
         setHasFixedSize(true)
@@ -47,6 +33,7 @@ public class ChannelListView @JvmOverloads constructor(
         setLayoutManager(layoutManager)
         adapter = ChannelListItemAdapter()
         parseStyleAttributes(context, attrs)
+        addItemDecoration(dividerDecoration)
     }
 
     private fun parseStyleAttributes(context: Context, attrs: AttributeSet?) {
@@ -80,6 +67,30 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     private fun canScrollUpForChannelEvent(): Boolean = layoutManager.findFirstVisibleItemPosition() < 3
+
+    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
+        requireAdapter().viewHolderFactory = factory
+    }
+
+    public fun setChannelClickListener(listener: ChannelClickListener) {
+        requireAdapter().channelClickListener = listener
+    }
+
+    public fun setChannelLongClickListener(listener: ChannelClickListener) {
+        requireAdapter().channelLongClickListener = listener
+    }
+
+    public fun setUserClickListener(listener: UserClickListener) {
+        requireAdapter().userClickListener = listener
+    }
+
+    public fun setItemSeparator(@DrawableRes drawableResource: Int) {
+        dividerDecoration.drawableResource = drawableResource
+    }
+
+    public fun setItemSeparatorHeight(height: Int) {
+        dividerDecoration.drawableHeight = height
+    }
 
     public fun setOnEndReachedListener(listener: EndReachedListener?) {
         endReachedListener = listener

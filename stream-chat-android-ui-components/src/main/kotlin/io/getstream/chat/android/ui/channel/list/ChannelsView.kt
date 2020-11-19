@@ -7,12 +7,14 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.R
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
@@ -48,6 +50,11 @@ public class ChannelsView @JvmOverloads constructor(
                     }
                 }
             }
+
+            it.getResourceId(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable, R.drawable.stream_divider)
+                .let { separator ->
+                    channelListView.setItemSeparator(separator)
+                }
         }
     }
 
@@ -73,18 +80,51 @@ public class ChannelsView @JvmOverloads constructor(
         addView(loadingView, layoutParams)
     }
 
+    /**
+     * Uses the [drawableResource] as the separator for list items
+     *
+     * @param drawableResource the drawable used as a separator
+     */
+    public fun setItemSeparator(@DrawableRes drawableResource: Int) {
+        channelListView.setItemSeparator(drawableResource)
+    }
+
+    public fun setItemSeparatorHeight(dp: Int) {
+        channelListView.setItemSeparatorHeight(dp.dpToPx())
+    }
+
+    /**
+     * Allows clients to set a custom implementation of [BaseChannelViewHolderFactory]
+     *
+     * @param factory the custom factory to be used when generating item view holders
+     */
     public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
         channelListView.setViewHolderFactory(factory)
     }
 
+    /**
+     * Allows clients to set a click listener for all channel list items
+     *
+     * @param listener the callback to be invoked on channel item click
+     */
     public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener) {
         channelListView.setChannelClickListener(listener)
     }
 
+    /**
+     * Allows clients to set a long-click listener for all channel list items
+     *
+     * @param listener the callback to be invoked on channel long click
+     */
     public fun setChannelLongClickListener(listener: ChannelListView.ChannelClickListener) {
         channelListView.setChannelLongClickListener(listener)
     }
 
+    /**
+     * Allows clients to set a click listener to be notified of user click events
+     *
+     * @param listener the listener to be invoked when a user click event occurs
+     */
     public fun setUserClickListener(listener: ChannelListView.UserClickListener) {
         channelListView.setUserClickListener(listener)
     }

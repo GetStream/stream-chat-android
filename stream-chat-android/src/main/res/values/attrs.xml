@@ -113,6 +113,7 @@
         <!--Custom ChannelListLayout-->
         <!-- Text of the empty state label -->
         <attr name="streamChannelsEmptyStateLabelText" format="string" />
+        <attr name="streamChannelsItemSeparatorDrawable" format="reference" />
     </declare-styleable>
 
     <!--MessageInputView-->
