@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
+import io.getstream.chat.android.livedata.ChannelPreview
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -57,14 +58,17 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
+import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
@@ -132,15 +136,16 @@ internal class ChannelControllerImpl(
         .map { it.values.sortedBy { user -> user.createdAt } }
         .asLiveData()
 
+    val _typingUsers = _typing.map {
+        it.values
+            .sortedBy(ChatEvent::createdAt)
+            .mapNotNull { event ->
+                (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
+            }
+    }.stateIn(DispatcherProvider.IO, emptyMap())
+
     /** who is currently typing (current user is excluded from this) */
-    override val typing: LiveData<List<User>> = _typing
-        .map {
-            it.values
-                .sortedBy(ChatEvent::createdAt)
-                .mapNotNull { event ->
-                    (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
-                }
-        }.asLiveData()
+    override val typing: LiveData<List<User>> = _typingUsers.asLiveData()
 
     /** how far every user in this channel has read */
     override val reads: LiveData<List<ChannelUserRead>> = _reads
@@ -150,15 +155,14 @@ internal class ChannelControllerImpl(
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
 
+    val _unreadCount = _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
+        computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
+    }.stateIn(DispatcherProvider.IO, 0)
+
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
-    override val unreadCount: LiveData<Int> =
-        ChannelUnreadCountLiveData(
-            domainImpl.currentUser,
-            read,
-            messages
-        )
+    override val unreadCount: LiveData<Int> = _unreadCount.asLiveData()
 
     /** the list of members of this channel */
     override val members: LiveData<List<Member>> = _members
@@ -1273,6 +1277,10 @@ internal class ChannelControllerImpl(
         channel.hidden = _hidden.value
 
         return channel
+    }
+
+    fun toChannelPreview(): ChannelPreview {
+        return ChannelPreview(channel = toChannel(), _typingUsers.value, _unreadCount.value)
     }
 
     internal fun loadOlderThreadMessages(threadId: String, limit: Int, firstMessage: Message? = null): Result<List<Message>> {
