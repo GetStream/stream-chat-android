@@ -20,9 +20,11 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
     }
 
     fun dispose() {
-        ProcessLifecycleOwner.get()
-            .lifecycle
-            .removeObserver(this)
+        CoroutineScope(DispatcherProvider.Main).launch {
+            ProcessLifecycleOwner.get()
+                .lifecycle
+                .removeObserver(this@StreamLifecycleObserver)
+        }
         recurringResumeEvent = false
     }
 
