@@ -6,6 +6,7 @@ include (
 		':stream-chat-android-offline',
 		':stream-chat-android-client',
 		':stream-chat-android-core',
+		':stream-chat-android-test',
 )
 
 buildCache {

@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.utils
 
 import android.annotation.SuppressLint
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar

@@ -1,8 +1,8 @@
-package io.getstream.chat.core.internal.fsm
+package io.getstream.chat.android.core.internal.fsm
 
-import io.getstream.chat.core.internal.InternalStreamChatApi
-import io.getstream.chat.core.internal.fsm.builder.FSMBuilder
-import io.getstream.chat.core.internal.fsm.builder.FSMBuilderMarker
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilder
+import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

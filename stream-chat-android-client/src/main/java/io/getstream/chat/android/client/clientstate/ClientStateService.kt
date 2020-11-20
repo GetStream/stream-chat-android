@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.core.internal.fsm.FiniteStateMachine
+import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
 internal class ClientStateService {
     fun onConnected(user: User, connectionId: String) {
