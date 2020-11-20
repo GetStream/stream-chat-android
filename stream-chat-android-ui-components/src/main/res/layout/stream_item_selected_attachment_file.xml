@@ -20,6 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
         tools:src="@drawable/stream_ic_file_csv"
         />
 
@@ -57,19 +58,21 @@
         tools:text="123 KB"
         />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/tv_close"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="8dp"
         android:background="@drawable/stream_circle_white"
         android:backgroundTint="@color/stream_grey_medium_light"
-        android:padding="10dp"
+        android:cropToPadding="true"
+        android:padding="6dp"
         android:scaleType="center"
         android:src="@drawable/stream_ic_close"
+        android:tint="@color/stream_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_white"
+        tools:ignore="ContentDescription"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

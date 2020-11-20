@@ -16,12 +16,16 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_close"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="8dp"
-        android:background="@drawable/stream_attachment_cancel"
+        android:background="@drawable/stream_attachment_cancel_background"
+        android:cropToPadding="true"
+        android:padding="6dp"
+        android:src="@drawable/stream_ic_close"
+        android:tint="@color/stream_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

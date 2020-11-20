@@ -190,7 +190,7 @@ public class MessageInputView : ConstraintLayout {
 
         binding.etMessageTextInput.doAfterTextChanged {
             suggestionListController.onTextChanged(it?.toString() ?: "")
-            refreshSendButtonState()
+            refreshControlsState()
         }
 
         binding.etMessageTextInput.run {
@@ -274,20 +274,22 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configAttachmentButtonBehavior() {
         attachmentController = AttachmentController(context, binding.mediaComposer, binding.fileComposer) {
-            refreshSendButtonState()
+            refreshControlsState()
         }
         binding.ivOpenAttachment.setOnClickListener {
             attachmentController.openAttachmentDialog()
         }
     }
 
-    private fun refreshSendButtonState() {
-        if (!binding.etMessageTextInput.text.toString().isNullOrBlank() ||
-            attachmentController.selectedAttachments.isNotEmpty()
-        ) {
+    private fun refreshControlsState() {
+        val hasText = !binding.etMessageTextInput.text.toString().isNullOrBlank()
+        val hasAttachments = attachmentController.selectedAttachments.isNotEmpty()
+
+        if (hasText || hasAttachments) {
             showSendMessageEnabled()
         } else {
             showSendMessageDisabled()
         }
+        binding.ivOpenEmojis.isVisible = !hasAttachments
     }
 }
