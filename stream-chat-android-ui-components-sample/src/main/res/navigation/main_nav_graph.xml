@@ -102,6 +102,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAddChannelViewFragment"
             app:destination="@id/componentBrowserAddChannelViewFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment"
+            app:destination="@id/componentBrowserMessagesHeaderFragment"
+            />
     </fragment>
 
     <fragment
@@ -126,6 +130,12 @@
         android:id="@+id/componentBrowserAddChannelViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.add.ComponentBrowserAddChannelView"
         android:label="ComponentBrowserAddChannelView"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessagesHeaderFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
+        android:label="ComponentBrowserMessagesHeaderView"
         />
 
 </navigation>

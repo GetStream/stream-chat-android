@@ -16,6 +16,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarView;
@@ -23,12 +24,8 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import com.getstream.sdk.chat.view.channels.ChannelListView;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
@@ -38,11 +35,6 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
-
-    @SuppressLint("ConstantLocale")
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d", Locale.getDefault());
-    @SuppressLint("ConstantLocale")
-    private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     protected TextView tv_name, tv_last_message, tv_date;
     protected ReadStateView read_state;
@@ -199,22 +191,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         Date messageDate = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
 
-        if (messageDate == null) {
-            tv_date.setText("");
-        }
-        else if (isFromToday(messageDate)) {
-            tv_date.setText(TIME_DATEFORMAT.format(messageDate));
-        } else {
-            tv_date.setText(DATE_FORMAT.format(messageDate));
-        }
-    }
-
-    private boolean isFromToday(Date date) {
-        Calendar today = Calendar.getInstance();
-        Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(date);
-        return today.get(Calendar.DAY_OF_YEAR) == messageCalendar.get(Calendar.DAY_OF_YEAR)
-                && today.get(Calendar.YEAR) == messageCalendar.get(Calendar.YEAR);
+        tv_date.setText(DateFormatter.formatAsTimeOrDate(messageDate));
     }
 
     protected void configReadState(Channel channel) {
