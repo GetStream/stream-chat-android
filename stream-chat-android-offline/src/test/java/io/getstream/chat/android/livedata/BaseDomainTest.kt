@@ -134,7 +134,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -186,7 +186,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -221,13 +221,7 @@ internal open class BaseDomainTest {
     fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
 
         if (setUser) {
-            runBlocking {
-                waitForSetUser(
-                    client,
-                    data.user1,
-                    data.user1Token
-                )
-            }
+            waitForSetUser(client, data.user1, data.user1Token)
         }
 
         db = createRoomDb()
