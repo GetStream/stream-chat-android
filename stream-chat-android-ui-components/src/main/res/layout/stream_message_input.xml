@@ -26,7 +26,21 @@
         android:src="@drawable/stream_ic_attach"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
         app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/stream_ic_attach"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/clearMessageInputButton"
+        android:layout_width="@dimen/stream_attachment_button_width"
+        android:layout_height="@dimen/stream_attachment_button_height"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/stream_spacing_medium"
+        android:src="@drawable/stream_ic_next"
+        android:tint="@color/stream_blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
+        app:layout_constraintEnd_toStartOf="@id/iv_open_emojis"
+        app:layout_constraintStart_toEndOf="@id/iv_open_attachment"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -38,8 +52,7 @@
         android:layout_marginBottom="@dimen/stream_spacing_medium"
         android:src="@drawable/stream_ic_lightning"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
-        app:layout_constraintStart_toEndOf="@id/iv_open_attachment"
-        tools:src="@drawable/stream_ic_lightning"
+        app:layout_constraintStart_toEndOf="@id/clearMessageInputButton"
         />
 
     <LinearLayout

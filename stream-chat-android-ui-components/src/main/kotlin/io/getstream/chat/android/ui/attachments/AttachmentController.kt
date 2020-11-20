@@ -54,6 +54,14 @@ internal class AttachmentController(
         }
     }
 
+    fun clearSelectedAttachments() {
+        selectedAttachments = emptyList()
+        selectedFilesRecyclerView.isVisible = false
+        selectedFileAttachmentAdapter.clear()
+        selectedMediaRecyclerView.isVisible = false
+        selectedMediaAttachmentAdapter.clear()
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeAttachment(attachment)

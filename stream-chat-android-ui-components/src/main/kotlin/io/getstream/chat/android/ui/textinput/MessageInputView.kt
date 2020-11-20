@@ -19,6 +19,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
+import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
@@ -72,6 +73,7 @@ public class MessageInputView : ConstraintLayout {
             configLightningButton(typedArray)
             configTextInput(typedArray)
             configSendButton(typedArray)
+            configClearAttachmentsButton()
             configAttachmentButtonBehavior()
         }
     }
@@ -272,6 +274,14 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageEnabled.alpha = 0F
     }
 
+    private fun configClearAttachmentsButton() {
+        binding.clearMessageInputButton.setOnClickListener {
+            attachmentController.clearSelectedAttachments()
+            binding.etMessageTextInput.setText(String.EMPTY)
+            refreshControlsState()
+        }
+    }
+
     private fun configAttachmentButtonBehavior() {
         attachmentController = AttachmentController(context, binding.mediaComposer, binding.fileComposer) {
             refreshControlsState()
@@ -290,6 +300,17 @@ public class MessageInputView : ConstraintLayout {
         } else {
             showSendMessageDisabled()
         }
-        binding.ivOpenEmojis.isVisible = !hasAttachments
+
+        if (hasAttachments) {
+            binding.ivOpenEmojis.isVisible = false
+            binding.ivOpenAttachment.isVisible = false
+            binding.clearMessageInputButton.isVisible = true
+            binding.etMessageTextInput.setHint(R.string.stream_attachment_input_hint)
+        } else {
+            binding.ivOpenEmojis.isVisible = true
+            binding.ivOpenAttachment.isVisible = true
+            binding.clearMessageInputButton.isVisible = false
+            binding.etMessageTextInput.hint = null
+        }
     }
 }

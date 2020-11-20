@@ -39,9 +39,10 @@
     <string name="stream_create_group">Create a Group</string>
     <string name="stream_add_channel_user_list_title">On the platform</string>
 
-    <!--Attachment Dialog-->
+    <!--Attachments-->
     <string name="stream_attachment_dialog_recent_files">Recent Files</string>
     <string name="stream_attachment_dialog_permission_camera">Allow access to your Camera</string>
     <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
     <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
+    <string name="stream_attachment_input_hint">Add command or send</string>
 </resources>
