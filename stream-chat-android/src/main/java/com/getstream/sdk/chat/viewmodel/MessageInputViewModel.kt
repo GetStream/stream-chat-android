@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,6 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
 import java.io.File
 
 /**
@@ -24,18 +24,25 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
-    private val channelController: ChannelController =
-        chatDomain.useCases.watchChannel(cid, 0).execute().data()
-
-    private var channelState = MutableLiveData<Channel>(channelController.toChannel())
-    public val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
-
-    public val members: LiveData<List<Member>> = channelController.members
     private var activeThread = MutableLiveData<Message?>()
+    private val _maxMessageLength = MutableLiveData(0)
+    private val _commands = MutableLiveData<List<Command>>(emptyList())
+    private val _members = MediatorLiveData<List<Member>>()
+    public val maxMessageLength: LiveData<Int> = _maxMessageLength
+    public val commands: LiveData<List<Command>> = _commands
+    public val members: LiveData<List<Member>> = _members
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
-    public val maxMessageLength: Int by lazy {
-        channelController.toChannel().config.maxMessageLength
+    init {
+        chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
+            if (channelControllerResult.isSuccess) {
+                val channelController = channelControllerResult.data()
+                val channel: Channel = channelController.toChannel()
+                _maxMessageLength.value = channel.config.maxMessageLength
+                _commands.value = channel.config.commands
+                _members.addSource(channelController.members) { _members.value = it }
+            }
+        }
     }
 
     /**
