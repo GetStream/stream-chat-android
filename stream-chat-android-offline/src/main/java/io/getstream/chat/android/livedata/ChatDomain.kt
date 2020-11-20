@@ -62,7 +62,7 @@ public interface ChatDomain {
      *   })
      *
      */
-    public val errorEvents: LiveData<Event<ChatError>?>
+    public val errorEvents: LiveData<Event<ChatError>>
 
     /**
      * list of users that you've muted

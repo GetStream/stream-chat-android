@@ -55,6 +55,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
@@ -180,7 +181,7 @@ internal class ChatDomainImpl internal constructor(
      *   })
      *
      */
-    override val errorEvents: LiveData<Event<ChatError>?> = _errorEvent.asLiveData()
+    override val errorEvents: LiveData<Event<ChatError>> = _errorEvent.filterNotNull().asLiveData()
 
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -191,8 +192,6 @@ internal class ChatDomainImpl internal constructor(
     override val typingUpdates: LiveData<TypingEvent> = _typingChannels
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
-
-    // TODO 1.1: We should accelerate online/offline detection
 
     internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
