@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.ChannelController
 
-/***
+/**
  * ViewModel class for [com.getstream.sdk.chat.view.ChannelHeaderView].
  * Responsible for updating channel information.
  * Can be bound to the view using [ChannelHeaderViewModel.bindView] function.
