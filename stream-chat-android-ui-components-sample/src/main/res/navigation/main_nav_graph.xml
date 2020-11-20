@@ -70,18 +70,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/directChatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.direct_chat.DirectChatFragment"
-        android:label="NewChatFragment"
-        />
-
-    <fragment
-        android:id="@+id/groupChatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.group_chat.GroupChatFragment"
-        android:label="NewGroupChatFragment"
-        />
-
-    <fragment
         android:id="@+id/componentBrowserHomeFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment"
         android:label="ComponentBrowserHomeFragment"
