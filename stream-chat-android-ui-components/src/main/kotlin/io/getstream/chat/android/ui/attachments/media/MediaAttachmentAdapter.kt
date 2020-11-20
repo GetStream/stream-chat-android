@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.StringUtility
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemAttachmentMediaBinding
@@ -83,20 +82,7 @@ internal class MediaAttachmentAdapter(
         }
 
         private fun bindSelectionMark(attachment: AttachmentMetaData) {
-            when {
-                attachment.size > Constant.MAX_UPLOAD_FILE_SIZE -> {
-                    binding.selectionMarkImageView.isVisible = false
-                    binding.largeFileMarkImageView.isVisible = true
-                }
-                attachment.isSelected -> {
-                    binding.selectionMarkImageView.isVisible = true
-                    binding.largeFileMarkImageView.isVisible = false
-                }
-                else -> {
-                    binding.selectionMarkImageView.isVisible = false
-                    binding.largeFileMarkImageView.isVisible = false
-                }
-            }
+            binding.selectionMarkImageView.isVisible = attachment.isSelected
         }
 
         private fun bindSelectionOverlay(attachment: AttachmentMetaData) {
