@@ -36,12 +36,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
     init {
         chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
-                channelControllerResult.data().run {
-                    val channel: Channel = toChannel()
-                    _maxMessageLength.value = channel.config.maxMessageLength
-                    _commands.value = channel.config.commands
-                    _members.addSource(members) { _members.value = it }
-                }
+                val channelController = channelControllerResult.data()
+                val channel: Channel = channelController.toChannel()
+                _maxMessageLength.value = channel.config.maxMessageLength
+                _commands.value = channel.config.commands
+                _members.addSource(channelController.members) { _members.value = it }
             }
         }
     }

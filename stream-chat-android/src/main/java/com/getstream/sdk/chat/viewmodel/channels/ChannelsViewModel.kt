@@ -44,22 +44,21 @@ public class ChannelsViewModel(
         loadingData.postValue(State.Loading)
         chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
-                queryChannelsControllerResult.data().run {
-                    stateMerger.addSource(
-                        map(channels) { channelList ->
-                            if (channelList.isEmpty()) {
-                                State.NoChannelsAvailable
-                            } else {
-                                State.Result(channelList.filter { it.hidden == false })
-                            }
+                val queryChannelsController = queryChannelsControllerResult.data()
+                stateMerger.addSource(
+                    map(queryChannelsController.channels) { channelList ->
+                        if (channelList.isEmpty()) {
+                            State.NoChannelsAvailable
+                        } else {
+                            State.Result(channelList.filter { it.hidden == false })
                         }
-                    ) { state -> stateMerger.value = state }
-                    paginationStateMerger.addSource(loadingMore) { loadingMore ->
-                        setPaginationState { copy(loadingMore = loadingMore) }
                     }
-                    paginationStateMerger.addSource(endOfChannels) { endOfChannels ->
-                        setPaginationState { copy(endOfChannels = endOfChannels) }
-                    }
+                ) { state -> stateMerger.value = state }
+                paginationStateMerger.addSource(queryChannelsController.loadingMore) { loadingMore ->
+                    setPaginationState { copy(loadingMore = loadingMore) }
+                }
+                paginationStateMerger.addSource(queryChannelsController.endOfChannels) { endOfChannels ->
+                    setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
             }
         }

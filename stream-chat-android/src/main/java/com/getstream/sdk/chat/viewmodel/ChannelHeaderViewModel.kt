@@ -31,19 +31,18 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
     init {
         chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
-                channelControllerResult.data().run {
-                    _members.addSource(members) { _members.value = it }
-                    _channelState.addSource(map(channelData) { toChannel() }) {
-                        _channelState.value = it
-                    }
-                    _anyOtherUsersOnline.addSource(
-                        map(members) { members ->
-                            members.asSequence()
-                                .filter { it.user != chatDomain.currentUser }
-                                .any { it.user.online }
-                        }
-                    ) { _anyOtherUsersOnline.value = it }
+                val channelController = channelControllerResult.data()
+                _members.addSource(channelController.members) { _members.value = it }
+                _channelState.addSource(map(channelController.channelData) { channelController.toChannel() }) {
+                    _channelState.value = it
                 }
+                _anyOtherUsersOnline.addSource(
+                    map(channelController.members) { members ->
+                        members.asSequence()
+                            .filter { it.user != chatDomain.currentUser }
+                            .any { it.user.online }
+                    }
+                ) { _anyOtherUsersOnline.value = it }
             }
         }
     }

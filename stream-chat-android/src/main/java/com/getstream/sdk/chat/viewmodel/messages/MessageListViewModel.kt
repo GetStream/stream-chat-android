@@ -58,26 +58,25 @@ public class MessageListViewModel @JvmOverloads constructor(
 
         domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
-                channelControllerResult.data().run {
-                    _channel.addSource(MutableLiveData(toChannel())) { _channel.value = it }
-                    val typingIds = Transformations.map(typing) { (_, idList) -> idList }
-                    messageListData = MessageListItemLiveData(
-                        currentUser,
-                        messages,
-                        oldMessages,
-                        reads,
-                        typingIds,
-                        false,
-                        ::dateSeparator
-                    ).also { mld ->
-                        stateMerger.apply {
-                            addSource(MutableLiveData<State>(State.Loading)) { value = it }
-                            addSource(mld) { value = State.Result(it) }
-                        }
+                val channelController = channelControllerResult.data()
+                _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
+                val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
+                messageListData = MessageListItemLiveData(
+                    currentUser,
+                    channelController.messages,
+                    channelController.oldMessages,
+                    channelController.reads,
+                    typingIds,
+                    false,
+                    ::dateSeparator
+                ).also { mld ->
+                    stateMerger.apply {
+                        addSource(MutableLiveData<State>(State.Loading)) { value = it }
+                        addSource(mld) { value = State.Result(it) }
                     }
-                    _reads.addSource(this.reads) { _reads.value = it }
-                    _loadMoreLiveData.addSource(loadingOlderMessages) { _loadMoreLiveData.value = it }
                 }
+                _reads.addSource(channelController.reads) { _reads.value = it }
+                _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
             }
         }
     }
@@ -206,12 +205,11 @@ public class MessageListViewModel @JvmOverloads constructor(
         val parentId: String = parentMessage.id
         domain.useCases.getThread(cid, parentId).enqueue { threadControllerResult ->
             if (threadControllerResult.isSuccess) {
-                threadControllerResult.data().run {
-                    currentMode = Mode.Thread(parentMessage)
-                    threadMessages = messages
-                    setThreadMessages(threadMessages)
-                    domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
-                }
+                val threadController = threadControllerResult.data()
+                currentMode = Mode.Thread(parentMessage)
+                threadMessages = threadController.messages
+                setThreadMessages(threadMessages)
+                domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
             }
         }
     }
