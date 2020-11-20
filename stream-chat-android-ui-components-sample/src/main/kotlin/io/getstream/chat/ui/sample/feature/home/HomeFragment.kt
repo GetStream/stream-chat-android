@@ -59,6 +59,8 @@ class HomeFragment : Fragment() {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.hostFragmentContainer) as NavHostFragment
         binding.bottomNavigationView.setupWithNavController(navHostFragment.navController)
+        // disable reloading fragment when clicking again on the same tab
+        binding.bottomNavigationView.setOnNavigationItemReselectedListener {}
     }
 
     private fun setupNavigationDrawer() {

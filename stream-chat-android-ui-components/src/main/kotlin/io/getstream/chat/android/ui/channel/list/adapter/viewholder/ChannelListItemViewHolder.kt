@@ -1,9 +1,9 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
-import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.View
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -19,17 +19,8 @@ import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
 import io.getstream.chat.android.ui.utils.extensions.getReadStatusDrawable
 import io.getstream.chat.android.ui.utils.extensions.getUsers
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
-
-    public companion object {
-        @SuppressLint("ConstantLocale")
-        private val DEFAULT_LOCALE: Locale = Locale.getDefault()
-
-        private val TIME_FORMAT = SimpleDateFormat("hh:mm", DEFAULT_LOCALE)
-    }
 
     public override fun bind(
         channel: Channel,
@@ -64,9 +55,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                         )
                     } ?: String.EMPTY
 
-                    channel.getLastMessageTime()
-                        ?.let(TIME_FORMAT::format)
-                        ?.let { lastMessageTimeLabel.text = it }
+                    lastMessageTimeLabel.text = DateFormatter.formatAsTimeOrDate(channel.getLastMessageTime())
 
                     channel.getCurrentUserUnreadCount().let { unreadCount ->
                         unreadCountBadge.apply {
