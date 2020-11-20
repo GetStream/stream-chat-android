@@ -9,12 +9,12 @@ import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 
 class ChannelListFragment : Fragment() {
@@ -51,7 +51,7 @@ class ChannelListFragment : Fragment() {
             setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             setChannelClickListener {
-                ChatLogger.instance.logD(it.name, "clicked!")
+                findNavController().navigateSafely(ChannelListFragmentDirections.actionOpenChat(it.cid))
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
