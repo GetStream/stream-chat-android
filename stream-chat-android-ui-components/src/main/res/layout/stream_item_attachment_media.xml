@@ -47,18 +47,6 @@
         />
 
     <ImageView
-        android:id="@+id/largeFileMarkImageView"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="@dimen/stream_spacing_small"
-        android:src="@drawable/stream_ic_file_size_error"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
-        app:layout_constraintTop_toTopOf="@id/mediaThumbnailImageView"
-        tools:ignore="ContentDescription"
-        />
-
-    <ImageView
         android:id="@+id/videoLogoImageView"
         android:layout_width="24dp"
         android:layout_height="24dp"
