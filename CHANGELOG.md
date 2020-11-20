@@ -8,9 +8,11 @@
 
 ## stream-chat-android-client
 - It's no longer required to wait for `setUser` to finish before querying channels
+- `ChatClient::setUser` method allows be called without network connection and will retry to connect when network connection is available
 
 ## stream-chat-android-offline
 - Fix bug when channels with newer messages don't go to the first position in the list
+- Fix Offline usage of `ChatDomain`
 
 # Nov 13th, 2020 - 4.4.2
 ## stream-chat-android-ui-component
