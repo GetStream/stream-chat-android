@@ -39,6 +39,7 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -134,7 +135,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -186,7 +187,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -221,13 +222,7 @@ internal open class BaseDomainTest {
     fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
 
         if (setUser) {
-            runBlocking {
-                waitForSetUser(
-                    client,
-                    data.user1,
-                    data.user1Token
-                )
-            }
+            waitForSetUser(client, data.user1, data.user1Token)
         }
 
         db = createRoomDb()
