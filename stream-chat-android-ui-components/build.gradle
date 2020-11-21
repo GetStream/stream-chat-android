@@ -91,4 +91,5 @@ dependencies {
     implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.lottie
+    implementation Dependencies.photoview
 }

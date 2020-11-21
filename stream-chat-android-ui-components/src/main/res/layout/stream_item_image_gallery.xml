@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/iv_ImageItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
