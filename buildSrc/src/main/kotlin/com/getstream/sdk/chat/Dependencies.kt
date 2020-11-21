@@ -49,6 +49,7 @@ private const val KLUENT_VERSION = "1.63"
 private const val KOTLIN_VERSION = "1.4.10"
 private const val KTLINT_PLUGIN_VERSION = "9.4.1"
 private const val LEAK_CANARY_VERSION = "2.4"
+private const val LOTTIE_VERSION = "3.5.0"
 private const val MATERIAL_COMPONENTS_VERSION = "1.2.1"
 private const val MARKWON_VERSION = "4.6.0"
 private const val MOCKITO_KOTLIN_VERSION = "2.2.0"
@@ -66,7 +67,6 @@ private const val SHIMMER_VERSION = "0.5.0"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1"
 private const val WORK_VERSION = "2.4.0"
-private const val LOTTIE_VERSION = "3.5.0"
 
 object Dependencies {
     const val activityKtx = "androidx.activity:activity-ktx:$ACTIVITY_KTX_VERSION"
@@ -130,6 +130,7 @@ object Dependencies {
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
     const val ktlintPlugin = "org.jlleitschuh.gradle:ktlint-gradle:$KTLINT_PLUGIN_VERSION"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:$LEAK_CANARY_VERSION"
+    const val lottie = "com.airbnb.android:lottie:$LOTTIE_VERSION"
     const val materialComponents = "com.google.android.material:material:$MATERIAL_COMPONENTS_VERSION"
     const val markwonCore = "io.noties.markwon:core:$MARKWON_VERSION"
     const val markwonLinkify = "io.noties.markwon:linkify:$MARKWON_VERSION"
@@ -161,7 +162,6 @@ object Dependencies {
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:$WORK_VERSION"
     const val workTesting = "androidx.work:work-testing:$WORK_VERSION"
-    const val lottie = "com.airbnb.android:lottie:$LOTTIE_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
