@@ -6,20 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemImageGalleryBinding
 
 public class ImageSlidePageFragment : Fragment() {
 
     public var imageBitmap: Bitmap? = null
 
-    private val binding = StreamItemImageGalleryBinding.inflate(LayoutInflater.from(context), null, true)
+    private lateinit var binding: StreamItemImageGalleryBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.stream_item_image_gallery, container, false)
+    ): View {
+        return StreamItemImageGalleryBinding.inflate(LayoutInflater.from(context)).apply {
+            binding = this
+        }.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
