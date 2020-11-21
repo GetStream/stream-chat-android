@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import io.getstream.chat.android.ui.R
@@ -59,7 +60,11 @@ public class AttachmentGallery : ConstraintLayout {
     }
 
     private fun configPositionCount(count: Int) {
-        binding.tvPhotoCount.text = String.format(countText, 1, count)
+        if (count > 1) {
+            binding.tvPhotoCount.text = String.format(countText, 1, count)
+        } else {
+            binding.tvPhotoCount.isVisible = false
+        }
 
         binding.vpAttachmentGallery.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
