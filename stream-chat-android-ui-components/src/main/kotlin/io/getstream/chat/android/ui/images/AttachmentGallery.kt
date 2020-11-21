@@ -66,12 +66,14 @@ public class AttachmentGallery : ConstraintLayout {
             binding.tvPhotoCount.isVisible = false
         }
 
-        binding.vpAttachmentGallery.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
+        binding.vpAttachmentGallery.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
 
-                binding.tvPhotoCount.text = String.format(countText, position + 1, count)
+                    binding.tvPhotoCount.text = String.format(countText, position + 1, count)
+                }
             }
-        })
+        )
     }
 }
