@@ -17,8 +17,8 @@ import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
 import coil.transform.RoundedCornersTransformation
-import io.getstream.chat.core.internal.InternalStreamChatApi
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
 import coil.loadAny as coilLoadAny
 

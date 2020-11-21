@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.call
 
 import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -53,10 +54,12 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> =
         }
     }
 
-internal fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
+@InternalStreamChatApi
+public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
     return MapCall(this, mapper)
 }
 
-internal fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
+@InternalStreamChatApi
+public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
     return ZipCall(this, call)
 }

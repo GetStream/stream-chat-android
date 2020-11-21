@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -241,8 +242,8 @@ internal class ClientStateServiceTests {
 
         fun givenUserConnectedState(
             user: User = Mother.randomUser(),
-            token: String = Mother.randomString(),
-            connectionId: String = Mother.randomString()
+            token: String = randomString(),
+            connectionId: String = randomString()
         ): Fixture {
             givenUserAuthorizationPendingWithTokenState(token)
             clientStateService.onConnected(user, connectionId)
@@ -251,8 +252,8 @@ internal class ClientStateServiceTests {
 
         fun givenUserDisconnectedState(
             user: User = Mother.randomUser(),
-            token: String = Mother.randomString(),
-            connectionId: String = Mother.randomString()
+            token: String = randomString(),
+            connectionId: String = randomString()
         ): Fixture {
             givenUserConnectedState(user, token, connectionId)
             clientStateService.onDisconnected()
@@ -264,7 +265,7 @@ internal class ClientStateServiceTests {
             return this
         }
 
-        fun givenAnonymousPendingWithTokenState(token: String = Mother.randomString()): Fixture {
+        fun givenAnonymousPendingWithTokenState(token: String = randomString()): Fixture {
             givenAnonymousPendingWithoutTokenState()
             clientStateService.onTokenReceived(token)
             return this
@@ -272,8 +273,8 @@ internal class ClientStateServiceTests {
 
         fun givenAnonymousUserConnectedState(
             anonymousUser: User = Mother.randomUser(),
-            token: String = Mother.randomString(),
-            connectionId: String = Mother.randomString()
+            token: String = randomString(),
+            connectionId: String = randomString()
         ): Fixture {
             givenAnonymousPendingWithTokenState(token)
             clientStateService.onConnected(anonymousUser, connectionId)
@@ -282,8 +283,8 @@ internal class ClientStateServiceTests {
 
         fun givenAnonymousUserDisconnectedState(
             anonymousUser: User = Mother.randomUser(),
-            token: String = Mother.randomString(),
-            connectionId: String = Mother.randomString()
+            token: String = randomString(),
+            connectionId: String = randomString()
         ): Fixture {
             givenAnonymousUserConnectedState(anonymousUser, token, connectionId)
             clientStateService.onDisconnected()

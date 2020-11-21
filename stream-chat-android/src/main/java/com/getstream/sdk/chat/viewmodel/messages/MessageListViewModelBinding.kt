@@ -18,7 +18,9 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
-    view.init(channel, currentUser)
+    channel.observe(lifecycleOwner) {
+        view.init(it, currentUser)
+    }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setOnMessageDeleteHandler { onEvent(DeleteMessage(it)) }

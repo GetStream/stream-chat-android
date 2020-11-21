@@ -62,14 +62,13 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=kotlin.RequiresOptIn',
-                '-Xopt-in=io.getstream.chat.core.internal.InternalStreamChatApi',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
         ]
     }
 }
 
 dependencies {
-    implementation project(':stream-chat-android-core')
+    api project(':stream-chat-android-core')
 
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
@@ -90,6 +89,7 @@ dependencies {
     debugImplementation Dependencies.flipperLoader
 
     // Tests
+    testImplementation project(':stream-chat-android-test')
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

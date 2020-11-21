@@ -3,8 +3,8 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 

@@ -15,29 +15,15 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import java.io.File
 import java.time.Instant
-import java.util.Calendar
 import java.util.Date
-import kotlin.random.Random
-
-private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
-
-internal fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
-    Random.nextInt(1, maxInt + 1)
-
-internal fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
-    Random.nextLong(1, maxLong + 1)
-
-internal fun randomInt() = Random.nextInt()
-internal fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
-internal fun randomLong() = Random.nextLong()
-internal fun randomBoolean() = Random.nextBoolean()
-internal fun randomString(size: Int = 20): String = buildString(capacity = size) {
-    repeat(size) {
-        append(charPool.random())
-    }
-}
 
 internal fun randomUser(
     id: String = randomString(),
@@ -75,7 +61,6 @@ internal fun randomUser(
     extraData
 )
 
-internal fun randomCID() = "${randomString()}:${randomString()}"
 internal fun createUser(
     id: String = randomString(),
     role: String = randomString(),
@@ -136,8 +121,6 @@ internal fun createChannel(
 
 internal fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData =
     AttachmentMetaData(attachment)
-
-internal fun createFile(path: String = randomString()): File = File(path)
 
 internal fun createAttachment(
     authorName: String? = randomString(),
@@ -209,8 +192,6 @@ internal fun createMessage(
     silent = silent
 )
 
-internal fun randomDate() = Date(randomLong())
-
 internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 
 internal fun createMessageList(
@@ -239,16 +220,3 @@ internal fun createMessageItem(
     isMine: Boolean = randomBoolean(),
     messageReadBy: MutableList<ChannelUserRead> = mutableListOf()
 ): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)
-
-internal fun createDate(
-    year: Int,
-    month: Int,
-    date: Int,
-    hourOfDay: Int = 0,
-    minute: Int = 0,
-    seconds: Int = 0
-): Date {
-    val calendar = Calendar.getInstance()
-    calendar.set(year, month, date, hourOfDay, minute, seconds)
-    return calendar.time
-}
