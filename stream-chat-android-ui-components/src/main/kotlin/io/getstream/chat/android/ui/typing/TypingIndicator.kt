@@ -8,7 +8,8 @@ import io.getstream.chat.android.ui.databinding.StreamTyppingIndicatorViewBindin
 
 public class TypingIndicator : LinearLayout {
 
-    private lateinit var binding: StreamTyppingIndicatorViewBinding
+    private val binding: StreamTyppingIndicatorViewBinding =
+        StreamTyppingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     public var message: String
         get() = binding.tvUserTyping.text.toString()
@@ -16,32 +17,20 @@ public class TypingIndicator : LinearLayout {
             binding.tvUserTyping.text = value
         }
 
-    public constructor(context: Context?) : super(context) {
-        init()
-    }
+    public constructor(context: Context?) : super(context)
 
-    public constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        init()
-    }
+    public constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     public constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
-    ) {
-        init()
-    }
+    )
 
     public constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context,
         attrs,
         defStyleAttr,
         defStyleRes
-    ) {
-        init()
-    }
-
-    private fun init() {
-        binding = StreamTyppingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
-    }
+    )
 }
