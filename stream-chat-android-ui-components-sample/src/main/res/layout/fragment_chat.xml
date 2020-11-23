@@ -13,10 +13,19 @@
         />
 
     <com.getstream.sdk.chat.view.MessageListView
+        android:id="@+id/messageList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header"
+        />
+
+    <io.getstream.chat.android.ui.textinput.MessageInputView
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/messageList"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
