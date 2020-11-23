@@ -12,19 +12,6 @@
         android:label="ChannelsFragment"
         tools:layout="@layout/fragment_channels"
         >
-        <action
-            android:id="@+id/action_open_chat"
-            app:destination="@id/chatFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@+id/bottom_navigation"
-            app:popUpToInclusive="true"
-            >
-            <argument
-                android:name="cid"
-                app:argType="string"
-                app:nullable="false"
-                />
-        </action>
     </fragment>
 
     <fragment
@@ -33,22 +20,4 @@
         android:label="MentionsFragment"
         tools:layout="@layout/fragment_mentions"
         />
-
-    <fragment
-        android:id="@+id/chatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.chat.ChatFragment"
-        android:label="ChannelFragment"
-        >
-
-        <argument
-            android:name="cid"
-            app:argType="string"
-            app:nullable="false"
-            />
-
-        <action
-            android:id="@+id/action_ChatFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            />
-    </fragment>
 </navigation>
