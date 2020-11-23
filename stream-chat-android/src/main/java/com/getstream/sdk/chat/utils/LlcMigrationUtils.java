@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.model.ModelType;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,28 +69,6 @@ public class LlcMigrationUtils {
             long lastMessageTime = lastMessageDate != null ? lastMessageDate.getTime() : 0;
             return myReadDate.getTime() >= lastMessageTime;
         }
-    }
-
-    public static List<ChannelUserRead> getLastMessageReads(Channel channel) {
-        Message lastMessage = computeLastMessage(channel);
-        List<ChannelUserRead> readLastMessage = new ArrayList<>();
-        List<ChannelUserRead> reads = channel.getRead();
-        if (lastMessage == null || lastMessage.getCreatedAt() == null) return readLastMessage;
-
-        User currentUser = getCurrentUser();
-        String currentUserId = currentUser.getId();
-
-        for (ChannelUserRead r : reads) {
-            if (r.getUserId().equals(currentUserId) || r.getLastRead() == null)
-                continue;
-            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
-                readLastMessage.add(r);
-            }
-        }
-
-        // sort the reads
-        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-        return readLastMessage;
     }
 
     public static Date getLastActive(List<Member> members) {

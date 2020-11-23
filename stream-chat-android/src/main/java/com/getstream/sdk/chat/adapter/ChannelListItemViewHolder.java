@@ -185,7 +185,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configReadState(Channel channel) {
-        List<ChannelUserRead> lastMessageReads = LlcMigrationUtils.getLastMessageReads(channel);
+        List<ChannelUserRead> lastMessageReads = channel.getRead();
         read_state.setReads(lastMessageReads, true, style.getReadStateStyle(), style.getAvatarStyle());
     }
 
