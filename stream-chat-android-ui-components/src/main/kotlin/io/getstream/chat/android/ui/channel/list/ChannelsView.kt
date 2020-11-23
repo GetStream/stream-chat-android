@@ -129,6 +129,10 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setUserClickListener(listener)
     }
 
+    public fun setDeleteListener(listener: ChannelListView.ChannelClickListener) {
+        channelListView.setChannelDeleteListener(listener)
+    }
+
     public fun setOnEndReachedListener(listener: () -> Unit) {
         channelListView.setOnEndReachedListener(listener)
     }

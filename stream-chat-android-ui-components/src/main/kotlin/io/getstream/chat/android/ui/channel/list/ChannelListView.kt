@@ -84,6 +84,10 @@ public class ChannelListView @JvmOverloads constructor(
         requireAdapter().userClickListener = listener
     }
 
+    public fun setChannelDeleteListener(listener: ChannelClickListener) {
+        requireAdapter().deleteClickListener = listener
+    }
+
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
         dividerDecoration.drawableResource = drawableResource
     }

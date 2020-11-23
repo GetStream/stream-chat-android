@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_channel_list_item_height"
+    android:background="@color/stream_gray"
+    >
+
+    <ImageView
+        android:id="@+id/delete_image_view"
+        android:layout_width="@dimen/stream_channel_list_item_option_icon_width"
+        android:layout_height="0dp"
+        android:scaleType="center"
+        android:src="@drawable/stream_ic_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/options_image_view"
+        android:layout_width="@dimen/stream_channel_list_item_option_icon_width"
+        android:layout_height="0dp"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/delete_image_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/stream_ic_more"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
