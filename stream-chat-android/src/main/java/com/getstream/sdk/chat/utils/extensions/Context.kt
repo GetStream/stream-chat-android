@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils
+package com.getstream.sdk.chat.utils.extensions
 
 import android.content.Context
 import android.view.LayoutInflater

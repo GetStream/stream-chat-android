@@ -17,8 +17,9 @@ import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.DateFormatter;
-import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.extensions.ChannelUtils;
+import com.getstream.sdk.chat.utils.extensions.MemberUtils;
 import com.getstream.sdk.chat.view.AvatarView;
 import com.getstream.sdk.chat.view.ReadStateView;
 import com.getstream.sdk.chat.view.channels.ChannelListView;
@@ -92,11 +93,11 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // - unread count
         // - read state for this channel
 
-        if (diff.name) configChannelName(channel);
-        if (diff.avatarView) configAvatarView(channel);
-        if (diff.lastMessage) configLastMessage(channel);
-        if (diff.lastMessageDate) configLastMessageDate(channel);
-        if (diff.readState) configReadState(channel);
+        if (diff.getName()) configChannelName(channel);
+        if (diff.getAvatarView()) configAvatarView(channel);
+        if (diff.getLastMessage()) configLastMessage(channel);
+        if (diff.getLastMessageDate()) configLastMessageDate(channel);
+        if (diff.getReadState()) configReadState(channel);
 
         // set Click listeners
         configClickListeners(channel);
@@ -106,12 +107,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     // set the channel name
     protected void configChannelName(Channel channel) {
-        String channelName = LlcMigrationUtils.getChannelNameOrMembers(channel);
+        String channelName = ChannelUtils.getChannelNameOrMembers(channel);
         tv_name.setText((!TextUtils.isEmpty(channelName) ? channelName : style.getChannelWithoutNameText()));
     }
 
     protected void configAvatarView(Channel channel) {
-        List<User> otherUsers = LlcMigrationUtils.getOtherUsers(channel.getMembers());
+        List<User> otherUsers = MemberUtils.getOtherUsers(channel.getMembers());
         avatarView.setChannelAndLastActiveUsers(channel, otherUsers, style.getAvatarStyle());
         // click listeners
         avatarView.setOnClickListener(view -> {
@@ -126,7 +127,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     @SuppressLint("ResourceType")
     protected void configLastMessage(Channel channel) {
-        Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);
+        Message lastMessage = ChannelUtils.computeLastMessage(channel);
         iv_attachment_type.setVisibility(View.GONE);
         if (lastMessage == null) {
             tv_last_message.setText("");
@@ -182,8 +183,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configLastMessageDate(Channel channel) {
-
-        Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);
+        Message lastMessage = ChannelUtils.computeLastMessage(channel);
         if (lastMessage == null) {
             tv_date.setText("");
             return;
@@ -195,7 +195,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configReadState(Channel channel) {
-        List<ChannelUserRead> lastMessageReads = LlcMigrationUtils.getLastMessageReads(channel);
+        List<ChannelUserRead> lastMessageReads = ChannelUtils.getLastMessageReads(channel);
         read_state.setReads(lastMessageReads, true, style.getReadStateStyle(), style.getAvatarStyle());
     }
 
@@ -222,9 +222,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         User currentUser = ChatDomain.instance().getCurrentUser();
         String currentUserId = currentUser.getId();
 
-        Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);
+        Message lastMessage = ChannelUtils.computeLastMessage(channel);
         boolean outgoing = (lastMessage != null && lastMessage.getUser().getId().equals(currentUserId));
-        boolean readLastMessage = LlcMigrationUtils.readLastMessage(channel);
+        boolean readLastMessage = ChannelUtils.readLastMessage(channel);
 
         if (readLastMessage || outgoing)
             applyReadStyle();

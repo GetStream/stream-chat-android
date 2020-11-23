@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.exhaustive
+import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.view.PreviewMessageView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member

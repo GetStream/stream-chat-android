@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachFileBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.UiUtils
 
 internal class FileAttachmentSelectedAdapter(
     private var attachments: List<AttachmentMetaData>,
@@ -31,7 +31,7 @@ internal class FileAttachmentSelectedAdapter(
     // endregion
     // region Configure Attachments
     private fun configureFileAttach(binding: StreamItemAttachFileBinding, attachment: AttachmentMetaData) {
-        binding.ivFileThumb.setImageResource(LlcMigrationUtils.getIcon(attachment.mimeType))
+        binding.ivFileThumb.setImageResource(UiUtils.getIcon(attachment.mimeType))
         binding.tvFileTitle.text = attachment.title
         binding.ivLargeFileMark.visibility = View.INVISIBLE
         binding.ivSelectMark.isVisible = false

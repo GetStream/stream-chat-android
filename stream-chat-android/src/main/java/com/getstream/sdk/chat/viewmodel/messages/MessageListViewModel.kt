@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.utils.exhaustive
+import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel

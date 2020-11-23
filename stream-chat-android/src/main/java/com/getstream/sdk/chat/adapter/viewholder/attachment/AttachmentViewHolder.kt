@@ -16,8 +16,8 @@ import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentBinding
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
@@ -191,7 +191,7 @@ internal class AttachmentViewHolder(
 
         val attachments = messageItem.message.attachments.filter { it.type == ModelType.attach_file }
         binding.lvAttachmentFile.adapter = FileAttachmentSelectedAdapter(
-            LlcMigrationUtils.getMetaAttachments(attachments),
+            attachments.map { AttachmentMetaData(it) },
             false
         )
         binding.lvAttachmentFile.onItemClickListener = OnItemClickListener { _, _, _, _ ->
