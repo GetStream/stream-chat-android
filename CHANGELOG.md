@@ -1,4 +1,4 @@
-# To be released:
+# Nov 24th, 2020 - 4.4.5
 
 ## Common changes for all artifacts
 
@@ -34,6 +34,7 @@
 ## stream-chat-android-ui-components
 - Add MessagesHeaderView
 - New artifact name: `io.getstream:stream-chat-android-ui-components:STREAM_VERSION`
+- Adding AttachmentGallery to handle attachments
 
 # Nov 24th, 2020 - 4.4.4
 This version is a roolback to 4.4.2, The previous release (4.4.3) was not valid due to a problem with the build flow.
