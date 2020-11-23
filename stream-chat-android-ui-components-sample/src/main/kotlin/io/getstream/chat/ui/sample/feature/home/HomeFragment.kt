@@ -48,6 +48,19 @@ class HomeFragment : Fragment() {
                 navigateToLoginScreen()
             }
         )
+        binding.channelListHeaderView.apply {
+            setOnAddChannelButtonClickListener {
+                findNavController().navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+            }
+            viewModel.online.observe(viewLifecycleOwner) { isOnline ->
+                if (isOnline) {
+                    showOnlineTitle()
+                } else {
+                    showOfflineTitle()
+                }
+            }
+            setUser(viewModel.currentUser)
+        }
     }
 
     override fun onDestroyView() {

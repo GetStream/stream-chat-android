@@ -67,12 +67,17 @@
             app:popUpTo="@+id/main_navigation"
             app:popUpToInclusive="true"
             />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addChannelFragment"
+            app:destination="@id/addChannelFragment"
+            />
     </fragment>
 
     <fragment
-        android:id="@+id/directChatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.direct_chat.DirectChatFragment"
-        android:label="NewChatFragment"
+        android:id="@+id/addChannelFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.AddChannelFragment"
+        android:label="AddChannelFragment"
         />
 
     <fragment
@@ -116,7 +121,7 @@
 
     <fragment
         android:id="@+id/componentBrowserChannelsHeaderViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.channels.ComponentBrowserChannelsHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.list.ComponentBrowserChannelListHeaderViewFragment"
         android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
 
