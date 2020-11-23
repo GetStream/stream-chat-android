@@ -8,5 +8,6 @@ import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
         view.setTitle(it.getDisplayName())
+        view.setAvatar(channel = it)
     }
 }
