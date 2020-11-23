@@ -85,4 +85,13 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/sdk_version_template"
         />
+
+    <io.getstream.chat.android.ui.images.AttachmentGallery
+        android:id="@+id/attachmentGallery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        app:streamCountText="%s of %s"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

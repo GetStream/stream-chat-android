@@ -17,7 +17,7 @@ public class AttachmentGallery : ConstraintLayout {
 
     private val binding = StreamAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var countText: String = "%s out %s"
+    private var countText: String = "%s - %s"
 
     public constructor(context: Context) : super(context) {
         init(null)
@@ -41,22 +41,13 @@ public class AttachmentGallery : ConstraintLayout {
 
     private fun configureAttributes(attributeSet: AttributeSet) {
         context.obtainStyledAttributes(attributeSet, R.styleable.StreamAttachmentGalleryView).use { tArray ->
-            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s out %s"
+            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s - %s"
         }
     }
 
-    public fun provideBitmapList(fragmentActivity: FragmentActivity, bitmapList: List<Bitmap>) {
-        binding.vpAttachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, bitmapList)
-        configPositionCount(bitmapList.size)
-    }
-
-    public fun provideImageResourceList(fragmentActivity: FragmentActivity, resourceList: List<Int>) {
-        val bitmapList: List<Bitmap> = resourceList.map { resource ->
-            BitmapFactory.decodeResource(fragmentActivity.resources, resource)
-        }
-
-        binding.vpAttachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, bitmapList)
-        configPositionCount(bitmapList.size)
+    public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>) {
+        binding.vpAttachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
+        configPositionCount(imageList.size)
     }
 
     private fun configPositionCount(count: Int) {
