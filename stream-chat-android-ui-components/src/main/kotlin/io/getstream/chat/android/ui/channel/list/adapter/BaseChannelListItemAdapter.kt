@@ -32,7 +32,7 @@ public abstract class BaseChannelListItemAdapter :
             override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
                 !oldItem.diff(newItem).hasDifference()
 
-            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any? = oldItem.diff(newItem)
+            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any = oldItem.diff(newItem)
         }
     }
 }
