@@ -1,7 +1,9 @@
 package io.getstream.chat.android.client.utils
 
 import android.util.Log
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+@InternalStreamChatApi
 public object PerformanceUtils {
     private var tasks: Map<String, TaskEntry> = emptyMap()
 
