@@ -18,12 +18,10 @@ import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserLastMessage
-import io.getstream.chat.android.ui.utils.extensions.getCurrentUserRead
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
-import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 import io.getstream.chat.android.ui.utils.extensions.getPreviewText
 import io.getstream.chat.android.ui.utils.extensions.getUsers
 import io.getstream.chat.android.ui.utils.extensions.lastMessageByCurrentUserWasRead
@@ -132,22 +130,15 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
-        unreadCountBadge.isVisible = channel.messages.isNotEmpty()
+        unreadCountBadge.isVisible = channel.unreadCount > 0
 
         if (!unreadCountBadge.isVisible) {
             return
         }
 
-        channel
-            .getCurrentUserRead()
-            ?.unreadMessages
-            .getOrDefault(0)
-            .let { unreadCount ->
-                unreadCountBadge.apply {
-                    isVisible = unreadCount > 0
-                    text = unreadCount.toString()
-                }
-            }
+        unreadCountBadge.apply {
+            text = channel.unreadCount.toString()
+        }
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureLastMessageTimestamp(channel: Channel) {

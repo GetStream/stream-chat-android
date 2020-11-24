@@ -164,15 +164,15 @@ internal class ChannelControllerImpl(
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
 
-    val _unreadCount = _read.combine(_messages) {
-        channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
-        val messages = messagesMap.values.toList()
-        if (messages.size <= 1 && channelUserRead != null) {
-            channelUserRead.unreadMessages
-        } else {
-            computeUnreadCount(domainImpl.currentUser, channelUserRead, messages)
-        }
-    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
+    private val _unreadCount =
+        _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
+            val messages = messagesMap.values.toList()
+            if (messages.size <= 1 && channelUserRead != null) {
+                channelUserRead.unreadMessages
+            } else {
+                computeUnreadCount(domainImpl.currentUser, channelUserRead, messages)
+            }
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
 
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)

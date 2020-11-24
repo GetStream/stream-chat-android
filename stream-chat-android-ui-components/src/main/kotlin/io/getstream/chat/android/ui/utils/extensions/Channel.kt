@@ -28,6 +28,7 @@ internal fun Channel.getLastMessage(): Message? =
         .asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
+        .filter { !it.silent }
         .filter { it.type == ModelType.message_regular }
         .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
 
@@ -52,13 +53,6 @@ internal fun Channel.getLastMessageReadCount(): Int =
         } == false
     }.count()
 
-internal fun Channel.currentUserHasReadLastMessage(): Boolean =
-    getCurrentUserRead()?.lastRead?.let { lastRead ->
-        getLastMessage()?.createdAt?.let { lastMessageDate ->
-            !lastMessageDate.after(lastRead)
-        }
-    } ?: false
-
 internal fun Channel.getLastMessageTime(): Date? = getLastMessage()?.let { it.createdAt ?: it.createdLocallyAt }
 
 internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
@@ -70,7 +64,7 @@ internal fun Channel.diff(other: Channel): ChannelDiff =
     ChannelDiff(
         nameChanged = name != other.name,
         avatarViewChanged = getUsers() != other.getUsers(),
-        readStateChanged = getLastMessageReadCount() != other.getLastMessageReadCount(),
+        readStateChanged = unreadCount != other.unreadCount,
         lastMessageChanged = getLastMessage() != other.getLastMessage()
     )
 

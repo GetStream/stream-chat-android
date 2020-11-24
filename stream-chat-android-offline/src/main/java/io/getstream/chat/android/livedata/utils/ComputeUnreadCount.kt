@@ -4,10 +4,9 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 
-internal fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List<Message>?): Int? {
-    var unreadMessageCount: Int? = null
+internal fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List<Message>?): Int {
+    var unreadMessageCount = 0
     if (messages != null) {
-        unreadMessageCount = 0
         val lastRead = read?.lastRead
         val lastReadTime = lastRead?.time ?: 0
         val currentUserId = currentUser.id

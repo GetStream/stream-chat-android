@@ -37,7 +37,7 @@ public data class Channel(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    var unreadCount: Int? = null,
+    var unreadCount: Int = 0,
 
     val team: String = "",
 
