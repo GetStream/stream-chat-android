@@ -17,9 +17,7 @@ public class AttachmentGallery : ConstraintLayout {
 
     private var countText: String = "%s - %s"
 
-    public constructor(context: Context) : super(context) {
-        init(null)
-    }
+    public constructor(context: Context) : super(context)
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)

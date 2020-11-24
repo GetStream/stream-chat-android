@@ -13,7 +13,7 @@ internal class AttachmentSlidePagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return ImageSlidePageFragment().apply {
-            this.image = imageList[position]
+            this.imageUrl = imageList[position]
         }
     }
 }

@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.databinding.StreamItemImageGalleryBinding
 
 public class ImageSlidePageFragment : Fragment() {
 
-    public var image: String? = null
+    public var imageUrl: String? = null
 
     private lateinit var binding: StreamItemImageGalleryBinding
 
@@ -27,7 +27,7 @@ public class ImageSlidePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        image?.let {
+        imageUrl?.let {
             ImageLoader.run {
                 binding.ivImageItem.load(it)
             }
