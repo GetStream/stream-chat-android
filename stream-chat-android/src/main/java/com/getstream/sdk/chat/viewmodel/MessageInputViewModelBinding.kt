@@ -9,7 +9,7 @@ import java.io.File
 
 /***
  * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
- * based on data provided by the VkiewModel, and forwarding View events to the ViewModel.
+ * based on data provided by the ViewModel, and forwarding View events to the ViewModel.
  * This includes handling typing detection and sending messages.
  */
 @JvmName("bind")
