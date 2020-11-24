@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/stream_selectable_item_background_white"
+    android:layout_height="@dimen/stream_channel_list_item_height"
+    android:background="@color/stream_white"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView

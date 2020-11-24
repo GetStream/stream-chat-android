@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.text.Spanned
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
@@ -11,8 +12,8 @@ import java.util.Date
 
 internal fun Message.getSenderDisplayName(context: Context): String =
     when {
-        user.isCurrentUser() -> context.getString(R.string.stream_channel_display_name_self)
-        else -> context.getString(R.string.stream_mention_user_name_template, user.name)
+        user.isCurrentUser() -> getSelfDisplayName(context)
+        else -> getUserAsMention(context, user)
     }
 
 internal fun Message.getPreviewText(context: Context): Spanned =
@@ -22,7 +23,21 @@ internal fun Message.getPreviewText(context: Context): Spanned =
             getSenderDisplayName(context),
             text
         )
-        .boldMentions()
+        .bold(getPreviewTextMentions(context))
+
+private fun Message.getPreviewTextMentions(context: Context): List<String> =
+    mentionedUsers
+        .map { getUserAsMention(context, it) }
+        .plus(getSenderDisplayName(context))
+        .filter { it != getSelfDisplayName(context) }
+
+private fun getUserAsMention(
+    context: Context,
+    it: User
+) = context.getString(R.string.stream_mention_user_name_template, it.name)
+
+private fun getSelfDisplayName(context: Context) =
+    context.getString(R.string.stream_channel_display_name_self)
 
 internal fun Message.isDeleted(): Boolean = deletedAt != null
 

@@ -24,11 +24,12 @@ internal fun Channel.getDisplayName(): String = name.takeIf { it.isNotEmpty() }
     ?: getUsers().joinToString { it.name }
 
 internal fun Channel.getLastMessage(): Message? =
-    messages.filter {
-        (it.createdAt != null || it.createdLocallyAt != null) &&
-            it.deletedAt == null &&
-            it.type == ModelType.message_regular
-    }.maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
+    messages
+        .asSequence()
+        .filter { it.createdAt != null || it.createdLocallyAt != null }
+        .filter { it.deletedAt == null }
+        .filter { it.type == ModelType.message_regular }
+        .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
 
 internal fun Channel.getCurrentUserLastMessage(): Message? = getLastMessageByUserId(getCurrentUser().id)
 
@@ -58,9 +59,7 @@ internal fun Channel.currentUserHasReadLastMessage(): Boolean =
         }
     } ?: false
 
-internal fun Channel.getLastMessageTime(): Date? = getLastMessage()?.let {
-    it.createdAt ?: it.createdLocallyAt
-}
+internal fun Channel.getLastMessageTime(): Date? = getLastMessage()?.let { it.createdAt ?: it.createdLocallyAt }
 
 internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
 

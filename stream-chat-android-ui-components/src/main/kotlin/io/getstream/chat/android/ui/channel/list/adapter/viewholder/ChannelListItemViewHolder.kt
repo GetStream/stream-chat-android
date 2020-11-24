@@ -19,8 +19,8 @@ import io.getstream.chat.android.ui.utils.extensions.currentUserLastMessageWasRe
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserUnreadCount
-import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
 import io.getstream.chat.android.ui.utils.extensions.getPreviewText
@@ -36,6 +36,8 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         private val DEFAULT_LOCALE: Locale = Locale.getDefault()
 
         private val TIME_FORMAT = SimpleDateFormat("hh:mm a", DEFAULT_LOCALE)
+
+        private val OPTIONS_COUNT = 2
     }
 
     public val binding: StreamChannelListItemViewBinding =
@@ -210,10 +212,12 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
     @SuppressLint("ClickableViewAccessibility")
     private fun StreamChannelListItemViewBinding.configureSwipeBehavior() {
-        val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat() * 2
+        val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat()
+        val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
         var startX = 0f
         var startY = 0f
-        val dragRange = -menuItemWidth..0f
+        val dragRange = -optionsMenuWidth..0f
+        var swiping = false
 
         itemForegroundView.root.setOnTouchListener { view, event ->
             when (event.action) {
@@ -223,20 +227,22 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                     startX = event.x
                     startY = event.y
 
-                    // don't consume
-                    false
+                    swiping = false
+
+                    false // don't consume
                 }
 
                 MotionEvent.ACTION_MOVE -> {
+
                     // calculate the deltas
                     val deltaY = event.y - startY
                     val deltaX = event.x - startX
 
                     // determine if it's a swipe by comparing axis delta magnitude
-                    val isSwipe = deltaX.absoluteValue > deltaY.absoluteValue
+                    swiping = deltaX.absoluteValue > deltaY.absoluteValue
 
                     when {
-                        isSwipe -> {
+                        swiping -> {
                             // determine the new x value by adding the delta
                             val projectedX = view.x + deltaX
                             // clamp it and animate if necessary
@@ -246,28 +252,28 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                                     view.x = clampedX
                                 }
                             }
-
-                            true // consume if swipe
                         }
-
-                        else -> false // don't consume
                     }
+
+                    swiping // consume if swiping
                 }
 
                 // determine snap and animate to it on action up
                 MotionEvent.ACTION_UP -> {
+
                     val snap = when {
-                        view.x <= -(menuItemWidth * .5) -> -menuItemWidth
+                        view.x <= -(optionsMenuWidth * .5) -> -optionsMenuWidth
                         else -> 0f
                     }
 
                     view.animate().x(snap).setStartDelay(0).setDuration(100).start()
 
-                    false // don't consume
+                    swiping // consume if swiping
                 }
 
                 // snap closed on cancel
                 MotionEvent.ACTION_CANCEL -> {
+
                     view.animate().x(0f).setStartDelay(0).setDuration(100).start()
 
                     false // don't consume

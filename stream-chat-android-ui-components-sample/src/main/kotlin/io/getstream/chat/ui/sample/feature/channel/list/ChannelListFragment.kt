@@ -36,7 +36,7 @@ class ChannelListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
