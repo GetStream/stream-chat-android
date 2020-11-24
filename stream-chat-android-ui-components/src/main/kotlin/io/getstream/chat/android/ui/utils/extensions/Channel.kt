@@ -66,12 +66,6 @@ internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
 internal fun Channel.getCurrentUserRead(): ChannelUserRead? =
     read.firstOrNull { it.user.id == getCurrentUser().id }
 
-internal fun Channel.getCurrentUserUnreadCount(): Int = getCurrentUserRead()?.lastRead?.let { currentRead ->
-    messages.count { message ->
-        message.createdAt?.after(currentRead) == true
-    }
-} ?: 0
-
 internal fun Channel.diff(other: Channel): ChannelDiff =
     ChannelDiff(
         nameChanged = name != other.name,
@@ -80,7 +74,7 @@ internal fun Channel.diff(other: Channel): ChannelDiff =
         lastMessageChanged = getLastMessage() != other.getLastMessage()
     )
 
-internal fun Channel.currentUserLastMessageWasRead(): Boolean {
+internal fun Channel.lastMessageByCurrentUserWasRead(): Boolean {
     return getCurrentUserLastMessage()?.let { currentUserLastMessage ->
         read.any { channelRead ->
             channelRead.lastRead?.before(currentUserLastMessage.createdAt)?.not() ?: false

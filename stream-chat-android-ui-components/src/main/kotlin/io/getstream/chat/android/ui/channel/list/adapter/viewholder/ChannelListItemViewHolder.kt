@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -15,16 +16,17 @@ import io.getstream.chat.android.ui.databinding.StreamChannelListItemForegroundV
 import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
-import io.getstream.chat.android.ui.utils.extensions.currentUserLastMessageWasRead
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUserLastMessage
-import io.getstream.chat.android.ui.utils.extensions.getCurrentUserUnreadCount
+import io.getstream.chat.android.ui.utils.extensions.getCurrentUserRead
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
+import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 import io.getstream.chat.android.ui.utils.extensions.getPreviewText
 import io.getstream.chat.android.ui.utils.extensions.getUsers
+import io.getstream.chat.android.ui.utils.extensions.lastMessageByCurrentUserWasRead
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.absoluteValue
@@ -37,7 +39,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         private val TIME_FORMAT = SimpleDateFormat("hh:mm a", DEFAULT_LOCALE)
 
-        private val OPTIONS_COUNT = 2
+        private const val OPTIONS_COUNT = 2
     }
 
     public val binding: StreamChannelListItemViewBinding =
@@ -69,6 +71,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         style: ChannelListViewStyle?
     ) {
         binding.itemForegroundView.apply {
+
             diff?.run {
                 if (nameChanged) {
                     configureChannelNameLabel(channel)
@@ -85,11 +88,11 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                 }
 
                 if (readStateChanged) {
-                    configureReadStateImage(channel)
+                    configureCurrentUserLastMessageStatus(channel)
                 }
-
-                configureClickListeners(channel, channelClickListener, channelLongClickListener)
             }
+
+            configureClickListeners(channel, channelClickListener, channelLongClickListener)
 
             style?.let { applyStyle(this, it) }
         }
@@ -107,18 +110,6 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         root.setOnLongClickListener {
             channelLongClickListener.onClick(channel)
             true
-        }
-    }
-
-    private fun StreamChannelListItemForegroundViewBinding.configureReadStateImage(channel: Channel) {
-        messageStatusImageView.isVisible = channel.messages.isNotEmpty()
-
-        if (!messageStatusImageView.isVisible) {
-            return
-        }
-
-        if (channel.currentUserLastMessageWasRead()) {
-            messageStatusImageView.setImageResource(R.drawable.stream_ic_check_all)
         }
     }
 
@@ -147,12 +138,16 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
             return
         }
 
-        channel.getCurrentUserUnreadCount().let { unreadCount ->
-            unreadCountBadge.apply {
-                isVisible = unreadCount > 0
-                text = unreadCount.toString()
+        channel
+            .getCurrentUserRead()
+            ?.unreadMessages
+            .getOrDefault(0)
+            .let { unreadCount ->
+                unreadCountBadge.apply {
+                    isVisible = unreadCount > 0
+                    text = unreadCount.toString()
+                }
             }
-        }
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureLastMessageTimestamp(channel: Channel) {
@@ -177,11 +172,39 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         lastMessageLabel.text = channel.getLastMessage()?.getPreviewText(context) ?: String.EMPTY
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureMessageStatus(channel: Channel) {
-        channel.getCurrentUserLastMessage()?.syncStatus?.let { sync ->
+    private fun StreamChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(channel: Channel) {
+        messageStatusImageView.isVisible = channel.messages.isNotEmpty()
+
+        if (!messageStatusImageView.isVisible) {
+            return
+        }
+
+        val lastMessage = channel.getLastMessage()
+
+        /**
+         * read - if the last message doesn't belong to current user, or if channel reads indicates it
+         * delivered - if the last message belongs to the current user and reads indicate it wasn't read
+         * pending - if the sync status says it's pending
+         */
+
+        val currentUserSentLastMessage = lastMessage == channel.getCurrentUserLastMessage()
+
+        when {
+            !currentUserSentLastMessage || channel.lastMessageByCurrentUserWasRead() ->
+                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_all)
+
+            currentUserSentLastMessage && !channel.lastMessageByCurrentUserWasRead() ->
+                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_gray)
+
+            else -> determineLastMessageSyncStatus(lastMessage)
+        }
+    }
+
+    private fun StreamChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message?) {
+        message?.syncStatus?.let { sync ->
             when (sync) {
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
-                    messageStatusImageView.setImageResource(R.drawable.stream_ic_more)
+                    messageStatusImageView.setImageResource(R.drawable.stream_ic_clock)
                 }
 
                 SyncStatus.COMPLETED -> {

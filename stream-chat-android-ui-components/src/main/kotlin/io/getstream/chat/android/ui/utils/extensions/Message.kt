@@ -51,12 +51,4 @@ internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
-// @IdRes
-// internal fun getActiveContentViewResId(message: Message, binding: StreamItemMessageBinding): Int {
-//     return when {
-//         message.attachments.isNotEmpty() -> binding.attachmentview.id
-//         else -> binding.tvText.id
-//     }
-// }
-
 internal fun Message.getCreatedDate(): Date? = createdAt ?: createdLocallyAt
