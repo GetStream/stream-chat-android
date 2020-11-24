@@ -80,7 +80,18 @@
                 app:nullable="false"
                 />
         </action>
+
+        <action
+            android:id="@+id/action_homeFragment_to_addChannelFragment"
+            app:destination="@id/addChannelFragment"
+            />
     </fragment>
+
+    <fragment
+        android:id="@+id/addChannelFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.AddChannelFragment"
+        android:label="AddChannelFragment"
+        />
 
     <fragment
         android:id="@+id/chatFragment"
@@ -138,7 +149,7 @@
 
     <fragment
         android:id="@+id/componentBrowserChannelsHeaderViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.channels.ComponentBrowserChannelsHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.list.ComponentBrowserChannelListHeaderViewFragment"
         android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
 

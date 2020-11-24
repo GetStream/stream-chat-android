@@ -25,9 +25,9 @@
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
 
-    <!--Direct chat screen-->
-    <string name="direct_chat_title">New chat</string>
-
     <!--Group chat screen-->
     <string name="group_chat_title">New group chat</string>
+
+    <!--Add Channel Screen-->
+    <string name="add_channel_title">New Chat</string>
 </resources>
