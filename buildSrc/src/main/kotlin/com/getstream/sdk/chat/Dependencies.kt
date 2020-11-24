@@ -92,6 +92,7 @@ object Dependencies {
     const val awaitility = "org.awaitility:awaitility:$AWAITILITY_VERSION"
     const val coil = "io.coil-kt:coil:$COIL_VERSION"
     const val coilGif = "io.coil-kt:coil-gif:$COIL_VERSION"
+    const val coilVideo = "io.coil-kt:coil-video:$COIL_VERSION"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
     const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$COROUTINES_VERSION"
     const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$COROUTINES_VERSION"

@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
+import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 
 internal class MediaAttachmentAdapter(
@@ -56,7 +59,11 @@ internal class MediaAttachmentAdapter(
         private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(attachment: AttachmentMetaData) {
-            binding.ivMedia.load(attachment.uri)
+            if (attachment.type == ModelType.attach_video) {
+                binding.ivMedia.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
+            } else {
+                binding.ivMedia.load(attachment.uri, R.drawable.stream_placeholder)
+            }
             binding.ivSelectMark.isVisible = attachment.isSelected
             binding.ivLargeFileMark.isVisible = attachment.size > Constant.MAX_UPLOAD_FILE_SIZE
             itemView.setOnClickListener { listener(attachment) }
