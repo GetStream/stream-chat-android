@@ -109,6 +109,12 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureReadStateImage(channel: Channel) {
+        messageStatusImageView.isVisible = channel.messages.isNotEmpty()
+
+        if (!messageStatusImageView.isVisible) {
+            return
+        }
+
         if (channel.currentUserLastMessageWasRead()) {
             messageStatusImageView.setImageResource(R.drawable.stream_ic_check_all)
         }
@@ -133,6 +139,12 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
+        unreadCountBadge.isVisible = channel.messages.isNotEmpty()
+
+        if (!unreadCountBadge.isVisible) {
+            return
+        }
+
         channel.getCurrentUserUnreadCount().let { unreadCount ->
             unreadCountBadge.apply {
                 isVisible = unreadCount > 0
@@ -142,12 +154,24 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureLastMessageTimestamp(channel: Channel) {
+        lastMessageTimeLabel.isVisible = channel.messages.isNotEmpty()
+
+        if (!lastMessageTimeLabel.isVisible) {
+            return
+        }
+
         channel.getLastMessageTime()
             ?.let(TIME_FORMAT::format)
             ?.let { lastMessageTimeLabel.text = it }
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureLastMessageLabel(channel: Channel) {
+        lastMessageLabel.isVisible = channel.messages.isNotEmpty()
+
+        if (!lastMessageLabel.isVisible) {
+            return
+        }
+
         lastMessageLabel.text = channel.getLastMessage()?.getPreviewText(context) ?: String.EMPTY
     }
 
