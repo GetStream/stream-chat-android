@@ -50,6 +50,8 @@ internal class ClientStateService {
             }
 
             state<ClientState.User.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
                     ClientState.User.Authorized.Connected(
                         event.connectionId,
@@ -88,6 +90,8 @@ internal class ClientStateService {
             }
 
             state<ClientState.Anonymous.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
                     ClientState.Anonymous.Authorized.Connected(
                         event.connectionId,

@@ -6,7 +6,6 @@ import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import com.google.gson.Gson
@@ -56,6 +55,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
@@ -127,12 +127,13 @@ internal class ChatDomainImpl internal constructor(
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
 
-    private val _totalUnreadCount = MutableLiveData<Int>()
-    private val _channelUnreadCount = MutableLiveData<Int>()
-    private val _errorEvent = MutableLiveData<Event<ChatError>>()
-    private val _banned = MutableLiveData(false)
-    private val _mutedUsers = MutableLiveData<List<Mute>>()
+    private val _totalUnreadCount = MutableStateFlow(0)
+    private val _channelUnreadCount = MutableStateFlow(0)
+    private val _errorEvent = MutableStateFlow<Event<ChatError>?>(null)
+    private val _banned = MutableStateFlow(false)
+    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MediatorLiveData<TypingEvent>()
+
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(appContext) }
@@ -154,22 +155,22 @@ internal class ChatDomainImpl internal constructor(
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    override val totalUnreadCount: LiveData<Int> = _totalUnreadCount
+    override val totalUnreadCount: LiveData<Int> = _totalUnreadCount.asLiveData()
 
     /**
      * the number of unread channels for the current user
      */
-    override val channelUnreadCount: LiveData<Int> = _channelUnreadCount
+    override val channelUnreadCount: LiveData<Int> = _channelUnreadCount.asLiveData()
 
     /**
      * list of users that you've muted
      */
-    override val muted: LiveData<List<Mute>> = _mutedUsers
+    override val muted: LiveData<List<Mute>> = _mutedUsers.asLiveData()
 
     /**
      * if the current user is banned or not
      */
-    override val banned: LiveData<Boolean> = _banned
+    override val banned: LiveData<Boolean> = _banned.asLiveData()
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -180,7 +181,7 @@ internal class ChatDomainImpl internal constructor(
      *   })
      *
      */
-    override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
+    override val errorEvents: LiveData<Event<ChatError>> = _errorEvent.filterNotNull().asLiveData()
 
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -191,8 +192,6 @@ internal class ChatDomainImpl internal constructor(
     override val typingUpdates: LiveData<TypingEvent> = _typingChannels
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
-
-    // TODO 1.1: We should accelerate online/offline detection
 
     internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
@@ -215,9 +214,9 @@ internal class ChatDomainImpl internal constructor(
     private fun clearState() {
         _initialized.value = false
         _online.value = false
-        _totalUnreadCount.postValue(0)
-        _channelUnreadCount.postValue(0)
-        _banned.postValue(false)
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
+        _banned.value = false
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
@@ -317,7 +316,7 @@ internal class ChatDomainImpl internal constructor(
         }
         currentUser = me
         repos.users.insertMe(me)
-        _mutedUsers.postValue(me.mutes)
+        _mutedUsers.value = me.mutes
         setTotalUnreadCount(me.totalUnreadCount)
         setChannelUnreadCount(me.unreadChannels)
 
@@ -435,11 +434,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
     fun addError(error: ChatError) {
-        _errorEvent.postValue(
-            Event(
-                error
-            )
-        )
+        _errorEvent.value = Event(error)
     }
 
     fun isActiveChannel(cid: String): Boolean {
@@ -447,24 +442,15 @@ internal class ChatDomainImpl internal constructor(
     }
 
     fun setChannelUnreadCount(newCount: Int) {
-        val currentCount = _channelUnreadCount.value ?: 0
-        if (currentCount != newCount) {
-            _channelUnreadCount.postValue(newCount)
-        }
+        _channelUnreadCount.value = newCount
     }
 
     fun setBanned(newBanned: Boolean) {
-        val banned = _banned.value ?: false
-        if (newBanned != banned) {
-            _banned.postValue(newBanned)
-        }
+        _banned.value = newBanned
     }
 
     fun setTotalUnreadCount(newCount: Int) {
-        val currentCount = _totalUnreadCount.value ?: 0
-        if (currentCount != newCount) {
-            _totalUnreadCount.postValue(newCount)
-        }
+        _totalUnreadCount.value = newCount
     }
 
     /**

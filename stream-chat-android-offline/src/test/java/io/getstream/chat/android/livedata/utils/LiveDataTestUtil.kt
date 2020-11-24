@@ -71,7 +71,6 @@ internal suspend fun waitForSetUser(
     )
     // TODO: this makes all tests very slow, someone should investigate why this doesn't work properly
     // Workaround to have `setUser()` process completed ¯\_(ツ)_/¯
-    Thread.sleep(timeMillis)
     delay(timeMillis)
     // trigger the event loop to run
     ShadowLooper.runUiThreadTasksIncludingDelayedTasks()

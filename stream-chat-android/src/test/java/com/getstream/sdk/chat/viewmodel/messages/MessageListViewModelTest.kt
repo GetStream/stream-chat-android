@@ -32,6 +32,7 @@ import io.getstream.chat.android.livedata.usecase.LoadOlderMessages
 import io.getstream.chat.android.livedata.usecase.ThreadLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
+import io.getstream.chat.android.test.TestCall
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeNull
@@ -69,20 +70,22 @@ internal class MessageListViewModelTest {
     private val client: ChatClient = mock()
     private val useCases: UseCaseHelper = mock()
     private val watchChannel: WatchChannel = mock()
-    private val watchChannelCall: Call<ChannelController> = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
+    private val watchChannelCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
     private val threadLoadMore: ThreadLoadMore = mock()
-    private val threadLoadMoreCall: Call<List<Message>> = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
+    private val threadLoadMoreCall = TestCall(threadLoadMoreResult)
     private val loadOlderMessages: LoadOlderMessages = mock()
-    private val loadOlderMessagesCall: Call<Channel> = mock()
     private val loadOlderMessagesResult: Result<Channel> = mock()
+    private val loadOlderMessagesCall = TestCall(loadOlderMessagesResult)
     private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
-    private val deleteMessageCall: Call<Message> = mock()
-    private val getThreadCall: Call<ThreadController> = mock()
+    private val deleteMessageResult: Result<Message> = mock()
+    private val deletedMessage = createMessage()
+    private val deleteMessageCall = TestCall(deleteMessageResult)
     private val getThreadResult: Result<ThreadController> = mock()
+    private val getThreadCall = TestCall(getThreadResult)
     private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
     private val flagResult: Call<Flag> = mock()
@@ -98,8 +101,10 @@ internal class MessageListViewModelTest {
         whenever(domain.useCases) doReturn useCases
         whenever(useCases.watchChannel) doReturn watchChannel
         whenever(watchChannel.invoke(any(), any())) doReturn watchChannelCall
-        whenever(watchChannelCall.execute()) doReturn channelControllerResult
         whenever(channelControllerResult.data()) doReturn channelController
+        whenever(channelControllerResult.isSuccess) doReturn true
+        whenever(deleteMessageResult.data()) doReturn deletedMessage
+        whenever(deleteMessageResult.isSuccess) doReturn true
         whenever(domain.currentUser) doReturn CURRENT_USER
         whenever(channelController.messages) doReturn messages
         whenever(channelController.oldMessages) doReturn oldMessages
@@ -107,16 +112,15 @@ internal class MessageListViewModelTest {
         whenever(channelController.reads) doReturn reads
         whenever(useCases.threadLoadMore) doReturn threadLoadMore
         whenever(threadLoadMore.invoke(any(), any(), any())) doReturn threadLoadMoreCall
-        whenever(threadLoadMoreCall.execute()) doReturn threadLoadMoreResult
+        whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
         whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
         whenever(useCases.loadOlderMessages.invoke(any(), any())) doReturn loadOlderMessagesCall
-        whenever(loadOlderMessagesCall.execute()) doReturn loadOlderMessagesResult
         whenever(useCases.deleteMessage) doReturn deleteMessage
         whenever(useCases.getThread) doReturn getThread
         whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall
         whenever(getThread.invoke(any(), any())) doReturn getThreadCall
-        whenever(getThreadCall.execute()) doReturn getThreadResult
+        whenever(getThreadResult.isSuccess) doReturn true
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flagMessage(any())) doReturn flagCall
