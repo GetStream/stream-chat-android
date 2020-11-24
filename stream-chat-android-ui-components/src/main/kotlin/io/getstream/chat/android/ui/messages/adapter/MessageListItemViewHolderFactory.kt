@@ -4,7 +4,7 @@ import android.view.View
 import com.getstream.sdk.chat.adapter.MessageListItem
 
 public open class MessageListItemViewHolderFactory {
-    public fun createViewHolder(parentView: View, viewType: Int): BaseMessageItemViewHolder<MessageListItem> {
+    public fun createViewHolder(parentView: View, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {
             MessageListItemViewType.DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MessageListItemViewType.TYPING_INDICATOR -> createTypingIndicatorViewHolder(parentView)
@@ -18,15 +18,15 @@ public open class MessageListItemViewHolderFactory {
         }
     }
 
-    public open fun createDateDividerViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createTypingIndicatorViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createMessageDeletedViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createPlainTextViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createReplyMessageViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createPlainTextWithAttachmentsViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createAttachmentsViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createLoadingIndicatorViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
-    public open fun createThreadSeparatorViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> = createBaseMessageItemViewHolder(parentView)
+    public open fun createDateDividerViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createTypingIndicatorViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createMessageDeletedViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createPlainTextViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createReplyMessageViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createPlainTextWithAttachmentsViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createAttachmentsViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createLoadingIndicatorViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
+    public open fun createThreadSeparatorViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
 
     private fun createBaseMessageItemViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> {
         return object : BaseMessageItemViewHolder<MessageListItem>(parentView) {
