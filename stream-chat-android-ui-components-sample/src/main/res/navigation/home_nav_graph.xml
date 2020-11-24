@@ -11,7 +11,8 @@
         android:name="io.getstream.chat.ui.sample.feature.channel.list.ChannelListFragment"
         android:label="ChannelsFragment"
         tools:layout="@layout/fragment_channels"
-        />
+        >
+    </fragment>
 
     <fragment
         android:id="@+id/mentions_fragment"
