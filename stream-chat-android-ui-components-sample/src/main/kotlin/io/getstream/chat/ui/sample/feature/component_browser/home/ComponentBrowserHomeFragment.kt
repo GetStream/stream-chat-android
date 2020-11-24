@@ -58,9 +58,9 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupChannelsHeaderView() {
-        binding.channelsHeaderView.setUser(randomUser())
-        binding.channelsHeaderView.showOnlineTitle()
-        binding.channelsHeaderViewContainer.setOnClickListener {
+        binding.channelListHeaderView.setUser(randomUser())
+        binding.channelListHeaderView.showOnlineTitle()
+        binding.channelListHeaderViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)
         }
     }
