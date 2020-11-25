@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.feature.channels
+package io.getstream.chat.ui.sample.feature.channel.list
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/channels_fragment"
-        android:name="io.getstream.chat.ui.sample.feature.channels.ChannelListFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.list.ChannelListFragment"
         android:label="ChannelsFragment"
         tools:layout="@layout/fragment_channels"
         >
