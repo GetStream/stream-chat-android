@@ -25,7 +25,10 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
-            TODO("Not yet implemented")
+            this@bindView.sendMessage(messageText) {
+                this.parentId = parentMessage.id
+                this.showInChannel = alsoSendToChannel
+            }
         }
 
         override fun sendToThreadWithAttachments(
@@ -39,6 +42,14 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
             TODO("Not yet implemented")
+        }
+    }
+
+    getActiveThread().observe(lifecycleOwner) {
+        if (it != null) {
+            view.inputMode = MessageInputView.InputMode.Thread(it)
+        } else {
+            view.inputMode = MessageInputView.InputMode.Normal
         }
     }
 }

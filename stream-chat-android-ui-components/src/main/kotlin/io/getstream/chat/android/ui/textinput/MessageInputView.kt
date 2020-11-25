@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.getColorList
 import java.io.File
+import kotlin.properties.Delegates
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
     "No icon for disabled state of send message button. Please set it in XML."
@@ -66,38 +67,15 @@ public class MessageInputView : ConstraintLayout {
             }
         }
 
-    public var mode: InputMode = InputMode.Normal
-
-    public var sendMessageHandler: MessageSendHandler = object : MessageSendHandler {
-        override fun sendMessage(messageText: String) {
-            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-        }
-
-        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-        }
-
-        override fun sendToThread(
-            parentMessage: Message,
-            messageText: String,
-            alsoSendToChannel: Boolean
-        ) {
-            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-        }
-
-        override fun sendToThreadWithAttachments(
-            parentMessage: Message,
-            message: String,
-            alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
-        ) {
-            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-        }
-
-        override fun editMessage(oldMessage: Message, newMessageText: String) {
-            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-        }
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, _ ->
+        configSendAlsoToChannelCheckbox()
     }
+
+    public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat as ChatMode) { _, _, _ ->
+        configSendAlsoToChannelCheckbox()
+    }
+
+    public var sendMessageHandler: MessageSendHandler = emptyMessageSendHandler
 
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
@@ -118,9 +96,32 @@ public class MessageInputView : ConstraintLayout {
         }
 
         binding.sendButtonContainer.setOnClickListener {
-            sendMessageHandler.sendMessage(messageText)
+            inputMode.apply {
+                when (this) {
+                    is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
+                    is InputMode.Thread -> {
+                        sendMessageHandler.sendToThread(
+                            parentMessage,
+                            messageText,
+                            binding.sendAlsoToChannel.isSelected
+                        )
+                    }
+                }
+            }
+
+
             messageText = ""
         }
+        configSendAlsoToChannelCheckbox()
+    }
+
+    private fun configSendAlsoToChannelCheckbox() {
+        binding.sendAlsoToChannel.isVisible = inputMode is InputMode.Thread
+        val text = when (chatMode) {
+            is ChatMode.GroupChat -> "Send also to channel"
+            is ChatMode.DirectChat -> "Send also as direct message"
+        }
+        binding.sendAlsoToChannel.text = text
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
@@ -320,10 +321,48 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageEnabled.alpha = 0F
     }
 
+    private companion object {
+        val emptyMessageSendHandler = object : MessageSendHandler {
+            override fun sendMessage(messageText: String) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendToThread(
+                parentMessage: Message,
+                messageText: String,
+                alsoSendToChannel: Boolean
+            ) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendToThreadWithAttachments(
+                parentMessage: Message,
+                message: String,
+                alsoSendToChannel: Boolean,
+                attachmentsFiles: List<File>
+            ) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun editMessage(oldMessage: Message, newMessageText: String) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+        }
+    }
+
     public sealed class InputMode {
         public object Normal : InputMode()
         public data class Thread(val parentMessage: Message) : InputMode()
         public data class Edit(val oldMessage: Message) : InputMode()
+    }
+
+    public sealed class ChatMode {
+        public object DirectChat : ChatMode()
+        public object GroupChat : ChatMode()
     }
 }
 
