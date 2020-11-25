@@ -5,6 +5,14 @@ plugins {
     id 'kotlin'
 }
 
+
+ext {
+    PUBLISH_GROUP_ID = com.getstream.sdk.chat.Configuration.artifactGroup
+    PUBLISH_VERSION = com.getstream.sdk.chat.Configuration.versionName
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-core'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
