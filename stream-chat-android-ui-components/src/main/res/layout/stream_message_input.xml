@@ -23,9 +23,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:src="@drawable/stream_ic_attach"
-        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintBottom_toBottomOf="@id/messageTextInput"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        app:layout_constraintTop_toTopOf="@id/messageTextInput"
         tools:src="@drawable/stream_ic_attach"
         />
 
@@ -36,14 +36,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:src="@drawable/stream_ic_lightning"
-        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintBottom_toBottomOf="@id/messageTextInput"
         app:layout_constraintStart_toEndOf="@id/iv_open_attachment"
-        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        app:layout_constraintTop_toTopOf="@id/messageTextInput"
         tools:src="@drawable/stream_ic_lightning"
         />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_message_text_input"
+        android:id="@+id/messageTextInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -58,21 +58,21 @@
         android:textColor="@color/stream_black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/fl_send_button_container"
+        app:layout_constraintEnd_toStartOf="@id/sendButtonContainer"
         app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
         app:layout_constraintTop_toBottomOf="@id/suggestionListView"
         tools:text="Hi. I am a text, did you notice?"
         />
 
     <FrameLayout
-        android:id="@+id/fl_send_button_container"
+        android:id="@+id/sendButtonContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintBottom_toBottomOf="@id/messageTextInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        app:layout_constraintTop_toTopOf="@id/messageTextInput"
         >
 
         <androidx.appcompat.widget.AppCompatImageView

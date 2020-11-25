@@ -15,10 +15,12 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.getColorList
+import java.io.File
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
     "No icon for disabled state of send message button. Please set it in XML."
@@ -54,6 +56,49 @@ public class MessageInputView : ConstraintLayout {
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
 
+    public var messageText: String
+        get() = binding.messageTextInput.text.toString()
+        set(text) {
+            binding.messageTextInput.apply {
+                requestFocus()
+                setText(text)
+                setSelection(getText()?.length ?: 0)
+            }
+        }
+
+    public var mode: InputMode = InputMode.Normal
+
+    public var sendMessageHandler: MessageSendHandler = object : MessageSendHandler {
+        override fun sendMessage(messageText: String) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+
+        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+
+        override fun sendToThread(
+            parentMessage: Message,
+            messageText: String,
+            alsoSendToChannel: Boolean
+        ) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+
+        override fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsFiles: List<File>
+        ) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+
+        override fun editMessage(oldMessage: Message, newMessageText: String) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+    }
+
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
     }
@@ -70,6 +115,11 @@ public class MessageInputView : ConstraintLayout {
             configLightningButton(typedArray)
             configTextInput(typedArray)
             configSendButton(typedArray)
+        }
+
+        binding.sendButtonContainer.setOnClickListener {
+            sendMessageHandler.sendMessage(messageText)
+            messageText = ""
         }
     }
 
@@ -183,15 +233,15 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configTextInput(typedArray: TypedArray) {
-        suggestionListController = SuggestionListController(binding.suggestionListView, binding.etMessageTextInput)
+        suggestionListController = SuggestionListController(binding.suggestionListView, binding.messageTextInput)
 
-        binding.etMessageTextInput.doAfterTextChanged {
+        binding.messageTextInput.doAfterTextChanged {
             suggestionListController.onTextChanged(it?.toString() ?: "")
         }
 
-        TextInputHandler.bindEditText(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
+        TextInputHandler.bindEditText(binding.messageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
 
-        binding.etMessageTextInput.run {
+        binding.messageTextInput.run {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamMessageInputTextColor,
@@ -269,4 +319,29 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageDisabled.alpha = 1F
         binding.ivSendMessageEnabled.alpha = 0F
     }
+
+    public sealed class InputMode {
+        public object Normal : InputMode()
+        public data class Thread(val parentMessage: Message) : InputMode()
+        public data class Edit(val oldMessage: Message) : InputMode()
+    }
+}
+
+public interface TypeListener {
+    public fun onKeystroke()
+    public fun onStopTyping()
+}
+
+public interface MessageSendHandler {
+    public fun sendMessage(messageText: String)
+    public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+    public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+    public fun sendToThreadWithAttachments(
+        parentMessage: Message,
+        message: String,
+        alsoSendToChannel: Boolean,
+        attachmentsFiles: List<File>
+    )
+
+    public fun editMessage(oldMessage: Message, newMessageText: String)
 }
