@@ -22,22 +22,32 @@ internal class AddChannelMembersAdapter :
         }
     ) {
 
+    var memberClickListener: MemberClickListener = MemberClickListener { }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         return StreamAddChannelMemberItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let(::MemberViewHolder)
+            .let { MemberViewHolder(it, memberClickListener) }
     }
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MemberViewHolder(private val binding: StreamAddChannelMemberItemBinding) :
+    class MemberViewHolder(
+        private val binding: StreamAddChannelMemberItemBinding,
+        private val memberClickListener: MemberClickListener
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
+            binding.memberContainer.setOnClickListener { memberClickListener.onMemberClicked(user) }
             binding.memberAvatar.setUserData(user)
             binding.memberNameTextView.text = user.name
         }
+    }
+
+    fun interface MemberClickListener {
+        fun onMemberClicked(user: User)
     }
 }

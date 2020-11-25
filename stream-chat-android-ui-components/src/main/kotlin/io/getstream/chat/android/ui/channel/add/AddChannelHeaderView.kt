@@ -70,6 +70,10 @@ internal class AddChannelHeaderView : FrameLayout {
         binding.addMemberButton.setOnClickListener { listener.onButtonClick() }
     }
 
+    fun setMemberClickListener(listener: AddChannelMembersAdapter.MemberClickListener) {
+        adapter.memberClickListener = listener
+    }
+
     interface Listener {
         fun onInputChanged(query: String)
     }

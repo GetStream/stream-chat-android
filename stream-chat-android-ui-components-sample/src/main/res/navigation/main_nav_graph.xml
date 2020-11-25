@@ -91,7 +91,21 @@
         android:id="@+id/addChannelFragment"
         android:name="io.getstream.chat.ui.sample.feature.channel.add.AddChannelFragment"
         android:label="AddChannelFragment"
-        />
+        >
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/chatFragment"
