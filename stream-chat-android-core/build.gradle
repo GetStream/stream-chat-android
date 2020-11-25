@@ -3,6 +3,7 @@ import com.getstream.sdk.chat.Dependencies
 plugins {
     id 'java-library'
     id 'kotlin'
+    id "com.github.dcendents.android-maven"
 }
 
 
