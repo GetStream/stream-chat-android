@@ -6,7 +6,7 @@
     android:background="@color/stream_concrete"
     >
 
-    <io.getstream.chat.android.ui.channel.add.AddChannelHeaderView
+    <io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
         android:id="@+id/headerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
-            android:text="@string/stream_create_group"
+            android:text="@string/create_group"
             android:textColor="@color/stream_black"
             android:textSize="@dimen/stream_text_medium"
             />
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
-        android:text="@string/stream_add_channel_user_list_title"
+        android:text="@string/add_channel_user_list_title"
         android:textColor="@color/stream_black_50"
         android:textSize="@dimen/stream_text_small"
         app:layout_constraintEnd_toEndOf="parent"

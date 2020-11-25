@@ -1,13 +1,14 @@
-package io.getstream.chat.android.ui.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import io.getstream.chat.android.ui.databinding.StreamAddChannelSeparatorItemBinding
-import io.getstream.chat.android.ui.databinding.StreamAddChannelUserItemBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
+import io.getstream.chat.ui.sample.feature.channel.add.AddChannelUsersAdapter.UserClickListener
 
-internal class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder<*>>(
+class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder<*>>(
     object : DiffUtil.ItemCallback<UserListItem>() {
         override fun areItemsTheSame(oldItem: UserListItem, newItem: UserListItem): Boolean {
             return oldItem.id == newItem.id
@@ -27,11 +28,11 @@ internal class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder
     ): BaseViewHolder<*> {
         return when (viewType) {
             TYPE_SEPARATOR ->
-                StreamAddChannelSeparatorItemBinding
+                AddChannelSeparatorItemBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
                     .let(::SeparatorViewHolder)
             TYPE_USER_ITEM ->
-                StreamAddChannelUserItemBinding
+                AddChannelUserItemBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
                     .let { UserItemViewHolder(it, userClickListener) }
             else -> throw IllegalArgumentException("Unhandled add channel user list view type ($viewType)")

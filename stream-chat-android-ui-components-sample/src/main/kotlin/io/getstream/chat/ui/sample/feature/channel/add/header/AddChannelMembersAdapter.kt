@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add.header
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.ui.databinding.StreamAddChannelMemberItemBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
 
-internal class AddChannelMembersAdapter :
+class AddChannelMembersAdapter :
     ListAdapter<User, AddChannelMembersAdapter.MemberViewHolder>(
         object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
@@ -25,7 +25,7 @@ internal class AddChannelMembersAdapter :
     var memberClickListener: MemberClickListener = MemberClickListener { }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
-        return StreamAddChannelMemberItemBinding
+        return AddChannelMemberItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { MemberViewHolder(it, memberClickListener) }
     }
@@ -35,7 +35,7 @@ internal class AddChannelMembersAdapter :
     }
 
     class MemberViewHolder(
-        private val binding: StreamAddChannelMemberItemBinding,
+        private val binding: AddChannelMemberItemBinding,
         private val memberClickListener: MemberClickListener
     ) :
         RecyclerView.ViewHolder(binding.root) {

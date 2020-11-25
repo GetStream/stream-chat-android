@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/stream_add_channel_member_item_background"
+    android:background="@drawable/add_channel_member_item_background"
     android:orientation="horizontal"
     >
 
