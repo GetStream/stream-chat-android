@@ -130,7 +130,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun StreamChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
-        unreadCountBadge.isVisible = channel.unreadCount > 0
+        unreadCountBadge.isVisible = channel.unreadCount ?: 0 > 0
 
         if (!unreadCountBadge.isVisible) {
             return

@@ -4,18 +4,38 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 
-internal fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List<Message>?): Int {
-    var unreadMessageCount = 0
-    if (messages != null) {
-        val lastRead = read?.lastRead
-        val lastReadTime = lastRead?.time ?: 0
-        val currentUserId = currentUser.id
-        for (m in messages.reversed()) {
-            if (m.user.id == currentUserId) continue
-            if (m.deletedAt != null) continue
-            if (m.silent) continue
-            if ((m.createdAt ?: m.createdLocallyAt)?.time ?: lastReadTime > lastReadTime) unreadMessageCount++
-        }
+internal fun computeUnreadCount(
+    currentUser: User,
+    read: ChannelUserRead? = null,
+    messages: List<Message>? = null
+): Int? {
+
+    if (messages == null) {
+        return null
     }
-    return unreadMessageCount
+
+    if (read == null) {
+        return messages.size
+    }
+
+    if (messages.size <= 1) {
+        return read.unreadMessages
+    }
+
+    val lastRead = read.lastRead
+        ?: throw IllegalStateException("ChannelUserRead instance for ${read.user.id} missing lastRead date")
+
+    return messages
+        .asSequence()
+        .filter { it.user.id != currentUser.id } // doesn't belong to the current user
+        .filter { it.deletedAt == null } // isn't deleted
+        .filter { !it.silent } // isn't silent
+        .count { message ->
+            val messageCreatedAt =
+                message.createdAt
+                    ?: message.createdLocallyAt
+                    ?: throw IllegalStateException("Message ${message.id} missing creation date")
+
+            lastRead.before(messageCreatedAt)
+        }
 }
