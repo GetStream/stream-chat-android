@@ -39,7 +39,7 @@
     <string name="stream_add_member_hint">Type a name</string>
     <string name="stream_create_group">Create a Group</string>
     <string name="stream_add_channel_user_list_title">On the platform</string>
-    <string name="stream_add_channel_empty_users_title">No users matches these keywords…</string>
+    <string name="stream_add_channel_empty_users_title">No user matches these keywords…</string>
     <string name="stream_add_channel_empty_message_list_title">No chats here yet…</string>
 
     <!-- ChannelHeaderView -->
