@@ -25,6 +25,7 @@ buildscript {
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
         classpath Dependencies.gradleNexusStagingPlugin
+        classpath Dependencies.dokka
     }
 }
 

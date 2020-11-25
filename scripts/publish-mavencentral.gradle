@@ -1,3 +1,7 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka'
+
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
     if (project.plugins.findPlugin("com.android.library")) {
@@ -7,12 +11,16 @@ task androidSourcesJar(type: Jar) {
     }
 }
 
-artifacts {
-    archives androidSourcesJar
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    archiveClassifier.set('javadoc')
+    from dokkaJavadoc.outputDirectory
 }
 
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
+artifacts {
+    archives androidSourcesJar
+    archives javadocJar
+}
+
 
 group = PUBLISH_GROUP_ID
 version = PUBLISH_VERSION
@@ -55,6 +63,7 @@ publishing {
             }
 
             artifact androidSourcesJar
+            artifact javadocJar
 
             pom {
                 name = PUBLISH_ARTIFACT_ID
