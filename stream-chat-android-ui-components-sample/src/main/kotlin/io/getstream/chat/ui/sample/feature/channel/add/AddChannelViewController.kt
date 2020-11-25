@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add
 
 import android.view.ViewGroup
 import android.widget.TextView
@@ -6,8 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
 
-internal class AddChannelViewController(
+class AddChannelViewController(
     private val headerView: AddChannelHeaderView,
     private val usersTitle: TextView,
     private val usersRecyclerView: RecyclerView,

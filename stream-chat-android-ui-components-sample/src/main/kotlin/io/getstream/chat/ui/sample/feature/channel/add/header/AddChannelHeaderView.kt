@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add.header
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.databinding.StreamAddChannelHeaderViewBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 
-internal class AddChannelHeaderView : FrameLayout {
+class AddChannelHeaderView : FrameLayout {
 
     var membersInputListener: Listener? = null
-    private val binding = StreamAddChannelHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = AddChannelHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
     private val adapter = AddChannelMembersAdapter()
     private val query: String
         get() = binding.inputEditText.text.trim().toString()
