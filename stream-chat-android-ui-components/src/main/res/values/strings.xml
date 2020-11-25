@@ -33,11 +33,14 @@
     <string name="stream_add_channel_back_icon_description">Back</string>
     <string name="stream_add_channel_add_member_icon_description">Add member</string>
     <string name="stream_add_channel_user_checked_description">User checked</string>
+    <string name="stream_add_channel_empty_users_description">No users</string>
     <string name="stream_add_channel_title">New Chat</string>
     <string name="stream_add_member_title">TO:</string>
     <string name="stream_add_member_hint">Type a name</string>
     <string name="stream_create_group">Create a Group</string>
     <string name="stream_add_channel_user_list_title">On the platform</string>
+    <string name="stream_add_channel_empty_users_title">No user matches these keywords…</string>
+    <string name="stream_add_channel_empty_message_list_title">No chats here yet…</string>
 
     <!-- ChannelHeaderView -->
     <string name="stream_content_description_back_button">Back button</string>
