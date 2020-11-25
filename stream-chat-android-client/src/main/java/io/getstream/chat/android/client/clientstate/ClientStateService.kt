@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.core.internal.fsm.FiniteStateMachine
+import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
 internal class ClientStateService {
     fun onConnected(user: User, connectionId: String) {
@@ -50,6 +50,8 @@ internal class ClientStateService {
             }
 
             state<ClientState.User.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
                     ClientState.User.Authorized.Connected(
                         event.connectionId,
@@ -88,6 +90,8 @@ internal class ClientStateService {
             }
 
             state<ClientState.Anonymous.Pending.WithToken> {
+                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
                     ClientState.Anonymous.Authorized.Connected(
                         event.connectionId,

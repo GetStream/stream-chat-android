@@ -1,0 +1,31 @@
+import com.getstream.sdk.chat.Dependencies
+
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+        ]
+    }
+}
+
+dependencies {
+    api project(":stream-chat-android-core")
+
+    implementation Dependencies.kotlinStdLib
+    implementation Dependencies.coroutinesTest
+    implementation Dependencies.androidxArchCoreTest
+    implementation Dependencies.junitJupiterApi
+    implementation Dependencies.junit4
+}

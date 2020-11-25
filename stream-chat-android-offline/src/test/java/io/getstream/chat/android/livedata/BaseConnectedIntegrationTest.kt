@@ -1,8 +1,10 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
@@ -35,11 +37,22 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         db = createRoomDb()
 
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db)
-            .offlineEnabled()
-            .userPresenceEnabled()
-            .recoveryDisabled()
-            .buildImpl()
+        val handler: Handler = mock()
+        val offlineEnabled = true
+        val userPresence = true
+        val recoveryEnabled = false
+        val backgroundSyncEnabled = false
+        chatDomainImpl = ChatDomainImpl(
+            client,
+            data.user1,
+            db,
+            handler,
+            offlineEnabled,
+            userPresence,
+            recoveryEnabled,
+            backgroundSyncEnabled,
+            context
+        )
         chatDomain = chatDomainImpl
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {

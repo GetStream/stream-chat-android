@@ -6,13 +6,13 @@ import com.getstream.sdk.chat.createAttachment
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.randomLong
 import com.getstream.sdk.chat.utils.Constant
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import io.getstream.chat.android.test.randomLong
 import org.amshove.kluent.When
 import org.amshove.kluent.any
 import org.amshove.kluent.calling

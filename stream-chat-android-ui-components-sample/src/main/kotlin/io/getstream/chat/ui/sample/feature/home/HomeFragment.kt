@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -48,6 +49,22 @@ class HomeFragment : Fragment() {
                 navigateToLoginScreen()
             }
         )
+        binding.channelListHeaderView.apply {
+            setOnAddChannelButtonClickListener {
+                findNavController().navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+            }
+            viewModel.online.observe(viewLifecycleOwner) { isOnline ->
+                if (isOnline) {
+                    showOnlineTitle()
+                } else {
+                    showOfflineTitle()
+                }
+            }
+            setUser(viewModel.currentUser)
+            setOnUserAvatarClickListener {
+                binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     override fun onDestroyView() {

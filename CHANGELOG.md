@@ -1,16 +1,29 @@
 # To be released:
 ## Common changes for all artifacts
 
-## stream-chat-android-ui-component
-- Add MessagesHeaderView
-
 ## stream-chat-android
 
 ## stream-chat-android-client
+
+## stream-chat-android-offline
+
+## stream-chat-android-ui-component
+
+# Nov 24th, 2020 - 4.4.4
+This version is a roolback to 4.4.2, The previous release (4.4.3) was not valid due to a problem with the build flow.
+We are going to release 4.4.5 with the features introduced by 4.4.3 as soon as the build is back working
+
+# Nov 20th, 2020 - 4.4.3
+## stream-chat-android-client
 - It's no longer required to wait for `setUser` to finish before querying channels
+- `ChatClient::setUser` method allows be called without network connection and will retry to connect when network connection is available
 
 ## stream-chat-android-offline
 - Fix bug when channels with newer messages don't go to the first position in the list
+- Fix Offline usage of `ChatDomain`
+
+## stream-chat-android-ui-component
+- Add MessagesHeaderView
 
 # Nov 13th, 2020 - 4.4.2
 ## stream-chat-android-ui-component

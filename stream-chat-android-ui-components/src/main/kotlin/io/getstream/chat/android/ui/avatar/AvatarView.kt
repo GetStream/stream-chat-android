@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.ui.search.SearchView
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserSearchViewBinding
 
@@ -34,12 +33,11 @@ class ComponentBrowserSearchViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.searchView.listener = object : SearchView.Listener {
-            override fun onInputChanged(query: String) {
-                Log.d(TAG, "Input: '$query'")
+        binding.searchView.apply {
+            setDebouncedInputChangedListener { query ->
+                Log.d(TAG, "Debounced input: '$query'")
             }
-
-            override fun onSearchStarted(query: String) {
+            setSearchStartedListener { query ->
                 Log.d(TAG, "Search: '$query'")
                 showToast("Search: '$query'")
             }

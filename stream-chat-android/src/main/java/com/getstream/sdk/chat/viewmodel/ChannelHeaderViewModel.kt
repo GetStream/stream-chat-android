@@ -1,16 +1,14 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
 
-private const val MESSAGE_LIMIT = 30
-
-/***
+/**
  * ViewModel class for [com.getstream.sdk.chat.view.ChannelHeaderView].
  * Responsible for updating channel information.
  * Can be bound to the view using [ChannelHeaderViewModel.bindView] function.
@@ -22,19 +20,30 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
 
-    public val members: LiveData<List<Member>>
-    public val channelState: LiveData<Channel>
-    public val anyOtherUsersOnline: LiveData<Boolean>
+    private val _members = MediatorLiveData<List<Member>>()
+    private val _channelState = MediatorLiveData<Channel>()
+    private val _anyOtherUsersOnline = MediatorLiveData<Boolean>()
+
+    public val members: LiveData<List<Member>> = _members
+    public val channelState: LiveData<Channel> = _channelState
+    public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline
 
     init {
-        val channelController: ChannelController =
-            chatDomain.useCases.watchChannel(cid, 0).execute().data()
-        members = channelController.members
-        channelState = map(channelController.channelData) { channelController.toChannel() }
-        anyOtherUsersOnline = map(members) { members ->
-            members.asSequence()
-                .filter { it.user != chatDomain.currentUser }
-                .any { it.user.online }
+        chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
+            if (channelControllerResult.isSuccess) {
+                val channelController = channelControllerResult.data()
+                _members.addSource(channelController.members) { _members.value = it }
+                _channelState.addSource(map(channelController.channelData) { channelController.toChannel() }) {
+                    _channelState.value = it
+                }
+                _anyOtherUsersOnline.addSource(
+                    map(channelController.members) { members ->
+                        members.asSequence()
+                            .filter { it.user != chatDomain.currentUser }
+                            .any { it.user.online }
+                    }
+                ) { _anyOtherUsersOnline.value = it }
+            }
         }
     }
 }
