@@ -97,4 +97,17 @@
 
     </FrameLayout>
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/sendAlsoToChannel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:textColor="@color/stream_black_50"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageTextInput"
+        android:textSize="@dimen/stream_text_small"
+        tools:text="Send also to channel"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
