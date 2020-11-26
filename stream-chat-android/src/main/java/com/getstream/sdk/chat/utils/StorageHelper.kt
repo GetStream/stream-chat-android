@@ -10,12 +10,14 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal class StorageHelper {
+@InternalStreamChatApi
+public class StorageHelper {
     private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US)
 
     internal fun getCachedFileFromUri(
@@ -38,7 +40,22 @@ internal class StorageHelper {
         return cachedFile
     }
 
-    internal fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
+    public fun getFileAttachments(context: Context): List<AttachmentMetaData> {
+        return getFilteredAttachments(context, null)
+    }
+
+    public fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
+        val selection = (
+            MediaStore.Files.FileColumns.MEDIA_TYPE + "=" +
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE +
+                " OR " +
+                MediaStore.Files.FileColumns.MEDIA_TYPE + "=" +
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+            )
+        return getFilteredAttachments(context, selection)
+    }
+
+    private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
         val columns = arrayOf(
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
@@ -47,14 +64,6 @@ internal class StorageHelper {
             MediaStore.Files.FileColumns.SIZE,
             MediaStore.Files.FileColumns.DURATION
         )
-        val selection = (
-            MediaStore.Files.FileColumns.MEDIA_TYPE + "=" +
-                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE +
-                " OR " +
-                MediaStore.Files.FileColumns.MEDIA_TYPE + "=" +
-                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
-            )
-
         context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             columns,
@@ -67,7 +76,7 @@ internal class StorageHelper {
         return emptyList()
     }
 
-    internal fun getAttachmentsFromUriList(
+    public fun getAttachmentsFromUriList(
         context: Context,
         uriList: List<Uri>
     ): List<AttachmentMetaData> {

@@ -35,4 +35,10 @@
     <string name="stream_message_list_header_offline">Offline…</string>
     <string name="stream_message_list_header_try_again">Try Again</string>
     <string name="stream_message_list_header_typing">is typing</string>
+
+    <!--Attachment Dialog-->
+    <string name="stream_attachment_dialog_recent_files">Recent Files</string>
+    <string name="stream_attachment_dialog_permission_camera">Allow access to your Camera</string>
+    <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
+    <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
 </resources>
