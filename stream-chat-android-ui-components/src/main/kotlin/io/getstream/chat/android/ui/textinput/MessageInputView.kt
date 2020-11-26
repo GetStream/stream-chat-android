@@ -7,17 +7,22 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
+import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.getColorList
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
@@ -44,6 +49,15 @@ public class MessageInputView : ConstraintLayout {
         defStyleAttr
     ) {
         init(context, attrs)
+    }
+
+    private val attachmentsSelectedListener = object : AttachmentSelectionListener {
+        override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
+            if (attachments.isNotEmpty()) {
+                val attachmentsString = attachments.joinToString(separator = "\n") { it.uri.toString() }
+                Toast.makeText(context, attachmentsString, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private var currentAnimatorSet: AnimatorSet? = null
@@ -78,6 +92,10 @@ public class MessageInputView : ConstraintLayout {
     private fun configAttachmentButton(typedArray: TypedArray) {
         binding.ivOpenAttachment.run {
             isVisible = typedArray.getBoolean(R.styleable.StreamMessageInputView_streamAttachButtonEnabled, true)
+
+            setOnClickListener {
+                openAttachmentDialog()
+            }
 
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamAttachButtonIcon)
                 ?.let(this::setImageDrawable)
@@ -277,5 +295,13 @@ public class MessageInputView : ConstraintLayout {
 
     public fun interface MessageSentListener {
         public fun onMessageSent()
+    }
+
+    private fun openAttachmentDialog() {
+        context.getFragmentManager()?.let {
+            AttachmentDialogFragment.newInstance()
+                .apply { setAttachmentsSelectedListener(attachmentsSelectedListener) }
+                .show(it, AttachmentDialogFragment.TAG)
+        }
     }
 }

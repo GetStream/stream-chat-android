@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialogContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        android:id="@+id/recentFilesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/stream_spacing_medium"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        android:text="@string/stream_attachment_dialog_recent_files"
+        android:textColor="@color/stream_text_black"
+        android:textSize="@dimen/stream_text_large"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/recentFilesRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/fileManagerImageView"
+        android:layout_width="@dimen/stream_attachment_dialog_button_size"
+        android:layout_height="@dimen/stream_attachment_dialog_button_size"
+        android:scaleType="center"
+        android:src="@drawable/stream_ic_file_manager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_blue"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recentFilesRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recentFilesTextView"
+        />
+
+    <TextView
+        android:id="@+id/emptyPlaceholderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stream_no_media_error"
+        android:textColor="@color/stream_black"
+        android:textSize="@dimen/stream_text_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <include
+        android:id="@+id/grantPermissionsInclude"
+        layout="@layout/stream_attachment_permission_view"
+        />
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/approveAttachmentSelectionButton"-->
+<!--        style="@style/StreamAttachmentDialogButtonStyle"-->
+<!--        android:layout_margin="@dimen/stream_spacing_medium"-->
+<!--        android:visibility="gone"-->
+<!--        app:icon="@drawable/stream_ic_check"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        />-->
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

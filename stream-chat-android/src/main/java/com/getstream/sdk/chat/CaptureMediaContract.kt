@@ -9,6 +9,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.FileProvider
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -16,7 +17,8 @@ import java.util.Locale
 
 private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
-internal class CaptureMediaContract : ActivityResultContract<Unit, File>() {
+@InternalStreamChatApi
+public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
 
     private var pictureFile: File? = null
     private var videoFile: File? = null
