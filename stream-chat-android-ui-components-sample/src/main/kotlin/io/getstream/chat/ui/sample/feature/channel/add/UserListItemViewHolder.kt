@@ -1,13 +1,13 @@
-package io.getstream.chat.android.ui.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add
 
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.ui.databinding.StreamAddChannelSeparatorItemBinding
-import io.getstream.chat.android.ui.databinding.StreamAddChannelUserItemBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
 
-internal abstract class BaseViewHolder<T : UserListItem>(
+abstract class BaseViewHolder<T : UserListItem>(
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -20,7 +20,7 @@ internal abstract class BaseViewHolder<T : UserListItem>(
     protected abstract fun bind(item: T)
 }
 
-internal class SeparatorViewHolder(private val binding: StreamAddChannelSeparatorItemBinding) :
+class SeparatorViewHolder(private val binding: AddChannelSeparatorItemBinding) :
     BaseViewHolder<UserListItem.Separator>(binding.root) {
 
     override fun bind(item: UserListItem.Separator) {
@@ -28,8 +28,8 @@ internal class SeparatorViewHolder(private val binding: StreamAddChannelSeparato
     }
 }
 
-internal class UserItemViewHolder(
-    private val binding: StreamAddChannelUserItemBinding,
+class UserItemViewHolder(
+    private val binding: AddChannelUserItemBinding,
     private val userClickListener: AddChannelUsersAdapter.UserClickListener
 ) : BaseViewHolder<UserListItem.UserItem>(binding.root) {
 
