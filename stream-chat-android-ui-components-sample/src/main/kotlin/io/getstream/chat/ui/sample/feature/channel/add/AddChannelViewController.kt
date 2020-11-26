@@ -57,7 +57,7 @@ class AddChannelViewController(
     }
 
     fun addMoreUsers(users: List<User>, shouldShowUserSections: Boolean = true) {
-        userInfoList.addAll(users.map { UserInfo(it, false) })
+        userInfoList.addAll(users.map { UserInfo(it, members.contains(it)) })
         if (shouldShowUserSections) {
             showSectionedUsers(userInfoList)
         } else {
