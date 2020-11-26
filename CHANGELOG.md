@@ -7,10 +7,12 @@
 
 ## stream-chat-android-client
 - New artifact name: `io.getstream:stream-chat-android-client:STREAM_VERSION`
-
+- Show date of the last message into channels list when data comes from offline storage
+- Show text of the last message into channels list when data comes from offline storage
 
 ## stream-chat-android-offline
 - New artifact name: `io.getstream:stream-chat-android-offline:STREAM_VERSION`
+- Provide the last message when data is load from offline storage
 
 
 ## stream-chat-android-ui-components
