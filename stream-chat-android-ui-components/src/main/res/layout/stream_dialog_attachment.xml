@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/stream_gray"
+    >
+
+    <RadioGroup
+        android:id="@+id/attachmentButtonsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/stream_attachment_dialog_button_section_height"
+        android:layout_marginStart="4dp"
+        android:checkedButton="@+id/mediaAttachmentsButton"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/pagerContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ToggleButton
+            android:id="@+id/mediaAttachmentButton"
+            style="@style/StreamAttachmentDialogToggleButton"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/stream_attachment_permission_media"
+            />
+
+        <ToggleButton
+            android:id="@+id/fileAttachmentButton"
+            style="@style/StreamAttachmentDialogToggleButton"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/stream_attachment_permission_file"
+            />
+
+        <ToggleButton
+            android:id="@+id/cameraAttachmentButton"
+            style="@style/StreamAttachmentDialogToggleButton"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/stream_attachment_permission_camera"
+            />
+
+    </RadioGroup>
+
+    <ImageButton
+        android:id="@+id/attachButton"
+        android:layout_width="@dimen/stream_attachment_dialog_button_size"
+        android:layout_height="@dimen/stream_attachment_dialog_button_size"
+        android:scaleType="center"
+        android:layout_margin="6dp"
+        android:tint="@color/stream_attach_button"
+        android:background="@null"
+        android:src="@drawable/stream_ic_next"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pagerContainer"
+        style="@style/StreamAttachmentsCardViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_attachment_dialog_page_height"
+        app:cardElevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/attachmentButtonsContainer"
+        >
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/attachmentPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/stream_spacing_small"
+            android:background="@color/stream_grey_light"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
