@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.LlcMigrationUtils;
+import com.getstream.sdk.chat.utils.UiUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.livedata.ChatDomain;
 import kotlin.Unit;
-
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
 
@@ -36,7 +35,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                                  MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
         this.message = message;
-        this.reactionTypes = LlcMigrationUtils.getReactionTypes();
+        this.reactionTypes = UiUtils.getReactionTypes();
         this.style = style;
         this.clickListener = clickListener;
         if (!message.getCid().equals("")) {
