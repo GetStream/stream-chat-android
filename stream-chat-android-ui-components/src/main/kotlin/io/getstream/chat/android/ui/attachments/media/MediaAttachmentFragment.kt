@@ -14,10 +14,10 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentMediaBinding
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

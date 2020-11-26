@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.utils
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.R
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.DecimalFormat
 import kotlin.math.ln
 import kotlin.math.pow

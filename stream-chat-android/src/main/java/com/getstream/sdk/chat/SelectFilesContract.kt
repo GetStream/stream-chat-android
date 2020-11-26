@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {

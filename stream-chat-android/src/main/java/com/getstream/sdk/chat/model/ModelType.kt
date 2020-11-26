@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.model
 
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public object ModelType {
