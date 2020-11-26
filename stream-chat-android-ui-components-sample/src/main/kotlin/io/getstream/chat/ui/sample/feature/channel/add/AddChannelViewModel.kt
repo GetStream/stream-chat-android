@@ -12,6 +12,8 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class AddChannelViewModel : ViewModel() {
@@ -25,6 +27,7 @@ class AddChannelViewModel : ViewModel() {
         Filters.and(Filters.ne("name", ""), Filters.ne("id", currentUserId))
 
     private var channelClient: ChannelClient? = null
+    private var searchQuery: String = ""
     private var offset: Int = 0
 
     init {
@@ -36,6 +39,7 @@ class AddChannelViewModel : ViewModel() {
             Event.ReachedEndOfList -> requestMoreUsers()
             Event.MessageSent -> createChannel()
             is Event.MembersChanged -> createDraftChannel(event.members)
+            is Event.SearchInputChanged -> searchUsers(event.query)
         }
     }
 
@@ -43,10 +47,16 @@ class AddChannelViewModel : ViewModel() {
         if (!isRequestingMore) {
             _state.value = State.Loading
         }
+        viewModelScope.coroutineContext.cancelChildren()
         viewModelScope.launch(Dispatchers.IO) {
+            val filter = if (searchQuery.isEmpty()) {
+                usersQueryFilter
+            } else {
+                Filters.and(Filters.autocomplete("name", searchQuery), Filters.ne("id", currentUserId))
+            }
             val result = ChatClient.instance().queryUsers(
                 QueryUsersRequest(
-                    filter = usersQueryFilter,
+                    filter = filter,
                     offset = offset,
                     limit = USERS_LIMIT,
                     querySort = USERS_QUERY_SORT,
@@ -54,13 +64,16 @@ class AddChannelViewModel : ViewModel() {
                 )
             ).execute()
 
-            if (result.isSuccess) {
+            if (result.isSuccess && isActive) {
                 val users = result.data()
                 _state.postValue(
                     if (users.isEmpty()) {
                         State.Empty
                     } else {
-                        if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users)
+                        if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(
+                            users,
+                            shouldShowUserSections = searchQuery.isEmpty()
+                        )
                     }
                 )
                 updatePaginationData(users)
@@ -99,6 +112,12 @@ class AddChannelViewModel : ViewModel() {
         }
     }
 
+    private fun searchUsers(query: String) {
+        offset = 0
+        searchQuery = query
+        requestUsers(isRequestingMore = false)
+    }
+
     private fun requestMoreUsers() {
         _paginationState.value = _paginationState.value?.copy(loadingMore = true) ?: PaginationState(loadingMore = true)
         requestUsers(isRequestingMore = true)
@@ -121,7 +140,7 @@ class AddChannelViewModel : ViewModel() {
         object Empty : State()
         object HideChannel : State()
         data class ShowChannel(val cid: String) : State()
-        data class Result(val users: List<User>) : State()
+        data class Result(val users: List<User>, val shouldShowUserSections: Boolean) : State()
         data class ResultMoreUsers(val users: List<User>) : State()
         data class NavigateToChannel(val cid: String) : State()
     }
@@ -130,6 +149,7 @@ class AddChannelViewModel : ViewModel() {
         object ReachedEndOfList : Event()
         object MessageSent : Event()
         data class MembersChanged(val members: List<User>) : Event()
+        data class SearchInputChanged(val query: String) : Event()
     }
 
     data class PaginationState(

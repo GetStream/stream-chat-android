@@ -68,14 +68,21 @@ class AddChannelFragment : Fragment() {
         addChannelViewModel.apply {
             state.observe(viewLifecycleOwner) { state ->
                 when (state) {
-                    AddChannelViewModel.State.Loading -> binding.addChannelView.showLoadingView()
+                    AddChannelViewModel.State.Loading -> {
+                        binding.addChannelView.showLoadingView()
+                        binding.addChannelView.hideUsersRecyclerView()
+                        binding.addChannelView.hideEmptyStateView()
+                    }
                     AddChannelViewModel.State.Empty -> {
+                        binding.addChannelView.hideUsersRecyclerView()
                         binding.addChannelView.hideLoadingView()
                         binding.addChannelView.showEmptyStateView()
                     }
                     is AddChannelViewModel.State.Result -> {
+                        binding.addChannelView.setUsers(state.users, state.shouldShowUserSections)
                         binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.setUsers(state.users)
+                        binding.addChannelView.hideEmptyStateView()
+                        binding.addChannelView.showUsersRecyclerView()
                     }
                     is AddChannelViewModel.State.ResultMoreUsers -> {
                         binding.addChannelView.addMoreUsers(state.users)
@@ -103,6 +110,9 @@ class AddChannelFragment : Fragment() {
             }
             messageInputView.messageSentListener = MessageInputView.MessageSentListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
+            }
+            setSearchInputChangedListener {
+                addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
             }
         }
     }
