@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
+import io.getstream.chat.android.ui.attachments.AttachmentSource
 import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentMediaBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,7 +61,7 @@ public class MediaAttachmentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.MEDIA)
     }
 
     override fun onDestroyView() {
@@ -119,7 +120,7 @@ public class MediaAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             mediaAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.MEDIA)
     }
 
     private fun populateAttachments() {

@@ -19,6 +19,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
+import io.getstream.chat.android.ui.attachments.AttachmentSource
 import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentFileBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,7 +63,7 @@ public class FileAttachmentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.FILE)
     }
 
     override fun onDestroyView() {
@@ -86,7 +87,7 @@ public class FileAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             fileAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.FILE)
     }
 
     private fun setupViews() {
@@ -123,7 +124,7 @@ public class FileAttachmentFragment : Fragment() {
                         storageHelper.getAttachmentsFromUriList(requireContext(), it)
                     }
                     setFragmentResult(
-                        AttachmentDialogFragment.REQUEST_KEY,
+                        AttachmentDialogFragment.REQUEST_KEY_FILE_MANAGER,
                         bundleOf(AttachmentDialogFragment.BUNDLE_KEY to attachments.toSet())
                     )
                 }

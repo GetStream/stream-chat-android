@@ -60,7 +60,7 @@ internal class CameraAttachmentFragment : Fragment() {
                     setOf(AttachmentMetaData(file))
                 }
                 setFragmentResult(
-                    AttachmentDialogFragment.REQUEST_KEY,
+                    AttachmentDialogFragment.REQUEST_KEY_CAMERA,
                     bundleOf(AttachmentDialogFragment.BUNDLE_KEY to result)
                 )
             }

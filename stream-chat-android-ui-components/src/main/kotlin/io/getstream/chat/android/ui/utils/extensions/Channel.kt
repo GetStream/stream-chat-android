@@ -52,8 +52,8 @@ internal fun Channel.currentUserHasReadLastMessage(): Boolean =
 
 internal fun Channel.getReadStatusDrawable(context: Context): Drawable? =
     when (getLastMessageReadCount()) {
-        0 -> ContextCompat.getDrawable(context, R.drawable.ic_icon_check)
-        else -> ContextCompat.getDrawable(context, R.drawable.ic_icon_check_all)
+        0 -> ContextCompat.getDrawable(context, R.drawable.stream_ic_icon_check)
+        else -> ContextCompat.getDrawable(context, R.drawable.stream_ic_icon_check_all)
         // wip - need to figure out message pending status for clock icon
     }
 
