@@ -3,19 +3,17 @@ package io.getstream.chat.android.ui.attachments.selected
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemSelectedAttachmentMediaBinding
+import io.getstream.chat.android.ui.utils.SimpleListAdapter
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class SelectedMediaAttachmentAdapter(
-    private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
-) : RecyclerView.Adapter<SelectedMediaAttachmentAdapter.SelectedMediaAttachmentViewHolder>() {
-
-    private val attachments: MutableList<AttachmentMetaData> = mutableListOf()
+    var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {}
+) : SimpleListAdapter<AttachmentMetaData, SelectedMediaAttachmentAdapter.SelectedMediaAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedMediaAttachmentViewHolder {
         return StreamItemSelectedAttachmentMediaBinding
@@ -23,38 +21,12 @@ internal class SelectedMediaAttachmentAdapter(
             .let { SelectedMediaAttachmentViewHolder(it, onAttachmentCancelled) }
     }
 
-    override fun onBindViewHolder(holder: SelectedMediaAttachmentViewHolder, position: Int) {
-        holder.bind(attachments[position])
-    }
-
-    override fun getItemCount(): Int = attachments.size
-
-    internal fun setAttachments(attachments: List<AttachmentMetaData>) {
-        this.attachments.clear()
-        this.attachments.addAll(attachments)
-        notifyDataSetChanged()
-    }
-
-    fun removeAttachment(attachment: AttachmentMetaData) {
-        val index = attachments.indexOf(attachment)
-        if (index != -1) {
-            attachments.remove(attachment)
-            notifyItemRemoved(index)
-        }
-    }
-
-    fun clear() {
-        attachments.clear()
-        notifyDataSetChanged()
-    }
-
     class SelectedMediaAttachmentViewHolder(
         private val binding: StreamItemSelectedAttachmentMediaBinding,
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
-    ) : RecyclerView.ViewHolder(binding.root) {
-        private val context = itemView.context
+    ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
 
-        fun bind(attachment: AttachmentMetaData) {
+        override fun bind(attachment: AttachmentMetaData) {
             bindAttachmentImage(attachment)
             bindClickListener(attachment)
         }

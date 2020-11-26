@@ -18,15 +18,13 @@ internal class AttachmentController(
     private val context: Context,
     private val selectedMediaRecyclerView: RecyclerView,
     private val selectedFilesRecyclerView: RecyclerView,
+    private val storageHelper: StorageHelper = StorageHelper(),
+    private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter(),
+    private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter(),
     private val selectedAttachmentsChangeListener: (List<AttachmentMetaData>) -> Unit
-
 ) {
     internal var selectedAttachments: List<AttachmentMetaData> = emptyList()
         private set
-
-    private val storageHelper = StorageHelper()
-    private val selectedFileAttachmentAdapter = SelectedFileAttachmentAdapter(::cancelAttachment)
-    private val selectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter(::cancelAttachment)
 
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
@@ -42,7 +40,9 @@ internal class AttachmentController(
 
     init {
         selectedFilesRecyclerView.itemAnimator = null
+        selectedFileAttachmentAdapter.onAttachmentCancelled = ::cancelAttachment
         selectedFilesRecyclerView.adapter = selectedFileAttachmentAdapter
+        selectedMediaAttachmentAdapter.onAttachmentCancelled = ::cancelAttachment
         selectedMediaRecyclerView.adapter = selectedMediaAttachmentAdapter
     }
 
@@ -64,14 +64,11 @@ internal class AttachmentController(
 
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
-        selectedFileAttachmentAdapter.removeAttachment(attachment)
-        selectedMediaAttachmentAdapter.removeAttachment(attachment)
+        selectedFileAttachmentAdapter.removeItem(attachment)
+        selectedMediaAttachmentAdapter.removeItem(attachment)
 
         if (selectedAttachments.isEmpty()) {
-            selectedFilesRecyclerView.isVisible = false
-            selectedFileAttachmentAdapter.clear()
-            selectedMediaRecyclerView.isVisible = false
-            selectedMediaAttachmentAdapter.clear()
+            clearSelectedAttachments()
         }
 
         selectedAttachmentsChangeListener(selectedAttachments)
@@ -80,20 +77,19 @@ internal class AttachmentController(
     private fun onMediaAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
         selectedAttachments = attachments
             .filter { it.uri != null }
-            .filter { it.type in listOf(ModelType.attach_image, ModelType.attach_video) }
+            .filter { it.type in MEDIA_ATTACHMENT_TYPES }
 
         selectedFilesRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         selectedMediaRecyclerView.isVisible = true
-        selectedMediaAttachmentAdapter.setAttachments(selectedAttachments)
+        selectedMediaAttachmentAdapter.setItems(selectedAttachments)
 
         selectedAttachmentsChangeListener(selectedAttachments)
     }
 
     private fun onFileAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
         GlobalScope.launch(DispatcherProvider.Main) {
-            val uris = attachments
-                .mapNotNull { it.uri }
+            val uris = attachments.mapNotNull(AttachmentMetaData::uri)
 
             selectedAttachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getAttachmentsFromUriList(context, uris).toMutableList()
@@ -102,9 +98,13 @@ internal class AttachmentController(
             selectedMediaRecyclerView.isVisible = false
             selectedMediaAttachmentAdapter.clear()
             selectedFilesRecyclerView.isVisible = true
-            selectedFileAttachmentAdapter.setAttachments(selectedAttachments)
+            selectedFileAttachmentAdapter.setItems(selectedAttachments)
 
             selectedAttachmentsChangeListener(selectedAttachments)
         }
+    }
+
+    companion object {
+        private val MEDIA_ATTACHMENT_TYPES = listOf(ModelType.attach_image, ModelType.attach_video)
     }
 }
