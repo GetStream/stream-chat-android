@@ -14,11 +14,11 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.attachments.AttachmentSource
 import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentMediaBinding
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -56,7 +56,7 @@ public class MediaAttachmentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        tryPopulateAttachments()
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -84,12 +84,12 @@ public class MediaAttachmentFragment : Fragment() {
             grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_media)
             grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_media)
             grantPermissionsTextView.setOnClickListener {
-                tryPopulateAttachments()
+                checkPermissions()
             }
         }
     }
 
-    private fun tryPopulateAttachments() {
+    private fun checkPermissions() {
         if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
             permissionChecker.checkStoragePermissions(
                 binding.root,

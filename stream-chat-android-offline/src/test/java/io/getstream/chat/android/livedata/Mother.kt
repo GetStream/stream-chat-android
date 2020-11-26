@@ -15,56 +15,26 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
-import java.io.File
+import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomFile
+import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import java.util.Date
-import kotlin.random.Random
 
 private val fixture = JFixture()
-private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
-
-internal fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
-    Random.nextInt(1, maxInt + 1)
-
-internal fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
-    Random.nextLong(1, maxLong + 1)
-
-internal fun randomInt() = Random.nextInt()
-
-internal fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
-
-internal fun randomIntBetween(range: IntRange) = Random.nextInt(range.first, range.last)
-
-internal fun randomLong() = Random.nextLong()
-
-internal fun randomBoolean() = Random.nextBoolean()
-
-internal fun randomString(size: Int = 20): String = buildString(capacity = size) {
-    repeat(size) {
-        append(charPool.random())
-    }
-}
-
-internal fun randomCID() = "${randomString()}:${randomString()}"
-
-internal fun randomFile(extension: String = randomString(3)) = File("${randomString()}.$extension")
-
-internal fun randomFiles(
-    size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> File = { randomFile() }
-): List<File> = (1..size).map(creationFunction)
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()) }
 ): List<Attachment> = (1..size).map(creationFunction)
-
-internal fun randomImageFile() = randomFile(extension = "jpg")
 
 internal fun randomUser(
     id: String = randomString(),
@@ -218,11 +188,6 @@ internal fun randomChannelEntity(
     channelId: String = randomString()
 ): ChannelEntity = ChannelEntity(type, channelId)
 
-internal fun randomChannelEntityPair(
-    channel: Channel = randomChannel(),
-    channelEntity: ChannelEntity = randomChannelEntity()
-): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)
-
 internal fun randomMessageEntity(
     id: String = randomString(),
     cid: String = randomCID(),
@@ -239,13 +204,6 @@ internal fun randomReactionEntity(
 internal fun randomMemberEntity(userId: String = randomString()) = MemberEntity(userId)
 
 internal fun randomChannelUserReadEntity(userId: String = randomString()) = ChannelUserReadEntity(userId)
-
-internal fun randomDate() = Date(randomLong())
-
-internal fun randomMessages(
-    size: Int = 20,
-    creationFunction: (Int) -> Message = { randomMessage() }
-): List<Message> = (1..size).map(creationFunction)
 
 internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 

@@ -29,13 +29,17 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance()
 ) : ViewModel() {
-    private val loading = MutableLiveData<State>()
     private var threadMessages: LiveData<List<Message>> = MutableLiveData()
-    private val messageListData: MessageListItemLiveData
+    private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
     private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
-    private val reads: LiveData<List<ChannelUserRead>>
+    private val _reads: MediatorLiveData<List<ChannelUserRead>> = MediatorLiveData()
+    private val reads: LiveData<List<ChannelUserRead>> = _reads
+    private val _loadMoreLiveData = MediatorLiveData<Boolean>()
+    public val loadMoreLiveData: LiveData<Boolean> = _loadMoreLiveData
+    private val _channel = MediatorLiveData<Channel>()
+    public val channel: LiveData<Channel> = _channel
 
     /***
      * Whether the user is viewing a thread
@@ -48,34 +52,32 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @see State
      */
     public val state: LiveData<State> = stateMerger
-    public val loadMoreLiveData: LiveData<Boolean>
-    public val channel: Channel
-    public val currentUser: User
+    public val currentUser: User = domain.currentUser
 
     init {
-        loading.value = State.Loading
 
-        val result = domain.useCases.watchChannel(cid, MESSAGES_LIMIT).execute()
-        val channelController = result.data()
-        channel = channelController.toChannel()
-        currentUser = domain.currentUser
-        reads = channelController.reads
-        loadMoreLiveData = channelController.loadingOlderMessages
-
-        val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
-
-        messageListData = MessageListItemLiveData(
-            currentUser,
-            channelController.messages,
-            channelController.oldMessages,
-            reads,
-            typingIds,
-            false,
-            ::dateSeparator
-        )
-        stateMerger.apply {
-            addSource(loading) { value = it }
-            addSource(messageListData) { value = State.Result(it) }
+        domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
+            if (channelControllerResult.isSuccess) {
+                val channelController = channelControllerResult.data()
+                _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
+                val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
+                messageListData = MessageListItemLiveData(
+                    currentUser,
+                    channelController.messages,
+                    channelController.oldMessages,
+                    channelController.reads,
+                    typingIds,
+                    false,
+                    ::dateSeparator
+                ).also { mld ->
+                    stateMerger.apply {
+                        addSource(MutableLiveData<State>(State.Loading)) { value = it }
+                        addSource(mld) { value = State.Result(it) }
+                    }
+                }
+                _reads.addSource(channelController.reads) { _reads.value = it }
+                _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
+            }
         }
     }
 
@@ -105,10 +107,12 @@ public class MessageListViewModel @JvmOverloads constructor(
             true,
             ::threadDateSeparator
         )
-        threadListData?.let {
-            stateMerger.apply {
-                removeSource(messageListData)
-                addSource(it) { value = State.Result(it) }
+        threadListData?.let { tld ->
+            messageListData?.let { mld ->
+                stateMerger.apply {
+                    removeSource(mld)
+                    addSource(tld) { value = State.Result(it) }
+                }
             }
         }
     }
@@ -117,8 +121,8 @@ public class MessageListViewModel @JvmOverloads constructor(
         threadListData?.let {
             stateMerger.removeSource(it)
         }
-        stateMerger.apply {
-            addSource(messageListData) { value = State.Result(it) }
+        messageListData?.let {
+            stateMerger.addSource(it) { stateMerger.value = State.Result(it) }
         }
     }
 
@@ -170,18 +174,18 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun onEndRegionReached() {
-        messageListData.loadingMoreChanged(true)
+        messageListData?.loadingMoreChanged(true)
         currentMode.run {
             when (this) {
                 is Mode.Normal -> {
                     domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
-                        messageListData.loadingMoreChanged(false)
+                        messageListData?.loadingMoreChanged(false)
                     }
                 }
                 is Mode.Thread -> {
                     domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT)
                         .enqueue {
-                            messageListData.loadingMoreChanged(false)
+                            messageListData?.loadingMoreChanged(false)
                         }
                 }
             }.exhaustive
@@ -198,12 +202,16 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
-        currentMode = Mode.Thread(parentMessage)
         val parentId: String = parentMessage.id
-        val threadController = domain.useCases.getThread(cid, parentId).execute().data()
-        threadMessages = threadController.messages
-        setThreadMessages(threadMessages)
-        domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
+        domain.useCases.getThread(cid, parentId).enqueue { threadControllerResult ->
+            if (threadControllerResult.isSuccess) {
+                val threadController = threadControllerResult.data()
+                currentMode = Mode.Thread(parentMessage)
+                threadMessages = threadController.messages
+                setThreadMessages(threadMessages)
+                domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
+            }
+        }
     }
 
     private fun onNormalModeEntered() {

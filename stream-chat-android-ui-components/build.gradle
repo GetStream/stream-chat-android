@@ -67,13 +67,12 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-progressive',
                 '-Xexplicit-api=strict',
                 '-Xopt-in=kotlin.contracts.ExperimentalContracts',
-                '-Xopt-in=io.getstream.chat.core.internal.InternalStreamChatApi'
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
 
 dependencies {
-    implementation project(':stream-chat-android-core')
     api project(":stream-chat-android")
 
     implementation Dependencies.kotlinStdLib
@@ -85,4 +84,5 @@ dependencies {
     implementation Dependencies.drawabletoolbox
     implementation Dependencies.fragmentKtx
     implementation Dependencies.androidxCoreKtx
+    implementation Dependencies.lottie
 }

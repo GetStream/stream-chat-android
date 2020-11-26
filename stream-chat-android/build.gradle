@@ -75,13 +75,12 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=io.getstream.chat.core.internal.InternalStreamChatApi'
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
 
 dependencies {
-    implementation project(":stream-chat-android-core")
     api project(":stream-chat-android-offline")
 
     implementation Dependencies.kotlinStdLib
@@ -120,6 +119,7 @@ dependencies {
     implementation Dependencies.androidxMedia
     implementation Dependencies.coil
     implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
 
     // ExoPlayer
     api Dependencies.exoplayerCore
@@ -128,6 +128,8 @@ dependencies {
     api Dependencies.exoplayerSmoothstreaming
 
     // Tests
+    testImplementation project(":stream-chat-android-test")
+
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine

@@ -59,7 +59,7 @@
     </declare-styleable>
 
     <!--ChannelsHeaderView-->
-    <declare-styleable name="ChannelsHeaderView">
+    <declare-styleable name="ChannelListHeaderView">
         <attr name="streamAvatarWidth" />
         <attr name="streamAvatarHeight" />
         <attr name="streamAvatarBorderWidth" />

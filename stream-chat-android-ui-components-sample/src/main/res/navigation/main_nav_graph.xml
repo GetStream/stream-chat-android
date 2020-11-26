@@ -67,19 +67,66 @@
             app:popUpTo="@+id/main_navigation"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/bottom_navigation"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+
+        <action
+            android:id="@+id/action_homeFragment_to_addChannelFragment"
+            app:destination="@id/addChannelFragment"
+            />
     </fragment>
 
     <fragment
-        android:id="@+id/directChatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.direct_chat.DirectChatFragment"
-        android:label="NewChatFragment"
-        />
+        android:id="@+id/addChannelFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.AddChannelFragment"
+        android:label="AddChannelFragment"
+        >
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+    </fragment>
 
     <fragment
-        android:id="@+id/groupChatFragment"
-        android:name="io.getstream.chat.ui.sample.feature.group_chat.GroupChatFragment"
-        android:label="NewGroupChatFragment"
-        />
+        android:id="@+id/chatFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.ChatFragment"
+        android:label="ChannelFragment"
+        >
+
+        <argument
+            android:name="cid"
+            app:argType="string"
+            app:nullable="false"
+            />
+
+        <action
+            android:id="@+id/action_ChatFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/main_navigation"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/componentBrowserHomeFragment"
@@ -99,10 +146,6 @@
             app:destination="@id/componentBrowserSearchViewFragment"
             />
         <action
-            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAddChannelViewFragment"
-            app:destination="@id/componentBrowserAddChannelViewFragment"
-            />
-        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment"
             app:destination="@id/componentBrowserMessagesHeaderFragment"
             />
@@ -116,7 +159,7 @@
 
     <fragment
         android:id="@+id/componentBrowserChannelsHeaderViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.channels.ComponentBrowserChannelsHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.list.ComponentBrowserChannelListHeaderViewFragment"
         android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
 
@@ -124,12 +167,6 @@
         android:id="@+id/componentBrowserSearchViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.search.ComponentBrowserSearchViewFragment"
         android:label="ComponentBrowserSearchViewFragment"
-        />
-
-    <fragment
-        android:id="@+id/componentBrowserAddChannelViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.add.ComponentBrowserAddChannelView"
-        android:label="ComponentBrowserAddChannelView"
         />
 
     <fragment

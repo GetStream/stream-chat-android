@@ -24,7 +24,6 @@ class UserLoginViewModel : ViewModel() {
 
     fun userClicked(user: SampleUser) {
         _state.postValue(State.Loading)
-        initChatSdk()
         initChatUser(user)
     }
 
@@ -33,8 +32,8 @@ class UserLoginViewModel : ViewModel() {
      * but since we allow changing API keys at runtime in this demo app, we have to
      * reinitialize the Chat SDK here with the new API key.
      */
-    private fun initChatSdk() {
-        App.instance.chatInitializer.init(AppConfig.apiKey)
+    private fun initChatSdk(user: ChatUser) {
+        App.instance.chatInitializer.init(AppConfig.apiKey, user)
     }
 
     private fun initChatUser(user: SampleUser, cid: String? = null) {
@@ -44,16 +43,12 @@ class UserLoginViewModel : ViewModel() {
             image = user.image
             name = user.name
         }
+        initChatSdk(chatUser)
         ChatClient.instance().setUser(
             chatUser,
             user.token,
             object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    if (cid != null) {
-                        _state.postValue(State.RedirectToChannel(cid))
-                    } else {
-                        _state.postValue(State.RedirectToChannels)
-                    }
                     Timber.d("User set successfully")
                 }
 
@@ -63,6 +58,11 @@ class UserLoginViewModel : ViewModel() {
                 }
             }
         )
+        if (cid != null) {
+            _state.postValue(State.RedirectToChannel(cid))
+        } else {
+            _state.postValue(State.RedirectToChannels)
+        }
     }
 
     fun targetChannelDataReceived(cid: String) {

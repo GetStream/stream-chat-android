@@ -47,7 +47,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
-        setupAddChannelView()
     }
 
     private fun setupAvatarView() {
@@ -58,9 +57,9 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupChannelsHeaderView() {
-        binding.channelsHeaderView.setUser(randomUser())
-        binding.channelsHeaderView.showOnlineTitle()
-        binding.channelsHeaderViewContainer.setOnClickListener {
+        binding.channelListHeaderView.setUser(randomUser())
+        binding.channelListHeaderView.showOnlineTitle()
+        binding.channelListHeaderViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)
         }
     }
@@ -78,12 +77,6 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
-        }
-    }
-
-    private fun setupAddChannelView() {
-        binding.addChannelViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAddChannelViewFragment)
         }
     }
 }

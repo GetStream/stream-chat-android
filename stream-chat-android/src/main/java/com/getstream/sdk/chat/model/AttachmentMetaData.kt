@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.model
 import android.net.Uri
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 
 @InternalStreamChatApi

@@ -38,7 +38,7 @@ internal class CameraAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupResultListener()
-        tryLaunchCamera()
+        checkPermissions()
     }
 
     private fun setupViews() {
@@ -46,7 +46,7 @@ internal class CameraAttachmentFragment : Fragment() {
             grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_camera)
             grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_camera)
             grantPermissionsTextView.setOnClickListener {
-                tryLaunchCamera()
+                checkPermissions()
             }
         }
     }
@@ -66,7 +66,7 @@ internal class CameraAttachmentFragment : Fragment() {
             }
     }
 
-    private fun tryLaunchCamera() {
+    private fun checkPermissions() {
         if (!permissionChecker.isGrantedCameraPermissions(requireContext())) {
             permissionChecker.checkCameraPermissions(
                 binding.root,

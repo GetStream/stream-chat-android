@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.InstantTaskExecutorExtension
-import io.getstream.chat.android.livedata.utils.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -42,7 +42,17 @@ internal class ChatDomainImplTest {
         val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = true
-        sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled, false, mock())
+        sut = ChatDomainImpl(
+            client,
+            currentUser,
+            db,
+            handler,
+            offlineEnabled,
+            userPresence,
+            recoveryEnabled,
+            false,
+            mock()
+        )
     }
 
     @Test

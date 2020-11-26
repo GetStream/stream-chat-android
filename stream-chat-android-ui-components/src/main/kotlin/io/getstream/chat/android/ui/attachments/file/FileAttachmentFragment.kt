@@ -15,12 +15,12 @@ import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.attachments.AttachmentSource
 import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentFileBinding
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -58,7 +58,7 @@ public class FileAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupResultListener()
-        tryPopulateAttachments()
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -95,7 +95,7 @@ public class FileAttachmentFragment : Fragment() {
             grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_file)
             grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_files)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
-                tryPopulateAttachments()
+                checkPermissions()
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
             fileManagerImageView.setOnClickListener {
@@ -104,7 +104,7 @@ public class FileAttachmentFragment : Fragment() {
         }
     }
 
-    private fun tryPopulateAttachments() {
+    private fun checkPermissions() {
         if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
             permissionChecker.checkStoragePermissions(
                 binding.root,

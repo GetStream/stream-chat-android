@@ -54,7 +54,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/channelsHeaderViewContainer"
+            android:id="@+id/channelListHeaderViewContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -68,17 +68,17 @@
             >
 
             <TextView
-                android:id="@+id/channelsHeaderViewLabel"
+                android:id="@+id/channelListHeaderViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
-                android:text="ChannelsHeaderView"
+                android:text="ChannelListHeaderView"
                 />
 
 
-            <io.getstream.chat.android.ui.channels.header.ChannelsHeaderView
-                android:id="@+id/channelsHeaderView"
+            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+                android:id="@+id/channelListHeaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
@@ -96,7 +96,7 @@
             android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/channelsHeaderViewContainer"
+            app:layout_constraintTop_toBottomOf="@id/channelListHeaderViewContainer"
             >
 
             <TextView
@@ -153,40 +153,6 @@
                 />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/addChannelViewContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchViewContainer"
-            >
-
-            <TextView
-                android:id="@+id/addChannelViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="AddChannelView"
-                />
-
-            <io.getstream.chat.android.ui.channel.add.AddChannelView
-                android:id="@+id/addChannelView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                />
-        </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

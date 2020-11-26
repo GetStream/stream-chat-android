@@ -26,11 +26,14 @@ import io.getstream.chat.android.livedata.ChatDomain
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
+    private val filter: FilterObject = Filters.and(
+        eq("type", "messaging"),
+        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
+        Filters.ne("draft", true)
+    ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModel() {
-    private val channelsData: LiveData<State>
     private val loadingData = MutableLiveData<State.Loading>()
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -41,27 +44,28 @@ public class ChannelsViewModel(
     public val paginationState: LiveData<PaginationState> = paginationStateMerger
 
     init {
-        val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
-        queryChannelsController.run {
-            loadingData.postValue(State.Loading)
-            channelsData = map(channels) { channelList ->
-                if (channelList.isEmpty()) {
-                    State.NoChannelsAvailable
-                } else {
-                    State.Result(channelList.filter { it.hidden == false })
+        stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
+        loadingData.postValue(State.Loading)
+        chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+            if (queryChannelsControllerResult.isSuccess) {
+                val queryChannelsController = queryChannelsControllerResult.data()
+                stateMerger.addSource(
+                    map(queryChannelsController.channels) { channelList ->
+                        if (channelList.isEmpty()) {
+                            State.NoChannelsAvailable
+                        } else {
+                            State.Result(channelList.filter { it.hidden == false })
+                        }
+                    }
+                ) { state -> stateMerger.value = state }
+                paginationStateMerger.addSource(queryChannelsController.loadingMore) { loadingMore ->
+                    setPaginationState { copy(loadingMore = loadingMore) }
+                }
+                paginationStateMerger.addSource(queryChannelsController.endOfChannels) { endOfChannels ->
+                    setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
             }
-
-            paginationStateMerger.addSource(loadingMore) { loadingMore ->
-                setPaginationState { copy(loadingMore = loadingMore) }
-            }
-            paginationStateMerger.addSource(endOfChannels) { endOfChannels ->
-                setPaginationState { copy(endOfChannels = endOfChannels) }
-            }
         }
-
-        stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
-        stateMerger.addSource(channelsData) { state -> stateMerger.value = state }
     }
 
     public fun onEvent(event: Event) {

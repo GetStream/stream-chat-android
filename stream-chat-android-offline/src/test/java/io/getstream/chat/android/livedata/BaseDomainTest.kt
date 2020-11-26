@@ -32,11 +32,12 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.livedata.utils.TestCall
-import io.getstream.chat.android.livedata.utils.TestCoroutineRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
+import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
@@ -133,7 +134,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -185,7 +186,7 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
-                    override fun dispose() { }
+                    override fun dispose() {}
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
@@ -220,13 +221,7 @@ internal open class BaseDomainTest {
     fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
 
         if (setUser) {
-            runBlocking {
-                waitForSetUser(
-                    client,
-                    data.user1,
-                    data.user1Token
-                )
-            }
+            waitForSetUser(client, data.user1, data.user1Token)
         }
 
         db = createRoomDb()

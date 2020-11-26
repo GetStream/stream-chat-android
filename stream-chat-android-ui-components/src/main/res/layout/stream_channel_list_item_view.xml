@@ -5,6 +5,7 @@
     android:id="@+id/content_root"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_channel_list_item_height"
+    android:background="?selectableItemBackground"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView

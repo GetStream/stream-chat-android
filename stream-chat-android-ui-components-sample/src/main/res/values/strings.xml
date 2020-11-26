@@ -25,9 +25,15 @@
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
 
-    <!--Direct chat screen-->
-    <string name="direct_chat_title">New chat</string>
-
     <!--Group chat screen-->
     <string name="group_chat_title">New group chat</string>
+
+    <!--Add Channel Screen-->
+    <string name="add_channel_title">New Chat</string>
+    <string name="add_member_title">TO:</string>
+    <string name="add_member_hint">Type a name</string>
+    <string name="create_group">Create a Group</string>
+    <string name="add_channel_user_list_title">On the platform</string>
+    <string name="add_channel_empty_users_title">No users matches these keywords…</string>
+    <string name="add_channel_empty_message_list_title">No chats here yet…</string>
 </resources>

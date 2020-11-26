@@ -10,7 +10,7 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
