@@ -42,4 +42,7 @@
     <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
     <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
     <string name="stream_attachment_input_hint">Add command or send</string>
+
+    <!-- Message list -->
+    <string name="stream_message_deleted_label">Message deleted</string>
 </resources>
