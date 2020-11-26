@@ -6,8 +6,9 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
-import com.getstream.sdk.chat.utils.isInLastMinute
+import com.getstream.sdk.chat.utils.extensions.getChannelNameOrMembers
+import com.getstream.sdk.chat.utils.extensions.getLastActive
+import com.getstream.sdk.chat.utils.extensions.isInLastMinute
 import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 
@@ -23,7 +24,7 @@ public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwn
     }
     channelState.observe(lifecycleOwner) { channel ->
         view.currentChannel = channel
-        LlcMigrationUtils.getChannelNameOrMembers(channel)
+        channel.getChannelNameOrMembers()
             .takeUnless { it.isBlank() }
             ?.let { view.setHeaderTitle(it) }
     }
@@ -31,7 +32,7 @@ public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwn
 }
 
 private fun List<Member>.lastActive(context: Context): String =
-    LlcMigrationUtils.getLastActive(this).let {
+    getLastActive().let {
         context.getString(
             R.string.stream_channel_header_active,
             when {

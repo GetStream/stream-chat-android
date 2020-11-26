@@ -18,7 +18,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewRes
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
+import com.getstream.sdk.chat.utils.UiUtils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
@@ -63,7 +63,7 @@ internal class ReactionConfigurator(
         binding.reactionsRecyclerView.adapter = ReactionListItemAdapter(
             context,
             message.reactionCounts,
-            LlcMigrationUtils.getReactionTypes(),
+            UiUtils.getReactionTypes(),
             style
         )
         binding.reactionsRecyclerView.setOnTouchListener { _: View?, event: MotionEvent ->

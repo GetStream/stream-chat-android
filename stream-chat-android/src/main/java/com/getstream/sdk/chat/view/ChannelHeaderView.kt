@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.RelativeLayout
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
+import com.getstream.sdk.chat.utils.extensions.getOtherUsers
 import com.getstream.sdk.chat.view.MessageListView.HeaderAvatarGroupClickListener
 import com.getstream.sdk.chat.view.MessageListView.HeaderOptionsClickListener
 import io.getstream.chat.android.client.models.Channel
@@ -49,9 +49,9 @@ public class ChannelHeaderView @JvmOverloads constructor(
         }
     }
 
-    public fun configHeaderAvatar(members: List<Member?>?) {
+    public fun configHeaderAvatar(members: List<Member>) {
         binding.avatarGroup.setLastActiveUsers(
-            LlcMigrationUtils.getOtherUsers(members),
+            members.getOtherUsers(),
             style.avatarStyle
         )
     }
