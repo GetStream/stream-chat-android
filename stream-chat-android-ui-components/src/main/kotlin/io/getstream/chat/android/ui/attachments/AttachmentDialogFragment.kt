@@ -18,6 +18,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
+    private var attachmentSource: AttachmentSource = AttachmentSource.MEDIA
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         binding.apply {
             attachButton.isEnabled = false
             attachButton.setOnClickListener {
-                attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+                attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
                 dismiss()
             }
 
@@ -70,12 +71,13 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
     override fun getTheme(): Int = R.style.StreamAttachmentBottomSheetDialog
 
-    fun setAttachmentsSelectedListener(attachmentSelectionListener: AttachmentSelectionListener) {
+    fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
     }
 
-    override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
+    override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
         this.selectedAttachments = attachments
+        this.attachmentSource = attachmentSource
         binding.attachButton.isEnabled = selectedAttachments.isNotEmpty()
     }
 
@@ -87,9 +89,14 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     }
 
     private fun setupResultListener() {
-        childFragmentManager.setFragmentResultListener(REQUEST_KEY, this) { _, bundle ->
+        childFragmentManager.setFragmentResultListener(REQUEST_KEY_CAMERA, this) { _, bundle ->
             val result = bundle.getSerializable(BUNDLE_KEY) as Set<AttachmentMetaData>
-            attachmentSelectionListener?.onAttachmentsSelected(result)
+            attachmentSelectionListener?.onAttachmentsSelected(result, AttachmentSource.CAMERA)
+            dismiss()
+        }
+        childFragmentManager.setFragmentResultListener(REQUEST_KEY_FILE_MANAGER, this) { _, bundle ->
+            val result = bundle.getSerializable(BUNDLE_KEY) as Set<AttachmentMetaData>
+            attachmentSelectionListener?.onAttachmentsSelected(result, AttachmentSource.FILE)
             dismiss()
         }
     }
@@ -97,7 +104,8 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     companion object {
         const val TAG = "attachments"
 
-        const val REQUEST_KEY = "request_attachments"
+        const val REQUEST_KEY_CAMERA = "key_camera"
+        const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
         const val BUNDLE_KEY = "bundle_attachments"
 
         fun newInstance() = AttachmentDialogFragment()

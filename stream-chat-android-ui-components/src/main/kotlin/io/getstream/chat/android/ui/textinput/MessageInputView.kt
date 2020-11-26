@@ -7,22 +7,19 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
-import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
+import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
-import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
@@ -51,19 +48,11 @@ public class MessageInputView : ConstraintLayout {
         init(context, attrs)
     }
 
-    private val attachmentsSelectedListener = object : AttachmentSelectionListener {
-        override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
-            if (attachments.isNotEmpty()) {
-                val attachmentsString = attachments.joinToString(separator = "\n") { it.uri.toString() }
-                Toast.makeText(context, attachmentsString, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     private var currentAnimatorSet: AnimatorSet? = null
 
     private lateinit var binding: StreamMessageInputBinding
     private lateinit var suggestionListController: SuggestionListController
+    private lateinit var attachmentController: AttachmentController
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
@@ -86,16 +75,14 @@ public class MessageInputView : ConstraintLayout {
             configLightningButton(typedArray)
             configTextInput(typedArray)
             configSendButton(typedArray)
+            configClearAttachmentsButton()
+            configAttachmentButtonBehavior()
         }
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
         binding.ivOpenAttachment.run {
             isVisible = typedArray.getBoolean(R.styleable.StreamMessageInputView_streamAttachButtonEnabled, true)
-
-            setOnClickListener {
-                openAttachmentDialog()
-            }
 
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamAttachButtonIcon)
                 ?.let(this::setImageDrawable)
@@ -207,9 +194,8 @@ public class MessageInputView : ConstraintLayout {
 
         binding.etMessageTextInput.doAfterTextChanged {
             suggestionListController.onTextChanged(it?.toString() ?: "")
+            refreshControlsState()
         }
-
-        TextInputHandler.bindEditText(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
 
         binding.etMessageTextInput.run {
             setTextColor(
@@ -297,11 +283,43 @@ public class MessageInputView : ConstraintLayout {
         public fun onMessageSent()
     }
 
-    private fun openAttachmentDialog() {
-        context.getFragmentManager()?.let {
-            AttachmentDialogFragment.newInstance()
-                .apply { setAttachmentsSelectedListener(attachmentsSelectedListener) }
-                .show(it, AttachmentDialogFragment.TAG)
+    private fun configClearAttachmentsButton() {
+        binding.clearMessageInputButton.setOnClickListener {
+            attachmentController.clearSelectedAttachments()
+            binding.etMessageTextInput.setText(String.EMPTY)
+            refreshControlsState()
+        }
+    }
+
+    private fun configAttachmentButtonBehavior() {
+        attachmentController = AttachmentController(context, binding.mediaComposer, binding.fileComposer) {
+            refreshControlsState()
+        }
+        binding.ivOpenAttachment.setOnClickListener {
+            attachmentController.openAttachmentDialog()
+        }
+    }
+
+    private fun refreshControlsState() {
+        val hasText = !binding.etMessageTextInput.text.toString().isNullOrBlank()
+        val hasAttachments = attachmentController.selectedAttachments.isNotEmpty()
+
+        if (hasText || hasAttachments) {
+            showSendMessageEnabled()
+        } else {
+            showSendMessageDisabled()
+        }
+
+        if (hasAttachments) {
+            binding.ivOpenEmojis.isVisible = false
+            binding.ivOpenAttachment.isVisible = false
+            binding.clearMessageInputButton.isVisible = true
+            binding.etMessageTextInput.setHint(R.string.stream_attachment_input_hint)
+        } else {
+            binding.ivOpenEmojis.isVisible = true
+            binding.ivOpenAttachment.isVisible = true
+            binding.clearMessageInputButton.isVisible = false
+            binding.etMessageTextInput.hint = null
         }
     }
 }
