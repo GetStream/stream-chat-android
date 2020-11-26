@@ -7,35 +7,65 @@ on:
       - master
 
 jobs:
-  test:
-    name: Run Unit Tests
+  build_sample_app:
+    name: Build Sample App
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v2
-    - name: set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - name: Prepare environment
-      run: |
-        git fetch --unshallow
-        echo "${{ secrets.RELEASE_KEYSTORE }}" > stream-chat-android-sample/.sign/release.keystore.asc
-        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/release.keystore.asc > stream-chat-android-sample/.sign/release.keystore
-        echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > stream-chat-android-sample/.sign/keystore.properties.asc
-        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/keystore.properties.asc > stream-chat-android-sample/.sign/keystore.properties
-    - name: Assemble
-      run: bash ./gradlew :stream-chat-android-sample:assemble --stacktrace
-    - name: Upload testDebugUnitTest Results
-      uses: actions/upload-artifact@v2
-      with:
-        name: stream-chat-android-sample-release
-        path: stream-chat-android-sample/build/outputs/apk/release/
-    - name: Upload artifact to Firebase App Distribution
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
-      with:
-        appId: ${{secrets.FIREBASE_APP_ID}}
-        token: ${{secrets.FIREBASE_TOKEN}}
-        groups: stream-testers
-        file: stream-chat-android-sample/build/outputs/apk/release/stream-chat-android-sample-release.apk
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Prepare environment
+        run: |
+          git fetch --unshallow
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > stream-chat-android-sample/.sign/release.keystore.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/release.keystore.asc > stream-chat-android-sample/.sign/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > stream-chat-android-sample/.sign/keystore.properties.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/keystore.properties.asc > stream-chat-android-sample/.sign/keystore.properties
+      - name: Assemble
+        run: bash ./gradlew :stream-chat-android-sample:assembleRelease --stacktrace
+      - name: Upload testDebugUnitTest Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: stream-chat-android-sample-release
+          path: stream-chat-android-sample/build/outputs/apk/release/
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: stream-testers
+          file: stream-chat-android-sample/build/outputs/apk/release/stream-chat-android-sample-release.apk
+  build_ui_components_sample_app:
+    name: Build UI-Components Sample App
+    runs-on: ubuntu-18.04
 
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Prepare environment
+        run: |
+          git fetch --unshallow
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > stream-chat-android-ui-components-sample/.sign/release.keystore.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-ui-components-sample/.sign/release.keystore.asc > stream-chat-android-ui-components-sample/.sign/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > stream-chat-android-ui-components-sample/.sign/keystore.properties.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-ui-components-sample/.sign/keystore.properties.asc > stream-chat-android-ui-components-sample/.sign/keystore.properties
+      - name: Assemble
+        run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleRelease --stacktrace
+      - name: Upload testDebugUnitTest Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: stream-chat-android-ui-components-sample-release
+          path: stream-chat-android-ui-components-sample/build/outputs/apk/release/
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: stream-testers
+          file: stream-chat-android-ui-components-sample/build/outputs/apk/release/stream-chat-android-ui-components-sample-release.apk
