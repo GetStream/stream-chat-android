@@ -79,4 +79,10 @@ class ComponentBrowserHomeFragment : Fragment() {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
         }
     }
+
+    private fun setupAttachmentGallery() {
+        binding.attachmentGalleryContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
+        }
+    }
 }
