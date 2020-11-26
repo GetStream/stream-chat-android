@@ -21,54 +21,63 @@ import kotlin.math.abs
 internal class AvatarBitmapFactory(private val context: Context) {
     private val gradientBaseColors = context.getIntArray(R.array.stream_avatar_gradient_colors)
 
-    internal suspend fun createUserBitmap(user: User, style: AvatarStyle): Bitmap {
+    internal suspend fun createUserBitmap(
+        user: User,
+        style: AvatarStyle,
+        avatarSize: Int
+    ): Bitmap {
         return ImageLoader.getBitmap(context, user.image)
-            ?: createInitialsBitmap(style, user.initials)
+            ?: createInitialsBitmap(style, avatarSize, user.initials)
     }
 
     internal suspend fun createChannelBitmaps(
         channel: Channel,
         lastActiveUsers: List<User>,
-        style: AvatarStyle
+        style: AvatarStyle,
+        avatarSize: Int
     ): List<Bitmap> {
         return ImageLoader.getBitmap(context, channel.image)
             ?.let { listOf(it) }
-            ?: createUsersBitmaps(lastActiveUsers, style).takeUnless { it.isEmpty() }
-            ?: listOf(createInitialsBitmap(style, channel.initials))
+            ?: createUsersBitmaps(lastActiveUsers, style, avatarSize).takeUnless { it.isEmpty() }
+            ?: listOf(createInitialsBitmap(style, avatarSize, channel.initials))
     }
 
-    private suspend fun createUsersBitmaps(users: List<User>, style: AvatarStyle): List<Bitmap> {
-        return users.take(MAX_AVATAR_SECTIONS).map { createUserBitmap(it, style) }
+    private suspend fun createUsersBitmaps(
+        users: List<User>,
+        style: AvatarStyle,
+        avatarSize: Int
+    ): List<Bitmap> {
+        return users.take(MAX_AVATAR_SECTIONS).map { createUserBitmap(it, style, avatarSize) }
     }
 
     private fun createInitialsBitmap(
         avatarStyle: AvatarStyle,
+        avatarSize: Int,
         initials: String,
     ): Bitmap {
-        val avatarWidth = avatarStyle.avatarWidth - avatarStyle.avatarBorderWidth * 2
-        val avatarHeight = avatarStyle.avatarHeight - avatarStyle.avatarBorderWidth * 2
+        val avatarSizeWithoutBorder = avatarSize - avatarStyle.avatarBorderWidth * 2
         return Bitmap.createBitmap(
-            avatarWidth,
-            avatarHeight,
+            avatarSizeWithoutBorder,
+            avatarSizeWithoutBorder,
             Bitmap.Config.ARGB_8888
         ).apply {
             val canvas = Canvas(this)
-            canvas.drawGradient(initials, avatarWidth, avatarHeight)
-            canvas.drawInitials(avatarStyle, initials, avatarWidth, avatarHeight)
+            canvas.drawGradient(initials, avatarSizeWithoutBorder)
+            canvas.drawInitials(avatarStyle, initials, avatarSizeWithoutBorder)
         }
     }
 
-    private fun Canvas.drawGradient(initials: String, avatarWidth: Int, avatarHeight: Int) {
+    private fun Canvas.drawGradient(initials: String, avatarSize: Int) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             isAntiAlias = true
             style = Paint.Style.FILL
-            shader = createLinearGradientShader(initials, avatarHeight)
+            shader = createLinearGradientShader(initials, avatarSize)
         }
         drawRect(
             0f,
             0f,
-            avatarWidth.toFloat(),
-            avatarHeight.toFloat(),
+            avatarSize.toFloat(),
+            avatarSize.toFloat(),
             paint
         )
     }
@@ -76,8 +85,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
     private fun Canvas.drawInitials(
         avatarStyle: AvatarStyle,
         initials: String,
-        avatarWidth: Int,
-        avatarHeight: Int
+        avatarSize: Int
     ) {
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
@@ -88,20 +96,20 @@ internal class AvatarBitmapFactory(private val context: Context) {
         }
         drawText(
             initials,
-            avatarWidth / 2f,
-            avatarHeight / 2f - (textPaint.ascent() + textPaint.descent()) / 2f,
+            avatarSize / 2f,
+            avatarSize / 2f - (textPaint.ascent() + textPaint.descent()) / 2f,
             textPaint
         )
     }
 
-    private fun createLinearGradientShader(initials: String, height: Int): Shader {
+    private fun createLinearGradientShader(initials: String, avatarSize: Int): Shader {
         val baseColorIndex = abs(initials.hashCode()) % gradientBaseColors.size
         val baseColor = gradientBaseColors[baseColorIndex]
         return LinearGradient(
             0f,
             0f,
             0f,
-            height.toFloat(),
+            avatarSize.toFloat(),
             adjustColorLBrightness(baseColor, GRADIENT_DARKER_COLOR_FACTOR),
             adjustColorLBrightness(baseColor, GRADIENT_LIGHTER_COLOR_FACTOR),
             Shader.TileMode.CLAMP

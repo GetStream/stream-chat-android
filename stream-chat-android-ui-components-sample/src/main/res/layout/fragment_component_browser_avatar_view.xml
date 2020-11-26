@@ -42,22 +42,16 @@
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewSmall"
                 style="@style/StreamMessageListAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMedium"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewLarge"
                 style="@style/StreamGroupActionsAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -70,29 +64,21 @@
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView1"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView2"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView3"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView4"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -105,22 +91,21 @@
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing1"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing2"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing3"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewMissing4"
+                style="@style/StreamGroupActionsAvatarStyle"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -133,24 +118,18 @@
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewSmallIndicator"
                 style="@style/StreamMessageListAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMediumIndicator"
                 style="@style/StreamUserAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewLargeIndicator"
                 style="@style/StreamGroupActionsAvatarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 />
         </LinearLayout>
     </ScrollView>

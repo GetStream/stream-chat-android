@@ -7,13 +7,12 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 public class AvatarView : AppCompatImageView {
@@ -35,6 +34,10 @@ public class AvatarView : AppCompatImageView {
     private lateinit var avatarStyle: AvatarStyle
     private var onlineIndicatorVisible: Boolean = false
 
+    private var asyncAvatarDrawableProvider: (suspend () -> AvatarDrawable)? = null
+    private var avatarViewSize: Int = 0
+    private var loadAvatarImageJob: Job? = null
+
     public constructor(context: Context) : super(context) {
         init(context, null)
     }
@@ -51,21 +54,19 @@ public class AvatarView : AppCompatImageView {
         init(context, attrs)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?) {
-        setStyle(AvatarStyle(context, attrs))
-    }
-
     public fun setChannelData(channel: Channel, users: List<User>) {
-        configureImageDrawable {
-            AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, users, avatarStyle))
+        asyncAvatarDrawableProvider = {
+            AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, users, avatarStyle, avatarViewSize))
         }
+        requestLayout()
     }
 
     public fun setUserData(user: User) {
         this.onlineIndicatorVisible = user.online
-        configureImageDrawable {
-            AvatarDrawable(listOfNotNull(bitmapFactory.createUserBitmap(user, avatarStyle)))
+        asyncAvatarDrawableProvider = {
+            AvatarDrawable(listOfNotNull(bitmapFactory.createUserBitmap(user, avatarStyle, avatarViewSize)))
         }
+        requestLayout()
     }
 
     public fun showOnlineIndicator(visible: Boolean) {
@@ -73,18 +74,21 @@ public class AvatarView : AppCompatImageView {
         invalidate()
     }
 
-    private fun setStyle(avatarStyle: AvatarStyle) {
-        this.avatarStyle = avatarStyle
-        borderPaint.color = avatarStyle.avatarBorderColor
-        borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = resolveSize(0, widthMeasureSpec)
+        val height = resolveSize(0, heightMeasureSpec)
+        avatarViewSize = if (width > height) height else width
+
+        setMeasuredDimension(avatarViewSize, avatarViewSize)
     }
 
-    private fun configureImageDrawable(generateAvatarDrawable: suspend () -> AvatarDrawable) {
-        GlobalScope.launch(DispatcherProvider.Main) {
-            setImageDrawable(generateAvatarDrawable())
-            updateLayoutParams<ViewGroup.LayoutParams> {
-                width = avatarStyle.avatarWidth
-                height = avatarStyle.avatarHeight
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        if (w > 0 && w != oldw) {
+            asyncAvatarDrawableProvider?.let {
+                loadAvatarImageJob?.cancel()
+                loadAvatarImageJob = GlobalScope.launch(DispatcherProvider.Main) {
+                    setImageDrawable(it())
+                }
             }
         }
     }
@@ -98,6 +102,16 @@ public class AvatarView : AppCompatImageView {
             canvas.restore()
             drawOnlineStatus(canvas)
         }
+    }
+
+    private fun init(context: Context, attrs: AttributeSet?) {
+        setStyle(AvatarStyle(context, attrs))
+    }
+
+    private fun setStyle(avatarStyle: AvatarStyle) {
+        this.avatarStyle = avatarStyle
+        borderPaint.color = avatarStyle.avatarBorderColor
+        borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {

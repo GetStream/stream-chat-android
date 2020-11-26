@@ -39,7 +39,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private val binding = StreamChannelListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelListHeaderView).use { typedArray ->
+        context.obtainStyledAttributes(attrs, R.styleable.StreamChannelListHeaderView).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
@@ -49,7 +49,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun configUserAvatar(typedArray: TypedArray) {
         binding.userAvatar.apply {
-            if (typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamShowUserAvatar, true)) {
+            if (typedArray.getBoolean(R.styleable.StreamChannelListHeaderView_streamShowUserAvatar, true)) {
                 visibility = View.VISIBLE
                 isClickable = true
             } else {
@@ -62,7 +62,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private fun configOnlineTitle(typedArray: TypedArray) {
         val textStyle = getOnlineTitleTextStyle(typedArray)
         binding.onlineTextView.apply {
-            text = typedArray.getString(R.styleable.ChannelListHeaderView_streamOnlineTitleText)
+            text = typedArray.getString(R.styleable.StreamChannelListHeaderView_streamOnlineTitleText)
                 ?: context.getString(R.string.stream_channels_header_view_online_title)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
@@ -73,7 +73,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private fun configOfflineTitleContainer(typedArray: TypedArray) {
         val textStyle = getOfflineTitleTextStyle(typedArray)
         binding.offlineTextView.apply {
-            text = typedArray.getString(R.styleable.ChannelListHeaderView_streamOfflineTitleText)
+            text = typedArray.getString(R.styleable.StreamChannelListHeaderView_streamOfflineTitleText)
                 ?: context.getString(R.string.stream_channels_header_view_offline_title)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
@@ -81,16 +81,16 @@ public class ChannelListHeaderView : ConstraintLayout {
         }
 
         binding.offlineProgressBar.apply {
-            isVisible = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamShowOfflineProgressBar, true)
+            isVisible = typedArray.getBoolean(R.styleable.StreamChannelListHeaderView_streamShowOfflineProgressBar, true)
             indeterminateTintList =
-                typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamOfflineProgressBarTint)
+                typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamOfflineProgressBarTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
         }
     }
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
-            if (typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamShowAddChannelButton, true)) {
+            if (typedArray.getBoolean(R.styleable.StreamChannelListHeaderView_streamShowAddChannelButton, true)) {
                 visibility = View.VISIBLE
                 isClickable = true
             } else {
@@ -99,58 +99,58 @@ public class ChannelListHeaderView : ConstraintLayout {
             }
             layoutParams = layoutParams.apply {
                 height = typedArray.getDimensionPixelSize(
-                    R.styleable.ChannelListHeaderView_streamAddChannelButtonHeight,
+                    R.styleable.StreamChannelListHeaderView_streamAddChannelButtonHeight,
                     DEFAULT_ADD_CHANNEL_BUTTON_SIZE
                 )
                 width = typedArray.getDimensionPixelSize(
-                    R.styleable.ChannelListHeaderView_streamAddChannelButtonWidth,
+                    R.styleable.StreamChannelListHeaderView_streamAddChannelButtonWidth,
                     DEFAULT_ADD_CHANNEL_BUTTON_SIZE
                 )
             }
-            iconTint = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamAddChannelButtonTint)
+            iconTint = typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelButtonTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
-            icon = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamAddChannelButtonIcon)
+            icon = typedArray.getDrawable(R.styleable.StreamChannelListHeaderView_streamAddChannelButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_pen)
             backgroundTintList =
-                typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamAddChannelBackgroundTint)
+                typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelBackgroundTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_white)
         }
     }
 
     private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
-            R.styleable.ChannelListHeaderView_streamOnlineTitleTextSize,
+            R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextSize,
             context.getDimension(R.dimen.stream_text_large)
         )
             .color(
-                R.styleable.ChannelListHeaderView_streamOnlineTitleTextColor,
+                R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextColor,
                 ContextCompat.getColor(context, R.color.stream_black)
             )
             .font(
-                R.styleable.ChannelListHeaderView_streamOnlineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamOnlineTitleTextFont
+                R.styleable.StreamChannelListHeaderView_streamOnlineTitleFontAssets,
+                R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextFont
             )
             .style(
-                R.styleable.ChannelListHeaderView_streamOnlineTitleTextStyle,
+                R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextStyle,
                 Typeface.BOLD
             ).build()
     }
 
     private fun getOfflineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
-            R.styleable.ChannelListHeaderView_streamOfflineTitleTextSize,
+            R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextSize,
             context.getDimension(R.dimen.stream_text_large)
         )
             .color(
-                R.styleable.ChannelListHeaderView_streamOfflineTitleTextColor,
+                R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextColor,
                 ContextCompat.getColor(context, R.color.stream_black)
             )
             .font(
-                R.styleable.ChannelListHeaderView_streamOfflineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamOfflineTitleTextFont
+                R.styleable.StreamChannelListHeaderView_streamOfflineTitleFontAssets,
+                R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextFont
             )
             .style(
-                R.styleable.ChannelListHeaderView_streamOfflineTitleTextStyle,
+                R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextStyle,
                 Typeface.BOLD
             ).build()
     }

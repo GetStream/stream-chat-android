@@ -9,29 +9,29 @@
     </style>
 
     <style name="StreamMessageListAvatarStyle" parent="StreamBaseAvatarStyle">
-        <item name="streamAvatarWidth">@dimen/stream_avatar_size_small</item>
-        <item name="streamAvatarHeight">@dimen/stream_avatar_size_small</item>
+        <item name="android:layout_width">@dimen/stream_avatar_size_small</item>
+        <item name="android:layout_height">@dimen/stream_avatar_size_small</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_small</item>
         <item name="streamAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUserAvatarStyle" parent="StreamBaseAvatarStyle">
-        <item name="streamAvatarWidth">@dimen/stream_avatar_size_medium</item>
-        <item name="streamAvatarHeight">@dimen/stream_avatar_size_medium</item>
+        <item name="android:layout_width">@dimen/stream_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_avatar_size_medium</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
         <item name="streamAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamChannelListAvatarStyle" parent="StreamBaseAvatarStyle">
-        <item name="streamAvatarWidth">@dimen/stream_avatar_size_medium</item>
-        <item name="streamAvatarHeight">@dimen/stream_avatar_size_medium</item>
+        <item name="android:layout_width">@dimen/stream_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_avatar_size_medium</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
         <item name="streamAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
     <style name="StreamGroupActionsAvatarStyle" parent="StreamBaseAvatarStyle">
-        <item name="streamAvatarWidth">@dimen/stream_avatar_size_large</item>
-        <item name="streamAvatarHeight">@dimen/stream_avatar_size_large</item>
+        <item name="android:layout_width">@dimen/stream_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_avatar_size_large</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>
         <item name="streamAvatarOnlineIndicatorEnabled">true</item>
     </style>
