@@ -24,7 +24,6 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import com.getstream.sdk.chat.view.channels.ChannelListView;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 
-import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.models.Attachment;
@@ -182,20 +181,11 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configLastMessageDate(Channel channel) {
-
-        Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);
-        if (lastMessage == null) {
-            tv_date.setText("");
-            return;
-        }
-
-        Date messageDate = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
-
-        tv_date.setText(DateFormatter.formatAsTimeOrDate(messageDate));
+        tv_date.setText(DateFormatter.formatAsTimeOrDate(channel.getLastMessageAt()));
     }
 
     protected void configReadState(Channel channel) {
-        List<ChannelUserRead> lastMessageReads = LlcMigrationUtils.getLastMessageReads(channel);
+        List<ChannelUserRead> lastMessageReads = channel.getRead();
         read_state.setReads(lastMessageReads, true, style.getReadStateStyle(), style.getAvatarStyle());
     }
 

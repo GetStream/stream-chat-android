@@ -81,7 +81,7 @@ internal class RepositoryHelper(
         return channelEntities.map { entity ->
             entity.toChannel(userMap).apply {
                 config = configs.select(type) ?: defaultConfig
-                messages = messagesMap[cid] ?: emptyList()
+                messages = messagesMap[cid] ?: messages
             }
         }
     }
