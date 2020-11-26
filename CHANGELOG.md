@@ -1,13 +1,21 @@
 # To be released:
 ## Common changes for all artifacts
+- Stream SDks has been uploaded to MavenCentral and the GroupID has changed to `io.getstream`.
 
 ## stream-chat-android
+- New artifact name: `io.getstream:stream-chat-android:STREAM_VERSION`
 
 ## stream-chat-android-client
+- New artifact name: `io.getstream:stream-chat-android-client:STREAM_VERSION`
+
 
 ## stream-chat-android-offline
+- New artifact name: `io.getstream:stream-chat-android-offline:STREAM_VERSION`
 
-## stream-chat-android-ui-component
+
+## stream-chat-android-ui-components
+- New artifact name: `io.getstream:stream-chat-android-ui-components:STREAM_VERSION`
+
 
 # Nov 24th, 2020 - 4.4.4
 This version is a roolback to 4.4.2, The previous release (4.4.3) was not valid due to a problem with the build flow.
