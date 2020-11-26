@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemDateSeparatorBinding
 import com.getstream.sdk.chat.enums.Dates
@@ -21,7 +22,7 @@ internal class DateSeparatorViewHolder(
         StreamItemDateSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<DateSeparatorItem>(binding.root) {
 
-    override fun bind(messageListItem: DateSeparatorItem) {
+    override fun bind(messageListItem: DateSeparatorItem, diff: MessageListItemPayloadDiff?) {
         configDate(messageListItem)
         applyStyle()
     }

@@ -40,4 +40,13 @@ internal class MessageListItemAdapter(
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(getItem(position))
     }
+
+    override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int, payloads: MutableList<Any>) {
+        val diff = if (payloads.isEmpty()) {
+            null
+        } else {
+            payloads[0] as MessageListItemPayloadDiff
+        }
+        holder.bindListItem(getItem(position), diff)
+    }
 }
