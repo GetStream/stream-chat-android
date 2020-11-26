@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
 
 class AddChannelViewController(
@@ -21,6 +22,7 @@ class AddChannelViewController(
 
     var membersChangedListener = AddChannelView.MembersChangedListener {}
     var addMemberButtonClickListener = AddChannelView.AddMemberButtonClickListener {}
+    var searchInputChangedListener = AddChannelView.SearchInputChangedListener { }
 
     init {
         usersRecyclerView.adapter = usersAdapter
@@ -30,11 +32,16 @@ class AddChannelViewController(
         headerView.apply {
             membersInputListener = object : AddChannelHeaderView.Listener {
                 override fun onInputChanged(query: String) {
-                    // Filter users list
+                    usersTitle.text = if (query.isEmpty()) {
+                        context.getString(R.string.add_channel_user_list_title)
+                    } else {
+                        context.getString(R.string.add_channel_user_list_search_title, query)
+                    }
+                    searchInputChangedListener.onInputChanged(query)
                 }
             }
             setAddMemberButtonClickListener {
-                showInput()
+                this@AddChannelViewController.showInput()
                 addMemberButtonClickListener.onAddMemberButtonClicked()
                 usersRecyclerView.isVisible = true
             }
@@ -44,14 +51,22 @@ class AddChannelViewController(
         }
     }
 
-    fun setUsers(users: List<User>) {
+    fun setUsers(users: List<User>, shouldShowUserSections: Boolean) {
         userInfoList.clear()
-        addMoreUsers(users)
+        addMoreUsers(users, shouldShowUserSections)
     }
 
-    fun addMoreUsers(users: List<User>) {
-        userInfoList.addAll(users.map { UserInfo(it, false) })
-        showSectionedUsers(userInfoList)
+    fun addMoreUsers(users: List<User>, shouldShowUserSections: Boolean = true) {
+        userInfoList.addAll(users.map { UserInfo(it, members.contains(it)) })
+        if (shouldShowUserSections) {
+            showSectionedUsers(userInfoList)
+        } else {
+            showUsers(userInfoList)
+        }
+    }
+
+    private fun showUsers(users: List<UserInfo>) {
+        usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
     }
 
     private fun showSectionedUsers(userInfoList: List<UserInfo>) {

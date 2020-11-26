@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 
 class AddChannelHeaderView : FrameLayout {
@@ -15,6 +16,7 @@ class AddChannelHeaderView : FrameLayout {
     var membersInputListener: Listener? = null
     private val binding = AddChannelHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
     private val adapter = AddChannelMembersAdapter()
+    private val inputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
     private val query: String
         get() = binding.inputEditText.text.trim().toString()
 
@@ -37,7 +39,9 @@ class AddChannelHeaderView : FrameLayout {
     private fun init(attrs: AttributeSet?) {
         binding.membersRecyclerView.adapter = adapter
         binding.inputEditText.doAfterTextChanged {
-            membersInputListener?.onInputChanged(query)
+            inputDebouncer.submit {
+                membersInputListener?.onInputChanged(query)
+            }
         }
     }
 
@@ -53,7 +57,6 @@ class AddChannelHeaderView : FrameLayout {
     }
 
     fun hideInput() {
-        binding.inputEditText.setText("")
         binding.inputEditText.isVisible = false
         Utils.hideSoftKeyboard(binding.inputEditText)
     }
@@ -74,11 +77,20 @@ class AddChannelHeaderView : FrameLayout {
         adapter.memberClickListener = listener
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        inputDebouncer.shutdown()
+    }
+
     interface Listener {
         fun onInputChanged(query: String)
     }
 
     fun interface AddMemberButtonClickListener {
         fun onButtonClick()
+    }
+
+    companion object {
+        private const val TYPING_DEBOUNCE_MS = 300L
     }
 }

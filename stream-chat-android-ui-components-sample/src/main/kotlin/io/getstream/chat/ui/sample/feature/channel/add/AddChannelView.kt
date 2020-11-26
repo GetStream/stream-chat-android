@@ -75,8 +75,8 @@ class AddChannelView : FrameLayout {
         )
     }
 
-    fun setUsers(users: List<User>) {
-        controller.setUsers(users)
+    fun setUsers(users: List<User>, shouldShowUserSections: Boolean) {
+        controller.setUsers(users, shouldShowUserSections)
     }
 
     fun addMoreUsers(users: List<User>) {
@@ -131,6 +131,10 @@ class AddChannelView : FrameLayout {
         controller.addMemberButtonClickListener = listener
     }
 
+    fun setSearchInputChangedListener(listener: SearchInputChangedListener) {
+        controller.searchInputChangedListener = listener
+    }
+
     fun interface EndReachedListener {
         fun onEndReached()
     }
@@ -145,6 +149,10 @@ class AddChannelView : FrameLayout {
 
     fun interface AddMemberButtonClickListener {
         fun onAddMemberButtonClicked()
+    }
+
+    fun interface SearchInputChangedListener {
+        fun onInputChanged(query: String)
     }
 
     private fun defaultLoadingView(): View = ProgressBar(context)
