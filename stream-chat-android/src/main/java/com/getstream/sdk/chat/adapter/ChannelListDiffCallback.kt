@@ -7,12 +7,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.livedata.ChatDomain.Companion.instance
+import io.getstream.chat.android.livedata.ChatDomain
 
 internal class ChannelListDiffCallback @JvmOverloads constructor(
     private val oldList: List<Channel>,
     private val newList: List<Channel>,
-    private val currentUser: User = instance().currentUser
+    private val currentUser: User = ChatDomain.instance().currentUser
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -27,22 +27,16 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
         val oldChannel = oldList[oldItemPosition]
         val newChannel = newList[newItemPosition]
 
-        var contentTheSame = true
-
-        if (oldChannel.cid != newChannel.cid) {
-            contentTheSame = false
-        } else if (oldChannel.updatedAt == null && newChannel.updatedAt != null) {
-            contentTheSame = false
-        } else if (newChannel.updatedAt != null && oldChannel.updatedAt!!.time < newChannel.updatedAt!!.time) {
-            contentTheSame = false
-        } else if (oldChannel.extraData != newChannel.extraData) {
-            contentTheSame = false
-        } else if (!lastMessagesAreTheSame(oldChannel, newChannel)) {
-            contentTheSame = false
-        } else if (channelUserReadIsDifferent(oldChannel, newChannel)) {
-            contentTheSame = false
+        if ((oldChannel.cid != newChannel.cid) ||
+            (oldChannel.updatedAt == null && newChannel.updatedAt != null) ||
+            (newChannel.updatedAt != null && oldChannel.updatedAt!!.time < newChannel.updatedAt!!.time) ||
+            (oldChannel.extraData != newChannel.extraData) ||
+            (!lastMessagesAreTheSame(oldChannel, newChannel)) ||
+            (channelUserReadIsDifferent(oldChannel, newChannel))
+        ) {
+            return false
         }
-        return contentTheSame
+        return true
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {

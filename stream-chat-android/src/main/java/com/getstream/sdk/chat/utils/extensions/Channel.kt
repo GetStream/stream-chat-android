@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
-import java.util.ArrayList
 import java.util.Date
 
 internal fun Channel.computeLastMessage(): Message? {
@@ -82,7 +81,7 @@ internal fun Channel.getLastMessageReads(
     val lastMessage: Message? = computeLastMessage()
     if (lastMessage?.createdAt == null) return emptyList()
 
-    val readLastMessage: MutableList<ChannelUserRead> = ArrayList()
+    val readLastMessage: MutableList<ChannelUserRead> = mutableListOf()
 
     val channelUserReadList = read
     val currentUserId = currentUser.id
