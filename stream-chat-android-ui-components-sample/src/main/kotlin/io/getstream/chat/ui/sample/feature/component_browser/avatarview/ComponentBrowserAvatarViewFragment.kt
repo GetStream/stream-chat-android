@@ -93,6 +93,10 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 randomUser(withImage = false),
             )
         )
+        binding.avatarViewMissing4.setChannelData(
+            randomChannel(),
+            listOf(randomUser(withImage = false))
+        )
 
         binding.avatarViewSmallIndicator.apply {
             setUserData(randomUser(isOnline = true))
