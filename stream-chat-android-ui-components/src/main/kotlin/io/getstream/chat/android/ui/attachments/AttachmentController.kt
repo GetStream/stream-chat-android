@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.attachments.selected.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.attachments.selected.SelectedMediaAttachmentAdapter
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
