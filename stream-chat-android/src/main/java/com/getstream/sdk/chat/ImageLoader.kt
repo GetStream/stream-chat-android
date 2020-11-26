@@ -11,6 +11,7 @@ import androidx.annotation.RawRes
 import coil.Coil
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.transform.BlurTransformation
@@ -47,7 +48,15 @@ public object ImageLoader {
         loadAny(drawableResId)
     }
 
-    public fun ImageView.load(uri: Uri?): Unit = loadAny(uri)
+    public fun ImageView.load(
+        uri: Uri?,
+        @DrawableRes placeholderResId: Int? = null
+    ): Unit = loadAny(uri, placeholderResId)
+
+    public fun ImageView.loadVideoThumbnail(
+        uri: Uri?,
+        @DrawableRes placeholderResId: Int? = null
+    ): Unit = loadAny(uri, placeholderResId, true)
 
     @JvmStatic
     @JvmOverloads
@@ -56,11 +65,12 @@ public object ImageLoader {
         @DrawableRes placeholderResId: Int? = null,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    ): Unit = loadAny(uri, placeholderResId, onStart, onComplete)
+    ): Unit = loadAny(uri, placeholderResId, false, onStart, onComplete)
 
     private fun ImageView.loadAny(
         data: Any?,
         @DrawableRes placeholderResId: Int? = null,
+        videoContentUri: Boolean = false,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
     ) {
@@ -72,6 +82,9 @@ public object ImageLoader {
                 onError = { _, _ -> onComplete() },
                 onSuccess = { _, _ -> onComplete() },
             )
+            if (videoContentUri) {
+                fetcher(VideoFrameUriFetcher(context))
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -75,13 +76,13 @@ internal class MediaAttachmentSelectedAdapter(
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build()
             )
-            if (attachment.uri != null) {
-                binding.ivMedia.load(attachment.uri)
+
+            if (attachment.type == ModelType.attach_video) {
+                binding.ivMedia.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
             } else {
-                if (attachment.mimeType == ModelType.attach_mime_mov || attachment.mimeType == ModelType.attach_mime_mp4) {
-                    binding.ivMedia.setImageResource(R.drawable.stream_placeholder)
-                }
+                binding.ivMedia.load(attachment.uri, R.drawable.stream_placeholder)
             }
+
             if (ModelType.attach_video == attachment.type) {
                 binding.tvLength.text = StringUtility.convertVideoLength(attachment.videoLength)
             } else {

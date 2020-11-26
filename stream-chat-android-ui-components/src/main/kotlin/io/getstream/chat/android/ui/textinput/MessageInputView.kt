@@ -54,6 +54,8 @@ public class MessageInputView : ConstraintLayout {
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
 
+    public var messageSentListener: MessageSentListener = MessageSentListener { }
+
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
     }
@@ -268,5 +270,12 @@ public class MessageInputView : ConstraintLayout {
 
         binding.ivSendMessageDisabled.alpha = 1F
         binding.ivSendMessageEnabled.alpha = 0F
+
+        // Temporary solution. Should be moved to ViewModel binding when sending message will be implemented
+        binding.ivSendMessageEnabled.setOnClickListener { messageSentListener.onMessageSent() }
+    }
+
+    public fun interface MessageSentListener {
+        public fun onMessageSent()
     }
 }
