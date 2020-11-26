@@ -16,6 +16,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +33,9 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
-import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.utils.whenFalse
-import com.getstream.sdk.chat.utils.whenTrue
+import com.getstream.sdk.chat.utils.extensions.whenFalse
+import com.getstream.sdk.chat.utils.extensions.whenTrue
 import com.getstream.sdk.chat.view.common.activity
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
@@ -195,9 +195,9 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
                     setKeyboardEventListener()
                 }
             }
-        TextViewUtils.afterTextChanged(binding.messageTextInput) { editable: Editable ->
+        binding.messageTextInput.doAfterTextChanged { editable: Editable? ->
             keyStroke(
-                editable.toString()
+                editable?.toString() ?: ""
             )
         }
         binding.messageTextInput.setCallback { inputContentInfo, flags, _ ->

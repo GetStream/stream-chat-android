@@ -9,8 +9,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "de.mannodermaus.android-junit5"
 apply plugin: "com.hiya.jacoco-android"
 
-group = Configuration.artifactGroup
-version = Configuration.versionName
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
     compileSdkVersion 28

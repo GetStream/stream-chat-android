@@ -9,8 +9,14 @@ apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: "com.hiya.jacoco-android"
 
-group = Configuration.artifactGroup
-version = Configuration.versionName
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-offline'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
     compileSdkVersion 28
