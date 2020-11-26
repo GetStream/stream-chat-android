@@ -23,7 +23,7 @@ class ChatFragment : Fragment() {
     private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
-    private val inputListViewModel: MessageInputViewModel by viewModels { factory }
+    private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -44,11 +44,32 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
-        messageListViewModel.bindView(binding.messageList, viewLifecycleOwner)
-        inputListViewModel.bindView(binding.input, viewLifecycleOwner)
+        messageListViewModel.bindView(
+            binding.messageList,
+            viewLifecycleOwner
+        ) // TODO replace with new design message list
+        initMessageInputViewModel()
 
         binding.header.setBackButtonClickListener {
             findNavController().navigateUp()
+        }
+    }
+
+    private fun initMessageInputViewModel() {
+        messageInputViewModel.apply {
+            bindView(binding.input, viewLifecycleOwner)
+            messageListViewModel.mode.observe(
+                viewLifecycleOwner,
+                {
+                    when (it) {
+                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
+                        is MessageListViewModel.Mode.Normal -> resetThread()
+                    }
+                }
+            )
+            binding.messageList.setOnMessageEditHandler {
+                editMessage.postValue(it)
+            }
         }
     }
 }
