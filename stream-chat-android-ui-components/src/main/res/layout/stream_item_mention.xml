@@ -14,8 +14,6 @@
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         style="@style/StreamChannelListAvatarStyle"
-        android:layout_width="@dimen/stream_avatar_size_medium"
-        android:layout_height="@dimen/stream_avatar_size_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
