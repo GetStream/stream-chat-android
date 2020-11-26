@@ -55,7 +55,7 @@ public class MediaAttachmentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        tryPopulateAttachments()
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -83,12 +83,12 @@ public class MediaAttachmentFragment : Fragment() {
             grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_media)
             grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_media)
             grantPermissionsTextView.setOnClickListener {
-                tryPopulateAttachments()
+                checkPermissions()
             }
         }
     }
 
-    private fun tryPopulateAttachments() {
+    private fun checkPermissions() {
         if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
             permissionChecker.checkStoragePermissions(
                 binding.root,

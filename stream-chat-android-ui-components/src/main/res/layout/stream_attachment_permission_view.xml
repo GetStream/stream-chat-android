@@ -12,6 +12,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
+    tools:visibility="visible"
     >
 
     <ImageView
@@ -21,6 +22,7 @@
         android:scaleType="centerCrop"
         app:tint="@color/stream_grey_light"
         tools:src="@drawable/stream_attachment_permission_camera"
+        tools:ignore="ContentDescription"
         />
 
     <TextView

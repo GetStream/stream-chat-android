@@ -57,7 +57,7 @@ public class FileAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupResultListener()
-        tryPopulateAttachments()
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -94,7 +94,7 @@ public class FileAttachmentFragment : Fragment() {
             grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_file)
             grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_files)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
-                tryPopulateAttachments()
+                checkPermissions()
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
             fileManagerImageView.setOnClickListener {
@@ -103,7 +103,7 @@ public class FileAttachmentFragment : Fragment() {
         }
     }
 
-    private fun tryPopulateAttachments() {
+    private fun checkPermissions() {
         if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
             permissionChecker.checkStoragePermissions(
                 binding.root,
