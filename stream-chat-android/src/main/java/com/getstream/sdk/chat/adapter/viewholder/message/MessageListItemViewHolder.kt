@@ -112,7 +112,7 @@ internal class MessageListItemViewHolder(
             )
         } else {
             val configs = mutableListOf<Configurator>(marginConfigurator)
-            if (diff.text || diff.positions) {
+            if (diff.text || diff.positions || diff.deleted) {
                 configs.add(messageTextConfigurator)
             }
             if (diff.attachments) {
@@ -124,7 +124,7 @@ internal class MessageListItemViewHolder(
             if (diff.replies) {
                 configs.add(replyConfigurator)
             }
-            if (diff.syncStatus) {
+            if (diff.syncStatus || diff.readBy) {
                 configs.add(indicatorConfigurator)
             }
             configs.add(spaceConfigurator)

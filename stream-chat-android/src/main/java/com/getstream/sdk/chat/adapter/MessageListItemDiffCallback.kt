@@ -15,6 +15,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 newItem as MessageListItem.MessageItem
                 equal = if (oldItem.message.text != newItem.message.text) {
                     false
+                } else if (oldItem.message.reactionScores != newItem.message.reactionScores) {
+                    false
                 } else if (oldItem.message.reactionCounts != newItem.message.reactionCounts) {
                     false
                 } else if (oldItem.message.attachments != newItem.message.attachments) {
@@ -22,6 +24,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 } else if (oldItem.message.replyCount != newItem.message.replyCount) {
                     false
                 } else if (oldItem.message.syncStatus != newItem.message.syncStatus) {
+                    false
+                } else if (oldItem.message.deletedAt != newItem.message.deletedAt) {
                     false
                 } else if (oldItem.positions != newItem.positions) {
                     false
@@ -40,10 +44,11 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             newItem as MessageListItem.MessageItem
             MessageListItemPayloadDiff(
                 text = oldItem.message.text != newItem.message.text,
-                reactions = oldItem.message.reactionCounts != newItem.message.reactionCounts,
+                reactions = (oldItem.message.reactionCounts != newItem.message.reactionCounts) || (oldItem.message.reactionScores != newItem.message.reactionScores),
                 attachments = oldItem.message.attachments != newItem.message.attachments,
                 replies = oldItem.message.replyCount != newItem.message.replyCount,
                 syncStatus = oldItem.message.syncStatus != newItem.message.syncStatus,
+                deleted = oldItem.message.deletedAt != newItem.message.deletedAt,
                 positions = oldItem.positions != newItem.positions,
                 readBy = oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
             )
