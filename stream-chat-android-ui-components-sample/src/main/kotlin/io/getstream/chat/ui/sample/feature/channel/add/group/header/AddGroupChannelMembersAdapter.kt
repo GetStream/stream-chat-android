@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.feature.channel.add.header
+package io.getstream.chat.ui.sample.feature.channel.add.group.header
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
+import io.getstream.chat.ui.sample.databinding.AddGroupChannelMemberItemBinding
+import io.getstream.chat.ui.sample.feature.channel.add.header.MemberClickListener
 
-class AddChannelMembersAdapter :
-    ListAdapter<User, AddChannelMembersAdapter.MemberViewHolder>(
+class AddGroupChannelMembersAdapter :
+    ListAdapter<User, AddGroupChannelMembersAdapter.MemberViewHolder>(
         object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
                 return oldItem.id == newItem.id
@@ -25,7 +26,7 @@ class AddChannelMembersAdapter :
     var memberClickListener: MemberClickListener = MemberClickListener { }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
-        return AddChannelMemberItemBinding
+        return AddGroupChannelMemberItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { MemberViewHolder(it, memberClickListener) }
     }
@@ -35,13 +36,12 @@ class AddChannelMembersAdapter :
     }
 
     class MemberViewHolder(
-        private val binding: AddChannelMemberItemBinding,
+        private val binding: AddGroupChannelMemberItemBinding,
         private val memberClickListener: MemberClickListener
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
-            binding.memberContainer.setOnClickListener { memberClickListener.onMemberClicked(user) }
+            binding.deleteMemberButton.setOnClickListener { memberClickListener.onMemberClicked(user) }
             binding.memberAvatar.setUserData(user)
             binding.memberNameTextView.text = user.name
         }

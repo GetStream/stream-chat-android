@@ -11,9 +11,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 
-class AddChannelHeaderView : FrameLayout {
+class AddChannelHeaderView : FrameLayout, AddChannelHeader {
 
-    var membersInputListener: Listener? = null
+    override val viewContext: Context
+        get() = context
+    override var membersInputListener: MembersInputChangedListener = MembersInputChangedListener { }
     private val binding = AddChannelHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
     private val adapter = AddChannelMembersAdapter()
     private val inputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
@@ -40,54 +42,46 @@ class AddChannelHeaderView : FrameLayout {
         binding.membersRecyclerView.adapter = adapter
         binding.inputEditText.doAfterTextChanged {
             inputDebouncer.submit {
-                membersInputListener?.onInputChanged(query)
+                membersInputListener.onMembersInputChanged(query)
             }
         }
     }
 
-    fun setMembers(members: List<User>) {
+    override fun setMembers(members: List<User>) {
         adapter.submitList(members)
         binding.membersRecyclerView.isVisible = members.isNotEmpty()
     }
 
-    fun showInput() {
+    override fun showInput() {
         binding.inputEditText.isVisible = true
         binding.inputEditText.requestFocus()
         Utils.showSoftKeyboard(binding.inputEditText)
     }
 
-    fun hideInput() {
+    override fun hideInput() {
         binding.inputEditText.isVisible = false
         Utils.hideSoftKeyboard(binding.inputEditText)
     }
 
-    fun showAddMemberButton() {
+    override fun showAddMemberButton() {
         binding.addMemberButton.isVisible = true
     }
 
-    fun hideAddMemberButton() {
+    override fun hideAddMemberButton() {
         binding.addMemberButton.isVisible = false
     }
 
-    fun setAddMemberButtonClickListener(listener: AddMemberButtonClickListener) {
+    override fun setAddMemberButtonClickListener(listener: AddMemberButtonClickListener) {
         binding.addMemberButton.setOnClickListener { listener.onButtonClick() }
     }
 
-    fun setMemberClickListener(listener: AddChannelMembersAdapter.MemberClickListener) {
+    override fun setMemberClickListener(listener: MemberClickListener) {
         adapter.memberClickListener = listener
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         inputDebouncer.shutdown()
-    }
-
-    interface Listener {
-        fun onInputChanged(query: String)
-    }
-
-    fun interface AddMemberButtonClickListener {
-        fun onButtonClick()
     }
 
     companion object {

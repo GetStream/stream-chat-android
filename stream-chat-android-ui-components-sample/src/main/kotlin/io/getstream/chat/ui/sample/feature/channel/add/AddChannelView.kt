@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
+import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.view.MessageListView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.textinput.MessageInputView
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyMessageListViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyUsersViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelViewBinding
@@ -21,13 +23,7 @@ import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView.EndReached
 class AddChannelView : FrameLayout {
 
     private val binding = AddChannelViewBinding.inflate(LayoutInflater.from(context), this, true)
-    private val controller =
-        AddChannelViewController(
-            binding.headerView,
-            binding.usersTitle,
-            binding.usersRecyclerView,
-            binding.createGroupContainer
-        )
+    private lateinit var controller: AddChannelViewController
     private var loadingView: View = defaultLoadingView()
     private var emptyStateView: View = defaultEmptyStateView()
     var endReachedListener: EndReachedListener = EndReachedListener { }
@@ -57,6 +53,23 @@ class AddChannelView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.AddChannelView).use {
+            val isAddGroupChannel = it.getBoolean(R.styleable.AddChannelView_isAddGroupChannel, false)
+
+            binding.createGroupContainer.isVisible = !isAddGroupChannel
+            binding.messageInputView.isVisible = !isAddGroupChannel
+            binding.headerView.isVisible = !isAddGroupChannel
+            binding.groupHeaderView.isVisible = isAddGroupChannel
+
+            controller = AddChannelViewController(
+                if (isAddGroupChannel) binding.groupHeaderView else binding.headerView,
+                binding.usersTitle,
+                binding.usersRecyclerView,
+                binding.createGroupContainer,
+                isAddGroupChannel = isAddGroupChannel
+            )
+        }
+
         binding.usersRecyclerView.addOnScrollListener(endReachedScrollListener)
         loadingView.apply {
             isVisible = false
@@ -127,8 +140,8 @@ class AddChannelView : FrameLayout {
         controller.membersChangedListener = listener
     }
 
-    fun setAddMemberButtonClickListener(listener: AddMemberButtonClickListener) {
-        controller.addMemberButtonClickListener = listener
+    fun setAddMemberButtonClickedListener(listener: AddMemberButtonClickedListener) {
+        controller.addMemberButtonClickedListener = listener
     }
 
     fun setSearchInputChangedListener(listener: SearchInputChangedListener) {
@@ -147,7 +160,7 @@ class AddChannelView : FrameLayout {
         fun onMembersChanged(members: List<User>)
     }
 
-    fun interface AddMemberButtonClickListener {
+    fun interface AddMemberButtonClickedListener {
         fun onAddMemberButtonClicked()
     }
 

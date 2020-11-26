@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.feature.channel.add
+package io.getstream.chat.ui.sample.feature.channel.add.group
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,20 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import com.getstream.sdk.chat.viewmodel.messages.bindView
-import io.getstream.chat.android.ui.textinput.MessageInputView
-import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
-import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.databinding.FragmentAddChannelBinding
+import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelBinding
+import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView
+import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 
-class AddChannelFragment : Fragment() {
+class AddGroupChannelFragment : Fragment() {
 
-    private var _binding: FragmentAddChannelBinding? = null
+    private var _binding: FragmentAddGroupChannelBinding? = null
     private val binding get() = _binding!!
     private val addChannelViewModel: AddChannelViewModel by viewModels()
 
@@ -28,7 +22,7 @@ class AddChannelFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentAddChannelBinding.inflate(inflater, container, false)
+        _binding = FragmentAddGroupChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,28 +35,6 @@ class AddChannelFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun initializeChannel(cid: String) {
-        val factory = ChannelViewModelFactory(cid)
-        val messageListViewModel = factory.create(MessageListViewModel::class.java)
-        val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
-        binding.addChannelView.apply {
-            messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-            // Will be bound when bindView available
-            // messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
-            showMessageListView()
-            hideUsersRecyclerView()
-        }
-    }
-
-    private fun cleanChannel() {
-        hideMessageList()
-    }
-
-    private fun hideMessageList() {
-        binding.addChannelView.hideMessageListView()
-        binding.addChannelView.showUsersRecyclerView()
     }
 
     private fun bindAddChannelView() {
@@ -88,11 +60,9 @@ class AddChannelFragment : Fragment() {
                     is AddChannelViewModel.State.ResultMoreUsers -> {
                         binding.addChannelView.addMoreUsers(state.users)
                     }
-                    is AddChannelViewModel.State.ShowChannel -> initializeChannel(state.cid)
-                    AddChannelViewModel.State.HideChannel -> cleanChannel()
-                    is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
-                        AddChannelFragmentDirections.actionOpenChat(state.cid)
-                    )
+                    is AddChannelViewModel.State.ShowChannel,
+                    AddChannelViewModel.State.HideChannel,
+                    is AddChannelViewModel.State.NavigateToChannel -> Unit
                 }
             }
             paginationState.observe(viewLifecycleOwner) { state ->
@@ -103,20 +73,8 @@ class AddChannelFragment : Fragment() {
             endReachedListener = AddChannelView.EndReachedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.ReachedEndOfList)
             }
-            setAddMemberButtonClickedListener {
-                hideMessageList()
-            }
-            setMembersChangedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.MembersChanged(it))
-            }
-            messageInputView.messageSentListener = MessageInputView.MessageSentListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
-            }
             setSearchInputChangedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
-            }
-            setOnCreateGroupButtonListener {
-                findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
             }
         }
     }

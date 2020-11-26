@@ -105,6 +105,19 @@
                 app:nullable="false"
                 />
         </action>
+
+        <action
+            android:id="@+id/action_addChannelFragment_to_addGroupChannelFragment"
+            app:destination="@id/addGroupChannelFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addGroupChannelFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.group.AddGroupChannelFragment"
+        android:label="AddGroupChannelFragment"
+        >
+
     </fragment>
 
     <fragment
