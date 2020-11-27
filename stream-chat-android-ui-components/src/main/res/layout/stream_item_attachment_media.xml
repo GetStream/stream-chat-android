@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/mediaThumbnailImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@color/stream_grey"
+        />
+
+    <View
+        android:id="@+id/selectionOverlayView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/stream_attachment_dialog_selection_overlay"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
+        app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
+        app:layout_constraintStart_toStartOf="@id/mediaThumbnailImageView"
+        app:layout_constraintTop_toTopOf="@id/mediaThumbnailImageView"
+        tools:ignore="ContentDescription"
+        />
+
+    <ImageView
+        android:id="@+id/selectionMarkImageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="@dimen/stream_spacing_small"
+        android:background="@drawable/stream_circle_white"
+        android:scaleType="center"
+        android:src="@drawable/stream_ic_attachment_check"
+        app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
+        app:layout_constraintTop_toTopOf="@id/mediaThumbnailImageView"
+        tools:ignore="ContentDescription"
+        />
+
+    <ImageView
+        android:id="@+id/videoLogoImageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/stream_ic_video"
+        android:scaleType="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
+        app:layout_constraintStart_toStartOf="@id/mediaThumbnailImageView"
+        app:tint="@color/stream_white"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/videoLengthTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/stream_white"
+        android:textSize="@dimen/stream_text_small"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
+        app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
+        tools:visibility="visible"
+        tools:text="0:24"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

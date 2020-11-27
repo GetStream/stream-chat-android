@@ -21,6 +21,7 @@ import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -43,10 +44,12 @@ internal class QueryChannelsControllerImpl(
     private val _endOfChannels = MutableStateFlow(false)
     override val endOfChannels: LiveData<Boolean> = _endOfChannels.asLiveData()
 
-    private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
+    private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
 
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = _channels.map { it.values.sortedWith(sort.comparator) }.asLiveData()
+    override var channels: LiveData<List<Channel>> = _channels.filterNotNull()
+        .map { it.values.sortedWith(sort.comparator) }
+        .asLiveData()
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 

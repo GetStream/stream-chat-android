@@ -552,7 +552,7 @@ public class ChatClient internal constructor(
     public fun acceptInvite(
         channelType: String,
         channelId: String,
-        message: String
+        message: String?
     ): Call<Channel> {
         return api.acceptInvite(channelType, channelId, message)
     }

@@ -342,7 +342,7 @@ public class ChannelClient internal constructor(
         return client.removeMembers(channelType, channelId, userIds.toList())
     }
 
-    override fun acceptInvite(message: String): Call<Channel> {
+    override fun acceptInvite(message: String?): Call<Channel> {
         return client.acceptInvite(channelType, channelId, message)
     }
 

@@ -20,7 +20,7 @@ android {
         ndkVersion "21.3.6528147"
     }
 
-    File signFile = rootProject.file('stream-chat-android-sample/.sign/keystore.properties')
+    File signFile = rootProject.file('.sign/keystore.properties')
     if (signFile.exists()) {
         Properties properties = new Properties()
         properties.load(new FileInputStream(signFile))
@@ -35,7 +35,7 @@ android {
     } else {
         signingConfigs {
             release {
-                storeFile rootProject.file('stream-chat-android-sample/.sign/debug.keystore')
+                storeFile rootProject.file('.sign/debug.keystore')
                 storePassword 'android'
                 keyAlias 'androiddebugkey'
                 keyPassword 'android'
@@ -44,7 +44,7 @@ android {
     }
 
     signingConfigs.debug {
-        storeFile rootProject.file('stream-chat-android-sample/.sign/debug.keystore')
+        storeFile rootProject.file('.sign/debug.keystore')
         storePassword 'android'
         keyAlias 'androiddebugkey'
         keyPassword 'android'

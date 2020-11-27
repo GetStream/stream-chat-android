@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.adapter.ReactionDialogAdapter
 import com.getstream.sdk.chat.databinding.StreamDialogMessageMoreactionBinding
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.utils.inflater
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message

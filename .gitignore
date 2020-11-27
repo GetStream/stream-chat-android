@@ -96,3 +96,4 @@ lint/tmp/
 .cxx
 /projectFilesBackup/
 /projectFilesBackup1/
+*.gpg

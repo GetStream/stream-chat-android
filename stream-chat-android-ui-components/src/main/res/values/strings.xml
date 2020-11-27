@@ -29,20 +29,19 @@
     <string name="stream_search_view_search_icon_description">Search</string>
     <string name="stream_search_view_clear_input_description">Clear</string>
 
-    <!--Add Channel-->
-    <string name="stream_add_channel_back_icon_description">Back</string>
-    <string name="stream_add_channel_add_member_icon_description">Add member</string>
-    <string name="stream_add_channel_user_checked_description">User checked</string>
-    <string name="stream_add_channel_title">New Chat</string>
-    <string name="stream_add_member_title">TO:</string>
-    <string name="stream_add_member_hint">Type a name</string>
-    <string name="stream_create_group">Create a Group</string>
-    <string name="stream_add_channel_user_list_title">On the platform</string>
-
     <!-- ChannelHeaderView -->
     <string name="stream_content_description_back_button">Back button</string>
     <string name="stream_message_list_header_searching_for_network">Searching for network</string>
     <string name="stream_message_list_header_offline">Offline…</string>
     <string name="stream_message_list_header_try_again">Try Again</string>
     <string name="stream_message_list_header_typing">is typing</string>
+
+    <!--Attachments-->
+    <string name="stream_attachment_dialog_recent_files">Recent Files</string>
+    <string name="stream_attachment_dialog_permission_camera">Allow access to your Camera</string>
+    <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
+    <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
+    <string name="stream_attachment_input_hint">Add command or send</string>
+    <string name="stream_send_also_to_channel">Send also to channel</string>
+    <string name="stream_send_also_as_direct_message">Send also as direct message</string>
 </resources>

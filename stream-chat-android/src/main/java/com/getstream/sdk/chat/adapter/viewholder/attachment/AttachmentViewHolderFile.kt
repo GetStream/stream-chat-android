@@ -5,7 +5,7 @@ import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentFileBinding
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
+import com.getstream.sdk.chat.utils.UiUtils
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
@@ -44,8 +44,8 @@ internal class AttachmentViewHolderFile(
     }
 
     private fun configAttachment() {
-        binding.tvFileSize.text = LlcMigrationUtils.getFileSizeHumanized(attachment)
-        binding.ivFileThumb.setImageResource(LlcMigrationUtils.getIcon(attachment))
+        binding.tvFileSize.text = UiUtils.getFileSizeHumanized(attachment.fileSize)
+        binding.ivFileThumb.setImageResource(UiUtils.getIcon(attachment.mimeType))
         binding.tvFileTitle.text = attachment.title
 
         val background = bubbleHelper.getDrawableForAttachment(

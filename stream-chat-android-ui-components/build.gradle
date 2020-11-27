@@ -10,8 +10,13 @@ apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = Configuration.artifactGroup
-version = Configuration.versionName
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-components'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
     compileSdkVersion Configuration.compileSdkVersion
@@ -81,6 +86,7 @@ dependencies {
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.constraintLayout
     implementation Dependencies.materialComponents
+    implementation Dependencies.drawabletoolbox
     implementation Dependencies.fragmentKtx
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.lottie

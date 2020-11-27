@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_attachment_dialog_file_item_height"
+    android:background="?selectableItemBackground"
+    >
+
+    <CheckedTextView
+        android:id="@+id/selectionIndicator"
+        android:layout_width="@dimen/stream_attachment_dialog_selection_indicator_size"
+        android:layout_height="@dimen/stream_attachment_dialog_selection_indicator_size"
+        android:layout_marginStart="@dimen/stream_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_spacing_medium"
+        android:background="@drawable/stream_selector_file_attachment"
+        android:checkMark="@null"
+        android:gravity="center"
+        android:textAlignment="gravity"
+        android:textColor="@color/stream_white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fileTypeImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:checked="true"
+        tools:ignore="SmallSp"
+        tools:text="1"
+        tools:visibility="visible"
+        />
+
+    <ImageView
+        android:id="@+id/fileTypeImageView"
+        android:layout_width="@dimen/stream_attachment_dialog_file_type_width"
+        android:layout_height="@dimen/stream_attachment_dialog_file_type_height"
+        android:layout_marginStart="@dimen/stream_spacing_medium"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/selectionIndicator"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/stream_ic_file_csv"
+        />
+
+    <TextView
+        android:id="@+id/fileNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_spacing_medium"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/stream_text_black"
+        android:textSize="@dimen/stream_text_medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/fileSizeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fileTypeImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="SlimAaron.pdf"
+        />
+
+    <TextView
+        android:id="@+id/fileSizeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_spacing_medium"
+        android:textColor="@color/stream_text_grey"
+        android:textSize="@dimen/stream_text_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fileTypeImageView"
+        app:layout_constraintTop_toBottomOf="@id/fileNameTextView"
+        tools:text="123 KB"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

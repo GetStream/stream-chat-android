@@ -34,4 +34,18 @@
 
     <!--Channel List Items-->
     <dimen name="stream_channel_list_item_height">64dp</dimen>
+
+    <!--Attachment Dialog-->
+    <dimen name="stream_attachment_dialog_page_height">320dp</dimen>
+    <dimen name="stream_attachment_dialog_button_size">40dp</dimen>
+    <dimen name="stream_attachment_dialog_file_item_height">56dp</dimen>
+    <dimen name="stream_attachment_dialog_file_type_height">40dp</dimen>
+    <dimen name="stream_attachment_dialog_file_type_width">34dp</dimen>
+    <dimen name="stream_attachment_dialog_button_section_height">52dp</dimen>
+    <dimen name="stream_attachment_dialog_permission_image_size">168dp</dimen>
+    <dimen name="stream_attachment_dialog_selection_indicator_size">20dp</dimen>
+
+    <!--Selected Attachments-->
+    <dimen name="stream_selected_attachment_corner_radius">12dp</dimen>
+    <dimen name="stream_selected_attachment_media_height">104dp</dimen>
 </resources>

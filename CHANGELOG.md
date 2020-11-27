@@ -1,4 +1,5 @@
 # To be released:
+
 ## Common changes for all artifacts
 
 ## stream-chat-android
@@ -7,7 +8,36 @@
 
 ## stream-chat-android-offline
 
-## stream-chat-android-ui-component
+## stream-chat-android-ui-components
+
+# Nov 24th, 2020 - 4.4.5
+## Common changes for all artifacts
+- Stream SDks has been uploaded to MavenCentral and the GroupID has changed to `io.getstream`.
+
+## stream-chat-android
+- New artifact name: `io.getstream:stream-chat-android:STREAM_VERSION`
+
+## stream-chat-android-client
+- It's no longer required to wait for `setUser` to finish before querying channels
+- `ChatClient::setUser` method allows be called without network connection and will retry to connect when network connection is available
+- New artifact name: `io.getstream:stream-chat-android-client:STREAM_VERSION`
+- Show date of the last message into channels list when data comes from offline storage
+- Show text of the last message into channels list when data comes from offline storage
+- Accept Invite Message is now optional, if null value is sent, no message will be sent to the rest of members about this action
+
+## stream-chat-android-offline
+- Fix bug when channels with newer messages don't go to the first position in the list
+- Fix Offline usage of `ChatDomain`
+- New artifact name: `io.getstream:stream-chat-android-offline:STREAM_VERSION`
+- Provide the last message when data is load from offline storage
+
+## stream-chat-android-ui-components
+- Add MessagesHeaderView
+- New artifact name: `io.getstream:stream-chat-android-ui-components:STREAM_VERSION`
+
+# Nov 24th, 2020 - 4.4.4
+This version is a roolback to 4.4.2, The previous release (4.4.3) was not valid due to a problem with the build flow.
+We are going to release 4.4.5 with the features introduced by 4.4.3 as soon as the build is back working
 
 # Nov 20th, 2020 - 4.4.3
 ## stream-chat-android-client

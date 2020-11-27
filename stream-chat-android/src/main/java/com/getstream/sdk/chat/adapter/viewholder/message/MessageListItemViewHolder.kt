@@ -3,9 +3,9 @@ package com.getstream.sdk.chat.adapter.viewholder.message
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.AttachmentConfigurator
-import com.getstream.sdk.chat.adapter.viewholder.message.configurators.Configurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.IndicatorConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.MarginConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.MessageTextConfigurator
@@ -40,80 +40,64 @@ internal class MessageListItemViewHolder(
         StreamItemMessageBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
 
-    override fun bind(messageListItem: MessageItem) {
-        configurators.forEach { configurator ->
-            configurator.configure(messageListItem)
+    private val marginConfigurator = MarginConfigurator(binding, style)
+    private val spaceConfigurator = SpaceConfigurator(binding)
+    private val usernameAndDateConfigurator = UsernameAndDateConfigurator(binding, style)
+    private val messageTextConfigurator = MessageTextConfigurator(
+        binding,
+        context,
+        style,
+        bubbleHelper,
+        messageClickListener,
+        messageLongClickListener,
+        messageRetryListener
+    )
+    private val attachmentConfigurator = AttachmentConfigurator(
+        binding,
+        style,
+        viewHolderFactory
+    )
+    private val indicatorConfigurator = IndicatorConfigurator(
+        binding,
+        style.readStateStyle,
+        readStateClickListener
+    )
+    private val reactionConfigurator = ReactionConfigurator(
+        binding,
+        context,
+        style,
+        channel,
+        reactionViewClickListener,
+        configParamsReadIndicator = { messageItem ->
+            indicatorConfigurator.configParamsReadIndicator(messageItem)
         }
-    }
+    )
+    private val replyConfigurator = ReplyConfigurator(
+        binding,
+        context,
+        style,
+        channel,
+        messageClickListener,
+        bindingAdapterPosition = { bindingAdapterPosition }
+    )
+    private val userAvatarConfigurator = UserAvatarConfigurator(
+        binding,
+        context,
+        style,
+        userClickListener
+    )
 
-    private val configurators: List<Configurator>
-
-    init {
-        val marginConfigurator = MarginConfigurator(
-            binding,
-            style
-        )
-        val messageTextConfigurator = MessageTextConfigurator(
-            binding,
-            context,
-            style,
-            bubbleHelper,
-            messageClickListener,
-            messageLongClickListener,
-            messageRetryListener
-        )
-        val attachmentConfigurator = AttachmentConfigurator(
-            binding,
-            style,
-            viewHolderFactory
-        )
-        val indicatorConfigurator = IndicatorConfigurator(
-            binding,
-            style.readStateStyle,
-            readStateClickListener
-        )
-        val reactionConfigurator = ReactionConfigurator(
-            binding,
-            context,
-            style,
-            channel,
-            reactionViewClickListener,
-            configParamsReadIndicator = { messageItem ->
-                indicatorConfigurator.configParamsReadIndicator(messageItem)
-            }
-        )
-        val replyConfigurator = ReplyConfigurator(
-            binding,
-            context,
-            style,
-            channel,
-            messageClickListener,
-            bindingAdapterPosition = { bindingAdapterPosition }
-        )
-        val spaceConfigurator = SpaceConfigurator(
-            binding
-        )
-        val userAvatarConfigurator = UserAvatarConfigurator(
-            binding,
-            context,
-            style,
-            userClickListener
-        )
-        val usernameAndDateConfigurator = UsernameAndDateConfigurator(
-            binding,
-            style
-        )
-
-        configurators = listOf(
-            marginConfigurator,
-            messageTextConfigurator,
-            attachmentConfigurator,
-            reactionConfigurator,
-            replyConfigurator,
-            indicatorConfigurator,
+    override fun bind(messageListItem: MessageItem, diff: MessageListItemPayloadDiff) {
+        listOfNotNull(
             spaceConfigurator,
-            userAvatarConfigurator,
-            usernameAndDateConfigurator
-        )
+            marginConfigurator,
+            messageTextConfigurator.takeIf { diff.text || diff.positions || diff.deleted || diff.reactions },
+            attachmentConfigurator.takeIf { diff.attachments },
+            reactionConfigurator.takeIf { diff.reactions },
+            replyConfigurator.takeIf { diff.replies },
+            indicatorConfigurator.takeIf { diff.syncStatus || diff.readBy },
+            userAvatarConfigurator.takeIf { diff.positions },
+            usernameAndDateConfigurator.takeIf { diff.positions }
+        ).forEach { it.configure(messageListItem) }
     }
 }

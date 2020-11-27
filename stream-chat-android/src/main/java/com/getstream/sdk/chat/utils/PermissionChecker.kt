@@ -12,15 +12,20 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal class PermissionChecker {
+@InternalStreamChatApi
+public class PermissionChecker {
 
-    internal fun isGrantedStoragePermissions(context: Context): Boolean {
+    public fun isGrantedStoragePermissions(context: Context): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
     }
 
-    internal fun isGrantedCameraPermissions(context: Context): Boolean =
+    public fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
             listOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -33,7 +38,7 @@ internal class PermissionChecker {
                     ) == PackageManager.PERMISSION_GRANTED
                 }
 
-    internal fun checkStoragePermissions(
+    public fun checkStoragePermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
         onPermissionGranted: () -> Unit
@@ -49,7 +54,7 @@ internal class PermissionChecker {
         )
     }
 
-    internal fun checkCameraPermissions(
+    public fun checkCameraPermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
         onPermissionGranted: () -> Unit
@@ -68,7 +73,7 @@ internal class PermissionChecker {
         )
     }
 
-    fun checkPermissions(
+    private fun checkPermissions(
         view: View,
         dialogTitle: String,
         dialogMessage: String,

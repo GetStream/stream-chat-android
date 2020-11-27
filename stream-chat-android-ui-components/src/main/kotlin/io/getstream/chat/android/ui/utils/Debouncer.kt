@@ -13,12 +13,12 @@ import kotlinx.coroutines.launch
  * [submit]ting a new piece of work to run within the debounce window
  * will cancel the previously submitted pending work.
  */
-internal class Debouncer(private val debounceMs: Long) {
+public class Debouncer(private val debounceMs: Long) {
 
     private val scope = CoroutineScope(DispatcherProvider.Main)
     private var job: Job? = null
 
-    fun submit(work: () -> Unit) {
+    public fun submit(work: () -> Unit) {
         job?.cancel()
         job = scope.launch {
             delay(debounceMs)
@@ -31,7 +31,7 @@ internal class Debouncer(private val debounceMs: Long) {
      *
      * Note that a shut down Debouncer will never execute work again.
      */
-    fun shutdown() {
+    public fun shutdown() {
         scope.cancel()
     }
 }
