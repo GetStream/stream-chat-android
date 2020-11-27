@@ -31,23 +31,27 @@
         />
 
     <ImageView
+        android:id="@+id/shareButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="6dp"
+        android:padding="6dp"
+        android:src="@drawable/stream_ic_share"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="10dp"
-        android:src="@drawable/stream_ic_share"
         />
 
     <ImageView
+        android:id="@+id/menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="6dp"
+        android:padding="6dp"
+        android:src="@drawable/stream_ic_grid_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/stream_ic_grid_menu"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

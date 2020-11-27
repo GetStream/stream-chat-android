@@ -3,7 +3,9 @@ package io.getstream.chat.android.ui.images
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -35,15 +37,28 @@ public class AttachmentGallery : ConstraintLayout {
         attr?.let(::configureAttributes)
     }
 
-    private fun configureAttributes(attributeSet: AttributeSet) {
-        context.obtainStyledAttributes(attributeSet, R.styleable.StreamAttachmentGalleryView).use { tArray ->
-            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s - %s"
-        }
-    }
-
     public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>) {
         binding.vpAttachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
         configPositionCount(imageList.size)
+    }
+
+    public fun setShareButtonClickListener(listener: OnClickListener) {
+        binding.shareButton.setOnClickListener(listener)
+    }
+
+    public fun setMenuButtonClickListener(listener: OnClickListener) {
+        binding.menuButton.setOnClickListener(listener)
+    }
+
+    private fun configureAttributes(attributeSet: AttributeSet) {
+        context.obtainStyledAttributes(attributeSet, R.styleable.StreamAttachmentGalleryView).use { tArray ->
+            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s - %s"
+
+            tArray.getColor(
+                R.styleable.StreamAttachmentGalleryView_streamCountTextColor,
+                ContextCompat.getColor(context, R.color.stream_black)
+            ).let(binding.tvPhotoCount::setTextColor)
+        }
     }
 
     private fun configPositionCount(count: Int) {
