@@ -2,9 +2,9 @@ package com.getstream.sdk.chat.adapter
 
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessageItem
+import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
-import java.util.Date
 
 internal class MessageListItemDiffCallbackTest {
 
@@ -17,9 +17,7 @@ internal class MessageListItemDiffCallbackTest {
         isMine = msgWithUserRead.isMine,
         messageReadBy = mutableListOf(
             channelUserRead.copy(
-                lastRead = Date.from(
-                    channelUserRead.lastRead!!.toInstant().plusSeconds(10)
-                )
+                user = User("other")
             )
         )
     )

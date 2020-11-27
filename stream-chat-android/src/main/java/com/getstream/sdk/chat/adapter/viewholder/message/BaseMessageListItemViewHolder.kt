@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 
 public abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
     itemView: View
@@ -13,9 +14,9 @@ public abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     @Suppress("UNCHECKED_CAST")
-    internal fun bindListItem(messageListItem: MessageListItem) = bind(messageListItem as T)
+    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff) = bind(messageListItem as T, diff)
 
-    protected abstract fun bind(messageListItem: T)
+    protected abstract fun bind(messageListItem: T, diff: MessageListItemPayloadDiff)
 
     protected val context: Context
         get() = itemView.context
