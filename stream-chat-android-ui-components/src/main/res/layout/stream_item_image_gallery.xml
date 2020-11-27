@@ -6,4 +6,3 @@
     android:layout_height="match_parent"
     tools:src="@drawable/stream_ic_attach"
     />
-
