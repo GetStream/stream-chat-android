@@ -172,12 +172,23 @@
             >
 
             <TextView
-                android:id="@+id/attachmentGalleryLabel"
+                android:id="@+id/attachmentGalleryOnePictureLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
-                android:text="AttachmentGallery"
+                android:text="AttachmentGallery - One pictures"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/attachmentGalleryMultiPictureLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="AttachmentGallery - Many pictures"
+                android:textColor="@color/black"
                 />
 
         </LinearLayout>

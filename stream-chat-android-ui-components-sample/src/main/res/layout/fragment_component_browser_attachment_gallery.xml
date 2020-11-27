@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ComponentBrowserAttachmentGalleryFragment"
+    android:background="@color/white"
     >
 
     <io.getstream.chat.android.ui.images.AttachmentGallery
         android:id="@+id/attachmentGallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"
-        app:streamCountText="%s of %s"
+        app:streamCountText="%s -> %s"
+        app:streamCountTextColor="@color/black"
         />
 
 </FrameLayout>
