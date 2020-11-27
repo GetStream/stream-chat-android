@@ -39,7 +39,7 @@ class ComponentBrowserAttachmentGalleryFragment : Fragment() {
                 Toast.makeText(requireContext(), "Menu click!", Toast.LENGTH_SHORT).show()
             }
 
-            setShareButtonClickListener() {
+            setShareButtonClickListener {
                 Toast.makeText(requireContext(), "Share click!", Toast.LENGTH_SHORT).show()
             }
         }
