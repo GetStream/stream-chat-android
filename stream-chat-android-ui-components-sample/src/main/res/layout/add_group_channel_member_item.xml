@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/memberContainer"
+    android:layout_width="64dp"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="8dp"
+    android:orientation="vertical"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <io.getstream.chat.android.ui.avatar.AvatarView
+            android:id="@+id/memberAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:streamAvatarBorderWidth="0dp"
+            app:streamAvatarOnlineIndicatorEnabled="true"
+            />
+
+        <ImageButton
+            android:id="@+id/deleteMemberButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/shape_circle_grey"
+            android:cropToPadding="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_close"
+            android:tint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/memberNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lines="2"
+        android:textColor="@color/stream_black"
+        android:textSize="@dimen/stream_text_medium"
+        />
+</LinearLayout>

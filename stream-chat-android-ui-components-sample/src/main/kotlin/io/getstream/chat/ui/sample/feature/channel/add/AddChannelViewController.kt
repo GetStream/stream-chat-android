@@ -7,21 +7,24 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
+import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeader
+import io.getstream.chat.ui.sample.feature.channel.add.header.MembersInputChangedListener
 
 class AddChannelViewController(
-    private val headerView: AddChannelHeaderView,
+    private val headerView: AddChannelHeader,
     private val usersTitle: TextView,
     private val usersRecyclerView: RecyclerView,
-    private val createGroupContainer: ViewGroup
+    private val createGroupContainer: ViewGroup,
+    private val isAddGroupChannel: Boolean,
 ) {
 
     private val usersAdapter = AddChannelUsersAdapter()
     private val members: MutableList<User> = mutableListOf()
     private val userInfoList: MutableList<UserInfo> = mutableListOf()
+    private var isSearching = false
 
     var membersChangedListener = AddChannelView.MembersChangedListener {}
-    var addMemberButtonClickListener = AddChannelView.AddMemberButtonClickListener {}
+    var addMemberButtonClickedListener = AddChannelView.AddMemberButtonClickedListener {}
     var searchInputChangedListener = AddChannelView.SearchInputChangedListener { }
 
     init {
@@ -30,19 +33,19 @@ class AddChannelViewController(
             onUserClicked(it)
         }
         headerView.apply {
-            membersInputListener = object : AddChannelHeaderView.Listener {
-                override fun onInputChanged(query: String) {
-                    usersTitle.text = if (query.isEmpty()) {
-                        context.getString(R.string.add_channel_user_list_title)
-                    } else {
-                        context.getString(R.string.add_channel_user_list_search_title, query)
-                    }
-                    searchInputChangedListener.onInputChanged(query)
+            membersInputListener = MembersInputChangedListener { query ->
+                usersTitle.text = if (query.isEmpty()) {
+                    isSearching = false
+                    viewContext.getString(R.string.add_channel_user_list_title)
+                } else {
+                    isSearching = true
+                    viewContext.getString(R.string.add_channel_user_list_search_title, query)
                 }
+                searchInputChangedListener.onInputChanged(query)
             }
             setAddMemberButtonClickListener {
                 this@AddChannelViewController.showInput()
-                addMemberButtonClickListener.onAddMemberButtonClicked()
+                addMemberButtonClickedListener.onAddMemberButtonClicked()
                 usersRecyclerView.isVisible = true
             }
             setMemberClickListener {
@@ -51,22 +54,22 @@ class AddChannelViewController(
         }
     }
 
-    fun setUsers(users: List<User>, shouldShowUserSections: Boolean) {
+    fun setUsers(users: List<User>) {
         userInfoList.clear()
-        addMoreUsers(users, shouldShowUserSections)
+        addMoreUsers(users)
     }
 
-    fun addMoreUsers(users: List<User>, shouldShowUserSections: Boolean = true) {
+    fun addMoreUsers(users: List<User>) {
         userInfoList.addAll(users.map { UserInfo(it, members.contains(it)) })
-        if (shouldShowUserSections) {
-            showSectionedUsers(userInfoList)
-        } else {
-            showUsers(userInfoList)
-        }
+        showUsers(userInfoList)
     }
 
     private fun showUsers(users: List<UserInfo>) {
-        usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
+        if (isSearching) {
+            usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
+        } else {
+            showSectionedUsers(users)
+        }
     }
 
     private fun showSectionedUsers(userInfoList: List<UserInfo>) {
@@ -82,7 +85,7 @@ class AddChannelViewController(
     private fun hideInput() {
         headerView.hideInput()
         headerView.showAddMemberButton()
-        usersTitle.isVisible = false
+        usersTitle.isVisible = isAddGroupChannel || false
     }
 
     private fun showInput() {
@@ -99,12 +102,16 @@ class AddChannelViewController(
             members.add(userInfo.user)
         }
         if (members.isEmpty()) {
-            createGroupContainer.isVisible = true
+            if (!isAddGroupChannel) {
+                createGroupContainer.isVisible = true
+            }
             usersRecyclerView.isVisible = true
             showInput()
         } else {
-            createGroupContainer.isVisible = false
-            usersRecyclerView.isVisible = false
+            if (!isAddGroupChannel) {
+                createGroupContainer.isVisible = false
+                usersRecyclerView.isVisible = false
+            }
             hideInput()
         }
         headerView.setMembers(members.toList())
@@ -114,7 +121,7 @@ class AddChannelViewController(
         val index = userInfoList.indexOf(userInfo)
         if (index != -1) {
             userInfoList[index] = userInfoList[index].copy(isSelected = !userInfo.isSelected)
-            showSectionedUsers(userInfoList)
+            showUsers(userInfoList)
         }
     }
 }
