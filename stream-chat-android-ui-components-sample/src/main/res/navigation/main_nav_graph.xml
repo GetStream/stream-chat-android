@@ -85,6 +85,11 @@
             android:id="@+id/action_homeFragment_to_addChannelFragment"
             app:destination="@id/addChannelFragment"
             />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addGroupChannelFragment"
+            app:destination="@+id/addGroupChannelFragment"
+            />
     </fragment>
 
     <fragment
