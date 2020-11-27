@@ -8,12 +8,11 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
         return oldItem.getStableId() == newItem.getStableId()
     }
 
-    override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
-        var equal = true
+    override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean =
         when (oldItem) {
             is MessageListItem.MessageItem -> {
                 newItem as MessageListItem.MessageItem
-                equal = if (oldItem.message.text != newItem.message.text) {
+                if (oldItem.message.text != newItem.message.text) {
                     false
                 } else if (oldItem.message.reactionScores != newItem.message.reactionScores) {
                     false
@@ -31,13 +30,12 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                     false
                 } else oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
             }
-            is MessageListItem.DateSeparatorItem, is MessageListItem.ThreadSeparatorItem, is MessageListItem.LoadingMoreIndicatorItem -> equal = true
-            is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as MessageListItem.TypingItem).users.map(User::id)
-            is MessageListItem.ReadStateItem -> oldItem.reads.map { it.getUserId() } == ((newItem) as MessageListItem.ReadStateItem).reads.map { it.getUserId() }
+            is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
+            is MessageListItem.ThreadSeparatorItem -> oldItem.date == (newItem as? MessageListItem.ThreadSeparatorItem)?.date
+            is MessageListItem.LoadingMoreIndicatorItem -> true
+            is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(User::id)
+            is MessageListItem.ReadStateItem -> oldItem.reads.map { it.getUserId() } == ((newItem) as? MessageListItem.ReadStateItem)?.reads?.map { it.getUserId() }
         }
-
-        return equal
-    }
 
     override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? {
         return if (oldItem is MessageListItem.MessageItem) {
