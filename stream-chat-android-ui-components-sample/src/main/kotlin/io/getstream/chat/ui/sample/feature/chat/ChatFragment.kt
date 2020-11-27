@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -44,14 +45,25 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
-        messageListViewModel.bindView(
-            binding.messageList,
-            viewLifecycleOwner
-        ) // TODO replace with new design message list
+        initMessagesViewModel()
         initMessageInputViewModel()
+        listenForBackButton()
 
         binding.header.setBackButtonClickListener {
             findNavController().navigateUp()
+        }
+    }
+
+    private fun listenForBackButton() {
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+                    }
+                }
+            )
         }
     }
 
@@ -71,5 +83,24 @@ class ChatFragment : Fragment() {
                 editMessage.postValue(it)
             }
         }
+    }
+
+    private fun initMessagesViewModel() {
+        messageListViewModel
+            .apply { bindView(binding.messageList, viewLifecycleOwner) } // TODO replace with new design message list
+            .apply {
+                state.observe(
+                    viewLifecycleOwner,
+                    {
+                        when (it) {
+                            is MessageListViewModel.State.NavigateUp -> navigateUp()
+                        }
+                    }
+                )
+            }
+    }
+
+    private fun navigateUp() {
+        findNavController().navigateUp()
     }
 }
