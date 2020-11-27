@@ -40,8 +40,14 @@ class AddGroupChannelMembersAdapter :
         private val memberClickListener: MemberClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        private lateinit var member: User
+
+        init {
+            binding.deleteMemberButton.setOnClickListener { memberClickListener.onMemberClicked(member) }
+        }
+
         fun bind(user: User) {
-            binding.deleteMemberButton.setOnClickListener { memberClickListener.onMemberClicked(user) }
+            member = user
             binding.memberAvatar.setUserData(user)
             binding.memberNameTextView.text = user.name
         }
