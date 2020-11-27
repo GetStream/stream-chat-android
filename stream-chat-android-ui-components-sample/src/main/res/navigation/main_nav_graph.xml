@@ -183,6 +183,19 @@
         android:id="@+id/componentBrowserMessageListBrowserFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment"
         android:label="ComponentBrowserMessageList"
+        >
+
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserDeletedMessages"
+            app:destination="@id/componentBrowserDeletedMessagesFragment"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/componentBrowserDeletedMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserDeletedMessages"
         />
 
 </navigation>
