@@ -149,6 +149,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment"
             app:destination="@id/componentBrowserMessagesHeaderFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment"
+            app:destination="@id/componentBrowserMessageListBrowserFragment"
+            />
     </fragment>
 
     <fragment
@@ -173,6 +177,12 @@
         android:id="@+id/componentBrowserMessagesHeaderFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessageListBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment"
+        android:label="ComponentBrowserMessageList"
         />
 
 </navigation>
