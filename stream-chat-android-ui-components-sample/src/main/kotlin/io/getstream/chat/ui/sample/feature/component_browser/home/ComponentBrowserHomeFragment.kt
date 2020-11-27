@@ -47,6 +47,13 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
+        setupMessageList()
+    }
+
+    private fun setupMessageList() {
+        binding.messageListComponentBrowser.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment)
+        }
     }
 
     private fun setupAvatarView() {

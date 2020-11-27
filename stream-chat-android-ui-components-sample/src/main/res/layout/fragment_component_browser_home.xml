@@ -153,6 +153,21 @@
                 />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/messageListComponentBrowser"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Message list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchViewContainer"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
