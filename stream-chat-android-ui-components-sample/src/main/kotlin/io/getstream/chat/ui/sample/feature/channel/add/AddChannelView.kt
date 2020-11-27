@@ -88,8 +88,8 @@ class AddChannelView : FrameLayout {
         )
     }
 
-    fun setUsers(users: List<User>, shouldShowUserSections: Boolean) {
-        controller.setUsers(users, shouldShowUserSections)
+    fun setUsers(users: List<User>) {
+        controller.setUsers(users)
     }
 
     fun addMoreUsers(users: List<User>) {

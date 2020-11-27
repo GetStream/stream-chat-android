@@ -52,7 +52,7 @@ class AddGroupChannelFragment : Fragment() {
                         binding.addChannelView.showEmptyStateView()
                     }
                     is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users, state.shouldShowUserSections)
+                        binding.addChannelView.setUsers(state.users)
                         binding.addChannelView.hideLoadingView()
                         binding.addChannelView.hideEmptyStateView()
                         binding.addChannelView.showUsersRecyclerView()

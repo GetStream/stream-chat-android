@@ -21,6 +21,7 @@ class AddChannelViewController(
     private val usersAdapter = AddChannelUsersAdapter()
     private val members: MutableList<User> = mutableListOf()
     private val userInfoList: MutableList<UserInfo> = mutableListOf()
+    private var isSearching = false
 
     var membersChangedListener = AddChannelView.MembersChangedListener {}
     var addMemberButtonClickedListener = AddChannelView.AddMemberButtonClickedListener {}
@@ -34,8 +35,10 @@ class AddChannelViewController(
         headerView.apply {
             membersInputListener = MembersInputChangedListener { query ->
                 usersTitle.text = if (query.isEmpty()) {
+                    isSearching = false
                     viewContext.getString(R.string.add_channel_user_list_title)
                 } else {
+                    isSearching = true
                     viewContext.getString(R.string.add_channel_user_list_search_title, query)
                 }
                 searchInputChangedListener.onInputChanged(query)
@@ -51,22 +54,22 @@ class AddChannelViewController(
         }
     }
 
-    fun setUsers(users: List<User>, shouldShowUserSections: Boolean) {
+    fun setUsers(users: List<User>) {
         userInfoList.clear()
-        addMoreUsers(users, shouldShowUserSections)
+        addMoreUsers(users)
     }
 
-    fun addMoreUsers(users: List<User>, shouldShowUserSections: Boolean = true) {
+    fun addMoreUsers(users: List<User>) {
         userInfoList.addAll(users.map { UserInfo(it, members.contains(it)) })
-        if (shouldShowUserSections) {
-            showSectionedUsers(userInfoList)
-        } else {
-            showUsers(userInfoList)
-        }
+        showUsers(userInfoList)
     }
 
     private fun showUsers(users: List<UserInfo>) {
-        usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
+        if (isSearching) {
+            usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
+        } else {
+            showSectionedUsers(users)
+        }
     }
 
     private fun showSectionedUsers(userInfoList: List<UserInfo>) {
@@ -118,7 +121,7 @@ class AddChannelViewController(
         val index = userInfoList.indexOf(userInfo)
         if (index != -1) {
             userInfoList[index] = userInfoList[index].copy(isSelected = !userInfo.isSelected)
-            showSectionedUsers(userInfoList)
+            showUsers(userInfoList)
         }
     }
 }
