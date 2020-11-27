@@ -37,7 +37,7 @@ public class AttachmentGallery : ConstraintLayout {
     }
 
     public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>) {
-        binding.vpAttachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
+        binding.attachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
         configPositionCount(imageList.size)
     }
 
@@ -56,23 +56,23 @@ public class AttachmentGallery : ConstraintLayout {
             tArray.getColor(
                 R.styleable.StreamAttachmentGalleryView_streamCountTextColor,
                 ContextCompat.getColor(context, R.color.stream_black)
-            ).let(binding.tvPhotoCount::setTextColor)
+            ).let(binding.photoCount::setTextColor)
         }
     }
 
     private fun configPositionCount(count: Int) {
         if (count > 1) {
-            binding.tvPhotoCount.text = String.format(countText, 1, count)
+            binding.photoCount.text = String.format(countText, 1, count)
         } else {
-            binding.tvPhotoCount.isVisible = false
+            binding.photoCount.isVisible = false
         }
 
-        binding.vpAttachmentGallery.registerOnPageChangeCallback(
+        binding.attachmentGallery.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
 
-                    binding.tvPhotoCount.text = String.format(countText, position + 1, count)
+                    binding.photoCount.text = String.format(countText, position + 1, count)
                 }
             }
         )

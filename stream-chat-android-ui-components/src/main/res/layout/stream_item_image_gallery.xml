@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.github.chrisbanes.photoview.PhotoView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/attachmentImage"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:src="@drawable/stream_ic_attach"
+    />
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/iv_ImageItem"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/stream_ic_attach"
-        />
-
-</FrameLayout>
