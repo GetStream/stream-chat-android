@@ -70,10 +70,7 @@ class AddChannelViewModel : ViewModel() {
                     if (users.isEmpty()) {
                         State.Empty
                     } else {
-                        if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(
-                            users,
-                            shouldShowUserSections = searchQuery.isEmpty()
-                        )
+                        if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users)
                     }
                 )
                 updatePaginationData(users)
@@ -140,7 +137,7 @@ class AddChannelViewModel : ViewModel() {
         object Empty : State()
         object HideChannel : State()
         data class ShowChannel(val cid: String) : State()
-        data class Result(val users: List<User>, val shouldShowUserSections: Boolean) : State()
+        data class Result(val users: List<User>) : State()
         data class ResultMoreUsers(val users: List<User>) : State()
         data class NavigateToChannel(val cid: String) : State()
     }
