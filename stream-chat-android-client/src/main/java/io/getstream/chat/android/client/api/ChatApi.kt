@@ -479,7 +479,7 @@ internal class ChatApi(
     fun acceptInvite(
         channelType: String,
         channelId: String,
-        message: String
+        message: String?
     ): Call<Channel> {
         return retrofitApi.acceptInvite(
             channelType,
