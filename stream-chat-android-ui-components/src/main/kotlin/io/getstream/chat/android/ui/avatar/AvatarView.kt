@@ -58,7 +58,7 @@ public class AvatarView : AppCompatImageView {
         asyncAvatarDrawableProvider = {
             AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, users, avatarStyle, avatarViewSize))
         }
-        requestLayout()
+        loadAvatarIfLaidOut()
     }
 
     public fun setUserData(user: User) {
@@ -66,7 +66,7 @@ public class AvatarView : AppCompatImageView {
         asyncAvatarDrawableProvider = {
             AvatarDrawable(listOfNotNull(bitmapFactory.createUserBitmap(user, avatarStyle, avatarViewSize)))
         }
-        requestLayout()
+        loadAvatarIfLaidOut()
     }
 
     public fun showOnlineIndicator(visible: Boolean) {
@@ -83,14 +83,17 @@ public class AvatarView : AppCompatImageView {
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        if (w > 0 && w != oldw) {
-            asyncAvatarDrawableProvider?.let {
+        loadAvatarIfLaidOut()
+    }
+
+    private fun loadAvatarIfLaidOut() {
+        asyncAvatarDrawableProvider.takeIf { it != null && avatarViewSize > 0 }
+            ?.let {
                 loadAvatarImageJob?.cancel()
                 loadAvatarImageJob = GlobalScope.launch(DispatcherProvider.Main) {
                     setImageDrawable(it())
                 }
             }
-        }
     }
 
     override fun onDraw(canvas: Canvas) {
