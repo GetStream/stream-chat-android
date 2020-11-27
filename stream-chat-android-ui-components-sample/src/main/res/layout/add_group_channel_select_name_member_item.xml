@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="16dp"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/memberAvatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:streamAvatarBorderWidth="0dp"
+        />
+
+    <TextView
+        android:id="@+id/memberNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="16dp"
+        android:singleLine="true"
+        android:textColor="@color/stream_black"
+        android:textSize="@dimen/stream_text_medium"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintEnd_toStartOf="@id/deleteMemberButton"
+        app:layout_constraintStart_toEndOf="@id/memberAvatar"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/deleteMemberButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="?android:selectableItemBackground"
+        android:cropToPadding="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_close"
+        android:tint="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stream_channel_header_separator_height"
+        android:background="@drawable/stream_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -122,7 +122,30 @@
         android:name="io.getstream.chat.ui.sample.feature.channel.add.group.AddGroupChannelFragment"
         android:label="AddGroupChannelFragment"
         >
+        <action
+            android:id="@+id/action_addGroupChannelFragment_to_addGroupChannelSelectNameFragment"
+            app:destination="@id/addGroupChannelSelectNameFragment"
+            />
+    </fragment>
 
+    <fragment
+        android:id="@+id/addGroupChannelSelectNameFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.group.select_name.AddGroupChannelSelectNameFragment"
+        android:label="AddGroupChannelSelectNameFragment"
+        >
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
     </fragment>
 
     <fragment

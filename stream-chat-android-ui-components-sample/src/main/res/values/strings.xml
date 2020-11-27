@@ -40,4 +40,10 @@
 
     <!--Add Group Channel Screens-->
     <string name="add_group_channel_title">Add Group Members</string>
+    <string name="add_group_channel_next_button">Next</string>
+    <string name="add_group_channel_select_name_title">Name of Group Chat</string>
+    <string name="add_group_channel_select_name_choose_title">NAME</string>
+    <string name="add_group_channel_select_name_choose_hint">Choose a group chat name</string>
+    <string name="add_group_channel_select_name_members_title">%d Members</string>
+    <string name="add_group_channel_select_name_create_button_title">Create</string>
 </resources>
