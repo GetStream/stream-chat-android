@@ -34,7 +34,7 @@ jobs:
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
+          appId: ${{secrets.FIREBASE_SAMPLE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: stream-testers
           file: stream-chat-android-sample/build/outputs/apk/release/stream-chat-android-sample-release.apk
@@ -65,7 +65,7 @@ jobs:
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
+          appId: ${{secrets.FIREBASE_UI_SAMPLE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/release/stream-chat-android-ui-components-sample-release.apk
