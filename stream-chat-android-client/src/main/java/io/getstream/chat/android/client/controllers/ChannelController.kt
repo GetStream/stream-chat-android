@@ -117,7 +117,7 @@ public interface ChannelController {
     public fun disableSlowMode(): Call<Channel>
     public fun addMembers(vararg userIds: String): Call<Channel>
     public fun removeMembers(vararg userIds: String): Call<Channel>
-    public fun acceptInvite(message: String): Call<Channel>
+    public fun acceptInvite(message: String?): Call<Channel>
     public fun rejectInvite(): Call<Channel>
     public fun mute(): Call<Unit>
     public fun unmute(): Call<Unit>
