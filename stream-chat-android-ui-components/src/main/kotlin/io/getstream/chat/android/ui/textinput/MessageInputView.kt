@@ -112,7 +112,7 @@ public class MessageInputView : ConstraintLayout {
                         sendMessageHandler.sendToThread(
                             parentMessage,
                             messageText,
-                            binding.sendAlsoToChannel.isSelected
+                            binding.sendAlsoToChannel.isChecked
                         )
                     }
                 }
