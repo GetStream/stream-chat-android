@@ -15,5 +15,5 @@ internal class LoadingMoreViewHolder(
     )
 ) : BaseMessageListItemViewHolder<MessageListItem.LoadingMoreIndicatorItem>(binding.root) {
 
-    override fun bind(messageListItem: MessageListItem.LoadingMoreIndicatorItem, diff: MessageListItemPayloadDiff?) = Unit
+    override fun bind(messageListItem: MessageListItem.LoadingMoreIndicatorItem, diff: MessageListItemPayloadDiff) = Unit
 }

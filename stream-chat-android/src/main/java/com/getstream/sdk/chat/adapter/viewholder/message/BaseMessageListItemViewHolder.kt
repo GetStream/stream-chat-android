@@ -14,9 +14,9 @@ public abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     @Suppress("UNCHECKED_CAST")
-    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) = bind(messageListItem as T, diff)
+    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff) = bind(messageListItem as T, diff)
 
-    protected abstract fun bind(messageListItem: T, diff: MessageListItemPayloadDiff?)
+    protected abstract fun bind(messageListItem: T, diff: MessageListItemPayloadDiff)
 
     protected val context: Context
         get() = itemView.context

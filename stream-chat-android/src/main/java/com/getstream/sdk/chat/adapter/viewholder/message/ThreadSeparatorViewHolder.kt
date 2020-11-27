@@ -12,7 +12,7 @@ internal class ThreadSeparatorViewHolder(
         StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<ThreadSeparatorItem>(binding.root) {
 
-    override fun bind(messageListItem: ThreadSeparatorItem, diff: MessageListItemPayloadDiff?) {
+    override fun bind(messageListItem: ThreadSeparatorItem, diff: MessageListItemPayloadDiff) {
         /* Empty */
     }
 }
