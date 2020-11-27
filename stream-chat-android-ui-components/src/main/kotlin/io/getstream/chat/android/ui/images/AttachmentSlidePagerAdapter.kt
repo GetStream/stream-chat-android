@@ -11,9 +11,5 @@ internal class AttachmentSlidePagerAdapter(
 
     override fun getItemCount(): Int = imageList.size
 
-    override fun createFragment(position: Int): Fragment {
-        return ImageSlidePageFragment().apply {
-            this.imageUrl = imageList[position]
-        }
-    }
+    override fun createFragment(position: Int): Fragment = ImageSlidePageFragment.create(imageList[position])
 }

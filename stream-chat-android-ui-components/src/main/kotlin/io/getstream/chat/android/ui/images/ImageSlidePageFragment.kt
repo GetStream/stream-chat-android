@@ -8,11 +8,21 @@ import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.ImageLoader
 import io.getstream.chat.android.ui.databinding.StreamItemImageGalleryBinding
 
+private const val IMAGE_ID = "IMAGE_ID"
+
 public class ImageSlidePageFragment : Fragment() {
 
-    public var imageUrl: String? = null
-
     private lateinit var binding: StreamItemImageGalleryBinding
+
+    public companion object {
+        public fun create(imageUrl: String): Fragment {
+            return ImageSlidePageFragment().apply {
+                arguments = Bundle().apply {
+                    putString(IMAGE_ID, imageUrl)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,10 +37,6 @@ public class ImageSlidePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imageUrl?.let {
-            ImageLoader.run {
-                binding.ivImageItem.load(it)
-            }
-        }
+        ImageLoader.run { binding.attachmentImage.load(arguments?.getString(IMAGE_ID)) }
     }
 }
