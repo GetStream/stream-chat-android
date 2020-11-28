@@ -63,6 +63,7 @@ import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -109,15 +110,19 @@ internal class ChannelControllerImpl(
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
 
+    private val _messagesState: MutableStateFlow<ChannelController.MessagesState> = MutableStateFlow(ChannelController.MessagesState.NoQueryActive)
+    override val messagesState = _messagesState.asLiveData()
+
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
+    val sortedVisibleMessages = messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    override val messages: LiveData<List<Message>> = sortedVisibleMessages.asLiveData()
 
-    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
+    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages).asLiveData()
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): LiveData<List<Message>> {
+    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): Flow<List<Message>> {
         return messages.map { messageMap ->
             messageMap.values
                 .asSequence()
@@ -125,7 +130,7 @@ internal class ChannelControllerImpl(
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
-        }.asLiveData()
+        }
     }
 
     /** the number of people currently watching the channel */
@@ -410,6 +415,9 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+        if (pagination.isFirstPage()) {
+            _messagesState.value = ChannelController.MessagesState.Loading
+        }
         // first we load the data from room and update the messages and channel livedata
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
@@ -433,10 +441,15 @@ internal class ChannelControllerImpl(
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
+            } else if (response.isError && pagination.isFirstPage() && localChannel == null) {
+                _messagesState.value = ChannelController.MessagesState.Failed(response.error())
             }
             response
         } else {
             // if we are not offline we mark it as needing recovery
+            if (pagination.isFirstPage() && localChannel == null) {
+                _messagesState.value = ChannelController.MessagesState.OfflineNoResults
+            }
             recoveryNeeded = true
             Result(localChannel, null)
         }
@@ -1163,6 +1176,7 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
+        _messagesState.value = ChannelController.MessagesState.Result(sortedVisibleMessages.value)
         lastMessageAt.value = c.lastMessageAt
     }
 

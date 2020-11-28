@@ -244,17 +244,21 @@ internal class QueryChannelsControllerImpl(
         val output: Result<List<Channel>> = if (queryOnlineJob != null) {
             queryOnlineJob.await().also { result ->
                 if (result.isSuccess) {
+                    val onlineChannels: List<Channel> = result.data()
                     updateChannelsAndQueryResults(
-                        result.data(),
+                        onlineChannels,
                         pagination.isFirstPage
                     )
-                } else if (result.isError && pagination.isFirstPage) {
+                    _channelsState.value = QueryChannelsController.ChannelsState.Result(onlineChannels)
+                } else if (result.isError && pagination.isFirstPage && channels == null) {
                     _channelsState.value = QueryChannelsController.ChannelsState.Failed(result.error())
                 }
             }
         } else {
-            if (channels == null && pagination.isFirstPage) {
+            if (pagination.isFirstPage && channels.isNullOrEmpty()) {
                 _channelsState.value = QueryChannelsController.ChannelsState.OfflineNoResults
+            } else {
+                _channelsState.value = QueryChannelsController.ChannelsState.Result(channels!!)
             }
             recoveryNeeded = true
             channels?.let { Result(it) }
@@ -289,7 +293,6 @@ internal class QueryChannelsControllerImpl(
             } else {
                 addToQueryResult(cIds)
             }
-            _channelsState.value = QueryChannelsController.ChannelsState.Result(_sortedChannels.value)
         }
     }
 
