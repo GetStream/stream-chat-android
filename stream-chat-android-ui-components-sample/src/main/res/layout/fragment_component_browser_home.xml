@@ -153,6 +153,77 @@
                 />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/viewReactionsViewContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchViewContainer"
+            >
+
+            <TextView
+                android:id="@+id/viewReactionsViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="ViewReactionsView"
+                />
+
+            <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+                android:id="@+id/viewReactionsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editReactionsViewContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/viewReactionsViewContainer"
+            >
+
+            <TextView
+                android:id="@+id/editReactionsViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="EditReactionsView"
+                />
+
+            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+                android:id="@+id/editReactionsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

@@ -6,6 +6,14 @@ import io.getstream.chat.android.ui.R
 @SuppressWarnings("unused")
 internal object UiUtils {
 
+    private val reactionTypes: Map<String, Int> = mapOf(
+        ReactionType.LOVE.toString() to R.drawable.stream_ic_reaction_love,
+        ReactionType.THUMBS_UP.toString() to R.drawable.stream_ic_reaction_thumbs_up,
+        ReactionType.THUMBS_DOWN.toString() to R.drawable.stream_ic_reaction_thumbs_down,
+        ReactionType.LOL.toString() to R.drawable.stream_ic_reaction_lol,
+        ReactionType.WUT.toString() to R.drawable.stream_ic_reaction_wut
+    )
+
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
         ModelType.attach_mime_pdf to R.drawable.stream_ic_file_pdf,
         ModelType.attach_mime_csv to R.drawable.stream_ic_file_csv,
@@ -40,4 +48,18 @@ internal object UiUtils {
             else -> R.drawable.stream_ic_file
         }
     }
+
+    fun getReactionTypes(): Map<String, Int> {
+        return reactionTypes
+    }
+}
+
+public enum class ReactionType(private val reactionType: String) {
+    LOVE("love"),
+    THUMBS_UP("thumbs_up"),
+    THUMBS_DOWN("thumbs_down"),
+    LOL("lol"),
+    WUT("wut");
+
+    override fun toString(): String = reactionType
 }

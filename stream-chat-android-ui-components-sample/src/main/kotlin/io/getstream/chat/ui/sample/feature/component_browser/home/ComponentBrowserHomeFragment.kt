@@ -11,6 +11,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
 
@@ -47,6 +48,8 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
+        setupViewReactionsView()
+        setupEditReactionsView()
     }
 
     private fun setupAvatarView() {
@@ -77,6 +80,20 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
+        }
+    }
+
+    private fun setupViewReactionsView() {
+        binding.viewReactionsView.setMessage(randomMessage(reactionsSize = 30, ownReactionsSize = 1))
+        binding.viewReactionsViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)
+        }
+    }
+
+    private fun setupEditReactionsView() {
+        binding.editReactionsView.setMessage(randomMessage(reactionsSize = 30, ownReactionsSize = 2))
+        binding.editReactionsViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
         }
     }
 }

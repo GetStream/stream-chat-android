@@ -167,6 +167,14 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment"
             app:destination="@id/componentBrowserMessagesHeaderFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment"
+            app:destination="@id/componentBrowserViewReactionsFragment"
+            />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment"
+            app:destination="@id/componentBrowserEditReactionsFragment"
+            />
     </fragment>
 
     <fragment
@@ -191,6 +199,18 @@
         android:id="@+id/componentBrowserMessagesHeaderFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserViewReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserViewReactionsFragment"
+        android:label="ComponentBrowserViewReactionsViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserEditReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserEditReactionsFragment"
+        android:label="ComponentBrowserEditReactionsViewFragment"
         />
 
 </navigation>

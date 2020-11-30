@@ -48,4 +48,32 @@
     <!--Selected Attachments-->
     <dimen name="stream_selected_attachment_corner_radius">12dp</dimen>
     <dimen name="stream_selected_attachment_media_height">104dp</dimen>
+
+    <!--ViewReactionsView-->
+    <dimen name="stream_view_reactions_total_height">36dp</dimen>
+    <dimen name="stream_view_reactions_horizontal_padding">2dp</dimen>
+    <dimen name="stream_view_reactions_item_margin">4dp</dimen>
+    <dimen name="stream_view_reactions_item_size">16dp</dimen>
+    <dimen name="stream_view_reactions_bubble_height">24dp</dimen>
+    <dimen name="stream_view_reactions_bubble_radius">12dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_big_cy">22dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_big_radius">5dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_big_offset">5dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_small_cy">29dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_small_radius">3dp</dimen>
+    <dimen name="stream_view_reactions_tail_circle_small_offset">9dp</dimen>
+
+    <!--EditReactionsView-->
+    <dimen name="stream_edit_reactions_total_height">54dp</dimen>
+    <dimen name="stream_edit_reactions_horizontal_padding">8dp</dimen>
+    <dimen name="stream_edit_reactions_item_margin">8dp</dimen>
+    <dimen name="stream_edit_reactions_item_size">24dp</dimen>
+    <dimen name="stream_edit_reactions_bubble_height">40dp</dimen>
+    <dimen name="stream_edit_reactions_bubble_radius">20dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_big_cy">36dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_big_radius">8dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_big_offset">5dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_small_cy">48dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_small_radius">3dp</dimen>
+    <dimen name="stream_edit_reactions_tail_circle_small_offset">10dp</dimen>
 </resources>

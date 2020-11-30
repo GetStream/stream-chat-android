@@ -168,6 +168,34 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+    </declare-styleable>
 
+    <!--ReactionsView-->
+    <declare-styleable name="StreamReactionsViewStyle">
+        <attr name="streamViewReactionsTotalHeight" format="dimension" />
+        <attr name="streamViewReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamViewReactionsItemSize" format="dimension" />
+        <attr name="streamViewReactionsItemMargin" format="dimension" />
+        <attr name="streamViewReactionsBubbleHeight" format="dimension" />
+        <attr name="streamViewReactionsBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsTailCircleBigCy" format="dimension" />
+        <attr name="streamViewReactionsTailCircleBigRadius" format="dimension" />
+        <attr name="streamViewReactionsTailCircleBigOffset" format="dimension" />
+        <attr name="streamViewReactionsTailCircleSmallCy" format="dimension" />
+        <attr name="streamViewReactionsTailCircleSmallRadius" format="dimension" />
+        <attr name="streamViewReactionsTailCircleSmallOffset" format="dimension" />
+
+        <attr name="streamEditReactionsTotalHeight" format="dimension" />
+        <attr name="streamEditReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamEditReactionsItemSize" format="dimension" />
+        <attr name="streamEditReactionsItemMargin" format="dimension" />
+        <attr name="streamEditReactionsBubbleHeight" format="dimension" />
+        <attr name="streamEditReactionsBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsTailCircleBigCy" format="dimension" />
+        <attr name="streamEditReactionsTailCircleBigRadius" format="dimension" />
+        <attr name="streamEditReactionsTailCircleBigOffset" format="dimension" />
+        <attr name="streamEditReactionsTailCircleSmallCy" format="dimension" />
+        <attr name="streamEditReactionsTailCircleSmallRadius" format="dimension" />
+        <attr name="streamEditReactionsTailCircleSmallOffset" format="dimension" />
     </declare-styleable>
 </resources>
