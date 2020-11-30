@@ -28,7 +28,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:fontFamily="sans-serif-medium"
         android:textColor="@color/stream_black"
         android:textSize="@dimen/stream_text_large"
         app:layout_constraintBottom_toTopOf="@+id/messageLabel"
