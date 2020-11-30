@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
+import io.getstream.chat.android.ui.textinput.OnMessageSendButtonClickListener
+import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -48,8 +50,7 @@ class AddChannelFragment : Fragment() {
         val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
         binding.addChannelView.apply {
             messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-            // Will be bound when bindView available
-            // messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+            messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
             showMessageListView()
             hideUsersRecyclerView()
         }
@@ -113,6 +114,9 @@ class AddChannelFragment : Fragment() {
             }
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
+            }
+            messageInputView.onSendButtonClickListener = OnMessageSendButtonClickListener {
+                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }
     }

@@ -80,6 +80,8 @@ public class MessageInputView : ConstraintLayout {
 
     public var sendMessageHandler: MessageSendHandler = emptyMessageSendHandler
 
+    public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
+
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
     }
@@ -105,6 +107,8 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.ivSendMessageEnabled.setOnClickListener {
+            onSendButtonClickListener.onClick()
+
             inputMode.apply {
                 when (this) {
                     is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
@@ -429,4 +433,8 @@ public interface MessageSendHandler {
     )
 
     public fun editMessage(oldMessage: Message, newMessageText: String)
+}
+
+public fun interface OnMessageSendButtonClickListener {
+    public fun onClick()
 }
