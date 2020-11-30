@@ -50,6 +50,7 @@ internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId
     constructor(r: Reaction) : this(r.messageId, r.fetchUserId(), r.type) {
         score = r.score
         createdAt = r.createdAt
+        updatedAt = r.updatedAt
         // defend against GSON unsafe decoding/encoding
         extraData = r.extraData ?: mutableMapOf()
         syncStatus = r.syncStatus ?: SyncStatus.COMPLETED
@@ -63,6 +64,7 @@ internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId
         r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
         r.extraData = extraData ?: mutableMapOf()
         r.createdAt = createdAt
+        r.updatedAt = updatedAt
         r.syncStatus = syncStatus ?: SyncStatus.COMPLETED
 
         return r
