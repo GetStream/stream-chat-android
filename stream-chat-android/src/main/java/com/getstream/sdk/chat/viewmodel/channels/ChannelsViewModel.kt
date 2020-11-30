@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
-/***
+/**
  * ViewModel class for [com.getstream.sdk.chat.view.channels.ChannelsView].
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelsViewModel.bindView] function.
