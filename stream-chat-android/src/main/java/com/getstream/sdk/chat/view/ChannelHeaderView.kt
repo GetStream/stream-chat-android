@@ -21,7 +21,7 @@ public class ChannelHeaderView @JvmOverloads constructor(
     private val binding: StreamViewChannelHeaderBinding
     private val style: ChannelHeaderViewStyle
 
-    /***
+    /**
      * Callback invoked when the header's back button is clicked.
      */
     public var onBackClick: () -> Unit = { }

@@ -16,7 +16,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
 
-/***
+/**
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
@@ -41,13 +41,13 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _channel = MediatorLiveData<Channel>()
     public val channel: LiveData<Channel> = _channel
 
-    /***
+    /**
      * Whether the user is viewing a thread
      * @see Mode
      */
     public val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
 
-    /***
+    /**
      * Current message list state
      * @see State
      */
@@ -126,7 +126,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
-    /***
+    /**
      * Handles an [event] coming from the View layer
      * @see Event
      */
