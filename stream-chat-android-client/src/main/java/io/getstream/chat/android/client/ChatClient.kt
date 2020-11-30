@@ -545,9 +545,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    public fun getVersion(): String {
-        return BuildConfig.STREAM_CHAT_CLIENT_VERSION + "-" + BuildConfig.BUILD_TYPE
-    }
+    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_CLIENT_VERSION
 
     public fun acceptInvite(
         channelType: String,
@@ -905,6 +903,7 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        private const val VERSION_PREFIX = "stream-chat-android-"
         private var instance: ChatClient? = null
 
         @JvmField
