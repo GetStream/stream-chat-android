@@ -5,7 +5,7 @@ package com.getstream.sdk.chat.viewmodel.channels
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
-/***
+/**
  * Binds [ChannelsView] with [ChannelsViewModel], updating the view's state
  * based on data provided by the ViewModel, and forwarding View events to
  * the ViewModel, to load more channels as the View is scrolled.
