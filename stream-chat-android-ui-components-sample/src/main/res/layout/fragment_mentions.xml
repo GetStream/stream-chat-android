@@ -5,12 +5,14 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.textinput.MessageInputView
+    <io.getstream.chat.android.ui.mentions.MentionsListView
+        android:id="@+id/mentionsListView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/home_bottom_nav_mentions"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
