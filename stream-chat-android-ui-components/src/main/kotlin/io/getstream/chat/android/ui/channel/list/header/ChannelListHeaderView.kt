@@ -83,11 +83,13 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.offlineProgressBar.apply {
             isVisible =
                 typedArray.getBoolean(R.styleable.StreamChannelListHeaderView_streamShowOfflineProgressBar, true)
-            indeterminateTintList =
-                typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamOfflineProgressBarTint)
-                    ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
+            indeterminateTintList = getProgressBarTint(typedArray)
         }
     }
+
+    private fun getProgressBarTint(typedArray: TypedArray) =
+        typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamOfflineProgressBarTint)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
@@ -112,11 +114,13 @@ public class ChannelListHeaderView : ConstraintLayout {
                 ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
             icon = typedArray.getDrawable(R.styleable.StreamChannelListHeaderView_streamAddChannelButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_pen)
-            backgroundTintList =
-                typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelBackgroundTint)
-                    ?: ContextCompat.getColorStateList(context, R.color.stream_white)
+            backgroundTintList = getBackgroundTint(typedArray)
         }
     }
+
+    private fun getBackgroundTint(typedArray: TypedArray) =
+        typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelBackgroundTint)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_white)
 
     private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(

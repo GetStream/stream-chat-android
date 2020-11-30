@@ -19,10 +19,7 @@ public class PermissionChecker {
 
     public fun isGrantedStoragePermissions(context: Context): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     public fun isGrantedCameraPermissions(context: Context): Boolean =
