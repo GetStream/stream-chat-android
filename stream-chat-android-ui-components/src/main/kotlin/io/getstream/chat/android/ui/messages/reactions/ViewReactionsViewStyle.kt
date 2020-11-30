@@ -6,7 +6,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.use
 
-public class ViewReactionsViewStyle internal constructor(
+internal class ViewReactionsViewStyle constructor(
     context: Context,
     attrs: AttributeSet?
 ) : ReactionsViewStyle() {
@@ -18,53 +18,53 @@ public class ViewReactionsViewStyle internal constructor(
             0,
             0
         ).use {
-            reactionsTotalHeight = it.getDimensionPixelSize(
+            totalHeight = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsTotalHeight,
                 context.getDimension(R.dimen.stream_view_reactions_total_height)
             )
-            reactionsHorizontalPadding = it.getDimensionPixelSize(
+            horizontalPadding = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsHorizontalPadding,
                 context.getDimension(R.dimen.stream_view_reactions_horizontal_padding)
             )
-            reactionsItemSize = it.getDimensionPixelSize(
+            itemSize = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamEditReactionsItemSize,
                 context.getDimension(R.dimen.stream_view_reactions_item_size)
             )
-            reactionsItemMargin = it.getDimensionPixelSize(
+            itemMargin = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamEditReactionsItemMargin,
                 context.getDimension(R.dimen.stream_view_reactions_item_margin)
             )
-            reactionsBubbleHeight = it.getDimensionPixelSize(
+            bubbleHeight = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleHeight,
                 context.getDimension(R.dimen.stream_view_reactions_bubble_height)
             )
-            reactionsBubbleRadius = it.getDimensionPixelSize(
+            bubbleRadius = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleRadius,
                 context.getDimension(R.dimen.stream_view_reactions_bubble_radius)
             )
-            reactionsBigTailCircleCy = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleBigCy,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_big_cy)
+            largeTailBubbleCy = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsLargeTailBubbleCy,
+                context.getDimension(R.dimen.stream_view_reactions_large_tail_bubble_cy)
             )
-            reactionsBigTailCircleRadius = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleBigRadius,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_big_radius)
+            largeTailBubbleRadius = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsLargeTailBubbleRadius,
+                context.getDimension(R.dimen.stream_view_reactions_large_tail_bubble_radius)
             )
-            reactionsBigTailCircleOffset = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleBigOffset,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_big_offset)
+            largeTailBubbleOffset = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsLargeTailBubbleOffset,
+                context.getDimension(R.dimen.stream_view_reactions_large_tail_bubble_offset)
             )
-            reactionsSmallTailCircleCy = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleSmallCy,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_small_cy)
+            smallTailBubbleCy = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsSmallTailBubbleCy,
+                context.getDimension(R.dimen.stream_view_reactions_small_tail_bubble_cy)
             )
-            reactionsSmallTailCircleRadius = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleSmallRadius,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_small_radius)
+            smallTailBubbleRadius = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsSmallTailBubbleRadius,
+                context.getDimension(R.dimen.stream_view_reactions_small_tail_bubble_radius)
             )
-            reactionsSmallTailCircleOffset = it.getDimensionPixelSize(
-                R.styleable.StreamReactionsViewStyle_streamViewReactionsTailCircleSmallOffset,
-                context.getDimension(R.dimen.stream_view_reactions_tail_circle_small_offset)
+            smallTailBubbleOffset = it.getDimensionPixelSize(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsSmallTailBubbleOffset,
+                context.getDimension(R.dimen.stream_view_reactions_small_tail_bubble_offset)
             )
         }
     }

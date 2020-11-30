@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.models.Reaction
 
 public abstract class ReactionsView : RecyclerView {
 
-    protected lateinit var reactionsViewStyle: ReactionsViewStyle
+    internal lateinit var reactionsViewStyle: ReactionsViewStyle
 
     private lateinit var reactionsAdapter: ReactionsAdapter
     private var isMyMessage: Boolean = false
@@ -33,11 +33,11 @@ public abstract class ReactionsView : RecyclerView {
         init()
     }
 
-    public fun setStyle(reactionsViewStyle: ReactionsViewStyle) {
+    internal fun setStyle(reactionsViewStyle: ReactionsViewStyle) {
         this.reactionsViewStyle = reactionsViewStyle
 
-        minimumHeight = reactionsViewStyle.reactionsTotalHeight
-        val horizontalPadding = reactionsViewStyle.reactionsHorizontalPadding
+        minimumHeight = reactionsViewStyle.totalHeight
+        val horizontalPadding = reactionsViewStyle.horizontalPadding
         setPadding(horizontalPadding, 0, horizontalPadding, 0)
 
         adapter = ReactionsAdapter(reactionsViewStyle) {
@@ -61,9 +61,9 @@ public abstract class ReactionsView : RecyclerView {
         drawReactionsBubble(canvas, isMyMessage)
     }
 
-    protected abstract fun drawReactionsBubble(canvas: Canvas, isMine: Boolean)
+    protected abstract fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean)
 
-    protected abstract fun createReactionItems(
+    internal abstract fun createReactionItems(
         message: Message,
         isMyMessage: Boolean
     ): List<ReactionsAdapter.ReactionItem>

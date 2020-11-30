@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
-public class ReactionsAdapter(
+internal class ReactionsAdapter(
     private val reactionsViewStyle: ReactionsViewStyle,
     private val reactionClickListener: ReactionsView.ReactionClickListener
 ) : ListAdapter<ReactionsAdapter.ReactionItem, ReactionsAdapter.ReactionViewHolder>(DIFF_CALLBACK) {
@@ -28,7 +28,7 @@ public class ReactionsAdapter(
         holder.bind(getItem(position))
     }
 
-    public class ReactionViewHolder(
+    class ReactionViewHolder(
         private val binding: StreamItemMessageReactionBinding,
         reactionsViewStyle: ReactionsViewStyle,
         private val reactionClickListener: ReactionsView.ReactionClickListener
@@ -37,8 +37,8 @@ public class ReactionsAdapter(
         private lateinit var reactionItem: ReactionItem
 
         init {
-            val itemSize: Int = reactionsViewStyle.reactionsItemSize
-            val itemMargin: Int = reactionsViewStyle.reactionsItemMargin
+            val itemSize: Int = reactionsViewStyle.itemSize
+            val itemMargin: Int = reactionsViewStyle.itemMargin
             binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = itemMargin
                 rightMargin = itemMargin
@@ -52,7 +52,7 @@ public class ReactionsAdapter(
             }
         }
 
-        public fun bind(reactionItem: ReactionItem) {
+        fun bind(reactionItem: ReactionItem) {
             this.reactionItem = reactionItem
             bindReactionIcon(reactionItem)
             bindReactionAffiliation(reactionItem)
@@ -79,13 +79,13 @@ public class ReactionsAdapter(
         }
     }
 
-    public data class ReactionItem(
+    data class ReactionItem(
         val reaction: Reaction,
         val isMine: Boolean
     )
 
-    public companion object {
-        public val DIFF_CALLBACK: DiffUtil.ItemCallback<ReactionItem> =
+    private companion object {
+        private val DIFF_CALLBACK: DiffUtil.ItemCallback<ReactionItem> =
             object : DiffUtil.ItemCallback<ReactionItem>() {
                 override fun areItemsTheSame(oldItem: ReactionItem, newItem: ReactionItem): Boolean {
                     return oldItem.reaction.messageId == newItem.reaction.messageId &&

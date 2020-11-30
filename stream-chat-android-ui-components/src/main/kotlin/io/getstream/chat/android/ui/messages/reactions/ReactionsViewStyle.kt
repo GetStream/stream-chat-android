@@ -1,28 +1,28 @@
 package io.getstream.chat.android.ui.messages.reactions
 
-public abstract class ReactionsViewStyle {
-    public var reactionsTotalHeight: Int = 0
+internal abstract class ReactionsViewStyle {
+    var totalHeight: Int = 0
         protected set
-    public var reactionsHorizontalPadding: Int = 0
+    var horizontalPadding: Int = 0
         protected set
-    public var reactionsItemSize: Int = 0
+    var itemSize: Int = 0
         protected set
-    public var reactionsItemMargin: Int = 0
+    var itemMargin: Int = 0
         protected set
-    public var reactionsBubbleHeight: Int = 0
+    var bubbleHeight: Int = 0
         protected set
-    public var reactionsBubbleRadius: Int = 0
+    var bubbleRadius: Int = 0
         protected set
-    public var reactionsBigTailCircleCy: Int = 0
+    var largeTailBubbleCy: Int = 0
         protected set
-    public var reactionsBigTailCircleRadius: Int = 0
+    var largeTailBubbleRadius: Int = 0
         protected set
-    public var reactionsBigTailCircleOffset: Int = 0
+    var largeTailBubbleOffset: Int = 0
         protected set
-    public var reactionsSmallTailCircleCy: Int = 0
+    var smallTailBubbleCy: Int = 0
         protected set
-    public var reactionsSmallTailCircleRadius: Int = 0
+    var smallTailBubbleRadius: Int = 0
         protected set
-    public var reactionsSmallTailCircleOffset: Int = 0
+    var smallTailBubbleOffset: Int = 0
         protected set
 }

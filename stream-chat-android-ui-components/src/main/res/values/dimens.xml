@@ -56,12 +56,12 @@
     <dimen name="stream_view_reactions_item_size">16dp</dimen>
     <dimen name="stream_view_reactions_bubble_height">24dp</dimen>
     <dimen name="stream_view_reactions_bubble_radius">12dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_big_cy">22dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_big_radius">5dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_big_offset">5dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_small_cy">29dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_small_radius">3dp</dimen>
-    <dimen name="stream_view_reactions_tail_circle_small_offset">9dp</dimen>
+    <dimen name="stream_view_reactions_large_tail_bubble_cy">22dp</dimen>
+    <dimen name="stream_view_reactions_large_tail_bubble_radius">5dp</dimen>
+    <dimen name="stream_view_reactions_large_tail_bubble_offset">5dp</dimen>
+    <dimen name="stream_view_reactions_small_tail_bubble_cy">29dp</dimen>
+    <dimen name="stream_view_reactions_small_tail_bubble_radius">3dp</dimen>
+    <dimen name="stream_view_reactions_small_tail_bubble_offset">9dp</dimen>
 
     <!--EditReactionsView-->
     <dimen name="stream_edit_reactions_total_height">54dp</dimen>
@@ -70,10 +70,10 @@
     <dimen name="stream_edit_reactions_item_size">24dp</dimen>
     <dimen name="stream_edit_reactions_bubble_height">40dp</dimen>
     <dimen name="stream_edit_reactions_bubble_radius">20dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_big_cy">36dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_big_radius">8dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_big_offset">5dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_small_cy">48dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_small_radius">3dp</dimen>
-    <dimen name="stream_edit_reactions_tail_circle_small_offset">10dp</dimen>
+    <dimen name="stream_edit_reactions_large_tail_bubble_cy">36dp</dimen>
+    <dimen name="stream_edit_reactions_large_tail_bubble_radius">8dp</dimen>
+    <dimen name="stream_edit_reactions_large_tail_bubble_offset">5dp</dimen>
+    <dimen name="stream_edit_reactions_small_tail_bubble_cy">48dp</dimen>
+    <dimen name="stream_edit_reactions_small_tail_bubble_radius">3dp</dimen>
+    <dimen name="stream_edit_reactions_small_tail_bubble_offset">10dp</dimen>
 </resources>

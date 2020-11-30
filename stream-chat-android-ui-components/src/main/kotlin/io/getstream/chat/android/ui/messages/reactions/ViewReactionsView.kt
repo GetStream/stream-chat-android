@@ -69,7 +69,7 @@ public class ViewReactionsView : ReactionsView {
         val horizontalPadding = if (message.latestReactions.size == 1) {
             0
         } else {
-            reactionsViewStyle.reactionsHorizontalPadding
+            reactionsViewStyle.horizontalPadding
         }
         setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
@@ -77,8 +77,8 @@ public class ViewReactionsView : ReactionsView {
     override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean) {
         val path = Path().apply {
             op(createBubbleRoundRectPath(), Path.Op.UNION)
-            op(createBiggerTailCirclePath(isMyMessage), Path.Op.UNION)
-            op(createSmallerTailCirclePath(isMyMessage), Path.Op.UNION)
+            op(createLargeTailBubblePath(isMyMessage), Path.Op.UNION)
+            op(createSmallTailBubblePath(isMyMessage), Path.Op.UNION)
         }
         if (isMyMessage) {
             canvas.drawPath(path, myMessageReactionsBubblePaint)
@@ -94,37 +94,37 @@ public class ViewReactionsView : ReactionsView {
                 0f,
                 0f,
                 width.toFloat(),
-                reactionsViewStyle.reactionsBubbleHeight.toFloat(),
-                reactionsViewStyle.reactionsBubbleRadius.toFloat(),
-                reactionsViewStyle.reactionsBubbleRadius.toFloat(),
+                reactionsViewStyle.bubbleHeight.toFloat(),
+                reactionsViewStyle.bubbleRadius.toFloat(),
+                reactionsViewStyle.bubbleRadius.toFloat(),
                 Path.Direction.CW
             )
         }
     }
 
-    private fun createBiggerTailCirclePath(isMyMessage: Boolean): Path {
-        val offset = reactionsViewStyle.reactionsBigTailCircleOffset.toFloat().let {
+    private fun createLargeTailBubblePath(isMyMessage: Boolean): Path {
+        val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
             if (isMyMessage) it else -it
         }
         return Path().apply {
             addCircle(
                 width / 2 + offset,
-                reactionsViewStyle.reactionsBigTailCircleCy.toFloat(),
-                reactionsViewStyle.reactionsBigTailCircleRadius.toFloat(),
+                reactionsViewStyle.largeTailBubbleCy.toFloat(),
+                reactionsViewStyle.largeTailBubbleRadius.toFloat(),
                 Path.Direction.CW
             )
         }
     }
 
-    private fun createSmallerTailCirclePath(isMyMessage: Boolean): Path {
-        val offset = reactionsViewStyle.reactionsSmallTailCircleOffset.toFloat().let {
+    private fun createSmallTailBubblePath(isMyMessage: Boolean): Path {
+        val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
             if (isMyMessage) it else -it
         }
         return Path().apply {
             addCircle(
                 width / 2 + offset,
-                reactionsViewStyle.reactionsSmallTailCircleCy.toFloat(),
-                reactionsViewStyle.reactionsSmallTailCircleRadius.toFloat(),
+                reactionsViewStyle.smallTailBubbleCy.toFloat(),
+                reactionsViewStyle.smallTailBubbleRadius.toFloat(),
                 Path.Direction.CW
             )
         }

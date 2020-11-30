@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.ui.utils.UiUtils
 
 public class EditReactionsView : ReactionsView {
-    private val bubblePaint = Paint().apply {
+    private val bubblePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = Color.WHITE
     }
@@ -45,8 +45,8 @@ public class EditReactionsView : ReactionsView {
 
     override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean) {
         drawBubbleRoundRect(canvas)
-        drawTailBiggerCircle(canvas, isMyMessage)
-        drawTailSmallerCircle(canvas, isMyMessage)
+        drawLargeTailBubble(canvas, isMyMessage)
+        drawSmallTailBubble(canvas, isMyMessage)
     }
 
     private fun drawBubbleRoundRect(canvas: Canvas) {
@@ -54,33 +54,33 @@ public class EditReactionsView : ReactionsView {
             0f,
             0f,
             width.toFloat(),
-            reactionsViewStyle.reactionsBubbleHeight.toFloat(),
-            reactionsViewStyle.reactionsBubbleRadius.toFloat(),
-            reactionsViewStyle.reactionsBubbleRadius.toFloat(),
+            reactionsViewStyle.bubbleHeight.toFloat(),
+            reactionsViewStyle.bubbleRadius.toFloat(),
+            reactionsViewStyle.bubbleRadius.toFloat(),
             bubblePaint
         )
     }
 
-    private fun drawTailBiggerCircle(canvas: Canvas, isMyMessage: Boolean) {
-        val offset = reactionsViewStyle.reactionsBigTailCircleOffset.toFloat().let {
+    private fun drawLargeTailBubble(canvas: Canvas, isMyMessage: Boolean) {
+        val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
             if (isMyMessage) it else -it
         }
         canvas.drawCircle(
             (width / 2).toFloat() + offset,
-            reactionsViewStyle.reactionsBigTailCircleCy.toFloat(),
-            reactionsViewStyle.reactionsBigTailCircleRadius.toFloat(),
+            reactionsViewStyle.largeTailBubbleCy.toFloat(),
+            reactionsViewStyle.largeTailBubbleRadius.toFloat(),
             bubblePaint
         )
     }
 
-    private fun drawTailSmallerCircle(canvas: Canvas, isMyMessage: Boolean) {
-        val offset = reactionsViewStyle.reactionsSmallTailCircleOffset.toFloat().let {
+    private fun drawSmallTailBubble(canvas: Canvas, isMyMessage: Boolean) {
+        val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
             if (isMyMessage) it else -it
         }
         canvas.drawCircle(
             width / 2 + offset,
-            reactionsViewStyle.reactionsSmallTailCircleCy.toFloat(),
-            reactionsViewStyle.reactionsSmallTailCircleRadius.toFloat(),
+            reactionsViewStyle.smallTailBubbleCy.toFloat(),
+            reactionsViewStyle.smallTailBubbleRadius.toFloat(),
             bubblePaint
         )
     }

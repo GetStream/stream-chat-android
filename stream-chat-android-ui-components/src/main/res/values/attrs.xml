@@ -178,12 +178,12 @@
         <attr name="streamViewReactionsItemMargin" format="dimension" />
         <attr name="streamViewReactionsBubbleHeight" format="dimension" />
         <attr name="streamViewReactionsBubbleRadius" format="dimension" />
-        <attr name="streamViewReactionsTailCircleBigCy" format="dimension" />
-        <attr name="streamViewReactionsTailCircleBigRadius" format="dimension" />
-        <attr name="streamViewReactionsTailCircleBigOffset" format="dimension" />
-        <attr name="streamViewReactionsTailCircleSmallCy" format="dimension" />
-        <attr name="streamViewReactionsTailCircleSmallRadius" format="dimension" />
-        <attr name="streamViewReactionsTailCircleSmallOffset" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleOffset" format="dimension" />
 
         <attr name="streamEditReactionsTotalHeight" format="dimension" />
         <attr name="streamEditReactionsHorizontalPadding" format="dimension" />
@@ -191,11 +191,11 @@
         <attr name="streamEditReactionsItemMargin" format="dimension" />
         <attr name="streamEditReactionsBubbleHeight" format="dimension" />
         <attr name="streamEditReactionsBubbleRadius" format="dimension" />
-        <attr name="streamEditReactionsTailCircleBigCy" format="dimension" />
-        <attr name="streamEditReactionsTailCircleBigRadius" format="dimension" />
-        <attr name="streamEditReactionsTailCircleBigOffset" format="dimension" />
-        <attr name="streamEditReactionsTailCircleSmallCy" format="dimension" />
-        <attr name="streamEditReactionsTailCircleSmallRadius" format="dimension" />
-        <attr name="streamEditReactionsTailCircleSmallOffset" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleOffset" format="dimension" />
     </declare-styleable>
 </resources>
