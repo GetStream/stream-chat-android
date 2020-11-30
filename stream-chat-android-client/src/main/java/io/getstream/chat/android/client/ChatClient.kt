@@ -58,7 +58,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
-/***
+/**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 public class ChatClient internal constructor(
@@ -111,7 +111,7 @@ public class ChatClient internal constructor(
 
     //region Set user
 
-    /***
+    /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      *
      * @see ChatClient.setUser with [TokenProvider] for advanced use cases
@@ -120,7 +120,7 @@ public class ChatClient internal constructor(
         setUser(user, ImmediateTokenProvider(token), listener)
     }
 
-    /***
+    /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
@@ -279,7 +279,7 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(listener = listener)
     }
 
-    /***
+    /**
      * Subscribes to the specific [eventTypes] of the client.
      *
      * @see [io.getstream.chat.android.client.models.EventType] for type constants
@@ -294,7 +294,7 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
-    /***
+    /**
      * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
@@ -325,7 +325,7 @@ public class ChatClient internal constructor(
         return disposable
     }
 
-    /***
+    /**
      * Subscribes to the specific [eventTypes] of the client.
      */
     public fun subscribeFor(
@@ -338,7 +338,7 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
-    /***
+    /**
      * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
@@ -369,7 +369,7 @@ public class ChatClient internal constructor(
         return disposable
     }
 
-    /***
+    /**
      * Subscribes for the next event with the given [eventType].
      */
     public fun subscribeForSingle(
@@ -382,7 +382,7 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribeSingle(filter, listener)
     }
 
-    /***
+    /**
      * Subscribes for the next event with the given [eventType].
      */
     public fun <T : ChatEvent> subscribeForSingle(
@@ -545,9 +545,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    public fun getVersion(): String {
-        return BuildConfig.STREAM_CHAT_CLIENT_VERSION + "-" + BuildConfig.BUILD_TYPE
-    }
+    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_CLIENT_VERSION
 
     public fun acceptInvite(
         channelType: String,
@@ -685,7 +683,7 @@ public class ChatClient internal constructor(
         }
     }
 
-    /***
+    /**
      * Returns a [ChannelClient] for given type and id
      *
      * @param channelType the channel type. ie messaging
@@ -695,7 +693,7 @@ public class ChatClient internal constructor(
         return ChannelClient(channelType, channelId, this)
     }
 
-    /***
+    /**
      * Returns a [ChannelClient] for given cid
      *
      * @param cid the full channel id. ie messaging:123
@@ -905,6 +903,7 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        private const val VERSION_PREFIX = "stream-chat-android-"
         private var instance: ChatClient? = null
 
         @JvmField

@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Last
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
-/***
+/**
  * Binds [MessageListView] with [MessageListViewModel].
  * Sets the View's handlers and displays new messages based on the ViewModel's state.
  */

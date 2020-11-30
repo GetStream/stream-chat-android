@@ -168,6 +168,10 @@
             app:destination="@id/componentBrowserMessagesHeaderFragment"
             />
         <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment"
+            app:destination="@id/componentBrowserMessagePreviewViewFragment"
+            />
+        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
             app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
@@ -206,5 +210,11 @@
             app:argType="string[]"
             />
     </fragment>
+
+    <fragment
+        android:id="@+id/componentBrowserMessagePreviewViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messagepreview.ComponentBrowserMessagePreviewFragment"
+        android:label="ComponentBrowserMessagePreviewView"
+        />
 
 </navigation>
