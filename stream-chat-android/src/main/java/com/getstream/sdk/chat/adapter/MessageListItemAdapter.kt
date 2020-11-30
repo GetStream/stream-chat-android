@@ -38,6 +38,43 @@ internal class MessageListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
-        holder.bindListItem(getItem(position))
+        holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+    }
+
+    override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int, payloads: MutableList<Any>) {
+        val diff = (
+            payloads
+                .filterIsInstance<MessageListItemPayloadDiff>()
+                .takeIf { it.isNotEmpty() }
+                ?: listOf(FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+            )
+            .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
+                acc + messageListItemPayloadDiff
+            }
+
+        holder.bindListItem(getItem(position), diff)
+    }
+
+    companion object {
+        private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
+            text = true,
+            reactions = true,
+            attachments = true,
+            replies = true,
+            syncStatus = true,
+            deleted = true,
+            positions = true,
+            readBy = true
+        )
+        private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
+            text = false,
+            reactions = false,
+            attachments = false,
+            replies = false,
+            syncStatus = false,
+            deleted = false,
+            positions = false,
+            readBy = false
+        )
     }
 }
