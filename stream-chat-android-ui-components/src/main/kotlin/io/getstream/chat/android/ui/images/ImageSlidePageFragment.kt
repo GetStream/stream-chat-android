@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.ImageLoader.load
 import io.getstream.chat.android.ui.databinding.StreamItemImageGalleryBinding
 
 private const val IMAGE_ID = "IMAGE_ID"
@@ -37,6 +37,6 @@ public class ImageSlidePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ImageLoader.run { binding.attachmentImage.load(arguments?.getString(IMAGE_ID)) }
+        binding.attachmentImage.load(arguments?.getString(IMAGE_ID))
     }
 }
