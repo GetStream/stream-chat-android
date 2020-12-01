@@ -42,7 +42,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
-            TODO("Not yet implemented")
+            viewModel.editMessage(oldMessage.copy( text = newMessageText))
         }
     }
 
@@ -51,6 +51,12 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             view.inputMode = MessageInputView.InputMode.Thread(it)
         } else {
             view.inputMode = MessageInputView.InputMode.Normal
+        }
+    }
+
+    editMessage.observe(lifecycleOwner) { message ->
+        message?.let {
+            view.inputMode = MessageInputView.InputMode.Edit(it)
         }
     }
 }

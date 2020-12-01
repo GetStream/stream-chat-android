@@ -75,6 +75,7 @@ public class MessageInputView : ConstraintLayout {
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
+        configText()
     }
 
     public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
@@ -108,6 +109,16 @@ public class MessageInputView : ConstraintLayout {
         configClearAttachmentsButton()
         configAttachmentButtonBehavior()
         configSendButtonListener()
+        configText()
+    }
+
+    private fun configText() {
+        inputMode.let {
+            messageText = when (it) {
+                is InputMode.Edit -> it.oldMessage.text
+                else -> ""
+            }
+        }
     }
 
     private fun configSendButtonListener() {
@@ -124,7 +135,7 @@ public class MessageInputView : ConstraintLayout {
                             binding.sendAlsoToChannel.isChecked
                         )
                     }
-                    is InputMode.Edit -> TODO("Not supported yet")
+                    is InputMode.Edit -> sendMessageHandler.editMessage(it.oldMessage, messageText)
                 }
             }
 
