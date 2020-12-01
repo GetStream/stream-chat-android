@@ -101,7 +101,7 @@ class AddChannelView : FrameLayout {
     }
 
     fun setOnCreateGroupButtonListener(listener: CreateGroupButtonClickListener) {
-        binding.createGroupButton.setOnClickListener { listener.onButtonClick() }
+        binding.createGroupContainer.setOnClickListener { listener.onButtonClick() }
     }
 
     fun hideLoadingView() {
