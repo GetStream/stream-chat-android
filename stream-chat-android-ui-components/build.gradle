@@ -22,12 +22,12 @@ android {
     compileSdkVersion Configuration.compileSdkVersion
 
     defaultConfig {
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
         versionName Configuration.versionName
 
         buildConfigField 'String', 'STREAM_CHAT_UI_COMPONENTS_VERSION', "\"$version\""
 
-        minSdkVersion Configuration.minSdkVersion
-        targetSdkVersion Configuration.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -36,9 +36,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     testOptions {
@@ -58,11 +62,6 @@ android {
         all {
             it.java.srcDir "src/$it.name/kotlin"
         }
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-        noStdlib = true
     }
 }
 
