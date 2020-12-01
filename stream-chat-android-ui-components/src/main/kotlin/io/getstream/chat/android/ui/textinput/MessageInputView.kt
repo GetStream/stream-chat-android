@@ -110,16 +110,17 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageEnabled.setOnClickListener {
             onSendButtonClickListener.onClick()
 
-            inputMode.apply {
-                when (this) {
+            inputMode.let {
+                when (it) {
                     is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
                     is InputMode.Thread -> {
                         sendMessageHandler.sendToThread(
-                            parentMessage,
+                            it.parentMessage,
                             messageText,
                             binding.sendAlsoToChannel.isChecked
                         )
                     }
+                    is InputMode.Edit -> TODO("Not supported yet")
                 }
             }
 
