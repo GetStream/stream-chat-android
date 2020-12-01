@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.databinding.StreamItemMessageDeletedBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.SpaceDecorator
 
 public class MessageDeletedViewHolder(
     parent: ViewGroup,
@@ -18,7 +19,7 @@ public class MessageDeletedViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    private val decorators = listOf<Decorator>(BackgroundDecorator())
+    private val decorators = listOf<Decorator>(BackgroundDecorator(), SpaceDecorator())
 
     override fun bind(data: MessageListItem.MessageItem) {
         decorators.forEach { it.decorate(this, data) }

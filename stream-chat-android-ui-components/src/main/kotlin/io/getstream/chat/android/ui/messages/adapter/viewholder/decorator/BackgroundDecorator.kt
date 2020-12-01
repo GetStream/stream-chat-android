@@ -11,19 +11,11 @@ import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.Utils.dpToPx
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
-import io.getstream.chat.android.ui.utils.extensions.exhaustive
 
-internal class BackgroundDecorator : Decorator {
-    override fun <T : MessageListItem> decorate(viewHolder: BaseMessageItemViewHolder<T>, data: T) {
-        when (viewHolder) {
-            is MessageDeletedViewHolder -> decorateMessageDeleted(viewHolder, data as MessageListItem.MessageItem)
-            else -> Unit
-        }.exhaustive
-    }
+internal class BackgroundDecorator : BaseDecorator() {
 
-    private fun decorateMessageDeleted(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateMessageDeleted(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
         val context = viewHolder.itemView.context
         val backgroundColor = ContextCompat.getColor(context, MESSAGE_DELETED_BACKGROUND)
         val radius = dpToPx(DEFAULT_CORNER_RADIUS.toInt()).toFloat()
