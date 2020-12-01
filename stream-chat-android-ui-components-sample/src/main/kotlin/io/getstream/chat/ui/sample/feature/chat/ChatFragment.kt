@@ -19,8 +19,9 @@ import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 
 class ChatFragment : Fragment() {
 
-    private val cid: String by lazy { navArgs<ChatFragmentArgs>().value.cid }
-    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(cid) }
+    private val args: ChatFragmentArgs by navArgs()
+
+    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val inputListViewModel: MessageInputViewModel by viewModels { factory }
@@ -32,7 +33,7 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
