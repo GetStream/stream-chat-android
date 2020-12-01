@@ -211,4 +211,9 @@
         <attr name="streamEditReactionsSmallTailBubbleRadius" format="dimension" />
         <attr name="streamEditReactionsSmallTailBubbleOffset" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="StreamAttachmentGalleryView">
+        <attr name="streamCountText" format="string"/>
+        <attr name="streamCountTextColor" format="color|reference"/>
+    </declare-styleable>
 </resources>

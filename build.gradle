@@ -34,6 +34,12 @@ allprojects {
         google()
         jcenter()
         mavenLocal()
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeModule("com.github.chrisbanes", "PhotoView")
+            }
+        }
     }
 }
 
