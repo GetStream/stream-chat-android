@@ -43,10 +43,10 @@ public class EditReactionsView : ReactionsView {
         }
     }
 
-    override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean) {
+    override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean, isMirrored: Boolean) {
         drawBubbleRoundRect(canvas)
-        drawLargeTailBubble(canvas, isMyMessage)
-        drawSmallTailBubble(canvas, isMyMessage)
+        drawLargeTailBubble(canvas, isMirrored)
+        drawSmallTailBubble(canvas, isMirrored)
     }
 
     private fun drawBubbleRoundRect(canvas: Canvas) {
@@ -61,9 +61,9 @@ public class EditReactionsView : ReactionsView {
         )
     }
 
-    private fun drawLargeTailBubble(canvas: Canvas, isMyMessage: Boolean) {
+    private fun drawLargeTailBubble(canvas: Canvas, isMirrored: Boolean) {
         val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
-            if (isMyMessage) it else -it
+            if (isMirrored) it else -it
         }
         canvas.drawCircle(
             (width / 2).toFloat() + offset,
@@ -73,9 +73,9 @@ public class EditReactionsView : ReactionsView {
         )
     }
 
-    private fun drawSmallTailBubble(canvas: Canvas, isMyMessage: Boolean) {
+    private fun drawSmallTailBubble(canvas: Canvas, isMirrored: Boolean) {
         val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
-            if (isMyMessage) it else -it
+            if (isMirrored) it else -it
         }
         canvas.drawCircle(
             width / 2 + offset,

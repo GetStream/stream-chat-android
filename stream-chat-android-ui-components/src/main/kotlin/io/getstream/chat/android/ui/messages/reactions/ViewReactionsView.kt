@@ -76,11 +76,11 @@ public class ViewReactionsView : ReactionsView {
         setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
-    override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean) {
+    override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean, isMirrored: Boolean) {
         val path = Path().apply {
-            op(createBubbleRoundRectPath(isMyMessage), Path.Op.UNION)
-            op(createLargeTailBubblePath(isMyMessage), Path.Op.UNION)
-            op(createSmallTailBubblePath(isMyMessage), Path.Op.UNION)
+            op(createBubbleRoundRectPath(isMyMessage = isMyMessage), Path.Op.UNION)
+            op(createLargeTailBubblePath(isMirrored = isMirrored), Path.Op.UNION)
+            op(createSmallTailBubblePath(isMirrored = isMirrored), Path.Op.UNION)
         }
         if (isMyMessage) {
             canvas.drawPath(path, myMessageReactionsBubblePaint)
@@ -109,9 +109,9 @@ public class ViewReactionsView : ReactionsView {
         }
     }
 
-    private fun createLargeTailBubblePath(isMyMessage: Boolean): Path {
+    private fun createLargeTailBubblePath(isMirrored: Boolean): Path {
         val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
-            if (isMyMessage) it else -it
+            if (isMirrored) it else -it
         }
         return Path().apply {
             addCircle(
@@ -123,9 +123,9 @@ public class ViewReactionsView : ReactionsView {
         }
     }
 
-    private fun createSmallTailBubblePath(isMyMessage: Boolean): Path {
+    private fun createSmallTailBubblePath(isMirrored: Boolean): Path {
         val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
-            if (isMyMessage) it else -it
+            if (isMirrored) it else -it
         }
         return Path().apply {
             addCircle(

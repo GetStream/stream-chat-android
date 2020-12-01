@@ -172,6 +172,12 @@
 
     <!--ReactionsView-->
     <declare-styleable name="StreamReactionsViewStyle">
+        <attr name="streamReactionsViewOrientation" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+            <enum name="undefined" value="2"/>
+        </attr>
+
         <attr name="streamViewReactionsTotalHeight" format="dimension" />
         <attr name="streamViewReactionsHorizontalPadding" format="dimension" />
         <attr name="streamViewReactionsItemSize" format="dimension" />
