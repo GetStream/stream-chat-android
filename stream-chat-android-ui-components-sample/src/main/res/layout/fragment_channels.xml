@@ -5,19 +5,40 @@
     android:layout_height="match_parent"
     >
 
+    <io.getstream.chat.android.ui.search.SearchInputView
+        android:id="@+id/searchInputView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <io.getstream.chat.android.ui.channel.list.ChannelsView
         android:id="@+id/channelsView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchInputView"
         app:streamChannelPreviewLayout="@layout/stream_channel_list_item_view"
         app:streamReadStateAvatarHeight="15dp"
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"
         app:streamShowReadState="true"
+        />
+
+    <io.getstream.chat.android.ui.search.SearchResultListView
+        android:id="@+id/searchResultListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchInputView"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

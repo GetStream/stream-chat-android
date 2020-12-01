@@ -34,13 +34,13 @@
             android:padding="16dp"
             >
 
-            <io.getstream.chat.android.ui.search.SearchView
+            <io.getstream.chat.android.ui.search.SearchInputView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
 
-            <io.getstream.chat.android.ui.search.SearchView
+            <io.getstream.chat.android.ui.search.SearchInputView
                 android:id="@+id/searchView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
