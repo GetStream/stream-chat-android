@@ -196,6 +196,10 @@
             app:destination="@id/componentBrowserMessagesHeaderFragment"
             />
         <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment"
+            app:destination="@id/componentBrowserMessageListBrowserFragment"
+            />
+        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment"
             app:destination="@id/componentBrowserMessagePreviewViewFragment"
             />
@@ -263,6 +267,25 @@
         android:id="@+id/componentBrowserEditReactionsFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserEditReactionsFragment"
         android:label="ComponentBrowserEditReactionsViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessageListBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment"
+        android:label="ComponentBrowserMessageList"
+        >
+
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserDeletedMessages"
+            app:destination="@id/componentBrowserDeletedMessagesFragment"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/componentBrowserDeletedMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserDeletedMessages"
         />
 
 </navigation>
