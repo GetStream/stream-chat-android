@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/createGroupChannelButton"
+        android:title="@string/add_group_channel_select_name_create_button_title"
+        app:actionLayout="@layout/add_group_channel_select_name_action_layout"
+        app:showAsAction="ifRoom"
+        />
+</menu>

@@ -96,8 +96,12 @@ class AddChannelView : FrameLayout {
         controller.addMoreUsers(users)
     }
 
+    fun setMembers(members: List<User>) {
+        controller.setMembers(members)
+    }
+
     fun setOnCreateGroupButtonListener(listener: CreateGroupButtonClickListener) {
-        binding.createGroupButton.setOnClickListener { listener.onButtonClick() }
+        binding.createGroupContainer.setOnClickListener { listener.onButtonClick() }
     }
 
     fun hideLoadingView() {

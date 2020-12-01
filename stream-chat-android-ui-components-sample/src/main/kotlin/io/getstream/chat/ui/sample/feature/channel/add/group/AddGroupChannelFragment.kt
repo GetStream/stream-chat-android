@@ -1,14 +1,21 @@
 package io.getstream.chat.ui.sample.feature.channel.add.group
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelBinding
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView
 import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 
 class AddGroupChannelFragment : Fragment() {
@@ -16,6 +23,12 @@ class AddGroupChannelFragment : Fragment() {
     private var _binding: FragmentAddGroupChannelBinding? = null
     private val binding get() = _binding!!
     private val addChannelViewModel: AddChannelViewModel by viewModels()
+    private val sharedMembersViewModel: AddGroupChannelMembersSharedViewModel by activityViewModels()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +43,16 @@ class AddGroupChannelFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initToolbar(binding.toolbar)
         bindAddChannelView()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    sharedMembersViewModel.setMembers(emptyList())
+                    findNavController().navigateUp()
+                }
+            }
+        )
     }
 
     override fun onDestroyView() {
@@ -37,44 +60,30 @@ class AddGroupChannelFragment : Fragment() {
         _binding = null
     }
 
-    private fun bindAddChannelView() {
-        addChannelViewModel.apply {
-            state.observe(viewLifecycleOwner) { state ->
-                when (state) {
-                    AddChannelViewModel.State.Loading -> {
-                        binding.addChannelView.showLoadingView()
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideEmptyStateView()
-                    }
-                    AddChannelViewModel.State.Empty -> {
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.showEmptyStateView()
-                    }
-                    is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users)
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.hideEmptyStateView()
-                        binding.addChannelView.showUsersRecyclerView()
-                    }
-                    is AddChannelViewModel.State.ResultMoreUsers -> {
-                        binding.addChannelView.addMoreUsers(state.users)
-                    }
-                    is AddChannelViewModel.State.ShowChannel,
-                    AddChannelViewModel.State.HideChannel,
-                    is AddChannelViewModel.State.NavigateToChannel -> Unit
-                }
-            }
-            paginationState.observe(viewLifecycleOwner) { state ->
-                binding.addChannelView.setPaginationEnabled(!state.endReached && !state.loadingMore)
-            }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_add_group_channel, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.addGroupChannelNextButton) {
+            findNavController().navigate(R.id.action_addGroupChannelFragment_to_addGroupChannelSelectNameFragment)
+            true
+        } else {
+            super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun bindAddChannelView() {
+        addChannelViewModel.bindView(binding.addChannelView, viewLifecycleOwner)
         binding.addChannelView.apply {
-            endReachedListener = AddChannelView.EndReachedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.ReachedEndOfList)
+            setMembersChangedListener {
+                sharedMembersViewModel.setMembers(it)
             }
-            setSearchInputChangedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
+            sharedMembersViewModel.members.value?.let {
+                setMembers(it)
+            }
+            sharedMembersViewModel.members.observe(viewLifecycleOwner) {
+                setMenuVisibility(it.isNotEmpty())
             }
         }
     }
