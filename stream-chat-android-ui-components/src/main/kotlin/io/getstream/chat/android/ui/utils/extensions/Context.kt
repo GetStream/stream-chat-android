@@ -3,8 +3,10 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.view.ContextThemeWrapper
 import androidx.annotation.ArrayRes
+import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
@@ -13,6 +15,10 @@ internal fun Context.getDimension(@DimenRes dimen: Int): Int {
 
 internal fun Context.getIntArray(@ArrayRes id: Int): IntArray {
     return resources.getIntArray(id)
+}
+
+internal fun Context.getColorCompat(@ColorRes color: Int): Int {
+    return ContextCompat.getColor(this, color)
 }
 
 internal fun Context?.getFragmentManager(): FragmentManager? {

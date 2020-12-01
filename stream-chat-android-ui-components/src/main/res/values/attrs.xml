@@ -168,6 +168,44 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+    </declare-styleable>
 
+    <!--ReactionsView-->
+    <declare-styleable name="StreamReactionsViewStyle">
+        <attr name="streamReactionsViewOrientation" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+            <enum name="undefined" value="2"/>
+        </attr>
+
+        <attr name="streamViewReactionsBubbleColorMine" format="color|reference" />
+        <attr name="streamViewReactionsBubbleBorderColorMine" format="color|reference" />
+        <attr name="streamViewReactionsBubbleColorTheirs" format="color|reference" />
+        <attr name="streamViewReactionsTotalHeight" format="dimension" />
+        <attr name="streamViewReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamViewReactionsItemSize" format="dimension" />
+        <attr name="streamViewReactionsItemMargin" format="dimension" />
+        <attr name="streamViewReactionsBubbleHeight" format="dimension" />
+        <attr name="streamViewReactionsBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamViewReactionsSmallTailBubbleOffset" format="dimension" />
+
+        <attr name="streamEditReactionsBubbleColor" format="color|reference" />
+        <attr name="streamEditReactionsTotalHeight" format="dimension" />
+        <attr name="streamEditReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamEditReactionsItemSize" format="dimension" />
+        <attr name="streamEditReactionsItemMargin" format="dimension" />
+        <attr name="streamEditReactionsBubbleHeight" format="dimension" />
+        <attr name="streamEditReactionsBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamEditReactionsSmallTailBubbleOffset" format="dimension" />
     </declare-styleable>
 </resources>
