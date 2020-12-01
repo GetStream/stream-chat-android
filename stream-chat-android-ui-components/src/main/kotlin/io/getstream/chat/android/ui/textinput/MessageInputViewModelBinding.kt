@@ -15,9 +15,10 @@ import java.io.File
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
     members.observe(lifecycleOwner) { view.configureMembers(it) }
     commands.observe(lifecycleOwner) { view.configureCommands(it) }
-    view.sendMessageHandler = object : MessageSendHandler {
+    view.sendMessageHandler = object : MessageInputView.MessageSendHandler {
+        val viewModel = this@bindView
         override fun sendMessage(messageText: String) {
-            this@bindView.sendMessage(messageText)
+            viewModel.sendMessage(messageText)
         }
 
         override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
@@ -25,7 +26,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
-            this@bindView.sendMessage(messageText) {
+            viewModel.sendMessage(messageText) {
                 this.parentId = parentMessage.id
                 this.showInChannel = alsoSendToChannel
             }

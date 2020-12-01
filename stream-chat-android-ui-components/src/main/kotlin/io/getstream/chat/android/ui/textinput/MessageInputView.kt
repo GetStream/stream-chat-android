@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
+import io.getstream.chat.android.ui.textinput.MessageInputView.OnMessageSendButtonClickListener
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
 import java.io.File
@@ -78,7 +79,7 @@ public class MessageInputView : ConstraintLayout {
         configSendAlsoToChannelCheckbox()
     }
 
-    public var sendMessageHandler: MessageSendHandler = emptyMessageSendHandler
+    public var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
 
     public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
 
@@ -372,7 +373,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private companion object {
-        val emptyMessageSendHandler = object : MessageSendHandler {
+        val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
             override fun sendMessage(messageText: String) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -414,27 +415,22 @@ public class MessageInputView : ConstraintLayout {
         public object DirectChat : ChatMode()
         public object GroupChat : ChatMode()
     }
-}
 
-public interface TypeListener {
-    public fun onKeystroke()
-    public fun onStopTyping()
-}
+    public interface MessageSendHandler {
+        public fun sendMessage(messageText: String)
+        public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+        public fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsFiles: List<File>
+        )
 
-public interface MessageSendHandler {
-    public fun sendMessage(messageText: String)
-    public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
-    public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
-    public fun sendToThreadWithAttachments(
-        parentMessage: Message,
-        message: String,
-        alsoSendToChannel: Boolean,
-        attachmentsFiles: List<File>
-    )
+        public fun editMessage(oldMessage: Message, newMessageText: String)
+    }
 
-    public fun editMessage(oldMessage: Message, newMessageText: String)
-}
-
-public fun interface OnMessageSendButtonClickListener {
-    public fun onClick()
+    public fun interface OnMessageSendButtonClickListener {
+        public fun onClick()
+    }
 }

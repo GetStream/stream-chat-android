@@ -33,7 +33,7 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,14 +47,10 @@ class ChatFragment : Fragment() {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
         initMessagesViewModel()
         initMessageInputViewModel()
-        listenForBackButton()
-
-        binding.header.setBackButtonClickListener {
-            findNavController().navigateUp()
-        }
+        configureBackButtonHandlinig()
     }
 
-    private fun listenForBackButton() {
+    private fun configureBackButtonHandlinig() {
         activity?.apply {
             onBackPressedDispatcher.addCallback(
                 viewLifecycleOwner,
@@ -64,6 +60,9 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
+        }
+        binding.header.setBackButtonClickListener {
+            messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
     }
 
@@ -93,14 +92,10 @@ class ChatFragment : Fragment() {
                     viewLifecycleOwner,
                     {
                         when (it) {
-                            is MessageListViewModel.State.NavigateUp -> navigateUp()
+                            is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
                         }
                     }
                 )
             }
-    }
-
-    private fun navigateUp() {
-        findNavController().navigateUp()
     }
 }
