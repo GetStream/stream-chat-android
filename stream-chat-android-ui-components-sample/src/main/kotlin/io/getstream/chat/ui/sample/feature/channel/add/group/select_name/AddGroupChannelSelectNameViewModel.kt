@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
@@ -24,15 +25,15 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
 
     private fun createChannel(name: String, members: List<User>) {
         _state.value = State.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             val result = ChatClient.instance()
                 .createChannel(
                     channelType = CHANNEL_TYPE_MESSAGING,
                     members = members.map { it.id } + currentUserId,
                     extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name)
-                ).execute()
+                ).await()
             if (result.isSuccess) {
-                _state.postValue(State.NavigateToChannel(result.data().cid))
+                _state.value = State.NavigateToChannel(result.data().cid)
             }
         }
     }
