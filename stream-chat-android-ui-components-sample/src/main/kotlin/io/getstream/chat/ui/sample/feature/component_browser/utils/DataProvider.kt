@@ -54,6 +54,6 @@ internal fun randomMessage(reactionsSize: Int, ownReactionsSize: Int): Message {
 private fun randomReactions(size: Int): List<Reaction> {
     return List(size) {
         val randomReactionType = ReactionType.values()[Random().nextInt(ReactionType.values().size)]
-        Reaction(user = randomUser(), type = randomReactionType.toString())
+        Reaction(user = randomUser(), type = randomReactionType.type)
     }
 }

@@ -1,18 +1,13 @@
 package io.getstream.chat.android.ui.utils
 
+import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
 
-@SuppressWarnings("unused")
 internal object UiUtils {
 
-    private val reactionTypes: Map<String, Int> = mapOf(
-        ReactionType.LOVE.toString() to R.drawable.stream_ic_reaction_love,
-        ReactionType.THUMBS_UP.toString() to R.drawable.stream_ic_reaction_thumbs_up,
-        ReactionType.THUMBS_DOWN.toString() to R.drawable.stream_ic_reaction_thumbs_down,
-        ReactionType.LOL.toString() to R.drawable.stream_ic_reaction_lol,
-        ReactionType.WUT.toString() to R.drawable.stream_ic_reaction_wut
-    )
+    private val reactionTypes: Map<String, Int> = ReactionType.values()
+        .associate { it.type to it.iconRes }
 
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
         ModelType.attach_mime_pdf to R.drawable.stream_ic_file_pdf,
@@ -54,12 +49,13 @@ internal object UiUtils {
     }
 }
 
-public enum class ReactionType(private val reactionType: String) {
-    LOVE("love"),
-    THUMBS_UP("thumbs_up"),
-    THUMBS_DOWN("thumbs_down"),
-    LOL("lol"),
-    WUT("wut");
-
-    override fun toString(): String = reactionType
+public enum class ReactionType(
+    public val type: String,
+    @DrawableRes public val iconRes: Int
+) {
+    LOVE("love", R.drawable.stream_ic_reaction_love),
+    THUMBS_UP("thumbs_up", R.drawable.stream_ic_reaction_thumbs_up),
+    THUMBS_DOWN("thumbs_down", R.drawable.stream_ic_reaction_thumbs_down),
+    LOL("lol", R.drawable.stream_ic_reaction_lol),
+    WUT("wut", R.drawable.stream_ic_reaction_wut);
 }
