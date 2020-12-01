@@ -13,6 +13,9 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 public class ViewReactionsView : ReactionsView {
 
+    // one dp stroke looks too thin
+    private val bubbleStrokeWidth: Float = 1.dpToPx() * 1.5f
+
     private val theirsMessageReactionsBubblePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = context.getColorCompat(R.color.stream_grey_90)
@@ -24,8 +27,7 @@ public class ViewReactionsView : ReactionsView {
     }
 
     private val myMessageReactionsBubbleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        // one dp stroke looks too thin
-        strokeWidth = 1.dpToPx() * 1.5f
+        strokeWidth = bubbleStrokeWidth
         style = Paint.Style.STROKE
         color = context.getColorCompat(R.color.stream_grey_90)
     }
@@ -76,7 +78,7 @@ public class ViewReactionsView : ReactionsView {
 
     override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean) {
         val path = Path().apply {
-            op(createBubbleRoundRectPath(), Path.Op.UNION)
+            op(createBubbleRoundRectPath(isMyMessage), Path.Op.UNION)
             op(createLargeTailBubblePath(isMyMessage), Path.Op.UNION)
             op(createSmallTailBubblePath(isMyMessage), Path.Op.UNION)
         }
@@ -88,12 +90,17 @@ public class ViewReactionsView : ReactionsView {
         }
     }
 
-    private fun createBubbleRoundRectPath(): Path {
+    private fun createBubbleRoundRectPath(isMyMessage: Boolean): Path {
+        val strokeOffset: Float = if (isMyMessage) {
+            bubbleStrokeWidth / 2
+        } else {
+            0f
+        }
         return Path().apply {
             addRoundRect(
-                0f,
-                0f,
-                width.toFloat(),
+                strokeOffset,
+                strokeOffset,
+                width.toFloat() - strokeOffset,
                 reactionsViewStyle.bubbleHeight.toFloat(),
                 reactionsViewStyle.bubbleRadius.toFloat(),
                 reactionsViewStyle.bubbleRadius.toFloat(),
