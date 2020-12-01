@@ -146,18 +146,35 @@ public class MessageListView : ConstraintLayout {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener { _, view ->
-            optionsView = view
-
-            binding.blurLayer.isVisible = true
-
-            if (view.parent != null && view.parent is ViewGroup) {
-                (view.parent as ViewGroup).removeView(view)
-            }
-
-            binding.messageOptionsContainer.addView(optionsView)
-            binding.messageOptionsScroll.isVisible = true
+        MessageLongClickListener { message, _ ->
+            MessageMoreActionDialog(
+                context,
+                channel,
+                message,
+                currentUser,
+                style,
+                onMessageEditHandler,
+                onMessageDeleteHandler,
+                { m: Message ->
+                    onStartThreadHandler.invoke(m)
+                    onStartThreadListener.invoke(m)
+                },
+                onMessageFlagHandler
+            ).show()
         }
+    //Todo: Add this after the behaviour of message options is complete.
+    //MessageLongClickListener { _, view ->
+    //             optionsView = view
+    //
+    //             binding.blurLayer.isVisible = true
+    //
+    //             if (view.parent != null && view.parent is ViewGroup) {
+    //                 (view.parent as ViewGroup).removeView(view)
+    //             }
+    //
+    //             binding.messageOptionsContainer.addView(optionsView)
+    //             binding.messageOptionsScroll.isVisible = true
+    //         }
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
             onMessageRetryHandler.invoke(message)
