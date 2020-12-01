@@ -5,7 +5,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedVi
 
 internal class GapDecorator : BaseDecorator() {
 
-    override fun decorateMessageDeleted(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
         if (data.positions.contains(MessageListItem.Position.TOP)) {
             viewHolder.binding.gapView.showBigGap()
         } else {

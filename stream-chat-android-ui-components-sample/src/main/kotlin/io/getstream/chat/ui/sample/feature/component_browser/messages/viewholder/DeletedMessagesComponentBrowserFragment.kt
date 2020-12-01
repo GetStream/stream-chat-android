@@ -13,11 +13,17 @@ import java.util.Date
 
 class DeletedMessagesComponentBrowserFragment : Fragment() {
 
-    private lateinit var binding: FragmentDeletedMessageComponentBrowserBinding
+    private var _binding: FragmentDeletedMessageComponentBrowserBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentDeletedMessageComponentBrowserBinding.inflate(inflater, container, false)
+        _binding = FragmentDeletedMessageComponentBrowserBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

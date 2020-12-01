@@ -12,12 +12,12 @@ internal interface Decorator {
 internal abstract class BaseDecorator : Decorator {
     override fun <T : MessageListItem> decorate(viewHolder: BaseMessageItemViewHolder<T>, data: T) {
         when (viewHolder) {
-            is MessageDeletedViewHolder -> decorateMessageDeleted(viewHolder, data as MessageListItem.MessageItem)
+            is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data as MessageListItem.MessageItem)
             else -> Unit
         }.exhaustive
     }
 
-    protected abstract fun decorateMessageDeleted(
+    protected abstract fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem
     )

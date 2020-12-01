@@ -15,7 +15,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedVi
 
 internal class BackgroundDecorator : BaseDecorator() {
 
-    override fun decorateMessageDeleted(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
         val context = viewHolder.itemView.context
         val backgroundColor = ContextCompat.getColor(context, MESSAGE_DELETED_BACKGROUND)
         val radius = dpToPx(DEFAULT_CORNER_RADIUS.toInt()).toFloat()

@@ -25,11 +25,11 @@ internal class GapView : LinearLayout {
 
     init {
         smallGap = Space(context).apply {
-            layoutParams = LAYOUT_PARAMS_FACTORY(dpToPx(SMALL_GAP_HEIGHT.toInt()))
+            layoutParams = createLayoutParams(dpToPx(SMALL_GAP_HEIGHT_DP))
             isVisible = false
         }
         bigGap = Space(context).apply {
-            layoutParams = LAYOUT_PARAMS_FACTORY(dpToPx(BIG_GAP_HEIGHT.toInt()))
+            layoutParams = createLayoutParams(dpToPx(BIG_GAP_HEIGHT_DP))
             isVisible = false
         }
         addView(smallGap)
@@ -47,9 +47,9 @@ internal class GapView : LinearLayout {
     }
 
     companion object {
-        private const val SMALL_GAP_HEIGHT = 2f
-        private const val BIG_GAP_HEIGHT = 8f
-        private val LAYOUT_PARAMS_FACTORY: (Int) -> ViewGroup.LayoutParams =
-            { height -> LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height) }
+        private const val SMALL_GAP_HEIGHT_DP = 2
+        private const val BIG_GAP_HEIGHT_DP = 8
+        private fun createLayoutParams(height: Int): ViewGroup.LayoutParams =
+            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
     }
 }
