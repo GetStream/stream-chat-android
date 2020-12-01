@@ -25,7 +25,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
     private var activeThread = MutableLiveData<Message?>()
-    private val _maxMessageLength = MutableLiveData(0)
+    private val _maxMessageLength = MutableLiveData(Int.MAX_VALUE)
     private val _commands = MutableLiveData<List<Command>>(emptyList())
     private val _members = MediatorLiveData<List<Member>>()
     public val maxMessageLength: LiveData<Int> = _maxMessageLength
