@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.ChatUI
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
@@ -14,6 +15,7 @@ import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
+import java.util.Date
 
 class ComponentBrowserHomeFragment : Fragment() {
 
@@ -48,6 +50,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
+        setupMessagePreviewView()
         setupViewReactionsView()
         setupEditReactionsView()
     }
@@ -80,6 +83,20 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
+        }
+    }
+
+    private fun setupMessagePreviewView() {
+        binding.messagePreviewView.setMessage(
+            Message(
+                id = "",
+                user = randomUser(),
+                createdAt = Date(2020, 7, 15, 14, 22),
+                text = "Hello world, how are you doing?",
+            )
+        )
+        binding.messagePreviewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment)
         }
     }
 

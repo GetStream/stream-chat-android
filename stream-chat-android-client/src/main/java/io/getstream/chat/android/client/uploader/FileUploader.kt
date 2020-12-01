@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.uploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
-/***
+/**
  * The FileUploader is responsible for sending and deleting files from given channel
  */
 public interface FileUploader {
