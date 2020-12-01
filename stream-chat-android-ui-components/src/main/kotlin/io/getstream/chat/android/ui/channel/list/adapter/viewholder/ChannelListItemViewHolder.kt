@@ -31,6 +31,14 @@ import kotlin.math.absoluteValue
 
 public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
 
+    internal sealed class MenuState {
+        internal object Open : MenuState()
+        internal object Closed : MenuState()
+    }
+
+    private val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat()
+    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
+
     public companion object {
         @SuppressLint("ConstantLocale")
         private val DEFAULT_LOCALE: Locale = Locale.getDefault()
@@ -38,12 +46,12 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         private val TIME_FORMAT = SimpleDateFormat("hh:mm a", DEFAULT_LOCALE)
 
         private const val OPTIONS_COUNT = 2
+
+        // persists menu states for channels - becomes necessary when view holders are recycled
+        private val swipeStateByChannelCid = mutableMapOf<String, MenuState>()
     }
 
-    public val binding: StreamChannelListItemViewBinding =
-        StreamChannelListItemViewBinding.bind(itemView).apply {
-            configureSwipeBehavior()
-        }
+    public val binding: StreamChannelListItemViewBinding = StreamChannelListItemViewBinding.bind(itemView)
 
     public override fun bind(
         channel: Channel,
@@ -69,6 +77,12 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         style: ChannelListViewStyle?
     ) {
         binding.itemForegroundView.apply {
+            root.x = when (swipeStateByChannelCid[channel.cid]) {
+                MenuState.Open -> -optionsMenuWidth
+                MenuState.Closed, null -> 0f
+            }
+
+            configureSwipeBehavior(channel.cid)
 
             diff?.run {
                 if (nameChanged) {
@@ -225,15 +239,14 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun StreamChannelListItemViewBinding.configureSwipeBehavior() {
-        val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat()
-        val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
+    private fun StreamChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
+
         var startX = 0f
         var startY = 0f
         val dragRange = -optionsMenuWidth..0f
         var swiping = false
 
-        itemForegroundView.root.setOnTouchListener { view, event ->
+        root.setOnTouchListener { view, event ->
             when (event.action) {
 
                 MotionEvent.ACTION_DOWN -> {
@@ -282,6 +295,9 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
                     view.animate().x(snap).setStartDelay(0).setDuration(100).start()
 
+                    // persist channel item's menu state
+                    swipeStateByChannelCid[cid] = if (snap < 0) MenuState.Open else MenuState.Closed
+
                     swiping // consume if swiping
                 }
 
@@ -289,6 +305,9 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                 MotionEvent.ACTION_CANCEL -> {
 
                     view.animate().x(0f).setStartDelay(0).setDuration(100).start()
+
+                    // persist channel item's menu state as closed
+                    swipeStateByChannelCid[cid] = MenuState.Closed
 
                     false // don't consume
                 }
