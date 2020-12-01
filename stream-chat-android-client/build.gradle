@@ -19,12 +19,10 @@ ext {
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.3"
+    compileSdkVersion Configuration.compileSdkVersion
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 1
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -48,18 +46,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    testOptions.unitTests {
-        returnDefaultValues = true
-    }
-
     kotlinOptions {
         jvmTarget = '1.8'
-        noStdlib = true
     }
 
     lintOptions {
         xmlReport false
+    }
+
+    testOptions.unitTests {
+        returnDefaultValues = true
     }
 }
 
