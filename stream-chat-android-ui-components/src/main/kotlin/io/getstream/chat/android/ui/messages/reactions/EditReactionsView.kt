@@ -39,7 +39,7 @@ public class EditReactionsView : ReactionsView {
         return UiUtils.getReactionTypes().keys.map { reactionType ->
             message.ownReactions
                 .any { it.type == reactionType }
-                .let { ReactionsAdapter.ReactionItem(Reaction(type = reactionType), it) }
+                .let { isMine -> ReactionsAdapter.ReactionItem(Reaction(type = reactionType), isMine) }
         }
     }
 
