@@ -10,7 +10,7 @@ import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.ui.databinding.StreamSearchViewBinding
 import io.getstream.chat.android.ui.utils.Debouncer
 
-public class SearchView : FrameLayout {
+public class SearchInputView : FrameLayout {
 
     private companion object {
         const val TYPING_DEBOUNCE_MS = 300L
