@@ -11,3 +11,9 @@ internal inline fun TypedArray.use(block: (TypedArray) -> Unit) {
     block(this)
     recycle()
 }
+
+internal inline fun <reified T : Enum<T>> TypedArray.getEnum(index: Int, default: T): T {
+    return getInt(index, -1).let {
+        if (it >= 0) enumValues<T>()[it] else default
+    }
+}
