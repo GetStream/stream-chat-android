@@ -48,10 +48,10 @@ class ChatFragment : Fragment() {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
         initMessagesViewModel()
         initMessageInputViewModel()
-        configureBackButtonHandlinig()
+        configureBackButtonHandling()
     }
 
-    private fun configureBackButtonHandlinig() {
+    private fun configureBackButtonHandling() {
         activity?.apply {
             onBackPressedDispatcher.addCallback(
                 viewLifecycleOwner,
