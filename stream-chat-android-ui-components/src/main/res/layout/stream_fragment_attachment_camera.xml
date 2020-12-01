@@ -6,6 +6,7 @@
 
     <include
         android:id="@+id/grantPermissionsInclude"
-        layout="@layout/stream_attachment_permission_view"/>
+        layout="@layout/stream_attachment_permission_view"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
