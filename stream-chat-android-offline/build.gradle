@@ -19,20 +19,22 @@ ext {
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.3"
+    compileSdkVersion Configuration.compileSdkVersion
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 1
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'STREAM_CHAT_OFFLINE_VERSION', "\"$version\""
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     testOptions.unitTests {
@@ -47,9 +49,6 @@ android {
                 exceptionFormat 'full'
             }
         }
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
     buildTypes {
         release {

@@ -7,7 +7,7 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
-/***
+/**
  * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
  * based on data provided by the ViewModel, and forwarding View events to the ViewModel.
  */
