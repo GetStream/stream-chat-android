@@ -1,5 +1,4 @@
 # To be released:
-# Nov 24th, 2020 - 4.4.5
 
 ## Common changes for all artifacts
 
