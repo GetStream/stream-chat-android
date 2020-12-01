@@ -1,10 +1,8 @@
 package com.getstream.sdk.chat.adapter
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
-import com.getstream.sdk.chat.adapter.viewholder.message.MessageListItemViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
