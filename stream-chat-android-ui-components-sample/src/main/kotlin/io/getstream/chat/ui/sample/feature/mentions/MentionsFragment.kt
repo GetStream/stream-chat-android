@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import io.getstream.chat.android.ui.mentions.MentionsListViewModel
 import io.getstream.chat.android.ui.mentions.bindView
-import io.getstream.chat.ui.sample.common.showToast
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentMentionsBinding
+import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class MentionsFragment : Fragment() {
 
@@ -37,9 +40,9 @@ class MentionsFragment : Fragment() {
         setupOnClickListeners()
 
         viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
-        binding.mentionsListView.setMentionSelectedListener {
-            // TODO add navigation
-            showToast("Selected mention ${it.id}")
+        binding.mentionsListView.setMentionSelectedListener { message ->
+            requireActivity().findNavController(R.id.hostFragmentContainer)
+                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
         }
     }
 

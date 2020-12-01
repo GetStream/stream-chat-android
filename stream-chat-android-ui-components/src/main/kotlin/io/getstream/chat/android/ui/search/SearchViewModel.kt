@@ -25,6 +25,7 @@ public class SearchViewModel : ViewModel() {
         _results.value = List(5) {
             Message(
                 id = "dummy-id-$it",
+                cid = "messaging:placeholder",
                 user = User().apply {
                     name = "John Doe"
                     image = "https://randomuser.me/api/portraits/men/0.jpg"
