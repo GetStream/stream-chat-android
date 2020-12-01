@@ -28,16 +28,15 @@ class AddGroupChannelSelectNameMembersAdapter :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         return AddGroupChannelSelectNameMemberItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { MemberViewHolder(it, deleteMemberClickListener) }
+            .let(::MemberViewHolder)
     }
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MemberViewHolder(
+    inner class MemberViewHolder(
         private val binding: AddGroupChannelSelectNameMemberItemBinding,
-        private val deleteMemberClickListener: DeleteMemberClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
