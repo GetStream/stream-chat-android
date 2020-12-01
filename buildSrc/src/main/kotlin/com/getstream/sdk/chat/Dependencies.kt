@@ -117,8 +117,7 @@ object Dependencies {
     const val flipperLoader = "com.facebook.soloader:soloader:$FLIPPER_SO_LOADER_VERSION"
     const val fragmentKtx = "androidx.fragment:fragment-ktx:$FRAGMENT_KTX_VERSION"
     const val fresco = "com.facebook.fresco:fresco:$FRESCO_VERSION"
-    const val gradleNexusStagingPlugin =
-        "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$GRADLE_NEXUS_STAGING_PLUGIN_VERSION"
+    const val gradleNexusStagingPlugin = "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$GRADLE_NEXUS_STAGING_PLUGIN_VERSION"
     const val gitversionerPlugin = "com.pascalwelsch.gitversioner:gitversioner:$GITVERSIONER_VERSION"
     const val googleServicesPlugin = "com.google.gms:google-services:$GOOGLE_SERVICES_VERSION"
     const val gradleVersionsPlugin = "com.github.ben-manes:gradle-versions-plugin:$GRADLE_VERSIONS_PLUGIN"
