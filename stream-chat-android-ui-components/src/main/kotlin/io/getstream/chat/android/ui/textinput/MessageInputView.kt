@@ -71,11 +71,11 @@ public class MessageInputView : ConstraintLayout {
             }
         }
 
-    public var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, _ ->
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
     }
 
-    public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat as ChatMode) { _, _, _ ->
+    public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
     }
 
