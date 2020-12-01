@@ -34,7 +34,7 @@ internal class MessageTextConfigurator(
     private val style: MessageListViewStyle,
     private val bubbleHelper: MessageListView.BubbleHelper,
     private val messageClickListener: MessageListView.MessageClickListener,
-    private val messageLongClickListener: MessageListView.MessageLongClickListener,
+    public var messageLongClickListener: MessageListView.MessageLongClickListener,
     private val messageRetryListener: MessageListView.MessageRetryListener
 ) : Configurator {
 

@@ -99,4 +99,27 @@
             tools:text="No messages"
             />
     </FrameLayout>
+
+    <com.github.mmin18.widget.RealtimeBlurView
+        android:id="@+id/blurLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:realtimeBlurRadius="20dp"
+        app:realtimeOverlayColor="#8000"
+        />
+
+    <FrameLayout
+        android:id="@+id/messageOptionsContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:layout_marginBottom="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

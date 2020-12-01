@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +65,8 @@ public class MessageListView : ConstraintLayout {
     private lateinit var style: MessageListViewStyle
 
     private lateinit var binding: StreamMessageListViewBinding
+
+    private var optionsView: View? = null
 
     private var newMessagesTextSingle: String? = null
     private var newMessagesTextPlural: String? = null
@@ -144,21 +147,15 @@ public class MessageListView : ConstraintLayout {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener { message ->
-            MessageMoreActionDialog(
-                context,
-                channel,
-                message,
-                currentUser,
-                style,
-                onMessageEditHandler,
-                onMessageDeleteHandler,
-                { m: Message ->
-                    onStartThreadHandler.invoke(m)
-                    onStartThreadListener.invoke(m)
-                },
-                onMessageFlagHandler
-            ).show()
+        MessageLongClickListener {
+            binding.blurLayer.isVisible = true
+
+            optionsView = binding.chatMessagesRV[0]
+            binding.chatMessagesRV.removeView(optionsView)
+
+            binding.messageOptionsContainer.run {
+                addView(optionsView)
+            }
         }
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
@@ -238,6 +235,7 @@ public class MessageListView : ConstraintLayout {
         initUnseenMessagesView()
         initLoadingView()
         initEmptyStateView()
+        initBlurLayer()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -259,6 +257,14 @@ public class MessageListView : ConstraintLayout {
     private fun initEmptyStateView() {
         emptyStateView = binding.defaultEmptyStateView
         emptyStateViewContainer = binding.emptyStateViewContainer
+    }
+
+    private fun initBlurLayer() {
+        binding.blurLayer.setOnClickListener {
+            binding.messageOptionsContainer.removeView(optionsView)
+
+            it.isVisible = false
+        }
     }
 
     private fun initScrollButtonBehaviour() {
@@ -440,7 +446,16 @@ public class MessageListView : ConstraintLayout {
         messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
         messageViewHolderFactory.bubbleHelper = bubbleHelper
 
-        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
+        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style) { position ->
+            binding.blurLayer.isVisible = true
+
+            optionsView = layoutManager.findViewByPosition(position)
+            binding.chatMessagesRV.removeView(optionsView)
+
+            binding.messageOptionsContainer.run {
+                addView(optionsView)
+            }
+        }
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
