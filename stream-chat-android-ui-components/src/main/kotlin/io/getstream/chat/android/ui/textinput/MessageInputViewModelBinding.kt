@@ -42,7 +42,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
-            viewModel.editMessage(oldMessage.copy( text = newMessageText))
+            viewModel.editMessage(oldMessage.copy(text = newMessageText))
         }
     }
 
