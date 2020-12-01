@@ -37,4 +37,10 @@
     </array>
 
     <color name="stream_attachment_dialog_selection_overlay">#80000000</color>
+
+    <color name="stream_view_reactions_bubble_color_mine">@color/stream_white</color>
+    <color name="stream_view_reactions_bubble_border_color_mine">@color/stream_grey_90</color>
+    <color name="stream_view_reactions_bubble_color_theirs">@color/stream_grey_90</color>
+    <color name="stream_edit_reactions_bubble_color_mine">@color/stream_white</color>
+    <color name="stream_edit_reactions_bubble_color_theirs">@color/stream_white</color>
 </resources>

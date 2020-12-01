@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.messages.reactions
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import io.getstream.chat.android.client.models.Message
@@ -10,9 +9,11 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.ui.utils.UiUtils
 
 public class EditReactionsView : ReactionsView {
-    private val bubblePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val bubblePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = Color.WHITE
+    }
+    private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
     }
 
     public constructor(context: Context) : super(context) {
@@ -32,7 +33,11 @@ public class EditReactionsView : ReactionsView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        setStyle(EditReactionsViewStyle(context, attrs))
+        EditReactionsViewStyle(context, attrs).apply {
+            setStyle(this)
+            bubblePaintMine.color = bubbleColorMine
+            bubblePaintTheirs.color = bubbleColorTheirs
+        }
     }
 
     override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionsAdapter.ReactionItem> {
@@ -44,12 +49,13 @@ public class EditReactionsView : ReactionsView {
     }
 
     override fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean, isMirrored: Boolean) {
-        drawBubbleRoundRect(canvas)
-        drawLargeTailBubble(canvas, isMirrored)
-        drawSmallTailBubble(canvas, isMirrored)
+        val bubblePaint = if (isMyMessage) bubblePaintMine else bubblePaintTheirs
+        drawBubbleRoundRect(canvas, bubblePaint)
+        drawLargeTailBubble(canvas, bubblePaint, isMirrored)
+        drawSmallTailBubble(canvas, bubblePaint, isMirrored)
     }
 
-    private fun drawBubbleRoundRect(canvas: Canvas) {
+    private fun drawBubbleRoundRect(canvas: Canvas, paint: Paint) {
         canvas.drawRoundRect(
             0f,
             0f,
@@ -57,11 +63,11 @@ public class EditReactionsView : ReactionsView {
             reactionsViewStyle.bubbleHeight.toFloat(),
             reactionsViewStyle.bubbleRadius.toFloat(),
             reactionsViewStyle.bubbleRadius.toFloat(),
-            bubblePaint
+            paint
         )
     }
 
-    private fun drawLargeTailBubble(canvas: Canvas, isMirrored: Boolean) {
+    private fun drawLargeTailBubble(canvas: Canvas, paint: Paint, isMirrored: Boolean) {
         val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
             if (isMirrored) it else -it
         }
@@ -69,11 +75,11 @@ public class EditReactionsView : ReactionsView {
             (width / 2).toFloat() + offset,
             reactionsViewStyle.largeTailBubbleCy.toFloat(),
             reactionsViewStyle.largeTailBubbleRadius.toFloat(),
-            bubblePaint
+            paint
         )
     }
 
-    private fun drawSmallTailBubble(canvas: Canvas, isMirrored: Boolean) {
+    private fun drawSmallTailBubble(canvas: Canvas, paint: Paint, isMirrored: Boolean) {
         val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
             if (isMirrored) it else -it
         }
@@ -81,7 +87,7 @@ public class EditReactionsView : ReactionsView {
             width / 2 + offset,
             reactionsViewStyle.smallTailBubbleCy.toFloat(),
             reactionsViewStyle.smallTailBubbleRadius.toFloat(),
-            bubblePaint
+            paint
         )
     }
 }

@@ -1,6 +1,12 @@
 package io.getstream.chat.android.ui.messages.reactions
 
 internal abstract class ReactionsViewStyle {
+    var bubbleColorMine: Int = 0
+        protected set
+    var bubbleColorTheirs: Int = 0
+        protected set
+    var bubbleBorderColor: Int = 0
+        protected set
     var totalHeight: Int = 0
         protected set
     var horizontalPadding: Int = 0

@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.reactions
 import android.content.Context
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.use
 
@@ -18,6 +19,18 @@ internal class ViewReactionsViewStyle constructor(
             0,
             0
         ).use {
+            bubbleColorMine = it.getColor(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorMine,
+                context.getColorCompat(R.color.stream_view_reactions_bubble_color_mine)
+            )
+            bubbleColorTheirs = it.getColor(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorTheirs,
+                context.getColorCompat(R.color.stream_view_reactions_bubble_color_theirs)
+            )
+            bubbleBorderColor = it.getColor(
+                R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorTheirs,
+                context.getColorCompat(R.color.stream_view_reactions_bubble_border_color_mine)
+            )
             totalHeight = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsTotalHeight,
                 context.getDimension(R.dimen.stream_view_reactions_total_height)

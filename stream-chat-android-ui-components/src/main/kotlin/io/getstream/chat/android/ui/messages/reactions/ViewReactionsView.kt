@@ -2,34 +2,26 @@ package io.getstream.chat.android.ui.messages.reactions
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 public class ViewReactionsView : ReactionsView {
 
     // one dp stroke looks too thin
     private val bubbleStrokeWidth: Float = 1.dpToPx() * 1.5f
 
-    private val theirsMessageReactionsBubblePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = context.getColorCompat(R.color.stream_grey_90)
     }
-
-    private val myMessageReactionsBubblePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val bubblePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = Color.WHITE
     }
-
-    private val myMessageReactionsBubbleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val bubbleStrokePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = bubbleStrokeWidth
         style = Paint.Style.STROKE
-        color = context.getColorCompat(R.color.stream_grey_90)
     }
 
     public constructor(context: Context) : super(context) {
@@ -49,7 +41,12 @@ public class ViewReactionsView : ReactionsView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        setStyle(ViewReactionsViewStyle(context, attrs))
+        ViewReactionsViewStyle(context, attrs).apply {
+            setStyle(this)
+            bubblePaintTheirs.color = bubbleColorTheirs
+            bubblePaintMine.color = bubbleColorMine
+            bubbleStrokePaintMine.color = bubbleBorderColor
+        }
     }
 
     override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionsAdapter.ReactionItem> {
@@ -83,10 +80,10 @@ public class ViewReactionsView : ReactionsView {
             op(createSmallTailBubblePath(isMirrored = isMirrored), Path.Op.UNION)
         }
         if (isMyMessage) {
-            canvas.drawPath(path, myMessageReactionsBubblePaint)
-            canvas.drawPath(path, myMessageReactionsBubbleStrokePaint)
+            canvas.drawPath(path, bubblePaintMine)
+            canvas.drawPath(path, bubbleStrokePaintMine)
         } else {
-            canvas.drawPath(path, theirsMessageReactionsBubblePaint)
+            canvas.drawPath(path, bubblePaintTheirs)
         }
     }
 
