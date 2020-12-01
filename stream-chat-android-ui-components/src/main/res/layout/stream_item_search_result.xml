@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_mention_item_height"
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="@dimen/stream_spacing_medium"
+    android:paddingTop="@dimen/stream_spacing_small"
+    android:paddingEnd="@dimen/stream_spacing_medium"
+    android:paddingBottom="@dimen/stream_spacing_small"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamChannelListAvatarStyle"
+        android:layout_width="@dimen/stream_avatar_size_medium"
+        android:layout_height="@dimen/stream_avatar_size_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_spacing_small"
+        android:textSize="@dimen/stream_text_medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/mentionNameTextView"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Rebel Titan"
+        />
+
+    <TextView
+        android:id="@+id/mentionNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_spacing_small"
+        android:textSize="@dimen/stream_text_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/usernameTextView"
+        tools:text="\@rebel"
+        />
+
+    <ImageView
+        android:layout_width="@dimen/stream_mention_icon_size"
+        android:layout_height="@dimen/stream_mention_icon_size"
+        android:src="@drawable/stream_ic_mention"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_blue"
+        tools:ignore="ContentDescription"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
