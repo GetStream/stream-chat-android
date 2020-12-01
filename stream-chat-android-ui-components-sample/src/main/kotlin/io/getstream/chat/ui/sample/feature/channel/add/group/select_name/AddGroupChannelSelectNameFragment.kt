@@ -94,7 +94,7 @@ class AddGroupChannelSelectNameFragment : Fragment() {
                 is AddGroupChannelSelectNameViewModel.State.NavigateToChannel -> {
                     sharedMembersViewModel.setMembers(emptyList())
                     findNavController().navigateSafely(
-                        AddGroupChannelSelectNameFragmentDirections.actionOpenChat(state.cid)
+                        AddGroupChannelSelectNameFragmentDirections.actionOpenChat(state.cid, null)
                     )
                 }
             }

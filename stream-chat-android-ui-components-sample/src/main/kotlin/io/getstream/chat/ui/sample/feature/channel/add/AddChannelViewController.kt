@@ -72,8 +72,6 @@ class AddChannelViewController(
         showUsers(userInfoList.map { UserInfo(it.user, members.contains(it.user)) })
     }
 
-    fun getMembers(): List<User> = members
-
     private fun showUsers(users: List<UserInfo>) {
         if (isSearching) {
             usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
