@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.android.ui.textinput.MessageInputView
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentAddChannelBinding
@@ -79,7 +80,7 @@ class AddChannelFragment : Fragment() {
                         binding.addChannelView.showEmptyStateView()
                     }
                     is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users, state.shouldShowUserSections)
+                        binding.addChannelView.setUsers(state.users)
                         binding.addChannelView.hideLoadingView()
                         binding.addChannelView.hideEmptyStateView()
                         binding.addChannelView.showUsersRecyclerView()
@@ -90,7 +91,7 @@ class AddChannelFragment : Fragment() {
                     is AddChannelViewModel.State.ShowChannel -> initializeChannel(state.cid)
                     AddChannelViewModel.State.HideChannel -> cleanChannel()
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
-                        AddChannelFragmentDirections.actionOpenChat(state.cid)
+                        AddChannelFragmentDirections.actionOpenChat(state.cid, null)
                     )
                 }
             }
@@ -102,7 +103,7 @@ class AddChannelFragment : Fragment() {
             endReachedListener = AddChannelView.EndReachedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.ReachedEndOfList)
             }
-            setAddMemberButtonClickListener {
+            setAddMemberButtonClickedListener {
                 hideMessageList()
             }
             setMembersChangedListener {
@@ -113,6 +114,9 @@ class AddChannelFragment : Fragment() {
             }
             setSearchInputChangedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
+            }
+            setOnCreateGroupButtonListener {
+                findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
             }
         }
     }

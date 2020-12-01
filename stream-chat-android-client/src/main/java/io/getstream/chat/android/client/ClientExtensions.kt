@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlin.reflect.KClass
 
-/***
+/**
  * Subscribes to client events of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
@@ -17,7 +17,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     )
 }
 
-/***
+/**
  * Subscribes to client events of type [T], in the lifecycle of [lifecycleOwner].
  *
  * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
@@ -33,7 +33,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     )
 }
 
-/***
+/**
  * Subscribes to the specific [eventTypes] of the client.
  */
 public fun ChatClient.subscribeFor(
@@ -44,7 +44,7 @@ public fun ChatClient.subscribeFor(
     return subscribeFor(*javaClassTypes, listener = listener)
 }
 
-/***
+/**
  * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
  *
  * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
@@ -58,7 +58,7 @@ public fun ChatClient.subscribeFor(
     return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
 }
 
-/***
+/**
  * Subscribes for the next client event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(

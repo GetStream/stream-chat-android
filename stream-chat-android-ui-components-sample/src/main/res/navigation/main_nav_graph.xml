@@ -85,6 +85,11 @@
             android:id="@+id/action_homeFragment_to_addChannelFragment"
             app:destination="@id/addChannelFragment"
             />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addGroupChannelFragment"
+            app:destination="@+id/addGroupChannelFragment"
+            />
     </fragment>
 
     <fragment
@@ -105,6 +110,19 @@
                 app:nullable="false"
                 />
         </action>
+
+        <action
+            android:id="@+id/action_addChannelFragment_to_addGroupChannelFragment"
+            app:destination="@id/addGroupChannelFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addGroupChannelFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.group.AddGroupChannelFragment"
+        android:label="AddGroupChannelFragment"
+        >
+
     </fragment>
 
     <fragment
@@ -117,6 +135,11 @@
             android:name="cid"
             app:argType="string"
             app:nullable="false"
+            />
+        <argument
+            android:name="messageId"
+            app:argType="string"
+            app:nullable="true"
             />
 
         <action
@@ -153,6 +176,18 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment"
             app:destination="@id/componentBrowserMessageListBrowserFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment"
+            app:destination="@id/componentBrowserMessagePreviewViewFragment"
+            />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment"
+            app:destination="@id/componentBrowserViewReactionsFragment"
+            />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment"
+            app:destination="@id/componentBrowserEditReactionsFragment"
+            />
     </fragment>
 
     <fragment
@@ -177,6 +212,24 @@
         android:id="@+id/componentBrowserMessagesHeaderFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessagePreviewViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messagepreview.ComponentBrowserMessagePreviewFragment"
+        android:label="ComponentBrowserMessagePreviewView"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserViewReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserViewReactionsFragment"
+        android:label="ComponentBrowserViewReactionsViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserEditReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserEditReactionsFragment"
+        android:label="ComponentBrowserEditReactionsViewFragment"
         />
 
     <fragment

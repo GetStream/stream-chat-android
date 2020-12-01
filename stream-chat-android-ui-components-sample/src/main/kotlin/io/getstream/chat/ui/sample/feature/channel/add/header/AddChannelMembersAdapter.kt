@@ -46,8 +46,4 @@ class AddChannelMembersAdapter :
             binding.memberNameTextView.text = user.name
         }
     }
-
-    fun interface MemberClickListener {
-        fun onMemberClicked(user: User)
-    }
 }

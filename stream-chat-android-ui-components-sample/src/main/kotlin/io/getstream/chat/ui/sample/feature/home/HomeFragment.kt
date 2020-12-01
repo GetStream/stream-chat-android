@@ -65,6 +65,21 @@ class HomeFragment : Fragment() {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
         }
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.directChatFragment -> {
+                    findNavController().navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+                    true
+                }
+                R.id.groupChatFragment -> {
+                    findNavController().navigateSafely(R.id.action_homeFragment_to_addGroupChannelFragment)
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

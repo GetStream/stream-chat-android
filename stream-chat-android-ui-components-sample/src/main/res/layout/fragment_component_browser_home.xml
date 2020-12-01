@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
 
         <TextView
@@ -17,23 +17,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Component Browser"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             />
 
         <LinearLayout
             android:id="@+id/avatarViewContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/shape_component_browser_item_background"
             android:orientation="vertical"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pageTitle"
             >
 
             <TextView
@@ -55,16 +49,13 @@
 
         <LinearLayout
             android:id="@+id/channelListHeaderViewContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/shape_component_browser_item_background"
             android:orientation="vertical"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/avatarViewContainer"
             >
 
             <TextView
@@ -87,16 +78,13 @@
 
         <LinearLayout
             android:id="@+id/messagesHeaderViewContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/shape_component_browser_item_background"
             android:orientation="vertical"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/channelListHeaderViewContainer"
             >
 
             <TextView
@@ -120,7 +108,7 @@
 
         <LinearLayout
             android:id="@+id/searchViewContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
@@ -130,9 +118,6 @@
             android:focusable="true"
             android:orientation="vertical"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/messagesHeaderViewContainer"
             >
 
             <TextView
@@ -144,10 +129,101 @@
                 android:text="SearchView"
                 />
 
-            <io.getstream.chat.android.ui.search.SearchView
+            <io.getstream.chat.android.ui.search.SearchInputView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/messagePreviewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/messagePreviewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="MessagePreviewView"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/viewReactionsViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/viewReactionsViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="ViewReactionsView"
+                />
+
+            <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+                android:id="@+id/viewReactionsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editReactionsViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/editReactionsViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="EditReactionsView"
+                />
+
+            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+                android:id="@+id/editReactionsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:clickable="false"
                 android:focusable="false"
                 />
@@ -164,10 +240,8 @@
             android:background="@drawable/shape_component_browser_item_background"
             android:padding="16dp"
             android:text="Message list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchViewContainer"/>
+            />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </ScrollView>

@@ -25,9 +25,6 @@
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
 
-    <!--Group chat screen-->
-    <string name="group_chat_title">New group chat</string>
-
     <!--Add Channel Screen-->
     <string name="add_channel_title">New Chat</string>
     <string name="add_member_title">TO:</string>
@@ -40,4 +37,7 @@
     <string name="add_channel_user_item_offline">Offline</string>
     <string name="add_channel_user_item_online">Online</string>
     <string name="add_channel_user_item_last_online">Last online %s</string>
+
+    <!--Add Group Channel Screens-->
+    <string name="add_group_channel_title">Add Group Members</string>
 </resources>

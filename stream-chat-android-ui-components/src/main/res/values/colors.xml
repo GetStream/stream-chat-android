@@ -26,6 +26,7 @@
     <color name="stream_white">#FFFFFF</color>
     <color name="stream_alabaster">#FCFCFC</color>
     <color name="stream_concrete">#F2F2F2</color>
+    <color name="stream_grey_90">#E6E6E6</color>
 
     <array name="stream_avatar_gradient_colors">
         <item>@color/stream_avatar_gradient_orange</item>
@@ -37,4 +38,10 @@
     </array>
 
     <color name="stream_attachment_dialog_selection_overlay">#80000000</color>
+
+    <color name="stream_view_reactions_bubble_color_mine">@color/stream_white</color>
+    <color name="stream_view_reactions_bubble_border_color_mine">@color/stream_grey_90</color>
+    <color name="stream_view_reactions_bubble_color_theirs">@color/stream_grey_90</color>
+    <color name="stream_edit_reactions_bubble_color_mine">@color/stream_white</color>
+    <color name="stream_edit_reactions_bubble_color_theirs">@color/stream_white</color>
 </resources>
