@@ -32,7 +32,7 @@ public data class Config(
     var isMutes: Boolean = false,
 
     @SerializedName("max_message_length")
-    var maxMessageLength: Int = 0,
+    var maxMessageLength: Int = Int.MAX_VALUE,
 
     var automod: String = "",
     var infinite: String = "",
