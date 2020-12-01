@@ -40,9 +40,6 @@ public class SearchResultListView : LinearLayout {
         binding.searchListView.apply {
             setHasFixedSize(true)
             adapter = this@SearchResultListView.adapter
-            layoutManager = LinearLayoutManager(context).apply {
-                orientation = LinearLayoutManager.VERTICAL
-            }
             addItemDecoration(
                 DividerItemDecoration(
                     context,
