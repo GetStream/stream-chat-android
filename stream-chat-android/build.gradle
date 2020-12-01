@@ -116,7 +116,7 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
-    implementation 'com.github.mmin18:realtimeblurview:1.2.1'
+    implementation Dependencies.realtimeBlurView
 
     // ExoPlayer
     api Dependencies.exoplayerCore
