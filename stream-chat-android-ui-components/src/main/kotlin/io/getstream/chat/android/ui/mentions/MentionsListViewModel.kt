@@ -26,6 +26,7 @@ public class MentionsListViewModel : ViewModel() {
         _mentions.value = List(20) {
             Message(
                 id = "dummy-id-$it",
+                cid = "messaging:placeholder",
                 user = User().apply {
                     name = "Jane Doe"
                     image = "https://randomuser.me/api/portraits/women/0.jpg"

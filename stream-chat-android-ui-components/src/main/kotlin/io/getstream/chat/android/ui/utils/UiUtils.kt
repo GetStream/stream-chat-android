@@ -1,10 +1,13 @@
 package io.getstream.chat.android.ui.utils
 
+import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
 
-@SuppressWarnings("unused")
 internal object UiUtils {
+
+    private val reactionTypes: Map<String, Int> = ReactionType.values()
+        .associate { it.type to it.iconRes }
 
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
         ModelType.attach_mime_pdf to R.drawable.stream_ic_file_pdf,
@@ -40,4 +43,19 @@ internal object UiUtils {
             else -> R.drawable.stream_ic_file
         }
     }
+
+    fun getReactionTypes(): Map<String, Int> {
+        return reactionTypes
+    }
+}
+
+public enum class ReactionType(
+    public val type: String,
+    @DrawableRes public val iconRes: Int
+) {
+    LOVE("love", R.drawable.stream_ic_reaction_love),
+    THUMBS_UP("thumbs_up", R.drawable.stream_ic_reaction_thumbs_up),
+    THUMBS_DOWN("thumbs_down", R.drawable.stream_ic_reaction_thumbs_down),
+    LOL("lol", R.drawable.stream_ic_reaction_lol),
+    WUT("wut", R.drawable.stream_ic_reaction_wut);
 }

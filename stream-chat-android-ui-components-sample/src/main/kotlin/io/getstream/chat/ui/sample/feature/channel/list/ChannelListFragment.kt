@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.search.SearchViewModel
 import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
@@ -59,7 +58,7 @@ class ChannelListFragment : Fragment() {
 
             setChannelClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
-                    .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid))
+                    .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, null))
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
@@ -78,9 +77,9 @@ class ChannelListFragment : Fragment() {
         }
 
         searchViewModel.bindView(binding.searchResultListView, this)
-        binding.searchResultListView.setSearchResultSelectedListener {
-            // TODO navigate to result message
-            showToast("Search result selected: ${it.id}")
+        binding.searchResultListView.setSearchResultSelectedListener { message ->
+            requireActivity().findNavController(R.id.hostFragmentContainer)
+                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
         }
     }
 
