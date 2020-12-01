@@ -37,7 +37,7 @@ class AddGroupChannelSelectNameFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddGroupChannelSelectNameBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -95,10 +95,11 @@ class AddGroupChannelSelectNameFragment : Fragment() {
                     binding.progressBar.isVisible = true
                 }
                 is AddGroupChannelSelectNameViewModel.State.NavigateToChannel -> {
+                    sharedMembersViewModel.members.removeObservers(viewLifecycleOwner)
+                    sharedMembersViewModel.setMembers(emptyList())
                     findNavController().navigateSafely(
                         AddGroupChannelSelectNameFragmentDirections.actionOpenChat(state.cid, null)
                     )
-                    sharedMembersViewModel.setMembers(emptyList())
                 }
             }
         }
