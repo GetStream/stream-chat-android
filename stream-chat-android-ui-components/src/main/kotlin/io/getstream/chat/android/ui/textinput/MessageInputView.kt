@@ -299,13 +299,13 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendButton(typedArray: TypedArray) {
         iconDisabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonDisabledIcon)
-                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
-                    ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
+            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
+            ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonEnabledIcon)
-                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
-                    ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
+            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
+            ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
 
         DrawableCompat.setTintList(
             iconEnabledSendButtonDrawable!!,
