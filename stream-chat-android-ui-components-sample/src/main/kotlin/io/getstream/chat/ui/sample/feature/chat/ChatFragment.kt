@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -24,7 +25,7 @@ class ChatFragment : Fragment() {
     private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
-    private val inputListViewModel: MessageInputViewModel by viewModels { factory }
+    private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -45,11 +46,57 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
-        messageListViewModel.bindView(binding.messageList, viewLifecycleOwner)
-        inputListViewModel.bindView(binding.input, viewLifecycleOwner)
+        initMessagesViewModel()
+        initMessageInputViewModel()
+        configureBackButtonHandling()
+    }
 
-        binding.header.setBackButtonClickListener {
-            findNavController().navigateUp()
+    private fun configureBackButtonHandling() {
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+                    }
+                }
+            )
         }
+        binding.header.setBackButtonClickListener {
+            messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+        }
+    }
+
+    private fun initMessageInputViewModel() {
+        messageInputViewModel.apply {
+            bindView(binding.input, viewLifecycleOwner)
+            messageListViewModel.mode.observe(
+                viewLifecycleOwner,
+                {
+                    when (it) {
+                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
+                        is MessageListViewModel.Mode.Normal -> resetThread()
+                    }
+                }
+            )
+            binding.messageList.setOnMessageEditHandler {
+                editMessage.postValue(it)
+            }
+        }
+    }
+
+    private fun initMessagesViewModel() {
+        messageListViewModel
+            .apply { bindView(binding.messageList, viewLifecycleOwner) } // TODO replace with new design message list
+            .apply {
+                state.observe(
+                    viewLifecycleOwner,
+                    {
+                        when (it) {
+                            is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
+                        }
+                    }
+                )
+            }
     }
 }

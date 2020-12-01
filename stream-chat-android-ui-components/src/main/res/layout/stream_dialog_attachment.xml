@@ -52,7 +52,8 @@
         android:background="@null"
         android:src="@drawable/stream_ic_next"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pagerContainer"
