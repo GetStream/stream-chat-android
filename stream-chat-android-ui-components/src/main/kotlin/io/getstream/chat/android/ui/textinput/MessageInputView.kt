@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.textinput
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -15,12 +16,16 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
+import io.getstream.chat.android.ui.textinput.MessageInputView.OnMessageSendButtonClickListener
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
+import java.io.File
+import kotlin.properties.Delegates
 
 private const val NO_ICON_MESSAGE_DISABLED_STATE =
     "No icon for disabled state of send message button. Please set it in XML."
@@ -56,8 +61,29 @@ public class MessageInputView : ConstraintLayout {
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
+    private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
 
-    public var messageSentListener: MessageSentListener = MessageSentListener { }
+    public var messageText: String
+        get() = binding.etMessageTextInput.text.toString()
+        set(text) {
+            binding.etMessageTextInput.apply {
+                requestFocus()
+                setText(text)
+                setSelection(getText()?.length ?: 0)
+            }
+        }
+
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
+        configSendAlsoToChannelCheckbox()
+    }
+
+    public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
+        configSendAlsoToChannelCheckbox()
+    }
+
+    public var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
+
+    public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
 
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
@@ -67,6 +93,7 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController.commands = commands
     }
 
+    @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -75,9 +102,56 @@ public class MessageInputView : ConstraintLayout {
             configLightningButton(typedArray)
             configTextInput(typedArray)
             configSendButton(typedArray)
-            configClearAttachmentsButton()
-            configAttachmentButtonBehavior()
+            configSendAlsoToChannelCheckboxVisibility(typedArray)
         }
+        configSendAlsoToChannelCheckbox()
+        configClearAttachmentsButton()
+        configAttachmentButtonBehavior()
+        configSendButtonListener()
+    }
+
+    private fun configSendButtonListener() {
+        binding.ivSendMessageEnabled.setOnClickListener {
+            onSendButtonClickListener.onClick()
+
+            inputMode.let {
+                when (it) {
+                    is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
+                    is InputMode.Thread -> {
+                        sendMessageHandler.sendToThread(
+                            it.parentMessage,
+                            messageText,
+                            binding.sendAlsoToChannel.isChecked
+                        )
+                    }
+                    is InputMode.Edit -> TODO("Not supported yet")
+                }
+            }
+
+            messageText = ""
+        }
+    }
+
+    private fun configSendAlsoToChannelCheckboxVisibility(typedArray: TypedArray) {
+        sendAlsoToChannelCheckBoxEnabled =
+            typedArray.getBoolean(R.styleable.StreamMessageInputView_streamShowSendAlsoToChannelCheckbox, true)
+    }
+
+    private fun configSendAlsoToChannelCheckbox() {
+        val isThreadModeActive = inputMode is InputMode.Thread
+        val shouldShowCheckbox = sendAlsoToChannelCheckBoxEnabled && isThreadModeActive
+        if (shouldShowCheckbox) {
+            val text = when (chatMode) {
+                ChatMode.GroupChat -> {
+                    context.getString(R.string.stream_send_also_to_channel)
+                }
+                ChatMode.DirectChat -> {
+                    context.getString(R.string.stream_send_also_as_direct_message)
+                }
+            }
+            binding.sendAlsoToChannel.text = text
+        }
+        binding.sendAlsoToChannel.isVisible = shouldShowCheckbox
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
@@ -274,13 +348,6 @@ public class MessageInputView : ConstraintLayout {
 
         binding.ivSendMessageDisabled.alpha = 1F
         binding.ivSendMessageEnabled.alpha = 0F
-
-        // Temporary solution. Should be moved to ViewModel binding when sending message will be implemented
-        binding.ivSendMessageEnabled.setOnClickListener { messageSentListener.onMessageSent() }
-    }
-
-    public fun interface MessageSentListener {
-        public fun onMessageSent()
     }
 
     private fun configClearAttachmentsButton() {
@@ -321,5 +388,67 @@ public class MessageInputView : ConstraintLayout {
             binding.clearMessageInputButton.isVisible = false
             binding.etMessageTextInput.hint = null
         }
+    }
+
+    private companion object {
+        val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
+            override fun sendMessage(messageText: String) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendToThread(
+                parentMessage: Message,
+                messageText: String,
+                alsoSendToChannel: Boolean
+            ) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendToThreadWithAttachments(
+                parentMessage: Message,
+                message: String,
+                alsoSendToChannel: Boolean,
+                attachmentsFiles: List<File>
+            ) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun editMessage(oldMessage: Message, newMessageText: String) {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+        }
+    }
+
+    public sealed class InputMode {
+        public object Normal : InputMode()
+        public data class Thread(val parentMessage: Message) : InputMode()
+        public data class Edit(val oldMessage: Message) : InputMode()
+    }
+
+    public enum class ChatMode {
+        DirectChat,
+        GroupChat
+    }
+
+    public interface MessageSendHandler {
+        public fun sendMessage(messageText: String)
+        public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+        public fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsFiles: List<File>
+        )
+
+        public fun editMessage(oldMessage: Message, newMessageText: String)
+    }
+
+    public fun interface OnMessageSendButtonClickListener {
+        public fun onClick()
     }
 }

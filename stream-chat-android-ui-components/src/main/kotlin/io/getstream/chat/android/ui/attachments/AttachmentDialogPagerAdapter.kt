@@ -5,7 +5,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.getstream.chat.android.ui.attachments.camera.CameraAttachmentFragment
 import io.getstream.chat.android.ui.attachments.file.FileAttachmentFragment
 import io.getstream.chat.android.ui.attachments.media.MediaAttachmentFragment
-import java.lang.IllegalArgumentException
 
 public class AttachmentDialogPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
