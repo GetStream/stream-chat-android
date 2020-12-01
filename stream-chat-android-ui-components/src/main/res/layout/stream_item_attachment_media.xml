@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"
-        tools:src = "@color/stream_grey"
+        tools:src="@color/stream_grey"
         />
 
     <View

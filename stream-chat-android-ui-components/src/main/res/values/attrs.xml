@@ -54,6 +54,9 @@
         <attr name="streamSendButtonDisabledIcon" format="reference" />
         <attr name="streamSendButtonWidth" format="dimension|reference" />
         <attr name="streamSendButtonHeight" format="dimension|reference" />
+
+        <!-- "Also send to channel" CheckBox -->
+        <attr name="streamShowSendAlsoToChannelCheckbox" format="boolean" />
     </declare-styleable>
 
     <!--ChannelsHeaderView-->
