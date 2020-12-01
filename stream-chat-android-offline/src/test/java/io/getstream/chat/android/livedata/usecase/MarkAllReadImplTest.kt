@@ -2,17 +2,19 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.yield
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class MarkAllReadImplTest : BaseDomainTest2() {
+internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun markAllRead() = runBlocking {
+    fun markAllRead() = testCoroutines.dispatcher.runBlockingTest {
+        yield()
         chatDomainImpl.allActiveChannels().let { activeChannels ->
 
             // set up unread states
@@ -21,7 +23,7 @@ internal class MarkAllReadImplTest : BaseDomainTest2() {
                     Truth.assertThat(count).isEqualTo(0)
                 }
 
-                channel.handleEvent(data.newMessageEvent)
+                channel.handleEvent(data.newMessageFromUser2)
 
                 channel.unreadCount.getOrAwaitValue().let { unreadCount ->
                     Truth.assertThat(unreadCount).isEqualTo(1)
