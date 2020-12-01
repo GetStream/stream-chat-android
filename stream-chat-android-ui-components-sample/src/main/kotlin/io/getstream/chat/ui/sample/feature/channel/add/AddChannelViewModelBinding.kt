@@ -1,8 +1,6 @@
-package io.getstream.chat.ui.sample.feature.channel.add.group
+package io.getstream.chat.ui.sample.feature.channel.add
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 
 fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
