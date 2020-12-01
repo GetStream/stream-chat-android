@@ -54,6 +54,13 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupViewReactionsView()
         setupEditReactionsView()
         setupAttachmentGallery()
+        setupMessageList()
+    }
+
+    private fun setupMessageList() {
+        binding.messageListComponentBrowser.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment)
+        }
     }
 
     private fun setupAvatarView() {
