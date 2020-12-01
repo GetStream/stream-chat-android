@@ -162,8 +162,9 @@ public class MessageListView : ConstraintLayout {
                 onMessageFlagHandler
             ).show()
         }
-    //Todo: Add this after the behaviour of message options is complete.
-    //MessageLongClickListener { _, view ->
+
+    // Todo: Add this after the behaviour of message options is complete.
+    // MessageLongClickListener { _, view ->
     //             optionsView = view
     //
     //             binding.blurLayer.isVisible = true
