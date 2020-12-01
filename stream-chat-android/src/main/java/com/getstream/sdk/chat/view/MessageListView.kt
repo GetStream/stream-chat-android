@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -147,15 +146,17 @@ public class MessageListView : ConstraintLayout {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener {
+        MessageLongClickListener { _, view ->
+            optionsView = view
+
             binding.blurLayer.isVisible = true
 
-            optionsView = binding.chatMessagesRV[0]
-            binding.chatMessagesRV.removeView(optionsView)
-
-            binding.messageOptionsContainer.run {
-                addView(optionsView)
+            if (view.parent != null && view.parent is ViewGroup) {
+                (view.parent as ViewGroup).removeView(view)
             }
+
+            binding.messageOptionsContainer.addView(optionsView)
+            binding.messageOptionsScroll.isVisible = true
         }
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
@@ -260,11 +261,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initBlurLayer() {
-        binding.blurLayer.setOnClickListener {
-            binding.messageOptionsContainer.removeView(optionsView)
+        binding.blurLayer.setOnClickListener { hideBlurLayer() }
+        binding.messageOptionsContainer.setOnClickListener { hideBlurLayer() }
+    }
 
-            it.isVisible = false
-        }
+    private fun hideBlurLayer() {
+        binding.messageOptionsContainer.removeView(optionsView)
+        binding.messageOptionsScroll.isVisible = false
+
+        binding.blurLayer.isVisible = false
     }
 
     private fun initScrollButtonBehaviour() {
@@ -381,7 +386,8 @@ public class MessageListView : ConstraintLayout {
                     hasScrolledUp = currentLastVisible < lastPosition()
                     firstVisiblePosition = currentFirstVisible
 
-                    val realLastVisibleMessage = min(max(currentLastVisible, lastSeenMessagePosition()), currentList.size)
+                    val realLastVisibleMessage =
+                        min(max(currentLastVisible, lastSeenMessagePosition()), currentList.size)
                     lastSeenMessage = currentList[realLastVisibleMessage]
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
@@ -446,16 +452,7 @@ public class MessageListView : ConstraintLayout {
         messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
         messageViewHolderFactory.bubbleHelper = bubbleHelper
 
-        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style) { position ->
-            binding.blurLayer.isVisible = true
-
-            optionsView = layoutManager.findViewByPosition(position)
-            binding.chatMessagesRV.removeView(optionsView)
-
-            binding.messageOptionsContainer.run {
-                addView(optionsView)
-            }
-        }
+        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
@@ -784,7 +781,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface MessageLongClickListener {
-        public fun onMessageLongClick(message: Message)
+        public fun onMessageLongClick(message: Message, view: View)
     }
 
     public fun interface AttachmentClickListener {

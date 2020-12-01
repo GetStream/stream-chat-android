@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
@@ -11,7 +12,6 @@ internal class MessageListItemAdapter(
     private val channel: Channel,
     private val viewHolderFactory: MessageViewHolderFactory,
     private val style: MessageListViewStyle,
-    private val itemLongClickListener: (Int) -> Unit = {}
 ) : ListAdapter<MessageListItem, BaseMessageListItemViewHolder<*>>(MessageListItemDiffCallback) {
 
     var isThread = false
@@ -41,12 +41,6 @@ internal class MessageListItemAdapter(
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
-
-        if (holder is MessageListItemViewHolder) {
-            holder.setMessageLongClick {
-                itemLongClickListener(position)
-            }
-        }
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int, payloads: MutableList<Any>) {
@@ -59,12 +53,6 @@ internal class MessageListItemAdapter(
             .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
                 acc + messageListItemPayloadDiff
             }
-
-        if (holder is MessageListItemViewHolder) {
-            holder.setMessageLongClick {
-                itemLongClickListener(position)
-            }
-        }
 
         holder.bindListItem(getItem(position), diff)
     }

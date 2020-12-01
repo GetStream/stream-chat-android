@@ -181,7 +181,7 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         mediaBinding.root.setOnLongClickListener {
-            longClickListener.onMessageLongClick(messageItem.message)
+            longClickListener.onMessageLongClick(messageItem.message, itemView)
             true
         }
     }
@@ -198,7 +198,7 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         binding.lvAttachmentFile.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            longClickListener.onMessageLongClick(messageItem.message)
+            longClickListener.onMessageLongClick(messageItem.message, itemView)
             true
         }
 

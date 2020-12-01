@@ -168,7 +168,7 @@ internal class AttachmentViewHolderMedia(
             )
         }
         binding.ivMediaThumb.setOnLongClickListener {
-            longClickListener.onMessageLongClick(messageItem.message)
+            longClickListener.onMessageLongClick(messageItem.message, itemView)
             true
         }
     }

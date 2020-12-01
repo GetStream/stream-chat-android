@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
 
 internal class ListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
-    messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
+    messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.TWO_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
     attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
@@ -37,8 +37,8 @@ internal class ListenerContainerImpl(
     override var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
         messageLongClickListener
     ) { realListener ->
-        MessageLongClickListener { message ->
-            realListener().onMessageLongClick(message)
+        MessageLongClickListener { message, view ->
+            realListener().onMessageLongClick(message, view)
         }
     }
 

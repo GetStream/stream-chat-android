@@ -171,7 +171,7 @@ internal class MessageTextConfigurator(
                 return@setOnLongClickListener true
             }
             isLongClick = true
-            messageLongClickListener.onMessageLongClick(message)
+            messageLongClickListener.onMessageLongClick(message, binding.itemMessageContainer)
             true
         }
 
