@@ -74,7 +74,7 @@ class AddGroupChannelSelectNameFragment : Fragment() {
                 findNavController().navigateUp()
             } else {
                 binding.membersTitleTextView.text = requireContext().resources.getQuantityString(
-                    R.string.add_group_channel_select_name_members_title,
+                    R.plurals.add_group_channel_select_name_members_title,
                     members.size,
                     members.size
                 )

@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelBinding
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView
 import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 
 class AddGroupChannelFragment : Fragment() {
@@ -75,44 +74,8 @@ class AddGroupChannelFragment : Fragment() {
     }
 
     private fun bindAddChannelView() {
-        addChannelViewModel.apply {
-            state.observe(viewLifecycleOwner) { state ->
-                when (state) {
-                    AddChannelViewModel.State.Loading -> {
-                        binding.addChannelView.showLoadingView()
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideEmptyStateView()
-                    }
-                    AddChannelViewModel.State.Empty -> {
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.showEmptyStateView()
-                    }
-                    is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users)
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.hideEmptyStateView()
-                        binding.addChannelView.showUsersRecyclerView()
-                    }
-                    is AddChannelViewModel.State.ResultMoreUsers -> {
-                        binding.addChannelView.addMoreUsers(state.users)
-                    }
-                    is AddChannelViewModel.State.ShowChannel,
-                    AddChannelViewModel.State.HideChannel,
-                    is AddChannelViewModel.State.NavigateToChannel -> Unit
-                }
-            }
-            paginationState.observe(viewLifecycleOwner) { state ->
-                binding.addChannelView.setPaginationEnabled(!state.endReached && !state.loadingMore)
-            }
-        }
+        addChannelViewModel.bindView(binding.addChannelView, viewLifecycleOwner)
         binding.addChannelView.apply {
-            endReachedListener = AddChannelView.EndReachedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.ReachedEndOfList)
-            }
-            setSearchInputChangedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
-            }
             setMembersChangedListener {
                 sharedMembersViewModel.setMembers(it)
             }
