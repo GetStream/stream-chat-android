@@ -46,24 +46,16 @@
         app:layout_constraintTop_toBottomOf="@id/headerBarrier"
         >
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/createGroupButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/createGroupImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            app:backgroundTint="@color/stream_white"
-            app:cornerRadius="20dp"
-            app:icon="@drawable/stream_ic_create_group"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconTint="@color/stream_blue"
-            app:layout_constraintBottom_toTopOf="@id/separator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/shape_circle_white"
+            android:elevation="2dp"
+            android:padding="8dp"
+            android:src="@drawable/stream_ic_create_group"
+            app:tint="@color/stream_blue"
             />
 
         <TextView
