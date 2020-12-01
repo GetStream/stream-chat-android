@@ -130,8 +130,12 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendAlsoToChannelCheckbox() {
         binding.sendAlsoToChannel.isVisible = inputMode is InputMode.Thread
         val text = when (chatMode) {
-            is ChatMode.GroupChat -> context.getString(R.string.stream_send_also_to_channel)
-            is ChatMode.DirectChat -> context.getString(R.string.stream_send_also_as_direct_message)
+            ChatMode.GroupChat -> {
+                context.getString(R.string.stream_send_also_to_channel)
+            }
+            ChatMode.DirectChat -> {
+                context.getString(R.string.stream_send_also_as_direct_message)
+            }
         }
         binding.sendAlsoToChannel.text = text
     }
@@ -281,13 +285,13 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendButton(typedArray: TypedArray) {
         iconDisabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonDisabledIcon)
-            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
-            ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
+                    ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonEnabledIcon)
-            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
-            ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
+                    ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
 
         DrawableCompat.setTintList(
             iconEnabledSendButtonDrawable!!,
@@ -411,9 +415,9 @@ public class MessageInputView : ConstraintLayout {
         public data class Edit(val oldMessage: Message) : InputMode()
     }
 
-    public sealed class ChatMode {
-        public object DirectChat : ChatMode()
-        public object GroupChat : ChatMode()
+    public enum class ChatMode {
+        DirectChat,
+        GroupChat
     }
 
     public interface MessageSendHandler {
