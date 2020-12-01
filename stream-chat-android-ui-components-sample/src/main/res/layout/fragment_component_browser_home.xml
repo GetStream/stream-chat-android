@@ -140,6 +140,42 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/attachmentGalleryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/attachmentGalleryOnePictureLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="AttachmentGallery - One picture"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/attachmentGalleryMultiPictureLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="AttachmentGallery - Many pictures"
+                android:textColor="@color/black"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/messagePreviewContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
