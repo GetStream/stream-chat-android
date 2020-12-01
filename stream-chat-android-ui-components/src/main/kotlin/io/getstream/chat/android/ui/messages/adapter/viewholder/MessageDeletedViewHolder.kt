@@ -8,18 +8,20 @@ import io.getstream.chat.android.ui.databinding.StreamItemMessageDeletedBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.SpaceDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 
 public class MessageDeletedViewHolder(
     parent: ViewGroup,
     internal val binding: StreamItemMessageDeletedBinding = StreamItemMessageDeletedBinding.inflate(
         LayoutInflater.from(
             parent.context
-        ), parent, false
+        ),
+        parent,
+        false
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    private val decorators = listOf<Decorator>(BackgroundDecorator(), SpaceDecorator())
+    private val decorators = listOf<Decorator>(BackgroundDecorator(), GapDecorator())
 
     override fun bind(data: MessageListItem.MessageItem) {
         decorators.forEach { it.decorate(this, data) }

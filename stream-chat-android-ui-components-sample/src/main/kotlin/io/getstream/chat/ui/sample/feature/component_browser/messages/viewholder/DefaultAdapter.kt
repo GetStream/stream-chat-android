@@ -9,11 +9,11 @@ internal class DefaultAdapter<T, VH : RecyclerView.ViewHolder>(
     private val binder: (VH, T) -> Unit
 ) : RecyclerView.Adapter<VH>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH  = viewHolderFactory(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = viewHolderFactory(parent)
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         binder(holder, list[position])
     }
 
-    override fun getItemCount(): Int  = list.size
+    override fun getItemCount(): Int = list.size
 }

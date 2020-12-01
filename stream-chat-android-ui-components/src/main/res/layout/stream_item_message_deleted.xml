@@ -5,25 +5,11 @@
     android:orientation="vertical"
     >
 
-    <LinearLayout
+    <io.getstream.chat.android.ui.messages.adapter.GapView
+        android:id="@+id/gapView"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <Space
-        android:id="@+id/standard_gap"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:visibility="gone"
         />
-
-    <Space
-        android:id="@+id/big_gap"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:visibility="gone"
-        />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/deleteLabel"
