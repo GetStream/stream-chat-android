@@ -25,10 +25,7 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
 
     override fun createIntent(context: Context, input: Unit?): Intent {
         val takePictureIntents =
-            File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                createFileName("STREAM_IMG", "jpg")
-            ).let {
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_IMG", "jpg")).let {
                 pictureFile = it
                 createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
             }

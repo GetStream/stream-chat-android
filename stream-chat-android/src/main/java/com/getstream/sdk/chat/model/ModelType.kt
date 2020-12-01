@@ -34,15 +34,13 @@ public object ModelType {
     public const val attach_mime_7z: String = "application/x-7z-compressed"
     public const val attach_mime_csv: String = "text/comma-separated-values"
     public const val attach_mime_doc: String = "application/msword"
-    public const val attach_mime_docx: String =
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    public const val attach_mime_docx: String = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     public const val attach_mime_html: String = "text/html"
     public const val attach_mime_md: String = "text/markdown"
     public const val attach_mime_odt: String = "application/vnd.oasis.opendocument.text"
     public const val attach_mime_pdf: String = "application/pdf"
     public const val attach_mime_ppt: String = "application/vnd.ms-powerpoint"
-    public const val attach_mime_pptx: String =
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    public const val attach_mime_pptx: String = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     public const val attach_mime_rar: String = "application/vnd.rar"
     public const val attach_mime_rtf: String = "application/rtf"
     public const val attach_mime_tar: String = "application/tar"

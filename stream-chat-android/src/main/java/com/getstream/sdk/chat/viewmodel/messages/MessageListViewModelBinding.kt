@@ -24,9 +24,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setOnMessageDeleteHandler { onEvent(DeleteMessage(it)) }
-    view.setOnStartThreadHandler {
-        onEvent(ThreadModeEntered(it))
-    }
+    view.setOnStartThreadHandler { onEvent(ThreadModeEntered(it)) }
     view.setOnMessageFlagHandler { onEvent(FlagMessage(it)) }
     view.setOnSendGiphyHandler { message, giphyAction ->
         onEvent(GiphyActionSelected(message, giphyAction))
