@@ -129,16 +129,19 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configSendAlsoToChannelCheckbox() {
-        binding.sendAlsoToChannel.isVisible = inputMode is InputMode.Thread
-        val text = when (chatMode) {
-            ChatMode.GroupChat -> {
-                context.getString(R.string.stream_send_also_to_channel)
+        val isThreadModeActive = inputMode is InputMode.Thread
+        if (isThreadModeActive) {
+            val text = when (chatMode) {
+                ChatMode.GroupChat -> {
+                    context.getString(R.string.stream_send_also_to_channel)
+                }
+                ChatMode.DirectChat -> {
+                    context.getString(R.string.stream_send_also_as_direct_message)
+                }
             }
-            ChatMode.DirectChat -> {
-                context.getString(R.string.stream_send_also_as_direct_message)
-            }
+            binding.sendAlsoToChannel.text = text
         }
-        binding.sendAlsoToChannel.text = text
+        binding.sendAlsoToChannel.isVisible = isThreadModeActive
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
