@@ -73,8 +73,11 @@ class AddGroupChannelSelectNameFragment : Fragment() {
             if (members.isEmpty()) {
                 findNavController().navigateUp()
             } else {
-                binding.membersTitleTextView.text =
-                    getString(R.string.add_group_channel_select_name_members_title, members.size + 1)
+                binding.membersTitleTextView.text = requireContext().resources.getQuantityString(
+                    R.string.add_group_channel_select_name_members_title,
+                    members.size,
+                    members.size
+                )
                 adapter.submitList(members)
             }
         }
