@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.textinput
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -60,6 +61,7 @@ public class MessageInputView : ConstraintLayout {
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
+    private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
 
     public var messageText: String
         get() = binding.etMessageTextInput.text.toString()
@@ -91,6 +93,7 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController.commands = commands
     }
 
+    @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -99,10 +102,11 @@ public class MessageInputView : ConstraintLayout {
             configLightningButton(typedArray)
             configTextInput(typedArray)
             configSendButton(typedArray)
-            configClearAttachmentsButton()
-            configAttachmentButtonBehavior()
+            configSendAlsoToChannelCheckboxVisibility(typedArray)
         }
         configSendAlsoToChannelCheckbox()
+        configClearAttachmentsButton()
+        configAttachmentButtonBehavior()
         configSendButtonListener()
     }
 
@@ -128,9 +132,15 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    private fun configSendAlsoToChannelCheckboxVisibility(typedArray: TypedArray) {
+        sendAlsoToChannelCheckBoxEnabled =
+            typedArray.getBoolean(R.styleable.StreamMessageInputView_streamShowSendAlsoToChannelCheckbox, true)
+    }
+
     private fun configSendAlsoToChannelCheckbox() {
         val isThreadModeActive = inputMode is InputMode.Thread
-        if (isThreadModeActive) {
+        val shouldShowCheckbox = sendAlsoToChannelCheckBoxEnabled && isThreadModeActive
+        if (shouldShowCheckbox) {
             val text = when (chatMode) {
                 ChatMode.GroupChat -> {
                     context.getString(R.string.stream_send_also_to_channel)
@@ -141,7 +151,7 @@ public class MessageInputView : ConstraintLayout {
             }
             binding.sendAlsoToChannel.text = text
         }
-        binding.sendAlsoToChannel.isVisible = isThreadModeActive
+        binding.sendAlsoToChannel.isVisible = shouldShowCheckbox
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
