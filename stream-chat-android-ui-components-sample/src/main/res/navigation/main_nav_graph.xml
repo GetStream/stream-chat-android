@@ -136,6 +136,11 @@
             app:argType="string"
             app:nullable="false"
             />
+        <argument
+            android:name="messageId"
+            app:argType="string"
+            app:nullable="true"
+            />
 
         <action
             android:id="@+id/action_ChatFragment_to_homeFragment"

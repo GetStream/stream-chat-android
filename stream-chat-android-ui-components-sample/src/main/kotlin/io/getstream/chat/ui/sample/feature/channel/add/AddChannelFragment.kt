@@ -91,7 +91,7 @@ class AddChannelFragment : Fragment() {
                     is AddChannelViewModel.State.ShowChannel -> initializeChannel(state.cid)
                     AddChannelViewModel.State.HideChannel -> cleanChannel()
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
-                        AddChannelFragmentDirections.actionOpenChat(state.cid)
+                        AddChannelFragmentDirections.actionOpenChat(state.cid, null)
                     )
                 }
             }
