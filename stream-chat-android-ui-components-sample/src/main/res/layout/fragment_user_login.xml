@@ -85,4 +85,5 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/sdk_version_template"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
