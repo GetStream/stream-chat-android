@@ -64,7 +64,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -136,21 +135,16 @@ internal class ChannelControllerImpl(
         .map { it.values.sortedBy { user -> user.createdAt } }
         .asLiveData()
 
-    val _typingUsers: StateFlow<List<User>> = _typing.map {
-        it.values
-            .sortedBy(ChatEvent::createdAt)
-            .mapNotNull { event ->
-                (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
-            }
-    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-
     /** who is currently typing (current user is excluded from this) */
     override val typing: LiveData<TypingEvent> = _typing
         .map {
             val userList = it.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
-                    (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
+                    when (event) {
+                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.currentUser }
+                        else -> null
+                    }
                 }
 
             TypingEvent(channelId, userList)
