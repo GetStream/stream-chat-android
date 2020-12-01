@@ -188,6 +188,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment"
             app:destination="@id/componentBrowserEditReactionsFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
+            app:destination="@id/componentBrowserAttachmentGalleryFragment"
+            />
     </fragment>
 
     <fragment
@@ -213,6 +217,16 @@
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
         />
+    <fragment
+        android:id="@+id/componentBrowserAttachmentGalleryFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.attachments.gallery.ComponentBrowserAttachmentGalleryFragment"
+        android:label="ComponentBrowserAttachmentGalleryFragment"
+        >
+        <argument
+            android:name="picturesArgs"
+            app:argType="string[]"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/componentBrowserMessagePreviewViewFragment"

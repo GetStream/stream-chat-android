@@ -9,6 +9,7 @@
 ## stream-chat-android-offline
 
 ## stream-chat-android-ui-components
+- Adding AttachmentGallery to handle attachments
 
 # Nov 24th, 2020 - 4.4.5
 ## Common changes for all artifacts
