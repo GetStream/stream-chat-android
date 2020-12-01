@@ -18,10 +18,11 @@ fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: Lifecycle
                 view.showEmptyStateView()
             }
             is AddChannelViewModel.State.Result -> {
-                view.setUsers(state.users)
-                view.hideLoadingView()
-                view.hideEmptyStateView()
-                view.showUsersRecyclerView()
+                view.setUsers(state.users) {
+                    view.hideLoadingView()
+                    view.hideEmptyStateView()
+                    view.showUsersRecyclerView()
+                }
             }
             is AddChannelViewModel.State.ResultMoreUsers -> {
                 view.addMoreUsers(state.users)

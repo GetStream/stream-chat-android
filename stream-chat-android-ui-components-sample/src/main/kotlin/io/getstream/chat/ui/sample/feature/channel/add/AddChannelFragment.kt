@@ -28,7 +28,7 @@ class AddChannelFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,10 +80,11 @@ class AddChannelFragment : Fragment() {
                         binding.addChannelView.showEmptyStateView()
                     }
                     is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users)
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.hideEmptyStateView()
-                        binding.addChannelView.showUsersRecyclerView()
+                        binding.addChannelView.setUsers(state.users) {
+                            binding.addChannelView.hideLoadingView()
+                            binding.addChannelView.hideEmptyStateView()
+                            binding.addChannelView.showUsersRecyclerView()
+                        }
                     }
                     is AddChannelViewModel.State.ResultMoreUsers -> {
                         binding.addChannelView.addMoreUsers(state.users)
