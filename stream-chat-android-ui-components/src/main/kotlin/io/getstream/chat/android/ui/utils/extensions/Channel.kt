@@ -82,7 +82,7 @@ internal fun Channel.diff(other: Channel): ChannelDiff =
 
 internal fun Channel.getOnlineStateSubtitle(context: Context): String {
     val users = getUsers()
-    if (users.isEmpty()) return ""
+    if (users.isEmpty()) return String.EMPTY
 
     if (users.size == 1) {
         return users.first().getLastSeenText(context)
