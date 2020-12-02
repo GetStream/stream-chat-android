@@ -19,21 +19,13 @@ public class MessagePlainTextViewHolder(
             false
         )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+
     override fun bindData(data: MessageListItem.MessageItem) {
-        if (data.isMine) {
-            bindMine(data)
+        (binding.messageText.layoutParams as LinearLayout.LayoutParams).gravity = if (data.isMine) {
+            Gravity.END
         } else {
-            bindTheir(data)
+            Gravity.START
         }
-    }
-
-    private fun bindTheir(data: MessageListItem.MessageItem) {
-        (binding.messageText.layoutParams as LinearLayout.LayoutParams).gravity = Gravity.START
-        binding.messageText.text = data.message.text
-    }
-
-    private fun bindMine(data: MessageListItem.MessageItem) {
-        (binding.messageText.layoutParams as LinearLayout.LayoutParams).gravity = Gravity.END
         binding.messageText.text = data.message.text
     }
 }

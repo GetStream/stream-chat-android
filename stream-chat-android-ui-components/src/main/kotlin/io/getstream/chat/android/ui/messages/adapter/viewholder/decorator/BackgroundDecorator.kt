@@ -54,8 +54,8 @@ internal class BackgroundDecorator : BaseDecorator() {
             paint = paint,
             topLeftCornerPx = radius,
             topRightCornerPx = radius,
-            bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
-            bottomLeftCornerPx = radius
+            bottomRightCornerPx = if (data.isMine && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
+            bottomLeftCornerPx = if (data.isMine.not() && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
         )
     }
 
