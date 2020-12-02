@@ -52,13 +52,7 @@ internal class ClientStateService {
             state<ClientState.User.Pending.WithToken> {
                 onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
-                    ClientState.User.Authorized.Connected(
-                        event.connectionId,
-                        event.user,
-                        state.token
-                    )
-                }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
             }
 
             state<ClientState.User.Authorized.Connected> {
