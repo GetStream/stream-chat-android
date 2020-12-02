@@ -71,6 +71,7 @@ class AddChannelView : FrameLayout {
         }
 
         binding.usersRecyclerView.addOnScrollListener(endReachedScrollListener)
+        binding.usersRecyclerView.itemAnimator = null
         loadingView.apply {
             isVisible = false
             addView(this, defaultChildLayoutParams())
@@ -88,8 +89,8 @@ class AddChannelView : FrameLayout {
         )
     }
 
-    fun setUsers(users: List<User>) {
-        controller.setUsers(users)
+    fun setUsers(users: List<User>, usersSubmittedCallback: () -> Unit) {
+        controller.setUsers(users, usersSubmittedCallback)
     }
 
     fun addMoreUsers(users: List<User>) {
