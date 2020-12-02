@@ -3,8 +3,8 @@ name: Pull request CI checks
 on: [pull_request]
 
 jobs:
-  stream_chat_android_client:
-    name: stream-chat-android-client
+  lint:
+    name: ktlint
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
@@ -14,22 +14,10 @@ jobs:
         with:
           java-version: 1.8
       - name: ktlint
-        run: ./gradlew :stream-chat-android-client:ktlintCheck
-      - name: Unit tests
-        run: ./gradlew :stream-chat-android-client:testDebug --stacktrace
-      - name: Coverage
-        run: ./gradlew :stream-chat-android-client:jacocoTestReport
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testDebugUnitTest
-          path: stream-chat-android-client/build/reports/tests/testDebugUnitTest
+        run: ./gradlew ktlintCheck
 
-  stream_chat_android_offline:
-    name: stream-chat-android-offline
+  test:
+    name: Unit tests
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
@@ -38,59 +26,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: ktlint
-        run: ./gradlew :stream-chat-android-offline:ktlintCheck
       - name: Unit tests
-        run: ./gradlew :stream-chat-android-offline:testDebug --stacktrace
-      - name: Coverage
-        run: ./gradlew :stream-chat-android-offline:jacocoTestReport
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1
+        run: ./gradlew testDebug --stacktrace
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: testDebugUnitTest
-          path: stream-chat-android-offline/build/reports/tests/testDebugUnitTest
-
-  stream_chat_android:
-    name: stream-chat-android
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: ktlint
-        run: ./gradlew :stream-chat-android:ktlintCheck :stream-chat-android-sample:ktlintCheck
-      - name: Unit tests
-        run: ./gradlew :stream-chat-android:testDebug :stream-chat-android-sample:testDebug --stacktrace
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testDebugUnitTest
-          path: stream-chat-android/build/reports/tests/testDebugUnitTest
-
-  stream_chat_android_ui_components:
-    name: stream-chat-android-ui-components
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: ktlint
-        run: ./gradlew :stream-chat-android-ui-components:ktlintCheck :stream-chat-android-ui-components-sample:ktlintCheck
-      - name: Unit tests
-        run: ./gradlew :stream-chat-android-ui-components:testDebug :stream-chat-android-ui-components-sample:testDebug --stacktrace
-      - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: testDebugUnitTest
-          path: stream-chat-android-ui-components/build/reports/tests/testDebugUnitTest
+          path: /**/build/reports/tests/testDebugUnitTest
