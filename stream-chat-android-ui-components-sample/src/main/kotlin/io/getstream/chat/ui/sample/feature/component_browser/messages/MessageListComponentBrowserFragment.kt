@@ -32,5 +32,8 @@ class MessageListComponentBrowserFragment : Fragment() {
         binding.deletedMessages.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDeletedMessages)
         }
+        binding.dateDivider.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)
+        }
     }
 }

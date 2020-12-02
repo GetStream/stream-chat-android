@@ -3,6 +3,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+- Use custom `StreamFileProvider` instead of androidx `FileProvider` to avoid conflicts
 
 ## stream-chat-android-client
 
