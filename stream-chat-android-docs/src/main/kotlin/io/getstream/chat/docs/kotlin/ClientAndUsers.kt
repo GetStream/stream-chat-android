@@ -126,4 +126,22 @@ object ClientAndUsers {
             }
         )
     }
+
+    fun guestUser() {
+        client.setGuestUser(
+            "user-id",
+            "name",
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    val user = data.user
+                    val connectionId = data.connectionId
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user))
+                }
+
+                override fun onError(error: ChatError) {
+                    Log.e(TAG, String.format("There was an error %s", error, error.cause))
+                }
+            }
+        )
+    }
 }
