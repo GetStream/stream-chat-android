@@ -59,4 +59,14 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             view.inputMode = MessageInputView.InputMode.Edit(it)
         }
     }
+
+    view.typeListener = object : MessageInputView.TypeListener {
+        override fun onKeystroke() {
+            keystroke()
+        }
+
+        override fun onStopTyping() {
+            stopTyping()
+        }
+    }
 }

@@ -82,6 +82,8 @@ public class MessageInputView : ConstraintLayout {
         configSendAlsoToChannelCheckbox()
     }
 
+    public var typeListener: TypeListener = EMPTY_TYPE_LISTENER
+
     public var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
 
     public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
@@ -280,6 +282,7 @@ public class MessageInputView : ConstraintLayout {
         binding.etMessageTextInput.doAfterTextChanged {
             suggestionListController.onTextChanged(it?.toString() ?: "")
             refreshControlsState()
+            handleKeyStroke()
         }
 
         binding.etMessageTextInput.run {
@@ -304,6 +307,14 @@ public class MessageInputView : ConstraintLayout {
                 ).toFloat()
 
             hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)
+        }
+    }
+
+    private fun handleKeyStroke() {
+        if (messageText.isNotBlank()) {
+            typeListener.onKeystroke()
+        } else {
+            typeListener.onStopTyping()
         }
     }
 
@@ -432,6 +443,11 @@ public class MessageInputView : ConstraintLayout {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
         }
+
+        val EMPTY_TYPE_LISTENER = object : TypeListener {
+            override fun onKeystroke() = Unit
+            override fun onStopTyping() = Unit
+        }
     }
 
     public sealed class InputMode {
@@ -461,5 +477,10 @@ public class MessageInputView : ConstraintLayout {
 
     public fun interface OnMessageSendButtonClickListener {
         public fun onClick()
+    }
+
+    public interface TypeListener {
+        public fun onKeystroke()
+        public fun onStopTyping()
     }
 }
