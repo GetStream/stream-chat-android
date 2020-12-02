@@ -55,7 +55,6 @@ public class MessagesHeaderView : ConstraintLayout {
             configUserAvatar(it)
             configTitle(it)
             configBackButton(it)
-            configTypingLabel(it)
             configOfflineLabel(it)
             configSearchingForNetworkLabel(it)
             configOnlineLabel(it)
@@ -120,9 +119,10 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.offlineContainer.isVisible = true
     }
 
-    public fun showTypingStateLabel() {
+    public fun showTypingStateLabel(typingUsers: List<User>) {
         hideSubtitle()
         binding.typingContainer.isVisible = true
+        binding.typingView.setTypingUsers(typingUsers)
     }
 
     public fun hideTitle() {
@@ -212,37 +212,6 @@ public class MessagesHeaderView : ConstraintLayout {
             )
             .style(
                 R.styleable.StreamMessagesHeaderView_streamMessagesHeaderOfflineLabelTextStyle,
-                Typeface.NORMAL
-            )
-            .build()
-    }
-
-    private fun configTypingLabel(attrs: TypedArray) {
-        val textStyle = getTypingTextStyle(attrs)
-        binding.typingLabel.apply {
-            text = attrs.getString(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelText)
-                ?: context.getString(R.string.stream_message_list_header_typing)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
-            setTextColor(textStyle.color)
-            typeface = textStyle.font
-        }
-    }
-
-    private fun getTypingTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray).size(
-            R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelTextSize,
-            context.getDimension(R.dimen.stream_text_small)
-        )
-            .color(
-                R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelTextColor,
-                ContextCompat.getColor(context, R.color.stream_text_color_black_translucent)
-            )
-            .font(
-                R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelFontAssets,
-                R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelTextFont
-            )
-            .style(
-                R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTypingLabelTextStyle,
                 Typeface.NORMAL
             )
             .build()
