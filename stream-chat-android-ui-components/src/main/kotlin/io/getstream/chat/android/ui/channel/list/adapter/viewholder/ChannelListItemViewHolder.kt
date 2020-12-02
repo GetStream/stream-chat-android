@@ -90,7 +90,6 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
                 }
 
                 val lastMessage = channel.getLastMessage()
-
                 if (lastMessageChanged) {
                     configureLastMessageLabel(channel, lastMessage)
                     configureLastMessageTimestamp(lastMessage)

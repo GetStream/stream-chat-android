@@ -72,7 +72,11 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
     )
 
     return if (onlineUsers > 0) {
-        context.getString(R.string.stream_ui_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
+        context.getString(
+            R.string.stream_ui_message_list_header_group_member_count_with_online,
+            groupMembers,
+            onlineUsers
+        )
     } else {
         groupMembers
     }

@@ -22,7 +22,6 @@
     <string name="stream_ui_channels_header_view_offline_title">Waiting for network</string>
 
     <!--Channel List Item View-->
-    <string name="stream_ui_channel_item_last_message_template">%1$s: %2$s</string>
     <string name="stream_ui_channel_display_name_self">You</string>
 
     <!--SearchView-->
