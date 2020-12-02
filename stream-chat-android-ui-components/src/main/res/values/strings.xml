@@ -54,4 +54,10 @@
 
     <!-- Message list -->
     <string name="stream_message_deleted_label">Message deleted</string>
+
+    <!-- Typing -->
+    <plurals name="stream_typing_text">
+        <item quantity="one">%s is typing</item>
+        <item quantity="other">%s and %d more are typing</item>
+    </plurals>
 </resources>
