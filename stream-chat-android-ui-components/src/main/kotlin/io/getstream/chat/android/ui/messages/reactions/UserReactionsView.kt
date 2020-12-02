@@ -40,7 +40,7 @@ public class UserReactionsView : FrameLayout {
         bindReactionList(message)
     }
 
-    public fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
+    public fun setReactionClickListener(reactionClickListener: ReactionClickListener?) {
         this.reactionClickListener = reactionClickListener
     }
 
