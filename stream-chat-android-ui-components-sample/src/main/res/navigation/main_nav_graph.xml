@@ -211,6 +211,11 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
             app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment"
+            app:destination="@id/componentBrowserUserReactionsFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -263,6 +268,12 @@
         android:id="@+id/componentBrowserEditReactionsFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserEditReactionsFragment"
         android:label="ComponentBrowserEditReactionsViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserUserReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserUserReactionsFragment"
+        android:label="ComponentBrowserUserReactionsFragment"
         />
 
 </navigation>

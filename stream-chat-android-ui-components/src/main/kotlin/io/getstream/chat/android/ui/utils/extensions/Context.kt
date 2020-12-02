@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
@@ -28,3 +29,6 @@ internal fun Context?.getFragmentManager(): FragmentManager? {
         else -> null
     }
 }
+
+internal inline val Context.inflater: LayoutInflater
+    get() = LayoutInflater.from(this)

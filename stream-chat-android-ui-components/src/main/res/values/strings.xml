@@ -51,4 +51,9 @@
     <!-- MessageInputView -->
     <string name="stream_send_also_to_channel">Also send to channel</string>
     <string name="stream_send_also_as_direct_message">Also send as direct message</string>
+
+    <plurals name="stream_user_reactions_title">
+        <item quantity="one">%d Message reaction</item>
+        <item quantity="other">%d Message reactions</item>
+    </plurals>
 </resources>

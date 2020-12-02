@@ -54,6 +54,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupViewReactionsView()
         setupEditReactionsView()
         setupAttachmentGallery()
+        setupUserReactionsView()
     }
 
     private fun setupAvatarView() {
@@ -137,6 +138,13 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.editReactionsView.setMessage(randomMessage(reactionsSize = 30, ownReactionsSize = 2))
         binding.editReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
+        }
+    }
+
+    private fun setupUserReactionsView() {
+        binding.userReactionsView.setMessage(randomMessage(reactionsSize = 2, ownReactionsSize = 1))
+        binding.userReactionsViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
         }
     }
 }
