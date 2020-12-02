@@ -311,13 +311,14 @@ internal class QueryChannelsControllerImpl(
      */
     private fun refreshChannels(cIds: List<String>) {
         val cIdsInQuery = queryChannelsSpec.cids.intersect(cIds)
+
+        // update the channels
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
         val existingChannelMap = _channels.value?.toMutableMap() ?: mutableMapOf()
 
         newChannels.forEach { channel ->
             existingChannelMap[channel.cid] = channel
         }
-
         _channels.value = existingChannelMap
     }
 

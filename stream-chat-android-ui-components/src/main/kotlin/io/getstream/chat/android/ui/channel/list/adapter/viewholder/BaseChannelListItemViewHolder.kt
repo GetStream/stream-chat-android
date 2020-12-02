@@ -13,6 +13,7 @@ public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerVi
         diff: ChannelDiff? = null,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
+        channelDeleteListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         style: ChannelListViewStyle? = null
     )

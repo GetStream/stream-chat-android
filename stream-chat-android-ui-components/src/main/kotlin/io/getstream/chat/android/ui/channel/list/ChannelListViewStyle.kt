@@ -146,7 +146,7 @@ public class ChannelListViewStyle internal constructor(context: Context, attrs: 
         with(attributes) {
             channelPreviewLayout = getResourceId(
                 R.styleable.ChannelListView_streamChannelPreviewLayout,
-                R.layout.stream_item_channel
+                io.getstream.chat.android.ui.R.layout.stream_channel_list_item_view
             )
             // Avatar
             avatarStyle = AvatarStyle(context, attrs)

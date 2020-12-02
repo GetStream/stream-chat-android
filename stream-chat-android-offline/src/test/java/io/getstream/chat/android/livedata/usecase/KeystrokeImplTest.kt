@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -12,6 +13,7 @@ internal class KeystrokeImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun keystroke() = runBlocking {
+        yield()
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val result = chatDomain.useCases.keystroke(data.channel1.cid).execute()
         Truth.assertThat(result.data()).isTrue()
