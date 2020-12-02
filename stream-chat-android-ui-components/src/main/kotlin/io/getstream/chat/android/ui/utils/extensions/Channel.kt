@@ -84,7 +84,7 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
     val currentUser = ChatDomain.instance().currentUser
-    return read.filterNot { it.user.id == currentUser.id }
+    return read.filter { it.user.id != currentUser.id }
         .mapNotNull { it.lastRead }
         .any { it.time >= message.getCreatedAtOrThrow().time }
 }

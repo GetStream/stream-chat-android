@@ -184,7 +184,6 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
-
         when {
             !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
                 messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_all)
