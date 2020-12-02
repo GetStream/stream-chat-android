@@ -46,6 +46,12 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
     private fun createFileName(prefix: String, extension: String) =
         "${prefix}_${dateFormat.format(Date().time)}.$extension"
 
+    private fun getFileProviderAuthority(context: Context): String {
+        val compName = ComponentName(context, StreamFileProvider::class.java.name)
+        val providerInfo = context.packageManager.getProviderInfo(compName, 0)
+        return providerInfo.authority
+    }
+
     private fun createIntentList(
         context: Context,
         action: String,
@@ -53,7 +59,7 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
     ): List<Intent> {
         val destinationUri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.streamfileprovider",
+            getFileProviderAuthority(context),
             destinationFile
         )
         val actionIntent = Intent(action)

@@ -4,6 +4,7 @@
     <color name="stream_grey">#808080</color>
     <color name="stream_grey_medium_light">#CCCCCC</color>
     <color name="stream_grey_light">#F5F5F5</color>
+    <color name="stream_grey_light_opacity_50">#80E6E6E6</color>
     <color name="stream_light_red">#FF3742</color>
 
     <color name="stream_text_black">@color/stream_black</color>
@@ -22,6 +23,7 @@
     <color name="stream_black">#000000</color>
     <color name="stream_black_30">#4D000000</color>
     <color name="stream_black_50">#80000000</color>
+    <color name="stream_black_60">#99000000</color>
     <color name="stream_white">#FFFFFF</color>
     <color name="stream_alabaster">#FCFCFC</color>
     <color name="stream_concrete">#F2F2F2</color>

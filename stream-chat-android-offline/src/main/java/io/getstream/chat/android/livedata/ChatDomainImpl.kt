@@ -619,9 +619,14 @@ internal class ChatDomainImpl internal constructor(
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList()
+        val cids: List<String> = activeChannelMapImpl
+            .entries
+            .asSequence()
             .filter { it.value.recoveryNeeded || recoveryNeeded }
-            .filterNot { updatedChannelIds.contains(it.key) }.take(30)
+            .filterNot { updatedChannelIds.contains(it.key) }
+            .take(30)
+            .map { it.key }
+            .toList()
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
