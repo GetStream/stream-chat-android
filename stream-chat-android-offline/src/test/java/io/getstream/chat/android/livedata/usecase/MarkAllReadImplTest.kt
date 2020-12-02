@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.yield
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -14,7 +13,7 @@ internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun markAllRead() = testCoroutines.dispatcher.runBlockingTest {
-        yield()
+        advanceUntilIdle()
         chatDomainImpl.allActiveChannels().let { activeChannels ->
 
             // set up unread states

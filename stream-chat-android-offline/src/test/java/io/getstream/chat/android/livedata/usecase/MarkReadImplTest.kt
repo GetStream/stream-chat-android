@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.yield
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -14,7 +13,7 @@ internal class MarkReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun read() = testCoroutines.dispatcher.runBlockingTest {
-        yield()
+        advanceUntilIdle()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         channelControllerImpl.handleEvent(data.newMessageFromUser2)
         var unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
