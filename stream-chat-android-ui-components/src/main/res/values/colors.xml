@@ -23,6 +23,7 @@
     <color name="stream_black">#000000</color>
     <color name="stream_black_30">#4D000000</color>
     <color name="stream_black_50">#80000000</color>
+    <color name="stream_black_60">#99000000</color>
     <color name="stream_white">#FFFFFF</color>
     <color name="stream_alabaster">#FCFCFC</color>
     <color name="stream_concrete">#F2F2F2</color>
