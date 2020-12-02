@@ -52,7 +52,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
         holder.bind(
             getItem(position),
-            null,
+            DEFAULT_DIFF,
             channelClickListener,
             channelLongClickListener,
             deleteClickListener,

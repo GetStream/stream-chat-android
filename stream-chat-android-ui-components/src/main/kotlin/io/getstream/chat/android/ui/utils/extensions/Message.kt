@@ -1,40 +1,18 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
-import android.text.Spanned
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.ModelType
 import java.util.Date
 
-internal fun Message.getSenderDisplayName(context: Context): String =
+internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: Boolean = false): String? =
     when {
         user.isCurrentUser() -> getSelfDisplayName(context)
-        else -> getUserAsMention(context, user)
+        isDirectMessaging -> null
+        else -> user.asMention(context)
     }
-
-internal fun Message.getPreviewText(context: Context): Spanned =
-    context
-        .getString(
-            R.string.stream_ui_channel_item_last_message_template,
-            getSenderDisplayName(context),
-            text
-        )
-        .bold(getPreviewTextMentions(context))
-
-private fun Message.getPreviewTextMentions(context: Context): List<String> =
-    mentionedUsers
-        .map { getUserAsMention(context, it) }
-        .plus(getSenderDisplayName(context))
-        .filter { it != getSelfDisplayName(context) }
-
-private fun getUserAsMention(
-    context: Context,
-    it: User
-) = context.getString(R.string.stream_ui_mention_user_name_template, it.name)
 
 private fun getSelfDisplayName(context: Context) =
     context.getString(R.string.stream_ui_channel_display_name_self)
@@ -51,4 +29,8 @@ internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
-internal fun Message.getCreatedDate(): Date? = createdAt ?: createdLocallyAt
+internal fun Message.getCreatedAt(): Date? = createdAt ?: createdLocallyAt
+
+internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAt()) {
+    "a message needs to have a non null value for either createdAt or createdLocallyAt"
+}
