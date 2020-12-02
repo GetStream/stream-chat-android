@@ -18,7 +18,7 @@ public class DateDividerViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root) {
 
-    override fun bind(data: MessageListItem.DateSeparatorItem) {
+    override fun bindData(data: MessageListItem.DateSeparatorItem) {
         binding.dateLabel.text =
             DateUtils.getRelativeTimeSpanString(data.date.time, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
     }
