@@ -110,6 +110,11 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.typingContainer.isVisible = false
     }
 
+    public fun showOnlineStateSubtitle() {
+        hideSubtitle()
+        binding.onlineContainer.isVisible = true
+    }
+
     public fun showSearchingForNetworkLabel() {
         hideSubtitle()
         binding.searchingForNetworkContainer.isVisible = true
