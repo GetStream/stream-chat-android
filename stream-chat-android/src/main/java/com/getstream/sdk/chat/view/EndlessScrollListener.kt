@@ -3,12 +3,12 @@ package com.getstream.sdk.chat.view
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-internal class EndlessScrollListener(
+public class EndlessScrollListener(
     private val loadMoreListener: () -> Unit
 ) : RecyclerView.OnScrollListener() {
 
-    var paginationEnabled: Boolean = false
-    var loadMoreThreshold: Int = 0
+    public var paginationEnabled: Boolean = false
+    public var loadMoreThreshold: Int = 0
         set(value) {
             require(value >= 0) { "Load more threshold must not be negative" }
             field = value

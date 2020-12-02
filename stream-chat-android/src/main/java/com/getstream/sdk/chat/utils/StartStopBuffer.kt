@@ -8,17 +8,17 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class StartStopBuffer<T> {
+public class StartStopBuffer<T> {
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
 
-    fun hold() {
+    public fun hold() {
         active.set(false)
     }
 
-    fun active() {
+    public fun active() {
         active.set(true)
 
         if (func != null) {
@@ -38,7 +38,7 @@ internal class StartStopBuffer<T> {
         }
     }
 
-    fun subscribe(func: (T) -> Unit) {
+    public fun subscribe(func: (T) -> Unit) {
         this.func = func
 
         if (active.get()) {
@@ -46,7 +46,7 @@ internal class StartStopBuffer<T> {
         }
     }
 
-    fun enqueueData(data: T) {
+    public fun enqueueData(data: T) {
         events.offer(data)
 
         if (active.get()) {

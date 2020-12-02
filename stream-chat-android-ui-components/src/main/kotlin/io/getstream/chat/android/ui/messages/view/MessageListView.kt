@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view
+package io.getstream.chat.android.ui.messages.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -19,16 +19,17 @@ import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.ListenerContainer
-import com.getstream.sdk.chat.adapter.ListenerContainerImpl
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
-import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.getstream.sdk.chat.view.EndlessScrollListener
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -37,16 +38,17 @@ import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
+import com.getstream.sdk.chat.view.MessageListViewStyle
 import com.getstream.sdk.chat.view.channels.ChannelsView
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import kotlin.math.max
 import kotlin.math.min
 
@@ -147,35 +149,20 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message, _ ->
-            MessageMoreActionDialog(
-                context,
-                channel,
-                message,
-                currentUser,
-                style,
-                onMessageEditHandler,
-                onMessageDeleteHandler,
-                { m: Message ->
-                    onStartThreadHandler.invoke(m)
-                    onStartThreadListener.invoke(m)
-                },
-                onMessageFlagHandler
-            ).show()
+            MessageLongClickListener { _, view ->
+                optionsView = view
+
+                binding.blurLayer.isVisible = true
+
+                if (view.parent != null && view.parent is ViewGroup) {
+                    (view.parent as ViewGroup).removeView(view)
+                }
+
+                binding.messageOptionsContainer.addView(optionsView)
+                binding.messageOptionsScroll.isVisible = true
+            }
         }
 
-    // Todo: Add this after the behaviour of message options is complete.
-    // MessageLongClickListener { _, view ->
-    //             optionsView = view
-    //
-    //             binding.blurLayer.isVisible = true
-    //
-    //             if (view.parent != null && view.parent is ViewGroup) {
-    //                 (view.parent as ViewGroup).removeView(view)
-    //             }
-    //
-    //             binding.messageOptionsContainer.addView(optionsView)
-    //             binding.messageOptionsScroll.isVisible = true
-    //         }
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
             onMessageRetryHandler.invoke(message)
@@ -224,7 +211,7 @@ public class MessageListView : ConstraintLayout {
         DEFAULT_GIPHY_SEND_LISTENER
     )
 
-    private lateinit var bubbleHelper: BubbleHelper
+    private lateinit var bubbleHelper: MessageListView.BubbleHelper
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
     private lateinit var messageViewHolderFactory: MessageViewHolderFactory
 
@@ -254,6 +241,7 @@ public class MessageListView : ConstraintLayout {
         initUnseenMessagesView()
         initLoadingView()
         initEmptyStateView()
+        initBlurLayer()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -275,6 +263,18 @@ public class MessageListView : ConstraintLayout {
     private fun initEmptyStateView() {
         emptyStateView = binding.defaultEmptyStateView
         emptyStateViewContainer = binding.emptyStateViewContainer
+    }
+
+    private fun initBlurLayer() {
+        binding.blurLayer.setOnClickListener { hideBlurLayer() }
+        binding.messageOptionsContainer.setOnClickListener { hideBlurLayer() }
+    }
+
+    private fun hideBlurLayer() {
+        binding.messageOptionsContainer.removeView(optionsView)
+        binding.messageOptionsScroll.isVisible = false
+
+        binding.blurLayer.isVisible = false
     }
 
     private fun initScrollButtonBehaviour() {
@@ -547,7 +547,7 @@ public class MessageListView : ConstraintLayout {
         setMessageViewHolderFactory(messageViewHolderFactory)
     }
 
-    public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
+    public fun setBubbleHelper(bubbleHelper: MessageListView.BubbleHelper) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
     }
@@ -767,67 +767,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
         this.onStartThreadListener = onStartThreadListener
-    }
-
-    public fun interface HeaderAvatarGroupClickListener {
-        public fun onHeaderAvatarGroupClick(channel: Channel)
-    }
-
-    public fun interface HeaderOptionsClickListener {
-        public fun onHeaderOptionsClick(channel: Channel)
-    }
-
-    public fun interface MessageClickListener {
-        public fun onMessageClick(message: Message)
-    }
-
-    public fun interface MessageRetryListener {
-        public fun onRetryMessage(message: Message)
-    }
-
-    public fun interface MessageLongClickListener {
-        public fun onMessageLongClick(message: Message, view: View)
-    }
-
-    public fun interface AttachmentClickListener {
-        public fun onAttachmentClick(message: Message, attachment: Attachment)
-    }
-
-    public fun interface GiphySendListener {
-        public fun onGiphySend(message: Message, action: GiphyAction)
-    }
-
-    public fun interface UserClickListener {
-        public fun onUserClick(user: User)
-    }
-
-    public fun interface ReadStateClickListener {
-        public fun onReadStateClick(reads: List<ChannelUserRead>)
-    }
-
-    public fun interface ReactionViewClickListener {
-        public fun onReactionViewClick(message: Message)
-    }
-
-    public interface BubbleHelper {
-        public fun getDrawableForMessage(
-            message: Message,
-            mine: Boolean,
-            positions: List<MessageListItem.Position>
-        ): Drawable
-
-        public fun getDrawableForAttachment(
-            message: Message,
-            mine: Boolean,
-            positions: List<MessageListItem.Position>,
-            attachment: Attachment
-        ): Drawable
-
-        public fun getDrawableForAttachmentDescription(
-            message: Message,
-            mine: Boolean,
-            positions: List<MessageListItem.Position>
-        ): Drawable
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {

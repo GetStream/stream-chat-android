@@ -116,8 +116,6 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
-    implementation Dependencies.realtimeBlurView
-
     // ExoPlayer
     api Dependencies.exoplayerCore
     api Dependencies.exoplayerDash

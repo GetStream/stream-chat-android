@@ -22,9 +22,8 @@ public open class AttachmentViewHolderFactory {
     }
 
     public lateinit var listenerContainer: ListenerContainer
-        internal set
+
     public lateinit var bubbleHelper: MessageListView.BubbleHelper
-        internal set
 
     public open fun getAttachmentViewType(
         attachmentItem: AttachmentListItem
