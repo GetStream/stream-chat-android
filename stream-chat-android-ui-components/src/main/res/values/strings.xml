@@ -56,7 +56,7 @@
     <string name="stream_message_deleted_label">Message deleted</string>
 
     <plurals name="stream_user_reactions_title">
-        <item quantity="one">%d Message reaction</item>
-        <item quantity="other">%d Message reactions</item>
+        <item quantity="one">%d Message Reaction</item>
+        <item quantity="other">%d Message Reactions</item>
     </plurals>
 </resources>
