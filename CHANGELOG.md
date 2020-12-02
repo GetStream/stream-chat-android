@@ -4,6 +4,7 @@
 
 ## stream-chat-android
 - Use custom `StreamFileProvider` instead of androidx `FileProvider` to avoid conflicts
+- Add `ChatClient::setGuestUser` method to login as a guest user
 
 ## stream-chat-android-client
 
