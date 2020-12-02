@@ -107,10 +107,6 @@ public abstract class ReactionsView : RecyclerView {
         }
     }
 
-    public fun interface ReactionClickListener {
-        public fun onReactionClick(reaction: Reaction)
-    }
-
     public enum class Orientation {
         LEFT,
         RIGHT,

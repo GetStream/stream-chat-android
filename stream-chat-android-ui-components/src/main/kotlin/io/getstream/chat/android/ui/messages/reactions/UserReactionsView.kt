@@ -14,7 +14,7 @@ public class UserReactionsView : FrameLayout {
     private val binding: StreamUserReactionsViewBinding =
         StreamUserReactionsViewBinding.inflate(context.inflater, this, true)
 
-    private var reactionClickListener: ReactionsView.ReactionClickListener? = null
+    private var reactionClickListener: ReactionClickListener? = null
     private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter {
         reactionClickListener?.onReactionClick(it)
     }
@@ -40,7 +40,7 @@ public class UserReactionsView : FrameLayout {
         bindReactionList(message)
     }
 
-    public fun setReactionClickListener(reactionClickListener: ReactionsView.ReactionClickListener) {
+    public fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
         this.reactionClickListener = reactionClickListener
     }
 

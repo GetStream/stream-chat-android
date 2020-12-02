@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 internal class ReactionsAdapter(
     private val reactionsViewStyle: ReactionsViewStyle,
-    private val reactionClickListener: ReactionsView.ReactionClickListener
+    private val reactionClickListener: ReactionClickListener
 ) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
@@ -29,7 +29,7 @@ internal class ReactionsAdapter(
     class ReactionViewHolder(
         private val binding: StreamItemMessageReactionBinding,
         reactionsViewStyle: ReactionsViewStyle,
-        private val reactionClickListener: ReactionsView.ReactionClickListener
+        private val reactionClickListener: ReactionClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var reactionItem: ReactionItem
