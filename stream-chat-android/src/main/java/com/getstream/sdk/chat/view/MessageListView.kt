@@ -163,19 +163,6 @@ public class MessageListView : ConstraintLayout {
             ).show()
         }
 
-    // Todo: Add this after the behaviour of message options is complete.
-    // MessageLongClickListener { _, view ->
-    //             optionsView = view
-    //
-    //             binding.blurLayer.isVisible = true
-    //
-    //             if (view.parent != null && view.parent is ViewGroup) {
-    //                 (view.parent as ViewGroup).removeView(view)
-    //             }
-    //
-    //             binding.messageOptionsContainer.addView(optionsView)
-    //             binding.messageOptionsScroll.isVisible = true
-    //         }
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
             onMessageRetryHandler.invoke(message)
