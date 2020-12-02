@@ -154,7 +154,7 @@ public class MessageListView : ConstraintLayout {
 
                 binding.blurLayer.isVisible = true
 
-                if (view.parent != null && view.parent is ViewGroup) {
+                if (view?.parent != null && view.parent is ViewGroup) {
                     (view.parent as ViewGroup).removeView(view)
                 }
 
