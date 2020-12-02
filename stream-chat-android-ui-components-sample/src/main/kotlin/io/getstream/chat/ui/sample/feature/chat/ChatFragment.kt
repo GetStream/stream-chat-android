@@ -29,7 +29,6 @@ class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ChatViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +45,7 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initHeaderViewModel()
+        headerViewModel.bindView(binding.header, viewLifecycleOwner)
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
@@ -65,19 +64,6 @@ class ChatFragment : Fragment() {
         }
         binding.header.setBackButtonClickListener {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
-        }
-    }
-
-    private fun initHeaderViewModel() {
-        headerViewModel.apply {
-            bindView(binding.header, viewLifecycleOwner)
-            viewModel.online.observe(viewLifecycleOwner, { isOnline ->
-                if (isOnline) {
-                    binding.header.showOnlineStateSubtitle()
-                } else {
-                    binding.header.showSearchingForNetworkLabel()
-                }
-            })
         }
     }
 

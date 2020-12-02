@@ -10,4 +10,11 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
         view.setTitle(it.getDisplayName())
         view.setAvatar(channel = it)
     }
+    online.observe(lifecycle) { isOnline ->
+        if (isOnline) {
+            view.showOnlineStateSubtitle()
+        } else {
+            view.showSearchingForNetworkLabel()
+        }
+    }
 }
