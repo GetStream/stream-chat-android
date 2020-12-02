@@ -3,34 +3,49 @@ package io.getstream.chat.android.ui.typing
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.LinearLayout
+import android.widget.FrameLayout
+import androidx.core.view.isVisible
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamTyppingIndicatorViewBinding
 
-public class TypingIndicator : LinearLayout {
+public class TypingIndicator : FrameLayout {
 
     private val binding: StreamTyppingIndicatorViewBinding =
         StreamTyppingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
 
-    public var message: String
-        get() = binding.tvUserTyping.text.toString()
-        set(value) {
-            binding.tvUserTyping.text = value
-        }
+    public constructor(context: Context) : super(context) {
+        init()
+    }
 
-    public constructor(context: Context?) : super(context)
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
+    }
 
-    public constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    public constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
-    )
+    ) {
+        init()
+    }
 
-    public constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    )
+    private fun init() {
+        isVisible = false
+    }
+
+    public fun setTypingUsers(users: List<User>) {
+        isVisible = if (users.isEmpty()) {
+            false
+        } else {
+            binding.tvUserTyping.text = resources.getQuantityString(
+                R.plurals.stream_typing_text,
+                users.size,
+                users.first().name,
+                users.size - 1
+            )
+            true
+        }
+    }
 }
