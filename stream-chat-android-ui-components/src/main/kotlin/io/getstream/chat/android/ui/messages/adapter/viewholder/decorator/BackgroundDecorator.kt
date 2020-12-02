@@ -46,6 +46,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         } else {
             Paint().apply {
                 style = Paint.Style.STROKE
+                strokeWidth = dpToPx(DEFAULT_STROKE_WIDTH_DP).toFloat()
                 color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_OTHER_STROKE_COLOR)
                 isAntiAlias = true
             }
@@ -131,5 +132,6 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_border_stroke
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_grey_90
         private const val DEFAULT_CORNER_RADIUS_DP = 16
+        private const val DEFAULT_STROKE_WIDTH_DP = 1
     }
 }
