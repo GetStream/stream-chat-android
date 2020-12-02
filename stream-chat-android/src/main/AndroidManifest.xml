@@ -35,7 +35,7 @@
         </receiver>
 
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"
             android:exported="false"
             android:grantUriPermissions="true"
