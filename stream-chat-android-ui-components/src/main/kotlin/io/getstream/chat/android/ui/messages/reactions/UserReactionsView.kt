@@ -65,7 +65,6 @@ public class UserReactionsView : FrameLayout {
 
         val reactionItems = message.latestReactions
             .map { ReactionItem(it, message.ownReactions.contains(it)) }
-            .toMutableList()
         userReactionsAdapter.submitList(reactionItems)
     }
 
