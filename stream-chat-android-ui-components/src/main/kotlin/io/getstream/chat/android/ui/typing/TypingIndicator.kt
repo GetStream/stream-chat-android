@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamTyppingIndicatorViewBinding
+import io.getstream.chat.android.ui.databinding.StreamTypingIndicatorViewBinding
 
 public class TypingIndicator : FrameLayout {
 
-    private val binding: StreamTyppingIndicatorViewBinding =
-        StreamTyppingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: StreamTypingIndicatorViewBinding =
+        StreamTypingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     public constructor(context: Context) : super(context) {
         init()
