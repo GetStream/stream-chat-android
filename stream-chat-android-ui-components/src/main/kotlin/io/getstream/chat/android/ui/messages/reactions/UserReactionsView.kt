@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUserReactionsViewBinding
-import io.getstream.chat.android.ui.utils.extensions.inflater
 
 public class UserReactionsView : FrameLayout {
 

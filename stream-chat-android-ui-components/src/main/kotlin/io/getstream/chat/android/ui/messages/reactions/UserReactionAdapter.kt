@@ -5,14 +5,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.updateConstraints
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemUserReactionBinding
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getDimension
-import io.getstream.chat.android.ui.utils.extensions.inflater
-import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class UserReactionAdapter(
     private val reactionClickListener: ReactionClickListener
