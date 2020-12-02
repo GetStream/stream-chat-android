@@ -96,8 +96,6 @@ internal class BackgroundStrokeDrawable(
     private val strokePaint = Paint().apply {
         this.color = strokeColor
         isAntiAlias = true
-        style = Paint.Style.STROKE
-        strokeWidth = this@BackgroundStrokeDrawable.strokeWidth
     }
 
     override fun draw(canvas: Canvas) {
@@ -112,12 +110,11 @@ internal class BackgroundStrokeDrawable(
             bottomRightCornerPx,
             bottomLeftCornerPx
         ).let {
-            canvas.drawPath(it, paint)
             canvas.drawPath(it, strokePaint)
         }
 
         // inner rect
-        /*roundedRect(
+        roundedRect(
             strokeWidth,
             strokeWidth,
             bounds.width().toFloat() - strokeWidth,
@@ -126,6 +123,6 @@ internal class BackgroundStrokeDrawable(
             topRightCornerPx,
             bottomRightCornerPx,
             bottomLeftCornerPx
-        ).let { canvas.drawPath(it, paint) }*/
+        ).let { canvas.drawPath(it, paint) }
     }
 }
