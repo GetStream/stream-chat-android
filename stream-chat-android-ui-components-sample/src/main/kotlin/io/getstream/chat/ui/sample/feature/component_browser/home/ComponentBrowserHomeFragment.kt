@@ -33,7 +33,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentComponentBrowserHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -55,11 +55,18 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupEditReactionsView()
         setupAttachmentGallery()
         setupMessageList()
+        setupTypingIndicator()
     }
 
     private fun setupMessageList() {
         binding.messageListComponentBrowser.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment)
+        }
+    }
+
+    private fun setupTypingIndicator() {
+        binding.typingIndicatorBrowser.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment)
         }
     }
 

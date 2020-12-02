@@ -224,6 +224,24 @@ internal class ClientStateServiceTests {
         connectedState.anonymousUser shouldBeEqualTo user
     }
 
+    @Test
+    fun `Given user pending with token state When disconnect requested Should move to idle state`() {
+        val sut = Fixture().givenUserAuthorizationPendingWithTokenState(token = "token").please()
+
+        sut.onDisconnectRequested()
+
+        sut.state shouldBeInstanceOf ClientState.Idle::class
+    }
+
+    @Test
+    fun `Given anonymous user pending with token state When disconnect requested Should move to idle state`() {
+        val sut = Fixture().givenAnonymousPendingWithTokenState(token = "token").please()
+
+        sut.onDisconnectRequested()
+
+        sut.state shouldBeInstanceOf ClientState.Idle::class
+    }
+
     private class Fixture {
         private val clientStateService = ClientStateService()
 

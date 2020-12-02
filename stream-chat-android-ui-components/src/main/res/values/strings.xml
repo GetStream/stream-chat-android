@@ -23,6 +23,7 @@
 
     <!--Channel List Item View-->
     <string name="stream_channel_item_last_message_template">%1$s: %2$s</string>
+    <string name="stream_channel_display_name_self">You</string>
 
     <!--SearchView-->
     <string name="stream_search_input_view_hint">Search</string>
@@ -54,4 +55,10 @@
 
     <!-- Message list -->
     <string name="stream_message_deleted_label">Message deleted</string>
+
+    <!-- Typing -->
+    <plurals name="stream_typing_text">
+        <item quantity="one">%s is typing</item>
+        <item quantity="other">%s and %d more are typing</item>
+    </plurals>
 </resources>

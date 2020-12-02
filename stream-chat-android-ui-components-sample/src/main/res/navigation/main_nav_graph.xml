@@ -215,6 +215,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
             app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment"
+            app:destination="@id/componentBrowserTypingIndicatorFragment"
+            />
     </fragment>
 
     <fragment
@@ -308,6 +312,12 @@
         android:id="@+id/componentBrowserPlainTextMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextMessagesComponentBrowserFragment"
         android:label="ComponentBrowserPlainTextMessagesFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserTypingIndicatorFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.typing.ComponentBrowserTypingIndicatorFragment"
+        android:label="ComponentBrowserTypingIndicatorFragment"
         />
 
 </navigation>

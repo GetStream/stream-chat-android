@@ -14,6 +14,8 @@ import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.search.SearchViewModel
 import io.getstream.chat.android.ui.search.bindView
@@ -34,7 +36,7 @@ class ChannelListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,6 +61,10 @@ class ChannelListFragment : Fragment() {
             setChannelClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, null))
+            }
+
+            setDeleteListener {
+                ChatLogger.instance.logD(it.name, "delete me!")
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
