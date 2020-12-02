@@ -50,7 +50,7 @@ internal class UserReactionAdapter(
 
         private fun bindUserAvatar() {
             val user = reactionItem.reaction.user
-            binding.avatarView.setUserData(user ?: User())
+            binding.avatarView.setUserData(user!!)
         }
 
         private fun bindUserName() {
