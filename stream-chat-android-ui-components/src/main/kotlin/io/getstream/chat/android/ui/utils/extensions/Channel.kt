@@ -79,3 +79,30 @@ internal fun Channel.diff(other: Channel): ChannelDiff =
         readStateChanged = getLastMessageReadCount() != other.getLastMessageReadCount(),
         lastMessageChanged = getLastMessage() != other.getLastMessage()
     )
+
+internal fun Channel.getOnlineStateSubtitle(context: Context): String {
+    val users = getUsers()
+    if (users.isEmpty()) return ""
+
+    if (users.size == 1) {
+        return users.first().getLastSeenText(context)
+    }
+
+    return getGroupSubtitle(context)
+}
+
+internal fun Channel.getGroupSubtitle(context: Context): String {
+    val allUsers = members.map { it.user }
+    val onlineUsers = allUsers.count { it.online }
+    val groupMembers = context.resources.getQuantityString(
+        R.plurals.stream_message_list_header_group_member_count,
+        allUsers.size,
+        allUsers.size
+    )
+
+    return if (onlineUsers > 0) {
+        context.getString(R.string.stream_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
+    } else {
+        groupMembers
+    }
+}
