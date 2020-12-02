@@ -30,7 +30,7 @@ public open class MessageListItemViewHolderFactory {
 
     private fun createBaseMessageItemViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> {
         return object : BaseMessageItemViewHolder<MessageListItem>(parentView) {
-            override fun bind(data: MessageListItem) = Unit
+            override fun bindData(data: MessageListItem) = Unit
         }
     }
 }

@@ -6,21 +6,52 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
-import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.Utils.dpToPx
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 
 internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        val context = viewHolder.itemView.context
-        val backgroundColor = ContextCompat.getColor(context, MESSAGE_DELETED_BACKGROUND)
-        val radius = dpToPx(DEFAULT_CORNER_RADIUS.toInt()).toFloat()
+        val backgroundColor = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_DELETED_BACKGROUND)
+        val radius = dpToPx(DEFAULT_CORNER_RADIUS_DP).toFloat()
+        val paint = Paint().apply {
+            color = backgroundColor
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
         viewHolder.binding.deleteLabel.background = BackgroundDrawable(
-            color = backgroundColor,
+            paint = paint,
+            topLeftCornerPx = radius,
+            topRightCornerPx = radius,
+            bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
+            bottomLeftCornerPx = radius
+        )
+    }
+
+    override fun decoratePlainTextMessage(
+        viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        val radius = dpToPx(DEFAULT_CORNER_RADIUS_DP).toFloat()
+        val paint = if (data.isMine) {
+            Paint().apply {
+                style = Paint.Style.FILL
+                color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_CURRENT_USER_BACKGROUND)
+                isAntiAlias = true
+            }
+        } else {
+            Paint().apply {
+                style = Paint.Style.STROKE
+                color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_OTHER_STROKE_COLOR)
+                isAntiAlias = true
+            }
+        }
+        viewHolder.binding.messageText.background = BackgroundDrawable(
+            paint = paint,
             topLeftCornerPx = radius,
             topRightCornerPx = radius,
             bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
@@ -29,8 +60,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     }
 
     private class BackgroundDrawable(
-        @ColorInt
-        val color: Int,
+        val paint: Paint,
         val topLeftCornerPx: Float,
         val topRightCornerPx: Float,
         val bottomRightCornerPx: Float,
@@ -42,12 +72,6 @@ internal class BackgroundDecorator : BaseDecorator() {
             require(topRightCornerPx >= 0)
             require(bottomLeftCornerPx >= 0)
             require(bottomRightCornerPx >= 0)
-        }
-
-        private val paint = Paint().apply {
-            color = this@BackgroundDrawable.color
-            isAntiAlias = true
-            style = Paint.Style.FILL
         }
 
         override fun draw(canvas: Canvas) {
@@ -104,6 +128,8 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     companion object {
         private val MESSAGE_DELETED_BACKGROUND = R.color.stream_grey_light_opacity_50
-        private const val DEFAULT_CORNER_RADIUS = 16f
+        private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_border_stroke
+        private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_grey_90
+        private const val DEFAULT_CORNER_RADIUS_DP = 16
     }
 }
