@@ -215,6 +215,10 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
             app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment"
+            app:destination="@id/componentBrowserTypingIndicatorFragment"
+            />
     </fragment>
 
     <fragment
@@ -280,12 +284,29 @@
             app:destination="@id/componentBrowserDeletedMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserDateDividerFragment"
+            app:destination="@id/componentBrowserDateDividerFragment"
+            />
+
     </fragment>
 
     <fragment
         android:id="@+id/componentBrowserDeletedMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
         android:label="ComponentBrowserDeletedMessages"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserDateDividerFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DateDividerComponentBrowserFragment"
+        android:label="ComponentBrowserDateDividerFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserTypingIndicatorFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.typing.ComponentBrowserTypingIndicatorFragment"
+        android:label="ComponentBrowserTypingIndicatorFragment"
         />
 
 </navigation>

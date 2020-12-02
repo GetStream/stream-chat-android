@@ -1,8 +1,6 @@
-package io.getstream.chat.ui.sample.feature.channel.add.group
+package io.getstream.chat.ui.sample.feature.channel.add
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 
 fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
@@ -18,10 +16,11 @@ fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: Lifecycle
                 view.showEmptyStateView()
             }
             is AddChannelViewModel.State.Result -> {
-                view.setUsers(state.users)
-                view.hideLoadingView()
-                view.hideEmptyStateView()
-                view.showUsersRecyclerView()
+                view.setUsers(state.users) {
+                    view.hideLoadingView()
+                    view.hideEmptyStateView()
+                    view.showUsersRecyclerView()
+                }
             }
             is AddChannelViewModel.State.ResultMoreUsers -> {
                 view.addMoreUsers(state.users)
