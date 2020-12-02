@@ -167,6 +167,16 @@ public class ChatClient internal constructor(
         }
     }
 
+    public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
+        getGuestToken(userId, username).enqueue {
+            if (it.isSuccess) {
+                setUser(it.data().user, it.data().token, listener)
+            } else {
+                listener?.onError(it.error())
+            }
+        }
+    }
+
     public fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
         return api.getGuestUser(userId, userName)
     }
