@@ -54,14 +54,14 @@ class AddChannelViewController(
         }
     }
 
-    fun setUsers(users: List<User>) {
+    fun setUsers(users: List<User>, usersSubmittedCallback: () -> Unit) {
         userInfoList.clear()
-        addMoreUsers(users)
+        addMoreUsers(users, usersSubmittedCallback)
     }
 
-    fun addMoreUsers(users: List<User>) {
+    fun addMoreUsers(users: List<User>, usersSubmittedCallback: () -> Unit = {}) {
         userInfoList.addAll(users.map { UserInfo(it, members.contains(it)) })
-        showUsers(userInfoList)
+        showUsers(userInfoList, usersSubmittedCallback)
     }
 
     fun setMembers(members: List<User>) {
@@ -72,22 +72,22 @@ class AddChannelViewController(
         showUsers(userInfoList.map { UserInfo(it.user, members.contains(it.user)) })
     }
 
-    private fun showUsers(users: List<UserInfo>) {
+    private fun showUsers(users: List<UserInfo>, usersSubmittedCallback: () -> Unit = {}) {
         if (isSearching) {
-            usersAdapter.submitList(users.map { UserListItem.UserItem(it) })
+            usersAdapter.submitList(users.map { UserListItem.UserItem(it) }, usersSubmittedCallback)
         } else {
-            showSectionedUsers(users)
+            showSectionedUsers(users, usersSubmittedCallback)
         }
     }
 
-    private fun showSectionedUsers(userInfoList: List<UserInfo>) {
+    private fun showSectionedUsers(userInfoList: List<UserInfo>, usersSubmittedCallback: () -> Unit) {
         val sectionedUsers = userInfoList
             .groupBy { it.user.name.first().toUpperCase() }
             .toSortedMap()
             .flatMap { (letter, users) ->
                 mutableListOf(UserListItem.Separator(letter)) + users.map { UserListItem.UserItem(it) }
             }
-        usersAdapter.submitList(sectionedUsers)
+        usersAdapter.submitList(sectionedUsers, usersSubmittedCallback)
     }
 
     private fun hideInput() {
