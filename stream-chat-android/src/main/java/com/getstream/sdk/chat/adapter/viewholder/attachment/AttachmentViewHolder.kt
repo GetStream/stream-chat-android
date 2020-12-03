@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
@@ -30,7 +31,8 @@ internal class AttachmentViewHolder(
     private val bubbleHelper: BubbleHelper,
     private val messageItem: MessageItem,
     private val clickListener: AttachmentClickListener,
-    private val longClickListener: MessageLongClickListener,
+    private val longClickListener: MessageLongClickListener? = null,
+    private val longClickListener2: MessageListView.MessageLongClickListener2? = null,
     private val binding: StreamItemAttachmentBinding =
         StreamItemAttachmentBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -181,7 +183,11 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         mediaBinding.root.setOnLongClickListener {
-            longClickListener.onMessageLongClick(messageItem.message, itemView)
+            if (longClickListener2 != null) {
+                longClickListener2.onMessageLongClick2(messageItem.message, itemView)
+            } else {
+                longClickListener?.onMessageLongClick(messageItem.message)
+            }
             true
         }
     }
@@ -198,7 +204,13 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         binding.lvAttachmentFile.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            longClickListener.onMessageLongClick(messageItem.message, itemView)
+            if (longClickListener2 != null) {
+                longClickListener2.onMessageLongClick2(messageItem.message, itemView)
+            } else {
+                longClickListener?.onMessageLongClick(messageItem.message)
+            }
+
+
             true
         }
 

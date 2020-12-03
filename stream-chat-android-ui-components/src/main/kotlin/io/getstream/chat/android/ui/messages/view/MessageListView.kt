@@ -28,11 +28,12 @@ import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
+import com.getstream.sdk.chat.view.IMessageListView
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener2
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -60,7 +61,7 @@ import kotlin.math.min
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView : ConstraintLayout {
+public class MessageListView : ConstraintLayout, IMessageListView {
     private var firstVisiblePosition = 0
 
     private lateinit var style: MessageListViewStyle
@@ -148,19 +149,17 @@ public class MessageListView : ConstraintLayout {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener { message, _ ->
-            MessageLongClickListener { _, view ->
-                optionsView = view
+        MessageLongClickListener2 { _, view ->
+            optionsView = view
 
-                binding.blurLayer.isVisible = true
+            binding.blurLayer.isVisible = true
 
-                if (view?.parent != null && view.parent is ViewGroup) {
-                    (view.parent as ViewGroup).removeView(view)
-                }
-
-                binding.messageOptionsContainer.addView(optionsView)
-                binding.messageOptionsScroll.isVisible = true
+            if (view?.parent != null && view.parent is ViewGroup) {
+                (view.parent as ViewGroup).removeView(view)
             }
+
+            binding.messageOptionsContainer.addView(optionsView)
+            binding.messageOptionsScroll.isVisible = true
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -201,14 +200,14 @@ public class MessageListView : ConstraintLayout {
         }
 
     private val listenerContainer: ListenerContainer = ListenerContainerImpl(
-        DEFAULT_MESSAGE_CLICK_LISTENER,
-        DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
-        DEFAULT_MESSAGE_RETRY_LISTENER,
-        DEFAULT_ATTACHMENT_CLICK_LISTENER,
-        DEFAULT_REACTION_VIEW_CLICK_LISTENER,
-        DEFAULT_USER_CLICK_LISTENER,
-        DEFAULT_READ_STATE_CLICK_LISTENER,
-        DEFAULT_GIPHY_SEND_LISTENER
+        messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
+        messageLongClickListener2 = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+        messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
+        attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
+        reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
+        userClickListener = DEFAULT_USER_CLICK_LISTENER,
+        readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
+        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER
     )
 
     private lateinit var bubbleHelper: MessageListView.BubbleHelper
@@ -372,7 +371,7 @@ public class MessageListView : ConstraintLayout {
         return adapter.itemCount - 1
     }
 
-    public fun setLoadingMore(loadingMore: Boolean) {
+    override fun setLoadingMore(loadingMore: Boolean) {
         loadMoreListener.paginationEnabled = !loadingMore
     }
 
@@ -428,7 +427,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    public fun init(channel: Channel, currentUser: User) {
+    override fun init(channel: Channel, currentUser: User) {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
@@ -474,11 +473,11 @@ public class MessageListView : ConstraintLayout {
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
-    public fun showLoadingView() {
+    override fun showLoadingView() {
         loadingViewContainer.isVisible = true
     }
 
-    public fun hideLoadingView() {
+    override fun hideLoadingView() {
         loadingViewContainer.isVisible = false
     }
 
@@ -493,11 +492,11 @@ public class MessageListView : ConstraintLayout {
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
-    public fun showEmptyStateView() {
+    override fun showEmptyStateView() {
         emptyStateViewContainer.isVisible = true
     }
 
-    public fun hideEmptyStateView() {
+    override fun hideEmptyStateView() {
         emptyStateViewContainer.isVisible = false
     }
 
@@ -552,7 +551,7 @@ public class MessageListView : ConstraintLayout {
         this.bubbleHelper = bubbleHelper
     }
 
-    public fun displayNewMessage(listItem: MessageListItemWrapper) {
+    override fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
 
@@ -679,9 +678,9 @@ public class MessageListView : ConstraintLayout {
      *
      * @param messageLongClickListener The listener to use. If null, the default will be used instead.
      */
-    public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
-        listenerContainer.messageLongClickListener =
-            messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
+    public fun setMessageLongClickListener(messageLongClickListener2: MessageLongClickListener2?) {
+        listenerContainer.messageLongClickListener2 =
+            messageLongClickListener2 ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**
@@ -733,35 +732,35 @@ public class MessageListView : ConstraintLayout {
             readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
     }
 
-    public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
+    override fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
 
-    public fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
+    override fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    public fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
+    override fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
         this.onMessageEditHandler = onMessageEditHandler
     }
 
-    public fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
+    override fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
         this.onMessageDeleteHandler = onMessageDeleteHandler
     }
 
-    public fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
+    override fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
         this.onStartThreadHandler = onStartThreadHandler
     }
 
-    public fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
+    override fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
         this.onMessageFlagHandler = onMessageFlagHandler
     }
 
-    public fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
+    override fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
         this.onSendGiphyHandler = onSendGiphyHandler
     }
 
-    public fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
+    override fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
         this.onMessageRetryHandler = onMessageRetryHandler
     }
 

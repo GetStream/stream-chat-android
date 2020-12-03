@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <com.getstream.sdk.chat.view.MessageListView
+    <io.getstream.chat.android.ui.messages.view.MessageListView
         android:id="@+id/messageList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
