@@ -79,12 +79,15 @@ class Messages(
             imageFile,
             object : ProgressCallback {
                 override fun onSuccess(file: String) {
+                    val fileUrl = file
                 }
 
                 override fun onError(error: ChatError) {
+                    Log.e(TAG, String.format("There was an error %s", error, error.cause))
                 }
 
                 override fun onProgress(progress: Long) {
+                    // you can render uploading progress here
                 }
             }
         )
@@ -94,12 +97,15 @@ class Messages(
             anyOtherFile,
             object : ProgressCallback {
                 override fun onSuccess(file: String) {
+                    val fileUrl = file
                 }
 
                 override fun onError(error: ChatError) {
+                    Log.e(TAG, String.format("There was an error %s", error, error.cause))
                 }
 
                 override fun onProgress(progress: Long) {
+                    // you can render uploading progress here
                 }
             }
         )

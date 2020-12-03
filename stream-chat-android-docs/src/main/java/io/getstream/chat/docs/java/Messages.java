@@ -106,17 +106,17 @@ public class Messages {
         channelController.sendImage(imageFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
-
+                String fileUrl = file;
             }
 
             @Override
             public void onError(@NotNull ChatError error) {
-
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
 
             @Override
             public void onProgress(long progress) {
-
+                // you render the uploading progress here
             }
         });
 
@@ -124,17 +124,17 @@ public class Messages {
         channelController.sendFile(anyOtherFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
-
+                String fileUrl = file;
             }
 
             @Override
             public void onError(@NotNull ChatError error) {
-
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
 
             @Override
             public void onProgress(long progress) {
-
+                // you render the uploading progress here
             }
         });
     }
