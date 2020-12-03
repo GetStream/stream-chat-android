@@ -15,11 +15,12 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.docs.StaticInstances.TAG
 import java.io.File
 
-object Messages {
-    val client: ChatClient = TODO()
-    val channelController: ChannelClient = TODO()
-    val message: Message = TODO()
-    val parentMessage: Message = TODO()
+class Messages(
+    val client: ChatClient,
+    val channelController: ChannelClient,
+    val message: Message,
+    val parentMessage: Message
+) {
 
     fun sendAMessage() {
         // create a message
@@ -190,6 +191,5 @@ object Messages {
                 Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
             }
         }
-
     }
 }

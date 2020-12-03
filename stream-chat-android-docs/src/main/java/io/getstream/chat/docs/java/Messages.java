@@ -24,12 +24,12 @@ import kotlin.Unit;
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class Messages {
-    static ChatClient client;
-    static ChannelClient channelController;
-    static Message message;
-    static Message parentMessage;
+    private ChatClient client;
+    private ChannelClient channelController;
+    private Message message;
+    private Message parentMessage;
 
-    public static void sendAMessage() {
+    public void sendAMessage() {
         // create a message
         Message message = new Message();
         message.setText("Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
@@ -54,14 +54,14 @@ public class Messages {
         channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void getAMessage() {
+    public void getAMessage() {
         channelController.getMessage("message-id").enqueue(result -> {
             Message message = result.data();
             return Unit.INSTANCE;
         });
     }
 
-    public static void updateAMessage() {
+    public void updateAMessage() {
         // update some field of the message
         message.setText("my updated text");
 
@@ -72,11 +72,11 @@ public class Messages {
         });
     }
 
-    public static void deleteAMessage() {
+    public void deleteAMessage() {
         channelController.deleteMessage("message-id").enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void fileUploads() {
+    public void fileUploads() {
         File imageFile = new File("path");
         File anyOtherFile = new File("path");
 
@@ -117,7 +117,7 @@ public class Messages {
         });
     }
 
-    public static void sendAReaction() {
+    public void sendAReaction() {
         Reaction reaction = new Reaction();
         reaction.setMessageId("message-id");
         reaction.setType("like");
@@ -126,11 +126,11 @@ public class Messages {
         channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void removeAReaction() {
+    public void removeAReaction() {
         channelController.deleteReaction("message-id", "like").enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void paginatingReactions() {
+    public void paginatingReactions() {
         // get the first 10 reactions
         channelController.getReactions("message-id", 0, 10).enqueue(result -> Unit.INSTANCE);
 
@@ -142,7 +142,7 @@ public class Messages {
         channelController.getReactions("message-id", reactionId, 10).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void cumulativeReactions() {
+    public void cumulativeReactions() {
         int score = 5;
         Reaction reaction = new Reaction();
         reaction.setMessageId("message-id");
@@ -152,7 +152,7 @@ public class Messages {
         channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void startAThread() {
+    public void startAThread() {
         // set the parent id to make sure a message shows up in a thread
         Message message = new Message();
         message.setText("hello world");
@@ -162,7 +162,7 @@ public class Messages {
         channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void threadPagination() {
+    public void threadPagination() {
         int limit = 20;
         // retrieve the first 20 messages inside the thread
         client.getReplies(parentMessage.getId(), limit).enqueue(result -> {
@@ -177,7 +177,7 @@ public class Messages {
         });
     }
 
-    public static void silentMessage() {
+    public void silentMessage() {
         Message message = new Message();
         message.setText("text-of-a-message");
         message.setSilent(true);
@@ -185,7 +185,7 @@ public class Messages {
         channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void searchMessages() {
+    public void searchMessages() {
         int offset = 0;
         int limit = 10;
         String query = "supercalifragilisticexpialidocious";
