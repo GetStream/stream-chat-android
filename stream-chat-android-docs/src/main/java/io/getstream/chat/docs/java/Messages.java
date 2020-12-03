@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import kotlin.Unit;
@@ -94,5 +95,41 @@ public class Messages {
 
             }
         });
+    }
+
+    public static void sendAReaction() {
+        Reaction reaction = new Reaction();
+        reaction.setMessageId("message-id");
+        reaction.setType("like");
+        reaction.setScore(1);
+
+        channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public static void removeAReaction() {
+        channelController.deleteReaction("message-id", "like").enqueue(result -> Unit.INSTANCE);
+    }
+
+    public static void paginatingReactions() {
+        // get the first 10 reactions
+        channelController.getReactions("message-id", 0, 10).enqueue(result -> Unit.INSTANCE);
+
+        // get the second 10 reactions
+        channelController.getReactions("message-id", 10, 10).enqueue(result -> Unit.INSTANCE);
+
+        // get 10 reactions after particular reaction
+        String reactionId = "reaction-id";
+        channelController.getReactions("message-id", reactionId, 10).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public static void cumulativeReactions() {
+        int score = 5;
+        Reaction reaction = new Reaction();
+        reaction.setMessageId("message-id");
+        reaction.setType("like");
+        reaction.setScore(score);
+
+        channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
+
     }
 }

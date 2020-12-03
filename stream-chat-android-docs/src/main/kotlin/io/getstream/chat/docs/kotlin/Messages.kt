@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
@@ -90,5 +91,44 @@ object Messages {
 
             }
         })
+    }
+
+    fun sendAReaction() {
+        val reaction = Reaction("message-id", "like", 1)
+        channelController.sendReaction(reaction).enqueue {
+            val reaction = it.data()
+        }
+    }
+
+    fun removeAReaction() {
+        channelController.deleteReaction("message-id", "like").enqueue {
+            val message = it.data()
+        }
+    }
+
+    fun paginatingReactions() {
+        // get the first 10 reactions
+        channelController.getReactions("message-id", 0, 10).enqueue {
+            val reactions = it.data()
+        }
+
+        // get the second 10 reactions
+        channelController.getReactions("message-id", 10, 10).enqueue {
+            val reactions = it.data()
+        }
+
+        // get 10 reactions after particular reaction
+        val reactionId = "reaction-id"
+        channelController.getReactions("message-id", reactionId, 10).enqueue {
+            val reactions = it.data()
+        }
+    }
+
+    fun cumulativeReactions() {
+        val score = 5
+        val reaction = Reaction("message-id", "like", score)
+        channelController.sendReaction(reaction).enqueue {
+            val reaction = it.data()
+        }
     }
 }
