@@ -146,7 +146,7 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
     }
 
     fun queryingUsersById() {
-        // search users with id "john", "jack", or "jessie"
+        // Search users with id "john", "jack", or "jessie"
         val filter = Filters.`in`("id", listOf("john", "jack", "jessie"))
         val offset = 0
         val limit = 10
@@ -178,7 +178,7 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
     }
 
     fun queryingUsersByAutocompleteName() {
-        // search users with name contains "ro"
+        // Search users with name contains "ro"
         val filter = Filters.autocomplete("name", "ro")
         val offset = 0
         val limit = 10
@@ -193,7 +193,7 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
     }
 
     fun queryingUsersByAutocompleteId() {
-        // search users with id contains "ro"
+        // Search users with id contains "ro"
         val filter = Filters.autocomplete("id", "ro")
         val offset = 0
         val limit = 10

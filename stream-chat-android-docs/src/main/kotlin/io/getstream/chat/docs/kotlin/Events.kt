@@ -29,7 +29,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
             // Subscribe for new message events
             val disposable: Disposable = channelController
                 .subscribeFor<NewMessageEvent> { newMessageEvent ->
-                    // to get the message
+                    // To get the message
                     val message = newMessageEvent.message
                 }
 
@@ -42,7 +42,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
                 .subscribe { event: ChatEvent ->
                     when (event) {
                         is NewMessageEvent -> {
-                            // to get the message
+                            // To get the message
                             val message = event.message
                         }
                     }
@@ -102,10 +102,10 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
      */
     inner class TypingEvents {
         fun sendTypingEvents() {
-            // sends a typing.start event if it's been more than 3000 ms since the last event
+            // Sends a typing.start event if it's been more than 3000 ms since the last event
             channelController.keystroke().enqueue()
 
-            // sends an event typing.stop to all channel participants
+            // Sends an event typing.stop to all channel participants
             channelController.stopTyping().enqueue()
         }
     }
@@ -115,7 +115,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
      */
     inner class NotificationEvents {
         fun notificationEvents() {
-            // an example of how listen event when a user is added to a channel
+            // An example of how listen event when a user is added to a channel
             channelController.subscribeFor<NotificationAddedToChannelEvent> { notificationEvent ->
                 // Handle event
             }

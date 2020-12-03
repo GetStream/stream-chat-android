@@ -47,7 +47,7 @@ public class Events {
         public void listenAllChannelEvents() {
             Disposable disposable = channelController.subscribe((ChatEvent event) -> {
                 if (event instanceof NewMessageEvent) {
-                    // to get the message
+                    // To get the message
                     Message message = ((NewMessageEvent) event).getMessage();
                 }
                 return Unit.INSTANCE;
@@ -118,10 +118,10 @@ public class Events {
      */
     class TypingEvents {
         public void sendTypingEvent() {
-            // sends a typing.start event if it's been more than 3000 ms since the last event
+            // Sends a typing.start event if it's been more than 3000 ms since the last event
             channelController.keystroke().enqueue(result -> Unit.INSTANCE);
 
-            // sends an event typing.stop to all channel participants
+            // Sends an event typing.stop to all channel participants
             channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
         }
     }
@@ -131,7 +131,7 @@ public class Events {
      */
     class NotificationEvents {
         public void notificationEvents() {
-            // an example of how listen event when a user is added to a channel
+            // An example of how listen event when a user is added to a channel
             channelController.subscribeFor(
                     new Class[]{NotificationAddedToChannelEvent.class},
                     addedToChannelEvent -> {

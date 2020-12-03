@@ -160,7 +160,7 @@ public class ClientAndUsers {
     }
 
     public void queryingUsersById() {
-        // search users with id "john", "jack", or "jessie"
+        // Search users with id "john", "jack", or "jessie"
         List<String> userIds = new ArrayList<>();
         userIds.add("john");
         userIds.add("jack");
@@ -199,7 +199,7 @@ public class ClientAndUsers {
     }
 
     public void queryingUsersByAutocompleteName() {
-        // search users with name contains "ro"
+        // Search users with name contains "ro"
         FilterObject filter = Filters.autocomplete("name", "ro");
         int offset = 0;
         int limit = 10;
@@ -216,7 +216,7 @@ public class ClientAndUsers {
     }
 
     public void queryingUsersByAutocompleteId() {
-        // search users with id contains "ro"
+        // Search users with id contains "ro"
         FilterObject filter = Filters.autocomplete("id", "ro");
         int offset = 0;
         int limit = 10;
