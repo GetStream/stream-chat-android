@@ -154,7 +154,11 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         val request = QueryUsersRequest(filter, offset, limit, sort)
 
         client.queryUsers(request).enqueue {
-            val users = it.data()
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -165,7 +169,11 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         val request = QueryUsersRequest(filter, offset, limit)
 
         client.queryUsers(request).enqueue {
-            val users = it.data()
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -176,7 +184,11 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         val limit = 10
 
         client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
-            val users = it.data()
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -187,7 +199,11 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         val limit = 10
 
         client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
-            val users = it.data()
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 

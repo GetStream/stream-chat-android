@@ -171,7 +171,14 @@ public class ClientAndUsers {
         QuerySort<User> sort = new QuerySort<User>().desc("last_active");
         QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit, sort, false);
 
-        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
 
     }
 
@@ -181,7 +188,14 @@ public class ClientAndUsers {
         int limit = 10;
         QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
 
-        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void queryingUsersByAutocompleteName() {
@@ -191,7 +205,14 @@ public class ClientAndUsers {
         int limit = 10;
         QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
 
-        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void queryingUsersByAutocompleteId() {
@@ -201,7 +222,14 @@ public class ClientAndUsers {
         int limit = 10;
         QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
 
-        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void anonymousUser() {
