@@ -3,7 +3,10 @@ package io.getstream.chat.docs.kotlin
 import android.content.Context
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.TokenProvider
@@ -140,6 +143,52 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
                 }
             }
         )
+    }
+
+    fun queryingUsersById() {
+        // search users with id "john", "jack", or "jessie"
+        val filter = Filters.`in`("id", listOf("john", "jack", "jessie"))
+        val offset = 0
+        val limit = 10
+        val sort = QuerySort.desc<User>("last_active")
+        val request = QueryUsersRequest(filter, offset, limit, sort)
+
+        client.queryUsers(request).enqueue {
+            val users = it.data()
+        }
+    }
+
+    fun queryingBannedUsers() {
+        val filter = Filters.eq("banned", true)
+        val offset = 0
+        val limit = 10
+        val request = QueryUsersRequest(filter, offset, limit)
+
+        client.queryUsers(request).enqueue {
+            val users = it.data()
+        }
+    }
+
+    fun queryingUsersByAutocompleteName() {
+        // search users with name contains "ro"
+        val filter = Filters.autocomplete("name", "ro")
+        val offset = 0
+        val limit = 10
+
+        client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
+            val users = it.data()
+        }
+    }
+
+    fun queryingUsersByAutocompleteId() {
+        // search users with id contains "ro"
+        val filter = Filters.autocomplete("id", "ro")
+        val offset = 0
+        val limit = 10
+
+        client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
+            val users = it.data()
+        }
     }
 
     fun anonymousUser() {

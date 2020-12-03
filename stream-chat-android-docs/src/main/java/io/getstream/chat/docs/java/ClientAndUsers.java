@@ -5,15 +5,22 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
+import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.docs.TokenService;
+import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -150,6 +157,51 @@ public class ClientAndUsers {
                 Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
             }
         });
+    }
+
+    public void queryingUsersById() {
+        // search users with id "john", "jack", or "jessie"
+        List<String> userIds = new ArrayList<>();
+        userIds.add("john");
+        userIds.add("jack");
+        userIds.add("jessie");
+        FilterObject filter = Filters.in("id", userIds);
+        int offset = 0;
+        int limit = 10;
+        QuerySort<User> sort = new QuerySort<User>().desc("last_active");
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit, sort, false);
+
+        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+
+    }
+
+    public void queryingBannedUsers() {
+        FilterObject filter = Filters.eq("banned", true);
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public void queryingUsersByAutocompleteName() {
+        // search users with name contains "ro"
+        FilterObject filter = Filters.autocomplete("name", "ro");
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public void queryingUsersByAutocompleteId() {
+        // search users with id contains "ro"
+        FilterObject filter = Filters.autocomplete("id", "ro");
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> Unit.INSTANCE);
     }
 
     public void anonymousUser() {
