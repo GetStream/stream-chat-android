@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view
 
-import androidx.core.view.isVisible
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.Channel

@@ -210,7 +210,6 @@ internal class AttachmentViewHolder(
                 longClickListener?.onMessageLongClick(messageItem.message)
             }
 
-
             true
         }
 

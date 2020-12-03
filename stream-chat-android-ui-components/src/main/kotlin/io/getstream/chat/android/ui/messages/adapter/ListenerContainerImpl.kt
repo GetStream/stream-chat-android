@@ -26,7 +26,7 @@ public class ListenerContainerImpl(
 ) : ListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
-        val TWO_PARAM: (Any, Any?) -> Unit = { _, _ -> Unit }
+        val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
     }
 
     override var messageClickListener: MessageClickListener by ListenerDelegate(
