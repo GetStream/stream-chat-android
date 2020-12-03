@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 class Events(val client: ChatClient, val channelController: ChannelClient) {
 
     fun listenSpecificChannelEvents() {
+        // Subscribe for new message events
         val disposable: Disposable = channelController
             .subscribeFor<NewMessageEvent> { newMessageEvent ->
                 // to get the message

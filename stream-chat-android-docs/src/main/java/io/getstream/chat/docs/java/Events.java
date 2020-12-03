@@ -18,12 +18,15 @@ public class Events {
     private ChannelClient channelController;
 
     public void listenSpecificChannelEvents() {
-        Disposable disposable = client.subscribeForSingle(NewMessageEvent.class,
+        // Subscribe for new message events
+        Disposable disposable = client.subscribeForSingle(
+                NewMessageEvent.class,
                 (NewMessageEvent event) -> {
                     // to get the message
                     Message message = event.getMessage();
                     return Unit.INSTANCE;
-                });
+                }
+        );
 
         // Dispose when you want to stop receiving events
         disposable.dispose();
