@@ -59,6 +59,7 @@ public class Messages {
         File imageFile = new File("path");
         File anyOtherFile = new File("path");
 
+        // upload an image
         channelController.sendImage(imageFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
@@ -76,6 +77,7 @@ public class Messages {
             }
         });
 
+        // upload a file
         channelController.sendFile(anyOtherFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
