@@ -73,11 +73,6 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         style: ChannelListViewStyle?
     ) {
         binding.itemForegroundView.apply {
-            root.x = when (swipeStateByChannelCid[channel.cid]) {
-                MenuState.Open -> -optionsMenuWidth
-                MenuState.Closed, null -> 0f
-            }
-
             configureSwipeBehavior(channel.cid)
 
             diff?.run {
@@ -235,6 +230,11 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
     @SuppressLint("ClickableViewAccessibility")
     private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
+        // set the X to the preserved open / closed state
+        root.x = when (swipeStateByChannelCid[cid]) {
+            MenuState.Open -> -optionsMenuWidth
+            MenuState.Closed, null -> 0f
+        }
 
         var startX = 0f
         var startY = 0f

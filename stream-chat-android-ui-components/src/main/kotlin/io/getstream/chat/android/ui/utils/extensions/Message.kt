@@ -29,8 +29,8 @@ internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
-internal fun Message.getCreatedAt(): Date? = createdAt ?: createdLocallyAt
+internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 
-internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAt()) {
+internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
 }
