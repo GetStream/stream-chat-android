@@ -46,7 +46,7 @@ object Messages {
     }
 
     fun getAMessage() {
-        channelController.getMessage("messageId").enqueue {
+        channelController.getMessage("message-id").enqueue {
             val message = it.data()
         }
     }
@@ -61,7 +61,7 @@ object Messages {
     }
 
     fun deleteAMessage() {
-        channelController.deleteMessage("messageId").enqueue {
+        channelController.deleteMessage("message-id").enqueue {
             val deletedMessage = it.data()
         }
     }

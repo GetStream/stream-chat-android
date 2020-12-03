@@ -50,7 +50,7 @@ public class Messages {
     }
 
     public static void getAMessage() {
-        channelController.getMessage("messageId").enqueue(result -> {
+        channelController.getMessage("message-id").enqueue(result -> {
             Message message = result.data();
             return Unit.INSTANCE;
         });
@@ -65,7 +65,7 @@ public class Messages {
     }
 
     public static void deleteAMessage() {
-        channelController.deleteMessage("messageId").enqueue(messageResult -> Unit.INSTANCE);
+        channelController.deleteMessage("message-id").enqueue(messageResult -> Unit.INSTANCE);
     }
 
     public static void fileUploads() {
