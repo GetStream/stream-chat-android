@@ -14,9 +14,7 @@ import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
 
-object Events {
-    val client: ChatClient = TODO()
-    val channelController: ChannelClient = TODO()
+class Events(val client: ChatClient, val channelController: ChannelClient) {
 
     fun listenSpecificChannelEvents() {
         val disposable: Disposable = channelController

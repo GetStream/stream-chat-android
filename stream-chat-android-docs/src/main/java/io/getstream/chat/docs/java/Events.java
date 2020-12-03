@@ -14,10 +14,10 @@ import io.getstream.chat.android.client.utils.observable.Disposable;
 import kotlin.Unit;
 
 public class Events {
-    static ChatClient client;
-    static ChannelClient channelController;
+    private ChatClient client;
+    private ChannelClient channelController;
 
-    public static void listenSpecificChannelEvents() {
+    public void listenSpecificChannelEvents() {
         Disposable disposable = client.subscribeForSingle(NewMessageEvent.class,
                 (NewMessageEvent event) -> {
                     // to get the message
@@ -29,7 +29,7 @@ public class Events {
         disposable.dispose();
     }
 
-    public static void listenAllChannelEvents() {
+    public void listenAllChannelEvents() {
         Disposable disposable = channelController.subscribe((ChatEvent event) -> {
             if (event instanceof NewMessageEvent) {
                 // to get the message
@@ -42,7 +42,7 @@ public class Events {
         disposable.dispose();
     }
 
-    public static void listenClientEvents() {
+    public void listenClientEvents() {
         // Subscribe for User presence events
         client.subscribeFor(
                 new Class[]{UserPresenceChangedEvent.class},
@@ -64,7 +64,7 @@ public class Events {
         );
     }
 
-    public static void listenConnectionEvents() {
+    public void listenConnectionEvents() {
         client.subscribeFor(
                 new Class[]{ConnectedEvent.class, ConnectingEvent.class, DisconnectedEvent.class},
                 event -> {
@@ -80,7 +80,7 @@ public class Events {
         );
     }
 
-    public static void sendTypingEvent() {
+    public void sendTypingEvent() {
         // sends a typing.start event if it's been more than 3000 ms since the last event
         channelController.keystroke().enqueue(result -> Unit.INSTANCE);
 
@@ -88,7 +88,7 @@ public class Events {
         channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
     }
 
-    public static void notificationEvents() {
+    public void notificationEvents() {
         // an example of how listen event when a user is added to a channel
         channelController.subscribeFor(
                 new Class[]{NotificationAddedToChannelEvent.class},
