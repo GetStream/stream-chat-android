@@ -15,7 +15,8 @@ import java.io.File
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
     members.observe(lifecycleOwner) { view.configureMembers(it) }
     commands.observe(lifecycleOwner) { view.configureCommands(it) }
-    view.sendMessageHandler = object : MessageInputView.MessageSendHandler {
+
+    val sendMessageHandler = object : MessageInputView.MessageSendHandler {
         val viewModel = this@bindView
         override fun sendMessage(messageText: String) {
             viewModel.sendMessage(messageText)
@@ -45,6 +46,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             viewModel.editMessage(oldMessage.copy(text = newMessageText))
         }
     }
+    view.setSendMessageHandler(sendMessageHandler)
 
     getActiveThread().observe(lifecycleOwner) {
         if (it != null) {
@@ -60,7 +62,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
     }
 
-    view.typeListener = object : MessageInputView.TypeListener {
+    val typingListener = object : MessageInputView.TypingListener {
         override fun onKeystroke() {
             keystroke()
         }
@@ -69,4 +71,5 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             stopTyping()
         }
     }
+    view.setTypingListener(typingListener)
 }

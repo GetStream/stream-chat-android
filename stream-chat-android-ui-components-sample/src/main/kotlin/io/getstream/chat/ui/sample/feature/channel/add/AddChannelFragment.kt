@@ -93,7 +93,7 @@ class AddChannelFragment : Fragment() {
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
             }
-            messageInputView.onSendButtonClickListener = MessageInputView.OnMessageSendButtonClickListener {
+            messageInputView.setOnSendButtonClickListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }

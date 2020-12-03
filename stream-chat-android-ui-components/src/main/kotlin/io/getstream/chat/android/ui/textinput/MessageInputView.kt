@@ -21,7 +21,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
-import io.getstream.chat.android.ui.textinput.MessageInputView.OnMessageSendButtonClickListener
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
 import java.io.File
@@ -82,11 +81,25 @@ public class MessageInputView : ConstraintLayout {
         configSendAlsoToChannelCheckbox()
     }
 
-    public var typeListener: TypeListener = EMPTY_TYPE_LISTENER
+    private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
+    private var typingListener: TypingListener? = null
+    private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
 
-    public var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
+    public fun setOnSendButtonClickListener(listener: OnMessageSendButtonClickListener?) {
+        this.onSendButtonClickListener = listener
+    }
 
-    public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
+    public fun setTypingListener(listener: TypingListener?) {
+        this.typingListener = listener
+    }
+
+    /**
+     * Sets up [MessageSendHandler] implementation. [MessageInputView] will delegate all the message sending operations
+     * to this object.
+     */
+    public fun setSendMessageHandler(handler: MessageSendHandler) {
+        this.sendMessageHandler = handler
+    }
 
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
@@ -125,7 +138,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.ivSendMessageEnabled.setOnClickListener {
-            onSendButtonClickListener.onClick()
+            onSendButtonClickListener?.onClick()
 
             inputMode.let {
                 when (it) {
@@ -311,10 +324,10 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun handleKeyStroke() {
-        if (messageText.isNotBlank()) {
-            typeListener.onKeystroke()
+        if (messageText.isNotEmpty()) {
+            typingListener?.onKeystroke()
         } else {
-            typeListener.onStopTyping()
+            typingListener?.onStopTyping()
         }
     }
 
@@ -443,11 +456,6 @@ public class MessageInputView : ConstraintLayout {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
         }
-
-        val EMPTY_TYPE_LISTENER = object : TypeListener {
-            override fun onKeystroke() = Unit
-            override fun onStopTyping() = Unit
-        }
     }
 
     public sealed class InputMode {
@@ -479,7 +487,7 @@ public class MessageInputView : ConstraintLayout {
         public fun onClick()
     }
 
-    public interface TypeListener {
+    public interface TypingListener {
         public fun onKeystroke()
         public fun onStopTyping()
     }
