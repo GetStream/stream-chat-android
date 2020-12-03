@@ -72,4 +72,12 @@ object Events {
             }
         }
     }
+
+    fun sendTypingEvents() {
+        // sends a typing.start event if it's been more than 3000 ms since the last event
+        channelController.keystroke().enqueue()
+
+        // sends an event typing.stop to all channel participants
+        channelController.stopTyping().enqueue()
+    }
 }

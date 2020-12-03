@@ -76,4 +76,12 @@ public class Events {
                 }
         );
     }
+
+    public static void sendTypingEvent() {
+        // sends a typing.start event if it's been more than 3000 ms since the last event
+        channelController.keystroke().enqueue(result -> Unit.INSTANCE);
+
+        // sends an event typing.stop to all channel participants
+        channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
+    }
 }
