@@ -11,10 +11,7 @@ import io.getstream.chat.android.client.utils.ChatUtils
 import io.getstream.chat.docs.StaticInstances.TAG
 import io.getstream.chat.docs.TokenService
 
-object ClientAndUsers {
-    val context: Context = TODO()
-    val client: ChatClient = TODO()
-    val yourTokenService = TokenService
+class ClientAndUsers(val context: Context, val client: ChatClient, val yourTokenService: TokenService) {
 
     fun initialization() {
         // Typically done in your Application class using your API Key

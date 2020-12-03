@@ -289,18 +289,29 @@
             app:destination="@id/componentBrowserDateDividerFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserPlainTextMessages"
+            app:destination="@id/componentBrowserPlainTextMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
         android:id="@+id/componentBrowserDeletedMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
-        android:label="ComponentBrowserDeletedMessages"
+        android:label="ComponentBrowserDeletedMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserDateDividerFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DateDividerComponentBrowserFragment"
         android:label="ComponentBrowserDateDividerFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserPlainTextMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserPlainTextMessagesFragment"
         />
 
     <fragment

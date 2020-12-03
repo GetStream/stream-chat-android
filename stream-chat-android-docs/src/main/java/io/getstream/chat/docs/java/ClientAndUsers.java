@@ -1,6 +1,5 @@
 package io.getstream.chat.docs.java;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -19,12 +18,11 @@ import io.getstream.chat.docs.TokenService;
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class ClientAndUsers {
-    @SuppressLint("StaticFieldLeak")
-    static Context context;
-    static ChatClient client;
-    static TokenService yourTokenService;
+    private Context context;
+    private ChatClient client;
+    private TokenService yourTokenService;
 
-    public static void initialization() {
+    public void initialization() {
         // Typically done in your Application class using your API Key
         ChatClient client = new ChatClient.Builder("{{ api_key }}", context).build();
 
@@ -32,7 +30,7 @@ public class ClientAndUsers {
         ChatClient staticClientRef = ChatClient.instance();
     }
 
-    public static void setUser() {
+    public void setUser() {
         User user = new User();
         user.setId("user-id");
 
@@ -85,11 +83,11 @@ public class ClientAndUsers {
         });
     }
 
-    public static void disconnect() {
+    public void disconnect() {
         ChatClient.instance().disconnect();
     }
 
-    public static void developmentToken() {
+    public void developmentToken() {
         User user = new User();
         user.setId("user-id");
         String token = ChatUtils.devToken(user.getId());
@@ -110,7 +108,7 @@ public class ClientAndUsers {
         });
     }
 
-    public static void tokenExpiration() {
+    public void tokenExpiration() {
         User user = new User();
         user.setId("user-id");
         TokenProvider tokenProvider = new TokenProvider() {
@@ -137,7 +135,7 @@ public class ClientAndUsers {
         });
     }
 
-    public static void guestUser() {
+    public void guestUser() {
         client.setGuestUser("user-id", "name", new InitConnectionListener() {
             @Override
             public void onSuccess(@NotNull ConnectionData data) {

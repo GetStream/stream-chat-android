@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <io.getstream.chat.android.ui.messages.adapter.GapView
+        android:id="@+id/gapView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/stream_spacing_medium"
+        android:paddingTop="@dimen/stream_spacing_small"
+        android:paddingRight="@dimen/stream_spacing_medium"
+        android:paddingBottom="@dimen/stream_spacing_small"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:lineHeight="16sp"
+        android:gravity="start"
+        android:textColor="@color/stream_black"
+        />
+
+</LinearLayout>

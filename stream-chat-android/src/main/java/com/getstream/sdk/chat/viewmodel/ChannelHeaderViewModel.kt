@@ -27,6 +27,7 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
     public val members: LiveData<List<Member>> = _members
     public val channelState: LiveData<Channel> = _channelState
     public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline
+    public val online: LiveData<Boolean> = chatDomain.online
 
     init {
         chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->

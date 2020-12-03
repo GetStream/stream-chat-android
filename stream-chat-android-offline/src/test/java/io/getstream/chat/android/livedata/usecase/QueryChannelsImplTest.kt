@@ -54,7 +54,7 @@ internal class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         val readEvent = MessageReadEvent(EventType.MESSAGE_READ, Date(), data.user1, channel.cid, channel.type, channel.id, null)
         chatDomainImpl.eventHandler.handleEvent(readEvent)
         val read = channelController.read.getOrAwaitValue()
-        Truth.assertThat(read.lastRead).isEqualTo(readEvent.createdAt)
+        Truth.assertThat(read?.lastRead).isEqualTo(readEvent.createdAt)
         Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(0)
         Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(0)
     }

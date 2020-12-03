@@ -1,33 +1,15 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
-import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessageListViewHolderBinding
 import java.util.Date
 
-class DeletedMessagesComponentBrowserFragment : Fragment() {
+class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    private var _binding: FragmentComponentBrowserMessageListViewHolderBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentComponentBrowserMessageListViewHolderBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.recyclerView.adapter = DefaultAdapter(
+    override fun createAdapter(): RecyclerView.Adapter<*> {
+        return DefaultAdapter(
             getDummyDeletedMessagesList(),
             ::MessageDeletedViewHolder,
             MessageDeletedViewHolder::bind
