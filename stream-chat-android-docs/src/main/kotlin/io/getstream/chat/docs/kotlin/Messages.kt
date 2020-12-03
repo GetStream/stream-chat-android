@@ -153,4 +153,11 @@ object Messages {
             val replies = it.data()
         }
     }
+
+    fun silentMessage() {
+        val message = Message("text-of-a-message", silent = true)
+        channelController.sendMessage(message).enqueue {
+            val message = it.data()
+        }
+    }
 }

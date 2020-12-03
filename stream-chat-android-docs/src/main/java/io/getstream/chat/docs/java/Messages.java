@@ -160,4 +160,12 @@ public class Messages {
             return Unit.INSTANCE;
         });
     }
+
+    public static void silentMessage() {
+        Message message = new Message();
+        message.setText("text-of-a-message");
+        message.setSilent(true);
+
+        channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+    }
 }
