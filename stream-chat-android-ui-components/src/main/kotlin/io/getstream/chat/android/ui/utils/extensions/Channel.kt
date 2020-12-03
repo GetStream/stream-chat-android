@@ -90,6 +90,7 @@ internal fun Channel.isMessageRead(message: Message): Boolean =
 
 internal fun Channel.isDirectMessaging(): Boolean = getUsers().size == 1
 
+
 // None of the strings used to assemble the preview message are translatable - concatenation here should be fine
 internal fun Channel.getLastMessagePreviewText(
     context: Context,
