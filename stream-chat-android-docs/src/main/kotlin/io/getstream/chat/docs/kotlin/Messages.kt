@@ -75,28 +75,34 @@ class Messages(
         val anyOtherFile = File("path")
 
         // upload an image
-        channelController.sendImage(imageFile, object : ProgressCallback {
-            override fun onSuccess(file: String) {
-            }
+        channelController.sendImage(
+            imageFile,
+            object : ProgressCallback {
+                override fun onSuccess(file: String) {
+                }
 
-            override fun onError(error: ChatError) {
-            }
+                override fun onError(error: ChatError) {
+                }
 
-            override fun onProgress(progress: Long) {
+                override fun onProgress(progress: Long) {
+                }
             }
-        })
+        )
 
         // upload a file
-        channelController.sendFile(anyOtherFile, object : ProgressCallback {
-            override fun onSuccess(file: String) {
-            }
+        channelController.sendFile(
+            anyOtherFile,
+            object : ProgressCallback {
+                override fun onSuccess(file: String) {
+                }
 
-            override fun onError(error: ChatError) {
-            }
+                override fun onError(error: ChatError) {
+                }
 
-            override fun onProgress(progress: Long) {
+                override fun onProgress(progress: Long) {
+                }
             }
-        })
+        )
     }
 
     fun sendAReaction() {
