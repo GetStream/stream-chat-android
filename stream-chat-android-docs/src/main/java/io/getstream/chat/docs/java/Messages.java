@@ -116,7 +116,7 @@ public class Messages {
 
             @Override
             public void onProgress(long progress) {
-                // you render the uploading progress here
+                // You can render the uploading progress here
             }
         });
 
@@ -134,7 +134,7 @@ public class Messages {
 
             @Override
             public void onProgress(long progress) {
-                // you render the uploading progress here
+                // You can render the uploading progress here
             }
         });
     }

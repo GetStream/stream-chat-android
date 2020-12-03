@@ -103,7 +103,7 @@ class Messages(
                 }
 
                 override fun onProgress(progress: Long) {
-                    // you can render uploading progress here
+                    // You can render uploading progress here
                 }
             }
         )
@@ -121,7 +121,7 @@ class Messages(
                 }
 
                 override fun onProgress(progress: Long) {
-                    // you can render uploading progress here
+                    // You can render uploading progress here
                 }
             }
         )
