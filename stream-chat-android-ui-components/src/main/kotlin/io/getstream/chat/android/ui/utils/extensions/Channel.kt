@@ -32,7 +32,7 @@ internal fun Channel.getLastMessage(): Message? =
         .filter { it.deletedAt == null }
         .filter { !it.silent }
         .filter { it.type == ModelType.message_regular }
-        .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
+        .maxByOrNull { it.getCreatedAtOrThrow() }
 
 internal fun Channel.getLastMessageByUserId(userId: String): Message? =
     messages.lastOrNull {
