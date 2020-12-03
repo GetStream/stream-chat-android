@@ -18,7 +18,7 @@ import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener2
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 import top.defaults.drawabletoolbox.DrawableBuilder
@@ -31,7 +31,7 @@ internal class AttachmentViewHolderMedia(
     private val giphySendListener: GiphySendListener,
     private val clickListener: AttachmentClickListener,
     private val longClickListener: MessageLongClickListener? = null,
-    private val longClickListener2: MessageLongClickListener2? = null,
+    private val longClickListenerView: MessageLongClickListenerView? = null,
     private val binding: StreamItemAttachMediaBinding =
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -170,8 +170,8 @@ internal class AttachmentViewHolderMedia(
             )
         }
         binding.ivMediaThumb.setOnLongClickListener {
-            if (longClickListener2 != null) {
-                longClickListener2.onMessageLongClick2(messageItem.message, itemView)
+            if (longClickListenerView != null) {
+                longClickListenerView.onMessageLongClick2(messageItem.message, itemView)
             } else {
                 longClickListener?.onMessageLongClick(messageItem.message)
             }

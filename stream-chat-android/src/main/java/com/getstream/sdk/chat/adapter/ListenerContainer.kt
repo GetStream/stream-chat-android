@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener2
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 public interface ListenerContainer {
     public var messageClickListener: MessageClickListener
     public var messageLongClickListener: MessageLongClickListener
-    public var messageLongClickListener2: MessageLongClickListener2
+    public var messageLongClickListenerView: MessageLongClickListenerView
     public var messageRetryListener: MessageRetryListener
     public var attachmentClickListener: AttachmentClickListener
     public var reactionViewClickListener: ReactionViewClickListener

@@ -776,7 +776,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         public fun onMessageLongClick(message: Message)
     }
 
-    public fun interface MessageLongClickListener2 {
+    public fun interface MessageLongClickListenerView {
         public fun onMessageLongClick2(message: Message, view: View?)
     }
 

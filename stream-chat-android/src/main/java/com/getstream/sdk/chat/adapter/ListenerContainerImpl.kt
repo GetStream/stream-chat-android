@@ -43,8 +43,8 @@ public class ListenerContainerImpl(
         }
     }
 
-    override var messageLongClickListener2: MessageListView.MessageLongClickListener2 =
-        MessageListView.MessageLongClickListener2 { message, _ ->
+    override var messageLongClickListenerView: MessageListView.MessageLongClickListenerView =
+        MessageListView.MessageLongClickListenerView { message, _ ->
             messageLongClickListener.onMessageLongClick(message)
         }
 

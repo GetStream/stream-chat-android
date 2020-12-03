@@ -33,7 +33,7 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener2
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -149,7 +149,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener2 { _, view ->
+        MessageLongClickListenerView { _, view ->
             optionsView = view
 
             binding.blurLayer.isVisible = true
@@ -201,7 +201,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private val listenerContainer: ListenerContainer = ListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
-        messageLongClickListener2 = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+        messageLongClickListenerView = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
         attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
@@ -678,9 +678,9 @@ public class MessageListView : ConstraintLayout, IMessageListView {
      *
      * @param messageLongClickListener The listener to use. If null, the default will be used instead.
      */
-    public fun setMessageLongClickListener(messageLongClickListener2: MessageLongClickListener2?) {
-        listenerContainer.messageLongClickListener2 =
-            messageLongClickListener2 ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
+    public fun setMessageLongClickListener(messageLongClickListenerView: MessageLongClickListenerView?) {
+        listenerContainer.messageLongClickListenerView =
+            messageLongClickListenerView ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**

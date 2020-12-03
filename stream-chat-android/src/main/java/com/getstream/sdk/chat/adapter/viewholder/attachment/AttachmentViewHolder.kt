@@ -32,7 +32,7 @@ internal class AttachmentViewHolder(
     private val messageItem: MessageItem,
     private val clickListener: AttachmentClickListener,
     private val longClickListener: MessageLongClickListener? = null,
-    private val longClickListener2: MessageListView.MessageLongClickListener2? = null,
+    private val longClickListenerView: MessageListView.MessageLongClickListenerView? = null,
     private val binding: StreamItemAttachmentBinding =
         StreamItemAttachmentBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -183,8 +183,8 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         mediaBinding.root.setOnLongClickListener {
-            if (longClickListener2 != null) {
-                longClickListener2.onMessageLongClick2(messageItem.message, itemView)
+            if (longClickListenerView != null) {
+                longClickListenerView.onMessageLongClick2(messageItem.message, itemView)
             } else {
                 longClickListener?.onMessageLongClick(messageItem.message)
             }
@@ -204,8 +204,8 @@ internal class AttachmentViewHolder(
             clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         binding.lvAttachmentFile.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            if (longClickListener2 != null) {
-                longClickListener2.onMessageLongClick2(messageItem.message, itemView)
+            if (longClickListenerView != null) {
+                longClickListenerView.onMessageLongClick2(messageItem.message, itemView)
             } else {
                 longClickListener?.onMessageLongClick(messageItem.message)
             }

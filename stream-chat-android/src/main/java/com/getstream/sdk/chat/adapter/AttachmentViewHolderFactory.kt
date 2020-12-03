@@ -58,7 +58,7 @@ public open class AttachmentViewHolderFactory {
                     listenerContainer.giphySendListener,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener,
-                    listenerContainer.messageLongClickListener2
+                    listenerContainer.messageLongClickListenerView
                 )
             FILE_ATTACHMENT ->
                 AttachmentViewHolderFile(
@@ -68,7 +68,7 @@ public open class AttachmentViewHolderFactory {
                     messageItem,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener,
-                    listenerContainer.messageLongClickListener2
+                    listenerContainer.messageLongClickListenerView
                 )
             else ->
                 AttachmentViewHolder(
@@ -78,7 +78,7 @@ public open class AttachmentViewHolderFactory {
                     messageItem,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener,
-                    listenerContainer.messageLongClickListener2
+                    listenerContainer.messageLongClickListenerView
                 )
         }
     }
