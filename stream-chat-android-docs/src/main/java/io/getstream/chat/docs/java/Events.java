@@ -46,31 +46,33 @@ public class Events {
         // Subscribe for User presence events
         client.subscribeFor(
                 new Class[]{UserPresenceChangedEvent.class},
-                (ChatEvent chatEvent) -> {
+                event -> {
                     // Handle change
                     return Unit.INSTANCE;
                 }
         );
 
         // Subscribe for just the first ConnectedEvent
-        client.subscribeForSingle(ConnectedEvent.class,
-                (ConnectedEvent event) -> {
+        client.subscribeForSingle(
+                ConnectedEvent.class,
+                event -> {
                     // Use event data
                     int unreadCount = event.getMe().getTotalUnreadCount();
                     int unreadChannels = event.getMe().getUnreadChannels();
                     return Unit.INSTANCE;
-                });
+                }
+        );
     }
 
     public static void listenConnectionEvents() {
         client.subscribeFor(
                 new Class[]{ConnectedEvent.class, ConnectingEvent.class, DisconnectedEvent.class},
-                (ChatEvent chatEvent) -> {
-                    if (chatEvent instanceof ConnectedEvent) {
+                event -> {
+                    if (event instanceof ConnectedEvent) {
                         // Socket is connected
-                    } else if (chatEvent instanceof ConnectingEvent) {
+                    } else if (event instanceof ConnectingEvent) {
                         // Socket is connecting
-                    } else if (chatEvent instanceof DisconnectedEvent) {
+                    } else if (event instanceof DisconnectedEvent) {
                         // Socket is disconnected
                     }
                     return Unit.INSTANCE;
@@ -90,7 +92,7 @@ public class Events {
         // an example of how listen event when a user is added to a channel
         channelController.subscribeFor(
                 new Class[]{NotificationAddedToChannelEvent.class},
-                addedToChannel -> {
+                addedToChannelEvent -> {
                     // Handle event
                     return Unit.INSTANCE;
                 }
