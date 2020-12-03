@@ -1,9 +1,12 @@
 package io.getstream.chat.docs.kotlin
 
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.ProgressCallback
+import java.io.File
 
 object Messages {
     val channelController: ChannelClient = TODO()
@@ -52,5 +55,40 @@ object Messages {
         channelController.deleteMessage("messageId").enqueue {
             val deletedMessage = it.data()
         }
+    }
+
+    fun fileUploads() {
+        val imageFile = File("path")
+        val anyOtherFile = File("path")
+
+        // upload an image
+        channelController.sendImage(imageFile, object: ProgressCallback {
+            override fun onSuccess(file: String) {
+
+            }
+
+            override fun onError(error: ChatError) {
+
+            }
+
+            override fun onProgress(progress: Long) {
+
+            }
+        })
+
+        // upload a file
+        channelController.sendFile(anyOtherFile, object: ProgressCallback{
+            override fun onSuccess(file: String) {
+
+            }
+
+            override fun onError(error: ChatError) {
+
+            }
+
+            override fun onProgress(progress: Long) {
+
+            }
+        })
     }
 }

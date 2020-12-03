@@ -1,9 +1,15 @@
 package io.getstream.chat.docs.java;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+
 import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.ProgressCallback;
 import kotlin.Unit;
 
 public class Messages {
@@ -47,5 +53,44 @@ public class Messages {
 
     public static void deleteAMessage() {
         channelController.deleteMessage("messageId").enqueue(messageResult -> Unit.INSTANCE);
+    }
+
+    public static void fileUploads() {
+        File imageFile = new File("path");
+        File anyOtherFile = new File("path");
+
+        channelController.sendImage(imageFile, new ProgressCallback() {
+            @Override
+            public void onSuccess(@NotNull String file) {
+
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+
+            }
+
+            @Override
+            public void onProgress(long progress) {
+
+            }
+        });
+
+        channelController.sendFile(anyOtherFile, new ProgressCallback() {
+            @Override
+            public void onSuccess(@NotNull String file) {
+
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+
+            }
+
+            @Override
+            public void onProgress(long progress) {
+
+            }
+        });
     }
 }
