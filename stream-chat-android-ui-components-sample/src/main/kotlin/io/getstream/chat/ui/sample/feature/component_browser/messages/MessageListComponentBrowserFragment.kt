@@ -35,5 +35,8 @@ class MessageListComponentBrowserFragment : Fragment() {
         binding.dateDivider.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)
         }
+        binding.plainTextMessages.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextMessages)
+        }
     }
 }

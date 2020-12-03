@@ -41,4 +41,16 @@
         android:text="Date divider"
         />
 
+    <TextView
+        android:id="@+id/plainTextMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:layout_margin="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/shape_component_browser_item_background"
+        android:padding="16dp"
+        android:text="Plain text messages"
+        />
+
 </LinearLayout>
