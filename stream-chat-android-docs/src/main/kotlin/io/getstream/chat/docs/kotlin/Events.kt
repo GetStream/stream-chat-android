@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
@@ -79,5 +80,12 @@ object Events {
 
         // sends an event typing.stop to all channel participants
         channelController.stopTyping().enqueue()
+    }
+
+    fun notificationEvents() {
+        // an example of how listen event when a user is added to a channel
+        channelController.subscribeFor<NotificationAddedToChannelEvent> { notificationEvent ->
+            // Handle event
+        }
     }
 }
