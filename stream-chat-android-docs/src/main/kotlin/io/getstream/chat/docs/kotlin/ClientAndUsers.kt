@@ -141,4 +141,16 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
             }
         )
     }
+
+    fun anonymousUser() {
+        client.setAnonymousUser()
+    }
+
+    fun increasingTimeout() {
+        ChatClient
+            .Builder("{{ api_key }}", context)
+            .baseTimeout(6000)
+            .cdnTimeout(6000)
+            .build()
+    }
 }
