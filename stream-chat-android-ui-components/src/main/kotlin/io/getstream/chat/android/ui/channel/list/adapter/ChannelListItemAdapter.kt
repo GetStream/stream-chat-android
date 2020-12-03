@@ -43,6 +43,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             payloads.firstOrDefault(DEFAULT_DIFF).cast(),
             channelClickListener,
             channelLongClickListener,
+            deleteClickListener,
             userClickListener,
             style
         )
@@ -54,6 +55,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             null,
             channelClickListener,
             channelLongClickListener,
+            deleteClickListener,
             userClickListener,
             style
         )

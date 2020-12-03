@@ -2,10 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:alpha="0.9"
+    android:background="@color/stream_white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:paddingHorizontal="8dp"
     >
 
     <com.airbnb.lottie.LottieAnimationView
@@ -22,6 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/stream_text_grey"
         tools:text="One user is typing"
         />
 

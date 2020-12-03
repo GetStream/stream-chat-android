@@ -45,7 +45,8 @@ class CustomLoginViewModel : ViewModel() {
         App.instance.userRepository.user = SampleUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
-            token = loginCredentials.userToken
+            token = loginCredentials.userToken,
+            image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
         )
         ChatClient.instance()
             .setUser(

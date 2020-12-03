@@ -17,6 +17,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelBinding
 import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
+import io.getstream.chat.ui.sample.feature.channel.add.bindView
 
 class AddGroupChannelFragment : Fragment() {
 

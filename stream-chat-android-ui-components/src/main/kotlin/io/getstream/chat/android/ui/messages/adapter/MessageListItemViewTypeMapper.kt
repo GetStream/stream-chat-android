@@ -8,7 +8,6 @@ internal object MessageListItemViewTypeMapper {
     fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
         return when (viewTypeValue) {
             MessageListItemViewType.DATE_DIVIDER.typeValue -> MessageListItemViewType.DATE_DIVIDER
-            MessageListItemViewType.TYPING_INDICATOR.typeValue -> MessageListItemViewType.TYPING_INDICATOR
             MessageListItemViewType.MESSAGE_DELETED.typeValue -> MessageListItemViewType.MESSAGE_DELETED
             MessageListItemViewType.PLAIN_TEXT.typeValue -> MessageListItemViewType.PLAIN_TEXT
             MessageListItemViewType.REPLY_MESSAGE.typeValue -> MessageListItemViewType.REPLY_MESSAGE
@@ -23,7 +22,6 @@ internal object MessageListItemViewTypeMapper {
     private fun listItemToViewType(messageListItem: MessageListItem): MessageListItemViewType {
         return when (messageListItem) {
             is MessageListItem.DateSeparatorItem -> MessageListItemViewType.DATE_DIVIDER
-            is MessageListItem.TypingItem -> MessageListItemViewType.TYPING_INDICATOR
             is MessageListItem.LoadingMoreIndicatorItem -> MessageListItemViewType.LOADING_INDICATOR
             is MessageListItem.ThreadSeparatorItem -> MessageListItemViewType.THREAD_SEPARATOR
             is MessageListItem.ReadStateItem -> TODO("In current design there isn't any example of it")

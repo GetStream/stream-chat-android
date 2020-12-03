@@ -12,10 +12,18 @@ public abstract class BaseChannelListItemAdapter :
     ListAdapter<Channel, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
     public open var style: ChannelListViewStyle? = null
-    public open var channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener {}
+
+    public open var channelClickListener: ChannelListView.ChannelClickListener =
+        ChannelListView.ChannelClickListener {}
+
     public open var channelLongClickListener: ChannelListView.ChannelClickListener =
         ChannelListView.ChannelClickListener {}
-    public open var userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener {}
+
+    public open var deleteClickListener: ChannelListView.ChannelClickListener =
+        ChannelListView.ChannelClickListener {}
+
+    public open var userClickListener: ChannelListView.UserClickListener =
+        ChannelListView.UserClickListener {}
 
     public companion object {
         public val DIFF_CALLBACK: DiffUtil.ItemCallback<Channel> = object : DiffUtil.ItemCallback<Channel>() {
@@ -24,7 +32,7 @@ public abstract class BaseChannelListItemAdapter :
             override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
                 !oldItem.diff(newItem).hasDifference()
 
-            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any? = oldItem.diff(newItem)
+            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any = oldItem.diff(newItem)
         }
     }
 }

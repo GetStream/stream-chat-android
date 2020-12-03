@@ -123,10 +123,10 @@ internal open class BaseChatModule(
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
                 TokenAuthInterceptor(
-
                     tokenManager,
-                    parser
-                ) { config.isAnonymous }
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
 
             )
             .addInterceptor(
