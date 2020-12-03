@@ -14,8 +14,6 @@ internal class DateFormatterTest {
 
         val result = DateFormatter.formatAsTimeOrDate(date)
 
-        throw IllegalStateException("Example of a broken test")
-
         Truth.assertThat(result).isEqualTo("")
     }
 
