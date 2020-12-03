@@ -3,7 +3,10 @@ package io.getstream.chat.docs.kotlin
 import android.content.Context
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.TokenProvider
@@ -140,5 +143,79 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
                 }
             }
         )
+    }
+
+    fun queryingUsersById() {
+        // Search users with id "john", "jack", or "jessie"
+        val filter = Filters.`in`("id", listOf("john", "jack", "jessie"))
+        val offset = 0
+        val limit = 10
+        val sort = QuerySort.desc<User>("last_active")
+        val request = QueryUsersRequest(filter, offset, limit, sort)
+
+        client.queryUsers(request).enqueue {
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
+        }
+    }
+
+    fun queryingBannedUsers() {
+        val filter = Filters.eq("banned", true)
+        val offset = 0
+        val limit = 10
+        val request = QueryUsersRequest(filter, offset, limit)
+
+        client.queryUsers(request).enqueue {
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
+        }
+    }
+
+    fun queryingUsersByAutocompleteName() {
+        // Search users with name contains "ro"
+        val filter = Filters.autocomplete("name", "ro")
+        val offset = 0
+        val limit = 10
+
+        client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
+        }
+    }
+
+    fun queryingUsersByAutocompleteId() {
+        // Search users with id contains "ro"
+        val filter = Filters.autocomplete("id", "ro")
+        val offset = 0
+        val limit = 10
+
+        client.queryUsers(QueryUsersRequest(filter, offset, limit)).enqueue {
+            if (it.isSuccess) {
+                val users = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
+        }
+    }
+
+    fun anonymousUser() {
+        client.setAnonymousUser()
+    }
+
+    fun increasingTimeout() {
+        ChatClient
+            .Builder("{{ api_key }}", context)
+            .baseTimeout(6000)
+            .cdnTimeout(6000)
+            .build()
     }
 }

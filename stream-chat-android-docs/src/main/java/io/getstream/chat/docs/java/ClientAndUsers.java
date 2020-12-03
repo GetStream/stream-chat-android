@@ -5,15 +5,22 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
+import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.docs.TokenService;
+import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -54,7 +61,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
 
@@ -78,7 +85,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
@@ -103,7 +110,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
@@ -147,8 +154,105 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
+    }
+
+    public void queryingUsersById() {
+        // Search users with id "john", "jack", or "jessie"
+        List<String> userIds = new ArrayList<>();
+        userIds.add("john");
+        userIds.add("jack");
+        userIds.add("jessie");
+        FilterObject filter = Filters.in("id", userIds);
+        int offset = 0;
+        int limit = 10;
+        QuerySort<User> sort = new QuerySort<User>().desc("last_active");
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit, sort, false);
+
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
+
+    }
+
+    public void queryingBannedUsers() {
+        FilterObject filter = Filters.eq("banned", true);
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
+    }
+
+    public void queryingUsersByAutocompleteName() {
+        // Search users with name contains "ro"
+        FilterObject filter = Filters.autocomplete("name", "ro");
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
+    }
+
+    public void queryingUsersByAutocompleteId() {
+        // Search users with id contains "ro"
+        FilterObject filter = Filters.autocomplete("id", "ro");
+        int offset = 0;
+        int limit = 10;
+        QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
+
+        client.queryUsers(request).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<User> users = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
+    }
+
+    public void anonymousUser() {
+        client.setAnonymousUser(new InitConnectionListener() {
+            @Override
+            public void onSuccess(@NotNull ConnectionData data) {
+                User user = data.getUser();
+                String connectionId = data.getConnectionId();
+
+                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+            }
+        });
+    }
+
+    public void increasingTimeout() {
+        new ChatClient.Builder("{{ api_key }}", context)
+                .baseTimeout(6000)
+                .cdnTimeout(6000)
+                .build();
     }
 }

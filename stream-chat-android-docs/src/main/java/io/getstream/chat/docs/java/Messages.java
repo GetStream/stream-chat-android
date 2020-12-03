@@ -51,12 +51,23 @@ public class Messages {
         message.getMentionedUsers().add(user);
 
         // send the message to the channel
-        channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+        channelController.sendMessage(message).enqueue(result -> {
+            if (result.isSuccess()) {
+                Message sentMessage = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void getAMessage() {
         channelController.getMessage("message-id").enqueue(result -> {
-            Message message = result.data();
+            if (result.isSuccess()) {
+                Message message = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
             return Unit.INSTANCE;
         });
     }
@@ -67,13 +78,24 @@ public class Messages {
 
         // send the message to the channel
         channelController.updateMessage(message).enqueue(result -> {
-            Message updatedMessage = result.data();
+            if (result.isSuccess()) {
+                Message updatedMessage = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
             return Unit.INSTANCE;
         });
     }
 
     public void deleteAMessage() {
-        channelController.deleteMessage("message-id").enqueue(result -> Unit.INSTANCE);
+        channelController.deleteMessage("message-id").enqueue(result -> {
+            if (result.isSuccess()) {
+                Message deletedMessage = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void fileUploads() {
@@ -84,17 +106,17 @@ public class Messages {
         channelController.sendImage(imageFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
-
+                String fileUrl = file;
             }
 
             @Override
             public void onError(@NotNull ChatError error) {
-
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
 
             @Override
             public void onProgress(long progress) {
-
+                // You can render the uploading progress here
             }
         });
 
@@ -102,17 +124,17 @@ public class Messages {
         channelController.sendFile(anyOtherFile, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String file) {
-
+                String fileUrl = file;
             }
 
             @Override
             public void onError(@NotNull ChatError error) {
-
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
 
             @Override
             public void onProgress(long progress) {
-
+                // You can render the uploading progress here
             }
         });
     }
@@ -123,23 +145,58 @@ public class Messages {
         reaction.setType("like");
         reaction.setScore(1);
 
-        channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
+        channelController.sendReaction(reaction).enqueue(result -> {
+            if (result.isSuccess()) {
+                Reaction sentReaction = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void removeAReaction() {
-        channelController.deleteReaction("message-id", "like").enqueue(result -> Unit.INSTANCE);
+        channelController.deleteReaction("message-id", "like").enqueue(result -> {
+            if (result.isSuccess()) {
+                Message message = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void paginatingReactions() {
         // get the first 10 reactions
-        channelController.getReactions("message-id", 0, 10).enqueue(result -> Unit.INSTANCE);
+        channelController.getReactions("message-id", 0, 10).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<Reaction> reactions = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
 
         // get the second 10 reactions
-        channelController.getReactions("message-id", 10, 10).enqueue(result -> Unit.INSTANCE);
+        channelController.getReactions("message-id", 10, 10).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<Reaction> reactions = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
 
         // get 10 reactions after particular reaction
         String reactionId = "reaction-id";
-        channelController.getReactions("message-id", reactionId, 10).enqueue(result -> Unit.INSTANCE);
+        channelController.getReactions("message-id", reactionId, 10).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<Message> messages = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void cumulativeReactions() {
@@ -149,7 +206,14 @@ public class Messages {
         reaction.setType("like");
         reaction.setScore(score);
 
-        channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
+        channelController.sendReaction(reaction).enqueue(result -> {
+            if (result.isSuccess()) {
+                Reaction sentReaction = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void startAThread() {
@@ -159,20 +223,35 @@ public class Messages {
         message.setParentId(parentMessage.getId());
 
         // send the message to the channel
-        channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+        channelController.sendMessage(message).enqueue(result -> {
+            if (result.isSuccess()) {
+                Message sentMessage = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void threadPagination() {
         int limit = 20;
         // retrieve the first 20 messages inside the thread
         client.getReplies(parentMessage.getId(), limit).enqueue(result -> {
-            List<Message> replies = result.data();
+            if (result.isSuccess()) {
+                List<Message> replies = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
             return Unit.INSTANCE;
         });
 
         // retrieve the 20 more messages before the message with id "42"
         client.getRepliesMore(parentMessage.getId(), "42", limit).enqueue(result -> {
-            List<Message> replies = result.data();
+            if (result.isSuccess()) {
+                List<Message> replies = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
             return Unit.INSTANCE;
         });
     }
@@ -182,7 +261,14 @@ public class Messages {
         message.setText("text-of-a-message");
         message.setSilent(true);
 
-        channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+        channelController.sendMessage(message).enqueue(result -> {
+            if (result.isSuccess()) {
+                Message sentMessage = result.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void searchMessages() {
@@ -201,11 +287,11 @@ public class Messages {
                         channelFilter,
                         messageFilter
                 )
-        ).enqueue(listResult -> {
-            if (listResult.isSuccess()) {
-                List<Message> messages = listResult.data();
+        ).enqueue(result -> {
+            if (result.isSuccess()) {
+                List<Message> messages = result.data();
             } else {
-                Log.e(TAG, String.format("There was an error %s", listResult.error(), listResult.error().getCause()));
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
             return Unit.INSTANCE;
         });
