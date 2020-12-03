@@ -1,19 +1,27 @@
 package io.getstream.chat.docs.java;
 
+import android.util.Log;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import kotlin.Unit;
+
+import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class Messages {
     static ChatClient client;
@@ -167,5 +175,32 @@ public class Messages {
         message.setSilent(true);
 
         channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public static void searchMessages() {
+        int offset = 0;
+        int limit = 10;
+        String query = "supercalifragilisticexpialidocious";
+        ArrayList<String> searchUsersList = new ArrayList<>();
+        searchUsersList.add("john");
+        FilterObject channelFilter = Filters.in("members", searchUsersList);
+        FilterObject messageFilter = Filters.autocomplete("text", query);
+
+        client.searchMessages(
+                new SearchMessagesRequest(
+                        offset,
+                        limit,
+                        channelFilter,
+                        messageFilter
+                )
+        ).enqueue(listResult -> {
+            if (listResult.isSuccess()) {
+                List<Message> messages = listResult.data();
+            } else {
+                Log.e(TAG, String.format("There was an error %s", listResult.error(), listResult.error().getCause()));
+            }
+            return Unit.INSTANCE;
+        });
+
     }
 }

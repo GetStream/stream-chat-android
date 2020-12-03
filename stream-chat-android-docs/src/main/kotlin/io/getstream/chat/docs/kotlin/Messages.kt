@@ -1,13 +1,18 @@
 package io.getstream.chat.docs.kotlin
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.docs.StaticInstances.TAG
 import java.io.File
 
 object Messages {
@@ -159,5 +164,29 @@ object Messages {
         channelController.sendMessage(message).enqueue {
             val message = it.data()
         }
+    }
+
+    fun searchMessages() {
+        val offset = 0
+        val limit = 10
+        val query = "supercalifragilisticexpialidocious"
+        val channelFilter: FilterObject = Filters.`in`("members", listOf("john"))
+        val messageFilter: FilterObject = Filters.autocomplete("text", query)
+
+        client.searchMessages(
+            SearchMessagesRequest(
+                offset,
+                limit,
+                channelFilter,
+                messageFilter
+            )
+        ).enqueue {
+            if (it.isSuccess) {
+                val messages: List<Message> = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
+        }
+
     }
 }
