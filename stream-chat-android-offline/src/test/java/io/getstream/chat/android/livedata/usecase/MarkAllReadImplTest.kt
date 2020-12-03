@@ -13,7 +13,6 @@ internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun markAllRead() = testCoroutines.dispatcher.runBlockingTest {
-        advanceUntilIdle()
         chatDomainImpl.allActiveChannels().let { activeChannels ->
 
             // set up unread states
@@ -23,6 +22,7 @@ internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
                 }
 
                 channel.handleEvent(data.newMessageFromUser2)
+                advanceUntilIdle()
 
                 channel.unreadCount.getOrAwaitValue().let { unreadCount ->
                     Truth.assertThat(unreadCount).isEqualTo(1)
@@ -31,6 +31,7 @@ internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
 
             // mark all as read
             chatDomainImpl.useCases.markAllRead().execute()
+            advanceUntilIdle()
 
             // verify result
             activeChannels.forEach { channel ->

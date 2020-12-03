@@ -12,11 +12,12 @@ internal class KeystrokeImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun keystroke() = runBlockingTest {
-        advanceUntilIdle()
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val result = chatDomain.useCases.keystroke(data.channel1.cid).execute()
+        advanceUntilIdle()
         Truth.assertThat(result.data()).isTrue()
         val result2 = chatDomain.useCases.keystroke(data.channel1.cid).execute()
+        advanceUntilIdle()
         Truth.assertThat(result2.data()).isFalse()
     }
 }

@@ -13,13 +13,14 @@ internal class MarkReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun read() = testCoroutines.dispatcher.runBlockingTest {
-        advanceUntilIdle()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         channelControllerImpl.handleEvent(data.newMessageFromUser2)
+        advanceUntilIdle()
         var unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
         Truth.assertThat(unreadCount).isEqualTo(1)
 
         val result = chatDomain.useCases.markRead(data.channel1.cid).execute()
+        advanceUntilIdle()
         assertSuccess(result)
         val lastRead = channelControllerImpl.read.getOrAwaitValue()?.lastRead
         Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
