@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
@@ -10,8 +11,10 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
 object Messages {
+    val client: ChatClient = TODO()
     val channelController: ChannelClient = TODO()
     val message: Message = TODO()
+    val parentMessage: Message = TODO()
 
     fun sendAMessage() {
         val message = Message()
@@ -63,32 +66,26 @@ object Messages {
         val anyOtherFile = File("path")
 
         // upload an image
-        channelController.sendImage(imageFile, object: ProgressCallback {
+        channelController.sendImage(imageFile, object : ProgressCallback {
             override fun onSuccess(file: String) {
-
             }
 
             override fun onError(error: ChatError) {
-
             }
 
             override fun onProgress(progress: Long) {
-
             }
         })
 
         // upload a file
-        channelController.sendFile(anyOtherFile, object: ProgressCallback{
+        channelController.sendFile(anyOtherFile, object : ProgressCallback {
             override fun onSuccess(file: String) {
-
             }
 
             override fun onError(error: ChatError) {
-
             }
 
             override fun onProgress(progress: Long) {
-
             }
         })
     }
@@ -129,6 +126,31 @@ object Messages {
         val reaction = Reaction("message-id", "like", score)
         channelController.sendReaction(reaction).enqueue {
             val reaction = it.data()
+        }
+    }
+
+    fun startAThread() {
+        // set the parent id to make sure a message shows up in a thread
+        val message = Message()
+        message.text = "hello world"
+        message.parentId = parentMessage.id
+
+        // send the message to the channel
+        channelController.sendMessage(message).enqueue {
+            val message = it.data()
+        }
+    }
+
+    fun threadPagination() {
+        val limit = 20
+        // retrieve the first 20 messages inside the thread
+        client.getReplies(parentMessage.id, limit).enqueue {
+            val replies = it.data()
+        }
+
+        // retrieve the 20 more messages before the message with id "42"
+        client.getRepliesMore(parentMessage.id, "42", limit).enqueue {
+            val replies = it.data()
         }
     }
 }

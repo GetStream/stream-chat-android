@@ -3,7 +3,9 @@ package io.getstream.chat.docs.java;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
@@ -14,8 +16,10 @@ import io.getstream.chat.android.client.utils.ProgressCallback;
 import kotlin.Unit;
 
 public class Messages {
+    static ChatClient client;
     static ChannelClient channelController;
     static Message message;
+    static Message parentMessage;
 
     public static void sendAMessage() {
         Message message = new Message();
@@ -130,6 +134,30 @@ public class Messages {
         reaction.setScore(score);
 
         channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
+    }
 
+    public static void startAThread() {
+        // set the parent id to make sure a message shows up in a thread
+        Message message = new Message();
+        message.setText("hello world");
+        message.setParentId(parentMessage.getId());
+
+        // send the message to the channel
+        channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
+    }
+
+    public static void threadPagination() {
+        int limit = 20;
+        // retrieve the first 20 messages inside the thread
+        client.getReplies(parentMessage.getId(), limit).enqueue(result -> {
+            List<Message> replies = result.data();
+            return Unit.INSTANCE;
+        });
+
+        // retrieve the 20 more messages before the message with id "42"
+        client.getRepliesMore(parentMessage.getId(), "42", limit).enqueue(result -> {
+            List<Message> replies = result.data();
+            return Unit.INSTANCE;
+        });
     }
 }
