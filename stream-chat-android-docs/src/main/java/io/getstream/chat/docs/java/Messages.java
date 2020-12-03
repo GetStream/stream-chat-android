@@ -30,6 +30,7 @@ public class Messages {
     static Message parentMessage;
 
     public static void sendAMessage() {
+        // create a message
         Message message = new Message();
         message.setText("Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
         message.getExtraData().put("anotherCustomField", 234);
@@ -44,8 +45,12 @@ public class Messages {
 
         message.getAttachments().add(attachment);
 
-        message.getMentionedUsers().add(new User());
+        // include the user id of the mentioned user
+        User user = new User();
+        user.setId("josh-id");
+        message.getMentionedUsers().add(user);
 
+        // send the message to the channel
         channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
     }
 
@@ -57,7 +62,10 @@ public class Messages {
     }
 
     public static void updateAMessage() {
+        // update some field of the message
         message.setText("my updated text");
+        
+        // send the message to the channel
         channelController.updateMessage(message).enqueue(result -> {
             Message updatedMessage = result.data();
             return Unit.INSTANCE;
@@ -65,7 +73,7 @@ public class Messages {
     }
 
     public static void deleteAMessage() {
-        channelController.deleteMessage("message-id").enqueue(messageResult -> Unit.INSTANCE);
+        channelController.deleteMessage("message-id").enqueue(result -> Unit.INSTANCE);
     }
 
     public static void fileUploads() {

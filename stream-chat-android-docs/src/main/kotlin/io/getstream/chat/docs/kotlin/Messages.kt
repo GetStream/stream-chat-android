@@ -22,6 +22,7 @@ object Messages {
     val parentMessage: Message = TODO()
 
     fun sendAMessage() {
+        // create a message
         val message = Message()
         message.text =
             "Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish."
@@ -40,6 +41,7 @@ object Messages {
         // include the user id of the mentioned user
         message.mentionedUsers.add(User("josh-id"))
 
+        // send the message to the channel
         channelController.sendMessage(message).enqueue {
             val message = it.data()
         }
@@ -54,6 +56,7 @@ object Messages {
     fun updateAMessage() {
         // update some field of the message
         message.text = "my updated text"
+
         // send the message to the channel
         channelController.updateMessage(message).enqueue {
             val message = it.data()
