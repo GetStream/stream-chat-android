@@ -64,7 +64,7 @@ public class Messages {
     public static void updateAMessage() {
         // update some field of the message
         message.setText("my updated text");
-        
+
         // send the message to the channel
         channelController.updateMessage(message).enqueue(result -> {
             Message updatedMessage = result.data();
