@@ -61,7 +61,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
 
@@ -85,7 +85,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
@@ -110,7 +110,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
@@ -154,7 +154,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
@@ -216,7 +216,7 @@ public class ClientAndUsers {
 
             @Override
             public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
             }
         });
     }
