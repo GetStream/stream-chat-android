@@ -33,4 +33,4 @@ jobs:
         if: failure()
         with:
           name: testDebugUnitTest
-          path: /**/build/reports/tests/testDebugUnitTest
+          path: ./**/build/reports/tests/testDebugUnitTest
