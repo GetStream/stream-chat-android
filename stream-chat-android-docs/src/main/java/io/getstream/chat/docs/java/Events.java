@@ -34,7 +34,7 @@ public class Events {
             Disposable disposable = client.subscribeForSingle(
                     NewMessageEvent.class,
                     (NewMessageEvent event) -> {
-                        // to get the message
+                        // To get the message
                         Message message = event.getMessage();
                         return Unit.INSTANCE;
                     }
