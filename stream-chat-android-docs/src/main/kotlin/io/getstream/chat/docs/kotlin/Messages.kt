@@ -44,13 +44,21 @@ class Messages(
 
         // send the message to the channel
         channelController.sendMessage(message).enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val sentMessage = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
     fun getAMessage() {
         channelController.getMessage("message-id").enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val message = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -60,13 +68,21 @@ class Messages(
 
         // send the message to the channel
         channelController.updateMessage(message).enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val updatedMessage = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
     fun deleteAMessage() {
         channelController.deleteMessage("message-id").enqueue {
-            val deletedMessage = it.data()
+            if (it.isSuccess) {
+                val deletedMessage = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -114,31 +130,51 @@ class Messages(
     fun sendAReaction() {
         val reaction = Reaction("message-id", "like", 1)
         channelController.sendReaction(reaction).enqueue {
-            val reaction = it.data()
+            if (it.isSuccess) {
+                val sentReaction = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
     fun removeAReaction() {
         channelController.deleteReaction("message-id", "like").enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val message = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
     fun paginatingReactions() {
         // get the first 10 reactions
         channelController.getReactions("message-id", 0, 10).enqueue {
-            val reactions = it.data()
+            if (it.isSuccess) {
+                val reactions = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
 
         // get the second 10 reactions
         channelController.getReactions("message-id", 10, 10).enqueue {
-            val reactions = it.data()
+            if (it.isSuccess) {
+                val reactions = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
 
         // get 10 reactions after particular reaction
         val reactionId = "reaction-id"
         channelController.getReactions("message-id", reactionId, 10).enqueue {
-            val reactions = it.data()
+            if (it.isSuccess) {
+                val reactions = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -146,7 +182,11 @@ class Messages(
         val score = 5
         val reaction = Reaction("message-id", "like", score)
         channelController.sendReaction(reaction).enqueue {
-            val reaction = it.data()
+            if (it.isSuccess) {
+                val sentReaction = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -158,7 +198,11 @@ class Messages(
 
         // send the message to the channel
         channelController.sendMessage(message).enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val sentMessage = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
@@ -166,19 +210,31 @@ class Messages(
         val limit = 20
         // retrieve the first 20 messages inside the thread
         client.getReplies(parentMessage.id, limit).enqueue {
-            val replies = it.data()
+            if (it.isSuccess) {
+                val replies = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
 
         // retrieve the 20 more messages before the message with id "42"
         client.getRepliesMore(parentMessage.id, "42", limit).enqueue {
-            val replies = it.data()
+            if (it.isSuccess) {
+                val replies = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
     fun silentMessage() {
         val message = Message("text-of-a-message", silent = true)
         channelController.sendMessage(message).enqueue {
-            val message = it.data()
+            if (it.isSuccess) {
+                val sentMessage = it.data()
+            } else {
+                Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            }
         }
     }
 
