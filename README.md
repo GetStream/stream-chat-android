@@ -1,6 +1,6 @@
 # Official Android SDK for [Stream Chat](https://getstream.io/chat/)
 
-[![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
+![Build status](https://github.com/GetStream/stream-chat-android/workflows/Build%20and%20test/badge.svg)
 
 <p align="center">
   <a href="https://getstream.io/tutorials/android-chat/">
@@ -10,7 +10,7 @@
 
 ## 4.x
 
-4.x is based on Kotlin and splits out the client, offline support and UX components. It adds seamless offline support, improved performance, makes it easier to integrate and has better test coverage. 
+4.x is based on Kotlin and splits out the client, offline support and UX components. It adds seamless offline support, improved performance, makes it easier to integrate, and has better test coverage.
 
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
 
@@ -28,22 +28,23 @@
 
 ## Java/Kotlin Chat Tutorial
 
-The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
+The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin). It teaches you how to use this SDK and also shows you how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
 ## Sample App
 
-This repo includes a fully functional example app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage.
-To run the sample app start by cloning this repo:
+This repo includes a fully functional example app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage. To run the sample app, start by cloning this repo:
 
 ```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Next download android studio and open up the stream-chat-android folder. You'll want to run the stream-chat-android-sample app.
+Next, download Android Studio and open up the `stream-chat-android` folder. You'll want to run the `stream-chat-android-sample` app.
 Note that the Gradle sync process can take some time when you first open the project. 
 
 ## Docs
+
 This SDK consists of the following modules / artifacts:
+
 - [Chat client](stream-chat-android-client)
 - [Offline support and `LiveData` APIs](stream-chat-android-offline)
 - [Chat UI/UX](stream-chat-android)
@@ -74,201 +75,148 @@ The [Offline support and `LiveData` APIs](stream-chat-android-offline) docs are 
 
 - Channels list UI
 - Channel UI
-- Message Reactions
+- Message reactions
 - Link preview
-- Images, Videos and Files attachments
-- Edit and Delete message
-- Typing Indicators
-- Read Indicators
-- Push Notifications
+- Image, video and file attachments
+- Editing and deleting messages
+- Typing indicators
+- Read indicators
+- Push notifications
 - Image gallery
 - GIF support
-- Light/Dark themes
+- Light and dark themes
 - Style customization
 - UI customization
 - Threads
 - Slash commands
-- Markdown messages formatting
+- Markdown message formatting
 
+## Installing the Kotlin/Java Chat SDK
 
-## Installing the Java Chat SDK
-
-- **Step 1** Add repository into root build.gradle
+**Step 1**: Add `mavenCentral` to your repositories in your *project* level `build.gradle` file:
 
 ```gradle
 allprojects {
     repositories {
-    ...
-    maven {
-        url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 ```
 
-- **Step 2** Add library dependency into app build.gradle
+**Step 2**: Add the library as a dependency in your *module* level `build.gradle` file:
 
-> See the jitpack badge above for the latest version number
+> See the [releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version number.
 
 ```gradle
 android {
     ...
     compileOptions {
-        
-        //for java projects
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // for Kotlin projects
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
 dependencies {
-    implementation 'com.github.GetStream:stream-chat-android:version'
+    implementation "io.getstream:stream-chat-android:$stream_version"
+
+    // for Java projects
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 ```
-
-## Proguard/R8
-
-If you're using Proguard/R8, you'll want to have a look at the [proguard file we use for the sample](https://github.com/GetStream/stream-chat-android/blob/master/sample/proguard-rules.pro).
 
 ## Setup Stream Chat
 
 Make sure to initialize the SDK only once; the best place to do this is in your `Application` class.
 
-```java
-public class App extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Chat chat = new Chat.Builder("api-key", this).build();
+```kotlin
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        val apiKey: String = ...
+        val user = User().apply {
+            id = ...
+            image = ...
+            name = ...
+        }
+
+        val client = ChatClient.Builder(apiKey, this).build()
+        val domain = ChatDomain.Builder(client, user, this).offlineEnabled().build()
+        val ui = ChatUI.Builder(this).build()
     }
 }
 ```
 
-With this, you will be able to retrieve Chat instance from any part of your application using `Chat.instance()`. Here's an example:
+With this, you will be able to retrieve instances of the different components from any part of your application using `instance()`. Here's an example:
 
-```java
-public class MainActivity extends AppCompatActivity {
+```kotlin
+class MainActivity: AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Chat chat = Chat.instance();
-        ...
+        val chatClient = ChatClient.instance()
+        val chatDomain = ChatDomain.instance()
+        val chatUI = ChatUI.instance()
     }
+}
 ```
 
 ## Online status
 
-Connection status to Chat is available via `Chat.instance().getOnlineStatus()` which returns a LiveData object you can attach observers to.
+Connection status to Chat is available via `ChatDomain.instance().online` which returns a LiveData object you can attach observers to.
 
-```java
-Chat.instance().getOnlineStatus().observe(...);
+```kotlin
+ChatDomain.instance().online.observe(...)
 ```
 
 ## Markdown support
 
-Markdown support is based on [Markwon: 4.1.2](https://github.com/noties/Markwon).
-Currently SDK doesn't support all `Markwon` features and limited to this plugins:
+Markdown support is based on [Markwon 4](https://github.com/noties/Markwon). The SDK doesn't support all `Markwon` features, support is limited to these plugins:
+
 - [CorePlugin](https://noties.io/Markwon/docs/v4/core/core-plugin.html)
 - [LinkifyPlugin](https://noties.io/Markwon/docs/v4/linkify/)
 - [ImagesPlugin](https://noties.io/Markwon/docs/v4/image/)
 - [StrikethroughPlugin](https://noties.io/Markwon/docs/v4/ext-strikethrough/)
 
-If you want to use another library for `Markdown` or extend the `Markwon` plugins you can use the code below
+If you want to use a library other than Markwon or extend the Markwon plugins, you can use the code below to customize Markdown rendering when you build your `ChatUI` instance:
 
-```java
-Chat chat = new Chat.Builder(apiKey, this)
-    .markdown((textView, text) -> {
-        textView.setText(text)
-    })
-    .build();
+```kotlin
+val ui = ChatUI.Builder(context)
+    .withMarkdown { textView, text ->
+        // do custom rendering here
+        textView.text = text
+    }
+    .build()
 ```
 
 ## Debug and development
 
 ### Logging
-By default, logging is disabled. You enable logs and set log level when initializing `Chat`:
 
-```java
-Chat chat = new Chat.Builder("api-key", context).logLevel(ChatLogLevel.ALL).build()
-```
+By default, logging is disabled. You can enable logs and set a log level when initializing `ChatClient`:
 
-If you need to intercept logs you can pass logger handler:
-
-```java
-Chat chat = new Chat.Builder("api-key", context)
-    .loggerHandler(new ChatLoggerHandler() {
-        @Override
-        public void logI(@NotNull Object tag, @NotNull String message) {
-
-        }  
-    }
+```kotlin
+val client = ChatClient.Builder(apiKey, context)
+    .logLevel(ChatLogLevel.ALL)
     .build()
 ```
 
-### Editing this library
+If you need to intercept logs, you can also pass in your own `ChatLoggerHandler`:
 
-This guide assumes that you're working on your own project in the `project` folder and clone the chat SDK library in a separate folder.
+```kotlin
+val client = ChatClient.Builder(apiKey, context)
+    .logLevel(ChatLogLevel.ALL)
+    .loggerHandler(object : ChatLoggerHandler {
+        override fun logD(tag: Any, message: String) {
+            // custom logging
+        }
 
-1. First of all, you'll want to clone this repo
-
-```shell
-git clone git@github.com:GetStream/stream-chat-android.git
+        ...
+    })
+    .build()
 ```
-
-2. Next you'll edit your project's `settings.gradle` and add this
-
-```gradle
-include ':chat'
-
-project(":chat").projectDir = new File("ABSOLUTEPATHTOstream-chat-android here")
-```
-
-3. Open up your `project/app/build.gradle` and replace the production SDK with your local copy
-
-```gradle
-//implementation 'com.github.getstream:stream-chat-android:version'
-implementation project(':chat')
-```
-
-4. Next open up `project/build.gradle`. 
-
-Add the following to the buildscript {} entry.
-
-```gradle
-buildscript {
-...
-
-    ext {
-        googleServiceVersion = '4.3.2'
-        gradleVersion = '3.5.2'
-        gradlePluginVersion = '2.1'
-        jacocoVersion = '0.1.4'
-        mannodermausVersion = '1.5.1.0'
-
-    }
-    
-...
-}
-```
-
-Next, set up these libraries in the dependencies. (They are needed to compile stream-chat-android)
-
-```gradle
-buildscript {
-    dependecies {
-    ....
-    
-    classpath "com.android.tools.build:gradle:$gradleVersion"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
-        classpath "com.google.gms:google-services:$googleServiceVersion"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
-        classpath "com.dicedmelon.gradle:jacoco-android:$jacocoVersion"
-    }
-}
-```
-
-5.
-
-Hit build/clean project in android studio and build your app.
