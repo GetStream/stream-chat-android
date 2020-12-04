@@ -21,21 +21,21 @@
 
         <ToggleButton
             android:id="@+id/mediaAttachmentButton"
-            style="@style/StreamAttachmentDialogToggleButton"
+            style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
             android:background="@drawable/stream_attachment_permission_media"
             />
 
         <ToggleButton
             android:id="@+id/fileAttachmentButton"
-            style="@style/StreamAttachmentDialogToggleButton"
+            style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
             android:background="@drawable/stream_attachment_permission_file"
             />
 
         <ToggleButton
             android:id="@+id/cameraAttachmentButton"
-            style="@style/StreamAttachmentDialogToggleButton"
+            style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
             android:background="@drawable/stream_attachment_permission_camera"
             />
@@ -57,7 +57,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pagerContainer"
-        style="@style/StreamAttachmentsCardViewStyle"
+        style="@style/StreamUiAttachmentsCardViewStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_attachment_dialog_page_height"
         app:cardElevation="1dp"

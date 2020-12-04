@@ -69,7 +69,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         attachmentSelectionListener = null
     }
 
-    override fun getTheme(): Int = R.style.StreamAttachmentBottomSheetDialog
+    override fun getTheme(): Int = R.style.StreamUiAttachmentBottomSheetDialog
 
     fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener

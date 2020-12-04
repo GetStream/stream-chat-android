@@ -11,7 +11,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
-        style="@style/StreamUserAvatarStyle"
+        style="@style/StreamUiUserAvatarStyle"
         android:layout_width="@dimen/stream_avatar_size_medium"
         android:layout_height="@dimen/stream_avatar_size_medium"
         android:layout_marginStart="8dp"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/onlineTextView"
-        style="@style/StreamChannelsHeaderTitleStyle"
+        style="@style/StreamUiChannelsHeaderTitleStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -59,7 +59,7 @@
 
         <TextView
             android:id="@+id/offlineTextView"
-            style="@style/StreamChannelsHeaderTitleStyle"
+            style="@style/StreamUiChannelsHeaderTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stream_channels_header_view_offline_title"

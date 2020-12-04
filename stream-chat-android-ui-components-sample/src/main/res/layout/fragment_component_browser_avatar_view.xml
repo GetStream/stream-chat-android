@@ -41,17 +41,17 @@
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewSmall"
-                style="@style/StreamMessageListAvatarStyle"
+                style="@style/StreamUiMessageListAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMedium"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewLarge"
-                style="@style/StreamGroupActionsAvatarStyle"
+                style="@style/StreamUiGroupActionsAvatarStyle"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -63,22 +63,22 @@
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView1"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView2"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView3"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView4"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -90,22 +90,22 @@
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing1"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing2"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing3"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMissing4"
-                style="@style/StreamGroupActionsAvatarStyle"
+                style="@style/StreamUiGroupActionsAvatarStyle"
                 />
 
             <View style="@style/ComponentBrowserSeparator" />
@@ -117,19 +117,19 @@
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewSmallIndicator"
-                style="@style/StreamMessageListAvatarStyle"
+                style="@style/StreamUiMessageListAvatarStyle"
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewMediumIndicator"
-                style="@style/StreamUserAvatarStyle"
+                style="@style/StreamUiUserAvatarStyle"
                 app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarViewLargeIndicator"
-                style="@style/StreamGroupActionsAvatarStyle"
+                style="@style/StreamUiGroupActionsAvatarStyle"
                 />
         </LinearLayout>
     </ScrollView>

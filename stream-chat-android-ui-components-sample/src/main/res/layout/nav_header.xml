@@ -8,7 +8,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="@style/StreamUserAvatarStyle"
+        style="@style/StreamUiUserAvatarStyle"
         android:layout_width="@dimen/stream_avatar_size_medium"
         android:layout_height="@dimen/stream_avatar_size_medium"
         android:layout_marginStart="12dp"

@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="StreamBaseAvatarStyle">
+    <style name="StreamUiBaseAvatarStyle">
         <item name="streamAvatarBorderWidth">0dp</item>
         <item name="streamAvatarBorderColor">@color/stream_white</item>
         <item name="streamAvatarTextColor">@color/stream_white</item>
         <item name="streamAvatarTextStyle">bold</item>
     </style>
 
-    <style name="StreamMessageListAvatarStyle" parent="StreamBaseAvatarStyle">
+    <style name="StreamUiMessageListAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_avatar_size_small</item>
         <item name="android:layout_height">@dimen/stream_avatar_size_small</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_small</item>
         <item name="streamAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
-    <style name="StreamUserAvatarStyle" parent="StreamBaseAvatarStyle">
+    <style name="StreamUiUserAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_avatar_size_medium</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
         <item name="streamAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
-    <style name="StreamChannelListAvatarStyle" parent="StreamBaseAvatarStyle">
+    <style name="StreamUiChannelListAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_avatar_size_medium</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
         <item name="streamAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
-    <style name="StreamGroupActionsAvatarStyle" parent="StreamBaseAvatarStyle">
+    <style name="StreamUiGroupActionsAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_avatar_size_large</item>
         <item name="android:layout_height">@dimen/stream_avatar_size_large</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>
         <item name="streamAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
-    <style name="StreamChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/StreamChannelActionsBottomSheet</item>
+    <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
     </style>
 
-    <style name="StreamChannelActionsBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
-        <item name="shapeAppearanceOverlay">@style/StreamRoundedBottomSheetDialog</item>
+    <style name="StreamUiChannelActionsBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/StreamUiRoundedBottomSheetDialog</item>
     </style>
 
-    <style name="StreamRoundedBottomSheetDialog">
+    <style name="StreamUiRoundedBottomSheetDialog">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">16dp</item>
         <item name="cornerSizeTopLeft">16dp</item>
@@ -52,7 +52,7 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
-    <style name="StreamChannelActionsButtonStyle">
+    <style name="StreamUiChannelActionsButtonStyle">
         <item name="android:paddingStart">@dimen/stream_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_spacing_medium</item>
@@ -63,7 +63,7 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="StreamChannelsHeaderTitleStyle">
+    <style name="StreamUiChannelsHeaderTitleStyle">
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textSize">@dimen/stream_text_large</item>
         <item name="android:textColor">@color/stream_black</item>
@@ -71,7 +71,7 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="StreamAttachmentBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="StreamUiAttachmentBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -79,11 +79,11 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="StreamAttachmentsCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/StreamAttachmentsShapeAppearanceOverlay</item>
+    <style name="StreamUiAttachmentsCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/StreamUiAttachmentsShapeAppearanceOverlay</item>
     </style>
 
-    <style name="StreamAttachmentsShapeAppearanceOverlay">
+    <style name="StreamUiAttachmentsShapeAppearanceOverlay">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">16dp</item>
         <item name="cornerSizeTopLeft">16dp</item>
@@ -91,7 +91,7 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
-    <style name="StreamAttachmentDialogToggleButton">
+    <style name="StreamUiAttachmentDialogToggleButton">
         <item name="android:layout_width">@dimen/stream_attachment_dialog_button_size</item>
         <item name="android:layout_height">@dimen/stream_attachment_dialog_button_size</item>
         <item name="android:backgroundTint">@color/stream_ui_attachment_tab_button</item>
@@ -99,7 +99,7 @@
         <item name="android:textOn"></item>
     </style>
 
-    <style name="StreamUserReactionAvatarStyle" parent="StreamBaseAvatarStyle">
+    <style name="StreamUiUserReactionAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_avatar_size_large</item>
         <item name="android:layout_height">@dimen/stream_avatar_size_large</item>
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>

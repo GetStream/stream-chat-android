@@ -65,7 +65,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    override fun getTheme(): Int = R.style.StreamChannelActionsBottomSheetDialog
+    override fun getTheme(): Int = R.style.StreamUiChannelActionsBottomSheetDialog
 
     private fun setupViews() {
         with(binding) {
