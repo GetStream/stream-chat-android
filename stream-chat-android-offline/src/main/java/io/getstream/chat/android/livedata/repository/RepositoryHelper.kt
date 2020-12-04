@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -90,5 +91,14 @@ internal class RepositoryHelper(
         val entities = messages.selectEntities(messageIds)
         val userMap = users.selectUserMap(entities.flatMap(::userIdsFor))
         return entities.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
+    }
+
+    suspend fun insertChannel(channel: Channel) {
+        insertChannels(listOf(channel))
+    }
+
+    suspend fun insertChannels(channels: Collection<Channel>) {
+        this.channels.insertChannels(channels)
+        users.insert(channels.flatMap(Channel::users))
     }
 }

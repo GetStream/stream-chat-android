@@ -2,22 +2,37 @@ package io.getstream.chat.android.livedata.repository
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomChannelEntity
 import io.getstream.chat.android.livedata.randomChannelUserReadEntity
 import io.getstream.chat.android.livedata.randomMemberEntity
+import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageEntity
 import io.getstream.chat.android.livedata.randomReactionEntity
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.Verify
 import org.amshove.kluent.When
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain same`
+import org.amshove.kluent.called
 import org.amshove.kluent.calling
+import org.amshove.kluent.on
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.that
+import org.amshove.kluent.was
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -203,5 +218,56 @@ internal class RepositoryHelperTests {
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
         result.size shouldBeEqualTo 2
+    }
+
+    @Test
+    fun `When insert a channel, all participant users of this channel need to be stored`() = runBlockingTest {
+        val memberUser = randomUser()
+        val channelUser = randomUser()
+        val userRead = randomUser()
+        val messageUser = randomUser()
+        val channel = randomChannel(
+            createdBy = channelUser,
+            members = listOf(Member(memberUser)),
+            read = listOf(ChannelUserRead(userRead)),
+            messages = listOf(randomMessage(user = messageUser))
+        )
+
+        sut.insertChannel(channel)
+
+        Verify on channels that channels.insertChannels(eq(listOf(channel))) was called
+        Verify on users that users.insert(
+            com.nhaarman.mockitokotlin2.check { listUser ->
+                listUser.size `should be equal to` 4
+                listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser)
+            }
+        ) was called
+    }
+
+    @Test
+    fun `When insert a list of channels, all participant users of these channels need to be stored`() = runBlockingTest {
+        val (listOfUser: List<User>, listOfChannels: List<Channel>) =
+            (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
+                val memberUser = randomUser()
+                val channelUser = randomUser()
+                val userRead = randomUser()
+                val messageUser = randomUser()
+                val channel = randomChannel(
+                    createdBy = channelUser,
+                    members = listOf(Member(memberUser)),
+                    read = listOf(ChannelUserRead(userRead)),
+                    messages = listOf(randomMessage(user = messageUser))
+                )
+                acc.first + listOf(memberUser, channelUser, userRead, messageUser) to acc.second + channel
+            }
+
+        sut.insertChannels(listOfChannels)
+
+        Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
+        Verify on users that users.insert(
+            com.nhaarman.mockitokotlin2.check { listUser ->
+                listUser `should contain same` listOfUser
+            }
+        ) was called
     }
 }
