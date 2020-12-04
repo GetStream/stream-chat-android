@@ -10,6 +10,7 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
+- Centralize how channels are stored locally
 
 ## stream-chat-android-ui-components
 - Adding AttachmentGallery to handle attachments
