@@ -127,7 +127,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Test
     fun `a message read event should be stored on the channel`() = runBlocking {
-        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.readEvent)
         // check channel level read info
         val cid = data.readEvent.cid
@@ -178,7 +178,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `add and remove member should update the room storage`() = runBlocking {
         // add the member to the channel
-        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members
@@ -192,7 +192,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `member notification events should update room`() = runBlocking {
         // add the member to the channel
-        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members

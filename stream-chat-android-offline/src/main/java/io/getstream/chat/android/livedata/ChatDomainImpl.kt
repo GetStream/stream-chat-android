@@ -399,7 +399,7 @@ internal class ChatDomainImpl internal constructor(
             channelRepo.updateLiveDataFromChannel(c)
 
             // Update Room State
-            repos.channels.insertChannel(c)
+            repos.insertChannel(c)
 
             // Add to query controllers
             for (query in activeQueryMapImpl.values) {
@@ -415,7 +415,7 @@ internal class ChatDomainImpl internal constructor(
                 val result = runAndRetry(runnable)
                 if (result.isSuccess) {
                     c.syncStatus = SyncStatus.COMPLETED
-                    repos.channels.insertChannel(c)
+                    repos.insertChannel(c)
                     Result(result.data(), null)
                 } else {
                     if (result.error().isPermanent()) {
@@ -423,7 +423,7 @@ internal class ChatDomainImpl internal constructor(
                     } else {
                         c.syncStatus = SyncStatus.SYNC_NEEDED
                     }
-                    repos.channels.insertChannel(c)
+                    repos.insertChannel(c)
                     Result(null, result.error())
                 }
             } else {
@@ -718,7 +718,7 @@ internal class ChatDomainImpl internal constructor(
         // store the users
         repos.users.insert(users.values.toList())
         // store the channel data
-        repos.channels.insertChannel(channelsResponse)
+        repos.insertChannels(channelsResponse)
         // store the messages
         repos.messages.insert(messages)
 
