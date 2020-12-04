@@ -94,7 +94,7 @@
     <style name="StreamAttachmentDialogToggleButton">
         <item name="android:layout_width">@dimen/stream_attachment_dialog_button_size</item>
         <item name="android:layout_height">@dimen/stream_attachment_dialog_button_size</item>
-        <item name="android:backgroundTint">@color/stream_attachment_tab_button</item>
+        <item name="android:backgroundTint">@color/stream_ui_attachment_tab_button</item>
         <item name="android:textOff"></item>
         <item name="android:textOn"></item>
     </style>

@@ -48,7 +48,7 @@
         android:layout_height="@dimen/stream_attachment_dialog_button_size"
         android:scaleType="center"
         android:layout_margin="6dp"
-        android:tint="@color/stream_attach_button"
+        android:tint="@color/stream_ui_attach_button"
         android:background="@null"
         android:src="@drawable/stream_ic_next"
         app:layout_constraintTop_toTopOf="parent"
