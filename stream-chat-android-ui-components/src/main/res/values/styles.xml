@@ -98,4 +98,11 @@
         <item name="android:textOff"></item>
         <item name="android:textOn"></item>
     </style>
+
+    <style name="StreamUserReactionAvatarStyle" parent="StreamBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_avatar_size_large</item>
+        <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>
+        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+    </style>
 </resources>

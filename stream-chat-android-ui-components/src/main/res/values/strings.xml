@@ -68,4 +68,9 @@
         <item quantity="one">%s is typing</item>
         <item quantity="other">%s and %d more are typing</item>
     </plurals>
+
+    <plurals name="stream_user_reactions_title">
+        <item quantity="one">%d Message Reaction</item>
+        <item quantity="other">%d Message Reactions</item>
+    </plurals>
 </resources>
