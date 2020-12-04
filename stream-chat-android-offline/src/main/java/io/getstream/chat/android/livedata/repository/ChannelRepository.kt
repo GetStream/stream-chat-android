@@ -18,16 +18,6 @@ internal class ChannelRepository(
     // the channel cache is simple, just keeps the last 100 users in memory
     var channelCache = LruCache<String, ChannelEntity>(cacheSize)
 
-    suspend fun insertChannel(channel: Channel) {
-        val channelEntity = ChannelEntity(channel)
-        insert(listOf(channelEntity))
-    }
-
-    suspend fun insertChannel(channels: List<Channel>) {
-        val entities = channels.map { ChannelEntity(it) }
-        insert(entities)
-    }
-
     suspend fun insert(channelEntity: ChannelEntity) {
         insert(listOf(channelEntity))
     }
@@ -42,7 +32,7 @@ internal class ChannelRepository(
         insert(channels.map(::ChannelEntity))
     }
 
-    suspend fun insert(channelEntities: List<ChannelEntity>) {
+    private suspend fun insert(channelEntities: List<ChannelEntity>) {
         if (channelEntities.isEmpty()) return
         channelDao.insertMany(channelEntities)
         updateCache(channelEntities)
