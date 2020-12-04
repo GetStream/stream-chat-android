@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.textinput
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import com.getstream.sdk.chat.viewmodel.bindView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
@@ -23,7 +24,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles)
         }
 
         override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
@@ -39,7 +40,10 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             alsoSendToChannel: Boolean,
             attachmentsFiles: List<File>
         ) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
+                this.parentId = parentMessage.id
+                this.showInChannel = alsoSendToChannel
+            }
         }
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
