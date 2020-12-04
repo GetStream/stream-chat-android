@@ -56,6 +56,15 @@ public abstract class ReactionsView : RecyclerView {
         reactionsAdapter.submitList(createReactionItems(message, isMyMessage))
     }
 
+    public fun setReaction(reaction: Reaction, isMyReaction: Boolean = false) {
+        // according to the design, current user reactions have the same style
+        // as reactions on the current user messages in the message list
+        this.isMyMessage = isMyReaction
+
+        setPadding(0, 0, 0, 0)
+        reactionsAdapter.submitList(listOf(ReactionItem(reaction, true)))
+    }
+
     public fun setOrientation(orientation: Orientation) {
         this.orientation = orientation
         invalidate()
@@ -72,10 +81,7 @@ public abstract class ReactionsView : RecyclerView {
 
     protected abstract fun drawReactionsBubble(canvas: Canvas, isMyMessage: Boolean, isMirrored: Boolean)
 
-    internal abstract fun createReactionItems(
-        message: Message,
-        isMyMessage: Boolean
-    ): List<ReactionsAdapter.ReactionItem>
+    internal abstract fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionItem>
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
@@ -83,6 +89,7 @@ public abstract class ReactionsView : RecyclerView {
         setWillNotDraw(false)
         overScrollMode = View.OVER_SCROLL_NEVER
         itemAnimator = null
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
@@ -98,10 +105,6 @@ public abstract class ReactionsView : RecyclerView {
             Orientation.RIGHT -> true
             Orientation.UNDEFINED -> isMyMessage
         }
-    }
-
-    public fun interface ReactionClickListener {
-        public fun onReactionClick(reaction: Reaction)
     }
 
     public enum class Orientation {
