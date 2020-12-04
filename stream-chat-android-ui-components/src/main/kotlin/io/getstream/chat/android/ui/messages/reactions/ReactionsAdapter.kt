@@ -3,10 +3,8 @@ package io.getstream.chat.android.ui.messages.reactions
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemMessageReactionBinding
 import io.getstream.chat.android.ui.utils.UiUtils
@@ -15,8 +13,8 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 internal class ReactionsAdapter(
     private val reactionsViewStyle: ReactionsViewStyle,
-    private val reactionClickListener: ReactionsView.ReactionClickListener
-) : ListAdapter<ReactionsAdapter.ReactionItem, ReactionsAdapter.ReactionViewHolder>(DIFF_CALLBACK) {
+    private val reactionClickListener: ReactionClickListener
+) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
         return StreamItemMessageReactionBinding
@@ -31,7 +29,7 @@ internal class ReactionsAdapter(
     class ReactionViewHolder(
         private val binding: StreamItemMessageReactionBinding,
         reactionsViewStyle: ReactionsViewStyle,
-        private val reactionClickListener: ReactionsView.ReactionClickListener
+        private val reactionClickListener: ReactionClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var reactionItem: ReactionItem
@@ -77,25 +75,5 @@ internal class ReactionsAdapter(
             }
             binding.reactionIcon.setColorFilter(context.getColorCompat(iconTintResId))
         }
-    }
-
-    data class ReactionItem(
-        val reaction: Reaction,
-        val isMine: Boolean
-    )
-
-    private companion object {
-        private val DIFF_CALLBACK: DiffUtil.ItemCallback<ReactionItem> =
-            object : DiffUtil.ItemCallback<ReactionItem>() {
-                override fun areItemsTheSame(oldItem: ReactionItem, newItem: ReactionItem): Boolean {
-                    return oldItem.reaction.messageId == newItem.reaction.messageId &&
-                        oldItem.reaction.type == newItem.reaction.type &&
-                        oldItem.isMine == newItem.isMine
-                }
-
-                override fun areContentsTheSame(oldItem: ReactionItem, newItem: ReactionItem): Boolean {
-                    return oldItem == newItem
-                }
-            }
     }
 }
