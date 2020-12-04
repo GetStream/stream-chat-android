@@ -49,13 +49,13 @@ public class ViewReactionsView : ReactionsView {
         }
     }
 
-    override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionsAdapter.ReactionItem> {
-        val reactionsMap = mutableMapOf<String, ReactionsAdapter.ReactionItem>()
+    override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionItem> {
+        val reactionsMap = mutableMapOf<String, ReactionItem>()
         message.latestReactions.forEach { reaction ->
             val ownReaction = message.ownReactions.any { it.type == reaction.type }
             val alreadyPresent = reactionsMap.containsKey(reaction.type)
             if (!alreadyPresent || ownReaction) {
-                reactionsMap[reaction.type] = ReactionsAdapter.ReactionItem(reaction, ownReaction)
+                reactionsMap[reaction.type] = ReactionItem(reaction, ownReaction)
             }
         }
         return reactionsMap.values

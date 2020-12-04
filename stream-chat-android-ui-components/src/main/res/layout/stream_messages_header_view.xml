@@ -137,19 +137,10 @@
             android:visibility="gone"
             >
 
-            <!-- TODO: Replace with TypingView when ready -->
-            <TextView
+            <io.getstream.chat.android.ui.typing.TypingIndicator
+                android:id="@+id/typingView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="..."
-                />
-
-            <TextView
-                android:id="@+id/typing_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/stream_text_grey"
-                tools:text="is typing"
                 />
 
         </LinearLayout>

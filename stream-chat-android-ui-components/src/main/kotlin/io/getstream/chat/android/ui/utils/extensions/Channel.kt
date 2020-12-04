@@ -1,11 +1,13 @@
 package io.getstream.chat.android.ui.utils.extensions
 
+import android.content.Context
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.utils.ModelType
 import java.util.Date
@@ -67,6 +69,33 @@ internal fun Channel.diff(other: Channel): ChannelDiff =
         readStateChanged = unreadCount != other.unreadCount,
         lastMessageChanged = getLastMessage() != other.getLastMessage()
     )
+
+internal fun Channel.getOnlineStateSubtitle(context: Context): String {
+    val users = getUsers()
+    if (users.isEmpty()) return String.EMPTY
+
+    if (users.size == 1) {
+        return users.first().getLastSeenText(context)
+    }
+
+    return getGroupSubtitle(context)
+}
+
+internal fun Channel.getGroupSubtitle(context: Context): String {
+    val allUsers = members.map { it.user }
+    val onlineUsers = allUsers.count { it.online }
+    val groupMembers = context.resources.getQuantityString(
+        R.plurals.stream_message_list_header_group_member_count,
+        allUsers.size,
+        allUsers.size
+    )
+
+    return if (onlineUsers > 0) {
+        context.getString(R.string.stream_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
+    } else {
+        groupMembers
+    }
+}
 
 internal fun Channel.lastMessageByCurrentUserWasRead(): Boolean {
     return getCurrentUserLastMessage()?.let { currentUserLastMessage ->

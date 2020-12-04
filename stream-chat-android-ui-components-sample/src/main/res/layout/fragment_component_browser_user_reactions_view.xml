@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="MessagesHeaderView"
+        android:text="UserReactionsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,62 +32,40 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:paddingTop="@dimen/stream_spacing_medium"
+            android:paddingBottom="@dimen/stream_spacing_medium"
             >
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerOnlineStatus"
+            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+                android:id="@+id/userReactionsView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerOnlineNoBadgeStatus"
+            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+                android:id="@+id/userReactionsView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerOnlineAvatar"
+            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+                android:id="@+id/userReactionsView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerOfflineAvatar"
+            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+                android:id="@+id/userReactionsView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerSearchingForNetwork"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
-                />
-
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerDeviceOffline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
-                />
-
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
-                android:id="@+id/headerTypingSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
-                />
         </LinearLayout>
+
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
