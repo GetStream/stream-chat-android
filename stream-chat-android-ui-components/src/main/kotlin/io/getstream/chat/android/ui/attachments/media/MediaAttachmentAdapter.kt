@@ -69,7 +69,7 @@ internal class MediaAttachmentAdapter(
         private fun bindMediaImage(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
                 binding.mediaThumbnailImageView.load(R.drawable.stream_placeholder)
-                val color = ContextCompat.getColor(itemView.context, R.color.stream_grey_light)
+                val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_light)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {
                 binding.mediaThumbnailImageView.load(attachment.uri)

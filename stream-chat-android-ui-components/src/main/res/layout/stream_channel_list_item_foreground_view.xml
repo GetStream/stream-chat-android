@@ -4,7 +4,7 @@
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_channel_list_item_height"
-    android:background="@color/stream_white"
+    android:background="@color/stream_ui_white"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-medium"
-        android:textColor="@color/stream_black"
+        android:textColor="@color/stream_ui_black"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
         app:layout_constraintTop_toTopOf="parent"
@@ -80,7 +80,7 @@
         android:gravity="center"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="@color/stream_white"
+        android:textColor="@color/stream_ui_white"
         android:textSize="@dimen/stream_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"

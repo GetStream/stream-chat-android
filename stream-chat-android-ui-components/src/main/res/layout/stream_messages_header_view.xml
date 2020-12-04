@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_default_header_height"
-    android:background="@color/stream_white"
+    android:background="@color/stream_ui_white"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,9 +37,9 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:background="@drawable/stream_badge_bg"
-            android:backgroundTint="@color/stream_light_red"
+            android:backgroundTint="@color/stream_ui_light_red"
             android:gravity="center"
-            android:textColor="@color/stream_white"
+            android:textColor="@color/stream_ui_white"
             android:textSize="10dp"
             android:textStyle="bold"
             android:visibility="gone"
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="5sp"
-        android:textColor="@color/stream_text_black"
+        android:textColor="@color/stream_ui_text_black"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_message_list_header_searching_for_network"
-                android:textColor="@color/stream_text_grey"
+                android:textColor="@color/stream_ui_text_grey"
                 />
         </LinearLayout>
 
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_message_list_header_offline"
-                android:textColor="@color/stream_text_grey"
+                android:textColor="@color/stream_ui_text_grey"
                 />
 
             <TextView
@@ -124,7 +124,7 @@
                 android:focusable="true"
                 android:background="?selectableItemBackground"
                 android:text="@string/stream_message_list_header_try_again"
-                android:textColor="@color/stream_blue"
+                android:textColor="@color/stream_ui_blue"
                 />
         </LinearLayout>
 
@@ -156,7 +156,7 @@
                 android:id="@+id/online_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/stream_text_grey"
+                android:textColor="@color/stream_ui_text_grey"
                 tools:text="Online for 10 mins"
                 />
         </LinearLayout>

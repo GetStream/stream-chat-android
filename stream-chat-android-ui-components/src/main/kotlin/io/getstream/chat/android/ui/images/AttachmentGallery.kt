@@ -55,7 +55,7 @@ public class AttachmentGallery : ConstraintLayout {
 
             tArray.getColor(
                 R.styleable.StreamAttachmentGalleryView_streamCountTextColor,
-                ContextCompat.getColor(context, R.color.stream_black)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             ).let(binding.photoCount::setTextColor)
         }
     }

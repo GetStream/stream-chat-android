@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_white"
+    android:background="@color/stream_ui_white"
     >
 
     <io.getstream.chat.android.ui.suggestions.SuggestionListView
@@ -36,7 +36,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="@dimen/stream_spacing_medium"
         android:src="@drawable/stream_ic_next"
-        android:tint="@color/stream_blue"
+        android:tint="@color/stream_ui_blue"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
         app:layout_constraintEnd_toStartOf="@id/iv_open_emojis"
@@ -114,8 +114,8 @@
             android:paddingTop="18dp"
             android:paddingEnd="@dimen/stream_spacing_medium"
             android:paddingBottom="18dp"
-            android:textColor="@color/stream_black"
-            android:textColorHint="@color/stream_grey_light"
+            android:textColor="@color/stream_ui_black"
+            android:textColorHint="@color/stream_ui_grey_light"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/fl_send_button_container"
@@ -165,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textColor="@color/stream_black_50"
+        android:textColor="@color/stream_ui_black_50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_input_container"
         android:textSize="@dimen/stream_text_small"

@@ -17,14 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"
-        tools:src="@color/stream_grey"
+        tools:src="@color/stream_ui_grey"
         />
 
     <View
         android:id="@+id/selectionOverlayView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/stream_attachment_dialog_selection_overlay"
+        android:background="@color/stream_ui_attachment_dialog_selection_overlay"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
         app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
@@ -56,7 +56,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
         app:layout_constraintStart_toStartOf="@id/mediaThumbnailImageView"
-        app:tint="@color/stream_white"
+        app:tint="@color/stream_ui_white"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
         />
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/stream_white"
+        android:textColor="@color/stream_ui_white"
         android:textSize="@dimen/stream_text_small"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"

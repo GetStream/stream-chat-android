@@ -22,7 +22,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:lineHeight="16sp"
         android:gravity="start"
-        android:textColor="@color/stream_black"
+        android:textColor="@color/stream_ui_black"
         />
 
 </LinearLayout>

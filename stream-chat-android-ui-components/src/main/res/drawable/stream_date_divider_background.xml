@@ -3,5 +3,5 @@
     android:shape="rectangle"
     >
     <corners android:radius="16dp" />
-    <solid android:color="@color/stream_black_60" />
+    <solid android:color="@color/stream_ui_black_60" />
 </shape>

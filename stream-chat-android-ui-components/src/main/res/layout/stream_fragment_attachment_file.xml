@@ -14,7 +14,7 @@
         android:paddingTop="12dp"
         android:paddingBottom="8dp"
         android:text="@string/stream_attachment_dialog_recent_files"
-        android:textColor="@color/stream_text_black"
+        android:textColor="@color/stream_ui_text_black"
         android:textSize="@dimen/stream_text_large"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/recentFilesRecyclerView"
@@ -30,7 +30,7 @@
         android:src="@drawable/stream_ic_file_manager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_blue"
+        app:tint="@color/stream_ui_blue"
         />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stream_no_media_error"
-        android:textColor="@color/stream_black"
+        android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_text_large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

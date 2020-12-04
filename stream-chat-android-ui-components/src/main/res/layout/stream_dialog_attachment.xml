@@ -78,7 +78,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/stream_spacing_small"
-            android:background="@color/stream_grey_light"
+            android:background="@color/stream_ui_grey_light"
             />
 
     </com.google.android.material.card.MaterialCardView>

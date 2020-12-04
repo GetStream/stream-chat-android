@@ -23,7 +23,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_black"
+        android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_text_medium"
         />
 

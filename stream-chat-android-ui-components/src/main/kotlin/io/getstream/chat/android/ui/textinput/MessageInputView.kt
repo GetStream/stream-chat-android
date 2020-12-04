@@ -210,11 +210,11 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     typedArray.getColor(
                         R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_white)
+                        ContextCompat.getColor(context, R.color.stream_ui_white)
                     ),
                     typedArray.getColor(
                         R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_light)
+                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
                     )
                 )
             )
@@ -248,11 +248,11 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     typedArray.getColor(
                         R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_white)
+                        ContextCompat.getColor(context, R.color.stream_ui_white)
                     ),
                     typedArray.getColor(
                         R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_light)
+                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
                     )
                 )
             )
@@ -316,7 +316,7 @@ public class MessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamMessageInputTextColor,
-                    ContextCompat.getColor(context, R.color.stream_black)
+                    ContextCompat.getColor(context, R.color.stream_ui_black)
                 )
             )
 
@@ -379,7 +379,7 @@ public class MessageInputView : ConstraintLayout {
             getColorList(
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_black)
+                    ContextCompat.getColor(context, R.color.stream_ui_black)
                 ),
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamSendButtonPressedIconColor,

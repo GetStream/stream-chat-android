@@ -5,7 +5,7 @@
     android:id="@+id/channelListHeader"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/stream_white"
+    android:background="@color/stream_ui_white"
     tools:layout_height="@dimen/stream_default_header_height"
     >
 
@@ -54,7 +54,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginEnd="8dp"
-            android:indeterminateTint="@color/stream_blue"
+            android:indeterminateTint="@color/stream_ui_blue"
             />
 
         <TextView
@@ -75,12 +75,12 @@
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
-        app:backgroundTint="@color/stream_white"
+        app:backgroundTint="@color/stream_ui_white"
         app:cornerRadius="20dp"
         app:icon="@drawable/stream_ic_pen"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
-        app:iconTint="@color/stream_blue"
+        app:iconTint="@color/stream_ui_blue"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -90,7 +90,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
-        android:background="@color/stream_gray_light"
+        android:background="@color/stream_ui_gray_light"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

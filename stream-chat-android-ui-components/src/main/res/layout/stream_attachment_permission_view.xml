@@ -20,7 +20,7 @@
         android:layout_width="@dimen/stream_attachment_dialog_permission_image_size"
         android:layout_height="@dimen/stream_attachment_dialog_permission_image_size"
         android:scaleType="centerCrop"
-        app:tint="@color/stream_grey_light"
+        app:tint="@color/stream_ui_grey_light"
         tools:src="@drawable/stream_attachment_permission_camera"
         tools:ignore="ContentDescription"
         />
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
         android:padding="@dimen/stream_spacing_medium"
-        android:textColor="@color/stream_blue"
+        android:textColor="@color/stream_ui_blue"
         android:textSize="@dimen/stream_text_medium"
         android:textStyle="bold"
         tools:text="@string/stream_attachment_dialog_permission_camera"

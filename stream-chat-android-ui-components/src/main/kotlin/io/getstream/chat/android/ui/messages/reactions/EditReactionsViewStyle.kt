@@ -21,11 +21,11 @@ internal class EditReactionsViewStyle(
         ).use {
             bubbleColorMine = it.getColor(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorMine,
-                context.getColorCompat(R.color.stream_edit_reactions_bubble_color_mine)
+                context.getColorCompat(R.color.stream_ui_edit_reactions_bubble_color_mine)
             )
             bubbleColorTheirs = it.getColor(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorMine,
-                context.getColorCompat(R.color.stream_edit_reactions_bubble_color_theirs)
+                context.getColorCompat(R.color.stream_ui_edit_reactions_bubble_color_theirs)
             )
             totalHeight = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamEditReactionsTotalHeight,

@@ -89,7 +89,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun getProgressBarTint(typedArray: TypedArray) =
         typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamOfflineProgressBarTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
@@ -111,7 +111,7 @@ public class ChannelListHeaderView : ConstraintLayout {
                 )
             }
             iconTint = typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelButtonTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_blue)
+                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
             icon = typedArray.getDrawable(R.styleable.StreamChannelListHeaderView_streamAddChannelButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_pen)
             backgroundTintList = getBackgroundTint(typedArray)
@@ -120,7 +120,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun getBackgroundTint(typedArray: TypedArray) =
         typedArray.getColorStateList(R.styleable.StreamChannelListHeaderView_streamAddChannelBackgroundTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_white)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_white)
 
     private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
@@ -129,7 +129,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_black)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.StreamChannelListHeaderView_streamOnlineTitleFontAssets,
@@ -148,7 +148,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_black)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.StreamChannelListHeaderView_streamOfflineTitleFontAssets,

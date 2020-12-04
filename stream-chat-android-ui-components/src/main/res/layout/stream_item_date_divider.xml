@@ -16,7 +16,7 @@
         android:paddingVertical="2dp"
         android:text="@string/stream_message_deleted_label"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        android:textColor="@color/stream_white"
+        android:textColor="@color/stream_ui_white"
         tools:text="Today"
         />
 </FrameLayout>

@@ -21,15 +21,15 @@ internal class ViewReactionsViewStyle constructor(
         ).use {
             bubbleColorMine = it.getColor(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorMine,
-                context.getColorCompat(R.color.stream_view_reactions_bubble_color_mine)
+                context.getColorCompat(R.color.stream_ui_view_reactions_bubble_color_mine)
             )
             bubbleColorTheirs = it.getColor(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorTheirs,
-                context.getColorCompat(R.color.stream_view_reactions_bubble_color_theirs)
+                context.getColorCompat(R.color.stream_ui_view_reactions_bubble_color_theirs)
             )
             bubbleBorderColor = it.getColor(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsBubbleColorTheirs,
-                context.getColorCompat(R.color.stream_view_reactions_bubble_border_color_mine)
+                context.getColorCompat(R.color.stream_ui_view_reactions_bubble_border_color_mine)
             )
             totalHeight = it.getDimensionPixelSize(
                 R.styleable.StreamReactionsViewStyle_streamViewReactionsTotalHeight,
