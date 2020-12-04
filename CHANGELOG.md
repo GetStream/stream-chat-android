@@ -1,13 +1,9 @@
-# To be released:
-
-## Common changes for all artifacts
+# Dic 4th, 2020 - 4.4.6
 
 ## stream-chat-android
 - Use custom `StreamFileProvider` instead of androidx `FileProvider` to avoid conflicts
 - Add `ChatClient::setGuestUser` method to login as a guest user
 - Make `MessageListItemViewHolder` public and open, to allow customization by overriding the `bind` method
-
-## stream-chat-android-client
 
 ## stream-chat-android-offline
 - Centralize how channels are stored locally
