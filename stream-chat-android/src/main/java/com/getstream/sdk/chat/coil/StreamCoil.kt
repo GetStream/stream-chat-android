@@ -11,13 +11,13 @@ public object StreamCoil {
     private var imageLoader: ImageLoader? = null
     private var imageLoaderFactory: ImageLoaderFactory? = null
 
-    public fun imageLoader(context: Context): ImageLoader = imageLoader ?: newImageLoader(context)
-
     @Synchronized
     public fun setImageLoader(factory: ImageLoaderFactory) {
         imageLoaderFactory = factory
         imageLoader = null
     }
+
+    internal fun imageLoader(context: Context): ImageLoader = imageLoader ?: newImageLoader(context)
 
     @Synchronized
     private fun newImageLoader(context: Context): ImageLoader {
@@ -35,6 +35,6 @@ public object StreamCoil {
         }
     }
 
-    public inline val Context.streamImageLoader: ImageLoader
+    internal inline val Context.streamImageLoader: ImageLoader
         get() = imageLoader(this)
 }

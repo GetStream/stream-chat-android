@@ -6,9 +6,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import coil.loadAny
-import coil.transform.CircleCropTransformation
-import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
+import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.ImageLoader.load
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 
@@ -46,12 +45,12 @@ public class AvatarView : AppCompatImageView {
     }
 
     public fun setChannelData(channel: Channel) {
-        loadAvatar(Avatar.ChannelAvatar(channel, avatarStyle))
+        load(Avatar.ChannelAvatar(channel, avatarStyle), ImageLoader.ImageTransformation.Circle)
     }
 
     public fun setUserData(user: User) {
+        load(Avatar.UserAvatar(user, avatarStyle), ImageLoader.ImageTransformation.Circle)
         isOnline = user.online
-        loadAvatar(Avatar.UserAvatar(user, avatarStyle))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -97,12 +96,6 @@ public class AvatarView : AppCompatImageView {
                 width / 2f - avatarStyle.avatarBorderWidth / 2,
                 borderPaint
             )
-        }
-    }
-
-    private fun loadAvatar(avatar: Avatar) {
-        loadAny(avatar, context.streamImageLoader) {
-            transformations(CircleCropTransformation())
         }
     }
 

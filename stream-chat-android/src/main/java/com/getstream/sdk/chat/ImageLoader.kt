@@ -38,6 +38,15 @@ public object ImageLoader {
             }
     }
 
+    public fun ImageView.load(
+        data: Any?,
+        transformation: ImageTransformation = ImageTransformation.None
+    ) {
+        coilLoadAny(data, context.streamImageLoader) {
+            applyTransformation(transformation, context)
+        }
+    }
+
     public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int) {
         loadAny(drawableResId)
     }
