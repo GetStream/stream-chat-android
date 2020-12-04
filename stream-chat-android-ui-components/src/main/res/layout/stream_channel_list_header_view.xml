@@ -77,7 +77,7 @@
         android:insetBottom="0dp"
         app:backgroundTint="@color/stream_ui_white"
         app:cornerRadius="20dp"
-        app:icon="@drawable/stream_ic_pen"
+        app:icon="@drawable/stream_ui_ic_pen"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
         app:iconTint="@color/stream_ui_blue"

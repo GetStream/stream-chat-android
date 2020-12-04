@@ -55,7 +55,7 @@
         android:id="@+id/checkboxImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/stream_ic_check"
+        android:src="@drawable/stream_ui_ic_check"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -76,7 +76,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
-        android:background="@drawable/stream_divider"
+        android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

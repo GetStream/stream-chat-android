@@ -113,7 +113,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             iconTint = typedArray.getColorStateList(R.styleable.StreamUiChannelListHeaderView_streamUiAddChannelButtonTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
             icon = typedArray.getDrawable(R.styleable.StreamUiChannelListHeaderView_streamUiAddChannelButtonIcon)
-                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_pen)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
             backgroundTintList = getBackgroundTint(typedArray)
         }
     }

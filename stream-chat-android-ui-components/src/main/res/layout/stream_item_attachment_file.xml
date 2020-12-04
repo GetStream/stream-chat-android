@@ -13,7 +13,7 @@
         android:layout_height="@dimen/stream_ui_attachment_dialog_selection_indicator_size"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:background="@drawable/stream_selector_file_attachment"
+        android:background="@drawable/stream_ui_selector_file_attachment"
         android:checkMark="@null"
         android:gravity="center"
         android:textAlignment="gravity"
@@ -39,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/selectionIndicator"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/stream_ic_file_csv"
+        tools:src="@drawable/stream_ui_ic_file_csv"
         />
 
     <TextView

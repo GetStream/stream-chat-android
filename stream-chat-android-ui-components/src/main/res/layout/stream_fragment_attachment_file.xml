@@ -27,7 +27,7 @@
         android:layout_width="@dimen/stream_ui_attachment_dialog_button_size"
         android:layout_height="@dimen/stream_ui_attachment_dialog_button_size"
         android:scaleType="center"
-        android:src="@drawable/stream_ic_file_manager"
+        android:src="@drawable/stream_ui_ic_file_manager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/stream_ui_blue"

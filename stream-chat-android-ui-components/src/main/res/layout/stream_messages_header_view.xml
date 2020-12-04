@@ -36,7 +36,7 @@
             android:id="@+id/back_button_badge"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:background="@drawable/stream_badge_bg"
+            android:background="@drawable/stream_ui_badge_bg"
             android:backgroundTint="@color/stream_ui_light_red"
             android:gravity="center"
             android:textColor="@color/stream_ui_white"

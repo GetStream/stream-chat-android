@@ -270,7 +270,7 @@ public class MessagesHeaderView : ConstraintLayout {
                 R.styleable.StreamUiMessagesHeaderView_streamUiMessagesHeaderBackButtonBadgeBackgroundColor,
                 defaultColor
             )
-            ContextCompat.getDrawable(context, R.drawable.stream_badge_bg)?.let {
+            ContextCompat.getDrawable(context, R.drawable.stream_ui_badge_bg)?.let {
                 it.setTint(color)
                 background = it
             }

@@ -196,10 +196,10 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         when {
             !currentUserSentLastMessage || channel.lastMessageByCurrentUserWasRead() ->
-                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_all)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_all)
 
             currentUserSentLastMessage && !channel.lastMessageByCurrentUserWasRead() ->
-                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_gray)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
 
             else -> determineLastMessageSyncStatus(lastMessage)
         }
@@ -209,11 +209,11 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         message?.syncStatus?.let { sync ->
             when (sync) {
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
-                    messageStatusImageView.setImageResource(R.drawable.stream_ic_clock)
+                    messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_clock)
                 }
 
                 SyncStatus.COMPLETED -> {
-                    messageStatusImageView.setImageResource(R.drawable.stream_ic_check_gray)
+                    messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
                 }
 
                 SyncStatus.FAILED_PERMANENTLY -> {

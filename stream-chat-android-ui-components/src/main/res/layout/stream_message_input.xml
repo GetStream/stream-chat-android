@@ -23,7 +23,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
-        android:src="@drawable/stream_ic_attach"
+        android:src="@drawable/stream_ui_ic_attach"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -35,7 +35,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
-        android:src="@drawable/stream_ic_next"
+        android:src="@drawable/stream_ui_ic_next"
         android:tint="@color/stream_ui_blue"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
@@ -50,7 +50,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
-        android:src="@drawable/stream_ic_lightning"
+        android:src="@drawable/stream_ui_ic_lightning"
         app:layout_constraintBottom_toBottomOf="@id/ll_input_container"
         app:layout_constraintStart_toEndOf="@id/clearMessageInputButton"
         />

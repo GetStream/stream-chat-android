@@ -23,21 +23,21 @@
             android:id="@+id/mediaAttachmentButton"
             style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
-            android:background="@drawable/stream_attachment_permission_media"
+            android:background="@drawable/stream_ui_attachment_permission_media"
             />
 
         <ToggleButton
             android:id="@+id/fileAttachmentButton"
             style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
-            android:background="@drawable/stream_attachment_permission_file"
+            android:background="@drawable/stream_ui_attachment_permission_file"
             />
 
         <ToggleButton
             android:id="@+id/cameraAttachmentButton"
             style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
-            android:background="@drawable/stream_attachment_permission_camera"
+            android:background="@drawable/stream_ui_attachment_permission_camera"
             />
 
     </RadioGroup>
@@ -50,7 +50,7 @@
         android:layout_margin="6dp"
         android:tint="@color/stream_ui_attach_button"
         android:background="@null"
-        android:src="@drawable/stream_ic_next"
+        android:src="@drawable/stream_ui_ic_next"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />

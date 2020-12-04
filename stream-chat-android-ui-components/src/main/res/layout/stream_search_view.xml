@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="36dp"
-    android:background="@drawable/stream_shape_search_view_background"
+    android:background="@drawable/stream_ui_shape_search_view_background"
     >
 
     <ImageView
@@ -13,7 +13,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="8dp"
         android:contentDescription="@string/stream_ui_search_input_view_search_icon_description"
-        android:src="@drawable/stream_ic_search"
+        android:src="@drawable/stream_ui_ic_search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +44,7 @@
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/stream_ui_search_input_view_clear_input_description"
-        android:src="@drawable/stream_ic_clear"
+        android:src="@drawable/stream_ui_ic_clear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

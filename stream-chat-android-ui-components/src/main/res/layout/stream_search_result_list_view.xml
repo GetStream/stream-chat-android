@@ -9,7 +9,7 @@
         android:id="@+id/searchInfoBar"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="@drawable/stream_search_info_bar_gradient"
+        android:background="@drawable/stream_ui_search_info_bar_gradient"
         android:paddingStart="8dp"
         android:paddingTop="10dp"
         android:paddingEnd="8dp"

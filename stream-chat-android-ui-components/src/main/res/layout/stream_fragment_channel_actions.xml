@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:divider="@drawable/stream_divider"
+    android:divider="@drawable/stream_ui_divider"
     android:orientation="vertical"
     android:showDividers="middle"
     >
@@ -60,7 +60,7 @@
     <TextView
         android:id="@+id/leaveGroupButton"
         style="@style/StreamUiChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ic_leave_group"
+        android:drawableStart="@drawable/stream_ui_ic_leave_group"
         android:text="@string/stream_ui_channel_actions_leave_group"
         android:textColor="@color/stream_ui_black"
         />
@@ -68,7 +68,7 @@
     <TextView
         android:id="@+id/deleteChannelButton"
         style="@style/StreamUiChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ic_delete"
+        android:drawableStart="@drawable/stream_ui_ic_delete"
         android:text="@string/stream_ui_channel_actions_leave_group"
         android:textColor="@color/stream_ui_text_red"
         />
@@ -76,7 +76,7 @@
     <TextView
         android:id="@+id/deleteContactButton"
         style="@style/StreamUiChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ic_delete"
+        android:drawableStart="@drawable/stream_ui_ic_delete"
         android:text="@string/stream_ui_channel_actions_delete_contact"
         android:textColor="@color/stream_ui_text_red"
         />

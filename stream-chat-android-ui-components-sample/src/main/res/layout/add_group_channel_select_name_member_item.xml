@@ -55,7 +55,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
-        android:background="@drawable/stream_divider"
+        android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

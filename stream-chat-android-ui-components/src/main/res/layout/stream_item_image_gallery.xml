@@ -4,5 +4,5 @@
     android:id="@+id/attachmentImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:src="@drawable/stream_ic_attach"
+    tools:src="@drawable/stream_ui_ic_attach"
     />

@@ -35,7 +35,7 @@
                 android:text="@string/stream_ui_commands_instant_commands"
                 android:textColor="@color/stream_ui_text_grey"
                 android:textSize="@dimen/stream_ui_text_medium"
-                app:drawableStartCompat="@drawable/stream_ic_command"
+                app:drawableStartCompat="@drawable/stream_ui_ic_command"
                 app:drawableTint="@color/stream_ui_blue"
                 app:layout_constraintBottom_toTopOf="@id/suggestionsRecyclerView"
                 app:layout_constraintEnd_toEndOf="parent"
