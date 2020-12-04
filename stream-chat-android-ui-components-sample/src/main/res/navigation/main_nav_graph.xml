@@ -172,6 +172,24 @@
             app:popUpTo="@+id/main_navigation"
             app:popUpToInclusive="true"
             />
+
+        <action
+            android:id="@+id/action_chatFragment_to_chatInfoFragment"
+            app:destination="@id/chatInfoFragment"
+            app:launchSingleTop="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatInfoFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.info.ChatInfoFragment"
+        android:label="ChatInfoFragment"
+        >
+        <argument
+            android:name="cid"
+            app:argType="string"
+            app:nullable="false"
+            />
     </fragment>
 
     <fragment

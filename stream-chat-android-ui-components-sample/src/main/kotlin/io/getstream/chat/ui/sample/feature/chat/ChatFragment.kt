@@ -14,8 +14,10 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 
 class ChatFragment : Fragment() {
@@ -23,9 +25,11 @@ class ChatFragment : Fragment() {
     private val args: ChatFragmentArgs by navArgs()
 
     private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid) }
+    private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+    private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +50,7 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.header, viewLifecycleOwner)
+        initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
@@ -65,6 +70,23 @@ class ChatFragment : Fragment() {
         binding.header.setBackButtonClickListener {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
+    }
+
+    private fun initChatViewModel() {
+        binding.header.setAvatarClickListener {
+            chatViewModel.onAction(ChatViewModel.Action.AvatarClicked)
+        }
+        chatViewModel.navigationEvent.observe(
+            viewLifecycleOwner,
+            EventObserver { event ->
+                when (event) {
+                    is ChatViewModel.NavigationEvent.NavigateToChatInfo -> findNavController().navigateSafely(
+                        ChatFragmentDirections.actionChatFragmentToChatInfoFragment(event.cid)
+                    )
+                    is ChatViewModel.NavigationEvent.NavigateToGroupChatInfo -> Unit
+                }
+            }
+        )
     }
 
     private fun initMessageInputViewModel() {

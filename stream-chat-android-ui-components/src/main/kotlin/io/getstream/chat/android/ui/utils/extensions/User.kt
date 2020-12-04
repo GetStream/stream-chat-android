@@ -16,7 +16,7 @@ internal fun User.isCurrentUser(): Boolean {
     }
 }
 
-internal fun User.getLastSeenText(context: Context): String {
+public fun User.getLastSeenText(context: Context): String {
     return if (online) {
         context.getString(R.string.stream_message_list_header_online)
     } else {
