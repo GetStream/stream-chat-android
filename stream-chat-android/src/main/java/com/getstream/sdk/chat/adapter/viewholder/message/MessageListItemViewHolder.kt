@@ -24,7 +24,7 @@ import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
-internal class MessageListItemViewHolder(
+public open class MessageListItemViewHolder(
     parent: ViewGroup,
     style: MessageListViewStyle,
     channel: Channel,
