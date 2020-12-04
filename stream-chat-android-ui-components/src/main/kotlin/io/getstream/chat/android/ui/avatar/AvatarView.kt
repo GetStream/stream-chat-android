@@ -4,21 +4,15 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import coil.loadAny
+import coil.transform.CircleCropTransformation
+import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 public class AvatarView : AppCompatImageView {
-    private val bitmapFactory = AvatarBitmapFactory(context)
-    private val clipPath = Path()
-    private val clipRect = RectF()
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
@@ -32,11 +26,8 @@ public class AvatarView : AppCompatImageView {
     }
 
     private lateinit var avatarStyle: AvatarStyle
-    private var onlineIndicatorVisible: Boolean = false
-
-    private var asyncAvatarDrawableProvider: (suspend () -> AvatarDrawable)? = null
+    private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
-    private var loadAvatarImageJob: Job? = null
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -54,24 +45,13 @@ public class AvatarView : AppCompatImageView {
         init(context, attrs)
     }
 
-    public fun setChannelData(channel: Channel, users: List<User>) {
-        asyncAvatarDrawableProvider = {
-            AvatarDrawable(bitmapFactory.createChannelBitmaps(channel, users, avatarStyle, avatarViewSize))
-        }
-        loadAvatarIfLaidOut()
+    public fun setChannelData(channel: Channel) {
+        loadAvatar(Avatar.ChannelAvatar(channel, avatarStyle))
     }
 
     public fun setUserData(user: User) {
-        this.onlineIndicatorVisible = user.online
-        asyncAvatarDrawableProvider = {
-            AvatarDrawable(listOfNotNull(bitmapFactory.createUserBitmap(user, avatarStyle, avatarViewSize)))
-        }
-        loadAvatarIfLaidOut()
-    }
-
-    public fun showOnlineIndicator(visible: Boolean) {
-        this.onlineIndicatorVisible = visible
-        invalidate()
+        isOnline = user.online
+        loadAvatar(Avatar.UserAvatar(user, avatarStyle))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -82,27 +62,10 @@ public class AvatarView : AppCompatImageView {
         setMeasuredDimension(avatarViewSize, avatarViewSize)
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        loadAvatarIfLaidOut()
-    }
-
-    private fun loadAvatarIfLaidOut() {
-        asyncAvatarDrawableProvider.takeIf { it != null && avatarViewSize > 0 }
-            ?.let {
-                loadAvatarImageJob?.cancel()
-                loadAvatarImageJob = GlobalScope.launch(DispatcherProvider.Main) {
-                    setImageDrawable(it())
-                }
-            }
-    }
-
     override fun onDraw(canvas: Canvas) {
         if (drawable != null) {
-            drawBorder(canvas)
-            canvas.save()
-            clipToCircle(canvas)
             super.onDraw(canvas)
-            canvas.restore()
+            drawBorder(canvas)
             drawOnlineStatus(canvas)
         }
     }
@@ -118,7 +81,7 @@ public class AvatarView : AppCompatImageView {
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {
-        if (onlineIndicatorVisible && avatarStyle.onlineIndicatorEnabled) {
+        if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val cx = width - (width / 8f)
             val cy = height / 8f
             canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
@@ -137,16 +100,10 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    private fun clipToCircle(canvas: Canvas) {
-        clipPath.reset()
-        clipRect.set(
-            avatarStyle.avatarBorderWidth.toFloat(),
-            avatarStyle.avatarBorderWidth.toFloat(),
-            (width - avatarStyle.avatarBorderWidth).toFloat(),
-            (height - avatarStyle.avatarBorderWidth).toFloat()
-        )
-        clipPath.addOval(clipRect, Path.Direction.CW)
-        canvas.clipPath(clipPath)
+    private fun loadAvatar(avatar: Avatar) {
+        loadAny(avatar, context.streamImageLoader) {
+            transformations(CircleCropTransformation())
+        }
     }
 
     internal companion object {

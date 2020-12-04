@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessagesHeaderViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
 
 class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
     private var _binding: FragmentComponentBrowserMessagesHeaderViewBinding? = null
@@ -39,7 +39,7 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
         binding.headerOnlineNoBadgeStatus.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomChannel(), randomUsers())
+            setAvatar(randomChannel(listOf(randomMember())))
             showBackButtonBadge("")
         }
         binding.headerOnlineAvatar.apply {

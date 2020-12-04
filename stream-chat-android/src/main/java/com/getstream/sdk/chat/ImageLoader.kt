@@ -4,20 +4,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
-import coil.Coil
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
-import coil.size.Precision
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
 import coil.transform.RoundedCornersTransformation
+import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
@@ -32,15 +28,13 @@ public object ImageLoader {
     ): Bitmap? = withContext(DispatcherProvider.IO) {
         url.takeUnless { it.isBlank() }
             ?.let {
-                (
-                    Coil.execute(
-                        ImageRequest.Builder(context)
-                            .data(it)
-                            .applyTransformation(transformation, context)
-                            .build()
-                    )
-                        .drawable as? BitmapDrawable
-                    )?.bitmap
+                val imageResult = context.streamImageLoader.execute(
+                    ImageRequest.Builder(context)
+                        .data(it)
+                        .applyTransformation(transformation, context)
+                        .build()
+                )
+                (imageResult.drawable as? BitmapDrawable)?.bitmap
             }
     }
 
@@ -74,7 +68,7 @@ public object ImageLoader {
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
     ) {
-        coilLoadAny(data, getImageLoaderWithGifSupport(context)) {
+        coilLoadAny(data, context.streamImageLoader) {
             placeholderResId?.let { placeholder(it) }
             listener(
                 onStart = { onStart() },
@@ -87,23 +81,6 @@ public object ImageLoader {
             }
         }
     }
-
-    private fun getImageLoaderWithGifSupport(
-        context: Context,
-        // TODO: We should probably allowHardware for performance improvements but we do software rendering in PorterShapeImageView
-        allowHardware: Boolean = false,
-        precision: Precision = Precision.EXACT
-    ): coil.ImageLoader = coil.ImageLoader.Builder(context)
-        .allowHardware(allowHardware)
-        .precision(precision)
-        .componentRegistry {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                add(ImageDecoderDecoder())
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
 
     private fun ImageRequest.Builder.applyTransformation(
         transformation: ImageTransformation,

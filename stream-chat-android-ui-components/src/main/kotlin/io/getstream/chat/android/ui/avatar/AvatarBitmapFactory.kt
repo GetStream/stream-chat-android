@@ -116,7 +116,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         )
     }
 
-    companion object {
+    private companion object {
         private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f
         private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f
     }
