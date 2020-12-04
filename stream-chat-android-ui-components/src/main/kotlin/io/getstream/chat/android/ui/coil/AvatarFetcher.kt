@@ -15,7 +15,6 @@ import io.getstream.chat.android.ui.avatar.Avatar
 import io.getstream.chat.android.ui.avatar.AvatarBitmapCombiner
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.utils.extensions.getUsers
-import java.lang.StringBuilder
 
 internal class AvatarFetcher(
     private val avatarBitmapFactory: AvatarBitmapFactory
@@ -55,19 +54,22 @@ internal class AvatarFetcher(
     }
 
     override fun key(data: Avatar): String? {
+
         return when (data) {
             is Avatar.UserAvatar -> {
                 "${data.user.name}${data.user.image}"
             }
             is Avatar.ChannelAvatar -> {
-                StringBuilder().apply {
+                buildString {
                     append(data.channel.name)
                     append(data.channel.image)
-                    data.channel.getUsers().forEach {
-                        append(it.name)
-                        append(it.image)
-                    }
-                }.toString()
+                    data.channel.getUsers()
+                        .take(4)
+                        .forEach {
+                            append(it.name)
+                            append(it.image)
+                        }
+                }
             }
         }
     }

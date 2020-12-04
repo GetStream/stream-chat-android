@@ -94,5 +94,5 @@ dependencies {
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
-    implementation Dependencies.startup
+    implementation Dependencies.androidxStartup
 }

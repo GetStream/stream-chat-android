@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Rect
 import android.media.ThumbnailUtils
+import androidx.annotation.Px
 import androidx.core.graphics.applyCanvas
 
 internal object AvatarBitmapCombiner {
@@ -13,7 +14,7 @@ internal object AvatarBitmapCombiner {
         isDither = true
     }
 
-    fun combine(bitmaps: List<Bitmap>, size: Int): Bitmap {
+    fun combine(bitmaps: List<Bitmap>, @Px size: Int): Bitmap {
         return Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888).applyCanvas {
             val sourceRect = Rect(0, 0, size, size)
             createAvatarItems(bitmaps, size).forEach {
@@ -22,7 +23,7 @@ internal object AvatarBitmapCombiner {
         }
     }
 
-    private fun createAvatarItems(bitmaps: List<Bitmap>, size: Int): List<AvatarItem> {
+    private fun createAvatarItems(bitmaps: List<Bitmap>, @Px size: Int): List<AvatarItem> {
         val avatarBitmaps = bitmaps.take(AvatarView.MAX_AVATAR_SECTIONS)
         return when (avatarBitmaps.size) {
             0 -> emptyList()
@@ -47,7 +48,7 @@ internal object AvatarBitmapCombiner {
         }
     }
 
-    private fun Bitmap.toAvatarItem(sectionType: SectionType, size: Int): AvatarItem {
+    private fun Bitmap.toAvatarItem(sectionType: SectionType, @Px size: Int): AvatarItem {
         return when (sectionType) {
             SectionType.FULL_CIRCLE -> {
                 AvatarItem(scaleCenterCrop(size, size), Rect(0, 0, size, size))
@@ -94,7 +95,7 @@ internal object AvatarBitmapCombiner {
         }
     }
 
-    private fun Bitmap.scaleCenterCrop(newWidth: Int, newHeight: Int): Bitmap {
+    private fun Bitmap.scaleCenterCrop(@Px newWidth: Int, @Px newHeight: Int): Bitmap {
         return ThumbnailUtils.extractThumbnail(this, newWidth, newHeight)
     }
 

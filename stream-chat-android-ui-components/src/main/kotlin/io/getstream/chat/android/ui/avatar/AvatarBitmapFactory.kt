@@ -7,6 +7,7 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.Typeface
+import androidx.annotation.Px
 import com.getstream.sdk.chat.ImageLoader
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -24,7 +25,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
     internal suspend fun createUserBitmap(
         user: User,
         style: AvatarStyle,
-        avatarSize: Int
+        @Px avatarSize: Int
     ): Bitmap {
         return ImageLoader.getBitmap(context, user.image)
             ?: createInitialsBitmap(style, avatarSize, user.initials)
@@ -34,7 +35,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         channel: Channel,
         lastActiveUsers: List<User>,
         style: AvatarStyle,
-        avatarSize: Int
+        @Px avatarSize: Int
     ): List<Bitmap> {
         return ImageLoader.getBitmap(context, channel.image)
             ?.let { listOf(it) }
@@ -45,14 +46,14 @@ internal class AvatarBitmapFactory(private val context: Context) {
     private suspend fun createUsersBitmaps(
         users: List<User>,
         style: AvatarStyle,
-        avatarSize: Int
+        @Px avatarSize: Int
     ): List<Bitmap> {
         return users.take(MAX_AVATAR_SECTIONS).map { createUserBitmap(it, style, avatarSize) }
     }
 
     private fun createInitialsBitmap(
         avatarStyle: AvatarStyle,
-        avatarSize: Int,
+        @Px avatarSize: Int,
         initials: String,
     ): Bitmap {
         val avatarSizeWithoutBorder = avatarSize - avatarStyle.avatarBorderWidth * 2
@@ -85,7 +86,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
     private fun Canvas.drawInitials(
         avatarStyle: AvatarStyle,
         initials: String,
-        avatarSize: Int
+        @Px avatarSize: Int
     ) {
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
@@ -102,7 +103,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         )
     }
 
-    private fun createLinearGradientShader(initials: String, avatarSize: Int): Shader {
+    private fun createLinearGradientShader(initials: String, @Px avatarSize: Int): Shader {
         val baseColorIndex = abs(initials.hashCode()) % gradientBaseColors.size
         val baseColor = gradientBaseColors[baseColorIndex]
         return LinearGradient(

@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.coil.AvatarFetcher
 
 @SuppressWarnings("unused")
-public class ImageLoaderFactoryInitializer : Initializer<ImageLoaderFactory> {
+internal class ImageLoaderFactoryInitializer : Initializer<ImageLoaderFactory> {
     override fun create(context: Context): ImageLoaderFactory {
         return StreamImageLoaderFactory(context) {
             componentRegistry {
