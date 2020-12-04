@@ -32,7 +32,7 @@ public class TypingIndicators {
                 }
         );
 
-        // Add typing top event handling
+        // Add typing stop event handling
         channelController.subscribeFor(
                 new Class[]{TypingStopEvent.class},
                 event -> {

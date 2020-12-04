@@ -27,7 +27,7 @@ class TypingIndicators(val channelController: ChannelClient) {
             // Handle event
         }
 
-        // Add typing top event handling
+        // Add typing stop event handling
         channelController.subscribeFor<TypingStopEvent> { typingStopEvent ->
             // Handle event
         }
