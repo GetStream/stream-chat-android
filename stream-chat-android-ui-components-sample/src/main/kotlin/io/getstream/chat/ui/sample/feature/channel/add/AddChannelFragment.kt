@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
-import io.getstream.chat.android.ui.textinput.MessageInputView
 import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
@@ -93,7 +92,7 @@ class AddChannelFragment : Fragment() {
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
             }
-            messageInputView.onSendButtonClickListener = MessageInputView.OnMessageSendButtonClickListener {
+            messageInputView.setOnSendButtonClickListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }
