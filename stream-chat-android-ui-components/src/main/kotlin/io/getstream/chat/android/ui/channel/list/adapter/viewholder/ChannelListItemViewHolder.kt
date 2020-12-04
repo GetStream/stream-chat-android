@@ -134,7 +134,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener
     ) {
-        avatarView.setChannelData(channel, channel.getUsers())
+        avatarView.setChannelData(channel)
         avatarView.setOnClickListener {
             when (channel.getUsers().size) {
                 1 -> userClickListener.onUserClick(channel.getCurrentUser())
