@@ -1,6 +1,7 @@
 package io.getstream.chat.ui.sample.feature.component_browser.utils
 
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -33,10 +34,16 @@ internal fun randomUsers(size: Int = 30): List<User> {
     return 0.until(size).map { randomUser() }
 }
 
-internal fun randomChannel(): Channel {
+internal fun randomChannel(members: List<Member> = emptyList()): Channel {
     return Channel().apply {
+        cid = "${('A'..'Z').random()} ${('A'..'Z').random()}"
         name = "Sample Channel"
+        this.members = members
     }
+}
+
+internal fun randomMember(withImage: Boolean = true): Member {
+    return Member(user = randomUser(withImage))
 }
 
 internal fun randomMessage(reactionsSize: Int, ownReactionsSize: Int): Message {
