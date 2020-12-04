@@ -65,8 +65,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private lateinit var binding: StreamMessageListViewBinding
 
-    private var optionsView: View? = null
-
     private var newMessagesTextSingle: String? = null
     private var newMessagesTextPlural: String? = null
 
@@ -162,7 +160,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                 onMessageFlagHandler
             ).show()
         }
-
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
             onMessageRetryHandler.invoke(message)

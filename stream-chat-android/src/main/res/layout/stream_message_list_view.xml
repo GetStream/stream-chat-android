@@ -100,25 +100,4 @@
             />
     </FrameLayout>
 
-    <ScrollView
-        android:id="@+id/messageOptionsScroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <FrameLayout
-            android:id="@+id/messageOptionsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:minHeight="200dp"
-            />
-
-    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
