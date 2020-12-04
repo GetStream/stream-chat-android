@@ -14,7 +14,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamChannelListHeaderViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
@@ -36,7 +36,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         init(context, attrs)
     }
 
-    private val binding = StreamChannelListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = StreamUiChannelListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.StreamUiChannelListHeaderView).use { typedArray ->

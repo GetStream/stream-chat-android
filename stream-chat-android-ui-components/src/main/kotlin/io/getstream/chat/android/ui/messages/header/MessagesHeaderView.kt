@@ -17,7 +17,7 @@ import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamMessagesHeaderViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessagesHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
 public class MessagesHeaderView : ConstraintLayout {
@@ -46,8 +46,8 @@ public class MessagesHeaderView : ConstraintLayout {
         init(attrs)
     }
 
-    private val binding: StreamMessagesHeaderViewBinding =
-        StreamMessagesHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: StreamUiMessagesHeaderViewBinding =
+        StreamUiMessagesHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {

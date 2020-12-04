@@ -6,7 +6,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemMessageReactionBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
@@ -17,7 +17,7 @@ internal class ReactionsAdapter(
 ) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
-        return StreamItemMessageReactionBinding
+        return StreamUiItemMessageReactionBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { ReactionViewHolder(it, reactionsViewStyle, reactionClickListener) }
     }
@@ -27,7 +27,7 @@ internal class ReactionsAdapter(
     }
 
     class ReactionViewHolder(
-        private val binding: StreamItemMessageReactionBinding,
+        private val binding: StreamUiItemMessageReactionBinding,
         reactionsViewStyle: ReactionsViewStyle,
         private val reactionClickListener: ReactionClickListener
     ) : RecyclerView.ViewHolder(binding.root) {

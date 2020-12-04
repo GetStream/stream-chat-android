@@ -45,7 +45,7 @@
                 android:paddingEnd="@dimen/stream_ui_spacing_small"
                 android:scrollbars="none"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/stream_item_user_reaction"
+                tools:listitem="@layout/stream_ui_item_user_reaction"
                 tools:spanCount="4"
                 />
 

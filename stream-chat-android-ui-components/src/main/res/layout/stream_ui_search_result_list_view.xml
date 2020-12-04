@@ -24,7 +24,7 @@
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="15"
-        tools:listitem="@layout/stream_item_search_result"
+        tools:listitem="@layout/stream_ui_item_search_result"
         />
 
 </merge>

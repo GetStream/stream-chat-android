@@ -10,11 +10,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamAttachmentGalleryBinding
+import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
 
 public class AttachmentGallery : ConstraintLayout {
 
-    private val binding = StreamAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = StreamUiAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var countText: String = "%s - %s"
 

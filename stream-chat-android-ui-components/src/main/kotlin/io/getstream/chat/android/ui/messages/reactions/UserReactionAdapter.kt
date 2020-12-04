@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemUserReactionBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
@@ -18,7 +18,7 @@ internal class UserReactionAdapter(
 ) : ListAdapter<ReactionItem, UserReactionAdapter.UserReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
-        return StreamItemUserReactionBinding
+        return StreamUiItemUserReactionBinding
             .inflate(parent.context.inflater, parent, false)
             .let { UserReactionViewHolder(it, reactionClickListener) }
     }
@@ -28,7 +28,7 @@ internal class UserReactionAdapter(
     }
 
     class UserReactionViewHolder(
-        private val binding: StreamItemUserReactionBinding,
+        private val binding: StreamUiItemUserReactionBinding,
         private val reactionClickListener: ReactionClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 

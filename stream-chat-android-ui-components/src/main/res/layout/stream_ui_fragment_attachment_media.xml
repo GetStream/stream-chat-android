@@ -35,7 +35,7 @@
 
     <include
         android:id="@+id/grantPermissionsInclude"
-        layout="@layout/stream_attachment_permission_view"
+        layout="@layout/stream_ui_attachment_permission_view"
         />
 
     <!--    <com.google.android.material.button.MaterialButton-->

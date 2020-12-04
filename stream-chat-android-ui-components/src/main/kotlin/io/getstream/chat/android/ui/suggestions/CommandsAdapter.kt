@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemCommandBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 
 internal class CommandsAdapter(
     private val onCommandSelected: (Command) -> Unit
@@ -23,7 +23,7 @@ internal class CommandsAdapter(
     }
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
-        return StreamItemCommandBinding
+        return StreamUiItemCommandBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { CommandViewHolder(it, onCommandSelected) }
     }
@@ -33,7 +33,7 @@ internal class CommandsAdapter(
     }
 
     class CommandViewHolder(
-        private val binding: StreamItemCommandBinding,
+        private val binding: StreamUiItemCommandBinding,
         private val onCommandClicked: (Command) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamSearchResultListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 
 public class SearchResultListView : LinearLayout {
 
@@ -17,7 +17,7 @@ public class SearchResultListView : LinearLayout {
         const val LOAD_MORE_THRESHOLD = 10
     }
 
-    private val binding = StreamSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = StreamUiSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
 
     public constructor(context: Context) : super(context) {
         init(null)

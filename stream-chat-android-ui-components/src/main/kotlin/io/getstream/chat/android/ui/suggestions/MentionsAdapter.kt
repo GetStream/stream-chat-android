@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemMentionBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 
 internal class MentionsAdapter(
     private val onMentionSelected: (User) -> Unit
@@ -24,7 +24,7 @@ internal class MentionsAdapter(
     }
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionViewHolder {
-        return StreamItemMentionBinding
+        return StreamUiItemMentionBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { MentionViewHolder(it, onMentionSelected) }
     }
@@ -34,7 +34,7 @@ internal class MentionsAdapter(
     }
 
     class MentionViewHolder(
-        private val binding: StreamItemMentionBinding,
+        private val binding: StreamUiItemMentionBinding,
         private val onUserClicked: (User) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 

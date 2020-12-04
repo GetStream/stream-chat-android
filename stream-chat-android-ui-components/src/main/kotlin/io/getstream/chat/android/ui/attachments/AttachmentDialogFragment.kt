@@ -9,11 +9,11 @@ import androidx.core.view.forEach
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamDialogAttachmentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 
 internal class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
-    private var _binding: StreamDialogAttachmentBinding? = null
+    private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
 
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
@@ -31,7 +31,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamDialogAttachmentBinding.inflate(inflater, container, false)
+        _binding = StreamUiDialogAttachmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 

@@ -7,7 +7,7 @@ import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemSelectedAttachmentMediaBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
 import top.defaults.drawabletoolbox.DrawableBuilder
 
@@ -16,13 +16,13 @@ internal class SelectedMediaAttachmentAdapter(
 ) : SimpleListAdapter<AttachmentMetaData, SelectedMediaAttachmentAdapter.SelectedMediaAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedMediaAttachmentViewHolder {
-        return StreamItemSelectedAttachmentMediaBinding
+        return StreamUiItemSelectedAttachmentMediaBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { SelectedMediaAttachmentViewHolder(it, onAttachmentCancelled) }
     }
 
     class SelectedMediaAttachmentViewHolder(
-        private val binding: StreamItemSelectedAttachmentMediaBinding,
+        private val binding: StreamUiItemSelectedAttachmentMediaBinding,
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
 

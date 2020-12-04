@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
-import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
@@ -54,7 +54,7 @@ public class MessageInputView : ConstraintLayout {
 
     private var currentAnimatorSet: AnimatorSet? = null
 
-    private lateinit var binding: StreamMessageInputBinding
+    private lateinit var binding: StreamUiMessageInputBinding
     private lateinit var suggestionListController: SuggestionListController
     private lateinit var attachmentController: AttachmentController
 
@@ -111,7 +111,7 @@ public class MessageInputView : ConstraintLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
-        binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = StreamUiMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
         context.obtainStyledAttributes(attr, R.styleable.StreamUiMessageInputView).use { typedArray ->
             configAttachmentButton(typedArray)

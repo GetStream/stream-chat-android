@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamFragmentChannelActionsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
@@ -28,7 +28,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         ChannelActionsViewModelFactory(cid, isGroup)
     }
 
-    private var _binding: StreamFragmentChannelActionsBinding? = null
+    private var _binding: StreamUiFragmentChannelActionsBinding? = null
     private val binding get() = _binding!!
 
     override fun onAttach(context: Context) {
@@ -46,7 +46,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamFragmentChannelActionsBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentChannelActionsBinding.inflate(inflater, container, false)
         return binding.root
     }
 

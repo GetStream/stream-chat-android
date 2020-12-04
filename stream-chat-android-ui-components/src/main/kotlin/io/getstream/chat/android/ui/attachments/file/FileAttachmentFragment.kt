@@ -20,13 +20,13 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.attachments.AttachmentSource
-import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentFileBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 public class FileAttachmentFragment : Fragment() {
 
-    private var _binding: StreamFragmentAttachmentFileBinding? = null
+    private var _binding: StreamUiFragmentAttachmentFileBinding? = null
     private val binding get() = _binding!!
 
     private val storageHelper: StorageHelper = StorageHelper()
@@ -50,7 +50,7 @@ public class FileAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamFragmentAttachmentFileBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentAttachmentFileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
