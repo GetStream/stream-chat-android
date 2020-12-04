@@ -68,7 +68,7 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomUser(isOnline = false))
-            showTypingStateLabel()
+            showTypingStateLabel(randomUsers(3))
         }
     }
 }
