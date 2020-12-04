@@ -4,5 +4,5 @@
     android:layout_height="match_parent"
     android:text="@string/add_channel_empty_message_list_title"
     android:textColor="@color/stream_ui_black_50"
-    android:textSize="@dimen/stream_text_medium"
+    android:textSize="@dimen/stream_ui_text_medium"
     />

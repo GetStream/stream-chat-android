@@ -125,7 +125,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
             R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextSize,
-            context.getDimension(R.dimen.stream_text_large)
+            context.getDimension(R.dimen.stream_ui_text_large)
         )
             .color(
                 R.styleable.StreamChannelListHeaderView_streamOnlineTitleTextColor,
@@ -144,7 +144,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private fun getOfflineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
             R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextSize,
-            context.getDimension(R.dimen.stream_text_large)
+            context.getDimension(R.dimen.stream_ui_text_large)
         )
             .color(
                 R.styleable.StreamChannelListHeaderView_streamOfflineTitleTextColor,

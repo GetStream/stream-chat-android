@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/stream_spacing_small"
+        android:layout_margin="@dimen/stream_ui_spacing_small"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
         >
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/stream_spacing_medium"
+            android:padding="@dimen/stream_ui_spacing_medium"
             >
 
             <TextView
@@ -27,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:singleLine="true"
-                android:textColor="@color/stream_text_black"
-                android:textSize="@dimen/stream_text_large"
+                android:textColor="@color/stream_ui_text_black"
+                android:textSize="@dimen/stream_ui_text_large"
                 android:textStyle="bold"
                 tools:text="12 Message reactions"
                 />
@@ -38,11 +38,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/stream_spacing_small"
+                android:layout_marginTop="@dimen/stream_ui_spacing_small"
                 android:clipToPadding="false"
                 android:overScrollMode="never"
-                android:paddingStart="@dimen/stream_spacing_small"
-                android:paddingEnd="@dimen/stream_spacing_small"
+                android:paddingStart="@dimen/stream_ui_spacing_small"
+                android:paddingEnd="@dimen/stream_ui_spacing_small"
                 android:scrollbars="none"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/stream_item_user_reaction"

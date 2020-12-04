@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:text="@string/stream_no_media_error"
         android:textColor="@color/stream_ui_black"
-        android:textSize="@dimen/stream_text_large"
+        android:textSize="@dimen/stream_ui_text_large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

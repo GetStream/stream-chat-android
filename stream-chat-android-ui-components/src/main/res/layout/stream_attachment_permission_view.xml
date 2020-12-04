@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/grantPermissionsImageView"
-        android:layout_width="@dimen/stream_attachment_dialog_permission_image_size"
-        android:layout_height="@dimen/stream_attachment_dialog_permission_image_size"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_permission_image_size"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_permission_image_size"
         android:scaleType="centerCrop"
         app:tint="@color/stream_ui_grey_light"
         tools:src="@drawable/stream_attachment_permission_camera"
@@ -30,9 +30,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
-        android:padding="@dimen/stream_spacing_medium"
+        android:padding="@dimen/stream_ui_spacing_medium"
         android:textColor="@color/stream_ui_blue"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
         tools:text="@string/stream_attachment_dialog_permission_camera"
         />

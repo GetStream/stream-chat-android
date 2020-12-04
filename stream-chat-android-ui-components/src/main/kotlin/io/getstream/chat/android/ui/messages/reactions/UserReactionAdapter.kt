@@ -67,11 +67,11 @@ internal class UserReactionAdapter(
                 if (reactionItem.isMine) {
                     reactionsView.setOrientation(ReactionsView.Orientation.LEFT)
                     params.endToEnd = ConstraintSet.PARENT_ID
-                    params.marginEnd = context.getDimension(R.dimen.stream_spacing_small)
+                    params.marginEnd = context.getDimension(R.dimen.stream_ui_spacing_small)
                 } else {
                     reactionsView.setOrientation(ReactionsView.Orientation.RIGHT)
                     params.startToStart = ConstraintSet.PARENT_ID
-                    params.marginStart = context.getDimension(R.dimen.stream_spacing_small)
+                    params.marginStart = context.getDimension(R.dimen.stream_ui_spacing_small)
                 }
 
                 reactionsView.setReaction(reactionItem.reaction, reactionItem.isMine)

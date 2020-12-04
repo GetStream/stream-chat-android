@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@color/stream_ui_white"
-    tools:layout_height="@dimen/stream_default_header_height"
+    tools:layout_height="@dimen/stream_ui_default_header_height"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
         style="@style/StreamUiUserAvatarStyle"
-        android:layout_width="@dimen/stream_avatar_size_medium"
-        android:layout_height="@dimen/stream_avatar_size_medium"
+        android:layout_width="@dimen/stream_ui_avatar_size_medium"
+        android:layout_height="@dimen/stream_ui_avatar_size_medium"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintStart_toStartOf="parent"

@@ -24,7 +24,7 @@
             android:layout_marginEnd="64dp"
             android:singleLine="true"
             android:textColor="@color/stream_ui_text_black"
-            android:textSize="@dimen/stream_text_large"
+            android:textSize="@dimen/stream_ui_text_large"
             android:textStyle="bold"
             />
 
@@ -36,7 +36,7 @@
             android:layout_marginTop="4dp"
             android:singleLine="true"
             android:textColor="@color/stream_ui_text_grey"
-            android:textSize="@dimen/stream_text_small"
+            android:textSize="@dimen/stream_ui_text_small"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/stream_spacing_medium"
+            android:layout_marginTop="@dimen/stream_ui_spacing_medium"
             android:layout_marginBottom="24dp"
             android:clipToPadding="false"
             android:orientation="horizontal"

@@ -36,7 +36,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         internal object Closed : MenuState()
     }
 
-    private val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat()
+    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
     private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
     public companion object {

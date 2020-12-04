@@ -32,7 +32,7 @@ internal class SelectedMediaAttachmentAdapter(
         }
 
         private fun bindAttachmentImage(attachment: AttachmentMetaData) {
-            val cornerRadius = context.resources.getDimensionPixelSize(R.dimen.stream_selected_attachment_corner_radius)
+            val cornerRadius = context.resources.getDimensionPixelSize(R.dimen.stream_ui_selected_attachment_corner_radius)
             binding.ivMedia.setShape(
                 context,
                 DrawableBuilder()

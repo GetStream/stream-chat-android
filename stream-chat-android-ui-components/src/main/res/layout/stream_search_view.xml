@@ -30,7 +30,7 @@
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearInputButton"
         app:layout_constraintStart_toEndOf="@+id/searchIcon"

@@ -13,7 +13,7 @@
         android:paddingStart="8dp"
         android:paddingTop="10dp"
         android:paddingEnd="8dp"
-        android:textSize="@dimen/stream_text_small"
+        android:textSize="@dimen/stream_ui_text_small"
         tools:text="5 results"
         />
 

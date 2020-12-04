@@ -4,7 +4,7 @@
     >
     <solid android:color="@android:color/white" />
     <corners
-        android:topLeftRadius="@dimen/stream_channel_actions_corners_radius"
-        android:topRightRadius="@dimen/stream_channel_actions_corners_radius"
+        android:topLeftRadius="@dimen/stream_ui_channel_actions_corners_radius"
+        android:topRightRadius="@dimen/stream_ui_channel_actions_corners_radius"
         />
 </shape>

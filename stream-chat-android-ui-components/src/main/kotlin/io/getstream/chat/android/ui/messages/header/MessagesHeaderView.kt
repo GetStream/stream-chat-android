@@ -170,7 +170,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun getSearchingForNetworkTextStyle(attrs: TypedArray): TextStyle {
         return TextStyle.Builder(attrs).size(
             R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkLabelTextSize,
-            context.getDimension(R.dimen.stream_text_small)
+            context.getDimension(R.dimen.stream_ui_text_small)
         )
             .color(
                 R.styleable.StreamMessagesHeaderView_streamMessagesHeaderSearchingForNetworkLabelColor,
@@ -205,7 +205,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun getOfflineTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
             R.styleable.StreamMessagesHeaderView_streamMessagesHeaderOfflineLabelTextSize,
-            context.getDimension(R.dimen.stream_text_small)
+            context.getDimension(R.dimen.stream_ui_text_small)
         )
             .color(
                 R.styleable.StreamMessagesHeaderView_streamMessagesHeaderOfflineLabelTextColor,
@@ -235,7 +235,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun getOnlineTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
             R.styleable.StreamMessagesHeaderView_streamMessagesHeaderDefaultLabelTextSize,
-            context.getDimension(R.dimen.stream_text_small)
+            context.getDimension(R.dimen.stream_ui_text_small)
         )
             .color(
                 R.styleable.StreamMessagesHeaderView_streamMessagesHeaderDefaultLabelTextColor,
@@ -289,7 +289,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun getTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
             R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTitleTextSize,
-            context.getDimension(R.dimen.stream_text_large)
+            context.getDimension(R.dimen.stream_ui_text_large)
         )
             .color(
                 R.styleable.StreamMessagesHeaderView_streamMessagesHeaderTitleTextColor,

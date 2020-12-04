@@ -66,7 +66,7 @@
             android:layout_marginStart="8dp"
             android:text="@string/create_group"
             android:textColor="@color/stream_ui_black"
-            android:textSize="@dimen/stream_text_medium"
+            android:textSize="@dimen/stream_ui_text_medium"
             />
     </LinearLayout>
 
@@ -78,7 +78,7 @@
         android:paddingVertical="4dp"
         android:text="@string/add_channel_user_list_title"
         android:textColor="@color/stream_ui_black_50"
-        android:textSize="@dimen/stream_text_small"
+        android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/createGroupContainer"

@@ -16,7 +16,7 @@
         android:layout_marginTop="4dp"
         android:text="@string/add_member_title"
         android:textColor="@color/stream_ui_black_50"
-        android:textSize="@dimen/stream_text_small"
+        android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -52,7 +52,7 @@
         android:singleLine="true"
         android:textColor="@color/stream_ui_black"
         android:textColorHint="@color/stream_ui_black_50"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toBottomOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addMemberTextView"

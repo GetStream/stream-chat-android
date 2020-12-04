@@ -330,7 +330,7 @@ public class MessageInputView : ConstraintLayout {
             textSize =
                 typedArray.getDimensionPixelSize(
                     R.styleable.StreamMessageInputView_streamMessageInputTextSize,
-                    context.resources.getDimensionPixelSize(R.dimen.stream_text_size_input)
+                    context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
                 ).toFloat()
 
             hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)

@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/stream_ui_black_30"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         />
 
 </FrameLayout>

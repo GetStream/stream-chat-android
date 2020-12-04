@@ -50,6 +50,6 @@
         android:gravity="center"
         android:lines="2"
         android:textColor="@color/stream_ui_black"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         />
 </LinearLayout>
