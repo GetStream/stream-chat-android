@@ -39,13 +39,12 @@ internal class RepositoryHelper(
         channelEntities: Collection<ChannelEntity>,
         channelMessagesMap: Map<String, Collection<MessageEntity>>
     ): Collection<String> {
-        return channelEntities.fold(emptySet()) { acc, channel ->
+        return channelEntities.fold(emptySet<String>()) { acc, channel ->
             acc + channel.createdByUserId.orEmpty() +
                 channel.members.keys +
                 channel.reads.keys +
-                channel.lastMessage?.let(::userIdsFor).orEmpty() +
-                channelMessagesMap[channel.cid]?.flatMap(::userIdsFor).orEmpty()
-        }
+                channel.lastMessage?.let(::userIdsFor).orEmpty()
+        } + channelMessagesMap.values.flatMap { it.flatMap(::userIdsFor) }
     }
 
     private fun userIdsFor(message: MessageEntity): List<String> =
