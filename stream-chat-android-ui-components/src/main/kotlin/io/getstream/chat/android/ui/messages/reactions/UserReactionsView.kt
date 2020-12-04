@@ -64,6 +64,7 @@ public class UserReactionsView : FrameLayout {
             .coerceAtMost(MAX_COLUMNS_COUNT)
 
         val reactionItems = message.latestReactions
+            .filter { it.user != null }
             .map { ReactionItem(it, message.ownReactions.contains(it)) }
         userReactionsAdapter.submitList(reactionItems)
     }
