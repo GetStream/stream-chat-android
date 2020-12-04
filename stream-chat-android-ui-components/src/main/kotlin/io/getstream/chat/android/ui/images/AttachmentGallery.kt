@@ -50,11 +50,11 @@ public class AttachmentGallery : ConstraintLayout {
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
-        context.obtainStyledAttributes(attributeSet, R.styleable.StreamAttachmentGalleryView).use { tArray ->
-            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s - %s"
+        context.obtainStyledAttributes(attributeSet, R.styleable.StreamUiAttachmentGalleryView).use { tArray ->
+            countText = tArray.getString(R.styleable.StreamUiAttachmentGalleryView_streamUiCountText) ?: "%s - %s"
 
             tArray.getColor(
-                R.styleable.StreamAttachmentGalleryView_streamCountTextColor,
+                R.styleable.StreamUiAttachmentGalleryView_streamUiCountTextColor,
                 ContextCompat.getColor(context, R.color.stream_ui_black)
             ).let(binding.photoCount::setTextColor)
         }

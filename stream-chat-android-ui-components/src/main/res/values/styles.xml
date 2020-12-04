@@ -2,38 +2,38 @@
 <resources>
 
     <style name="StreamUiBaseAvatarStyle">
-        <item name="streamAvatarBorderWidth">0dp</item>
-        <item name="streamAvatarBorderColor">@color/stream_ui_white</item>
-        <item name="streamAvatarTextColor">@color/stream_ui_white</item>
-        <item name="streamAvatarTextStyle">bold</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
+        <item name="streamUiAvatarBorderColor">@color/stream_ui_white</item>
+        <item name="streamUiAvatarTextColor">@color/stream_ui_white</item>
+        <item name="streamUiAvatarTextStyle">bold</item>
     </style>
 
     <style name="StreamUiMessageListAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_small</item>
-        <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_small</item>
-        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_small</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUiUserAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
-        <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
-        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUiChannelListAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
-        <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
-        <item name="streamAvatarOnlineIndicatorEnabled">true</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
     <style name="StreamUiGroupActionsAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
-        <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
-        <item name="streamAvatarOnlineIndicatorEnabled">true</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
     <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -103,6 +103,6 @@
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
         <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
-        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 </resources>

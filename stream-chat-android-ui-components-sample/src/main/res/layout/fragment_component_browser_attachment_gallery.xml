@@ -12,8 +12,8 @@
         android:id="@+id/attachmentGallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:streamCountText="%s -> %s"
-        app:streamCountTextColor="@color/black"
+        app:streamUiCountText="%s -> %s"
+        app:streamUiCountTextColor="@color/black"
         />
 
 </FrameLayout>

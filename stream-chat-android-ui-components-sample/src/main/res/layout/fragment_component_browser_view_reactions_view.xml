@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamReactionsViewOrientation="left"
+                app:streamUiReactionsViewOrientation="left"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamReactionsViewOrientation="right"
+                app:streamUiReactionsViewOrientation="right"
                 />
 
         </LinearLayout>

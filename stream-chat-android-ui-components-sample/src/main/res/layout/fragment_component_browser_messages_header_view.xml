@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
         </LinearLayout>
     </ScrollView>
