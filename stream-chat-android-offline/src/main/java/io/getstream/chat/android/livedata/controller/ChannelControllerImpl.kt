@@ -58,14 +58,16 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
@@ -85,8 +87,7 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl
-) :
-    ChannelController {
+) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
@@ -140,7 +141,10 @@ internal class ChannelControllerImpl(
             val userList = it.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
-                    (event as? TypingStartEvent)?.user ?: (event as? TypingStopEvent)?.user
+                    when (event) {
+                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.currentUser }
+                        else -> null
+                    }
                 }
 
             TypingEvent(channelId, userList)
@@ -152,17 +156,17 @@ internal class ChannelControllerImpl(
         .asLiveData()
 
     /** read status for the current user */
-    override val read: LiveData<ChannelUserRead> = _read.filterNotNull().asLiveData()
+    override val read: LiveData<ChannelUserRead?> = _read.asLiveData()
+
+    private val _unreadCount =
+        _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
+            computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
 
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
-    override val unreadCount: LiveData<Int> =
-        ChannelUnreadCountLiveData(
-            domainImpl.currentUser,
-            read,
-            messages
-        )
+    override val unreadCount: LiveData<Int?> = _unreadCount.asLiveData()
 
     /** the list of members of this channel */
     override val members: LiveData<List<Member>> = _members
@@ -1284,7 +1288,7 @@ internal class ChannelControllerImpl(
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
-        channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
+        channel.unreadCount = _unreadCount.value
         channel.lastMessageAt =
             lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value

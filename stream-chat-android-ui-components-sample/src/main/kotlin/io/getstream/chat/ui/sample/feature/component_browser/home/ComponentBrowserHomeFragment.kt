@@ -12,9 +12,9 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
 import java.util.Date
 
 class ComponentBrowserHomeFragment : Fragment() {
@@ -33,7 +33,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentComponentBrowserHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,6 +56,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupAttachmentGallery()
         setupUserReactionsView()
         setupMessageList()
+        setupTypingIndicator()
     }
 
     private fun setupMessageList() {
@@ -64,8 +65,14 @@ class ComponentBrowserHomeFragment : Fragment() {
         }
     }
 
+    private fun setupTypingIndicator() {
+        binding.typingIndicatorBrowser.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment)
+        }
+    }
+
     private fun setupAvatarView() {
-        binding.avatarView.setChannelData(randomChannel(), randomUsers(size = 1))
+        binding.avatarView.setChannelData(randomChannel(listOf(randomMember())))
         binding.avatarViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)
         }
@@ -80,7 +87,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupMessagesHeaderView() {
-        binding.messagesHeaderView.setAvatar(randomChannel(), listOf(randomUser()))
+        binding.messagesHeaderView.setAvatar(randomChannel(listOf(randomMember())))
         binding.messagesHeaderView.showBackButtonBadge("5")
         binding.messagesHeaderView.setTitle("Chat title")
         binding.messagesHeaderView.setOnlineStateSubtitle("Last active 10 min ago")

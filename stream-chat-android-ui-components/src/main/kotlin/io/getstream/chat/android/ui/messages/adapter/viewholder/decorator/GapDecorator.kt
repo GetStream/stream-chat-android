@@ -1,15 +1,25 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.messages.adapter.GapView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 
 internal class GapDecorator : BaseDecorator() {
 
-    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+    private fun setupGapView(gapView: GapView, data: MessageListItem.MessageItem) {
         if (data.positions.contains(MessageListItem.Position.TOP)) {
-            viewHolder.binding.gapView.showBigGap()
+            gapView.showBigGap()
         } else {
-            viewHolder.binding.gapView.showSmallGap()
+            gapView.showSmallGap()
         }
+    }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+        setupGapView(viewHolder.binding.gapView, data)
+    }
+
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        setupGapView(viewHolder.binding.gapView, data)
     }
 }

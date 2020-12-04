@@ -21,7 +21,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
-import io.getstream.chat.android.ui.textinput.MessageInputView.OnMessageSendButtonClickListener
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
 import java.io.File
@@ -82,9 +81,25 @@ public class MessageInputView : ConstraintLayout {
         configSendAlsoToChannelCheckbox()
     }
 
-    public var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
+    private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
+    private var typingListener: TypingListener? = null
+    private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
 
-    public var onSendButtonClickListener: OnMessageSendButtonClickListener = OnMessageSendButtonClickListener {}
+    public fun setOnSendButtonClickListener(listener: OnMessageSendButtonClickListener?) {
+        this.onSendButtonClickListener = listener
+    }
+
+    public fun setTypingListener(listener: TypingListener?) {
+        this.typingListener = listener
+    }
+
+    /**
+     * Sets up [MessageSendHandler] implementation. [MessageInputView] will delegate all the message sending operations
+     * to this object.
+     */
+    public fun setSendMessageHandler(handler: MessageSendHandler) {
+        this.sendMessageHandler = handler
+    }
 
     public fun configureMembers(members: List<Member>) {
         suggestionListController.users = members.map { it.user }
@@ -123,7 +138,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.ivSendMessageEnabled.setOnClickListener {
-            onSendButtonClickListener.onClick()
+            onSendButtonClickListener?.onClick()
 
             inputMode.let {
                 when (it) {
@@ -280,6 +295,7 @@ public class MessageInputView : ConstraintLayout {
         binding.etMessageTextInput.doAfterTextChanged {
             suggestionListController.onTextChanged(it?.toString() ?: "")
             refreshControlsState()
+            handleKeyStroke()
         }
 
         binding.etMessageTextInput.run {
@@ -304,6 +320,14 @@ public class MessageInputView : ConstraintLayout {
                 ).toFloat()
 
             hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)
+        }
+    }
+
+    private fun handleKeyStroke() {
+        if (messageText.isNotEmpty()) {
+            typingListener?.onKeystroke()
+        } else {
+            typingListener?.onStopTyping()
         }
     }
 
@@ -461,5 +485,10 @@ public class MessageInputView : ConstraintLayout {
 
     public fun interface OnMessageSendButtonClickListener {
         public fun onClick()
+    }
+
+    public interface TypingListener {
+        public fun onKeystroke()
+        public fun onStopTyping()
     }
 }

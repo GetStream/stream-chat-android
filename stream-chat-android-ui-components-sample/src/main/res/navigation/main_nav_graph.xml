@@ -216,10 +216,13 @@
             app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
         <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment"
+            app:destination="@id/componentBrowserTypingIndicatorFragment"
+            />
+        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment"
             app:destination="@id/componentBrowserUserReactionsFragment"
             />
-
     </fragment>
 
     <fragment
@@ -290,18 +293,35 @@
             app:destination="@id/componentBrowserDateDividerFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserPlainTextMessages"
+            app:destination="@id/componentBrowserPlainTextMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
         android:id="@+id/componentBrowserDeletedMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
-        android:label="ComponentBrowserDeletedMessages"
+        android:label="ComponentBrowserDeletedMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserDateDividerFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DateDividerComponentBrowserFragment"
         android:label="ComponentBrowserDateDividerFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserPlainTextMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserPlainTextMessagesFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserTypingIndicatorFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.typing.ComponentBrowserTypingIndicatorFragment"
+        android:label="ComponentBrowserTypingIndicatorFragment"
         />
 
     <fragment

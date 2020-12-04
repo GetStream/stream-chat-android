@@ -278,6 +278,18 @@
             android:text="Message list"
             />
 
+        <TextView
+            android:id="@+id/typingIndicatorBrowser"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Typing indicator"
+            />
+
         <LinearLayout
             android:id="@+id/userReactionsViewContainer"
             android:layout_width="match_parent"

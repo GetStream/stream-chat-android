@@ -7,7 +7,6 @@ public open class MessageListItemViewHolderFactory {
     public fun createViewHolder(parentView: View, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {
             MessageListItemViewType.DATE_DIVIDER -> createDateDividerViewHolder(parentView)
-            MessageListItemViewType.TYPING_INDICATOR -> createTypingIndicatorViewHolder(parentView)
             MessageListItemViewType.MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT -> createPlainTextViewHolder(parentView)
             MessageListItemViewType.REPLY_MESSAGE -> createReplyMessageViewHolder(parentView)
@@ -19,7 +18,6 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createDateDividerViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
-    public open fun createTypingIndicatorViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
     public open fun createMessageDeletedViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
     public open fun createPlainTextViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
     public open fun createReplyMessageViewHolder(parentView: View): BaseMessageItemViewHolder<*> = createBaseMessageItemViewHolder(parentView)
@@ -30,7 +28,7 @@ public open class MessageListItemViewHolderFactory {
 
     private fun createBaseMessageItemViewHolder(parentView: View): BaseMessageItemViewHolder<MessageListItem> {
         return object : BaseMessageItemViewHolder<MessageListItem>(parentView) {
-            override fun bind(data: MessageListItem) = Unit
+            override fun bindData(data: MessageListItem) = Unit
         }
     }
 }

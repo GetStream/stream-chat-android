@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
-import io.getstream.chat.android.ui.textinput.MessageInputView
 import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
@@ -28,7 +27,7 @@ class AddChannelFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,55 +66,33 @@ class AddChannelFragment : Fragment() {
 
     private fun bindAddChannelView() {
         addChannelViewModel.apply {
+            bindView(binding.addChannelView, viewLifecycleOwner)
             state.observe(viewLifecycleOwner) { state ->
+                // Handle unique states
                 when (state) {
-                    AddChannelViewModel.State.Loading -> {
-                        binding.addChannelView.showLoadingView()
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideEmptyStateView()
-                    }
-                    AddChannelViewModel.State.Empty -> {
-                        binding.addChannelView.hideUsersRecyclerView()
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.showEmptyStateView()
-                    }
-                    is AddChannelViewModel.State.Result -> {
-                        binding.addChannelView.setUsers(state.users)
-                        binding.addChannelView.hideLoadingView()
-                        binding.addChannelView.hideEmptyStateView()
-                        binding.addChannelView.showUsersRecyclerView()
-                    }
-                    is AddChannelViewModel.State.ResultMoreUsers -> {
-                        binding.addChannelView.addMoreUsers(state.users)
-                    }
                     is AddChannelViewModel.State.ShowChannel -> initializeChannel(state.cid)
                     AddChannelViewModel.State.HideChannel -> cleanChannel()
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
                         AddChannelFragmentDirections.actionOpenChat(state.cid, null)
                     )
+                    AddChannelViewModel.State.Loading,
+                    AddChannelViewModel.State.Empty,
+                    is AddChannelViewModel.State.Result,
+                    is AddChannelViewModel.State.ResultMoreUsers -> Unit
                 }
-            }
-            paginationState.observe(viewLifecycleOwner) { state ->
-                binding.addChannelView.setPaginationEnabled(!state.endReached && !state.loadingMore)
             }
         }
         binding.addChannelView.apply {
-            endReachedListener = AddChannelView.EndReachedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.ReachedEndOfList)
-            }
             setAddMemberButtonClickedListener {
                 hideMessageList()
             }
             setMembersChangedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MembersChanged(it))
             }
-            setSearchInputChangedListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.SearchInputChanged(it))
-            }
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
             }
-            messageInputView.onSendButtonClickListener = MessageInputView.OnMessageSendButtonClickListener {
+            messageInputView.setOnSendButtonClickListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }
