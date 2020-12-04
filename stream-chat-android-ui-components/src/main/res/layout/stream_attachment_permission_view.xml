@@ -34,7 +34,7 @@
         android:textColor="@color/stream_ui_blue"
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
-        tools:text="@string/stream_attachment_dialog_permission_camera"
+        tools:text="@string/stream_ui_attachment_dialog_permission_camera"
         />
 
 </LinearLayout>

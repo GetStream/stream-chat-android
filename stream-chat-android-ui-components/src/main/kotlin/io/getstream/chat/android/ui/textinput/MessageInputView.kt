@@ -183,10 +183,10 @@ public class MessageInputView : ConstraintLayout {
         if (shouldShowCheckbox) {
             val text = when (chatMode) {
                 ChatMode.GroupChat -> {
-                    context.getString(R.string.stream_send_also_to_channel)
+                    context.getString(R.string.stream_ui_send_also_to_channel)
                 }
                 ChatMode.DirectChat -> {
-                    context.getString(R.string.stream_send_also_as_direct_message)
+                    context.getString(R.string.stream_ui_send_also_as_direct_message)
                 }
             }
             binding.sendAlsoToChannel.text = text
@@ -430,7 +430,7 @@ public class MessageInputView : ConstraintLayout {
             binding.ivOpenEmojis.isVisible = false
             binding.ivOpenAttachment.isVisible = false
             binding.clearMessageInputButton.isVisible = true
-            binding.etMessageTextInput.setHint(R.string.stream_attachment_input_hint)
+            binding.etMessageTextInput.setHint(R.string.stream_ui_attachment_input_hint)
         } else {
             binding.ivOpenEmojis.isVisible = true
             binding.ivOpenAttachment.isVisible = true

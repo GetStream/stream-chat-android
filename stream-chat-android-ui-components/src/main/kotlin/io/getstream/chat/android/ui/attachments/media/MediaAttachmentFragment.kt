@@ -82,7 +82,7 @@ public class MediaAttachmentFragment : Fragment() {
         }
         binding.grantPermissionsInclude.apply {
             grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_media)
-            grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_media)
+            grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_media)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

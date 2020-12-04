@@ -40,7 +40,7 @@ internal class CommandsAdapter(
         fun bind(command: Command) {
             binding.commandNameTextView.text = command.name.capitalize()
             binding.commandQueryTextView.text = itemView.context.getString(
-                R.string.stream_command_command_template,
+                R.string.stream_ui_command_command_template,
                 command.name,
                 command.args
             )

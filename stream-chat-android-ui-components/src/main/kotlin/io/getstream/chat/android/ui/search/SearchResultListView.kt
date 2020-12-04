@@ -70,8 +70,8 @@ public class SearchResultListView : LinearLayout {
     public fun setMessages(messages: List<Message>) {
         val count = messages.count()
         binding.searchInfoBar.text = when (count) {
-            0 -> resources.getString(R.string.stream_search_result_list_result_count_empty)
-            else -> resources.getQuantityString(R.plurals.stream_search_result_list_result_count, count, count)
+            0 -> resources.getString(R.string.stream_ui_search_result_list_result_count_empty)
+            else -> resources.getQuantityString(R.plurals.stream_ui_search_result_list_result_count, count, count)
         }
         adapter.submitList(messages)
     }

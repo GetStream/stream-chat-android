@@ -13,7 +13,7 @@
         android:paddingStart="@dimen/stream_ui_spacing_medium"
         android:paddingTop="12dp"
         android:paddingBottom="8dp"
-        android:text="@string/stream_attachment_dialog_recent_files"
+        android:text="@string/stream_ui_attachment_dialog_recent_files"
         android:textColor="@color/stream_ui_text_black"
         android:textSize="@dimen/stream_ui_text_large"
         android:textStyle="bold"

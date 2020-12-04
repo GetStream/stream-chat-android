@@ -102,7 +102,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun bindMembersInfo(members: List<Member>) {
         binding.membersInfoTextView.text = if (isGroup) {
             requireContext().resources.getQuantityString(
-                R.plurals.stream_channel_actions_members_count,
+                R.plurals.stream_ui_channel_actions_members_count,
                 members.size,
                 members.size,
                 members.count { it.user.online }
@@ -114,7 +114,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 ?.lastActive
                 ?.time
                 ?.let { DateUtils.getRelativeTimeSpanString(it) }
-                ?.let { requireContext().getString(R.string.stream_channel_actions_last_seen, it) }
+                ?.let { requireContext().getString(R.string.stream_ui_channel_actions_last_seen, it) }
                 ?: ""
         }
     }

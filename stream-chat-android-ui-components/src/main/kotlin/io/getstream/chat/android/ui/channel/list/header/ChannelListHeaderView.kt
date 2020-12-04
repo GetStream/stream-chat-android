@@ -63,7 +63,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         val textStyle = getOnlineTitleTextStyle(typedArray)
         binding.onlineTextView.apply {
             text = typedArray.getString(R.styleable.StreamChannelListHeaderView_streamOnlineTitleText)
-                ?: context.getString(R.string.stream_channels_header_view_online_title)
+                ?: context.getString(R.string.stream_ui_channels_header_view_online_title)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
@@ -74,7 +74,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         val textStyle = getOfflineTitleTextStyle(typedArray)
         binding.offlineTextView.apply {
             text = typedArray.getString(R.styleable.StreamChannelListHeaderView_streamOfflineTitleText)
-                ?: context.getString(R.string.stream_channels_header_view_offline_title)
+                ?: context.getString(R.string.stream_ui_channels_header_view_offline_title)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font

@@ -93,7 +93,7 @@ public class FileAttachmentFragment : Fragment() {
     private fun setupViews() {
         binding.apply {
             grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_file)
-            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_files)
+            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_files)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

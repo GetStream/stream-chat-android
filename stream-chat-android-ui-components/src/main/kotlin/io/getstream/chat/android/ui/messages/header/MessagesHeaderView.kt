@@ -142,7 +142,7 @@ public class MessagesHeaderView : ConstraintLayout {
         val textStyle = getSearchingForNetworkTextStyle(attrs)
         binding.searchingForNetworkText.apply {
             text = attrs.getString(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderOfflineLabelText)
-                ?: context.getString(R.string.stream_message_list_header_searching_for_network)
+                ?: context.getString(R.string.stream_ui_message_list_header_searching_for_network)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
@@ -191,7 +191,7 @@ public class MessagesHeaderView : ConstraintLayout {
         val textStyle = getOfflineTextStyle(attrs)
         binding.offlineText.apply {
             text = attrs.getString(R.styleable.StreamMessagesHeaderView_streamMessagesHeaderOfflineLabelText)
-                ?: context.getString(R.string.stream_message_list_header_offline)
+                ?: context.getString(R.string.stream_ui_message_list_header_offline)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font

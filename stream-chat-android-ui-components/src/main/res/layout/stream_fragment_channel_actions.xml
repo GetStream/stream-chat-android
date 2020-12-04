@@ -61,7 +61,7 @@
         android:id="@+id/leaveGroupButton"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_leave_group"
-        android:text="@string/stream_channel_actions_leave_group"
+        android:text="@string/stream_ui_channel_actions_leave_group"
         android:textColor="@color/stream_ui_black"
         />
 
@@ -69,7 +69,7 @@
         android:id="@+id/deleteChannelButton"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_delete"
-        android:text="@string/stream_channel_actions_leave_group"
+        android:text="@string/stream_ui_channel_actions_leave_group"
         android:textColor="@color/stream_ui_text_red"
         />
 
@@ -77,7 +77,7 @@
         android:id="@+id/deleteContactButton"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:drawableStart="@drawable/stream_ic_delete"
-        android:text="@string/stream_channel_actions_delete_contact"
+        android:text="@string/stream_ui_channel_actions_delete_contact"
         android:textColor="@color/stream_ui_text_red"
         />
 

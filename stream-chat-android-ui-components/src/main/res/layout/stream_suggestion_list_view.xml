@@ -32,7 +32,7 @@
                 android:paddingStart="12dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="4dp"
-                android:text="@string/stream_commands_instant_commands"
+                android:text="@string/stream_ui_commands_instant_commands"
                 android:textColor="@color/stream_ui_text_grey"
                 android:textSize="@dimen/stream_ui_text_medium"
                 app:drawableStartCompat="@drawable/stream_ic_command"

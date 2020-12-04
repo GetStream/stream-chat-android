@@ -42,7 +42,7 @@ internal class MentionsAdapter(
             binding.avatarView.setUserData(user)
             binding.usernameTextView.text = user.name
             binding.mentionNameTextView.text = itemView.context.getString(
-                R.string.stream_mention_user_name_template,
+                R.string.stream_ui_mention_user_name_template,
                 user.name.toLowerCase()
             )
             binding.root.setOnClickListener { onUserClicked(user) }

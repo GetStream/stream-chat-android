@@ -40,7 +40,7 @@ public class TypingIndicator : FrameLayout {
             false
         } else {
             binding.tvUserTyping.text = resources.getQuantityString(
-                R.plurals.stream_typing_text,
+                R.plurals.stream_ui_typing_text,
                 users.size,
                 users.first().name,
                 users.size - 1
