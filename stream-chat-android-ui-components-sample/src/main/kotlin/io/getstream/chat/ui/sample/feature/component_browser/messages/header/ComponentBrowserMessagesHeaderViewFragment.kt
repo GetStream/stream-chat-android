@@ -9,6 +9,7 @@ import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessagesH
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
 
 class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
     private var _binding: FragmentComponentBrowserMessagesHeaderViewBinding? = null
