@@ -82,14 +82,14 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
     }
 }
 
-internal fun Channel.isMessageRead(message: Message): Boolean =
-    read
-        .filter { it.user.id != message.user.id }
+internal fun Channel.isMessageRead(message: Message): Boolean {
+    val currentUser = ChatDomain.instance().currentUser
+    return read.filterNot { it.user.id == currentUser.id }
         .mapNotNull { it.lastRead }
         .any { it.time >= message.getCreatedAtOrThrow().time }
+}
 
 internal fun Channel.isDirectMessaging(): Boolean = getUsers().size == 1
-
 
 // None of the strings used to assemble the preview message are translatable - concatenation here should be fine
 internal fun Channel.getLastMessagePreviewText(
