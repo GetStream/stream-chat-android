@@ -14,10 +14,10 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
         viewHolder.binding.deleteLabel.background = BackgroundDrawable(
             color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_DELETED_BACKGROUND),
-            topLeftCornerPx = DEFAULT_STROKE_WIDTH_DP,
-            topRightCornerPx = DEFAULT_STROKE_WIDTH_DP,
-            bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_STROKE_WIDTH_DP,
-            bottomLeftCornerPx = DEFAULT_STROKE_WIDTH_DP
+            topLeftCornerPx = DEFAULT_CORNER_RADIUS_DP,
+            topRightCornerPx = DEFAULT_CORNER_RADIUS_DP,
+            bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_CORNER_RADIUS_DP,
+            bottomLeftCornerPx = DEFAULT_CORNER_RADIUS_DP
         )
     }
 
@@ -32,10 +32,10 @@ internal class BackgroundDecorator : BaseDecorator() {
         view.background = if (data.isMine) {
             BackgroundDrawable(
                 color = ContextCompat.getColor(view.context, MESSAGE_CURRENT_USER_BACKGROUND),
-                topLeftCornerPx = DEFAULT_STROKE_WIDTH_DP,
-                topRightCornerPx = DEFAULT_STROKE_WIDTH_DP,
-                bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_STROKE_WIDTH_DP,
-                bottomLeftCornerPx = DEFAULT_STROKE_WIDTH_DP
+                topLeftCornerPx = DEFAULT_CORNER_RADIUS_DP,
+                topRightCornerPx = DEFAULT_CORNER_RADIUS_DP,
+                bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_CORNER_RADIUS_DP,
+                bottomLeftCornerPx = DEFAULT_CORNER_RADIUS_DP
             )
         } else {
             BackgroundStrokeDrawable(
@@ -45,7 +45,7 @@ internal class BackgroundDecorator : BaseDecorator() {
                 topLeftCornerPx = DEFAULT_CORNER_RADIUS_DP,
                 topRightCornerPx = DEFAULT_CORNER_RADIUS_DP,
                 bottomRightCornerPx = DEFAULT_CORNER_RADIUS_DP,
-                bottomLeftCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_STROKE_WIDTH_DP
+                bottomLeftCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_CORNER_RADIUS_DP
             )
         }
     }

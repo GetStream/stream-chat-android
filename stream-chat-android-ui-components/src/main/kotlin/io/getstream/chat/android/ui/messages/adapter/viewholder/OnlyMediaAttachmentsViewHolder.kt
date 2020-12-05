@@ -21,11 +21,13 @@ public class OnlyMediaAttachmentsViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem) {
         if (data.message.attachments.firstOrNull()?.type == "image") {
-            showImage(data.message.attachments.first())
+            showImage(data.message.attachments.first(), data.isMine)
         }
     }
 
-    private fun showImage(imageAttachment: Attachment) {
+    private fun showImage(imageAttachment: Attachment, isMine: Boolean) {
+        binding.imageView.clipToOutline = true
         imageAttachment.imageUrl?.let { binding.imageView.load(it) }
+        constraintView(isMine, binding.backgroundView, binding.root)
     }
 }
