@@ -100,13 +100,12 @@
             />
     </FrameLayout>
 
-    <com.github.mmin18.widget.RealtimeBlurView
+    <FrameLayout
         android:id="@+id/blurLayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:realtimeBlurRadius="20dp"
-        app:realtimeOverlayColor="#8000"
+        android:background="#C000"
         />
 
     <ScrollView
