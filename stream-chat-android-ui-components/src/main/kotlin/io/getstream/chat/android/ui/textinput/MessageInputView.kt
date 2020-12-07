@@ -142,19 +142,33 @@ public class MessageInputView : ConstraintLayout {
 
             inputMode.let {
                 when (it) {
-                    is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
+                    is InputMode.Normal -> {
+                        if (attachmentController.selectedAttachments.isEmpty()) {
+                            sendMessageHandler.sendMessage(messageText)
+                        } else {
+                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
+                            sendMessageHandler.sendMessageWithAttachments(messageText, attachedFiles)
+                        }
+                    }
                     is InputMode.Thread -> {
-                        sendMessageHandler.sendToThread(
-                            it.parentMessage,
-                            messageText,
-                            binding.sendAlsoToChannel.isChecked
-                        )
+                        val parentMessage = it.parentMessage
+                        val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
+                        if (attachmentController.selectedAttachments.isEmpty()) {
+                            sendMessageHandler.sendToThread(
+                                parentMessage,
+                                messageText,
+                                binding.sendAlsoToChannel.isChecked
+                            )
+                        } else {
+                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
+                            sendMessageHandler.sendToThreadWithAttachments(parentMessage, messageText, sendAlsoToChannel, attachedFiles)
+                        }
                     }
                     is InputMode.Edit -> sendMessageHandler.editMessage(it.oldMessage, messageText)
                 }
             }
-
             messageText = ""
+            attachmentController.clearSelectedAttachments()
         }
     }
 

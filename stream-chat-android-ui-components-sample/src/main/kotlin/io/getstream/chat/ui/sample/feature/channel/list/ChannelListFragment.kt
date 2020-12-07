@@ -92,6 +92,10 @@ class ChannelListFragment : Fragment() {
     private fun setupOnClickListeners() {
         activity?.apply {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                if (binding.searchInputView.clear()) {
+                    return@addCallback
+                }
+
                 finish()
             }
         }

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
@@ -28,6 +29,8 @@ public class SearchInputView : FrameLayout {
     private val query: String
         get() = binding.inputField.text.trim().toString()
 
+    private var disableListeners = false
+
     public constructor(context: Context) : super(context) {
         init(null)
     }
@@ -48,6 +51,8 @@ public class SearchInputView : FrameLayout {
         parseAttrs(attrs)
 
         binding.inputField.doAfterTextChanged { newText ->
+            if (disableListeners) return@doAfterTextChanged
+
             updateClearButtonVisibility(newText)
             val newQuery = query
             continuousInputChangedListener?.onInputChanged(newQuery)
@@ -66,7 +71,7 @@ public class SearchInputView : FrameLayout {
         }
 
         binding.clearInputButton.setOnClickListener {
-            binding.inputField.setText("")
+            clear()
         }
 
         updateClearButtonVisibility(query)
@@ -92,6 +97,37 @@ public class SearchInputView : FrameLayout {
      */
     public fun setQuery(query: String) {
         binding.inputField.setText(query.trim())
+    }
+
+    /**
+     * Clears the current input.
+     *
+     * @return If there was an existing input that was cleared, false if it was already empty.
+     */
+    public fun clear(): Boolean {
+        if (query.isEmpty()) {
+            return false
+        }
+
+        withoutListenerNotifications {
+            binding.inputField.setText("")
+
+            // Notify both listeners instantly, manually
+            continuousInputChangedListener?.onInputChanged("")
+            debouncedInputChangedListener?.onInputChanged("")
+        }
+
+        return true
+    }
+
+    /**
+     * Performs the given [actions] without notifying listeners about the changes
+     * via the [TextWatcher] on the input field.
+     */
+    private inline fun withoutListenerNotifications(actions: () -> Unit) {
+        disableListeners = true
+        actions()
+        disableListeners = false
     }
 
     /**

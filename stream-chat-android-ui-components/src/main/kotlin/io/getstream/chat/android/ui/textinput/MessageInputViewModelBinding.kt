@@ -23,7 +23,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
 
         override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles)
         }
 
         override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
@@ -39,7 +39,10 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             alsoSendToChannel: Boolean,
             attachmentsFiles: List<File>
         ) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
+                this.parentId = parentMessage.id
+                this.showInChannel = alsoSendToChannel
+            }
         }
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
