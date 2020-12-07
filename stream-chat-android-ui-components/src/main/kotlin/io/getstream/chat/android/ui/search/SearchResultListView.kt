@@ -6,11 +6,16 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamSearchResultListViewBinding
 
 public class SearchResultListView : LinearLayout {
+
+    private companion object {
+        const val LOAD_MORE_THRESHOLD = 10
+    }
 
     private val binding = StreamSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
 
@@ -30,7 +35,15 @@ public class SearchResultListView : LinearLayout {
         init(attrs)
     }
 
+    private var loadMoreListener: LoadMoreListener? = null
+
     private val adapter = SearchResultListAdapter()
+
+    private val scrollListener = EndlessScrollListener {
+        loadMoreListener?.onLoadMoreRequested()
+    }.apply {
+        loadMoreThreshold = LOAD_MORE_THRESHOLD
+    }
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
@@ -46,6 +59,7 @@ public class SearchResultListView : LinearLayout {
                     LinearLayoutManager.VERTICAL
                 )
             )
+            addOnScrollListener(scrollListener)
         }
     }
 
@@ -62,11 +76,28 @@ public class SearchResultListView : LinearLayout {
         adapter.submitList(messages)
     }
 
+    public fun showLoading(isLoading: Boolean) {
+        // TODO display loading
+        scrollListener.paginationEnabled = !isLoading
+    }
+
+    public fun showError(isError: Boolean) {
+        // TODO display errors
+    }
+
     public fun setSearchResultSelectedListener(searchResultSelectedListener: SearchResultSelectedListener?) {
         adapter.setSearchResultSelectedListener(searchResultSelectedListener)
     }
 
+    public fun setLoadMoreListener(loadMoreListener: LoadMoreListener?) {
+        this.loadMoreListener = loadMoreListener
+    }
+
     public fun interface SearchResultSelectedListener {
         public fun onSearchResultSelected(message: Message)
+    }
+
+    public fun interface LoadMoreListener {
+        public fun onLoadMoreRequested()
     }
 }

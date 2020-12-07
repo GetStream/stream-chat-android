@@ -28,11 +28,10 @@ public open class MessageViewHolderFactory {
     }
 
     public lateinit var listenerContainer: ListenerContainer
-        internal set
+
     public lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
-        internal set
+
     public lateinit var bubbleHelper: MessageListView.BubbleHelper
-        internal set
 
     public open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
@@ -66,6 +65,7 @@ public open class MessageViewHolderFactory {
                     bubbleHelper,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
+                    listenerContainer.messageLongClickListenerView,
                     listenerContainer.messageRetryListener,
                     listenerContainer.reactionViewClickListener,
                     listenerContainer.userClickListener,

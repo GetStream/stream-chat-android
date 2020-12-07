@@ -2,13 +2,15 @@ package com.getstream.sdk.chat.view
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal class EndlessScrollListener(
+@InternalStreamChatApi
+public class EndlessScrollListener(
     private val loadMoreListener: () -> Unit
 ) : RecyclerView.OnScrollListener() {
 
-    var paginationEnabled: Boolean = false
-    var loadMoreThreshold: Int = 0
+    public var paginationEnabled: Boolean = false
+    public var loadMoreThreshold: Int = 0
         set(value) {
             require(value >= 0) { "Load more threshold must not be negative" }
             field = value
@@ -17,7 +19,7 @@ internal class EndlessScrollListener(
     private var scrollStateReset = true
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-        if (dy >= 0 || !paginationEnabled) {
+        if (!paginationEnabled) {
             return
         }
 
@@ -25,8 +27,38 @@ internal class EndlessScrollListener(
         if (layoutManager !is LinearLayoutManager) {
             throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
         }
+
+        if (layoutManager.stackFromEnd) {
+            checkScrollUp(dy, layoutManager, recyclerView)
+        } else {
+            checkScrollDown(dy, layoutManager, recyclerView)
+        }
+    }
+
+    private fun checkScrollUp(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        if (dy >= 0) {
+            // Scrolling downwards
+            return
+        }
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
         if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
+            scrollStateReset = false
+            recyclerView.post {
+                if (paginationEnabled) {
+                    loadMoreListener()
+                }
+            }
+        }
+    }
+
+    private fun checkScrollDown(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        if (dy <= 0) {
+            // Scrolling upwards
+            return
+        }
+        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+        val remainingItems = layoutManager.itemCount - lastVisiblePosition
+        if (scrollStateReset && remainingItems <= loadMoreThreshold) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {
