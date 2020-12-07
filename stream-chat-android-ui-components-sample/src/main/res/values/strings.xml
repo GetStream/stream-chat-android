@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Stream Chat Sample</string>
+    <string name="app_name">ChatSample</string>
     <string name="backend_error_info">Ups, something went wrong</string>
     <string name="sdk_version_template">Stream SDK v %s</string>
 
