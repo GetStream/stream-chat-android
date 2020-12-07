@@ -8,7 +8,7 @@ public data class ChannelItemPayloadDiff(
     val readState: Boolean,
 ) {
     public operator fun plus(other: ChannelItemPayloadDiff): ChannelItemPayloadDiff =
-        copy(
+        ChannelItemPayloadDiff(
             name = name || other.name,
             avatarView = avatarView || other.avatarView,
             lastMessage = lastMessage || other.lastMessage,
