@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,6 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             new ChannelItemPayloadDiff(true, true, true, true, true);
     private static final ChannelItemPayloadDiff EMPTY_CHANNEL_ITEM_PAYLOAD_DIFF =
             new ChannelItemPayloadDiff(false, false, false, false, false);
-    private Context context;
     private List<Channel> channels; // cached list of channels
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
@@ -28,14 +26,13 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ChannelListViewStyle style;
     private ChannelViewHolderFactory viewHolderFactory;
 
-    public ChannelListItemAdapter(Context context, List<Channel> channels) {
-        this.context = context;
+    public ChannelListItemAdapter(List<Channel> channels) {
         this.channels = channels;
         this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
-    public ChannelListItemAdapter(Context context) {
-        this(context, new ArrayList<>());
+    public ChannelListItemAdapter() {
+        this(new ArrayList<>());
         this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
@@ -96,7 +93,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Channel channelState = channels.get(position);
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, FULL_CHANNEL_ITEM_PAYLOAD_DIFF);
+        ((BaseChannelListItemViewHolder) holder).bind(channelState, position, FULL_CHANNEL_ITEM_PAYLOAD_DIFF);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 diff = diff.plus((ChannelItemPayloadDiff) payloads.get(i));
             }
         }
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, diff);
+        ((BaseChannelListItemViewHolder) holder).bind(channelState, position, diff);
     }
 
     @Override
