@@ -21,13 +21,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         app:layout_constraintWidth_percent="0.5"
+        android:background="@color/stream_white"
         android:padding="2dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             tools:src="@drawable/stream_placeholder"
             />
