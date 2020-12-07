@@ -82,7 +82,7 @@ class AddChannelViewController(
 
     private fun showSectionedUsers(userInfoList: List<UserInfo>, usersSubmittedCallback: () -> Unit) {
         val sectionedUsers = userInfoList
-            .groupBy { it.user.name.first().toUpperCase() }
+            .groupBy { (it.user.name.firstOrNull() ?: Char.MIN_VALUE).toUpperCase() }
             .toSortedMap()
             .flatMap { (letter, users) ->
                 mutableListOf(UserListItem.Separator(letter)) + users.map { UserListItem.UserItem(it) }
