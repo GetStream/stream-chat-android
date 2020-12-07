@@ -19,7 +19,7 @@ internal fun Message.getSenderDisplayName(context: Context): String =
 internal fun Message.getPreviewText(context: Context): Spanned =
     context
         .getString(
-            R.string.stream_channel_item_last_message_template,
+            R.string.stream_ui_channel_item_last_message_template,
             getSenderDisplayName(context),
             text
         )
@@ -34,10 +34,10 @@ private fun Message.getPreviewTextMentions(context: Context): List<String> =
 private fun getUserAsMention(
     context: Context,
     it: User
-) = context.getString(R.string.stream_mention_user_name_template, it.name)
+) = context.getString(R.string.stream_ui_mention_user_name_template, it.name)
 
 private fun getSelfDisplayName(context: Context) =
-    context.getString(R.string.stream_channel_display_name_self)
+    context.getString(R.string.stream_ui_channel_display_name_self)
 
 internal fun Message.isDeleted(): Boolean = deletedAt != null
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stream_alabaster"
+    android:background="@color/stream_ui_alabaster"
     >
 
     <TextView
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamReactionsViewOrientation="left"
+                app:streamUiReactionsViewOrientation="left"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamReactionsViewOrientation="right"
+                app:streamUiReactionsViewOrientation="right"
                 />
 
         </LinearLayout>

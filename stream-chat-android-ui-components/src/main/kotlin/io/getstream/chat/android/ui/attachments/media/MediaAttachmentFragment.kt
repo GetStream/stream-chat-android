@@ -18,13 +18,13 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.attachments.AttachmentSource
-import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentMediaBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 public class MediaAttachmentFragment : Fragment() {
 
-    private var _binding: StreamFragmentAttachmentMediaBinding? = null
+    private var _binding: StreamUiFragmentAttachmentMediaBinding? = null
     private val binding get() = _binding!!
 
     private val storageHelper: StorageHelper = StorageHelper()
@@ -49,7 +49,7 @@ public class MediaAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamFragmentAttachmentMediaBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentAttachmentMediaBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -81,8 +81,8 @@ public class MediaAttachmentFragment : Fragment() {
             adapter = mediaAttachmentsAdapter
         }
         binding.grantPermissionsInclude.apply {
-            grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_media)
-            grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_media)
+            grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_media)
+            grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_media)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

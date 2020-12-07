@@ -8,7 +8,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import io.getstream.chat.android.ui.databinding.StreamSearchViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.Debouncer
 
 public class SearchInputView : FrameLayout {
@@ -17,8 +17,8 @@ public class SearchInputView : FrameLayout {
         const val TYPING_DEBOUNCE_MS = 300L
     }
 
-    private val binding: StreamSearchViewBinding =
-        StreamSearchViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: StreamUiSearchViewBinding =
+        StreamUiSearchViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var debouncedInputChangedListener: InputChangedListener? = null
     private var continuousInputChangedListener: InputChangedListener? = null
