@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.exhaustive
@@ -14,6 +13,7 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
 
 /**
  * ViewModel class for [com.getstream.sdk.chat.view.channels.ChannelsView].
@@ -34,7 +34,6 @@ public class ChannelsViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModel() {
-    private val loadingData = MutableLiveData<State.Loading>()
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
     public val typingEvents: LiveData<TypingEvent>
@@ -44,17 +43,19 @@ public class ChannelsViewModel(
     public val paginationState: LiveData<PaginationState> = paginationStateMerger
 
     init {
-        stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
-        loadingData.postValue(State.Loading)
+        stateMerger.value = State.Loading
         chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
                 stateMerger.addSource(
-                    map(queryChannelsController.channels) { channelList ->
-                        if (channelList.isEmpty()) {
-                            State.NoChannelsAvailable
-                        } else {
-                            State.Result(channelList.filter { it.hidden == false })
+                    map(queryChannelsController.channelsState) { channelState ->
+                        when (channelState) {
+                            is QueryChannelsController.ChannelsState.NoQueryActive,
+                            is QueryChannelsController.ChannelsState.Loading -> State.Loading
+                            is QueryChannelsController.ChannelsState.OfflineNoResults,
+                            is QueryChannelsController.ChannelsState.Failed -> State.NoChannelsAvailable
+                            is QueryChannelsController.ChannelsState.Result ->
+                                State.Result(channelState.channels.filterNot { it.hidden == true })
                         }
                     }
                 ) { state -> stateMerger.value = state }
@@ -64,6 +65,8 @@ public class ChannelsViewModel(
                 paginationStateMerger.addSource(queryChannelsController.endOfChannels) { endOfChannels ->
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
+            } else {
+                stateMerger.postValue(State.NoChannelsAvailable)
             }
         }
     }
@@ -80,7 +83,6 @@ public class ChannelsViewModel(
     }
 
     public fun hideChannel(channel: Channel) {
-        loadingData.postValue(State.Loading)
         chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
     }
 
