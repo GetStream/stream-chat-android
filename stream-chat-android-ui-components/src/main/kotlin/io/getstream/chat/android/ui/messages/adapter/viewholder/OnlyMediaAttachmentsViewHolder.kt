@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -10,7 +9,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemMessageAttachmentsOnlyBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 
 public class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
@@ -34,16 +32,9 @@ public class OnlyMediaAttachmentsViewHolder(
         imageAttachment.imageUrl?.let { url ->
             binding.imageView.load(
                 uri = url,
-                placeholderResId = R.drawable.stream_placeholder,
+                placeholderResId = R.drawable.stream_ui_picture_placeholder,
                 onStart = { binding.loadImage.isVisible = true },
-                onComplete = {
-                    binding.loadImage.isVisible = false
-                    // Need to update layout params to get resized. Without, it doesn't work properly
-                    binding.backgroundView.layoutParams =
-                        (binding.backgroundView.layoutParams as ConstraintLayout.LayoutParams).apply {
-                            matchConstraintPercentWidth = MaxPossibleWidthDecorator.MAX_POSSIBLE_WIDTH_FACTOR
-                        }
-                }
+                onComplete = { binding.loadImage.isVisible = false }
             )
         }
     }
