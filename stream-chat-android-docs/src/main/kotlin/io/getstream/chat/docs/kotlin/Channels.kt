@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.ChannelsMuteEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -458,6 +459,99 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             channelController.unmute().enqueue {
                 if (it.isSuccess) {
                     // Channel is unmuted
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/query_members/?language=kotlin">Query Members</a>
+     */
+    inner class QueryMembers {
+        fun queryingMembers() {
+            val offset = 0
+            val limit = 10
+            val sort = QuerySort<Member>()
+
+            // Query members by user.name
+            channelController.queryMembers(offset, limit, Filters.eq("name", "tommaso"), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Autocomplete members by user name
+            channelController.queryMembers(offset, limit, Filters.autocomplete("name", "tommaso"), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query member by id
+            channelController.queryMembers(offset, limit, Filters.eq("id", "tommaso"), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query multiple members by id
+            channelController.queryMembers(offset, limit, Filters.`in`("id", "tommaso", "thierry"), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query channel moderators
+            channelController.queryMembers(offset, limit, Filters.eq("is_moderator", true), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query for banned members in channel
+            channelController.queryMembers(offset, limit, Filters.eq("banned", true), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query members with pending invites
+            channelController.queryMembers(offset, limit, Filters.eq("invite", "pending"), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Query all the members
+            channelController.queryMembers(offset, limit, FilterObject(), sort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+
+            // Order results by member created at descending
+            val createdAtDescendingSort = QuerySort.desc<Member>("created_at")
+            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort, emptyList()).enqueue {
+                if (it.isSuccess) {
+                    val members = it.data()
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
                 }
