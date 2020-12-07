@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.UiUtils
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 
@@ -18,7 +19,8 @@ internal class AttachmentViewHolderFile(
     private val bubbleHelper: BubbleHelper,
     private val messageItem: MessageItem,
     private val clickListener: AttachmentClickListener,
-    private val longClickListener: MessageLongClickListener,
+    private val longClickListener: MessageLongClickListener?,
+    private val longClickListenerView: MessageLongClickListenerView? = null,
     private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -65,7 +67,12 @@ internal class AttachmentViewHolderFile(
             )
         }
         binding.attachmentview.setOnLongClickListener {
-            longClickListener.onMessageLongClick(messageItem.message)
+            if (longClickListenerView != null) {
+                longClickListenerView.onMessageLongClick2(messageItem.message, itemView)
+            } else {
+                longClickListener?.onMessageLongClick(messageItem.message)
+            }
+
             true
         }
     }
