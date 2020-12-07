@@ -152,14 +152,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         MessageLongClickListenerView { _, view ->
             optionsView = view
 
-            binding.blurLayer.isVisible = true
+            binding.shadowLayer.isVisible = true
 
             if (view.parent != null && view.parent is ViewGroup) {
                 (view.parent as ViewGroup).removeView(view)
             }
 
-            binding.messageOptionsContainer.addView(optionsView)
-            binding.messageOptionsScroll.isVisible = true
+            binding.optionsMessageContainer.addView(optionsView)
+            binding.optionRootContainer.isVisible = true
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -265,15 +265,15 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun initBlurLayer() {
-        binding.blurLayer.setOnClickListener { hideBlurLayer() }
-        binding.messageOptionsContainer.setOnClickListener { hideBlurLayer() }
+        binding.shadowLayer.setOnClickListener { hideBlurLayer() }
+        binding.optionsMessageContainer.setOnClickListener { hideBlurLayer() }
     }
 
     private fun hideBlurLayer() {
-        binding.messageOptionsContainer.removeView(optionsView)
-        binding.messageOptionsScroll.isVisible = false
+        binding.optionsMessageContainer.removeView(optionsView)
+        binding.optionRootContainer.isVisible = false
 
-        binding.blurLayer.isVisible = false
+        binding.shadowLayer.isVisible = false
     }
 
     private fun initScrollButtonBehaviour() {
