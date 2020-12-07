@@ -100,7 +100,12 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
 internal fun Channel.lastMessageByCurrentUserWasRead(): Boolean {
     return getCurrentUserLastMessage()?.let { currentUserLastMessage ->
         read.any { channelRead ->
-            channelRead.lastRead?.before(currentUserLastMessage.createdAt)?.not() ?: false
+            val lastMessageCreatedAt = currentUserLastMessage.createdAt
+            if (lastMessageCreatedAt != null) {
+                channelRead.lastRead?.before(lastMessageCreatedAt)?.not() ?: false
+            } else {
+                false
+            }
         }
     } ?: false
 }

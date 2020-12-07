@@ -1,4 +1,3 @@
-
 # Stream Chat Client
 
 `Stream Chat Client` is the official low-level Android SDK for [Stream Chat](https://github.com/GetStream/stream-chat-android), a service for building chat and messaging applications. This library supports both Kotlin and Java usage, but we strongly recommend using Kotlin.
@@ -12,19 +11,22 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 * [Github repo for UX/Views and Sample app](https://github.com/GetStream/stream-chat-android)
 
 ## Setup
+
 ```groovy
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 ```
+
 ```groovy
 dependencies {
-    implementation 'com.github.GetStream:stream-chat-android-client:latest-version'
+    implementation "io.getstream:stream-chat-android-client:$stream_version"
 }
 ```
+
 ```groovy
 android {
   compileOptions {
@@ -192,11 +194,11 @@ client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
 ### Naming
 
 - Prefix `Chat` for public classes to avoid spoiling public class name space (generic util classes like `Result` or `Call` are exceptions)
-- Postix `Impl` for interface implementations
+- Postfix `Impl` for interface implementations
 - No `m` field name prefix
 - `id`, not `ID`
 - `t` for `Throwable`
-- `interface RetrfitCdnApi`, not `interface RetrofitCDNAPI`
+- `interface RetrofitCdnApi`, not `interface RetrofitCDNAPI`
 - not `setName`, but `name` with `Builder` classes 
 
 ```kotlin

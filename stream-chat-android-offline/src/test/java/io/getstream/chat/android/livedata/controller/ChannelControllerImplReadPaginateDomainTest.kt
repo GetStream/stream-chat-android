@@ -21,7 +21,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
         chatDomainImpl.setOffline()
         // add a message to local storage
         chatDomainImpl.repos.users.insertUser(data.user1)
-        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.insertChannel(data.channel1)
         val message1 = data.createMessage()
         channelControllerImpl.sendMessage(message1)
         // remove the livedata

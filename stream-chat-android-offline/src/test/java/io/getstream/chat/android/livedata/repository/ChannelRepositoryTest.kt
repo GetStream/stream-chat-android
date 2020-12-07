@@ -20,7 +20,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `inserting a channel and reading it should be equal`() = runBlocking {
-        repo.insertChannel(data.channel1)
+        repo.insertChannels(listOf(data.channel1))
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
         channel.config = data.channel1.config
@@ -32,7 +32,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `deleting a channel should work`() = runBlocking {
-        repo.insertChannel(data.channel1)
+        repo.insertChannels(listOf(data.channel1))
         repo.delete(data.channel1.cid)
         val entity = repo.select(data.channel1.cid)
 
@@ -41,8 +41,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `updating a channel should work as intended`() = runBlocking {
-        repo.insertChannel(data.channel1)
-        repo.insertChannel(data.channel1Updated)
+        repo.insertChannels(listOf(data.channel1, data.channel1Updated))
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
 
@@ -59,7 +58,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
         data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
         data.channel2.syncStatus = SyncStatus.COMPLETED
 
-        repo.insertChannel(listOf(data.channel1, data.channel2))
+        repo.insertChannels(listOf(data.channel1, data.channel2))
 
         var channels = repo.selectSyncNeeded()
         Truth.assertThat(channels.size).isEqualTo(1)
