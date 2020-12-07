@@ -78,13 +78,29 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
         this.selectedAttachments = attachments
         this.attachmentSource = attachmentSource
-        binding.attachButton.isEnabled = selectedAttachments.isNotEmpty()
+        selectedAttachments.isNotEmpty().let {
+            setAttachButtonEnabled(it)
+            setUnselectedButtonsEnabled(!it)
+        }
     }
 
     private fun setSelectedButton(selectedButton: ToggleButton, pagePosition: Int) {
         binding.attachmentPager.setCurrentItem(pagePosition, false)
         binding.attachmentButtonsContainer.forEach {
             (it as ToggleButton).isChecked = it == selectedButton
+        }
+    }
+
+    private fun setAttachButtonEnabled(isEnabled: Boolean) {
+        binding.attachButton.isEnabled = isEnabled
+    }
+
+    private fun setUnselectedButtonsEnabled(isEnabled: Boolean) {
+        binding.attachmentButtonsContainer.forEach {
+            it as ToggleButton
+            if (!it.isChecked) {
+                it.isEnabled = isEnabled
+            }
         }
     }
 

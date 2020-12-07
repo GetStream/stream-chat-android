@@ -46,4 +46,9 @@
     <color name="stream_gap_message">#673AB7</color>
     <color name="stream_gap_media_file">#00FF00</color>
     <color name="stream_gap_attach">#FFEB3B</color>
+
+    <!--Attachment Dialog-->
+    <color name="stream_attachment_dialog_header_color">#F5F5F5</color>
+    <color name="stream_attachment_dialog_button_enabled">#7A7A7A</color>
+    <color name="stream_attachment_dialog_button_disabled">#E6E6E6</color>
 </resources>

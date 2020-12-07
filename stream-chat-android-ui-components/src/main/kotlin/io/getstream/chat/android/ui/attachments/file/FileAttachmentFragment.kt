@@ -61,11 +61,6 @@ public class FileAttachmentFragment : Fragment() {
         checkPermissions()
     }
 
-    override fun onResume() {
-        super.onResume()
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.FILE)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         activityResultLauncher?.unregister()
