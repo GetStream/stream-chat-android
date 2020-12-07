@@ -410,13 +410,17 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Get list of muted channels when user is connected
-            client.setUser(User("user-id"), "token", object : InitConnectionListener() {
-                override fun onSuccess(data: ConnectionData) {
-                    val user = data.user
-                    // Mutes contains the list of channel mutes
-                    val mutes: List<ChannelMute> = user.channelMutes
+            client.setUser(
+                User("user-id"),
+                "token",
+                object : InitConnectionListener() {
+                    override fun onSuccess(data: ConnectionData) {
+                        val user = data.user
+                        // Mutes contains the list of channel mutes
+                        val mutes: List<ChannelMute> = user.channelMutes
+                    }
                 }
-            })
+            )
 
             // Get updates about muted channels
             client.subscribeFor<ChannelsMuteEvent> {
@@ -485,13 +489,14 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Autocomplete members by user name
-            channelController.queryMembers(offset, limit, Filters.autocomplete("name", "tommaso"), sort, emptyList()).enqueue {
-                if (it.isSuccess) {
-                    val members = it.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            channelController.queryMembers(offset, limit, Filters.autocomplete("name", "tommaso"), sort, emptyList())
+                .enqueue {
+                    if (it.isSuccess) {
+                        val members = it.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    }
                 }
-            }
 
             // Query member by id
             channelController.queryMembers(offset, limit, Filters.eq("id", "tommaso"), sort, emptyList()).enqueue {
@@ -503,13 +508,14 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Query multiple members by id
-            channelController.queryMembers(offset, limit, Filters.`in`("id", "tommaso", "thierry"), sort, emptyList()).enqueue {
-                if (it.isSuccess) {
-                    val members = it.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            channelController.queryMembers(offset, limit, Filters.`in`("id", "tommaso", "thierry"), sort, emptyList())
+                .enqueue {
+                    if (it.isSuccess) {
+                        val members = it.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    }
                 }
-            }
 
             // Query channel moderators
             channelController.queryMembers(offset, limit, Filters.eq("is_moderator", true), sort, emptyList()).enqueue {
@@ -549,13 +555,14 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
 
             // Order results by member created at descending
             val createdAtDescendingSort = QuerySort.desc<Member>("created_at")
-            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort, emptyList()).enqueue {
-                if (it.isSuccess) {
-                    val members = it.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort, emptyList())
+                .enqueue {
+                    if (it.isSuccess) {
+                        val members = it.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    }
                 }
-            }
         }
     }
 }
