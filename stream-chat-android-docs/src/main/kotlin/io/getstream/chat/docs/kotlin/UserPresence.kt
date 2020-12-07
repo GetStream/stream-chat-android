@@ -18,8 +18,9 @@ class UserPresence(val client: ChatClient, val channelController: ChannelClient)
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=kotlin#invisible">Invisible</a>
      */
     fun invisible() {
-        val user = User("user-id")
-        user.invisible = true
+        val user = User("user-id").apply {
+            invisible = true
+        }
         client.setUser(user, "{{ chat_user_token }}")
     }
 
@@ -30,9 +31,10 @@ class UserPresence(val client: ChatClient, val channelController: ChannelClient)
         // You need to be watching some channels/queries to be able to get presence events.
         // There are multiple ways of doing so:
         // 1. Watch a channel for presence event
-        val watchRequest = WatchChannelRequest()
-        watchRequest.presence = true
-        watchRequest.data["members"] = listOf("john", "jack")
+        val watchRequest = WatchChannelRequest().apply {
+            presence = true
+            data["members"] = listOf("john", "jack")
+        }
         channelController.watch(watchRequest).enqueue {
             if (it.isSuccess) {
                 val channel = it.data()
