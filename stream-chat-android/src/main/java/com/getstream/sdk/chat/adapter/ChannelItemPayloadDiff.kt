@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
-internal data class ChannelItemPayloadDiff(
+public data class ChannelItemPayloadDiff(
     val name: Boolean = true,
     val avatarView: Boolean = true,
     val lastMessage: Boolean = true,
