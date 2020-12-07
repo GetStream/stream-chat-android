@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.adapter
 
 public data class ChannelItemPayloadDiff(
-    val name: Boolean = true,
-    val avatarView: Boolean = true,
-    val lastMessage: Boolean = true,
-    val lastMessageDate: Boolean = true,
-    val readState: Boolean = true
+    val name: Boolean,
+    val avatarView: Boolean,
+    val lastMessage: Boolean,
+    val lastMessageDate: Boolean,
+    val readState: Boolean,
 ) {
     public operator fun plus(other: ChannelItemPayloadDiff): ChannelItemPayloadDiff =
         copy(
