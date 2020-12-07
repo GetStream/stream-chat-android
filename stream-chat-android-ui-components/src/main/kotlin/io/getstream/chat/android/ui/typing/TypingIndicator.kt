@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamTypingIndicatorViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiTypingIndicatorViewBinding
 
 public class TypingIndicator : FrameLayout {
 
-    private val binding: StreamTypingIndicatorViewBinding =
-        StreamTypingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: StreamUiTypingIndicatorViewBinding =
+        StreamUiTypingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     public constructor(context: Context) : super(context) {
         init()
@@ -40,7 +40,7 @@ public class TypingIndicator : FrameLayout {
             false
         } else {
             binding.tvUserTyping.text = resources.getQuantityString(
-                R.plurals.stream_typing_text,
+                R.plurals.stream_ui_typing_text,
                 users.size,
                 users.first().name,
                 users.size - 1

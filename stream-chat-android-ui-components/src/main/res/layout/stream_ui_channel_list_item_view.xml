@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/stream_ui_channel_list_item_height"
+    >
+
+    <include
+        android:id="@+id/item_background_view"
+        layout="@layout/stream_ui_channel_list_item_background_view"
+        />
+
+    <include
+        android:id="@+id/item_foreground_view"
+        layout="@layout/stream_ui_channel_list_item_foreground_view"
+        />
+
+</FrameLayout>

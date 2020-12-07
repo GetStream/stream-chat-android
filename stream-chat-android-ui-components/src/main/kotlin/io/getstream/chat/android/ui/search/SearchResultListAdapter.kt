@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.databinding.StreamItemMentionListBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.search.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.SearchResultListView.SearchResultSelectedListener
 
@@ -15,7 +15,7 @@ public class SearchResultListAdapter : ListAdapter<Message, MessagePreviewViewHo
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamItemMentionListBinding
+        return StreamUiItemMentionListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { binding -> MessagePreviewViewHolder(binding) }
     }
@@ -29,7 +29,7 @@ public class SearchResultListAdapter : ListAdapter<Message, MessagePreviewViewHo
     }
 
     public inner class MessagePreviewViewHolder(
-        private val binding: StreamItemMentionListBinding
+        private val binding: StreamUiItemMentionListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var message: Message

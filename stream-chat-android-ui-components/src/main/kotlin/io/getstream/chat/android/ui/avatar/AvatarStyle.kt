@@ -22,38 +22,38 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
     init {
         context.obtainStyledAttributes(
             attrs,
-            R.styleable.StreamAvatarView,
+            R.styleable.StreamUiAvatarView,
             0,
             0
         ).use {
             avatarBorderWidth = it.getDimensionPixelSize(
-                R.styleable.StreamAvatarView_streamAvatarBorderWidth,
+                R.styleable.StreamUiAvatarView_streamUiAvatarBorderWidth,
                 context.getDimension(R.dimen.stream_channel_avatar_border_width)
             )
             avatarBorderColor = it.getColor(
-                R.styleable.StreamAvatarView_streamAvatarBorderColor,
+                R.styleable.StreamUiAvatarView_streamUiAvatarBorderColor,
                 Color.WHITE
             )
             avatarInitialText = TextStyle.Builder(it)
                 .size(
-                    R.styleable.StreamAvatarView_streamAvatarTextSize,
+                    R.styleable.StreamUiAvatarView_streamUiAvatarTextSize,
                     context.getDimension(R.dimen.stream_channel_initials)
                 )
                 .color(
-                    R.styleable.StreamAvatarView_streamAvatarTextColor,
+                    R.styleable.StreamUiAvatarView_streamUiAvatarTextColor,
                     Color.WHITE
                 )
                 .font(
-                    R.styleable.StreamAvatarView_streamAvatarTextFontAssets,
-                    R.styleable.StreamAvatarView_streamAvatarTextFont
+                    R.styleable.StreamUiAvatarView_streamUiAvatarTextFontAssets,
+                    R.styleable.StreamUiAvatarView_streamUiAvatarTextFont
                 )
                 .style(
-                    R.styleable.StreamAvatarView_streamAvatarTextStyle,
+                    R.styleable.StreamUiAvatarView_streamUiAvatarTextStyle,
                     Typeface.BOLD
                 )
                 .build()
             onlineIndicatorEnabled = it.getBoolean(
-                R.styleable.StreamAvatarView_streamAvatarOnlineIndicatorEnabled,
+                R.styleable.StreamUiAvatarView_streamUiAvatarOnlineIndicatorEnabled,
                 false
             )
         }

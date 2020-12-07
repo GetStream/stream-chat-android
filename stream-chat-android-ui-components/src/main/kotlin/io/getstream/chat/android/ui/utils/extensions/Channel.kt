@@ -85,13 +85,13 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
     val allUsers = members.map { it.user }
     val onlineUsers = allUsers.count { it.online }
     val groupMembers = context.resources.getQuantityString(
-        R.plurals.stream_message_list_header_group_member_count,
+        R.plurals.stream_ui_message_list_header_group_member_count,
         allUsers.size,
         allUsers.size
     )
 
     return if (onlineUsers > 0) {
-        context.getString(R.string.stream_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
+        context.getString(R.string.stream_ui_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
     } else {
         groupMembers
     }

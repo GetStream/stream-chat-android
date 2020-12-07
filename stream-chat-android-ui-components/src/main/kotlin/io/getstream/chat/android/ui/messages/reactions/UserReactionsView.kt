@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUserReactionsViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
 
 public class UserReactionsView : FrameLayout {
 
-    private val binding: StreamUserReactionsViewBinding =
-        StreamUserReactionsViewBinding.inflate(context.inflater, this, true)
+    private val binding: StreamUiUserReactionsViewBinding =
+        StreamUiUserReactionsViewBinding.inflate(context.inflater, this, true)
 
     private var reactionClickListener: ReactionClickListener? = null
     private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter {
@@ -51,7 +51,7 @@ public class UserReactionsView : FrameLayout {
     private fun bindTitle(message: Message) {
         val reactionCount = message.latestReactions.size
         binding.messageMembersTextView.text = context.resources.getQuantityString(
-            R.plurals.stream_user_reactions_title,
+            R.plurals.stream_ui_user_reactions_title,
             reactionCount,
             reactionCount
         )

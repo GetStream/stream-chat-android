@@ -43,7 +43,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/backgroundView"
-            android:background="@color/stream_black_50"
+            android:background="@color/stream_ui_black_50"
             android:visibility="gone"
             tools:visibility="visible"
             >

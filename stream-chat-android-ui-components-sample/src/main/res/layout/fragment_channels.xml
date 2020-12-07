@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchInputView"
-        app:streamChannelPreviewLayout="@layout/stream_channel_list_item_view"
+        app:streamChannelPreviewLayout="@layout/stream_ui_channel_list_item_view"
         app:streamReadStateAvatarHeight="15dp"
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"
