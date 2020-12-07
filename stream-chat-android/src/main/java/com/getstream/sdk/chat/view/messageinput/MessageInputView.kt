@@ -165,6 +165,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         binding.llComposer.background = style.inputBackground
         // Input Text
         style.inputText.apply(binding.messageTextInput)
+        style.scrollbarStyle.apply(binding.messageTextInput)
         binding.messageTextInput.hint = style.getInputHint()
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)

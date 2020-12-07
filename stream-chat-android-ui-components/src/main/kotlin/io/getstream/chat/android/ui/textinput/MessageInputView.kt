@@ -14,6 +14,7 @@ import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import com.getstream.sdk.chat.style.ScrollbarStyle
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -334,6 +335,13 @@ public class MessageInputView : ConstraintLayout {
                 ).toFloat()
 
             hint = typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint)
+
+            ScrollbarStyle.Builder(typedArray).apply {
+                scrollbarEnabled(R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarEnabled)
+                scrollbarFadingEnabled(R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarFadingEnabled)
+                scrollbarWidth(R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarWidth)
+                scrollbarThumb(R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarThumb)
+            }.build().apply(this)
         }
     }
 
