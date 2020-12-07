@@ -7,10 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
-import java.util.Date
 
 public class MentionsListViewModel : ViewModel() {
 
@@ -18,29 +15,15 @@ public class MentionsListViewModel : ViewModel() {
     public val mentions: LiveData<List<Message>> = _mentions
 
     init {
-        fetchDummyData()
-        // fetchFromServer()
-    }
-
-    private fun fetchDummyData() {
-        _mentions.value = List(20) {
-            Message(
-                id = "dummy-id-$it",
-                cid = "messaging:placeholder",
-                user = User().apply {
-                    name = "Jane Doe"
-                    image = "https://randomuser.me/api/portraits/women/0.jpg"
-                },
-                createdAt = Date(2020, 7, 15, 10, 22),
-                text = "Hello world, how are you doing?",
-            )
-        }
+        // A temporary dummy implementation using the search API
+        fetchFromServer()
     }
 
     private fun fetchFromServer() {
-        // TODO update these filters
-        val channelFilter = Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id))
-        val messageFilter = Filters.autocomplete("text", "hi")
+        // TODO replace with usages of the mentions API
+        val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
+        val channelFilter = Filters.`in`("members", listOf(currentUser.id))
+        val messageFilter = Filters.autocomplete("text", "@${currentUser.name}")
 
         // TODO add paging
         val request = SearchMessagesRequest(
