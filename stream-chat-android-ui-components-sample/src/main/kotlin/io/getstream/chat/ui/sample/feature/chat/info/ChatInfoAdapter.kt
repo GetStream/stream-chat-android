@@ -57,7 +57,7 @@ class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
             ChatInfoItem.Option.SharedMedia,
             ChatInfoItem.Option.SharedFiles,
             ChatInfoItem.Option.SharedGroups,
-            ChatInfoItem.Option.LeaveChannel -> TYPE_OPTION
+            ChatInfoItem.Option.DeleteConversation -> TYPE_OPTION
             is ChatInfoItem.Option.Stateful -> TYPE_STATEFUL_OPTION
         }
     }

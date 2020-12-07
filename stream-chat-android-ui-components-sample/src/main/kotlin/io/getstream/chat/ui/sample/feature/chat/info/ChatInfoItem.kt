@@ -57,11 +57,11 @@ sealed class ChatInfoItem {
                 get() = R.color.black
         }
 
-        object LeaveChannel : Option() {
+        object DeleteConversation : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_delete_contact
             override val textResId: Int
-                get() = R.string.chat_info_option_delete_contact
+                get() = R.string.chat_info_option_delete_conversation
             override val tintResId: Int
                 get() = R.color.red
             override val showRightArrow: Boolean = false

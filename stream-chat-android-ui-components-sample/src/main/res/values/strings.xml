@@ -2,6 +2,8 @@
     <string name="app_name">ChatSample</string>
     <string name="backend_error_info">Ups, something went wrong</string>
     <string name="sdk_version_template">Stream SDK v %s</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 
     <!--User Login Screen-->
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
@@ -58,5 +60,6 @@
     <string name="chat_info_option_media">Photo &amp; Videos</string>
     <string name="chat_info_option_files">Files</string>
     <string name="chat_info_option_shared_groups">Shared Groups</string>
-    <string name="chat_info_option_delete_contact">Delete contact</string>
+    <string name="chat_info_option_delete_conversation">Delete Conversation</string>
+    <string name="chat_info__delete_conversation_confirm">Are you sure you want to delete this contact?</string>
 </resources>

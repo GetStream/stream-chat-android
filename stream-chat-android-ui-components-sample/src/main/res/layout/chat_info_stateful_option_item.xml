@@ -5,7 +5,7 @@
     android:id="@+id/optionContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/stream_selectable_item_background_white"
+    android:background="@drawable/stream_ui_selectable_item_background_white"
     android:paddingTop="16dp"
     >
 
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textSize="@dimen/stream_text_medium"
+        android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toBottomOf="@id/optionImageView"
         app:layout_constraintEnd_toStartOf="@id/optionSwitch"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -51,7 +51,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
-        android:background="@drawable/stream_divider"
+        android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
