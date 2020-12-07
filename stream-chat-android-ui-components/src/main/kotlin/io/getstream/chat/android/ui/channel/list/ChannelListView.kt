@@ -11,8 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.cast
 
@@ -68,24 +69,24 @@ public class ChannelListView @JvmOverloads constructor(
 
     private fun canScrollUpForChannelEvent(): Boolean = layoutManager.findFirstVisibleItemPosition() < 3
 
-    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
+    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory) {
         requireAdapter().viewHolderFactory = factory
     }
 
-    public fun setChannelClickListener(listener: ChannelClickListener) {
-        requireAdapter().channelClickListener = listener
+    public fun setChannelClickListener(listener: ChannelClickListener?) {
+        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
-    public fun setChannelLongClickListener(listener: ChannelClickListener) {
-        requireAdapter().channelLongClickListener = listener
+    public fun setChannelLongClickListener(listener: ChannelClickListener?) {
+        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
-    public fun setUserClickListener(listener: UserClickListener) {
-        requireAdapter().userClickListener = listener
+    public fun setUserClickListener(listener: UserClickListener?) {
+        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
-    public fun setChannelDeleteListener(listener: ChannelClickListener) {
-        requireAdapter().deleteClickListener = listener
+    public fun setChannelDeleteListener(listener: ChannelClickListener?) {
+        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
@@ -109,6 +110,10 @@ public class ChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
+    public fun reachedEndOfChannels(endReached: Boolean) {
+        requireAdapter().endReached = endReached
+    }
+
     public fun setChannels(channels: List<Channel>) {
         requireAdapter().submitList(channels)
     }
@@ -119,10 +124,18 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun interface UserClickListener {
+        public companion object {
+            public val DEFAULT: UserClickListener by lazy { UserClickListener {} }
+        }
+
         public fun onUserClick(user: User)
     }
 
     public fun interface ChannelClickListener {
+        public companion object {
+            public val DEFAULT: ChannelClickListener by lazy { ChannelClickListener {} }
+        }
+
         public fun onClick(channel: Channel)
     }
 

@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
-import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
@@ -22,13 +22,26 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
+import io.getstream.chat.android.ui.utils.extensions.inflater
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import kotlin.math.absoluteValue
 
-public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
+public class ChannelListItemViewHolder(
+    parent: ViewGroup,
+    override val channelClickListener: ChannelListView.ChannelClickListener,
+    override val channelLongClickListener: ChannelListView.ChannelClickListener,
+    override val channelDeleteListener: ChannelListView.ChannelClickListener,
+    override val userClickListener: ChannelListView.UserClickListener,
+    override val style: ChannelListViewStyle?,
+    private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
+        parent.inflater,
+        parent,
+        false
+    )
+) : BaseChannelListItemViewHolder(binding.root) {
 
     internal sealed class MenuState {
         internal object Open : MenuState()
@@ -47,31 +60,14 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         private val swipeStateByChannelCid = mutableMapOf<String, MenuState>()
     }
 
-    public val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.bind(itemView)
-
-    public override fun bind(
-        channel: Channel,
-        diff: ChannelDiff,
-        channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
-        channelDeleteListener: ChannelListView.ChannelClickListener,
-        userClickListener: ChannelListView.UserClickListener,
-        style: ChannelListViewStyle?
-    ) {
-        configureForeground(diff, channel, userClickListener, channelClickListener, channelLongClickListener, style)
+    public override fun bind(channel: Channel, diff: ChannelDiff) {
+        configureForeground(diff, channel)
         binding.itemBackgroundView.deleteImageView.setOnClickListener {
             channelDeleteListener.onClick(channel)
         }
     }
 
-    private fun configureForeground(
-        diff: ChannelDiff,
-        channel: Channel,
-        userClickListener: ChannelListView.UserClickListener,
-        channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
-        style: ChannelListViewStyle?
-    ) {
+    private fun configureForeground(diff: ChannelDiff, channel: Channel) {
         binding.itemForegroundView.apply {
             configureSwipeBehavior(channel.cid)
 
