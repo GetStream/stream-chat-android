@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.search
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,15 +10,22 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.search.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.SearchResultListView.SearchResultSelectedListener
+import io.getstream.chat.android.ui.utils.DateFormatter
 
-public class SearchResultListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+public class SearchResultListAdapter(
+    context: Context
+) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
+    private var dateFormatter = DateFormatter.from(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { binding -> MessagePreviewViewHolder(binding) }
+            .let { binding ->
+                binding.root.dateFormatter = dateFormatter
+                MessagePreviewViewHolder(binding)
+            }
     }
 
     override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {
