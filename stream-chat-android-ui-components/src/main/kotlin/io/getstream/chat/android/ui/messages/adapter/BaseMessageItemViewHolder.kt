@@ -26,7 +26,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(itemView: V
             clear(view.id, ConstraintSet.LEFT)
             clear(view.id, ConstraintSet.RIGHT)
             val anchorSide = if (isMine) ConstraintSet.END else ConstraintSet.START
-            connect(view.id,  anchorSide, ConstraintSet.PARENT_ID, anchorSide)
+            connect(view.id, anchorSide, ConstraintSet.PARENT_ID, anchorSide)
             applyTo(layout)
         }
     }

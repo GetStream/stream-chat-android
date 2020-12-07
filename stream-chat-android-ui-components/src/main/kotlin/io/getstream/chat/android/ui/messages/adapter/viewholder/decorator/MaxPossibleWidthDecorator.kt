@@ -30,6 +30,6 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
     }
 
     companion object {
-        private const val MAX_POSSIBLE_WIDTH_FACTOR = 5f / 7
+        internal const val MAX_POSSIBLE_WIDTH_FACTOR = 5f / 7
     }
 }
