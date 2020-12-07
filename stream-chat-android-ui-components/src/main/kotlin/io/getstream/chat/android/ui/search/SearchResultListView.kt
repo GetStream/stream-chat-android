@@ -37,7 +37,7 @@ public class SearchResultListView : LinearLayout {
 
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = SearchResultListAdapter()
+    private val adapter = SearchResultListAdapter(context)
 
     private val scrollListener = EndlessScrollListener {
         loadMoreListener?.onLoadMoreRequested()

@@ -1,15 +1,13 @@
 package com.getstream.sdk.chat.utils
 
 import android.annotation.SuppressLint
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@InternalStreamChatApi
-public object DateFormatter {
+internal object DateFormatter {
 
     @SuppressLint("ConstantLocale")
     private val DEFAULT_LOCALE = Locale.getDefault()
@@ -21,7 +19,7 @@ public object DateFormatter {
      * as a month/day format date otherwise.
      */
     @JvmStatic
-    public fun formatAsTimeOrDate(date: Date?): String {
+    fun formatAsTimeOrDate(date: Date?): String {
         return when {
             date == null -> ""
             isFromToday(date) -> TIME_FORMAT.format(date)
