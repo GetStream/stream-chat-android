@@ -37,7 +37,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val reaction1 =
             Reaction(message1.id, "like", 1).apply { user = data.user1; userId = data.user1.id }
         chatDomainImpl.setOffline()
-        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.insertChannel(data.channel1)
         channelControllerImpl.upsertMessage(message1)
         // send the reaction while offline
         channelControllerImpl.sendReaction(reaction1)

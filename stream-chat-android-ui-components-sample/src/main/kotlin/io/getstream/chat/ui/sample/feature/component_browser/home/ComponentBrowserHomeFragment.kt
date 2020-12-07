@@ -12,9 +12,9 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUsers
 import java.util.Date
 
 class ComponentBrowserHomeFragment : Fragment() {
@@ -54,6 +54,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupViewReactionsView()
         setupEditReactionsView()
         setupAttachmentGallery()
+        setupUserReactionsView()
         setupMessageList()
         setupTypingIndicator()
     }
@@ -71,7 +72,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupAvatarView() {
-        binding.avatarView.setChannelData(randomChannel(), randomUsers(size = 1))
+        binding.avatarView.setChannelData(randomChannel(listOf(randomMember())))
         binding.avatarViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)
         }
@@ -86,7 +87,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupMessagesHeaderView() {
-        binding.messagesHeaderView.setAvatar(randomChannel(), listOf(randomUser()))
+        binding.messagesHeaderView.setAvatar(randomChannel(listOf(randomMember())))
         binding.messagesHeaderView.showBackButtonBadge("5")
         binding.messagesHeaderView.setTitle("Chat title")
         binding.messagesHeaderView.setOnlineStateSubtitle("Last active 10 min ago")
@@ -151,6 +152,13 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.editReactionsView.setMessage(randomMessage(reactionsSize = 30, ownReactionsSize = 2))
         binding.editReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
+        }
+    }
+
+    private fun setupUserReactionsView() {
+        binding.userReactionsView.setMessage(randomMessage(reactionsSize = 2, ownReactionsSize = 1))
+        binding.userReactionsViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
         }
     }
 }

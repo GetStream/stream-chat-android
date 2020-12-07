@@ -40,11 +40,11 @@ public class EditReactionsView : ReactionsView {
         }
     }
 
-    override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionsAdapter.ReactionItem> {
+    override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionItem> {
         return UiUtils.getReactionTypes().keys.map { reactionType ->
             message.ownReactions
                 .any { it.type == reactionType }
-                .let { isMine -> ReactionsAdapter.ReactionItem(Reaction(type = reactionType), isMine) }
+                .let { isMine -> ReactionItem(Reaction(type = reactionType), isMine) }
         }
     }
 

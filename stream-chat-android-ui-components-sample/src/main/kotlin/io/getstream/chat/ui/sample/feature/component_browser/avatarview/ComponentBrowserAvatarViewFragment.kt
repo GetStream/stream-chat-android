@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserAvatarViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
 class ComponentBrowserAvatarViewFragment : Fragment() {
@@ -36,66 +37,72 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
         binding.avatarViewLarge.setUserData(randomUser())
 
         binding.avatarView1.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
+            randomChannel(
+                listOf(randomMember())
             ),
         )
         binding.avatarView2.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember()
+                )
             ),
         )
         binding.avatarView3.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(),
-                randomUser(),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember(),
+                    randomMember()
+                )
             )
         )
         binding.avatarView4.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(),
-                randomUser(),
-                randomUser(),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember(),
+                    randomMember(),
+                    randomMember()
+                )
             )
         )
 
         binding.avatarViewMissing1.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(withImage = false),
-                randomUser(),
-                randomUser(),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember(withImage = false),
+                    randomMember(),
+                    randomMember()
+                )
             )
         )
         binding.avatarViewMissing2.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(withImage = false),
-                randomUser(withImage = false),
-                randomUser(),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember(withImage = false),
+                    randomMember(withImage = false),
+                    randomMember()
+                )
             )
         )
         binding.avatarViewMissing3.setChannelData(
-            randomChannel(),
-            listOf(
-                randomUser(),
-                randomUser(withImage = false),
-                randomUser(withImage = false),
-                randomUser(withImage = false),
+            randomChannel(
+                listOf(
+                    randomMember(),
+                    randomMember(withImage = false),
+                    randomMember(withImage = false),
+                    randomMember(withImage = false)
+                )
             )
         )
         binding.avatarViewMissing4.setChannelData(
-            randomChannel(),
-            listOf(randomUser(withImage = false))
+            randomChannel(
+                listOf(randomMember(withImage = false))
+            )
         )
 
         binding.avatarViewSmallIndicator.apply {
