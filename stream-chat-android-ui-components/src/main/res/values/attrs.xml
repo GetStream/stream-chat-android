@@ -160,17 +160,6 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
-        <attr name="streamMessagesHeaderTypingLabelText" format="string|reference" />
-        <attr name="streamMessagesHeaderTypingLabelTextSize" format="dimension|reference" />
-        <attr name="streamMessagesHeaderTypingLabelTextColor" format="color|reference" />
-        <attr name="streamMessagesHeaderTypingLabelTextFont" format="reference" />
-        <attr name="streamMessagesHeaderTypingLabelFontAssets" format="string" />
-        <attr name="streamMessagesHeaderTypingLabelTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
     </declare-styleable>
 
     <!--ReactionsView-->

@@ -2,6 +2,32 @@
 
 This module adds offline support and provides LiveData APIs to [Stream's Chat SDK](https://github.com/GetStream/stream-chat-android). 
 
+## Setup
+
+```groovy
+allprojects {
+    repositories {
+        ...
+        mavenCentral()
+    }
+}
+```
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-offline:$stream_version"
+}
+```
+
+```groovy
+android {
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+```
+
 ## Offline
 
 Offline support is essential for a good chat user experience. Mobile networks tend to lose connection frequently.

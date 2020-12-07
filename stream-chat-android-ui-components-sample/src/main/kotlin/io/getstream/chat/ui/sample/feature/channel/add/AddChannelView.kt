@@ -11,8 +11,8 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.view.MessageListView
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.textinput.MessageInputView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyMessageListViewBinding

@@ -15,14 +15,15 @@ import java.io.File
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
     members.observe(lifecycleOwner) { view.configureMembers(it) }
     commands.observe(lifecycleOwner) { view.configureCommands(it) }
-    view.sendMessageHandler = object : MessageInputView.MessageSendHandler {
+
+    val sendMessageHandler = object : MessageInputView.MessageSendHandler {
         val viewModel = this@bindView
         override fun sendMessage(messageText: String) {
             viewModel.sendMessage(messageText)
         }
 
         override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles)
         }
 
         override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
@@ -38,13 +39,17 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             alsoSendToChannel: Boolean,
             attachmentsFiles: List<File>
         ) {
-            TODO("Not yet implemented")
+            viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
+                this.parentId = parentMessage.id
+                this.showInChannel = alsoSendToChannel
+            }
         }
 
         override fun editMessage(oldMessage: Message, newMessageText: String) {
             viewModel.editMessage(oldMessage.copy(text = newMessageText))
         }
     }
+    view.setSendMessageHandler(sendMessageHandler)
 
     getActiveThread().observe(lifecycleOwner) {
         if (it != null) {
@@ -59,4 +64,15 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             view.inputMode = MessageInputView.InputMode.Edit(it)
         }
     }
+
+    val typingListener = object : MessageInputView.TypingListener {
+        override fun onKeystroke() {
+            keystroke()
+        }
+
+        override fun onStopTyping() {
+            stopTyping()
+        }
+    }
+    view.setTypingListener(typingListener)
 }

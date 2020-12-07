@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 internal class AttachmentController(
     private val context: Context,
@@ -60,6 +61,10 @@ internal class AttachmentController(
         selectedFileAttachmentAdapter.clear()
         selectedMediaRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
+    }
+
+    fun getSelectedAttachmentsFiles(): List<File> = selectedAttachments.map {
+        storageHelper.getCachedFileFromUri(context, it)
     }
 
     private fun cancelAttachment(attachment: AttachmentMetaData) {

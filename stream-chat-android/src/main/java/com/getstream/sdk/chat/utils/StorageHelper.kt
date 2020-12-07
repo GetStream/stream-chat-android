@@ -20,7 +20,7 @@ import java.util.Locale
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US)
 
-    internal fun getCachedFileFromUri(
+    public fun getCachedFileFromUri(
         context: Context,
         attachmentMetaData: AttachmentMetaData
     ): File {

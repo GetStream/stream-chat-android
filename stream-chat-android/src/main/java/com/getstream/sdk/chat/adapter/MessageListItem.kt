@@ -25,7 +25,7 @@ import java.util.zip.Checksum
  */
 public sealed class MessageListItem {
 
-    internal fun getStableId(): Long {
+    public fun getStableId(): Long {
         val checksum: Checksum = CRC32()
         val plaintext = when (this) {
             is TypingItem -> "id_typing"

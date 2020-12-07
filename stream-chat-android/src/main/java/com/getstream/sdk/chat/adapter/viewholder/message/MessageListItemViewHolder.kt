@@ -19,12 +19,13 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
-internal class MessageListItemViewHolder(
+public open class MessageListItemViewHolder(
     parent: ViewGroup,
     style: MessageListViewStyle,
     channel: Channel,
@@ -32,6 +33,7 @@ internal class MessageListItemViewHolder(
     bubbleHelper: BubbleHelper,
     messageClickListener: MessageClickListener,
     messageLongClickListener: MessageLongClickListener,
+    messageLongClickListenerView: MessageLongClickListenerView,
     messageRetryListener: MessageListView.MessageRetryListener,
     reactionViewClickListener: ReactionViewClickListener,
     userClickListener: MessageListView.UserClickListener,
@@ -50,6 +52,7 @@ internal class MessageListItemViewHolder(
         bubbleHelper,
         messageClickListener,
         messageLongClickListener,
+        messageLongClickListenerView,
         messageRetryListener
     )
     private val attachmentConfigurator = AttachmentConfigurator(

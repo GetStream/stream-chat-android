@@ -91,4 +91,8 @@ dependencies {
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.lottie
     implementation Dependencies.photoview
+    implementation Dependencies.coil
+    implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
+    implementation Dependencies.androidxStartup
 }
