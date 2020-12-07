@@ -4,7 +4,6 @@ package io.getstream.chat.android.ui.textinput
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.bindView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
