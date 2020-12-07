@@ -22,9 +22,8 @@ public open class AttachmentViewHolderFactory {
     }
 
     public lateinit var listenerContainer: ListenerContainer
-        internal set
+
     public lateinit var bubbleHelper: MessageListView.BubbleHelper
-        internal set
 
     public open fun getAttachmentViewType(
         attachmentItem: AttachmentListItem
@@ -58,7 +57,8 @@ public open class AttachmentViewHolderFactory {
                     messageItem,
                     listenerContainer.giphySendListener,
                     listenerContainer.attachmentClickListener,
-                    listenerContainer.messageLongClickListener
+                    listenerContainer.messageLongClickListener,
+                    listenerContainer.messageLongClickListenerView
                 )
             FILE_ATTACHMENT ->
                 AttachmentViewHolderFile(
@@ -67,7 +67,8 @@ public open class AttachmentViewHolderFactory {
                     bubbleHelper,
                     messageItem,
                     listenerContainer.attachmentClickListener,
-                    listenerContainer.messageLongClickListener
+                    listenerContainer.messageLongClickListener,
+                    listenerContainer.messageLongClickListenerView
                 )
             else ->
                 AttachmentViewHolder(
@@ -76,7 +77,8 @@ public open class AttachmentViewHolderFactory {
                     bubbleHelper,
                     messageItem,
                     listenerContainer.attachmentClickListener,
-                    listenerContainer.messageLongClickListener
+                    listenerContainer.messageLongClickListener,
+                    listenerContainer.messageLongClickListenerView
                 )
         }
     }

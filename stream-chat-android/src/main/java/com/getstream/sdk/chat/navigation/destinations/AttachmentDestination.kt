@@ -13,9 +13,9 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 
-internal class AttachmentDestination(
-    val message: Message,
-    val attachment: Attachment,
+public class AttachmentDestination(
+    public val message: Message,
+    public val attachment: Attachment,
     context: Context
 ) : ChatDestination(context) {
 
@@ -23,7 +23,7 @@ internal class AttachmentDestination(
         showAttachment(message, attachment)
     }
 
-    fun showAttachment(message: Message, attachment: Attachment) {
+    public fun showAttachment(message: Message, attachment: Attachment) {
         var url: String? = null
         var type: String? = attachment.type
 
