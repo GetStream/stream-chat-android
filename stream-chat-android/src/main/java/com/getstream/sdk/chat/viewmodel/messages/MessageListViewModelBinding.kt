@@ -3,6 +3,7 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.view.IMessageListView
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -17,7 +18,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
  * Sets the View's handlers and displays new messages based on the ViewModel's state.
  */
 @JvmName("bind")
-public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+public fun MessageListViewModel.bindView(view: IMessageListView, lifecycleOwner: LifecycleOwner) {
     channel.observe(lifecycleOwner) {
         view.init(it, currentUser)
     }
