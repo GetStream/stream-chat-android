@@ -12,8 +12,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
-import io.getstream.chat.android.ui.databinding.StreamChannelListItemForegroundViewBinding
-import io.getstream.chat.android.ui.databinding.StreamChannelListItemViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
@@ -36,7 +36,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         internal object Closed : MenuState()
     }
 
-    private val menuItemWidth = context.getDimension(R.dimen.stream_channel_list_item_option_icon_width).toFloat()
+    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
     private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
     public companion object {
@@ -51,7 +51,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         private val swipeStateByChannelCid = mutableMapOf<String, MenuState>()
     }
 
-    public val binding: StreamChannelListItemViewBinding = StreamChannelListItemViewBinding.bind(itemView)
+    public val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.bind(itemView)
 
     public override fun bind(
         channel: Channel,
@@ -110,7 +110,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureClickListeners(
+    private fun StreamUiChannelListItemForegroundViewBinding.configureClickListeners(
         channel: Channel,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener
@@ -125,11 +125,11 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
         channelNameLabel.text = channel.getDisplayName()
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureAvatarView(
+    private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView(
         channel: Channel,
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener
@@ -143,7 +143,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
         unreadCountBadge.isVisible = channel.unreadCount ?: 0 > 0
 
         if (!unreadCountBadge.isVisible) {
@@ -155,7 +155,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureLastMessageTimestamp(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageTimestamp(channel: Channel) {
         lastMessageTimeLabel.isVisible = channel.messages.isNotEmpty()
 
         if (!lastMessageTimeLabel.isVisible) {
@@ -167,7 +167,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
             ?.let { lastMessageTimeLabel.text = it }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureLastMessageLabel(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabel(channel: Channel) {
         lastMessageLabel.isVisible = channel.messages.isNotEmpty()
 
         if (!lastMessageLabel.isVisible) {
@@ -177,7 +177,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         lastMessageLabel.text = channel.getLastMessage()?.getPreviewText(context) ?: String.EMPTY
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(channel: Channel) {
         messageStatusImageView.isVisible = channel.messages.isNotEmpty()
 
         if (!messageStatusImageView.isVisible) {
@@ -196,24 +196,24 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         when {
             !currentUserSentLastMessage || channel.lastMessageByCurrentUserWasRead() ->
-                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_all)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_all)
 
             currentUserSentLastMessage && !channel.lastMessageByCurrentUserWasRead() ->
-                messageStatusImageView.setImageResource(R.drawable.stream_ic_check_gray)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
 
             else -> determineLastMessageSyncStatus(lastMessage)
         }
     }
 
-    private fun StreamChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message?) {
+    private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message?) {
         message?.syncStatus?.let { sync ->
             when (sync) {
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
-                    messageStatusImageView.setImageResource(R.drawable.stream_ic_clock)
+                    messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_clock)
                 }
 
                 SyncStatus.COMPLETED -> {
-                    messageStatusImageView.setImageResource(R.drawable.stream_ic_check_gray)
+                    messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
                 }
 
                 SyncStatus.FAILED_PERMANENTLY -> {
@@ -225,7 +225,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
     private var styleApplied = false
 
-    private fun applyStyle(binding: StreamChannelListItemForegroundViewBinding, style: ChannelListViewStyle) {
+    private fun applyStyle(binding: StreamUiChannelListItemForegroundViewBinding, style: ChannelListViewStyle) {
         if (styleApplied) {
             return
         }
@@ -239,7 +239,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun StreamChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
 
         var startX = 0f
         var startY = 0f

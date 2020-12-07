@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.databinding.StreamItemMentionListBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.mentions.MentionsListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.mentions.MentionsListView.MentionSelectedListener
 import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
@@ -16,7 +16,7 @@ public class MentionsListAdapter : ListAdapter<Message, MessagePreviewViewHolder
     private var mentionSelectedListener: MentionSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamItemMentionListBinding
+        return StreamUiItemMentionListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { MessagePreviewViewHolder(it.root) }
     }

@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.ui.databinding.StreamItemChannelMemberBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemChannelMemberBinding
 
 internal class ChannelMembersAdapter(
     private val onMemberClicked: (Member) -> Unit
 ) : ListAdapter<Member, ChannelMembersAdapter.ChannelMemberViewHolder>(ChannelMembersDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
-        return StreamItemChannelMemberBinding
+        return StreamUiItemChannelMemberBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { ChannelMemberViewHolder(it, onMemberClicked) }
     }
@@ -34,7 +34,7 @@ internal class ChannelMembersAdapter(
     }
 
     class ChannelMemberViewHolder(
-        private val binding: StreamItemChannelMemberBinding,
+        private val binding: StreamUiItemChannelMemberBinding,
         private val onMemberClicked: (Member) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 

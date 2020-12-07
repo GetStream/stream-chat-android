@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.databinding.StreamSuggestionListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 
 internal class SuggestionListView : FrameLayout {
 
-    private val binding: StreamSuggestionListViewBinding = LayoutInflater.from(context).let {
-        StreamSuggestionListViewBinding.inflate(it, this)
+    private val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
+        StreamUiSuggestionListViewBinding.inflate(it, this)
     }
     private val mentionsAdapter: MentionsAdapter = MentionsAdapter { listener?.onMentionClick(it) }
     private val commandsAdapter: CommandsAdapter = CommandsAdapter { listener?.onCommandClick(it) }
