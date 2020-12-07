@@ -7,11 +7,11 @@ import android.widget.FrameLayout
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.ui.databinding.StreamMessagePreviewItemBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 
 public class MessagePreviewView : FrameLayout {
 
-    private val binding = StreamMessagePreviewItemBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = StreamUiMessagePreviewItemBinding.inflate(LayoutInflater.from(context), this, true)
 
     public constructor(context: Context) : super(context) {
         init(null)

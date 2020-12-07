@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
 
     @DrawableRes
-    var drawableResource: Int = R.drawable.stream_divider
+    var drawableResource: Int = R.drawable.stream_ui_divider
 
     /**
      * Drawable height in pixels
