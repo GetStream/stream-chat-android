@@ -1,9 +1,17 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
-import android.view.View
-import androidx.annotation.LayoutRes
+import android.view.ViewGroup
+import io.getstream.chat.android.ui.channel.list.ChannelListView
+import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 
-public abstract class BaseChannelViewHolderFactory<out ViewHolderT : BaseChannelListItemViewHolder>
-@JvmOverloads constructor(@LayoutRes public open var viewHolderLayout: Int? = null) {
-    public abstract fun createChannelViewHolder(itemView: View): ViewHolderT
+public abstract class BaseChannelViewHolderFactory {
+    public abstract fun createChannelViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+        channelClickListener: ChannelListView.ChannelClickListener,
+        channelLongClickListener: ChannelListView.ChannelClickListener,
+        deleteClickListener: ChannelListView.ChannelClickListener,
+        userClickListener: ChannelListView.UserClickListener,
+        style: ChannelListViewStyle? = null
+    ): BaseChannelListItemViewHolder
 }

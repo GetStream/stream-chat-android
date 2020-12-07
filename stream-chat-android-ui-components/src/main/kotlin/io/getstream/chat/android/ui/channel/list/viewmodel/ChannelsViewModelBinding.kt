@@ -21,4 +21,13 @@ public fun ChannelsViewModel.bindView(
             }
         }
     }
+
+    paginationState.observe(lifecycle) {
+        view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
+        view.reachedEndOfChannels(it.endOfChannels)
+    }
+
+    view.setOnEndReachedListener {
+        onEvent(ChannelsViewModel.Event.ReachedEndOfList)
+    }
 }
