@@ -1,12 +1,11 @@
 package io.getstream.chat.ui.sample.feature.channel.add
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
@@ -49,23 +48,8 @@ class UserItemViewHolder(
         with(item.userInfo) {
             binding.userAvatar.setUserData(user)
             binding.nameTextView.text = user.name
-            // Placeholder for now
-            binding.onlineTextView.text = getLastActiveText(user)
+            binding.onlineTextView.text = user.getLastSeenText(context)
             binding.checkboxImageView.isVisible = isSelected
-        }
-    }
-
-    private fun getLastActiveText(user: User): String {
-        return if (user.online) {
-            context.getString(R.string.add_channel_user_item_online)
-        } else {
-            user.lastActive?.let {
-                context.getString(
-                    R.string.add_channel_user_item_last_online,
-                    DateUtils.getRelativeTimeSpanString(it.time)
-                )
-            }
-                ?: context.getString(R.string.add_channel_user_item_offline)
         }
     }
 }
