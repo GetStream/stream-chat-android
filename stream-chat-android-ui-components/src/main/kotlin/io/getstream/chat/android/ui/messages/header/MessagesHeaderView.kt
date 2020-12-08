@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,6 +18,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagesHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class MessagesHeaderView : ConstraintLayout {
     public constructor(context: Context) : super(context) {
@@ -143,7 +143,7 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.searchingForNetworkText.apply {
             text = attrs.getString(R.styleable.StreamUiMessagesHeaderView_streamUiMessagesHeaderOfflineLabelText)
                 ?: context.getString(R.string.stream_ui_message_list_header_searching_for_network)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
@@ -192,12 +192,12 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.offlineText.apply {
             text = attrs.getString(R.styleable.StreamUiMessagesHeaderView_streamUiMessagesHeaderOfflineLabelText)
                 ?: context.getString(R.string.stream_ui_message_list_header_offline)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
         binding.offlineRetryButton.apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             typeface = textStyle.font
         }
     }
@@ -226,7 +226,7 @@ public class MessagesHeaderView : ConstraintLayout {
         val textStyle = getOnlineTextStyle(attrs)
         binding.onlineLabel.apply {
             text = attrs.getString(R.styleable.StreamUiMessagesHeaderView_streamUiMessagesHeaderDefaultLabelText) ?: ""
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
@@ -280,7 +280,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun configTitle(attrs: TypedArray) {
         val textStyle = getTitleTextStyle(attrs)
         binding.title.apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
