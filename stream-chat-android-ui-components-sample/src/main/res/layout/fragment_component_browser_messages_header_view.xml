@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stream_gray_light"
+    android:background="@color/stream_ui_gray_light"
     >
 
     <TextView
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
             <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
         </LinearLayout>
     </ScrollView>

@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.ImageLoader.load
-import io.getstream.chat.android.ui.databinding.StreamItemImageGalleryBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 private const val IMAGE_ID = "IMAGE_ID"
 
 public class ImageSlidePageFragment : Fragment() {
 
-    private lateinit var binding: StreamItemImageGalleryBinding
+    private lateinit var binding: StreamUiItemImageGalleryBinding
 
     public companion object {
         public fun create(imageUrl: String): Fragment {
@@ -29,7 +29,7 @@ public class ImageSlidePageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return StreamItemImageGalleryBinding.inflate(LayoutInflater.from(context)).apply {
+        return StreamUiItemImageGalleryBinding.inflate(LayoutInflater.from(context)).apply {
             binding = this
         }.root
     }

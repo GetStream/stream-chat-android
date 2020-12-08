@@ -1,76 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Command Suggestions-->
-    <string name="stream_commands_instant_commands">Instant Commands</string>
-    <string name="stream_command_command_template">/%1$s %2$s</string>
+    <string name="stream_ui_commands_instant_commands">Instant Commands</string>
+    <string name="stream_ui_command_command_template">/%1$s %2$s</string>
 
     <!--Mention Suggestions-->
-    <string name="stream_mention_user_name_template">\@%s</string>
+    <string name="stream_ui_mention_user_name_template">\@%s</string>
 
     <!--Channel Actions-->
-    <string name="stream_channel_actions_leave_group">Leave Group</string>
-    <string name="stream_channel_actions_delete_channel">Delete</string>
-    <string name="stream_channel_actions_delete_contact">Delete Contact</string>
-    <string name="stream_channel_actions_last_seen">Last seen %s</string>
-    <plurals name="stream_channel_actions_members_count">
+    <string name="stream_ui_channel_actions_leave_group">Leave Group</string>
+    <string name="stream_ui_channel_actions_delete_channel">Delete</string>
+    <string name="stream_ui_channel_actions_delete_contact">Delete Contact</string>
+    <string name="stream_ui_channel_actions_last_seen">Last seen %s</string>
+    <plurals name="stream_ui_channel_actions_members_count">
         <item quantity="one">%1d Member, %2d Online</item>
         <item quantity="other">%1d Members, %2d Online</item>
     </plurals>
 
     <!--ChannelsHeaderView-->
-    <string name="stream_channels_header_view_online_title">Stream Chat</string>
-    <string name="stream_channels_header_view_offline_title">Waiting for network</string>
+    <string name="stream_ui_channels_header_view_online_title">Stream Chat</string>
+    <string name="stream_ui_channels_header_view_offline_title">Waiting for network</string>
 
     <!--Channel List Item View-->
-    <string name="stream_channel_item_last_message_template">%1$s: %2$s</string>
-    <string name="stream_channel_display_name_self">You</string>
+    <string name="stream_ui_channel_item_last_message_template">%1$s: %2$s</string>
+    <string name="stream_ui_channel_display_name_self">You</string>
 
     <!--SearchView-->
-    <string name="stream_search_input_view_hint">Search</string>
-    <string name="stream_search_input_view_search_icon_description">Search</string>
-    <string name="stream_search_input_view_clear_input_description">Clear</string>
-    <string name="stream_search_result_list_result_count_empty">No results</string>
-    <plurals name="stream_search_result_list_result_count">
+    <string name="stream_ui_search_input_view_hint">Search</string>
+    <string name="stream_ui_search_input_view_search_icon_description">Search</string>
+    <string name="stream_ui_search_input_view_clear_input_description">Clear</string>
+    <string name="stream_ui_search_result_list_result_count_empty">No results</string>
+    <plurals name="stream_ui_search_result_list_result_count">
         <item quantity="one">1 result</item>
         <item quantity="other">%d results</item>
     </plurals>
 
     <!-- ChannelHeaderView -->
-    <string name="stream_content_description_back_button">Back button</string>
-    <string name="stream_message_list_header_searching_for_network">Searching for network</string>
-    <string name="stream_message_list_header_offline">Offline…</string>
-    <string name="stream_message_list_header_try_again">Try Again</string>
-    <string name="stream_message_list_header_typing">is typing</string>
-    <string name="stream_message_list_header_online">Online</string>
-    <string name="stream_message_list_header_last_seen">Last seen %s</string>
-    <string name="stream_message_list_header_group_member_count_with_online">%s, %d Online</string>
-    <plurals name="stream_message_list_header_group_member_count">
+    <string name="stream_ui_content_description_back_button">Back button</string>
+    <string name="stream_ui_message_list_header_searching_for_network">Searching for network</string>
+    <string name="stream_ui_message_list_header_offline">Offline…</string>
+    <string name="stream_ui_message_list_header_try_again">Try Again</string>
+    <string name="stream_ui_message_list_header_typing">is typing</string>
+    <string name="stream_ui_message_list_header_online">Online</string>
+    <string name="stream_ui_message_list_header_last_seen">Last seen %s</string>
+    <string name="stream_ui_message_list_header_group_member_count_with_online">%s, %d Online</string>
+    <plurals name="stream_ui_message_list_header_group_member_count">
         <item quantity="one">%1d Member</item>
         <item quantity="other">%1d Members</item>
     </plurals>
 
     <!--Attachments-->
-    <string name="stream_attachment_dialog_recent_files">Recent Files</string>
-    <string name="stream_attachment_dialog_permission_camera">Allow access to your Camera</string>
-    <string name="stream_attachment_dialog_permission_files">Allow access to your Files</string>
-    <string name="stream_attachment_dialog_permission_media">Allow access to your Gallery</string>
-    <string name="stream_attachment_input_hint">Add command or send</string>
+    <string name="stream_ui_attachment_dialog_recent_files">Recent Files</string>
+    <string name="stream_ui_attachment_dialog_permission_camera">Allow access to your Camera</string>
+    <string name="stream_ui_attachment_dialog_permission_files">Allow access to your Files</string>
+    <string name="stream_ui_attachment_dialog_permission_media">Allow access to your Gallery</string>
+    <string name="stream_ui_attachment_input_hint">Add command or send</string>
 
     <!-- MessageInputView -->
-    <string name="stream_send_also_to_channel">Also send to channel</string>
-    <string name="stream_send_also_as_direct_message">Also send as direct message</string>
+    <string name="stream_ui_send_also_to_channel">Also send to channel</string>
+    <string name="stream_ui_send_also_as_direct_message">Also send as direct message</string>
 
     <!-- Message list -->
-    <string name="stream_message_deleted_label">Message deleted</string>
+    <string name="stream_ui_message_deleted_label">Message deleted</string>
 
     <!-- Typing -->
-    <plurals name="stream_typing_text">
+    <plurals name="stream_ui_typing_text">
         <item quantity="one">%s is typing</item>
         <item quantity="other">%s and %d more are typing</item>
     </plurals>
 
-    <plurals name="stream_user_reactions_title">
+    <plurals name="stream_ui_user_reactions_title">
         <item quantity="one">%d Message Reaction</item>
         <item quantity="other">%d Message Reactions</item>
     </plurals>
+
+    <!-- Message Preview -->
+    <string name="stream_ui_message_preview_yesterday">Yesterday</string>
 </resources>

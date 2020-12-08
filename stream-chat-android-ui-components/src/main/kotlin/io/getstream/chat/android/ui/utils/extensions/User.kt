@@ -18,11 +18,11 @@ internal fun User.isCurrentUser(): Boolean {
 
 internal fun User.getLastSeenText(context: Context): String {
     return if (online) {
-        context.getString(R.string.stream_message_list_header_online)
+        context.getString(R.string.stream_ui_message_list_header_online)
     } else {
         val lastActive = lastActive ?: return String.EMPTY
         context.getString(
-            R.string.stream_message_list_header_last_seen,
+            R.string.stream_ui_message_list_header_last_seen,
             DateUtils.getRelativeTimeSpanString(lastActive.time).toString()
         )
     }

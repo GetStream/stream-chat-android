@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,23 +15,24 @@ import java.util.List;
 import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
+    private static final ChannelItemPayloadDiff FULL_CHANNEL_ITEM_PAYLOAD_DIFF =
+            new ChannelItemPayloadDiff(true, true, true, true, true);
+    private static final ChannelItemPayloadDiff EMPTY_CHANNEL_ITEM_PAYLOAD_DIFF =
+            new ChannelItemPayloadDiff(false, false, false, false, false);
     private List<Channel> channels; // cached list of channels
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
     private ChannelListViewStyle style;
-
     private ChannelViewHolderFactory viewHolderFactory;
 
-    public ChannelListItemAdapter(Context context, List<Channel> channels) {
-        this.context = context;
+    public ChannelListItemAdapter(List<Channel> channels) {
         this.channels = channels;
         this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
-    public ChannelListItemAdapter(Context context) {
-        this(context, new ArrayList<>());
+    public ChannelListItemAdapter() {
+        this(new ArrayList<>());
         this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
@@ -87,29 +87,27 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         // - if it extends baseChannelListItemView holder apply the click listeners and style;
         // - otherwise do nothing special
 
-        RecyclerView.ViewHolder anyViewHolder = viewHolderFactory.createChannelViewHolder(this, parent, viewType);
-
-        return anyViewHolder;
+        return viewHolderFactory.createChannelViewHolder(this, parent, viewType);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Channel channelState = channels.get(position);
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, null);
+        ((BaseChannelListItemViewHolder) holder).bind(channelState, position, FULL_CHANNEL_ITEM_PAYLOAD_DIFF);
     }
-
-    private ChannelItemPayloadDiff noDiff =  new ChannelItemPayloadDiff();
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
         Channel channelState = channels.get(position);
-        ChannelItemPayloadDiff diff;
+        ChannelItemPayloadDiff diff = EMPTY_CHANNEL_ITEM_PAYLOAD_DIFF;
         if (payloads.isEmpty()) {
-            diff = noDiff;
+            diff = FULL_CHANNEL_ITEM_PAYLOAD_DIFF;
         } else {
-            diff = (ChannelItemPayloadDiff) payloads.get(0);
+            for (int i = 0; i < payloads.size(); i++) {
+                diff = diff.plus((ChannelItemPayloadDiff) payloads.get(i));
+            }
         }
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, diff);
+        ((BaseChannelListItemViewHolder) holder).bind(channelState, position, diff);
     }
 
     @Override

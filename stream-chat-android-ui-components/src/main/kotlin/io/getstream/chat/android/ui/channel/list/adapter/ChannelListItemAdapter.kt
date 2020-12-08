@@ -30,7 +30,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     private fun getChannelItemLayout(): Int =
         viewHolderFactory.viewHolderLayout
             ?: style?.channelPreviewLayout
-            ?: R.layout.stream_channel_list_item_view
+            ?: R.layout.stream_ui_channel_list_item_view
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder =
         LayoutInflater.from(parent.context)

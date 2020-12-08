@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/stream_ui_channel_actions_member_height"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamUiGroupActionsAvatarStyle"
+        android:layout_width="@dimen/stream_ui_avatar_size_large"
+        android:layout_height="@dimen/stream_ui_avatar_size_large"
+        />
+
+    <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:singleLine="true"
+        android:textColor="@color/stream_ui_text_black"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:textStyle="bold"
+        tools:text="Bruker"
+        />
+
+</LinearLayout>

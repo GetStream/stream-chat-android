@@ -4,12 +4,12 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.databinding.StreamItemDateDividerBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 
 public class DateDividerViewHolder(
     parent: ViewGroup,
-    internal val binding: StreamItemDateDividerBinding = StreamItemDateDividerBinding.inflate(
+    internal val binding: StreamUiItemDateDividerBinding = StreamUiItemDateDividerBinding.inflate(
         LayoutInflater.from(
             parent.context
         ),

@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.databinding.StreamItemMessageDeletedBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessageDeletedBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 
 public class MessageDeletedViewHolder(
     parent: ViewGroup,
-    internal val binding: StreamItemMessageDeletedBinding = StreamItemMessageDeletedBinding.inflate(
+    internal val binding: StreamUiItemMessageDeletedBinding = StreamUiItemMessageDeletedBinding.inflate(
         LayoutInflater.from(
             parent.context
         ),

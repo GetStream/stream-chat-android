@@ -51,7 +51,7 @@ public class ChannelsView @JvmOverloads constructor(
                 }
             }
 
-            it.getResourceId(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable, R.drawable.stream_divider)
+            it.getResourceId(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable, R.drawable.stream_ui_divider)
                 .let { separator ->
                     channelListView.setItemSeparator(separator)
                 }
