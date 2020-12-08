@@ -22,6 +22,8 @@ import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -48,11 +50,6 @@ internal class QueryChannelsControllerImpl(
 
     private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
 
-    private val _channelsState: MutableStateFlow<QueryChannelsController.ChannelsState> = MutableStateFlow(
-        QueryChannelsController.ChannelsState.NoQueryActive
-    )
-    override val channelsState = _channelsState.asLiveData()
-
     private val _sortedChannels = _channels.filterNotNull()
         .map { it.values.sortedWith(sort.comparator) }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
@@ -66,6 +63,17 @@ internal class QueryChannelsControllerImpl(
 
     private val _loadingMore = MutableStateFlow(false)
     override val loadingMore: LiveData<Boolean> = _loadingMore.asLiveData()
+
+    private val _channelsState: StateFlow<QueryChannelsController.ChannelsState> =
+        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
+            when {
+                loading -> QueryChannelsController.ChannelsState.Loading
+                channels.isEmpty() -> QueryChannelsController.ChannelsState.OfflineNoResults
+                else -> QueryChannelsController.ChannelsState.Result(channels)
+            }
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
+
+    override val channelsState = _channelsState.asLiveData()
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
@@ -210,7 +218,6 @@ internal class QueryChannelsControllerImpl(
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val loader = if (pagination.isFirstPage) {
-            _channelsState.value = QueryChannelsController.ChannelsState.Loading
             _loading
         } else {
             _loadingMore
@@ -249,17 +256,9 @@ internal class QueryChannelsControllerImpl(
                         onlineChannels,
                         pagination.isFirstPage
                     )
-                    _channelsState.value = QueryChannelsController.ChannelsState.Result(onlineChannels)
-                } else if (result.isError && pagination.isFirstPage && channels == null) {
-                    _channelsState.value = QueryChannelsController.ChannelsState.Failed(result.error())
                 }
             }
         } else {
-            if (pagination.isFirstPage && channels.isNullOrEmpty()) {
-                _channelsState.value = QueryChannelsController.ChannelsState.OfflineNoResults
-            } else {
-                _channelsState.value = QueryChannelsController.ChannelsState.Result(channels!!)
-            }
             recoveryNeeded = true
             channels?.let { Result(it) }
                 ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
