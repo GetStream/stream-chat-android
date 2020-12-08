@@ -182,6 +182,20 @@
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
+        <!--MessageOptions-->
+        <attr name="streamReplyOptionMessage" format="string" />
+        <attr name="streamReplyOptionIcon" format="reference" />
+        <attr name="streamThreadReplyOptionMessage" format="string" />
+        <attr name="streamThreadReplyOptionIcon" format="reference" />
+        <attr name="streamCopyOptionMessage" format="string" />
+        <attr name="streamCopyOptionIcon" format="reference" />
+        <attr name="streamMuteOptionMessage" format="string" />
+        <attr name="streamMuteOptionIcon" format="reference" />
+        <attr name="streamBlockOptionMessage" format="string" />
+        <attr name="streamBlockOptionIcon" format="reference" />
+        <attr name="streamDeleteOptionMessage" format="string" />
+        <attr name="streamDeleteOptionIcon" format="reference" />
+
         <!--Scroll button-->
         <attr name="streamDefaultScrollButtonEnabled" format="boolean" />
         <attr name="streamScrollButtonBackground" format="reference" />

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messages.view
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
@@ -16,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.DefaultBubbleHelper
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -48,8 +48,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
+import io.getstream.chat.android.ui.utils.extensions.use
 import kotlin.math.max
 import kotlin.math.min
 
@@ -240,7 +242,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         initUnseenMessagesView()
         initLoadingView()
         initEmptyStateView()
-        initBlurLayer()
+        initShadowLayer()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -264,7 +266,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         emptyStateViewContainer = binding.emptyStateViewContainer
     }
 
-    private fun initBlurLayer() {
+    private fun initShadowLayer() {
         binding.shadowLayer.setOnClickListener { hideBlurLayer() }
         binding.optionsMessageContainer.setOnClickListener { hideBlurLayer() }
     }
@@ -306,65 +308,105 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initUnseenMessagesView() {
         binding.newMessagesTV.visibility = GONE
     }
-
+    
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
         style = MessageListViewStyle(context, attrs)
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
-        val tArray = context
-            .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
+        context.obtainStyledAttributes(attributeSet, R.styleable.MessageListView).use { tArray ->
 
-        loadMoreListener.loadMoreThreshold = tArray.getInteger(
-            R.styleable.MessageListView_streamLoadMoreThreshold,
-            context.resources.getInteger(R.integer.stream_load_more_threshold)
-        )
-
-        val backgroundRes = tArray.getResourceId(
-            R.styleable.MessageListView_streamScrollButtonBackground,
-            R.drawable.stream_shape_round
-        )
-
-        unseenButtonEnabled = tArray.getBoolean(
-            R.styleable.MessageListView_streamDefaultScrollButtonEnabled,
-            true
-        )
-
-        binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
-
-        if (!unseenButtonEnabled) {
-            binding.scrollBottomBtn.visibility = View.GONE
-        }
-
-        newMessagesTextSingle =
-            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
-        newMessagesTextPlural =
-            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural)
-        newMessagesBehaviour = NewMessagesBehaviour.parseValue(
-            tArray.getInt(
-                R.styleable.MessageListView_streamNewMessagesBehaviour,
-                NewMessagesBehaviour.COUNT_UPDATE.value
+            loadMoreListener.loadMoreThreshold = tArray.getInteger(
+                R.styleable.MessageListView_streamLoadMoreThreshold,
+                context.resources.getInteger(R.integer.stream_load_more_threshold)
             )
-        )
 
-        val arrowIconRes = tArray.getResourceId(
-            R.styleable.MessageListView_streamButtonIcon,
-            R.drawable.stream_bottom_arrow
-        )
+            val backgroundRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamScrollButtonBackground,
+                R.drawable.stream_shape_round
+            )
 
-        val scrollButtonArrow = findViewById<ImageView>(R.id.scrollIconIV)
-        scrollButtonArrow.setImageResource(arrowIconRes)
+            unseenButtonEnabled = tArray.getBoolean(
+                R.styleable.MessageListView_streamDefaultScrollButtonEnabled,
+                true
+            )
 
-        tArray.getText(R.styleable.MessageListView_streamMessagesEmptyStateLabelText)
-            ?.let { emptyStateText ->
-                emptyStateView.let {
-                    if (it is TextView) {
-                        it.text = emptyStateText
-                    }
-                }
+            binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
+
+            if (!unseenButtonEnabled) {
+                binding.scrollBottomBtn.visibility = View.GONE
             }
 
-        tArray.recycle()
+            newMessagesTextSingle =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
+            newMessagesTextPlural =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural)
+            newMessagesBehaviour = NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                    R.styleable.MessageListView_streamNewMessagesBehaviour,
+                    NewMessagesBehaviour.COUNT_UPDATE.value
+                )
+            )
+
+            val arrowIconRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonIcon,
+                R.drawable.stream_bottom_arrow
+            )
+
+            val scrollButtonArrow = findViewById<ImageView>(R.id.scrollIconIV)
+            scrollButtonArrow.setImageResource(arrowIconRes)
+
+            tArray.getText(R.styleable.MessageListView_streamMessagesEmptyStateLabelText)
+                ?.let { emptyStateText ->
+                    emptyStateView.let {
+                        if (it is TextView) {
+                            it.text = emptyStateText
+                        }
+                    }
+                }
+
+            configureMessageOptions(tArray)
+        }
+    }
+
+    private fun configureMessageOptions(tArray: TypedArray) {
+        binding.replyTV.text = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamReplyOptionIcon,
+            R.drawable.stream_ic_arrow_curve_left
+        ).let(binding.replyIV::setImageResource)
+
+        binding.threadReplyTV.text =
+            tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamThreadReplyOptionIcon,
+            R.drawable.stream_ic_thread_reply
+        ).let(binding.threadReplyIV::setImageResource)
+
+        binding.copyTV.text = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamCopyOptionIcon,
+            R.drawable.stream_ic_copy
+        ).let(binding.copyIV::setImageResource)
+
+        binding.muteTV.text = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamMuteOptionIcon,
+            R.drawable.stream_ic_mute
+        ).let(binding.muteIV::setImageResource)
+
+        binding.blockTV.text = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamBlockOptionIcon,
+            R.drawable.stream_ic_mute
+        ).let(binding.blockIV::setImageResource)
+
+        binding.deleteTV.text =
+            tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete message"
+        tArray.getResourceId(
+            R.styleable.MessageListView_streamDeleteOptionIcon,
+            R.drawable.stream_ic_delete
+        ).let(binding.deleteIV::setImageResource)
     }
 
     private fun lastPosition(): Int {
