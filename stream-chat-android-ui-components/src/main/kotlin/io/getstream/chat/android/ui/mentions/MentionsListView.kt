@@ -25,7 +25,7 @@ public class MentionsListView : RecyclerView {
         init(attrs)
     }
 
-    private val adapter = MentionsListAdapter()
+    private val adapter = MentionsListAdapter(context)
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
