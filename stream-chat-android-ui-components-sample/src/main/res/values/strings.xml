@@ -56,8 +56,8 @@
     <!-- Chat Info Screens -->
     <string name="chat_info_user_mention_symbol">\@user</string>
     <string name="chat_info_option_notifications">Notifications</string>
-    <string name="chat_info_option_mute_user">Mute user</string>
-    <string name="chat_info_option_block_user">Block user</string>
+    <string name="chat_info_option_mute_user">Mute User</string>
+    <string name="chat_info_option_block_user">Block User</string>
     <string name="chat_info_option_media">Photo &amp; Videos</string>
     <string name="chat_info_option_files">Files</string>
     <string name="chat_info_option_shared_groups">Shared Groups</string>
