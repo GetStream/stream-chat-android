@@ -397,7 +397,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         binding.blockTV.text = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
         tArray.getResourceId(
             R.styleable.MessageListView_streamBlockOptionIcon,
-            R.drawable.stream_ic_mute
+            R.drawable.stream_ic_user_block
         ).let(binding.blockIV::setImageResource)
 
         binding.deleteTV.text =
