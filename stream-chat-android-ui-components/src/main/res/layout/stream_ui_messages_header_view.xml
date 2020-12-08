@@ -11,7 +11,6 @@
         android:id="@+id/back_button_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="?selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,11 +19,12 @@
         tools:ignore="RtlHardcoded"
         >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/back_button"
-            android:layout_width="8dp"
-            android:layout_height="14dp"
-            android:layout_marginLeft="16dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stream_ui_content_description_back_button"
             android:src="@drawable/stream_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,19 +34,14 @@
 
         <TextView
             android:id="@+id/back_button_badge"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/stream_ui_badge_bg"
-            android:backgroundTint="@color/stream_ui_light_red"
-            android:gravity="center"
-            android:textColor="@color/stream_ui_white"
-            android:textSize="10dp"
-            android:textStyle="bold"
+            style="@style/StreamUiBadgeStyle"
+            android:layout_marginStart="18dp"
+            android:layout_marginBottom="16dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/back_button"
-            app:layout_constraintLeft_toRightOf="@+id/back_button"
-            tools:ignore="SpUsage"
-            tools:text="23"
+            app:layout_constraintBottom_toBottomOf="@+id/back_button"
+            app:layout_constraintStart_toStartOf="@+id/back_button"
+            tools:text="2"
+            tools:visibility="visible"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,9 +115,9 @@
                 android:id="@+id/offline_retry_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?selectableItemBackground"
                 android:text="@string/stream_ui_message_list_header_try_again"
                 android:textColor="@color/stream_ui_blue"
                 />
@@ -164,6 +159,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatar"
+        style="@style/StreamUiChannelListAvatarStyle"
         android:layout_width="@dimen/stream_ui_avatar_size_medium"
         android:layout_height="@dimen/stream_ui_avatar_size_medium"
         android:layout_marginRight="8dp"
