@@ -16,13 +16,13 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
     public var listenerContainer: ChannelListItemListenerContainer = ChannelListItemListenerContainer()
 
-    public var endReached: Boolean = true
+    public var endReached: Boolean = false
         set(value) {
-            field = value
             if (!value) {
                 // if we've reached the end, remove the last item
                 notifyItemRemoved(itemCount)
             }
+            field = value
         }
 
     public companion object {
