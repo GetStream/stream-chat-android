@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+- Add new attrs to `MessageListView`: `streamDeleteMessageActionEnabled`, `streamEditMessageActionEnabled`
 
 ## stream-chat-android-client
 
