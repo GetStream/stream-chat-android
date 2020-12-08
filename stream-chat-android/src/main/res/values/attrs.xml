@@ -177,8 +177,6 @@
         <!--Input Scrollbar-->
         <attr name="streamInputScrollbarEnabled" format="boolean" />
         <attr name="streamInputScrollbarFadingEnabled" format="boolean" />
-        <attr name="streamInputScrollbarWidth" format="dimension" />
-        <attr name="streamInputScrollbarThumb" format="reference" />
 
         <attr name="streamSendAlsoToChannel" format="color|reference" />
     </declare-styleable>

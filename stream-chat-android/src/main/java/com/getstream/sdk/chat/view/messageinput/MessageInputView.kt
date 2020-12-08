@@ -165,8 +165,9 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         binding.llComposer.background = style.inputBackground
         // Input Text
         style.inputText.apply(binding.messageTextInput)
-        style.scrollbarStyle.apply(binding.messageTextInput)
         binding.messageTextInput.hint = style.getInputHint()
+        binding.messageTextInput.isVerticalScrollBarEnabled = style.inputScrollbarEnabled
+        binding.messageTextInput.isScrollbarFadingEnabled = style.inputScrollbarFadingEnabled
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)

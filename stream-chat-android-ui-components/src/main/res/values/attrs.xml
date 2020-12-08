@@ -62,8 +62,6 @@
         </attr>
         <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
-        <attr name="streamUiMessageInputScrollbarWidth" format="dimension" />
-        <attr name="streamUiMessageInputScrollbarThumb" format="reference" />
 
         <!--Send Button-->
         <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />

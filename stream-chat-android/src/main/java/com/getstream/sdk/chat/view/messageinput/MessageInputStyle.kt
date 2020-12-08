@@ -13,7 +13,6 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.style.ScrollbarStyle
 import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 
@@ -31,7 +30,8 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     val attachmentCloseButtonBackground: Drawable?
     val inputSendAlsoToChannelTextColor: Int
     val sendAlsoToChannelCheckboxEnabled: Boolean
-    val scrollbarStyle: ScrollbarStyle
+    val inputScrollbarEnabled: Boolean
+    val inputScrollbarFadingEnabled: Boolean
 
     private var inputHint = ""
     private val attachmentButtonIcon: Int
@@ -202,12 +202,8 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                 style(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL)
             }.build()
 
-            scrollbarStyle = ScrollbarStyle.Builder(this).apply {
-                scrollbarEnabled(R.styleable.MessageInputView_streamInputScrollbarEnabled)
-                scrollbarFadingEnabled(R.styleable.MessageInputView_streamInputScrollbarFadingEnabled)
-                scrollbarWidth(R.styleable.MessageInputView_streamInputScrollbarWidth)
-                scrollbarThumb(R.styleable.MessageInputView_streamInputScrollbarThumb)
-            }.build()
+            inputScrollbarEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarEnabled, false)
+            inputScrollbarFadingEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarFadingEnabled, false)
 
             context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer))?.let { inputBackground = it }
             context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select))?.let { inputSelectedBackground = it }
