@@ -125,7 +125,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface UserClickListener {
         public companion object {
-            public val DEFAULT: UserClickListener by lazy { UserClickListener {} }
+            public val DEFAULT: UserClickListener = UserClickListener {}
         }
 
         public fun onUserClick(user: User)
@@ -133,7 +133,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface ChannelClickListener {
         public companion object {
-            public val DEFAULT: ChannelClickListener by lazy { ChannelClickListener {} }
+            public val DEFAULT: ChannelClickListener = ChannelClickListener {}
         }
 
         public fun onClick(channel: Channel)
