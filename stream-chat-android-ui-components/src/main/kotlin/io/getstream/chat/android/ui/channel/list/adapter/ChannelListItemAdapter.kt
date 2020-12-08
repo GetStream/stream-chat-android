@@ -16,7 +16,13 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         ChannelViewHolderFactory()
 
     public companion object {
-        public val DEFAULT_DIFF: ChannelDiff = ChannelDiff()
+        public val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
+        public val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
+            nameChanged = false,
+            avatarViewChanged = false,
+            lastMessageChanged = false,
+            readStateChanged = false
+        )
     }
 
     /**
@@ -40,7 +46,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
         holder.bind(
             getItem(position),
-            payloads.firstOrDefault(DEFAULT_DIFF).cast(),
+            payloads.firstOrDefault(EVERYTHING_CHANGED).cast(),
             channelClickListener,
             channelLongClickListener,
             deleteClickListener,
@@ -52,7 +58,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
         holder.bind(
             getItem(position),
-            null,
+            NOTHING_CHANGED,
             channelClickListener,
             channelLongClickListener,
             deleteClickListener,

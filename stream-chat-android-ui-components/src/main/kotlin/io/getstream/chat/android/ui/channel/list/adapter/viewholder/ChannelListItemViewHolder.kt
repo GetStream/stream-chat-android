@@ -51,7 +51,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
     public override fun bind(
         channel: Channel,
-        diff: ChannelDiff?,
+        diff: ChannelDiff,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         channelDeleteListener: ChannelListView.ChannelClickListener,
@@ -65,7 +65,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     }
 
     private fun configureForeground(
-        diff: ChannelDiff?,
+        diff: ChannelDiff,
         channel: Channel,
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener,
@@ -75,7 +75,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         binding.itemForegroundView.apply {
             configureSwipeBehavior(channel.cid)
 
-            diff?.run {
+            diff.run {
                 if (nameChanged) {
                     configureChannelNameLabel(channel)
                 }

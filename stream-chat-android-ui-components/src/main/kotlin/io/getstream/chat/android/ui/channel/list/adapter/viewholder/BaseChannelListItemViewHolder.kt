@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     public abstract fun bind(
         channel: Channel,
-        diff: ChannelDiff?,
+        diff: ChannelDiff,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         channelDeleteListener: ChannelListView.ChannelClickListener,
