@@ -4,8 +4,8 @@ import com.google.common.truth.Truth
 import com.squareup.burst.BurstJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.time.LocalDate
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 @RunWith(BurstJUnit4::class)
 internal class DefaultDateFormatterTest {
