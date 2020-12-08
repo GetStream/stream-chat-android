@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
+import io.getstream.chat.android.ui.utils.DateFormatter
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCurrentUser
@@ -25,8 +26,7 @@ import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
 import io.getstream.chat.android.ui.utils.extensions.getPreviewText
 import io.getstream.chat.android.ui.utils.extensions.getUsers
 import io.getstream.chat.android.ui.utils.extensions.lastMessageByCurrentUserWasRead
-import java.text.SimpleDateFormat
-import java.util.Locale
+import io.getstream.chat.android.ui.utils.formatMessageDate
 import kotlin.math.absoluteValue
 
 public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
@@ -39,12 +39,9 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
     private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
     private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
+    private val dateFormatter = DateFormatter.from(context)
+
     public companion object {
-        @SuppressLint("ConstantLocale")
-        private val DEFAULT_LOCALE: Locale = Locale.getDefault()
-
-        private val TIME_FORMAT = SimpleDateFormat("hh:mm a", DEFAULT_LOCALE)
-
         private const val OPTIONS_COUNT = 2
 
         // persists menu states for channels - becomes necessary when view holders are recycled
@@ -162,9 +159,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
             return
         }
 
-        channel.getLastMessageTime()
-            ?.let(TIME_FORMAT::format)
-            ?.let { lastMessageTimeLabel.text = it }
+        lastMessageTimeLabel.text = dateFormatter.formatMessageDate(channel.getLastMessageTime())
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabel(channel: Channel) {

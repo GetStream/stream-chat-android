@@ -46,4 +46,8 @@
     <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_grey_90</color>
     <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_white</color>
     <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_white</color>
+
+    <color name="stream_ui_attachment_dialog_header_color">#F5F5F5</color>
+    <color name="stream_ui_attachment_dialog_button_enabled">#7A7A7A</color>
+    <color name="stream_ui_attachment_dialog_button_disabled">#E6E6E6</color>
 </resources>

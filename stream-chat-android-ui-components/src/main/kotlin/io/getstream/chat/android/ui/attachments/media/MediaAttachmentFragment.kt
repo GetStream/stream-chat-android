@@ -59,11 +59,6 @@ public class MediaAttachmentFragment : Fragment() {
         checkPermissions()
     }
 
-    override fun onResume() {
-        super.onResume()
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.MEDIA)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
