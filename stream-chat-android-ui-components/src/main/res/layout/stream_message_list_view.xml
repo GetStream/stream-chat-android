@@ -160,9 +160,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:src="@drawable/stream_ic_arrow_curve_left"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/stream_ic_arrow_curve_left"
                         />
 
                     <TextView
@@ -170,11 +170,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Reply"
-                        android:textColor="@color/stream_white"
                         app:layout_constraintBottom_toBottomOf="@id/replyIV"
                         app:layout_constraintStart_toEndOf="@id/replyIV"
                         app:layout_constraintTop_toTopOf="@id/replyIV"
+                        tools:text="Reply"
                         />
 
                     <View
@@ -194,9 +193,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
-                        android:src="@drawable/stream_ic_thread_reply"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/replyDivision"
+                        tools:src="@drawable/stream_ic_thread_reply"
                         />
 
                     <TextView
@@ -204,11 +203,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Thread Reply"
-                        android:textColor="@color/stream_white"
                         app:layout_constraintBottom_toBottomOf="@id/threadReplyIV"
                         app:layout_constraintStart_toEndOf="@id/threadReplyIV"
                         app:layout_constraintTop_toTopOf="@id/threadReplyIV"
+                        tools:text="Thread Reply"
                         />
 
                     <View
@@ -228,9 +226,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
-                        android:src="@drawable/stream_ic_copy"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/threadReplyDivision"
+                        tools:src="@drawable/stream_ic_copy"
                         />
 
                     <TextView
@@ -238,11 +236,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Copy message"
-                        android:textColor="@color/stream_white"
                         app:layout_constraintBottom_toBottomOf="@id/copyIV"
                         app:layout_constraintStart_toEndOf="@id/copyIV"
                         app:layout_constraintTop_toTopOf="@id/copyIV"
+                        tools:text="Copy message"
                         />
 
                     <View
@@ -262,9 +259,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
-                        android:src="@drawable/stream_ic_mute"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/copyDivision"
+                        tools:src="@drawable/stream_ic_mute"
                         />
 
                     <TextView
@@ -272,11 +269,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Mute User"
-                        android:textColor="@color/stream_white"
                         app:layout_constraintBottom_toBottomOf="@id/muteIV"
                         app:layout_constraintStart_toEndOf="@id/muteIV"
                         app:layout_constraintTop_toTopOf="@id/muteIV"
+                        tools:text="Mute User"
                         />
 
                     <View
@@ -296,9 +292,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
-                        android:src="@drawable/stream_ic_mute"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/muteDivision"
+                        tools:src="@drawable/stream_ic_user_block"
                         />
 
                     <TextView
@@ -306,11 +302,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Block User"
-                        android:textColor="@color/stream_white"
                         app:layout_constraintBottom_toBottomOf="@id/blockIV"
                         app:layout_constraintStart_toEndOf="@id/blockIV"
                         app:layout_constraintTop_toTopOf="@id/blockIV"
+                        tools:text="Block User"
                         />
 
                     <View
@@ -330,10 +325,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="8dp"
-                        android:src="@drawable/stream_ic_delete"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/blockDivision"
                         app:tint="@color/stream_ui_light_red"
+                        tools:src="@drawable/stream_ic_delete"
                         />
 
                     <TextView
@@ -341,11 +336,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Delete Message"
                         android:textColor="@color/stream_ui_light_red"
                         app:layout_constraintBottom_toBottomOf="@id/deleteIV"
                         app:layout_constraintStart_toEndOf="@id/deleteIV"
                         app:layout_constraintTop_toTopOf="@id/deleteIV"
+                        tools:text="Delete Message"
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
