@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
@@ -21,13 +22,11 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(itemView: V
     public abstract fun bindData(data: T)
 
     protected fun constraintView(isMine: Boolean, view: View, layout: ConstraintLayout) {
-        ConstraintSet().apply {
-            clone(layout)
+        layout.updateConstraints {
             clear(view.id, ConstraintSet.LEFT)
             clear(view.id, ConstraintSet.RIGHT)
-            val anchorSide = if (isMine) ConstraintSet.END else ConstraintSet.START
+            val anchorSide = if (isMine) ConstraintSet.RIGHT else ConstraintSet.LEFT
             connect(view.id, anchorSide, ConstraintSet.PARENT_ID, anchorSide)
-            applyTo(layout)
         }
     }
 }
