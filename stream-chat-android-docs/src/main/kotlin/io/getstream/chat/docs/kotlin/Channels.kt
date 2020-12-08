@@ -72,7 +72,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
         fun stopWatchingChannel() {
             channelController.stopWatching().enqueue {
                 if (it.isSuccess) {
-                    val channel = it.data()
+                    // Channel unwatched
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
                 }
@@ -89,9 +89,10 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             val offset = 0
             val limit = 10
             val sort = QuerySort.desc<Channel>("last_message_at")
-            val request = QueryChannelsRequest(filter, offset, limit, sort)
-            request.watch = true
-            request.state = true
+            val request = QueryChannelsRequest(filter, offset, limit, sort).apply {
+                watch = true
+                state = true
+            }
 
             client.queryChannels(request).enqueue {
                 if (it.isSuccess) {
@@ -176,8 +177,8 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
 
         // Get the second 10 messages
         fun loadSecondPage(lastMessageId: String) {
-            val firstPage = QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
-            client.queryChannel("channel-type", "channel-id", firstPage).enqueue {
+            val secondPage = QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
+            client.queryChannel("channel-type", "channel-id", secondPage).enqueue {
                 if (it.isSuccess) {
                     val messages: List<Message> = it.data().messages
                     if (messages.size < pageSize) {
@@ -198,8 +199,9 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
     inner class UpdatingAChannel {
         fun updateChannel() {
             val channelData = mapOf("color" to "green")
-            val updateMessage = Message()
-            updateMessage.text = "Thierry changed the channel color to green"
+            val updateMessage = Message().apply {
+                text = "Thierry changed the channel color to green"
+            }
             channelController.update(updateMessage, channelData).enqueue {
                 if (it.isSuccess) {
                     val channel = it.data()
@@ -271,10 +273,10 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
         fun invitingUsers() {
             val members = listOf("thierry", "tommaso")
             val invites = listOf("nick")
-            val data = mutableMapOf<String, Any>()
-
-            data["members"] = members
-            data["invites"] = invites
+            val data = mapOf(
+                "members" to members,
+                "invites" to invites
+            )
 
             channelController.create(data).enqueue {
                 if (it.isSuccess) {
