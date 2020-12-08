@@ -37,7 +37,7 @@ fun ChatInfoViewModel.bindView(view: ChatInfoFragment, lifecycleOwner: Lifecycle
                 ChatInfoItem.Option.SharedFiles,
                 ChatInfoItem.Option.SharedGroups,
                 ChatInfoItem.Separator,
-                ChatInfoItem.Option.DeleteConversation
+                ChatInfoItem.Option.DeleteConversation,
             )
         )
     }
