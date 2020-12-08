@@ -1,49 +1,77 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.graphics.Paint
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        val radius = DEFAULT_CORNER_RADIUS_DP.dpToPxPrecise()
-        viewHolder.binding.deleteLabel.background = BackgroundDrawable(
-            color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_DELETED_BACKGROUND),
-            topLeftCornerPx = radius,
-            topRightCornerPx = radius,
-            bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
-            bottomLeftCornerPx = radius
-        )
+        val bottomRightCorner =
+            if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_CORNER_RADIUS
+        val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomRightCornerSize(bottomRightCorner).build()
+        viewHolder.binding.deleteLabel.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_DELETED_BACKGROUND))
+        }
     }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        val radius = DEFAULT_CORNER_RADIUS_DP.dpToPxPrecise()
-        viewHolder.binding.messageText.background = if (data.isMine) {
-            BackgroundDrawable(
-                color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_CURRENT_USER_BACKGROUND),
-                topLeftCornerPx = radius,
-                topRightCornerPx = radius,
-                bottomRightCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius,
-                bottomLeftCornerPx = radius
-            )
-        } else {
-            BackgroundStrokeDrawable(
-                color = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_OTHER_USER_BACKGROUND),
-                strokeColor = ContextCompat.getColor(viewHolder.itemView.context, MESSAGE_OTHER_STROKE_COLOR),
-                strokeWidth = DEFAULT_STROKE_WIDTH_DP.dpToPxPrecise(),
-                topLeftCornerPx = radius,
-                topRightCornerPx = radius,
-                bottomRightCornerPx = radius,
-                bottomLeftCornerPx = if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
-            )
+        setDefaultBackgroundDrawable(viewHolder.binding.messageText, data)
+    }
+
+    private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
+        val radius = DEFAULT_CORNER_RADIUS
+        val bottomRightCorner =
+            if (data.isMine && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
+        val bottomLeftCorner =
+            if (data.isMine.not() && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
+        val shapeAppearanceModel =
+            ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
+                .setBottomRightCornerSize(bottomRightCorner).build()
+        view.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            if (data.isMine) {
+                paintStyle = Paint.Style.FILL
+                setTint(ContextCompat.getColor(view.context, MESSAGE_CURRENT_USER_BACKGROUND))
+            } else {
+                paintStyle = Paint.Style.FILL_AND_STROKE
+                setStrokeTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_STROKE_COLOR))
+                strokeWidth = DEFAULT_STROKE_WIDTH
+                setTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_USER_BACKGROUND))
+            }
         }
+    }
+
+    override fun decorateOnlyMediaAttachmentsMessage(
+        viewHolder: OnlyMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        val cornerRadius = DEFAULT_CORNER_RADIUS - 2.dpToPxPrecise()
+        val bottomRightCornerRadius =
+            if (data.isMine && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else cornerRadius
+        val bottomLeftCornerRadius =
+            if (data.isMine.not() && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else cornerRadius
+        ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomLeftCornerSize(bottomLeftCornerRadius).setBottomRightCornerSize(bottomRightCornerRadius)
+            .build().also { shapeAppearanceModel ->
+                viewHolder.binding.imageView.shapeAppearanceModel = shapeAppearanceModel
+                viewHolder.binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+                    alpha = 128
+                    setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_ui_black))
+                }
+            }
+        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
     }
 
     companion object {
@@ -51,7 +79,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_border_stroke
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_90
-        private const val DEFAULT_CORNER_RADIUS_DP = 16
-        private const val DEFAULT_STROKE_WIDTH_DP = 1
+        private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
+        private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
     }
 }
