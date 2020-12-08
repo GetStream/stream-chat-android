@@ -368,7 +368,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             // Hides the channel until a new message is added there
             channelController.hide().enqueue {
                 if (it.isSuccess) {
-                    val channel = it.data()
+                    // Channel is hidden
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
                 }
@@ -377,7 +377,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             // Shows a previously hidden channel
             channelController.show().enqueue {
                 if (it.isSuccess) {
-                    val channel = it.data()
+                    // Channel is shown
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
                 }
@@ -386,7 +386,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             // Hide the channel and clear the message history
             channelController.hide(clearHistory = true).enqueue {
                 if (it.isSuccess) {
-                    val channel = it.data()
+                    // Channel is hidden
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
                 }
