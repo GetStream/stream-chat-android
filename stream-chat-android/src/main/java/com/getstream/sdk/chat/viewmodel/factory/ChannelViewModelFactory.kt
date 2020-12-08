@@ -22,8 +22,8 @@ public class ChannelViewModelFactory(private val cid: String) : ViewModelProvide
         MessageListViewModel::class.java to { MessageListViewModel(cid) },
     )
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        val viewModel: ViewModel? = factories[modelClass]?.invoke()
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException("ChannelViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
 
         @Suppress("UNCHECKED_CAST")
