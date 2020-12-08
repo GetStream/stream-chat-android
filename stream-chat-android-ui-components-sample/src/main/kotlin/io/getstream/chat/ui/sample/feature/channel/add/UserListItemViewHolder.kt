@@ -48,7 +48,6 @@ class UserItemViewHolder(
         with(item.userInfo) {
             binding.userAvatar.setUserData(user)
             binding.nameTextView.text = user.name
-            // Placeholder for now
             binding.onlineTextView.text = user.getLastSeenText(context)
             binding.checkboxImageView.isVisible = isSelected
         }
