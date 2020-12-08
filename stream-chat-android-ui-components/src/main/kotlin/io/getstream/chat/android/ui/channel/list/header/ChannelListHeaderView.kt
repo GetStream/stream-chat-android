@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class ChannelListHeaderView : ConstraintLayout {
 
@@ -64,7 +65,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.onlineTextView.apply {
             text = typedArray.getString(R.styleable.StreamUiChannelListHeaderView_streamUiOnlineTitleText)
                 ?: context.getString(R.string.stream_ui_channels_header_view_online_title)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
+            setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
