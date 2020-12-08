@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/chat_info__delete_conversation_confirm"
+            android:text="@string/chat_info_delete_conversation_confirm"
             android:textColor="@color/black"
             android:textSize="@dimen/stream_ui_text_medium"
             app:layout_constraintEnd_toEndOf="parent"
