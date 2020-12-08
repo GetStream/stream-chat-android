@@ -15,7 +15,7 @@
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
-        app:backgroundTint="@color/stream_white"
+        app:backgroundTint="@color/stream_ui_white"
         app:cornerRadius="20dp"
         app:icon="@drawable/ic_check"
         app:iconGravity="textStart"

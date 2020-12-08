@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentController
-import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.getColorList
@@ -54,7 +54,7 @@ public class MessageInputView : ConstraintLayout {
 
     private var currentAnimatorSet: AnimatorSet? = null
 
-    private lateinit var binding: StreamMessageInputBinding
+    private lateinit var binding: StreamUiMessageInputBinding
     private lateinit var suggestionListController: SuggestionListController
     private lateinit var attachmentController: AttachmentController
 
@@ -111,9 +111,9 @@ public class MessageInputView : ConstraintLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
-        binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = StreamUiMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
-        context.obtainStyledAttributes(attr, R.styleable.StreamMessageInputView).use { typedArray ->
+        context.obtainStyledAttributes(attr, R.styleable.StreamUiMessageInputView).use { typedArray ->
             configAttachmentButton(typedArray)
             configLightningButton(typedArray)
             configTextInput(typedArray)
@@ -142,25 +142,39 @@ public class MessageInputView : ConstraintLayout {
 
             inputMode.let {
                 when (it) {
-                    is InputMode.Normal -> sendMessageHandler.sendMessage(messageText)
+                    is InputMode.Normal -> {
+                        if (attachmentController.selectedAttachments.isEmpty()) {
+                            sendMessageHandler.sendMessage(messageText)
+                        } else {
+                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
+                            sendMessageHandler.sendMessageWithAttachments(messageText, attachedFiles)
+                        }
+                    }
                     is InputMode.Thread -> {
-                        sendMessageHandler.sendToThread(
-                            it.parentMessage,
-                            messageText,
-                            binding.sendAlsoToChannel.isChecked
-                        )
+                        val parentMessage = it.parentMessage
+                        val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
+                        if (attachmentController.selectedAttachments.isEmpty()) {
+                            sendMessageHandler.sendToThread(
+                                parentMessage,
+                                messageText,
+                                binding.sendAlsoToChannel.isChecked
+                            )
+                        } else {
+                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
+                            sendMessageHandler.sendToThreadWithAttachments(parentMessage, messageText, sendAlsoToChannel, attachedFiles)
+                        }
                     }
                     is InputMode.Edit -> sendMessageHandler.editMessage(it.oldMessage, messageText)
                 }
             }
-
             messageText = ""
+            attachmentController.clearSelectedAttachments()
         }
     }
 
     private fun configSendAlsoToChannelCheckboxVisibility(typedArray: TypedArray) {
         sendAlsoToChannelCheckBoxEnabled =
-            typedArray.getBoolean(R.styleable.StreamMessageInputView_streamShowSendAlsoToChannelCheckbox, true)
+            typedArray.getBoolean(R.styleable.StreamUiMessageInputView_streamUiShowSendAlsoToChannelCheckbox, true)
     }
 
     private fun configSendAlsoToChannelCheckbox() {
@@ -169,10 +183,10 @@ public class MessageInputView : ConstraintLayout {
         if (shouldShowCheckbox) {
             val text = when (chatMode) {
                 ChatMode.GroupChat -> {
-                    context.getString(R.string.stream_send_also_to_channel)
+                    context.getString(R.string.stream_ui_send_also_to_channel)
                 }
                 ChatMode.DirectChat -> {
-                    context.getString(R.string.stream_send_also_as_direct_message)
+                    context.getString(R.string.stream_ui_send_also_as_direct_message)
                 }
             }
             binding.sendAlsoToChannel.text = text
@@ -182,36 +196,36 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configAttachmentButton(typedArray: TypedArray) {
         binding.ivOpenAttachment.run {
-            isVisible = typedArray.getBoolean(R.styleable.StreamMessageInputView_streamAttachButtonEnabled, true)
+            isVisible = typedArray.getBoolean(R.styleable.StreamUiMessageInputView_streamUiAttachButtonEnabled, true)
 
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamAttachButtonIcon)
+            typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiAttachButtonIcon)
                 ?.let(this::setImageDrawable)
 
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamAttachButtonIconColor,
+                        R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconColor,
                         ContextCompat.getColor(context, R.color.stream_gray_dark)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_white)
+                        R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconPressedColor,
+                        ContextCompat.getColor(context, R.color.stream_ui_white)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_light)
+                        R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconPressedColor,
+                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
                     )
                 )
             )
 
             layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_streamAttachButtonWidth,
+                R.styleable.StreamUiMessageInputView_streamUiAttachButtonWidth,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_streamAttachButtonHeight,
+                R.styleable.StreamUiMessageInputView_streamUiAttachButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
         }
@@ -220,36 +234,36 @@ public class MessageInputView : ConstraintLayout {
     private fun configLightningButton(typedArray: TypedArray) {
         binding.ivOpenEmojis.run {
             isVisible =
-                typedArray.getBoolean(R.styleable.StreamMessageInputView_streamLightningButtonEnabled, true)
+                typedArray.getBoolean(R.styleable.StreamUiMessageInputView_streamUiLightningButtonEnabled, true)
 
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamLightningButtonIcon)
+            typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiLightningButtonIcon)
                 ?.let(this::setImageDrawable)
 
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamLightningButtonIconColor,
+                        R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconColor,
                         ContextCompat.getColor(context, R.color.stream_gray_dark)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_white)
+                        R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconPressedColor,
+                        ContextCompat.getColor(context, R.color.stream_ui_white)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_light)
+                        R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconPressedColor,
+                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
                     )
                 )
             )
 
             layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_streamLightningButtonWidth,
+                R.styleable.StreamUiMessageInputView_streamUiLightningButtonWidth,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_streamLightningButtonHeight,
+                R.styleable.StreamUiMessageInputView_streamUiLightningButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
         }
@@ -301,25 +315,25 @@ public class MessageInputView : ConstraintLayout {
         binding.etMessageTextInput.run {
             setTextColor(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamMessageInputTextColor,
-                    ContextCompat.getColor(context, R.color.stream_black)
+                    R.styleable.StreamUiMessageInputView_streamUiMessageInputTextColor,
+                    ContextCompat.getColor(context, R.color.stream_ui_black)
                 )
             )
 
             setHintTextColor(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamMessageInputHintTextColor,
+                    R.styleable.StreamUiMessageInputView_streamUiMessageInputHintTextColor,
                     ContextCompat.getColor(context, R.color.stream_gray_dark)
                 )
             )
 
             textSize =
                 typedArray.getDimensionPixelSize(
-                    R.styleable.StreamMessageInputView_streamMessageInputTextSize,
-                    context.resources.getDimensionPixelSize(R.dimen.stream_text_size_input)
+                    R.styleable.StreamUiMessageInputView_streamUiMessageInputTextSize,
+                    context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
                 ).toFloat()
 
-            hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)
+            hint = typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint)
         }
     }
 
@@ -333,12 +347,12 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButton(typedArray: TypedArray) {
         iconDisabledSendButtonDrawable =
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonDisabledIcon)
+            typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIcon)
             ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
 
         iconEnabledSendButtonDrawable =
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonEnabledIcon)
+            typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIcon)
             ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
 
@@ -346,15 +360,15 @@ public class MessageInputView : ConstraintLayout {
             iconEnabledSendButtonDrawable!!,
             getColorList(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonEnabledIconColor,
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIconColor,
                     ContextCompat.getColor(context, R.color.stream_input_message_send_button)
                 ),
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonPressedIconColor,
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
                     ContextCompat.getColor(context, R.color.stream_gray_dark)
                 ),
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
                     ContextCompat.getColor(context, R.color.stream_gray_dark)
                 )
             )
@@ -364,15 +378,15 @@ public class MessageInputView : ConstraintLayout {
             iconDisabledSendButtonDrawable!!,
             getColorList(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_black)
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
+                    ContextCompat.getColor(context, R.color.stream_ui_black)
                 ),
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonPressedIconColor,
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
                     ContextCompat.getColor(context, R.color.stream_gray_dark)
                 ),
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
+                    R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
                     ContextCompat.getColor(context, R.color.stream_gray_dark)
                 )
             )
@@ -416,7 +430,7 @@ public class MessageInputView : ConstraintLayout {
             binding.ivOpenEmojis.isVisible = false
             binding.ivOpenAttachment.isVisible = false
             binding.clearMessageInputButton.isVisible = true
-            binding.etMessageTextInput.setHint(R.string.stream_attachment_input_hint)
+            binding.etMessageTextInput.setHint(R.string.stream_ui_attachment_input_hint)
         } else {
             binding.ivOpenEmojis.isVisible = true
             binding.ivOpenAttachment.isVisible = true

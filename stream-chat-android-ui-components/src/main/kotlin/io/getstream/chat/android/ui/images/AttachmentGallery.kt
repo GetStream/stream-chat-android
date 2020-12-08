@@ -10,11 +10,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamAttachmentGalleryBinding
+import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
 
 public class AttachmentGallery : ConstraintLayout {
 
-    private val binding = StreamAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = StreamUiAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var countText: String = "%s - %s"
 
@@ -50,12 +50,12 @@ public class AttachmentGallery : ConstraintLayout {
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
-        context.obtainStyledAttributes(attributeSet, R.styleable.StreamAttachmentGalleryView).use { tArray ->
-            countText = tArray.getString(R.styleable.StreamAttachmentGalleryView_streamCountText) ?: "%s - %s"
+        context.obtainStyledAttributes(attributeSet, R.styleable.StreamUiAttachmentGalleryView).use { tArray ->
+            countText = tArray.getString(R.styleable.StreamUiAttachmentGalleryView_streamUiCountText) ?: "%s - %s"
 
             tArray.getColor(
-                R.styleable.StreamAttachmentGalleryView_streamCountTextColor,
-                ContextCompat.getColor(context, R.color.stream_black)
+                R.styleable.StreamUiAttachmentGalleryView_streamUiCountTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             ).let(binding.photoCount::setTextColor)
         }
     }

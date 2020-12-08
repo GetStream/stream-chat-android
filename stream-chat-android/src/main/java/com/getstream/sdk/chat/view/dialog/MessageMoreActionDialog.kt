@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import top.defaults.drawabletoolbox.DrawableBuilder
 
-internal class MessageMoreActionDialog(
+public class MessageMoreActionDialog(
     context: Context,
     private val channel: Channel,
     private val message: Message,

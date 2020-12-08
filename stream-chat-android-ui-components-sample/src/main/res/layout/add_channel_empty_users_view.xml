@@ -19,7 +19,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:text="@string/add_channel_empty_users_title"
-        android:textColor="@color/stream_black_50"
-        android:textSize="@dimen/stream_text_medium"
+        android:textColor="@color/stream_ui_black_50"
+        android:textSize="@dimen/stream_ui_text_medium"
         />
 </LinearLayout>

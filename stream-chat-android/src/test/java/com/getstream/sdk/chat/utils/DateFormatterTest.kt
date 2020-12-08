@@ -44,7 +44,7 @@ internal class DateFormatterTest {
     @Test
     fun formatDate() {
         val date: Date? = Date().apply {
-            year = 2020
+            year = 120 // 2020, years in Date start from 1900
             month = 10 // November
             date = 7
         }

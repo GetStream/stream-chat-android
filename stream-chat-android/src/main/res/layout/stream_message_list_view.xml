@@ -99,4 +99,5 @@
             tools:text="No messages"
             />
     </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

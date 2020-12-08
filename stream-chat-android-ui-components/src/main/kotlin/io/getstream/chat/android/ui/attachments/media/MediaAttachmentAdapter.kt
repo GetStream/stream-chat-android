@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.StringUtility
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamItemAttachmentMediaBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 
 internal class MediaAttachmentAdapter(
     private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit
@@ -20,7 +20,7 @@ internal class MediaAttachmentAdapter(
     private val attachments: MutableList<AttachmentMetaData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
-        return StreamItemAttachmentMediaBinding
+        return StreamUiItemAttachmentMediaBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { MediaAttachmentViewHolder(it, onAttachmentSelected) }
     }
@@ -55,7 +55,7 @@ internal class MediaAttachmentAdapter(
     }
 
     class MediaAttachmentViewHolder(
-        private val binding: StreamItemAttachmentMediaBinding,
+        private val binding: StreamUiItemAttachmentMediaBinding,
         private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(attachment: AttachmentMetaData) {
@@ -69,7 +69,7 @@ internal class MediaAttachmentAdapter(
         private fun bindMediaImage(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
                 binding.mediaThumbnailImageView.load(R.drawable.stream_placeholder)
-                val color = ContextCompat.getColor(itemView.context, R.color.stream_grey_light)
+                val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_light)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {
                 binding.mediaThumbnailImageView.load(attachment.uri)

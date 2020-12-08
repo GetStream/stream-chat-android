@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -11,7 +12,7 @@ import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal class ListenerContainerImpl(
+public class ListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
@@ -41,6 +42,11 @@ internal class ListenerContainerImpl(
             realListener().onMessageLongClick(message)
         }
     }
+
+    override var messageLongClickListenerView: MessageListView.MessageLongClickListenerView =
+        MessageListView.MessageLongClickListenerView { message, _ ->
+            messageLongClickListener.onMessageLongClick(message)
+        }
 
     override var messageRetryListener: MessageRetryListener by ListenerDelegate(
         messageRetryListener
@@ -107,7 +113,7 @@ internal class ListenerContainerImpl(
      *             wrapped can be referenced by calling the realListener() method. This
      *             function always returns the current listener, even if it changes.
      */
-    internal class ListenerDelegate<L : Any>(
+    public class ListenerDelegate<L : Any>(
         initialValue: L,
         wrap: (realListener: () -> L) -> L
     ) : ReadWriteProperty<Any?, L> {
