@@ -386,6 +386,8 @@
         <attr name="streamStartThreadMessageActionEnabled" format="boolean" />
         <attr name="streamCopyMessageActionEnabled" format="boolean" />
         <attr name="streamFlagMessageActionEnabled" format="boolean" />
+        <attr name="streamDeleteMessageActionEnabled" format="boolean" />
+        <attr name="streamEditMessageActionEnabled" format="boolean" />
 
     </declare-styleable>
     <!--ChannelHeaderView-->
