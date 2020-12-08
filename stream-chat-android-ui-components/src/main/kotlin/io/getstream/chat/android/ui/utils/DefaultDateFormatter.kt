@@ -3,9 +3,9 @@ package io.getstream.chat.android.ui.utils
 import android.content.Context
 import android.text.format.DateFormat
 import io.getstream.chat.android.ui.R
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import java.util.Locale
 
 internal class DefaultDateFormatter(
