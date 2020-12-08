@@ -11,6 +11,10 @@
         <flag name="bold" value="1" />
         <flag name="italic" value="2" />
     </attr>
+    <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
+        <enum name="top" value="0"/>
+        <enum name="bottom" value="1"/>
+    </attr>
 
     <attr name="streamUiAvatarWidth" format="dimension|reference" />
     <attr name="streamUiAvatarHeight" format="dimension|reference" />
@@ -24,6 +28,7 @@
         <attr name="streamUiAvatarTextFontAssets" />
         <attr name="streamUiAvatarTextStyle" />
         <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
+        <attr name="streamUiAvatarOnlineIndicatorPosition" />
     </declare-styleable>
 
     <!--MessageInputViewNew-->
