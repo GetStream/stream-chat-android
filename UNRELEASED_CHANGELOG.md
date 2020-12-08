@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+- Improve Channel List Diff
 Scrollbar customization for `MessageInputView` via `streamInputScrollbarEnabled`, `streamInputScrollbarFadingEnabled`, `streamInputScrollbarWidth` and `streamInputScrollbarThumb` attributes
 
 ## stream-chat-android-client
