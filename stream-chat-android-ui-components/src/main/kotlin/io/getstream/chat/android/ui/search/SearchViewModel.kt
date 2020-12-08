@@ -22,7 +22,7 @@ public class SearchViewModel : ViewModel() {
         val canLoadMore: Boolean,
         val results: List<Message>,
         val isLoading: Boolean,
-        val isError: Boolean,
+        val error: String?,
     )
 
     private companion object {
@@ -32,7 +32,7 @@ public class SearchViewModel : ViewModel() {
             query = "",
             results = emptyList(),
             isLoading = false,
-            isError = false,
+            error = null,
             canLoadMore = true,
         )
     }
@@ -55,7 +55,7 @@ public class SearchViewModel : ViewModel() {
                 query = query,
                 results = emptyList(),
                 isLoading = true,
-                isError = false,
+                error = null,
                 canLoadMore = true,
             )
             fetchServerResults()
@@ -113,7 +113,7 @@ public class SearchViewModel : ViewModel() {
             _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,
-                isError = true,
+                error = result.error().message
             )
         }
     }

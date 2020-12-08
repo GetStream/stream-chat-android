@@ -29,7 +29,7 @@
     <string name="stream_ui_search_input_view_hint">Search</string>
     <string name="stream_ui_search_input_view_search_icon_description">Search</string>
     <string name="stream_ui_search_input_view_clear_input_description">Clear</string>
-    <string name="stream_ui_search_result_list_result_count_empty">No results</string>
+    <string name="stream_ui_search_result_list_result_empty">No results for \"%s\"</string>
     <plurals name="stream_ui_search_result_list_result_count">
         <item quantity="one">1 result</item>
         <item quantity="other">%d results</item>

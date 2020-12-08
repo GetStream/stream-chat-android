@@ -11,9 +11,17 @@ import androidx.lifecycle.LifecycleOwner
 @JvmName("bind")
 public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
-        view.showLoading(state.isLoading)
-        view.showError(state.isError)
-        view.setMessages(state.results)
+        when {
+            state.isLoading -> {
+                view.showLoading()
+            }
+            state.error != null -> {
+                view.showError(state.error)
+            }
+            else -> {
+                view.setMessages(state.query, state.results)
+            }
+        }
     }
     view.setLoadMoreListener {
         this.loadMore()
