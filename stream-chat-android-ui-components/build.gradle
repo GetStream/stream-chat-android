@@ -40,6 +40,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -95,4 +96,14 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
+
+    // Tests
+    testImplementation project(":stream-chat-android-test")
+
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+    testImplementation Dependencies.truth
+    testImplementation Dependencies.burst
 }

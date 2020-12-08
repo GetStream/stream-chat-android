@@ -28,7 +28,11 @@ class SeparatorViewHolder(private val binding: AddChannelSeparatorItemBinding) :
     BaseViewHolder<UserListItem.Separator>(binding.root) {
 
     override fun bind(item: UserListItem.Separator) {
-        binding.titleTextView.text = item.letter.toString()
+        binding.titleTextView.text = if (item.letter == AddChannelViewController.EMPTY_NAME_SYMBOL) {
+            itemView.context.getString(R.string.add_channel_empty_user_name_separator)
+        } else {
+            item.letter.toString()
+        }
     }
 }
 
