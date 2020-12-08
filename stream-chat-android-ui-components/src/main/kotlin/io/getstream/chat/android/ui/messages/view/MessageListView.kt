@@ -308,7 +308,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initUnseenMessagesView() {
         binding.newMessagesTV.visibility = GONE
     }
-    
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
         style = MessageListViewStyle(context, attrs)
     }
