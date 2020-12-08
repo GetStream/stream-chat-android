@@ -9,15 +9,15 @@ public class ChannelViewHolderFactory : BaseChannelViewHolderFactory() {
 
     public override fun createChannelViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        channelItemType: ChannelListItemAdapter.ChannelItemType,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         style: ChannelListViewStyle?
-    ): BaseChannelListItemViewHolder = when (viewType) {
+    ): BaseChannelListItemViewHolder = when (channelItemType) {
 
-        ChannelListItemAdapter.ChannelItemType.LOADING_MORE.ordinal -> LoadingViewHolder(parent)
+        ChannelListItemAdapter.ChannelItemType.LOADING_MORE -> LoadingViewHolder(parent)
 
         else -> ChannelListItemViewHolder(
             parent,
