@@ -47,8 +47,8 @@ public object ImageLoader {
         }
     }
 
-    public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int) {
-        loadAny(drawableResId)
+    public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int, onStart: () -> Unit = {}, onComplete: () -> Unit = {}) {
+        loadAny(data = drawableResId, onStart = onStart, onComplete = onComplete)
     }
 
     public fun ImageView.load(

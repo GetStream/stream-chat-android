@@ -7,5 +7,3 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
-
-## stream-chat-android-ui-components

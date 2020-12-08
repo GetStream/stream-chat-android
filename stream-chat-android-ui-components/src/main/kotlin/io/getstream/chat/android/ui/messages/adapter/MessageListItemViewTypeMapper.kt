@@ -1,6 +1,8 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Attachment
 
 internal object MessageListItemViewTypeMapper {
     fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).typeValue
@@ -12,6 +14,7 @@ internal object MessageListItemViewTypeMapper {
             MessageListItemViewType.PLAIN_TEXT.typeValue -> MessageListItemViewType.PLAIN_TEXT
             MessageListItemViewType.REPLY_MESSAGE.typeValue -> MessageListItemViewType.REPLY_MESSAGE
             MessageListItemViewType.PLAIN_TEXT_WITH_ATTACHMENTS.typeValue -> MessageListItemViewType.PLAIN_TEXT_WITH_ATTACHMENTS
+            MessageListItemViewType.MEDIA_ATTACHMENTS.typeValue -> MessageListItemViewType.MEDIA_ATTACHMENTS
             MessageListItemViewType.ATTACHMENTS.typeValue -> MessageListItemViewType.ATTACHMENTS
             MessageListItemViewType.LOADING_INDICATOR.typeValue -> MessageListItemViewType.LOADING_INDICATOR
             MessageListItemViewType.THREAD_SEPARATOR.typeValue -> MessageListItemViewType.THREAD_SEPARATOR
@@ -34,9 +37,12 @@ internal object MessageListItemViewTypeMapper {
         return when {
             messageItem.message.deletedAt != null -> MessageListItemViewType.MESSAGE_DELETED
             messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isNotEmpty() -> MessageListItemViewType.PLAIN_TEXT_WITH_ATTACHMENTS
+            messageItem.message.attachments.isMedia() -> MessageListItemViewType.MEDIA_ATTACHMENTS
             messageItem.message.attachments.isNotEmpty() -> MessageListItemViewType.ATTACHMENTS
             /** Here will be additional clause for replay type */
             else -> MessageListItemViewType.PLAIN_TEXT
         }
     }
+
+    private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type == ModelType.attach_image }
 }
