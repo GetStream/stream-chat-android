@@ -62,16 +62,13 @@ internal class BackgroundDecorator : BaseDecorator() {
             if (data.isMine && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else cornerRadius
         val bottomLeftCornerRadius =
             if (data.isMine.not() && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else cornerRadius
-        ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .setBottomLeftCornerSize(bottomLeftCornerRadius).setBottomRightCornerSize(bottomRightCornerRadius)
-            .build().also { shapeAppearanceModel ->
-                viewHolder.binding.imageView.shapeAppearanceModel = shapeAppearanceModel
-                viewHolder.binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-                    alpha = 128
-                    setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_ui_black))
-                }
-            }
-        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
+        ShapeAppearanceModel.builder()
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomLeftCornerSize(bottomLeftCornerRadius)
+            .setBottomRightCornerSize(bottomRightCornerRadius)
+            .build()
+            .let(viewHolder.binding.mediaAttachmentView::setImageShape)
+        setDefaultBackgroundDrawable(viewHolder.binding.mediaAttachmentView, data)
     }
 
     companion object {

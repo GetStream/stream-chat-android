@@ -11,7 +11,7 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setMaxWidthToView(viewHolder.binding.backgroundView)
+        setMaxWidthToView(viewHolder.binding.mediaAttachmentView)
     }
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
