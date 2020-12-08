@@ -10,7 +10,7 @@ class ChatViewModelFactory(private val cid: String) : ViewModelProvider.Factory 
         ChatInfoViewModel::class.java to { ChatInfoViewModel(cid) },
     )
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException("ChatViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
 
