@@ -1,7 +1,7 @@
 package io.getstream.chat.android.ui.utils
 
 import android.content.Context
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 import java.util.Date
 
 public interface DateFormatter {

@@ -73,6 +73,8 @@ public class MessageMoreActionDialog(
                 onMessageDeleteHandler(message)
                 dismiss()
             }
+            binding.editMessageButton.isVisible = style.editMessageActionEnabled
+            binding.deleteMessageButton.isVisible = style.deleteMessageActionEnabled
         }
 
         if (canReactOnMessage()) {

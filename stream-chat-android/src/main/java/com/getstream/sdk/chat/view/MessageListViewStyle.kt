@@ -83,6 +83,8 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
     public val startThreadMessageActionEnabled: Boolean
     public val copyMessageActionEnabled: Boolean
     public val flagMessageActionEnabled: Boolean
+    public val deleteMessageActionEnabled: Boolean
+    public val editMessageActionEnabled: Boolean
 
     public fun getMessageBubbleDrawable(isMine: Boolean): Int {
         return if (isMine) messageBubbleDrawableMine else messageBubbleDrawableTheirs
@@ -565,6 +567,8 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
         )
         copyMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamCopyMessageActionEnabled, true)
         flagMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamFlagMessageActionEnabled, true)
+        deleteMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamDeleteMessageActionEnabled, true)
+        editMessageActionEnabled = a.getBoolean(R.styleable.MessageListView_streamEditMessageActionEnabled, true)
 
         a.recycle()
     }
