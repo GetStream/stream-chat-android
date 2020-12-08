@@ -72,7 +72,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         return with(listenerContainer) {
             viewHolderFactory.createChannelViewHolder(
                 parent,
-                viewType,
+                ChannelItemType.values()[viewType],
                 channelClickListener,
                 channelLongClickListener,
                 deleteClickListener,
