@@ -336,6 +336,16 @@ public class MessageInputView : ConstraintLayout {
             )
 
             hint = typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint)
+
+            isVerticalScrollBarEnabled = typedArray.getBoolean(
+                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarEnabled,
+                false
+            )
+
+            isScrollbarFadingEnabled = typedArray.getBoolean(
+                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarFadingEnabled,
+                false
+            )
         }
     }
 

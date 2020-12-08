@@ -4,6 +4,7 @@
 ## stream-chat-android
 - Add new attrs to `MessageListView`: `streamDeleteMessageActionEnabled`, `streamEditMessageActionEnabled`
 - Improve Channel List Diff
+- Add new attrs to `MessageInputView`: `streamInputScrollbarEnabled`, `streamInputScrollbarFadingEnabled`
 
 ## stream-chat-android-client
 
