@@ -42,8 +42,8 @@ class ChatInfoFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     fun showOptions(options: List<ChatInfoItem>) {

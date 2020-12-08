@@ -28,18 +28,23 @@ class ChatInfoViewModel(
 
     init {
         _state.value = State()
-        val controller = chatDomain.useCases.getChannelController(cid).execute().data()
-        // Update channel notifications
-        updateChannelNotificationsStatus(chatDomain.currentUser.channelMutes)
+        chatDomain.useCases.getChannelController(cid).enqueue { result ->
+            if (result.isSuccess) {
+                val controller = result.data()
+                // Update channel notifications
+                updateChannelNotificationsStatus(chatDomain.currentUser.channelMutes)
 
-        // Update members
-        _state.addSource(controller.members) { members ->
-            _state.value = _state.value!!.copy(member = members.first { it.getUserId() != chatDomain.currentUser.id })
-        }
-        // Muted channel members
-        _state.addSource(chatDomain.muted) { mutes ->
-            val member = _state.value!!.member
-            _state.value = _state.value?.copy(isMemberMuted = mutes.any { it.target.id == member.getUserId() })
+                // Update members
+                _state.addSource(controller.members) { members ->
+                    _state.value =
+                        _state.value!!.copy(member = members.first { it.getUserId() != chatDomain.currentUser.id })
+                }
+                // Muted channel members
+                _state.addSource(chatDomain.muted) { mutes ->
+                    val member = _state.value!!.member
+                    _state.value = _state.value?.copy(isMemberMuted = mutes.any { it.target.id == member.getUserId() })
+                }
+            }
         }
     }
 

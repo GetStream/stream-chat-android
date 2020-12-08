@@ -9,14 +9,23 @@ import io.getstream.chat.android.livedata.utils.Event
 
 class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 
-    private val channelController: ChannelController = chatDomain.useCases.getChannelController(cid).execute().data()
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
+    private var channelController: ChannelController? = null
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
+
+    init {
+        chatDomain.useCases.getChannelController(cid).enqueue { result ->
+            if (result.isSuccess) {
+                channelController = result.data()
+            }
+        }
+    }
 
     fun onAction(action: Action) {
         when (action) {
             Action.AvatarClicked -> {
-                channelController.members.value?.let { members ->
+                val controller = requireNotNull(channelController)
+                controller.members.value?.let { members ->
                     _navigationEvent.value = Event(
                         if (members.size > 2) {
                             NavigationEvent.NavigateToGroupChatInfo(cid)
