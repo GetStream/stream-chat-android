@@ -21,8 +21,8 @@ fun ChatInfoViewModel.bindView(view: ChatInfoFragment, lifecycleOwner: Lifecycle
     }
 
     // Update channel notifications status
-    ChatClient.instance().subscribeFor(lifecycleOwner, NotificationChannelMutesUpdatedEvent::class) {
-        onEvent(ChatInfoViewModel.Event.ChannelMutesUpdated((it as NotificationChannelMutesUpdatedEvent).me.channelMutes))
+    ChatClient.instance().subscribeFor<NotificationChannelMutesUpdatedEvent>(lifecycleOwner) {
+        onEvent(ChatInfoViewModel.Event.ChannelMutesUpdated(it.me.channelMutes))
     }
 
     state.observe(lifecycleOwner) { state ->
