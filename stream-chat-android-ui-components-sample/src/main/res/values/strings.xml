@@ -32,6 +32,7 @@
     <string name="add_member_title">TO:</string>
     <string name="add_member_hint">Type a name</string>
     <string name="create_group">Create a Group</string>
+    <string name="add_channel_empty_user_name_separator">Others</string>
     <string name="add_channel_user_list_title">On the platform</string>
     <string name="add_channel_user_list_search_title">Matches for \"%s\"</string>
     <string name="add_channel_empty_users_title">No users matches these keywords…</string>
