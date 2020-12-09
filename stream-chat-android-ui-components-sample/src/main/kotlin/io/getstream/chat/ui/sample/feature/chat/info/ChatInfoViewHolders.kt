@@ -128,8 +128,8 @@ class ChatInfoGroupNameViewHolder(
 ) : BaseViewHolder<ChatInfoItem.ChannelName>(binding.root) {
 
     init {
-        binding.editNameView.setGroupNameChangedListener {
-            nameChangedListener?.onChange(it)
+        binding.editNameView.setGroupNameChangedListener { name ->
+            nameChangedListener?.onChange(name)
         }
     }
 
