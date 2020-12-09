@@ -16,9 +16,9 @@ internal class ErrorCall<T : Any>(private val e: ChatError) : Call<T> {
         return Result(null, e)
     }
 
-    override fun enqueue(callback: (Result<T>) -> Unit) {
+    override fun enqueue(callback: Call.Callback<T>) {
         GlobalScope.launch(DispatcherProvider.Main) {
-            callback(Result(null, e))
+            callback.onResult(Result(null, e))
         }
     }
 }
