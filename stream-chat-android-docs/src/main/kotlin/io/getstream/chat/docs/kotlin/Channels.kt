@@ -481,83 +481,45 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             val limit = 10
             val sort = QuerySort<Member>()
 
-            // Query members by user.name
-            channelController.queryMembers(offset, limit, Filters.eq("name", "tommaso"), sort, emptyList()).enqueue { result ->
+            // We can query channel members with specific filters
+            // 1. Create the filters query, e.g query members by user name
+            val filterByName = Filters.eq("name", "tommaso")
+
+            // 2. Call queryMembers with that filters
+            channelController.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
                 if (result.isSuccess) {
                     val members = result.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
                 }
             }
 
+            // Here some commons filters you can use
             // Autocomplete members by user name
-            channelController.queryMembers(offset, limit, Filters.autocomplete("name", "tommaso"), sort, emptyList())
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        val members = result.data()
-                    } else {
-                        Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                    }
-                }
+            val filterByAutoCompleteName = Filters.autocomplete("name", "tommaso")
 
             // Query member by id
-            channelController.queryMembers(offset, limit, Filters.eq("id", "tommaso"), sort, emptyList()).enqueue { result ->
-                if (result.isSuccess) {
-                    val members = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                }
-            }
+            val filterById = Filters.eq("id", "tommaso")
 
             // Query multiple members by id
-            channelController.queryMembers(offset, limit, Filters.`in`("id", "tommaso", "thierry"), sort, emptyList())
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        val members = result.data()
-                    } else {
-                        Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                    }
-                }
+            val filterByIds = Filters.`in`("id", "tommaso", "thierry")
 
             // Query channel moderators
-            channelController.queryMembers(offset, limit, Filters.eq("is_moderator", true), sort, emptyList()).enqueue { result ->
-                if (result.isSuccess) {
-                    val members = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                }
-            }
+            val filterByModerator = Filters.eq("is_moderator", true)
 
             // Query for banned members in channel
-            channelController.queryMembers(offset, limit, Filters.eq("banned", true), sort, emptyList()).enqueue { result ->
-                if (result.isSuccess) {
-                    val members = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                }
-            }
+            val filterByBannedMembers = Filters.eq("banned", true)
 
             // Query members with pending invites
-            channelController.queryMembers(offset, limit, Filters.eq("invite", "pending"), sort, emptyList()).enqueue { result ->
-                if (result.isSuccess) {
-                    val members = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                }
-            }
+            val filterByPendingInvite = Filters.eq("invite", "pending")
 
             // Query all the members
-            channelController.queryMembers(offset, limit, FilterObject(), sort, emptyList()).enqueue { result ->
-                if (result.isSuccess) {
-                    val members = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
-                }
-            }
+            val filterByNone = FilterObject()
 
-            // Order results by member created at descending
-            val createdAtDescendingSort = QuerySort.desc<Member>("created_at")
-            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort, emptyList())
+            // We can order the results too with QuerySort param
+            // Here example to order results by member created at descending
+            val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
+            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val members = result.data()
