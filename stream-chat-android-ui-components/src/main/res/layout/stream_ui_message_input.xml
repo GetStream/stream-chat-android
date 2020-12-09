@@ -114,6 +114,7 @@
             android:paddingTop="18dp"
             android:paddingEnd="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="18dp"
+            android:scrollbars="vertical"
             android:textColor="@color/stream_ui_black"
             android:textColorHint="@color/stream_ui_grey_light"
             android:textSize="15sp"
@@ -166,9 +167,9 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:textColor="@color/stream_ui_black_50"
+        android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_input_container"
-        android:textSize="@dimen/stream_ui_text_small"
         tools:text="Send also to channel"
         />
 

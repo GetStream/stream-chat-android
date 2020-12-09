@@ -60,6 +60,8 @@
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
         </attr>
+        <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
+        <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
 
         <!--Send Button-->
         <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />

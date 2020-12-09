@@ -30,6 +30,8 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     val attachmentCloseButtonBackground: Drawable?
     val inputSendAlsoToChannelTextColor: Int
     val sendAlsoToChannelCheckboxEnabled: Boolean
+    val inputScrollbarEnabled: Boolean
+    val inputScrollbarFadingEnabled: Boolean
 
     private var inputHint = ""
     private val attachmentButtonIcon: Int
@@ -199,6 +201,9 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                 )
                 style(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL)
             }.build()
+
+            inputScrollbarEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarEnabled, false)
+            inputScrollbarFadingEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarFadingEnabled, false)
 
             context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer))?.let { inputBackground = it }
             context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select))?.let { inputSelectedBackground = it }

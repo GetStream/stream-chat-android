@@ -1,8 +1,8 @@
 package io.getstream.chat.android.ui.utils
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
 import java.util.Date
 
 internal object DateConverter {

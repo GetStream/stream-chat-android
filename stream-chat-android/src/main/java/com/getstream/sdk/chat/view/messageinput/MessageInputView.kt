@@ -166,6 +166,8 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         // Input Text
         style.inputText.apply(binding.messageTextInput)
         binding.messageTextInput.hint = style.getInputHint()
+        binding.messageTextInput.isVerticalScrollBarEnabled = style.inputScrollbarEnabled
+        binding.messageTextInput.isScrollbarFadingEnabled = style.inputScrollbarFadingEnabled
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)

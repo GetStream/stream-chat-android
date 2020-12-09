@@ -6,7 +6,8 @@ public enum class MessageListItemViewType(public val typeValue: Int) {
     PLAIN_TEXT(3),
     REPLY_MESSAGE(4),
     PLAIN_TEXT_WITH_ATTACHMENTS(5),
-    ATTACHMENTS(6),
-    LOADING_INDICATOR(7),
-    THREAD_SEPARATOR(8)
+    MEDIA_ATTACHMENTS(6),
+    ATTACHMENTS(7),
+    LOADING_INDICATOR(8),
+    THREAD_SEPARATOR(9)
 }

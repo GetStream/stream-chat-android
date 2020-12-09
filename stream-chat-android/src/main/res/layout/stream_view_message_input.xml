@@ -117,6 +117,7 @@
                     android:layout_gravity="end"
                     android:layout_margin="3dp"
                     android:src="@drawable/stream_ic_error"
+                    tools:ignore="ContentDescription"
                     />
             </FrameLayout>
 
@@ -170,6 +171,7 @@
                     android:layout_gravity="end"
                     android:layout_margin="3dp"
                     android:src="@drawable/stream_ic_error"
+                    tools:ignore="ContentDescription"
                     />
             </FrameLayout>
 
@@ -335,6 +337,7 @@
                 android:layout_marginBottom="13dp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                 app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription"
                 />
 
             <com.getstream.sdk.chat.utils.GifEditText
@@ -347,6 +350,7 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="7"
                 android:padding="17dp"
+                android:scrollbars="vertical"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                 app:layout_constraintEnd_toStartOf="@+id/sendButton"
@@ -362,6 +366,7 @@
                 android:layout_marginBottom="13dp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                 app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="ContentDescription"
                 />
 
             <CheckBox

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/stream_ui_grey_light" />
+            <size
+                android:width="120dp"
+                android:height="120dp"
+                />
+        </shape>
+
+    </item>
+
+    <item
+        android:drawable="@drawable/stream_ui_icon_picture_placeholder"
+        android:gravity="center"
+        />
+
+</layer-list>

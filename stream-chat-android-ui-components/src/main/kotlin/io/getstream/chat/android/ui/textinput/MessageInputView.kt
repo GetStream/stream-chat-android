@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.attachments.AttachmentController
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
+import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import io.getstream.chat.android.ui.utils.getColorList
 import java.io.File
 import kotlin.properties.Delegates
@@ -327,13 +328,24 @@ public class MessageInputView : ConstraintLayout {
                 )
             )
 
-            textSize =
+            setTextSizePx(
                 typedArray.getDimensionPixelSize(
                     R.styleable.StreamUiMessageInputView_streamUiMessageInputTextSize,
                     context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
                 ).toFloat()
+            )
 
             hint = typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint)
+
+            isVerticalScrollBarEnabled = typedArray.getBoolean(
+                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarEnabled,
+                false
+            )
+
+            isScrollbarFadingEnabled = typedArray.getBoolean(
+                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarFadingEnabled,
+                false
+            )
         }
     }
 

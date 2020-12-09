@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import android.annotation.SuppressLint
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.isVisible
@@ -26,6 +25,7 @@ import io.getstream.chat.android.ui.utils.extensions.getLastMessageTime
 import io.getstream.chat.android.ui.utils.extensions.getPreviewText
 import io.getstream.chat.android.ui.utils.extensions.getUsers
 import io.getstream.chat.android.ui.utils.extensions.lastMessageByCurrentUserWasRead
+import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import io.getstream.chat.android.ui.utils.formatMessageDate
 import kotlin.math.absoluteValue
 
@@ -226,10 +226,9 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         }
 
         binding.apply {
-            val px = TypedValue.COMPLEX_UNIT_PX
-            channelNameLabel.setTextSize(px, style.channelTitleText.size.toFloat())
-            lastMessageLabel.setTextSize(px, style.lastMessage.size.toFloat())
-            lastMessageTimeLabel.setTextSize(px, style.lastMessageDateText.size.toFloat())
+            channelNameLabel.setTextSizePx(style.channelTitleText.size.toFloat())
+            lastMessageLabel.setTextSizePx(style.lastMessage.size.toFloat())
+            lastMessageTimeLabel.setTextSizePx(style.lastMessageDateText.size.toFloat())
         }
     }
 
