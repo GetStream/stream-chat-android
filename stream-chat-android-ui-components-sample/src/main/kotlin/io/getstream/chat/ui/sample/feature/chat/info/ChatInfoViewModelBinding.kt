@@ -9,9 +9,12 @@ fun ChatInfoViewModel.bindView(view: ChatInfoFragment, lifecycleOwner: Lifecycle
     view.setChatInfoStatefulOptionChangedListener { option, isChecked ->
         onEvent(
             when (option) {
-                is ChatInfoItem.Option.Stateful.Notifications -> ChatInfoViewModel.Event.OptionNotificationClicked(isChecked)
-                is ChatInfoItem.Option.Stateful.Mute -> ChatInfoViewModel.Event.OptionMuteUserClicked(isChecked)
+                is ChatInfoItem.Option.Stateful.Notifications -> ChatInfoViewModel.Event.OptionNotificationClicked(
+                    isChecked
+                )
+                is ChatInfoItem.Option.Stateful.MuteUser -> ChatInfoViewModel.Event.OptionMuteUserClicked(isChecked)
                 is ChatInfoItem.Option.Stateful.Block -> ChatInfoViewModel.Event.OptionBlockUserClicked(isChecked)
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
         )
     }
@@ -27,7 +30,7 @@ fun ChatInfoViewModel.bindView(view: ChatInfoFragment, lifecycleOwner: Lifecycle
                 ChatInfoItem.MemberItem(state.chatMember),
                 ChatInfoItem.Separator,
                 ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled),
-                ChatInfoItem.Option.Stateful.Mute(isChecked = state.isMemberMuted),
+                ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted),
                 ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked),
                 ChatInfoItem.Option.SharedMedia,
                 ChatInfoItem.Option.SharedFiles,

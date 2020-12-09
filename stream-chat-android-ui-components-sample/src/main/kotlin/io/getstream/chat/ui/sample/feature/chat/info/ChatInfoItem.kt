@@ -91,11 +91,20 @@ sealed class ChatInfoItem {
                     get() = R.color.black
             }
 
-            data class Mute(override val isChecked: Boolean) : Stateful() {
+            data class MuteUser(override val isChecked: Boolean) : Stateful() {
                 override val iconResId: Int
                     get() = R.drawable.ic_mute
                 override val textResId: Int
                     get() = R.string.chat_info_option_mute_user
+                override val tintResId: Int
+                    get() = R.color.black
+            }
+
+            data class MuteChannel(override val isChecked: Boolean) : Stateful() {
+                override val iconResId: Int
+                    get() = R.drawable.ic_mute
+                override val textResId: Int
+                    get() = R.string.chat_group_info_option_mute
                 override val tintResId: Int
                     get() = R.color.black
             }

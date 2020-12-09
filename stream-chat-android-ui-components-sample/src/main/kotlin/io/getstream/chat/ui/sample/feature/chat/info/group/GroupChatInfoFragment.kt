@@ -72,7 +72,7 @@ class GroupChatInfoFragment : Fragment() {
                     listOf(
                         ChatInfoItem.Separator,
                         ChatInfoItem.ChannelName(state.channelName),
-                        ChatInfoItem.Option.Stateful.Mute(isChecked = state.channelMuted),
+                        ChatInfoItem.Option.Stateful.MuteChannel(isChecked = state.channelMuted),
                         ChatInfoItem.Option.SharedMedia,
                         ChatInfoItem.Option.SharedFiles,
                         ChatInfoItem.Option.LeaveGroup,
@@ -85,7 +85,7 @@ class GroupChatInfoFragment : Fragment() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
             viewModel.onAction(
                 when (option) {
-                    is ChatInfoItem.Option.Stateful.Mute -> GroupChatInfoViewModel.Action.MuteChannelClicked(
+                    is ChatInfoItem.Option.Stateful.MuteChannel -> GroupChatInfoViewModel.Action.MuteChannelClicked(
                         isChecked
                     )
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
