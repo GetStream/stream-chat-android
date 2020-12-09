@@ -103,7 +103,7 @@ public class Channels {
             FilterObject filter = Filters.in("members", "thierry").put("type", "messaging");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort().desc("last_message_at");
+            QuerySort<Channel> sort = new QuerySort<Channel>().desc("last_message_at");
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -145,7 +145,7 @@ public class Channels {
             FilterObject filter = Filters.in("members", "thierry");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort();
+            QuerySort<Channel> sort = new QuerySort<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -350,7 +350,7 @@ public class Channels {
             FilterObject filter = new FilterObject("invite", "accepted");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort();
+            QuerySort<Channel> sort = new QuerySort<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -499,7 +499,7 @@ public class Channels {
 
             // Retrieve muted channels
             FilterObject mutedFilter = Filters.eq("muted", true);
-            client.queryChannels(new QueryChannelsRequest(notMutedFilter, offset, limit, sort, messageLimit, memberLimit)).enqueue(result -> {
+            client.queryChannels(new QueryChannelsRequest(mutedFilter, offset, limit, sort, messageLimit, memberLimit)).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Channel> channels = result.data();
                 } else {
@@ -534,8 +534,12 @@ public class Channels {
             int limit = 10;
             QuerySort<Member> sort = new QuerySort<>();
 
-            // Query members by user.name
-            channelController.queryMembers(offset, limit, Filters.eq("name", "tommaso"), sort, emptyList()).enqueue(result -> {
+            // We can query channel members with specific filters
+            // 1. Create the filters query, e.g query members by user name
+            FilterObject filterByName = Filters.eq("name", "tommaso");
+
+            // 2. Call queryMembers with that filters
+            channelController.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Member> members = result.data();
                 } else {
@@ -544,77 +548,30 @@ public class Channels {
                 return Unit.INSTANCE;
             });
 
+            // Here some commons filters you can use
             // Autocomplete members by user name
-            channelController.queryMembers(offset, limit, Filters.autocomplete("name", "tommaso"), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByAutoCompleteName = Filters.autocomplete("name", "tommaso");
 
             // Query member by id
-            channelController.queryMembers(offset, limit, Filters.eq("id", "tommaso"), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterById = Filters.eq("id", "tommaso");
 
             // Query multiple members by id
-            channelController.queryMembers(offset, limit, Filters.in("id", "tommaso", "thierry"), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByIds = Filters.in("id", "tommaso", "thierry");
 
             // Query channel moderators
-            channelController.queryMembers(offset, limit, Filters.eq("is_moderator", true), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByModerator = Filters.eq("is_moderator", true);
 
             // Query for banned members in channel
-            channelController.queryMembers(offset, limit, Filters.eq("banned", true), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByBannedMembers = Filters.eq("banned", true);
 
             // Query members with pending invites
-            channelController.queryMembers(offset, limit, Filters.eq("invite", "pending"), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByPendingInvite = Filters.eq("invite", "pending");
 
             // Query all the members
-            channelController.queryMembers(offset, limit, new FilterObject(), sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-                return Unit.INSTANCE;
-            });
+            FilterObject filterByNone = new FilterObject();
 
-            // Order results by member created at descending
+            // We can order the results too with QuerySort param
+            // Here example to order results by member created at descending
             QuerySort<Member> createdAtDescendingSort = new QuerySort<Member>().desc("created_at");
             channelController.queryMembers(offset, limit, new FilterObject(), createdAtDescendingSort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
