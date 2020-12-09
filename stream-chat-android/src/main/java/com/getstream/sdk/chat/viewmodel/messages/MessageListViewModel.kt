@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.ChannelController
 import kotlin.properties.Delegates
 
 /**
@@ -29,7 +30,6 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance()
 ) : ViewModel() {
-    private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
@@ -55,7 +55,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val currentUser: User = domain.currentUser
 
     init {
-
+        stateMerger.value = State.Loading
         domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
@@ -64,15 +64,23 @@ public class MessageListViewModel @JvmOverloads constructor(
                 messageListData = MessageListItemLiveData(
                     currentUser,
                     channelController.messages,
-                    channelController.oldMessages,
                     channelController.reads,
                     typingIds,
                     false,
                     ::dateSeparator
-                ).also { mld ->
-                    stateMerger.apply {
-                        addSource(MutableLiveData<State>(State.Loading)) { value = it }
-                        addSource(mld) { value = State.Result(it) }
+                )
+                stateMerger.apply {
+                    addSource(channelController.messagesState) { messageState ->
+                        when (messageState) {
+                            is ChannelController.MessagesState.NoQueryActive,
+                            is ChannelController.MessagesState.Loading -> value = State.Loading
+                            is ChannelController.MessagesState.Failed,
+                            is ChannelController.MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
+                            is ChannelController.MessagesState.Result -> {
+                                removeSource(channelController.messagesState)
+                                onNormalModeEntered()
+                            }
+                        }
                     }
                 }
                 _reads.addSource(channelController.reads) { _reads.value = it }
@@ -101,7 +109,6 @@ public class MessageListViewModel @JvmOverloads constructor(
         threadListData = MessageListItemLiveData(
             currentUser,
             threadMessages,
-            MutableLiveData(),
             reads,
             null,
             true,
@@ -208,8 +215,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             if (threadControllerResult.isSuccess) {
                 val threadController = threadControllerResult.data()
                 currentMode = Mode.Thread(parentMessage)
-                threadMessages = threadController.messages
-                setThreadMessages(threadMessages)
+                setThreadMessages(threadController.messages)
                 domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
             }
         }
@@ -218,7 +224,6 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun onNormalModeEntered() {
         currentMode = Mode.Normal
         resetThread()
-        threadMessages = MutableLiveData()
     }
 
     public sealed class State {
