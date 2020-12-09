@@ -19,7 +19,7 @@ class MultiTenantsAndTeams(val client: ChatClient, val channelController: Channe
             if (result.isSuccess) {
                 val channel = result.data()
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
             }
         }
     }
@@ -40,7 +40,7 @@ class MultiTenantsAndTeams(val client: ChatClient, val channelController: Channe
             if (result.isSuccess) {
                 val users = result.data()
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
             }
         }
     }
