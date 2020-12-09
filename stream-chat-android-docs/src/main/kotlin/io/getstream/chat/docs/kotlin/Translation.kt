@@ -1,8 +1,10 @@
 package io.getstream.chat.docs.kotlin
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.getTranslation
+import io.getstream.chat.docs.StaticInstances.TAG
 
 class Translation(val client: ChatClient) {
 
@@ -15,10 +17,18 @@ class Translation(val client: ChatClient) {
         val message = Message(text = "Hello, I would like to have more information about your product.")
         val frenchLanguage = "fr"
         channelController.sendMessage(message).enqueue { result ->
-            val messageId = result.data().id
-            client.translate(messageId, frenchLanguage).enqueue { translationResult ->
-                val translatedMessage = translationResult.data()
-                val translation = translatedMessage.getTranslation(frenchLanguage)
+            if (result.isSuccess) {
+                val messageId = result.data().id
+                client.translate(messageId, frenchLanguage).enqueue { translationResult ->
+                    if (translationResult.isSuccess) {
+                        val translatedMessage = translationResult.data()
+                        val translation = translatedMessage.getTranslation(frenchLanguage)
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    }
+                }
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
             }
         }
     }
