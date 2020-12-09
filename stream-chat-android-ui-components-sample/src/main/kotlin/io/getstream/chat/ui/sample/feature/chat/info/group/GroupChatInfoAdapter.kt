@@ -48,7 +48,7 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
         membersSeparatorClickListener = listener
     }
 
-    fun setNameChangedListener(listener: NameChangedListener) {
+    fun setNameChangedListener(listener: NameChangedListener?) {
         nameChangedListener = listener
     }
 
