@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -371,19 +372,31 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun configureMessageOptions(tArray: TypedArray) {
+        val iconsTint = tArray.getColor(
+            R.styleable.MessageListView_streamMessageOptionIconColor,
+            ContextCompat.getColor(context, R.color.stream_ui_gray_light)
+        )
+
         binding.messageOptions.replyTV.text =
             tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         ).let { drawableRes ->
             binding.messageOptions
                 .replyTV
-                .setCompoundDrawables(ResourcesCompat.getDrawable(resources, drawableRes, null), null, null, null)
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
+                    null,
+                    null,
+                    null
+                )
         }
 
         binding.messageOptions.threadReplyTV.text =
             tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
@@ -391,7 +404,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             binding.messageOptions
                 .threadReplyTV
                 .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
                     null,
                     null,
                     null
@@ -400,6 +413,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
         binding.messageOptions.copyTV.text =
             tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
@@ -407,7 +421,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             binding.messageOptions
                 .copyTV
                 .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
                     null,
                     null,
                     null
@@ -416,6 +430,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
         binding.messageOptions.muteTV.text =
             tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
@@ -423,7 +438,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             binding.messageOptions
                 .muteTV
                 .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
                     null,
                     null,
                     null
@@ -432,6 +447,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
         binding.messageOptions.blockTV.text =
             tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
@@ -439,7 +455,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             binding.messageOptions
                 .blockTV
                 .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
                     null,
                     null,
                     null
@@ -448,6 +464,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
         binding.messageOptions.deleteTV.text =
             tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete message"
+        binding.messageOptions.deleteTV.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
+
         tArray.getResourceId(
             R.styleable.MessageListView_streamDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete

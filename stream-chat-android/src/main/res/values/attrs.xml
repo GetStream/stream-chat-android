@@ -195,6 +195,7 @@
         <attr name="streamBlockOptionIcon" format="reference" />
         <attr name="streamDeleteOptionMessage" format="string" />
         <attr name="streamDeleteOptionIcon" format="reference" />
+        <attr name="streamMessageOptionIconColor" format="color" />
 
         <!--Scroll button-->
         <attr name="streamDefaultScrollButtonEnabled" format="boolean" />
