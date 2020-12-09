@@ -17,11 +17,12 @@
         >
 
         <TextView
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/add_group_channel_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textStyle="bold"
             />
     </androidx.appcompat.widget.Toolbar>
 

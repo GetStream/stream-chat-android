@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/memberContainer"
     android:layout_width="64dp"
-    android:layout_height="match_parent"
-    android:layout_marginHorizontal="8dp"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/spacing_small"
     android:orientation="vertical"
     >
 
@@ -16,14 +16,11 @@
 
         <io.getstream.chat.android.ui.avatar.AvatarView
             android:id="@+id/memberAvatar"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            style="@style/StreamUiSelectedGroupMembersStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:streamUiAvatarBorderWidth="0dp"
-            app:streamUiAvatarOnlineIndicatorEnabled="true"
             />
 
         <ImageButton
@@ -46,10 +43,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:lines="2"
+        android:layout_marginTop="6dp"
+        android:gravity="center|top"
+        android:singleLine="true"
         android:textColor="@color/stream_ui_black"
-        android:textSize="@dimen/stream_ui_text_medium"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:textStyle="bold"
         />
+
 </LinearLayout>
