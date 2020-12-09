@@ -63,7 +63,7 @@ class GroupChatInfoViewModel(
         viewModelScope.launch {
             val result = channelClient.update(message = null, mapOf("name" to name)).await()
             if (result.isError) {
-                // Handle error
+                // TODO: Handle error
             }
         }
     }
@@ -74,7 +74,7 @@ class GroupChatInfoViewModel(
             if (result.isSuccess) {
                 _channelLeftState.value = true
             } else {
-                // Handle error
+                // TODO: Handle error
             }
         }
     }
