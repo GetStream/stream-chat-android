@@ -11,15 +11,15 @@ import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
+import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.format
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.name
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 internal class UsernameAndDateConfigurator(
     private val binding: StreamItemMessageBinding,
-    private val style: MessageListViewStyle
+    private val style: MessageListViewStyle,
+    private val dateFormatter: DateFormatter
 ) : Configurator {
 
     override fun configure(messageItem: MessageItem) {
@@ -45,7 +45,7 @@ internal class UsernameAndDateConfigurator(
 
         if (style.isMessageDateShow && date != null) {
             binding.tvMessagedate.isVisible = true
-            binding.tvMessagedate.text = TIME_DATEFORMAT.format(date)
+            binding.tvMessagedate.text = dateFormatter.format(date)
         } else {
             binding.tvMessagedate.isVisible = false
         }
@@ -72,9 +72,5 @@ internal class UsernameAndDateConfigurator(
             }
             horizontalBias = if (messageItem.isTheirs) 0f else 1f
         }
-    }
-
-    private companion object {
-        val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm", Locale.US)
     }
 }

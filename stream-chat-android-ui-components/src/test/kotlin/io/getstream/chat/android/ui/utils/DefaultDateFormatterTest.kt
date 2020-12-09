@@ -31,7 +31,7 @@ internal class DefaultDateFormatterTest {
             TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern)
         )
 
-        val formattedDate = formatter.formatMessageDate(testCase.dateToFormat)
+        val formattedDate = formatter.formatDate(testCase.dateToFormat)
 
         Truth.assertThat(formattedDate).isEqualTo(testCase.expectedResult)
     }

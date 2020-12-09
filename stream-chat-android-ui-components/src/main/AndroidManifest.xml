@@ -15,7 +15,7 @@
                 android:value="androidx.startup"
                 />
             <meta-data
-                android:name="io.getstream.chat.android.ui.utils.ThreeTenInitializer"
+                android:name="io.getstream.chat.android.ui.startup.ThreeTenInitializer"
                 android:value="androidx.startup"
                 />
         </provider>

@@ -21,7 +21,7 @@ internal class DefaultDateFormatter(
         // Re-evaluated every time to account for runtime Locale changes
         get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
 
-    override fun formatMessageDate(localDateTime: LocalDateTime?): String {
+    override fun formatDate(localDateTime: LocalDateTime?): String {
         localDateTime ?: return ""
 
         val localDate = localDateTime.toLocalDate()

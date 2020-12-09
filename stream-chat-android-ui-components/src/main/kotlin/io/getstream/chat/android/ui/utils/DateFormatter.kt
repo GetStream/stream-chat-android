@@ -5,7 +5,7 @@ import org.threeten.bp.LocalDateTime
 import java.util.Date
 
 public interface DateFormatter {
-    public fun formatMessageDate(localDateTime: LocalDateTime?): String
+    public fun formatDate(localDateTime: LocalDateTime?): String
 
     public companion object {
         public fun from(context: Context): DateFormatter = DefaultDateFormatter(context)
@@ -15,6 +15,6 @@ public interface DateFormatter {
 /**
  * Extension to be able to format objects of the deprecated [Date] type.
  */
-internal fun DateFormatter.formatMessageDate(date: Date?): String {
-    return formatMessageDate(date?.let(DateConverter::toLocalDateTime))
+internal fun DateFormatter.formatDate(date: Date?): String {
+    return formatDate(date?.let(DateConverter::toLocalDateTime))
 }

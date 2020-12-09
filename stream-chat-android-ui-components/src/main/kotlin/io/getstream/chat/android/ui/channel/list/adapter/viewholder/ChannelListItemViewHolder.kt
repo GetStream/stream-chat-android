@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
-import io.getstream.chat.android.ui.utils.formatMessageDate
+import io.getstream.chat.android.ui.utils.formatDate
 import kotlin.math.absoluteValue
 
 public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
@@ -153,7 +153,7 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         lastMessage ?: return
 
-        lastMessageTimeLabel.text = dateFormatter.formatMessageDate(lastMessage.getCreatedAtOrThrow())
+        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabel(

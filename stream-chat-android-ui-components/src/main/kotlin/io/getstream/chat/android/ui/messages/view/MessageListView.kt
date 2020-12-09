@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
@@ -208,6 +209,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     )
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
+    private lateinit var messageDateFormatter: DateFormatter
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -434,6 +436,9 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
+        if (::messageDateFormatter.isInitialized.not()) {
+            messageDateFormatter = DateFormatter.getDefault(context)
+        }
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
 
@@ -505,6 +510,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
+    }
+
+    public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        this.messageDateFormatter = messageDateFormatter
     }
 
     override fun displayNewMessage(listItem: MessageListItemWrapper) {

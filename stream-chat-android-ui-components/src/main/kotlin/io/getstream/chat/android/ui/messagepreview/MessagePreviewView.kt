@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.utils.DateFormatter
-import io.getstream.chat.android.ui.utils.formatMessageDate
+import io.getstream.chat.android.ui.utils.formatDate
 
 public class MessagePreviewView : FrameLayout {
 
@@ -59,6 +59,6 @@ public class MessagePreviewView : FrameLayout {
         binding.avatarView.setUserData(message.user)
         binding.channelNameLabel.text = message.user.name
         binding.messageLabel.text = message.text
-        binding.messageTimeLabel.text = dateFormatter.formatMessageDate(message.createdAt ?: message.createdLocallyAt)
+        binding.messageTimeLabel.text = dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
     }
 }
