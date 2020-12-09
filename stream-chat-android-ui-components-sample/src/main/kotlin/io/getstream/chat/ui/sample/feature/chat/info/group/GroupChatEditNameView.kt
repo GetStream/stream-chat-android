@@ -37,7 +37,6 @@ class GroupChatEditNameView : FrameLayout {
     }
 
     fun init() {
-        binding.actionButtons.isVisible = false
         binding.cancelButton.setOnClickListener {
             binding.nameEditText.clearFocus()
         }
