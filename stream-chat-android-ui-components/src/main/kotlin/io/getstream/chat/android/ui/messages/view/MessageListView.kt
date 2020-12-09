@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +50,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.utils.extensions.use
 import kotlin.math.max
@@ -68,7 +69,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private lateinit var style: MessageListViewStyle
 
-    private lateinit var binding: StreamMessageListViewBinding
+    private lateinit var binding: StreamUiMessageListViewBinding
 
     private var optionsView: View? = null
 
@@ -235,7 +236,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun init(context: Context, attr: AttributeSet?) {
-        binding = StreamMessageListViewBinding.inflate(context.inflater, this, true)
+        binding = StreamUiMessageListViewBinding.inflate(context.inflater, this, true)
 
         initRecyclerView()
         initUnseenMessagesButton()
@@ -308,6 +309,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initUnseenMessagesView() {
         binding.newMessagesTV.visibility = GONE
     }
+
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
         style = MessageListViewStyle(context, attrs)
     }
@@ -369,43 +371,96 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun configureMessageOptions(tArray: TypedArray) {
-        binding.messageOptions.replyTV.text = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        binding.messageOptions.replyTV.text =
+            tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
         tArray.getResourceId(
             R.styleable.MessageListView_streamReplyOptionIcon,
-            R.drawable.stream_ic_arrow_curve_left
-        ).let(binding.messageOptions.replyIV::setImageResource)
+            R.drawable.stream_ui_ic_arrow_curve_left
+        ).let { drawableRes ->
+            binding.messageOptions
+                .replyTV
+                .setCompoundDrawables(ResourcesCompat.getDrawable(resources, drawableRes, null), null, null, null)
+        }
 
         binding.messageOptions.threadReplyTV.text =
             tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
         tArray.getResourceId(
             R.styleable.MessageListView_streamThreadReplyOptionIcon,
-            R.drawable.stream_ic_thread_reply
-        ).let(binding.messageOptions.threadReplyIV::setImageResource)
+            R.drawable.stream_ui_ic_thread_reply
+        ).let { drawableRes ->
+            binding.messageOptions
+                .threadReplyTV
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    null,
+                    null,
+                    null
+                )
+        }
 
-        binding.messageOptions.copyTV.text = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        binding.messageOptions.copyTV.text =
+            tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
         tArray.getResourceId(
             R.styleable.MessageListView_streamCopyOptionIcon,
-            R.drawable.stream_ic_copy
-        ).let(binding.messageOptions.copyIV::setImageResource)
+            R.drawable.stream_ui_ic_copy
+        ).let { drawableRes ->
+            binding.messageOptions
+                .copyTV
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    null,
+                    null,
+                    null
+                )
+        }
 
-        binding.messageOptions.muteTV.text = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
+        binding.messageOptions.muteTV.text =
+            tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
         tArray.getResourceId(
             R.styleable.MessageListView_streamMuteOptionIcon,
-            R.drawable.stream_ic_mute
-        ).let(binding.messageOptions.muteIV::setImageResource)
+            R.drawable.stream_ui_ic_mute
+        ).let { drawableRes ->
+            binding.messageOptions
+                .muteTV
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    null,
+                    null,
+                    null
+                )
+        }
 
-        binding.messageOptions.blockTV.text = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
+        binding.messageOptions.blockTV.text =
+            tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
         tArray.getResourceId(
             R.styleable.MessageListView_streamBlockOptionIcon,
-            R.drawable.stream_ic_user_block
-        ).let(binding.messageOptions.blockIV::setImageResource)
+            R.drawable.stream_ui_ic_user_block
+        ).let { drawableRes ->
+            binding.messageOptions
+                .blockTV
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    null,
+                    null,
+                    null
+                )
+        }
 
         binding.messageOptions.deleteTV.text =
             tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete message"
         tArray.getResourceId(
             R.styleable.MessageListView_streamDeleteOptionIcon,
-            R.drawable.stream_ic_delete
-        ).let(binding.messageOptions.deleteIV::setImageResource)
+            R.drawable.stream_ui_ic_delete
+        ).let { drawableRes ->
+            binding.messageOptions
+                .deleteTV
+                .setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources, drawableRes, null),
+                    null,
+                    null,
+                    null
+                )
+        }
     }
 
     private fun lastPosition(): Int {
