@@ -538,7 +538,7 @@ public class Channels {
             // 1. Create the filters query, e.g query members by user name
             FilterObject filterByName = Filters.eq("name", "tommaso");
 
-            // 2. Call queryMembers with that filters
+            // 2. Call queryMembers with that filter
             channelController.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Member> members = result.data();
@@ -548,7 +548,7 @@ public class Channels {
                 return Unit.INSTANCE;
             });
 
-            // Here some commons filters you can use
+            // Here are some commons filters you can use:
             // Autocomplete members by user name
             FilterObject filterByAutoCompleteName = Filters.autocomplete("name", "tommaso");
 
