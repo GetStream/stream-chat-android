@@ -26,7 +26,7 @@ internal class MapCall<T : Any, K : Any>(
         }
     }
 
-    override fun enqueue(callback: (Result<K>) -> Unit) {
+    override fun enqueue(callback: Call.Callback<K>) {
         call.enqueue callback@{
             if (canceled.get()) {
                 return@callback
@@ -34,10 +34,10 @@ internal class MapCall<T : Any, K : Any>(
 
             if (it.isSuccess) {
                 val data = mapper(it.data())
-                callback(Result(data, null))
+                callback.onResult(Result(data, null))
             } else {
                 val error = it.error()
-                callback(Result(null, error))
+                callback.onResult(Result(null, error))
             }
         }
     }

@@ -25,11 +25,11 @@ public class CoroutineCall<T : Any>(
         return runBlocking { runnable() }
     }
 
-    override fun enqueue(callback: (Result<T>) -> Unit) {
+    override fun enqueue(callback: Call.Callback<T>) {
         job = scope.launch {
             val result = runnable()
             withContext(DispatcherProvider.Main) {
-                callback(result)
+                callback.onResult(result)
             }
         }
     }
