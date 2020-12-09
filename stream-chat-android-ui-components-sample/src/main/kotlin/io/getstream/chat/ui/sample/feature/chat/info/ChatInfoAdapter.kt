@@ -8,8 +8,9 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoMemberItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoOptionItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
+import java.lang.IllegalStateException
 
-class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
+open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
     object : DiffUtil.ItemCallback<ChatInfoItem>() {
         override fun areItemsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean {
             return oldItem.id == newItem.id
@@ -51,14 +52,12 @@ class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
+        return when (val item = getItem(position)) {
             is ChatInfoItem.MemberItem -> TYPE_MEMBER_ITEM
             ChatInfoItem.Separator -> TYPE_SEPARATOR
-            ChatInfoItem.Option.SharedMedia,
-            ChatInfoItem.Option.SharedFiles,
-            ChatInfoItem.Option.SharedGroups,
-            ChatInfoItem.Option.DeleteConversation -> TYPE_OPTION
-            is ChatInfoItem.Option.Stateful -> TYPE_STATEFUL_OPTION
+            is ChatInfoItem.Option -> TYPE_OPTION
+            is ChatInfoItem.StatefulOption -> TYPE_STATEFUL_OPTION
+            else -> throw IllegalStateException("ChatInfoAdapter doesn't support that option type: $item")
         }
     }
 
@@ -82,6 +81,6 @@ class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
     }
 
     fun interface ChatInfoStatefulOptionChangedListener {
-        fun onClick(option: ChatInfoItem.Option.Stateful, isChecked: Boolean)
+        fun onClick(option: ChatInfoItem.StatefulOption, isChecked: Boolean)
     }
 }

@@ -14,6 +14,7 @@ import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
+import java.lang.IllegalStateException
 
 class ChatInfoFragment : Fragment() {
 
@@ -61,18 +62,18 @@ class ChatInfoFragment : Fragment() {
     private fun initAdapter() {
         binding.optionsRecyclerView.adapter = adapter
         adapter.setChatInfoOptionClickListener { option ->
-            when (option) {
-                ChatInfoItem.Option.SharedMedia -> Unit // Not supported yet
-                ChatInfoItem.Option.SharedFiles -> Unit // Not supported yet
-                ChatInfoItem.Option.SharedGroups -> {
-                    val memberId = viewModel.state.value!!.member.getUserId()
+            when (option.optionType) {
+                OptionType.SHARED_MEDIA -> Unit // Not supported yet
+                OptionType.SHARED_FILES -> Unit // Not supported yet
+                OptionType.SHARED_GROUPS -> {
+                    val memberId = viewModel.state.value!!.chatMember.member.getUserId()
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
                             memberId
                         )
                     )
                 }
-                ChatInfoItem.Option.DeleteConversation -> {
+                OptionType.DELETE_CONVERSATION -> {
                     context.getFragmentManager()?.let {
                         ChatInfoDeleteChannelDialogFragment.newInstance()
                             .apply {
@@ -83,7 +84,7 @@ class ChatInfoFragment : Fragment() {
                             .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
                     }
                 }
-                is ChatInfoItem.Option.Stateful -> Unit
+                else -> throw IllegalStateException("Chat info option ${option.optionType} is not supported!")
             }
         }
     }

@@ -6,11 +6,16 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
+import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberItemBinding
+import io.getstream.chat.ui.sample.databinding.ChatInfoGroupNameItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoMemberItemBinding
+import io.getstream.chat.ui.sample.databinding.ChatInfoMembersSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoOptionItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
+import io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoAdapter
 
 abstract class BaseViewHolder<T : ChatInfoItem>(
     itemView: View
@@ -29,7 +34,7 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
     BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
 
     override fun bind(item: ChatInfoItem.MemberItem) {
-        with(item.member) {
+        with(item.chatMember.member) {
             binding.memberAvatar.setUserData(user)
             binding.memberUsername.text = user.name
             binding.memberOnlineIndicator.isVisible = user.online
@@ -58,20 +63,20 @@ class ChatInfoOptionViewHolder(
 
     override fun bind(item: ChatInfoItem.Option) {
         option = item
-        binding.optionTextView.setText(item.textResId)
-        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionImageView.setImageResource(item.iconResId)
-        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionArrowRight.isInvisible = !item.showRightArrow
+        binding.optionTextView.setText(item.optionType.textResId)
+        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.optionType.tintResId))
+        binding.optionImageView.setImageResource(item.optionType.iconResId)
+        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.optionType.tintResId))
+        binding.optionArrowRight.isInvisible = !item.optionType.showRightArrow
     }
 }
 
 class ChatInfoStatefulOptionViewHolder(
     private val binding: ChatInfoStatefulOptionItemBinding,
     private val optionChangedListener: ChatInfoAdapter.ChatInfoStatefulOptionChangedListener?
-) : BaseViewHolder<ChatInfoItem.Option.Stateful>(binding.root) {
+) : BaseViewHolder<ChatInfoItem.StatefulOption>(binding.root) {
 
-    private lateinit var option: ChatInfoItem.Option.Stateful
+    private lateinit var option: ChatInfoItem.StatefulOption
 
     init {
         binding.optionSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -79,12 +84,56 @@ class ChatInfoStatefulOptionViewHolder(
         }
     }
 
-    override fun bind(item: ChatInfoItem.Option.Stateful) {
+    override fun bind(item: ChatInfoItem.StatefulOption) {
         option = item
-        binding.optionTextView.setText(item.textResId)
-        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionImageView.setImageResource(item.iconResId)
-        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
+        binding.optionTextView.setText(item.optionType.textResId)
+        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.optionType.tintResId))
+        binding.optionImageView.setImageResource(item.optionType.iconResId)
+        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.optionType.tintResId))
         binding.optionSwitch.isChecked = item.isChecked
+    }
+}
+
+class ChatInfoGroupMemberViewHolder(private val binding: ChatInfoGroupMemberItemBinding) :
+    BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
+
+    override fun bind(item: ChatInfoItem.MemberItem) {
+        with(item.chatMember.member) {
+            binding.userAvatar.setUserData(user)
+            binding.nameTextView.text = user.name
+            binding.onlineTextView.text = user.getLastSeenText(itemView.context)
+            binding.ownerTextView.isVisible = item.chatMember.isOwner
+        }
+    }
+}
+
+class ChatInfoMembersSeparatorViewHolder(
+    private val binding: ChatInfoMembersSeparatorItemBinding,
+    private val membersSeparatorClickListener: GroupChatInfoAdapter.MembersSeparatorClickListener?
+) : BaseViewHolder<ChatInfoItem.MembersSeparator>(binding.root) {
+
+    init {
+        binding.membersSeparatorTextView.setOnClickListener { membersSeparatorClickListener?.onClick() }
+    }
+
+    override fun bind(item: ChatInfoItem.MembersSeparator) {
+        binding.membersSeparatorTextView.text =
+            itemView.context.getString(R.string.chat_group_info_option_members_separator_title, item.membersToShow)
+    }
+}
+
+class ChatInfoGroupNameViewHolder(
+    private val binding: ChatInfoGroupNameItemBinding,
+    private val nameChangedListener: GroupChatInfoAdapter.NameChangedListener?
+) : BaseViewHolder<ChatInfoItem.ChannelName>(binding.root) {
+
+    init {
+        binding.editNameView.setGroupNameChangedListener {
+            nameChangedListener?.onChange(it)
+        }
+    }
+
+    override fun bind(item: ChatInfoItem.ChannelName) {
+        binding.editNameView.setChannelName(item.name)
     }
 }

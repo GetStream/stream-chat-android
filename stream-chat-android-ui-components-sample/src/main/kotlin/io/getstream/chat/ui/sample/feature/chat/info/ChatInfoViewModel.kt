@@ -37,11 +37,11 @@ class ChatInfoViewModel(
                 // Update members
                 _state.addSource(controller.members) { members ->
                     _state.value =
-                        _state.value!!.copy(member = members.first { it.getUserId() != chatDomain.currentUser.id })
+                        _state.value!!.copy(chatMember = ChatMember(members.first { it.getUserId() != chatDomain.currentUser.id }))
                 }
                 // Muted channel members
                 _state.addSource(chatDomain.muted) { mutes ->
-                    val member = _state.value!!.member
+                    val member = _state.value!!.chatMember.member
                     _state.value = _state.value?.copy(isMemberMuted = mutes.any { it.target.id == member.getUserId() })
                 }
             }
@@ -80,9 +80,9 @@ class ChatInfoViewModel(
         viewModelScope.launch {
             val currentState = _state.value!!
             val result = if (isEnabled) {
-                channelClient.muteUser(currentState.member.getUserId()).await()
+                channelClient.muteUser(currentState.chatMember.member.getUserId()).await()
             } else {
-                channelClient.unmuteUser(currentState.member.getUserId()).await()
+                channelClient.unmuteUser(currentState.chatMember.member.getUserId()).await()
             }
             if (result.isError) {
                 // Handle error in a better way
@@ -106,7 +106,7 @@ class ChatInfoViewModel(
     }
 
     data class State(
-        val member: Member = Member(User()),
+        val chatMember: ChatMember = ChatMember(member = Member(User())),
         val notificationsEnabled: Boolean = false,
         val isMemberMuted: Boolean = false,
         val isMemberBlocked: Boolean = false

@@ -9,3 +9,4 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
+- Add updating `channelData` after receiving `ChannelUpdatedByUserEvent`

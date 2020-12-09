@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
@@ -94,3 +95,13 @@ fun Context?.getFragmentManager(): FragmentManager? {
         else -> null
     }
 }
+
+val ChannelData.name: String
+    get() {
+        val name = extraData["name"]
+        return if (name == null || name !is String) {
+            ""
+        } else {
+            name
+        }
+    }
