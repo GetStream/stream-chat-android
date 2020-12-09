@@ -21,9 +21,12 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
             }
         }
     }
-    errorEvents.observe(lifecycleOwner, EventObserver {
-        view.showError()
-    })
+    errorEvents.observe(
+        lifecycleOwner,
+        EventObserver {
+            view.showError()
+        }
+    )
     view.setLoadMoreListener {
         this.loadMore()
     }
