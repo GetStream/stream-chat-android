@@ -33,7 +33,7 @@ class UnreadCounts(val client: ChatClient, val channelController: ChannelClient)
                 if (result.isSuccess) {
                     // Messages in the channel marked as read
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
                 }
             }
         }
