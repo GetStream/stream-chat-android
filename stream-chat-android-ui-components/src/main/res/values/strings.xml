@@ -34,6 +34,7 @@
         <item quantity="one">1 result</item>
         <item quantity="other">%d results</item>
     </plurals>
+    <string name="stream_ui_search_result_list_error">An error occurred</string>
 
     <!-- ChannelHeaderView -->
     <string name="stream_ui_content_description_back_button">Back button</string>

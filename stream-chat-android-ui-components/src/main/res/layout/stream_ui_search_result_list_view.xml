@@ -76,15 +76,4 @@
         android:layout_gravity="center"
         />
 
-    <TextView
-        android:id="@+id/errorLabel"
-        android:layout_width="match_parent"
-        android:textAlignment="center"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="Error"
-        />
-
 </merge>

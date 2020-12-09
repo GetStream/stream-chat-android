@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.search
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.Toast
 import android.widget.ViewFlipper
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,6 @@ public class SearchResultListView : ViewFlipper {
         const val RESULTS = 0
         const val EMPTY = 1
         const val LOADING = 2
-        const val ERROR = 3
     }
 
     private val binding = StreamUiSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
@@ -87,10 +87,8 @@ public class SearchResultListView : ViewFlipper {
         scrollListener.paginationEnabled = false
     }
 
-    public fun showError(errorText: String) {
-        displayedChild = Flipper.ERROR
-        scrollListener.paginationEnabled = false
-        binding.errorLabel.text = errorText
+    public fun showError() {
+        Toast.makeText(context, R.string.stream_ui_search_result_list_error, Toast.LENGTH_SHORT).show()
     }
 
     public fun setSearchResultSelectedListener(searchResultSelectedListener: SearchResultSelectedListener?) {

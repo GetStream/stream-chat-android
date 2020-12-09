@@ -3,6 +3,7 @@
 package io.getstream.chat.android.ui.search
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.livedata.utils.EventObserver
 
 /**
  * Binds [SearchResultListView] with [SearchViewModel], updating the view's state
@@ -15,14 +16,14 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
             state.isLoading -> {
                 view.showLoading()
             }
-            state.error != null -> {
-                view.showError(state.error)
-            }
             else -> {
                 view.setMessages(state.query, state.results)
             }
         }
     }
+    errorEvents.observe(lifecycleOwner, EventObserver {
+        view.showError()
+    })
     view.setLoadMoreListener {
         this.loadMore()
     }
