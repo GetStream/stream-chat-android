@@ -25,42 +25,42 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
     init {
         context.obtainStyledAttributes(
             attrs,
-            R.styleable.StreamUiAvatarView,
+            R.styleable.AvatarView,
             0,
             0
         ).use {
             avatarBorderWidth = it.getDimensionPixelSize(
-                R.styleable.StreamUiAvatarView_streamUiAvatarBorderWidth,
+                R.styleable.AvatarView_streamUiAvatarBorderWidth,
                 context.getDimension(R.dimen.stream_channel_avatar_border_width)
             )
             avatarBorderColor = it.getColor(
-                R.styleable.StreamUiAvatarView_streamUiAvatarBorderColor,
+                R.styleable.AvatarView_streamUiAvatarBorderColor,
                 Color.WHITE
             )
             avatarInitialText = TextStyle.Builder(it)
                 .size(
-                    R.styleable.StreamUiAvatarView_streamUiAvatarTextSize,
+                    R.styleable.AvatarView_streamUiAvatarTextSize,
                     context.getDimension(R.dimen.stream_channel_initials)
                 )
                 .color(
-                    R.styleable.StreamUiAvatarView_streamUiAvatarTextColor,
+                    R.styleable.AvatarView_streamUiAvatarTextColor,
                     Color.WHITE
                 )
                 .font(
-                    R.styleable.StreamUiAvatarView_streamUiAvatarTextFontAssets,
-                    R.styleable.StreamUiAvatarView_streamUiAvatarTextFont
+                    R.styleable.AvatarView_streamUiAvatarTextFontAssets,
+                    R.styleable.AvatarView_streamUiAvatarTextFont
                 )
                 .style(
-                    R.styleable.StreamUiAvatarView_streamUiAvatarTextStyle,
+                    R.styleable.AvatarView_streamUiAvatarTextStyle,
                     Typeface.BOLD
                 )
                 .build()
             onlineIndicatorEnabled = it.getBoolean(
-                R.styleable.StreamUiAvatarView_streamUiAvatarOnlineIndicatorEnabled,
+                R.styleable.AvatarView_streamUiAvatarOnlineIndicatorEnabled,
                 false
             )
             onlineIndicatorPosition = it.getEnum(
-                R.styleable.StreamUiAvatarView_streamUiAvatarOnlineIndicatorPosition,
+                R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
                 AvatarView.OnlineIndicatorPosition.TOP
             )
         }
