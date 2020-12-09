@@ -7,12 +7,12 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.docs.StaticInstances.TAG
 
-class Push(val context: Context) {
+class Push(val context: Context, val client: ChatClient) {
 
     /**
      * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Android & Firebase</a>
      */
-    inner class AndroidAndFirebase(val client: ChatClient) {
+    inner class AndroidAndFirebase {
 
         /**
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
@@ -40,6 +40,38 @@ class Push(val context: Context) {
             ChatClient.Builder("{{ api_key }}", context)
                 .notifications(ChatNotificationHandler(context, notificationsConfig))
                 .build()
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Device</a>
+     */
+    inner class Device {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
+         */
+        fun registerADevice() {
+            client.addDevice("firebase-token").enqueue { result ->
+                if (result.isSuccess) {
+                    // Device was successfully registered
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#unregister-a-device">Unregister a Device</a>
+         */
+        fun unregisterADevice() {
+            client.deleteDevice("firebase-token").enqueue { result ->
+                if (result.isSuccess) {
+                    // Device was successfully registered
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                }
+            }
         }
     }
 }
