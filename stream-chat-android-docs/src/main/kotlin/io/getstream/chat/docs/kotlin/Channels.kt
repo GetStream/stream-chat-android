@@ -425,8 +425,8 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             )
 
             // Get updates about muted channels
-            client.subscribeFor<ChannelsMuteEvent> {
-                val mutes: List<ChannelMute> = it.channelsMute
+            client.subscribeFor<ChannelsMuteEvent> { event ->
+                val mutes: List<ChannelMute> = event.channelsMute
             }
         }
 
@@ -485,7 +485,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             // 1. Create the filters query, e.g query members by user name
             val filterByName = Filters.eq("name", "tommaso")
 
-            // 2. Call queryMembers with that filters
+            // 2. Call queryMembers with that filter
             channelController.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
                 if (result.isSuccess) {
                     val members = result.data()
@@ -494,7 +494,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
                 }
             }
 
-            // Here some commons filters you can use
+            // Here are some commons filters you can use:
             // Autocomplete members by user name
             val filterByAutoCompleteName = Filters.autocomplete("name", "tommaso")
 
