@@ -29,7 +29,7 @@ class GroupChatInfoViewModel(
     val channelLeftState: LiveData<Boolean> = _channelLeftState
 
     init {
-        _state.value = State()
+        _state.value = INITIAL_STATE
         chatDomain.useCases.getChannelController(cid).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
@@ -87,7 +87,7 @@ class GroupChatInfoViewModel(
         _state.value =
             currentState.copy(
                 members = membersToShow,
-                shouldExpandMembers = currentState.shouldExpandMembers || members.size <= COLLAPSED_MEMBERS_COUNT,
+                shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size <= COLLAPSED_MEMBERS_COUNT,
                 membersToShowCount = members.size - COLLAPSED_MEMBERS_COUNT
             )
     }
@@ -111,12 +111,13 @@ class GroupChatInfoViewModel(
     }
 
     data class State(
-        val members: List<ChatMember> = emptyList(),
-        val channelName: String = "",
-        val channelMuted: Boolean = false,
-        val shouldExpandMembers: Boolean = false,
-        val membersToShowCount: Int = 0,
+        val members: List<ChatMember>,
+        val channelName: String,
+        val channelMuted: Boolean,
+        val shouldExpandMembers: Boolean?,
+        val membersToShowCount: Int,
     )
+
 
     sealed class Event {
         data class NameChanged(val name: String) : Event()
@@ -128,5 +129,13 @@ class GroupChatInfoViewModel(
 
     companion object {
         const val COLLAPSED_MEMBERS_COUNT = 5
+
+        private val INITIAL_STATE = State(
+            members = emptyList(),
+            channelName = "",
+            channelMuted = false,
+            shouldExpandMembers = null,
+            membersToShowCount = 0
+        )
     }
 }

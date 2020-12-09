@@ -36,7 +36,7 @@ fun GroupChatInfoViewModel.bindView(view: GroupChatInfoFragment, lifecycleOwner:
     }
 
     state.observe(lifecycleOwner) { state ->
-        val members = if (state.shouldExpandMembers) {
+        val members = if (state.shouldExpandMembers != false) {
             state.members.map { ChatInfoItem.MemberItem(it) }
         } else {
             state.members.take(GroupChatInfoViewModel.COLLAPSED_MEMBERS_COUNT)
