@@ -22,7 +22,7 @@ class Push(val context: Context, val client: ChatClient) {
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
                 }
             }
         }
@@ -56,7 +56,7 @@ class Push(val context: Context, val client: ChatClient) {
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
                 }
             }
         }
@@ -67,9 +67,9 @@ class Push(val context: Context, val client: ChatClient) {
         fun unregisterADevice() {
             client.deleteDevice("firebase-token").enqueue { result ->
                 if (result.isSuccess) {
-                    // Device was successfully registered
+                    // Device was successfully unregistered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
                 }
             }
         }
