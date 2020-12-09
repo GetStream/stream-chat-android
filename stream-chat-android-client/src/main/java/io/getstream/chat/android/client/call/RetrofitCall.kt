@@ -28,10 +28,10 @@ internal class RetrofitCall<T : Any>(
         return execute(call)
     }
 
-    override fun enqueue(callback: (Result<T>) -> Unit) {
+    override fun enqueue(callback: Call.Callback<T>) {
         enqueue(call) {
             if (!canceled.get()) {
-                callback(it)
+                callback.onResult(it)
             }
         }
     }

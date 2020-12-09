@@ -13,10 +13,10 @@ public class TypingIndicators {
      */
     public void sendingStartAndStopTypingEvents() {
         // Sends a typing.start event at most once every two seconds
-        channelController.keystroke().enqueue(result -> Unit.INSTANCE);
+        channelController.keystroke().enqueue();
 
         // Sends the typing.stop event
-        channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
+        channelController.stopTyping().enqueue();
     }
 
     /**

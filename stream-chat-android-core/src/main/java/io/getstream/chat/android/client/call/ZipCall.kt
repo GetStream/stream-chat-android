@@ -43,9 +43,9 @@ internal class ZipCall<A : Any, B : Any>(
         }
     }
 
-    override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
+    override fun enqueue(callback: Call.Callback<Pair<A, B>>) {
         suspend fun performCallback(result: Result<Pair<A, B>>) {
-            withContext(DispatcherProvider.Main) { callback(result) }
+            withContext(DispatcherProvider.Main) { callback.onResult(result) }
         }
 
         job = GlobalScope.launch {
