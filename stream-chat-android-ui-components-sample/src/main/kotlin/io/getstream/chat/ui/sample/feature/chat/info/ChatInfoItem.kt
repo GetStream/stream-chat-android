@@ -6,7 +6,6 @@ import androidx.annotation.StringRes
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.ui.sample.R
 
-
 sealed class ChatInfoItem {
 
     val id: String
