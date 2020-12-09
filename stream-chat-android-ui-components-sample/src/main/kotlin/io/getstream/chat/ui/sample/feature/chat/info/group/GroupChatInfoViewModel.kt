@@ -49,13 +49,13 @@ class GroupChatInfoViewModel(
         }
     }
 
-    fun onEvent(event: Event) {
-        when (event) {
-            is Event.NameChanged -> changeGroupName(event.name)
-            Event.MembersSeparatorClick -> _state.value = _state.value!!.copy(shouldExpandMembers = true)
-            is Event.MuteChannelClicked -> switchGroupMute(event.isEnabled)
-            is Event.ChannelMutesUpdated -> updateChannelMuteStatus(event.channelMutes)
-            Event.LeaveChannel -> leaveChannel()
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.NameChanged -> changeGroupName(action.name)
+            Action.MembersSeparatorClicked -> _state.value = _state.value!!.copy(shouldExpandMembers = true)
+            is Action.MuteChannelClicked -> switchGroupMute(action.isEnabled)
+            is Action.ChannelMutesUpdated -> updateChannelMuteStatus(action.channelMutes)
+            Action.LeaveChannelClicked -> leaveChannel()
         }
     }
 
@@ -118,13 +118,12 @@ class GroupChatInfoViewModel(
         val membersToShowCount: Int,
     )
 
-
-    sealed class Event {
-        data class NameChanged(val name: String) : Event()
-        object MembersSeparatorClick : Event()
-        data class MuteChannelClicked(val isEnabled: Boolean) : Event()
-        data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Event()
-        object LeaveChannel : Event()
+    sealed class Action {
+        data class NameChanged(val name: String) : Action()
+        object MembersSeparatorClicked : Action()
+        data class MuteChannelClicked(val isEnabled: Boolean) : Action()
+        data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
+        object LeaveChannelClicked : Action()
     }
 
     companion object {

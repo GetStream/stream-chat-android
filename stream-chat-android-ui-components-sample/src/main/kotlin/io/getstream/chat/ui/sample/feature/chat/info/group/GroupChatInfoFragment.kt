@@ -83,9 +83,9 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            viewModel.onEvent(
+            viewModel.onAction(
                 when (option) {
-                    is ChatInfoItem.Option.Stateful.Mute -> GroupChatInfoViewModel.Event.MuteChannelClicked(
+                    is ChatInfoItem.Option.Stateful.Mute -> GroupChatInfoViewModel.Action.MuteChannelClicked(
                         isChecked
                     )
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
@@ -96,17 +96,17 @@ class GroupChatInfoFragment : Fragment() {
             when (option) {
                 ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
                 ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
-                ChatInfoItem.Option.LeaveGroup -> viewModel.onEvent(GroupChatInfoViewModel.Event.LeaveChannel)
+                ChatInfoItem.Option.LeaveGroup -> viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }
         }
-        adapter.setMembersSeparatorClickListener { viewModel.onEvent(GroupChatInfoViewModel.Event.MembersSeparatorClick) }
-        adapter.setNameChangedListener { viewModel.onEvent(GroupChatInfoViewModel.Event.NameChanged(it)) }
+        adapter.setMembersSeparatorClickListener { viewModel.onAction(GroupChatInfoViewModel.Action.MembersSeparatorClicked) }
+        adapter.setNameChangedListener { viewModel.onAction(GroupChatInfoViewModel.Action.NameChanged(it)) }
     }
 
     private fun subscribeForChannelMutesUpdatedEvents() {
         ChatClient.instance().subscribeFor<NotificationChannelMutesUpdatedEvent>(viewLifecycleOwner) {
-            viewModel.onEvent(GroupChatInfoViewModel.Event.ChannelMutesUpdated(it.me.channelMutes))
+            viewModel.onAction(GroupChatInfoViewModel.Action.ChannelMutesUpdated(it.me.channelMutes))
         }
     }
 }
