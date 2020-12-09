@@ -124,7 +124,7 @@ private class Fixture {
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
         val mockCall: Call<List<Channel>> = mock()
         When calling queryChannelsLoadMore.invoke(any(), any(), any(), any()) doReturn mockCall
-        When calling mockCall.enqueue(any()) doAnswer {
+        When calling mockCall.enqueue() doAnswer {
             channelsLiveData.postValue((channelsLiveData.value ?: emptyList()) + moreChannels)
         }
         return this

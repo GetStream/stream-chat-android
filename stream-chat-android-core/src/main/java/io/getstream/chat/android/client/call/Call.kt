@@ -27,7 +27,31 @@ public interface Call<T : Any> {
      * Executes the call asynchronously, on a background thread. Safe to call from the main
      * thread. The [callback] will always be invoked on the main thread.
      */
-    public fun enqueue(callback: (Result<T>) -> Unit = {})
+    @Suppress("DeprecatedCallableAddReplaceWith", "NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated(
+        level = DeprecationLevel.ERROR,
+        message = "Use the enqueue method with a Callback<T> parameter instead",
+    )
+    // Prevent usages from Kotlin, force call resolution to select the new enqueue function
+    @SinceKotlin("99999.9")
+    public fun enqueue(callback: (Result<T>) -> Unit = {}) {
+        // Not recursive, calls the overload with a Callback parameter
+        enqueue(callback)
+    }
+
+    /**
+     * Executes the call asynchronously, on a background thread. Safe to call from the main
+     * thread. The [callback] will always be invoked on the main thread.
+     */
+    public fun enqueue(callback: Callback<T>)
+
+    /**
+     * Executes the call asynchronously, on a background thread. Safe to call from the main
+     * thread.
+     *
+     * To get notified of the result and handle errors, use enqueue(callback) instead.
+     */
+    public fun enqueue(): Unit = enqueue {}
 
     /**
      * Cancels the execution of the call, if cancellation is supported for the operation.
@@ -35,6 +59,10 @@ public interface Call<T : Any> {
      * Note that calls can not be cancelled when running them with [execute].
      */
     public fun cancel()
+
+    public fun interface Callback<T : Any> {
+        public fun onResult(result: Result<T>)
+    }
 }
 
 /**
