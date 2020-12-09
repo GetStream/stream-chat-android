@@ -78,7 +78,7 @@ class GroupChatEditNameView : FrameLayout {
 
     private fun updateChannelName() {
         shouldUpdateCurrentName = false
-        nameChangedListener?.onNameChanged(binding.nameEditText.text.toString())
+        nameChangedListener?.onNameChanged(binding.nameEditText.text.trim().toString())
         binding.nameEditText.clearFocus()
     }
 
