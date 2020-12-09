@@ -349,15 +349,11 @@ internal class ChannelControllerImpl(
 
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
-        if (_loading.value == true) {
+        if (_loading.value) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
             return
         }
-        _loading.value = true
-        val pagination = QueryChannelPaginationRequest(limit)
-        runChannelQuery(pagination)
-
-        _loading.value = false
+        runChannelQuery(QueryChannelPaginationRequest(limit))
     }
 
     fun loadMoreMessagesRequest(
@@ -385,36 +381,29 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        if (_loadingOlderMessages.value) {
-            logger.logI("Another request to load older messages is in progress. Ignoring this request.")
-            return Result(
-                null,
-                ChatError("Another request to load older messages is in progress. Ignoring this request.")
-            )
-        }
-        _loadingOlderMessages.value = true
-        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
-        val result = runChannelQuery(pagination)
-        _loadingOlderMessages.value = false
-        return result
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.LESS_THAN))
     }
 
     suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        if (_loadingNewerMessages.value) {
-            logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
-            return Result(
-                null,
-                ChatError("Another request to load newer messages is in progress. Ignoring this request.")
-            )
-        }
-        _loadingNewerMessages.value = true
-        val pagination = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
-        val result = runChannelQuery(pagination)
-        _loadingNewerMessages.value = false
-        return result
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
     }
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+        val loader = when (pagination.messageFilterDirection) {
+            Pagination.GREATER_THAN,
+            Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
+            Pagination.LESS_THAN,
+            Pagination.LESS_THAN_OR_EQUAL -> _loadingOlderMessages
+            null -> _loading
+        }
+        if (loader.value) {
+            logger.logI("Another request to load messages is in progress. Ignoring this request.")
+            return Result(
+                null,
+                ChatError("Another request to load messages is in progress. Ignoring this request.")
+            )
+        }
+        loader.value = true
         if (pagination.isFirstPage()) {
             _messagesState.value = ChannelController.MessagesState.Loading
         }
@@ -437,7 +426,7 @@ internal class ChannelControllerImpl(
         }
 
         // if we are online we we run the actual API call
-        return if (queryOnlineJob != null) {
+        val result = if (queryOnlineJob != null) {
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
@@ -453,6 +442,8 @@ internal class ChannelControllerImpl(
             recoveryNeeded = true
             Result(localChannel, null)
         }
+        loader.value = false
+        return result
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
@@ -460,7 +451,6 @@ internal class ChannelControllerImpl(
 
         selectedChannel?.also { channel ->
             channel.config = domainImpl.getChannelConfig(channel.type)
-            _loading.value = false
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
