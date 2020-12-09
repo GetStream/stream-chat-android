@@ -62,10 +62,10 @@ class ChatInfoFragment : Fragment() {
     private fun initAdapter() {
         binding.optionsRecyclerView.adapter = adapter
         adapter.setChatInfoOptionClickListener { option ->
-            when (option.optionType) {
-                OptionType.SHARED_MEDIA -> Unit // Not supported yet
-                OptionType.SHARED_FILES -> Unit // Not supported yet
-                OptionType.SHARED_GROUPS -> {
+            when (option) {
+                ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedGroups -> {
                     val memberId = viewModel.state.value!!.chatMember.member.getUserId()
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
@@ -73,7 +73,7 @@ class ChatInfoFragment : Fragment() {
                         )
                     )
                 }
-                OptionType.DELETE_CONVERSATION -> {
+                ChatInfoItem.Option.DeleteConversation -> {
                     context.getFragmentManager()?.let {
                         ChatInfoDeleteChannelDialogFragment.newInstance()
                             .apply {
@@ -84,7 +84,7 @@ class ChatInfoFragment : Fragment() {
                             .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
                     }
                 }
-                else -> throw IllegalStateException("Chat info option ${option.optionType} is not supported!")
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
         }
     }

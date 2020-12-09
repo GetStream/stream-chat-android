@@ -92,7 +92,7 @@ class ChatInfoViewModel(
     }
 
     private fun switchUserBlock(isEnabled: Boolean) {
-        // Shadow ban is not supported yet
+        // TODO: Shadow ban is not supported yet
     }
 
     private fun deleteChannel() {

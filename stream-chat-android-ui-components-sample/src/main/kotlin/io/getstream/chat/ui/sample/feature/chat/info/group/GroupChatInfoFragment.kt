@@ -16,7 +16,6 @@ import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoAdapter
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
-import io.getstream.chat.ui.sample.feature.chat.info.OptionType
 
 class GroupChatInfoFragment : Fragment() {
 
@@ -72,11 +71,11 @@ class GroupChatInfoFragment : Fragment() {
     private fun initAdapter() {
         binding.optionsRecyclerView.adapter = adapter
         adapter.setChatInfoOptionClickListener { option ->
-            when (option.optionType) {
-                OptionType.SHARED_MEDIA -> Unit // Not supported yet
-                OptionType.SHARED_FILES -> Unit // Not supported yet
-                OptionType.LEAVE_GROUP -> viewModel.onEvent(GroupChatInfoViewModel.Event.LeaveChannel)
-                else -> throw IllegalStateException("Group chat info option ${option.optionType} is not supported!")
+            when (option) {
+                ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.LeaveGroup -> viewModel.onEvent(GroupChatInfoViewModel.Event.LeaveChannel)
+                else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }
         }
     }

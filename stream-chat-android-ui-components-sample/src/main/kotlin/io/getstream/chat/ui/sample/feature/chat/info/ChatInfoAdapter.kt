@@ -55,8 +55,8 @@ open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
         return when (val item = getItem(position)) {
             is ChatInfoItem.MemberItem -> TYPE_MEMBER_ITEM
             ChatInfoItem.Separator -> TYPE_SEPARATOR
+            is ChatInfoItem.Option.Stateful -> TYPE_STATEFUL_OPTION
             is ChatInfoItem.Option -> TYPE_OPTION
-            is ChatInfoItem.StatefulOption -> TYPE_STATEFUL_OPTION
             else -> throw IllegalStateException("ChatInfoAdapter doesn't support that option type: $item")
         }
     }
@@ -81,6 +81,6 @@ open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
     }
 
     fun interface ChatInfoStatefulOptionChangedListener {
-        fun onClick(option: ChatInfoItem.StatefulOption, isChecked: Boolean)
+        fun onClick(option: ChatInfoItem.Option.Stateful, isChecked: Boolean)
     }
 }

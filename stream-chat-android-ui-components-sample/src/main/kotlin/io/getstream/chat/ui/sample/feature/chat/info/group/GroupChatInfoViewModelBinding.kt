@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
-import io.getstream.chat.ui.sample.feature.chat.info.OptionType
 
 fun GroupChatInfoViewModel.bindView(view: GroupChatInfoFragment, lifecycleOwner: LifecycleOwner) {
 
@@ -24,9 +23,9 @@ fun GroupChatInfoViewModel.bindView(view: GroupChatInfoFragment, lifecycleOwner:
 
     view.setChatInfoStatefulOptionChangedListener { option, isChecked ->
         onEvent(
-            when (option.optionType) {
-                OptionType.MUTE_GROUP -> GroupChatInfoViewModel.Event.MuteChannelClicked(isChecked)
-                else -> throw IllegalStateException("Chat info option ${option.optionType} is not supported!")
+            when (option) {
+                is ChatInfoItem.Option.Stateful.Mute-> GroupChatInfoViewModel.Event.MuteChannelClicked(isChecked)
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
         )
     }
@@ -48,10 +47,10 @@ fun GroupChatInfoViewModel.bindView(view: GroupChatInfoFragment, lifecycleOwner:
                 listOf(
                     ChatInfoItem.Separator,
                     ChatInfoItem.ChannelName(state.channelName),
-                    ChatInfoItem.StatefulOption(OptionType.MUTE_GROUP, isChecked = state.channelMuted),
-                    ChatInfoItem.Option(OptionType.SHARED_MEDIA),
-                    ChatInfoItem.Option(OptionType.SHARED_FILES),
-                    ChatInfoItem.Option(OptionType.LEAVE_GROUP),
+                    ChatInfoItem.Option.Stateful.Mute(isChecked = state.channelMuted),
+                    ChatInfoItem.Option.SharedMedia,
+                    ChatInfoItem.Option.SharedFiles,
+                    ChatInfoItem.Option.LeaveGroup,
                 )
         )
     }

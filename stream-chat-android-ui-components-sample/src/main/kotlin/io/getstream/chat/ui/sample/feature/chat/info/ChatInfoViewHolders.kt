@@ -63,20 +63,20 @@ class ChatInfoOptionViewHolder(
 
     override fun bind(item: ChatInfoItem.Option) {
         option = item
-        binding.optionTextView.setText(item.optionType.textResId)
-        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.optionType.tintResId))
-        binding.optionImageView.setImageResource(item.optionType.iconResId)
-        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.optionType.tintResId))
-        binding.optionArrowRight.isInvisible = !item.optionType.showRightArrow
+        binding.optionTextView.setText(item.textResId)
+        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.tintResId))
+        binding.optionImageView.setImageResource(item.iconResId)
+        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
+        binding.optionArrowRight.isInvisible = !item.showRightArrow
     }
 }
 
 class ChatInfoStatefulOptionViewHolder(
     private val binding: ChatInfoStatefulOptionItemBinding,
     private val optionChangedListener: ChatInfoAdapter.ChatInfoStatefulOptionChangedListener?
-) : BaseViewHolder<ChatInfoItem.StatefulOption>(binding.root) {
+) : BaseViewHolder<ChatInfoItem.Option.Stateful>(binding.root) {
 
-    private lateinit var option: ChatInfoItem.StatefulOption
+    private lateinit var option: ChatInfoItem.Option.Stateful
 
     init {
         binding.optionSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -84,12 +84,12 @@ class ChatInfoStatefulOptionViewHolder(
         }
     }
 
-    override fun bind(item: ChatInfoItem.StatefulOption) {
+    override fun bind(item: ChatInfoItem.Option.Stateful) {
         option = item
-        binding.optionTextView.setText(item.optionType.textResId)
-        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.optionType.tintResId))
-        binding.optionImageView.setImageResource(item.optionType.iconResId)
-        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.optionType.tintResId))
+        binding.optionTextView.setText(item.textResId)
+        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.tintResId))
+        binding.optionImageView.setImageResource(item.iconResId)
+        binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
         binding.optionSwitch.isChecked = item.isChecked
     }
 }
