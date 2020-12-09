@@ -160,8 +160,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                 (view.parent as ViewGroup).removeView(view)
             }
 
-            binding.optionsMessageContainer.addView(optionsView)
-            binding.optionRootContainer.isVisible = true
+            binding.messageOptions.optionsMessageContainer.addView(optionsView)
+            binding.messageOptions.optionRootContainer.isVisible = true
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -268,12 +268,12 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private fun initShadowLayer() {
         binding.shadowLayer.setOnClickListener { hideBlurLayer() }
-        binding.optionsMessageContainer.setOnClickListener { hideBlurLayer() }
+        binding.messageOptions.optionsMessageContainer.setOnClickListener { hideBlurLayer() }
     }
 
     private fun hideBlurLayer() {
-        binding.optionsMessageContainer.removeView(optionsView)
-        binding.optionRootContainer.isVisible = false
+        binding.messageOptions.optionsMessageContainer.removeView(optionsView)
+        binding.messageOptions.optionRootContainer.isVisible = false
 
         binding.shadowLayer.isVisible = false
     }
@@ -369,43 +369,43 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun configureMessageOptions(tArray: TypedArray) {
-        binding.replyTV.text = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        binding.messageOptions.replyTV.text = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
         tArray.getResourceId(
             R.styleable.MessageListView_streamReplyOptionIcon,
             R.drawable.stream_ic_arrow_curve_left
-        ).let(binding.replyIV::setImageResource)
+        ).let(binding.messageOptions.replyIV::setImageResource)
 
-        binding.threadReplyTV.text =
+        binding.messageOptions.threadReplyTV.text =
             tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
         tArray.getResourceId(
             R.styleable.MessageListView_streamThreadReplyOptionIcon,
             R.drawable.stream_ic_thread_reply
-        ).let(binding.threadReplyIV::setImageResource)
+        ).let(binding.messageOptions.threadReplyIV::setImageResource)
 
-        binding.copyTV.text = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        binding.messageOptions.copyTV.text = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
         tArray.getResourceId(
             R.styleable.MessageListView_streamCopyOptionIcon,
             R.drawable.stream_ic_copy
-        ).let(binding.copyIV::setImageResource)
+        ).let(binding.messageOptions.copyIV::setImageResource)
 
-        binding.muteTV.text = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
+        binding.messageOptions.muteTV.text = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
         tArray.getResourceId(
             R.styleable.MessageListView_streamMuteOptionIcon,
             R.drawable.stream_ic_mute
-        ).let(binding.muteIV::setImageResource)
+        ).let(binding.messageOptions.muteIV::setImageResource)
 
-        binding.blockTV.text = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
+        binding.messageOptions.blockTV.text = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
         tArray.getResourceId(
             R.styleable.MessageListView_streamBlockOptionIcon,
             R.drawable.stream_ic_user_block
-        ).let(binding.blockIV::setImageResource)
+        ).let(binding.messageOptions.blockIV::setImageResource)
 
-        binding.deleteTV.text =
+        binding.messageOptions.deleteTV.text =
             tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete message"
         tArray.getResourceId(
             R.styleable.MessageListView_streamDeleteOptionIcon,
             R.drawable.stream_ic_delete
-        ).let(binding.deleteIV::setImageResource)
+        ).let(binding.messageOptions.deleteIV::setImageResource)
     }
 
     private fun lastPosition(): Int {

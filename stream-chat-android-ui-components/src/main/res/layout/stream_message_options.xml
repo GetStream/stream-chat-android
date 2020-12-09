@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageOptionsScroll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/optionRootContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        >
+
+        <FrameLayout
+            android:id="@+id/optionsMessageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/optionListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            app:cardCornerRadius="12dp"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minWidth="200dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                >
+
+                <ImageView
+                    android:id="@+id/replyIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/stream_ic_arrow_curve_left"
+                    />
+
+                <TextView
+                    android:id="@+id/replyTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/replyIV"
+                    app:layout_constraintStart_toEndOf="@id/replyIV"
+                    app:layout_constraintTop_toTopOf="@id/replyIV"
+                    tools:text="Reply"
+                    />
+
+                <View
+                    android:id="@+id/replyDivision"
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stream_gray_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/replyIV"
+                    />
+
+                <ImageView
+                    android:id="@+id/threadReplyIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/replyDivision"
+                    tools:src="@drawable/stream_ic_thread_reply"
+                    />
+
+                <TextView
+                    android:id="@+id/threadReplyTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/threadReplyIV"
+                    app:layout_constraintStart_toEndOf="@id/threadReplyIV"
+                    app:layout_constraintTop_toTopOf="@id/threadReplyIV"
+                    tools:text="Thread Reply"
+                    />
+
+                <View
+                    android:id="@+id/threadReplyDivision"
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stream_gray_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/threadReplyIV"
+                    />
+
+                <ImageView
+                    android:id="@+id/copyIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/threadReplyDivision"
+                    tools:src="@drawable/stream_ic_copy"
+                    />
+
+                <TextView
+                    android:id="@+id/copyTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/copyIV"
+                    app:layout_constraintStart_toEndOf="@id/copyIV"
+                    app:layout_constraintTop_toTopOf="@id/copyIV"
+                    tools:text="Copy message"
+                    />
+
+                <View
+                    android:id="@+id/copyDivision"
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stream_gray_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/copyIV"
+                    />
+
+                <ImageView
+                    android:id="@+id/muteIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/copyDivision"
+                    tools:src="@drawable/stream_ic_mute"
+                    />
+
+                <TextView
+                    android:id="@+id/muteTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/muteIV"
+                    app:layout_constraintStart_toEndOf="@id/muteIV"
+                    app:layout_constraintTop_toTopOf="@id/muteIV"
+                    tools:text="Mute User"
+                    />
+
+                <View
+                    android:id="@+id/muteDivision"
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stream_gray_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/muteIV"
+                    />
+
+                <ImageView
+                    android:id="@+id/blockIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/muteDivision"
+                    tools:src="@drawable/stream_ic_user_block"
+                    />
+
+                <TextView
+                    android:id="@+id/blockTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/blockIV"
+                    app:layout_constraintStart_toEndOf="@id/blockIV"
+                    app:layout_constraintTop_toTopOf="@id/blockIV"
+                    tools:text="Block User"
+                    />
+
+                <View
+                    android:id="@+id/blockDivision"
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stream_gray_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/blockIV"
+                    />
+
+                <ImageView
+                    android:id="@+id/deleteIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/blockDivision"
+                    app:tint="@color/stream_ui_light_red"
+                    tools:src="@drawable/stream_ic_delete"
+                    />
+
+                <TextView
+                    android:id="@+id/deleteTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/stream_ui_light_red"
+                    app:layout_constraintBottom_toBottomOf="@id/deleteIV"
+                    app:layout_constraintStart_toEndOf="@id/deleteIV"
+                    app:layout_constraintTop_toTopOf="@id/deleteIV"
+                    tools:text="Delete Message"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>
