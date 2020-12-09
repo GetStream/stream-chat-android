@@ -10,8 +10,8 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
         cancelled = true
     }
 
-    override fun enqueue(callback: (Result<T>) -> Unit) {
-        callback(result)
+    override fun enqueue(callback: Call.Callback<T>) {
+        callback.onResult(result)
     }
 
     override fun execute(): Result<T> {

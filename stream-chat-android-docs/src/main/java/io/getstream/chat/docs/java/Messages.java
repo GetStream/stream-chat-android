@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -61,7 +60,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -75,7 +73,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -93,7 +90,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -107,7 +103,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -174,7 +169,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -188,7 +182,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -203,7 +196,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Get the second 10 reactions
@@ -213,7 +205,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Get 10 reactions after particular reaction
@@ -224,7 +215,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -244,7 +234,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -266,7 +255,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -282,7 +270,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Retrieve the 20 more messages before the message with id "42"
@@ -292,7 +279,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -312,7 +298,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -343,7 +328,6 @@ public class Messages {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
         }

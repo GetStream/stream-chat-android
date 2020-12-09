@@ -67,7 +67,6 @@ public class UserPresence {
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // 2. Query some channels with presence events
@@ -91,7 +90,6 @@ public class UserPresence {
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // 3. Query some users for presence event
@@ -106,7 +104,6 @@ public class UserPresence {
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // Finally, Subscribe to events
