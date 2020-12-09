@@ -60,7 +60,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -76,7 +75,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -90,7 +88,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -116,7 +113,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -156,7 +152,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Get the second 10 channels
@@ -168,7 +163,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -194,7 +188,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error(), result.error().getCause()));
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -212,7 +205,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error(), result.error().getCause()));
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -232,7 +224,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -253,7 +244,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Remove member with id "thierry" and "josh"
@@ -263,7 +253,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -285,7 +274,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -311,7 +299,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -325,7 +312,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -339,7 +325,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -360,7 +345,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -381,7 +365,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -398,7 +381,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -413,7 +395,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Shows a previously hidden channel
@@ -423,7 +404,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Hide the channel and clear the message history
@@ -433,7 +413,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -453,7 +432,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Get list of muted channels when user is connected
@@ -494,7 +472,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Retrieve muted channels
@@ -505,7 +482,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -520,7 +496,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
@@ -545,7 +520,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
             // Here are some commons filters you can use:
@@ -579,7 +553,6 @@ public class Channels {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }
