@@ -6,6 +6,8 @@
 - Add new attrs to `MessageListView`: `streamDeleteMessageActionEnabled`, `streamEditMessageActionEnabled`
 - Improve Channel List Diff
 - Add new attrs to `MessageInputView`: `streamInputScrollbarEnabled`, `streamInputScrollbarFadingEnabled`
+- Add API for setting custom message date formatter in MessageListView via `setMessageDateFormatter(DateFormatter)`
+    - 24 vs 12 hr controlled by user's System settings.
 
 ## stream-chat-android-client
 
