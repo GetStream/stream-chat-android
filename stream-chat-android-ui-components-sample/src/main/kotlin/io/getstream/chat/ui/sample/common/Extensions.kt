@@ -97,11 +97,4 @@ fun Context?.getFragmentManager(): FragmentManager? {
 }
 
 val ChannelData.name: String
-    get() {
-        val name = extraData["name"]
-        return if (name == null || name !is String) {
-            ""
-        } else {
-            name
-        }
-    }
+    get() = (extraData["name"] as? String) ?: ""
