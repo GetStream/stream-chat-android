@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamFragmentChannelActionsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
@@ -28,7 +28,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         ChannelActionsViewModelFactory(cid, isGroup)
     }
 
-    private var _binding: StreamFragmentChannelActionsBinding? = null
+    private var _binding: StreamUiFragmentChannelActionsBinding? = null
     private val binding get() = _binding!!
 
     override fun onAttach(context: Context) {
@@ -46,7 +46,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamFragmentChannelActionsBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentChannelActionsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -65,7 +65,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    override fun getTheme(): Int = R.style.StreamChannelActionsBottomSheetDialog
+    override fun getTheme(): Int = R.style.StreamUiChannelActionsBottomSheetDialog
 
     private fun setupViews() {
         with(binding) {
@@ -102,7 +102,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun bindMembersInfo(members: List<Member>) {
         binding.membersInfoTextView.text = if (isGroup) {
             requireContext().resources.getQuantityString(
-                R.plurals.stream_channel_actions_members_count,
+                R.plurals.stream_ui_channel_actions_members_count,
                 members.size,
                 members.size,
                 members.count { it.user.online }
@@ -114,7 +114,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 ?.lastActive
                 ?.time
                 ?.let { DateUtils.getRelativeTimeSpanString(it) }
-                ?.let { requireContext().getString(R.string.stream_channel_actions_last_seen, it) }
+                ?.let { requireContext().getString(R.string.stream_ui_channel_actions_last_seen, it) }
                 ?: ""
         }
     }

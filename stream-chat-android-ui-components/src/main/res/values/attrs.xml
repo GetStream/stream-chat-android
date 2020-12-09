@@ -1,161 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="StreamAvatarView">
-        <attr name="streamAvatarBorderWidth" />
-        <attr name="streamAvatarBorderColor" />
-        <attr name="streamAvatarTextSize" />
-        <attr name="streamAvatarTextColor" />
-        <attr name="streamAvatarTextFont" />
-        <attr name="streamAvatarTextFontAssets" />
-        <attr name="streamAvatarTextStyle" />
-        <attr name="streamAvatarOnlineIndicatorEnabled" format="boolean" />
+    <attr name="streamUiAvatarBorderWidth" format="dimension|reference" />
+    <attr name="streamUiAvatarBorderColor" format="color|reference" />
+    <attr name="streamUiAvatarTextSize" format="dimension|reference" />
+    <attr name="streamUiAvatarTextColor" format="color|reference" />
+    <attr name="streamUiAvatarTextFont" format="reference" />
+    <attr name="streamUiAvatarTextFontAssets" format="string" />
+    <attr name="streamUiAvatarTextStyle">
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
+    </attr>
+
+    <attr name="streamUiAvatarWidth" format="dimension|reference" />
+    <attr name="streamUiAvatarHeight" format="dimension|reference" />
+
+    <declare-styleable name="StreamUiAvatarView">
+        <attr name="streamUiAvatarBorderWidth" />
+        <attr name="streamUiAvatarBorderColor" />
+        <attr name="streamUiAvatarTextSize" />
+        <attr name="streamUiAvatarTextColor" />
+        <attr name="streamUiAvatarTextFont" />
+        <attr name="streamUiAvatarTextFontAssets" />
+        <attr name="streamUiAvatarTextStyle" />
+        <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
     </declare-styleable>
 
     <!--MessageInputViewNew-->
-    <declare-styleable name="StreamMessageInputView">
+    <declare-styleable name="StreamUiMessageInputView">
         <!--Attachment Button-->
-        <attr name="streamAttachButtonEnabled" format="boolean" />
-        <attr name="streamAttachButtonIcon" format="reference" />
-        <attr name="streamAttachButtonIconColor" format="color|reference" />
-        <attr name="streamAttachButtonIconPressedColor" format="color|reference" />
-        <attr name="streamAttachButtonIconDisabledColor" format="color|reference" />
-        <attr name="streamAttachButtonSelectedIconColor" format="color|reference" />
-        <attr name="streamAttachButtonWidth" format="dimension|reference" />
-        <attr name="streamAttachButtonHeight" format="dimension|reference" />
+        <attr name="streamUiAttachButtonEnabled" format="boolean" />
+        <attr name="streamUiAttachButtonIcon" format="reference" />
+        <attr name="streamUiAttachButtonIconColor" format="color|reference" />
+        <attr name="streamUiAttachButtonIconPressedColor" format="color|reference" />
+        <attr name="streamUiAttachButtonIconDisabledColor" format="color|reference" />
+        <attr name="streamUiAttachButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamUiAttachButtonWidth" format="dimension|reference" />
+        <attr name="streamUiAttachButtonHeight" format="dimension|reference" />
 
         <!--Lightning Button-->
-        <attr name="streamLightningButtonEnabled" format="boolean" />
-        <attr name="streamLightningButtonIcon" format="reference" />
-        <attr name="streamLightningButtonIconColor" format="color|reference" />
-        <attr name="streamLightningButtonIconPressedColor" format="color|reference" />
-        <attr name="streamLightningButtonIconDisabledColor" format="color|reference" />
-        <attr name="streamLightningButtonSelectedIconColor" format="color|reference" />
-        <attr name="streamLightningButtonWidth" format="dimension|reference" />
-        <attr name="streamLightningButtonHeight" format="dimension|reference" />
+        <attr name="streamUiLightningButtonEnabled" format="boolean" />
+        <attr name="streamUiLightningButtonIcon" format="reference" />
+        <attr name="streamUiLightningButtonIconColor" format="color|reference" />
+        <attr name="streamUiLightningButtonIconPressedColor" format="color|reference" />
+        <attr name="streamUiLightningButtonIconDisabledColor" format="color|reference" />
+        <attr name="streamUiLightningButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamUiLightningButtonWidth" format="dimension|reference" />
+        <attr name="streamUiLightningButtonHeight" format="dimension|reference" />
 
         <!--Input Text-->
-        <attr name="streamMessageInputHint" format="string" />
-        <attr name="streamMessageInputTextSize" format="dimension|reference" />
-        <attr name="streamMessageInputTextColor" format="color|reference" />
-        <attr name="streamMessageInputHintTextColor" format="color|reference" />
-        <attr name="streamMessageInputTextFont" format="reference" />
-        <attr name="streamMessageInputTextFontAssets" format="string" />
-        <attr name="streamMessageInputTextStyle" format="enum">
+        <attr name="streamUiMessageInputHint" format="string" />
+        <attr name="streamUiMessageInputTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageInputTextColor" format="color|reference" />
+        <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
+        <attr name="streamUiMessageInputTextFont" format="reference" />
+        <attr name="streamUiMessageInputTextFontAssets" format="string" />
+        <attr name="streamUiMessageInputTextStyle" format="enum">
             <enum name="normal" value="0" />
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
         </attr>
+        <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
+        <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
 
         <!--Send Button-->
-        <attr name="streamSendButtonEnabledIconColor" format="color|reference" />
-        <attr name="streamSendButtonDisabledIconColor" format="color|reference" />
-        <attr name="streamSendButtonPressedIconColor" format="color|reference" />
-        <attr name="streamSendButtonEnabledIcon" format="reference" />
-        <attr name="streamSendButtonDisabledIcon" format="reference" />
-        <attr name="streamSendButtonWidth" format="dimension|reference" />
-        <attr name="streamSendButtonHeight" format="dimension|reference" />
+        <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonDisabledIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonPressedIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonEnabledIcon" format="reference" />
+        <attr name="streamUiSendButtonDisabledIcon" format="reference" />
+        <attr name="streamUiSendButtonWidth" format="dimension|reference" />
+        <attr name="streamUiSendButtonHeight" format="dimension|reference" />
 
         <!-- "Also send to channel" CheckBox -->
-        <attr name="streamShowSendAlsoToChannelCheckbox" format="boolean" />
+        <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
     </declare-styleable>
 
     <!--ChannelsHeaderView-->
-    <declare-styleable name="StreamChannelListHeaderView">
-        <attr name="streamAvatarWidth" />
-        <attr name="streamAvatarHeight" />
-        <attr name="streamAvatarBorderWidth" />
-        <attr name="streamAvatarBorderColor" />
-        <attr name="streamAvatarTextSize" />
-        <attr name="streamAvatarTextColor" />
-        <attr name="streamAvatarTextFont" />
-        <attr name="streamAvatarTextFontAssets" />
-        <attr name="streamAvatarTextStyle" />
-        <attr name="streamShowUserAvatar" format="boolean" />
+    <declare-styleable name="StreamUiChannelListHeaderView">
+        <attr name="streamUiAvatarWidth" />
+        <attr name="streamUiAvatarHeight" />
+        <attr name="streamUiAvatarBorderWidth" />
+        <attr name="streamUiAvatarBorderColor" />
+        <attr name="streamUiAvatarTextSize" />
+        <attr name="streamUiAvatarTextColor" />
+        <attr name="streamUiAvatarTextFont" />
+        <attr name="streamUiAvatarTextFontAssets" />
+        <attr name="streamUiAvatarTextStyle" />
+        <attr name="streamUiShowUserAvatar" format="boolean" />
 
-        <attr name="streamOnlineTitleText" format="string|reference" />
-        <attr name="streamOnlineTitleTextSize" format="dimension|reference" />
-        <attr name="streamOnlineTitleTextColor" format="color|reference" />
-        <attr name="streamOnlineTitleTextFont" format="reference" />
-        <attr name="streamOnlineTitleFontAssets" format="string" />
-        <attr name="streamOnlineTitleTextStyle">
+        <attr name="streamUiOnlineTitleText" format="string|reference" />
+        <attr name="streamUiOnlineTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiOnlineTitleTextColor" format="color|reference" />
+        <attr name="streamUiOnlineTitleTextFont" format="reference" />
+        <attr name="streamUiOnlineTitleFontAssets" format="string" />
+        <attr name="streamUiOnlineTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamOfflineTitleText" format="string|reference" />
-        <attr name="streamOfflineTitleTextSize" format="dimension|reference" />
-        <attr name="streamOfflineTitleTextColor" format="color|reference" />
-        <attr name="streamOfflineTitleTextFont" format="reference" />
-        <attr name="streamOfflineTitleFontAssets" format="string" />
-        <attr name="streamOfflineTitleTextStyle">
+        <attr name="streamUiOfflineTitleText" format="string|reference" />
+        <attr name="streamUiOfflineTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiOfflineTitleTextColor" format="color|reference" />
+        <attr name="streamUiOfflineTitleTextFont" format="reference" />
+        <attr name="streamUiOfflineTitleFontAssets" format="string" />
+        <attr name="streamUiOfflineTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamShowOfflineProgressBar" format="boolean" />
-        <attr name="streamOfflineProgressBarTint" format="color|reference" />
+        <attr name="streamUiShowOfflineProgressBar" format="boolean" />
+        <attr name="streamUiOfflineProgressBarTint" format="color|reference" />
 
-        <attr name="streamShowAddChannelButton" format="boolean" />
-        <attr name="streamAddChannelButtonHeight" format="dimension|reference" />
-        <attr name="streamAddChannelButtonWidth" format="dimension|reference" />
-        <attr name="streamAddChannelButtonIcon" format="reference" />
-        <attr name="streamAddChannelButtonTint" format="color|reference" />
-        <attr name="streamAddChannelBackgroundTint" format="color|reference" />
+        <attr name="streamUiShowAddChannelButton" format="boolean" />
+        <attr name="streamUiAddChannelButtonHeight" format="dimension|reference" />
+        <attr name="streamUiAddChannelButtonWidth" format="dimension|reference" />
+        <attr name="streamUiAddChannelButtonIcon" format="reference" />
+        <attr name="streamUiAddChannelButtonTint" format="color|reference" />
+        <attr name="streamUiAddChannelBackgroundTint" format="color|reference" />
     </declare-styleable>
 
     <!--MessageListHeaderView-->
-    <declare-styleable name="StreamMessagesHeaderView" parent="AvatarView">
-        <attr name="streamMessagesHeaderShowUserAvatar" format="boolean" />
+    <declare-styleable name="StreamUiMessagesHeaderView" parent="AvatarView">
+        <attr name="streamUiMessagesHeaderShowUserAvatar" format="boolean" />
 
-        <attr name="streamMessagesHeaderTitleTextSize" format="dimension|reference" />
-        <attr name="streamMessagesHeaderTitleTextColor" format="color|reference" />
-        <attr name="streamMessagesHeaderTitleTextFont" format="reference" />
-        <attr name="streamMessagesHeaderTitleFontAssets" format="string" />
-        <attr name="streamMessagesHeaderTitleTextStyle">
+        <attr name="streamUiMessagesHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiMessagesHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamUiMessagesHeaderTitleTextFont" format="reference" />
+        <attr name="streamUiMessagesHeaderTitleFontAssets" format="string" />
+        <attr name="streamUiMessagesHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamMessagesHeaderOfflineLabelText" format="string|reference" />
-        <attr name="streamMessagesHeaderOfflineLabelTextSize" format="dimension|reference" />
-        <attr name="streamMessagesHeaderOfflineLabelTextColor" format="color|reference" />
-        <attr name="streamMessagesHeaderOfflineLabelTextFont" format="reference" />
-        <attr name="streamMessagesHeaderOfflineLabelFontAssets" format="string" />
-        <attr name="streamMessagesHeaderOfflineLabelTextStyle">
+        <attr name="streamUiMessagesHeaderOfflineLabelText" format="string|reference" />
+        <attr name="streamUiMessagesHeaderOfflineLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessagesHeaderOfflineLabelTextColor" format="color|reference" />
+        <attr name="streamUiMessagesHeaderOfflineLabelTextFont" format="reference" />
+        <attr name="streamUiMessagesHeaderOfflineLabelFontAssets" format="string" />
+        <attr name="streamUiMessagesHeaderOfflineLabelTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelText" format="string|reference" />
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextSize" format="dimension|reference" />
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelColor" format="color|reference" />
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextFont" format="reference" />
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelFontAssets" format="string" />
-        <attr name="streamMessagesHeaderSearchingForNetworkLabelTextStyle">
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelText" format="string|reference" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelColor" format="color|reference" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelTextFont" format="reference" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelFontAssets" format="string" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkLabelTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamMessagesHeaderShowSearchingForNetworkProgressBar" format="boolean" />
-        <attr name="streamMessagesHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
+        <attr name="streamUiMessagesHeaderShowSearchingForNetworkProgressBar" format="boolean" />
+        <attr name="streamUiMessagesHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
 
-        <attr name="streamMessagesHeaderBackButtonDrawable" format="reference" />
-        <attr name="streamMessagesHeaderShowBackButton" format="boolean" />
+        <attr name="streamUiMessagesHeaderBackButtonDrawable" format="reference" />
+        <attr name="streamUiMessagesHeaderShowBackButton" format="boolean" />
 
-        <attr name="streamMessagesHeaderShowBackButtonBadge" format="boolean" />
-        <attr name="streamMessagesHeaderBackButtonBadgeBackgroundColor" format="color" />
+        <attr name="streamUiMessagesHeaderShowBackButtonBadge" format="boolean" />
+        <attr name="streamUiMessagesHeaderBackButtonBadgeBackgroundColor" format="color" />
 
-        <attr name="streamMessagesHeaderDefaultLabelText" format="string|reference" />
-        <attr name="streamMessagesHeaderDefaultLabelTextSize" format="dimension|reference" />
-        <attr name="streamMessagesHeaderDefaultLabelTextColor" format="color|reference" />
-        <attr name="streamMessagesHeaderDefaultLabelTextFont" format="reference" />
-        <attr name="streamMessagesHeaderDefaultLabelFontAssets" format="string" />
-        <attr name="streamMessagesHeaderDefaultLabelTextStyle">
+        <attr name="streamUiMessagesHeaderDefaultLabelText" format="string|reference" />
+        <attr name="streamUiMessagesHeaderDefaultLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessagesHeaderDefaultLabelTextColor" format="color|reference" />
+        <attr name="streamUiMessagesHeaderDefaultLabelTextFont" format="reference" />
+        <attr name="streamUiMessagesHeaderDefaultLabelFontAssets" format="string" />
+        <attr name="streamUiMessagesHeaderDefaultLabelTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -163,46 +180,46 @@
     </declare-styleable>
 
     <!--ReactionsView-->
-    <declare-styleable name="StreamReactionsViewStyle">
-        <attr name="streamReactionsViewOrientation" format="enum">
+    <declare-styleable name="StreamUiReactionsViewStyle">
+        <attr name="streamUiReactionsViewOrientation" format="enum">
             <enum name="left" value="0"/>
             <enum name="right" value="1"/>
             <enum name="undefined" value="2"/>
         </attr>
 
-        <attr name="streamViewReactionsBubbleColorMine" format="color|reference" />
-        <attr name="streamViewReactionsBubbleBorderColorMine" format="color|reference" />
-        <attr name="streamViewReactionsBubbleColorTheirs" format="color|reference" />
-        <attr name="streamViewReactionsTotalHeight" format="dimension" />
-        <attr name="streamViewReactionsHorizontalPadding" format="dimension" />
-        <attr name="streamViewReactionsItemSize" format="dimension" />
-        <attr name="streamViewReactionsItemMargin" format="dimension" />
-        <attr name="streamViewReactionsBubbleHeight" format="dimension" />
-        <attr name="streamViewReactionsBubbleRadius" format="dimension" />
-        <attr name="streamViewReactionsLargeTailBubbleCy" format="dimension" />
-        <attr name="streamViewReactionsLargeTailBubbleRadius" format="dimension" />
-        <attr name="streamViewReactionsLargeTailBubbleOffset" format="dimension" />
-        <attr name="streamViewReactionsSmallTailBubbleCy" format="dimension" />
-        <attr name="streamViewReactionsSmallTailBubbleRadius" format="dimension" />
-        <attr name="streamViewReactionsSmallTailBubbleOffset" format="dimension" />
+        <attr name="streamUiViewReactionsBubbleColorMine" format="color|reference" />
+        <attr name="streamUiViewReactionsBubbleBorderColorMine" format="color|reference" />
+        <attr name="streamUiViewReactionsBubbleColorTheirs" format="color|reference" />
+        <attr name="streamUiViewReactionsTotalHeight" format="dimension" />
+        <attr name="streamUiViewReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamUiViewReactionsItemSize" format="dimension" />
+        <attr name="streamUiViewReactionsItemMargin" format="dimension" />
+        <attr name="streamUiViewReactionsBubbleHeight" format="dimension" />
+        <attr name="streamUiViewReactionsBubbleRadius" format="dimension" />
+        <attr name="streamUiViewReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamUiViewReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamUiViewReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamUiViewReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamUiViewReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamUiViewReactionsSmallTailBubbleOffset" format="dimension" />
 
-        <attr name="streamEditReactionsBubbleColor" format="color|reference" />
-        <attr name="streamEditReactionsTotalHeight" format="dimension" />
-        <attr name="streamEditReactionsHorizontalPadding" format="dimension" />
-        <attr name="streamEditReactionsItemSize" format="dimension" />
-        <attr name="streamEditReactionsItemMargin" format="dimension" />
-        <attr name="streamEditReactionsBubbleHeight" format="dimension" />
-        <attr name="streamEditReactionsBubbleRadius" format="dimension" />
-        <attr name="streamEditReactionsLargeTailBubbleCy" format="dimension" />
-        <attr name="streamEditReactionsLargeTailBubbleRadius" format="dimension" />
-        <attr name="streamEditReactionsLargeTailBubbleOffset" format="dimension" />
-        <attr name="streamEditReactionsSmallTailBubbleCy" format="dimension" />
-        <attr name="streamEditReactionsSmallTailBubbleRadius" format="dimension" />
-        <attr name="streamEditReactionsSmallTailBubbleOffset" format="dimension" />
+        <attr name="streamUiEditReactionsBubbleColor" format="color|reference" />
+        <attr name="streamUiEditReactionsTotalHeight" format="dimension" />
+        <attr name="streamUiEditReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamUiEditReactionsItemSize" format="dimension" />
+        <attr name="streamUiEditReactionsItemMargin" format="dimension" />
+        <attr name="streamUiEditReactionsBubbleHeight" format="dimension" />
+        <attr name="streamUiEditReactionsBubbleRadius" format="dimension" />
+        <attr name="streamUiEditReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamUiEditReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamUiEditReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamUiEditReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamUiEditReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamUiEditReactionsSmallTailBubbleOffset" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="StreamAttachmentGalleryView">
-        <attr name="streamCountText" format="string"/>
-        <attr name="streamCountTextColor" format="color|reference"/>
+    <declare-styleable name="StreamUiAttachmentGalleryView">
+        <attr name="streamUiCountText" format="string"/>
+        <attr name="streamUiCountTextColor" format="color|reference"/>
     </declare-styleable>
 </resources>

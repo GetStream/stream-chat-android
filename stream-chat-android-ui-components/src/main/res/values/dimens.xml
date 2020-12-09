@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="stream_spacing_small">8dp</dimen>
-    <dimen name="stream_spacing_medium">16dp</dimen>
+    <dimen name="stream_ui_spacing_small">8dp</dimen>
+    <dimen name="stream_ui_spacing_medium">16dp</dimen>
 
-    <dimen name="stream_text_small">12sp</dimen>
-    <dimen name="stream_text_medium">14sp</dimen>
-    <dimen name="stream_text_large">16sp</dimen>
+    <dimen name="stream_ui_text_small">12sp</dimen>
+    <dimen name="stream_ui_text_medium">14sp</dimen>
+    <dimen name="stream_ui_text_large">16sp</dimen>
 
     <!--AvatarView-->
-    <dimen name="stream_avatar_size_small">32dp</dimen>
-    <dimen name="stream_avatar_size_medium">40dp</dimen>
-    <dimen name="stream_avatar_size_large">64dp</dimen>
-    <dimen name="stream_avatar_text_size_small">14sp</dimen>
-    <dimen name="stream_avatar_text_size_medium">16sp</dimen>
-    <dimen name="stream_avatar_text_size_large">24sp</dimen>
+    <dimen name="stream_ui_avatar_size_small">32dp</dimen>
+    <dimen name="stream_ui_avatar_size_medium">40dp</dimen>
+    <dimen name="stream_ui_avatar_size_large">64dp</dimen>
+    <dimen name="stream_ui_avatar_text_size_small">14sp</dimen>
+    <dimen name="stream_ui_avatar_text_size_medium">16sp</dimen>
+    <dimen name="stream_ui_avatar_text_size_large">24sp</dimen>
 
     <!--Command Suggestions-->
-    <dimen name="stream_command_icon_size">24dp</dimen>
+    <dimen name="stream_ui_command_icon_size">24dp</dimen>
 
     <!--Mention Suggestions-->
-    <dimen name="stream_mention_item_height">56dp</dimen>
-    <dimen name="stream_mention_icon_size">20dp</dimen>
+    <dimen name="stream_ui_mention_item_height">56dp</dimen>
+    <dimen name="stream_ui_mention_icon_size">20dp</dimen>
 
     <!--Channel Actions-->
-    <dimen name="stream_channel_actions_corners_radius">16dp</dimen>
-    <dimen name="stream_channel_actions_item_height">56dp</dimen>
-    <dimen name="stream_channel_actions_member_height">80dp</dimen>
+    <dimen name="stream_ui_channel_actions_corners_radius">16dp</dimen>
+    <dimen name="stream_ui_channel_actions_item_height">56dp</dimen>
+    <dimen name="stream_ui_channel_actions_member_height">80dp</dimen>
 
-    <dimen name="stream_text_size_input">6sp</dimen>
+    <dimen name="stream_ui_text_size_input">14sp</dimen>
 
     <!-- headers -->
-    <dimen name="stream_default_header_height">56dp</dimen>
+    <dimen name="stream_ui_default_header_height">56dp</dimen>
 
     <!--Channel List Items-->
-    <dimen name="stream_channel_list_item_height">64dp</dimen>
-    <dimen name="stream_channel_list_item_option_icon_width">50dp</dimen>
+    <dimen name="stream_ui_channel_list_item_height">64dp</dimen>
+    <dimen name="stream_ui_channel_list_item_option_icon_width">50dp</dimen>
 
     <!--Attachment Dialog-->
-    <dimen name="stream_attachment_dialog_page_height">320dp</dimen>
-    <dimen name="stream_attachment_dialog_button_size">40dp</dimen>
-    <dimen name="stream_attachment_dialog_file_item_height">56dp</dimen>
-    <dimen name="stream_attachment_dialog_file_type_height">40dp</dimen>
-    <dimen name="stream_attachment_dialog_file_type_width">34dp</dimen>
-    <dimen name="stream_attachment_dialog_button_section_height">52dp</dimen>
-    <dimen name="stream_attachment_dialog_permission_image_size">168dp</dimen>
-    <dimen name="stream_attachment_dialog_selection_indicator_size">20dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_page_height">320dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_button_size">40dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_file_item_height">56dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_file_type_height">40dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_file_type_width">34dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_button_section_height">52dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_permission_image_size">168dp</dimen>
+    <dimen name="stream_ui_attachment_dialog_selection_indicator_size">20dp</dimen>
 
     <!--Selected Attachments-->
-    <dimen name="stream_selected_attachment_corner_radius">12dp</dimen>
-    <dimen name="stream_selected_attachment_media_height">104dp</dimen>
+    <dimen name="stream_ui_selected_attachment_corner_radius">12dp</dimen>
+    <dimen name="stream_ui_selected_attachment_media_height">104dp</dimen>
 
     <!--Message Preview Items-->
-    <dimen name="stream_message_preview_item_height">64dp</dimen>
+    <dimen name="stream_ui_message_preview_item_height">64dp</dimen>
 
     <!--ViewReactionsView-->
-    <dimen name="stream_view_reactions_total_height">36dp</dimen>
-    <dimen name="stream_view_reactions_horizontal_padding">2dp</dimen>
-    <dimen name="stream_view_reactions_item_margin">4dp</dimen>
-    <dimen name="stream_view_reactions_item_size">16dp</dimen>
-    <dimen name="stream_view_reactions_bubble_height">24dp</dimen>
-    <dimen name="stream_view_reactions_bubble_radius">12dp</dimen>
-    <dimen name="stream_view_reactions_large_tail_bubble_cy">22dp</dimen>
-    <dimen name="stream_view_reactions_large_tail_bubble_radius">5dp</dimen>
-    <dimen name="stream_view_reactions_large_tail_bubble_offset">5dp</dimen>
-    <dimen name="stream_view_reactions_small_tail_bubble_cy">29dp</dimen>
-    <dimen name="stream_view_reactions_small_tail_bubble_radius">3dp</dimen>
-    <dimen name="stream_view_reactions_small_tail_bubble_offset">9dp</dimen>
+    <dimen name="stream_ui_view_reactions_total_height">36dp</dimen>
+    <dimen name="stream_ui_view_reactions_horizontal_padding">2dp</dimen>
+    <dimen name="stream_ui_view_reactions_item_margin">4dp</dimen>
+    <dimen name="stream_ui_view_reactions_item_size">16dp</dimen>
+    <dimen name="stream_ui_view_reactions_bubble_height">24dp</dimen>
+    <dimen name="stream_ui_view_reactions_bubble_radius">12dp</dimen>
+    <dimen name="stream_ui_view_reactions_large_tail_bubble_cy">22dp</dimen>
+    <dimen name="stream_ui_view_reactions_large_tail_bubble_radius">5dp</dimen>
+    <dimen name="stream_ui_view_reactions_large_tail_bubble_offset">5dp</dimen>
+    <dimen name="stream_ui_view_reactions_small_tail_bubble_cy">29dp</dimen>
+    <dimen name="stream_ui_view_reactions_small_tail_bubble_radius">3dp</dimen>
+    <dimen name="stream_ui_view_reactions_small_tail_bubble_offset">9dp</dimen>
 
     <!--EditReactionsView-->
-    <dimen name="stream_edit_reactions_total_height">54dp</dimen>
-    <dimen name="stream_edit_reactions_horizontal_padding">8dp</dimen>
-    <dimen name="stream_edit_reactions_item_margin">8dp</dimen>
-    <dimen name="stream_edit_reactions_item_size">24dp</dimen>
-    <dimen name="stream_edit_reactions_bubble_height">40dp</dimen>
-    <dimen name="stream_edit_reactions_bubble_radius">20dp</dimen>
-    <dimen name="stream_edit_reactions_large_tail_bubble_cy">36dp</dimen>
-    <dimen name="stream_edit_reactions_large_tail_bubble_radius">8dp</dimen>
-    <dimen name="stream_edit_reactions_large_tail_bubble_offset">5dp</dimen>
-    <dimen name="stream_edit_reactions_small_tail_bubble_cy">48dp</dimen>
-    <dimen name="stream_edit_reactions_small_tail_bubble_radius">3dp</dimen>
-    <dimen name="stream_edit_reactions_small_tail_bubble_offset">10dp</dimen>
+    <dimen name="stream_ui_edit_reactions_total_height">54dp</dimen>
+    <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
+    <dimen name="stream_ui_edit_reactions_item_margin">8dp</dimen>
+    <dimen name="stream_ui_edit_reactions_item_size">24dp</dimen>
+    <dimen name="stream_ui_edit_reactions_bubble_height">40dp</dimen>
+    <dimen name="stream_ui_edit_reactions_bubble_radius">20dp</dimen>
+    <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy">36dp</dimen>
+    <dimen name="stream_ui_edit_reactions_large_tail_bubble_radius">8dp</dimen>
+    <dimen name="stream_ui_edit_reactions_large_tail_bubble_offset">5dp</dimen>
+    <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy">48dp</dimen>
+    <dimen name="stream_ui_edit_reactions_small_tail_bubble_radius">3dp</dimen>
+    <dimen name="stream_ui_edit_reactions_small_tail_bubble_offset">10dp</dimen>
 </resources>

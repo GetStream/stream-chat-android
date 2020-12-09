@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">Stream Chat Sample</string>
+    <string name="app_name">ChatSample</string>
     <string name="backend_error_info">Ups, something went wrong</string>
     <string name="sdk_version_template">Stream SDK v %s</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 
     <!--User Login Screen-->
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
@@ -30,9 +32,10 @@
     <string name="add_member_title">TO:</string>
     <string name="add_member_hint">Type a name</string>
     <string name="create_group">Create a Group</string>
+    <string name="add_channel_empty_user_name_separator">Others</string>
     <string name="add_channel_user_list_title">On the platform</string>
     <string name="add_channel_user_list_search_title">Matches for \"%s\"</string>
-    <string name="add_channel_empty_users_title">No users matches these keywords…</string>
+    <string name="add_channel_empty_users_title">No user matches these keywords…</string>
     <string name="add_channel_empty_message_list_title">No chats here yet…</string>
     <string name="add_channel_user_item_offline">Offline</string>
     <string name="add_channel_user_item_online">Online</string>
@@ -49,4 +52,15 @@
         <item quantity="other">%1d Members</item>
     </plurals>
     <string name="add_group_channel_select_name_create_button_title">Create</string>
+
+    <!-- Chat Info Screens -->
+    <string name="chat_info_user_mention_symbol">\@user</string>
+    <string name="chat_info_option_notifications">Notifications</string>
+    <string name="chat_info_option_mute_user">Mute User</string>
+    <string name="chat_info_option_block_user">Block User</string>
+    <string name="chat_info_option_media">Photo &amp; Videos</string>
+    <string name="chat_info_option_files">Files</string>
+    <string name="chat_info_option_shared_groups">Shared Groups</string>
+    <string name="chat_info_option_delete_conversation">Delete Conversation</string>
+    <string name="chat_info_delete_conversation_confirm">Are you sure you want to delete this contact?</string>
 </resources>

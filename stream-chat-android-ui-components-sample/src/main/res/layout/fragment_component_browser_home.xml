@@ -41,7 +41,7 @@
 
             <io.getstream.chat.android.ui.avatar.AvatarView
                 android:id="@+id/avatarView"
-                style="@style/StreamGroupActionsAvatarStyle"
+                style="@style/StreamUiGroupActionsAvatarStyle"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 />

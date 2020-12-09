@@ -20,13 +20,13 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
 import io.getstream.chat.android.ui.attachments.AttachmentSource
-import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentFileBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 public class FileAttachmentFragment : Fragment() {
 
-    private var _binding: StreamFragmentAttachmentFileBinding? = null
+    private var _binding: StreamUiFragmentAttachmentFileBinding? = null
     private val binding get() = _binding!!
 
     private val storageHelper: StorageHelper = StorageHelper()
@@ -50,7 +50,7 @@ public class FileAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamFragmentAttachmentFileBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentAttachmentFileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -59,11 +59,6 @@ public class FileAttachmentFragment : Fragment() {
         setupViews()
         setupResultListener()
         checkPermissions()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.FILE)
     }
 
     override fun onDestroyView() {
@@ -92,8 +87,8 @@ public class FileAttachmentFragment : Fragment() {
 
     private fun setupViews() {
         binding.apply {
-            grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_file)
-            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_files)
+            grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_file)
+            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_files)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

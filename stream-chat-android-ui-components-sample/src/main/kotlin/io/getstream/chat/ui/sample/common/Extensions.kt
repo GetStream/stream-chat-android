@@ -2,6 +2,7 @@ package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
 import android.content.Context
+import android.view.ContextThemeWrapper
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -83,4 +85,12 @@ fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int
         }
     badge.isVisible = badgeNumber > 0
     badge.number = badgeNumber
+}
+
+fun Context?.getFragmentManager(): FragmentManager? {
+    return when (this) {
+        is AppCompatActivity -> supportFragmentManager
+        is ContextThemeWrapper -> baseContext.getFragmentManager()
+        else -> null
+    }
 }

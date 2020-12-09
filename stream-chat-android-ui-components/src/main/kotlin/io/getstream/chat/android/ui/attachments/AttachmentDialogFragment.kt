@@ -9,11 +9,11 @@ import androidx.core.view.forEach
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamDialogAttachmentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 
 internal class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
-    private var _binding: StreamDialogAttachmentBinding? = null
+    private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
 
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
@@ -31,7 +31,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StreamDialogAttachmentBinding.inflate(inflater, container, false)
+        _binding = StreamUiDialogAttachmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,7 +69,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         attachmentSelectionListener = null
     }
 
-    override fun getTheme(): Int = R.style.StreamAttachmentBottomSheetDialog
+    override fun getTheme(): Int = R.style.StreamUiAttachmentBottomSheetDialog
 
     fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
@@ -78,13 +78,29 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
         this.selectedAttachments = attachments
         this.attachmentSource = attachmentSource
-        binding.attachButton.isEnabled = selectedAttachments.isNotEmpty()
+        selectedAttachments.isNotEmpty().let {
+            setAttachButtonEnabled(it)
+            setUnselectedButtonsEnabled(!it)
+        }
     }
 
     private fun setSelectedButton(selectedButton: ToggleButton, pagePosition: Int) {
         binding.attachmentPager.setCurrentItem(pagePosition, false)
         binding.attachmentButtonsContainer.forEach {
             (it as ToggleButton).isChecked = it == selectedButton
+        }
+    }
+
+    private fun setAttachButtonEnabled(isEnabled: Boolean) {
+        binding.attachButton.isEnabled = isEnabled
+    }
+
+    private fun setUnselectedButtonsEnabled(isEnabled: Boolean) {
+        binding.attachmentButtonsContainer.forEach {
+            it as ToggleButton
+            if (!it.isChecked) {
+                it.isEnabled = isEnabled
+            }
         }
     }
 

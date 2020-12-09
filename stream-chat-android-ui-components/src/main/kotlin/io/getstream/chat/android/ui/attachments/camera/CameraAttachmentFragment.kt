@@ -14,12 +14,12 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
-import io.getstream.chat.android.ui.databinding.StreamFragmentAttachmentCameraBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import java.io.File
 
 internal class CameraAttachmentFragment : Fragment() {
 
-    private var _binding: StreamFragmentAttachmentCameraBinding? = null
+    private var _binding: StreamUiFragmentAttachmentCameraBinding? = null
     private val binding get() = _binding!!
 
     private val permissionChecker: PermissionChecker = PermissionChecker()
@@ -29,8 +29,8 @@ internal class CameraAttachmentFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = StreamFragmentAttachmentCameraBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = StreamUiFragmentAttachmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,8 +43,8 @@ internal class CameraAttachmentFragment : Fragment() {
 
     private fun setupViews() {
         binding.grantPermissionsInclude.apply {
-            grantPermissionsImageView.setImageResource(R.drawable.stream_attachment_permission_camera)
-            grantPermissionsTextView.setText(R.string.stream_attachment_dialog_permission_camera)
+            grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_camera)
+            grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_camera)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

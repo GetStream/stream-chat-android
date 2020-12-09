@@ -77,7 +77,7 @@ public class ChannelListView extends RecyclerView {
     }
 
     private void init() {
-        this.adapter = new ChannelListItemAdapter(getContext());
+        this.adapter = new ChannelListItemAdapter();
         this.setAdapterWithStyle(adapter);
         adapter.setChannelClickListener(this.channelClickListener);
         setOnLongClickListener(this.channelLongClickListener);

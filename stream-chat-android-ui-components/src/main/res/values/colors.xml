@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="stream_blue">#006CFF</color>
-    <color name="stream_grey">#808080</color>
-    <color name="stream_grey_medium_light">#CCCCCC</color>
-    <color name="stream_grey_light">#F5F5F5</color>
-    <color name="stream_grey_light_opacity_50">#80E6E6E6</color>
-    <color name="stream_light_red">#FF3742</color>
+    <color name="stream_ui_blue">#006CFF</color>
+    <color name="stream_ui_grey">#808080</color>
+    <color name="stream_ui_grey_medium_light">#CCCCCC</color>
+    <color name="stream_ui_grey_light">#F5F5F5</color>
+    <color name="stream_ui_grey_light_opacity_50">#80E6E6E6</color>
+    <color name="stream_ui_light_red">#FF3742</color>
 
-    <color name="stream_text_black">@color/stream_black</color>
-    <color name="stream_text_grey">@color/stream_grey</color>
-    <color name="stream_text_color_black_translucent">#88000000</color>
-    <color name="stream_text_red">#FF3742</color>
+    <color name="stream_ui_text_black">@color/stream_ui_black</color>
+    <color name="stream_ui_text_grey">@color/stream_ui_grey</color>
+    <color name="stream_ui_text_color_black_translucent">#88000000</color>
+    <color name="stream_ui_text_red">#FF3742</color>
 
-    <color name="stream_avatar_gradient_orange">#FF8A65</color>
-    <color name="stream_avatar_gradient_green">#81C784</color>
-    <color name="stream_avatar_gradient_blue">#4FC3F7</color>
-    <color name="stream_avatar_gradient_brown">#A1887F</color>
-    <color name="stream_avatar_gradient_yellow">#FFF176</color>
-    <color name="stream_avatar_gradient_red">#E57373</color>
+    <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
+    <color name="stream_ui_avatar_gradient_green">#81C784</color>
+    <color name="stream_ui_avatar_gradient_blue">#4FC3F7</color>
+    <color name="stream_ui_avatar_gradient_brown">#A1887F</color>
+    <color name="stream_ui_avatar_gradient_yellow">#FFF176</color>
+    <color name="stream_ui_avatar_gradient_red">#E57373</color>
 
-    <color name="stream_gray_light">#e8e8e8</color>
-    <color name="stream_black">#000000</color>
-    <color name="stream_black_30">#4D000000</color>
-    <color name="stream_black_50">#80000000</color>
-    <color name="stream_black_60">#99000000</color>
-    <color name="stream_white">#FFFFFF</color>
-    <color name="stream_alabaster">#FCFCFC</color>
-    <color name="stream_concrete">#F2F2F2</color>
-    <color name="stream_grey_90">#E6E6E6</color>
-    <color name="stream_border_stroke">#14000000</color>
+    <color name="stream_ui_gray_light">#e8e8e8</color>
+    <color name="stream_ui_black">#000000</color>
+    <color name="stream_ui_black_30">#4D000000</color>
+    <color name="stream_ui_black_50">#80000000</color>
+    <color name="stream_ui_black_60">#99000000</color>
+    <color name="stream_ui_white">#FFFFFF</color>
+    <color name="stream_ui_alabaster">#FCFCFC</color>
+    <color name="stream_ui_concrete">#F2F2F2</color>
+    <color name="stream_ui_grey_90">#E6E6E6</color>
+    <color name="stream_ui_border_stroke">#14000000</color>
 
-    <array name="stream_avatar_gradient_colors">
-        <item>@color/stream_avatar_gradient_orange</item>
-        <item>@color/stream_avatar_gradient_green</item>
-        <item>@color/stream_avatar_gradient_blue</item>
-        <item>@color/stream_avatar_gradient_brown</item>
-        <item>@color/stream_avatar_gradient_yellow</item>
-        <item>@color/stream_avatar_gradient_red</item>
+    <array name="stream_ui_avatar_gradient_colors">
+        <item>@color/stream_ui_avatar_gradient_orange</item>
+        <item>@color/stream_ui_avatar_gradient_green</item>
+        <item>@color/stream_ui_avatar_gradient_blue</item>
+        <item>@color/stream_ui_avatar_gradient_brown</item>
+        <item>@color/stream_ui_avatar_gradient_yellow</item>
+        <item>@color/stream_ui_avatar_gradient_red</item>
     </array>
 
-    <color name="stream_attachment_dialog_selection_overlay">#80000000</color>
+    <color name="stream_ui_attachment_dialog_selection_overlay">#80000000</color>
 
-    <color name="stream_view_reactions_bubble_color_mine">@color/stream_white</color>
-    <color name="stream_view_reactions_bubble_border_color_mine">@color/stream_grey_90</color>
-    <color name="stream_view_reactions_bubble_color_theirs">@color/stream_grey_90</color>
-    <color name="stream_edit_reactions_bubble_color_mine">@color/stream_white</color>
-    <color name="stream_edit_reactions_bubble_color_theirs">@color/stream_white</color>
+    <color name="stream_ui_view_reactions_bubble_color_mine">@color/stream_ui_white</color>
+    <color name="stream_ui_view_reactions_bubble_border_color_mine">@color/stream_ui_grey_90</color>
+    <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_grey_90</color>
+    <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_white</color>
+    <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_white</color>
+
+    <color name="stream_ui_attachment_dialog_header_color">#F5F5F5</color>
+    <color name="stream_ui_attachment_dialog_button_enabled">#7A7A7A</color>
+    <color name="stream_ui_attachment_dialog_button_disabled">#E6E6E6</color>
 </resources>

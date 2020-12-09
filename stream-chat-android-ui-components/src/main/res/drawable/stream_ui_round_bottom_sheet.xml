@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle"
+    >
+    <solid android:color="@android:color/white" />
+    <corners
+        android:topLeftRadius="@dimen/stream_ui_channel_actions_corners_radius"
+        android:topRightRadius="@dimen/stream_ui_channel_actions_corners_radius"
+        />
+</shape>

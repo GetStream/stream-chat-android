@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.ChatUI;
@@ -41,7 +41,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     protected AvatarView avatarView;
     protected ImageView iv_attachment_type;
     protected View click_area;
-    protected Context context;
 
     protected ChannelListView.UserClickListener userClickListener;
     protected ChannelListView.ChannelClickListener channelClickListener;
@@ -52,7 +51,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         super(itemView);
         findReferences();
     }
-
 
     public void setUserClickListener(ChannelListView.UserClickListener l) {
         userClickListener = l;
@@ -82,11 +80,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, @NonNull Channel channel, int position, @Nullable ChannelItemPayloadDiff diff) {
-
-        // setup the click listeners and the markdown builder
-        this.context = context;
-
+    public void bind(@NonNull Channel channel, int position, @NonNull ChannelItemPayloadDiff diff) {
         // the UI depends on the
         // - lastMessage
         // - unread count
@@ -147,6 +141,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         Attachment attachment = lastMessage.getAttachments().get(0);
         if (attachment.getType() != null) {
+            Context context = iv_attachment_type.getContext();
             iv_attachment_type.setVisibility(View.VISIBLE);
 
             String lastMessageText;
@@ -177,7 +172,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             }
 
             tv_last_message.setText(lastMessageText);
-            iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
+            iv_attachment_type.setImageDrawable(ContextCompat.getDrawable(context, attachmentType));
         }
     }
 

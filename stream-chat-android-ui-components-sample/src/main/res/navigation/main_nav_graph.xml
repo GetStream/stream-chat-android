@@ -172,6 +172,54 @@
             app:popUpTo="@+id/main_navigation"
             app:popUpToInclusive="true"
             />
+
+        <action
+            android:id="@+id/action_chatFragment_to_chatInfoFragment"
+            app:destination="@id/chatInfoFragment"
+            app:launchSingleTop="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatInfoFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.info.ChatInfoFragment"
+        android:label="ChatInfoFragment"
+        >
+        <argument
+            android:name="cid"
+            app:argType="string"
+            app:nullable="false"
+            />
+
+        <action
+            android:id="@+id/action_chatInfoFragment_to_chatInfoSharedGroupsFragment"
+            app:destination="@id/chatInfoSharedGroupsFragment"
+            app:launchSingleTop="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatInfoSharedGroupsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.info.ChatInfoSharedGroupsFragment"
+        android:label="ChatInfoSharedGroupsFragment"
+        >
+        <argument
+            android:name="memberId"
+            app:argType="string"
+            app:nullable="false"
+            />
+
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
     </fragment>
 
     <fragment
@@ -298,6 +346,11 @@
             app:destination="@id/componentBrowserPlainTextMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserOnlyMediaAttachmentsMessages"
+            app:destination="@id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -328,6 +381,12 @@
         android:id="@+id/componentBrowserUserReactionsFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserUserReactionsFragment"
         android:label="ComponentBrowserUserReactionsFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyAttachmentsMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserOnlyMediaAttachmentsMessagesFragment"
         />
 
 </navigation>

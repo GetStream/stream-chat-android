@@ -1,24 +1,32 @@
 package io.getstream.chat.android.ui.mentions
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.databinding.StreamItemMentionListBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.mentions.MentionsListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.mentions.MentionsListView.MentionSelectedListener
 import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+import io.getstream.chat.android.ui.utils.DateFormatter
 
-public class MentionsListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+public class MentionsListAdapter(
+    context: Context
+) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var mentionSelectedListener: MentionSelectedListener? = null
+    private var dateFormatter = DateFormatter.from(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamItemMentionListBinding
+        return StreamUiItemMentionListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { MessagePreviewViewHolder(it.root) }
+            .let { binding ->
+                binding.root.dateFormatter = dateFormatter
+                MessagePreviewViewHolder(binding.root)
+            }
     }
 
     override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {

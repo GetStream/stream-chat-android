@@ -25,10 +25,6 @@ class MessageListComponentBrowserFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupDeletedMessages()
-    }
-
-    private fun setupDeletedMessages() {
         binding.deletedMessages.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDeletedMessages)
         }
@@ -37,6 +33,9 @@ class MessageListComponentBrowserFragment : Fragment() {
         }
         binding.plainTextMessages.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextMessages)
+        }
+        binding.onlyMediaAttachments.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyMediaAttachmentsMessages)
         }
     }
 }
