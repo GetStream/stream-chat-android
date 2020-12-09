@@ -52,6 +52,16 @@ public class SearchViewModel : ViewModel() {
     private val logger = ChatLogger.get("SearchViewModel")
 
     public fun setQuery(query: String) {
+        if (query.isEmpty()) {
+            _state.value = State(
+                query = query,
+                canLoadMore = false,
+                results = emptyList(),
+                isLoading = false
+            )
+            return
+        }
+
         scope.launch {
             _state.value = State(
                 query = query,
