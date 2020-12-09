@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
@@ -226,9 +227,22 @@ internal open class BaseDomainTest {
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
-            .userPresenceEnabled().buildImpl()
-
+        val handler: Handler = mock()
+        val offlineEnabled = true
+        val userPresence = true
+        val recoveryEnabled = false
+        val backgroundSyncEnabled = false
+        chatDomainImpl = ChatDomainImpl(
+            client,
+            data.user1,
+            db,
+            handler,
+            offlineEnabled,
+            userPresence,
+            recoveryEnabled,
+            backgroundSyncEnabled,
+            context
+        )
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
@@ -239,6 +253,7 @@ internal open class BaseDomainTest {
                 return 1000
             }
         }
+        chatDomainImpl.scope = testCoroutines.scope
         chatDomain = chatDomainImpl
 
         chatDomainImpl.errorEvents.observeForever(
