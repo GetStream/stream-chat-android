@@ -18,6 +18,9 @@ public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerVi
     protected open val channelDeleteListener: ChannelListView.ChannelClickListener =
         ChannelListView.ChannelClickListener.DEFAULT
 
+    protected open val channelMoreOptionsListener: ChannelListView.ChannelClickListener =
+        ChannelListView.ChannelClickListener.DEFAULT
+
     protected open val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT
 
     protected open val style: ChannelListViewStyle? = null

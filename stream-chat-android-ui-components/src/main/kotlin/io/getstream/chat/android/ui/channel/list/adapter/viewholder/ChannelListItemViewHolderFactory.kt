@@ -13,6 +13,7 @@ public open class ChannelListItemViewHolderFactory {
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
+        moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         style: ChannelListViewStyle?
     ): BaseChannelListItemViewHolder {
@@ -22,6 +23,7 @@ public open class ChannelListItemViewHolderFactory {
                 channelClickListener,
                 channelLongClickListener,
                 deleteClickListener,
+                moreOptionsClickListener,
                 userClickListener,
                 style
             )
@@ -35,6 +37,7 @@ public open class ChannelListItemViewHolderFactory {
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
+        moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         style: ChannelListViewStyle?
     ): BaseChannelListItemViewHolder {
@@ -43,6 +46,7 @@ public open class ChannelListItemViewHolderFactory {
             channelClickListener,
             channelLongClickListener,
             deleteClickListener,
+            moreOptionsClickListener,
             userClickListener,
             style
         )

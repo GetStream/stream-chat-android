@@ -34,6 +34,7 @@ public class ChannelViewHolder(
     override val channelClickListener: ChannelListView.ChannelClickListener,
     override val channelLongClickListener: ChannelListView.ChannelClickListener,
     override val channelDeleteListener: ChannelListView.ChannelClickListener,
+    override val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     override val userClickListener: ChannelListView.UserClickListener,
     override val style: ChannelListViewStyle?,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
@@ -62,8 +63,17 @@ public class ChannelViewHolder(
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
-        binding.itemBackgroundView.deleteImageView.setOnClickListener {
-            channelDeleteListener.onClick(channel)
+        configureBackground(channel)
+    }
+
+    private fun configureBackground(channel: Channel) {
+        binding.itemBackgroundView.apply {
+            moreOptionsImageView.setOnClickListener {
+                channelMoreOptionsListener.onClick(channel)
+            }
+            deleteImageView.setOnClickListener {
+                channelDeleteListener.onClick(channel)
+            }
         }
     }
 

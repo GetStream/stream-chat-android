@@ -108,7 +108,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the callback to be invoked on channel item click
      */
-    public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener) {
+    public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setChannelClickListener(listener)
     }
 
@@ -117,7 +117,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the callback to be invoked on channel long click
      */
-    public fun setChannelLongClickListener(listener: ChannelListView.ChannelClickListener) {
+    public fun setChannelLongClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setChannelLongClickListener(listener)
     }
 
@@ -126,15 +126,19 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the listener to be invoked when a user click event occurs
      */
-    public fun setUserClickListener(listener: ChannelListView.UserClickListener) {
+    public fun setUserClickListener(listener: ChannelListView.UserClickListener?) {
         channelListView.setUserClickListener(listener)
     }
 
-    public fun setDeleteListener(listener: ChannelListView.ChannelClickListener) {
-        channelListView.setChannelDeleteListener(listener)
+    public fun setDeleteListener(listener: ChannelListView.ChannelClickListener?) {
+        channelListView.setChannelDeleteClickListener(listener)
     }
 
-    public fun setOnEndReachedListener(listener: ChannelListView.EndReachedListener) {
+    public fun setMoreOptionsClickListener(listener: ChannelListView.ChannelClickListener?) {
+        channelListView.setMoreOptionsClickListener(listener)
+    }
+
+    public fun setOnEndReachedListener(listener: ChannelListView.EndReachedListener?) {
         channelListView.setOnEndReachedListener(listener)
     }
 

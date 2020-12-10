@@ -75,6 +75,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
                 channelClickListener,
                 channelLongClickListener,
                 deleteClickListener,
+                moreOptionsClickListener,
                 userClickListener,
                 style
             )
