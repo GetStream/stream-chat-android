@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
 
 public class AvatarStyle internal constructor(context: Context, attrs: AttributeSet?) {
@@ -17,6 +18,8 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
     public var avatarInitialText: TextStyle
         internal set
     public var onlineIndicatorEnabled: Boolean
+        internal set
+    public var onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition
         internal set
 
     init {
@@ -55,6 +58,10 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
             onlineIndicatorEnabled = it.getBoolean(
                 R.styleable.StreamUiAvatarView_streamUiAvatarOnlineIndicatorEnabled,
                 false
+            )
+            onlineIndicatorPosition = it.getEnum(
+                R.styleable.StreamUiAvatarView_streamUiAvatarOnlineIndicatorPosition,
+                AvatarView.OnlineIndicatorPosition.TOP
             )
         }
     }

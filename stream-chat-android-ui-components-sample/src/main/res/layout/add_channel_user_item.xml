@@ -4,21 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/userContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:background="@color/stream_ui_white"
-    android:paddingStart="8dp"
-    android:paddingTop="16dp"
-    android:paddingEnd="8dp"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        style="@style/StreamUiChannelListAvatarStyle"
+        android:layout_marginStart="@dimen/spacing_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamAvatarBorderWidth="0dp"
         />
 
     <TextView
@@ -28,7 +24,8 @@
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
         android:textColor="@color/stream_ui_black"
-        android:textSize="@dimen/stream_ui_text_large"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/checkboxImageView"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
@@ -40,7 +37,7 @@
         android:id="@+id/onlineTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="@dimen/spacing_small"
         android:singleLine="true"
         android:textColor="@color/stream_ui_black_50"
         android:textSize="@dimen/stream_ui_text_small"
@@ -55,6 +52,7 @@
         android:id="@+id/checkboxImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_medium"
         android:src="@drawable/stream_ui_ic_check"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
