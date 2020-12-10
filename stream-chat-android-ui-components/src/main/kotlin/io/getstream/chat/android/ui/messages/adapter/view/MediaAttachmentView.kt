@@ -49,6 +49,16 @@ internal class MediaAttachmentView : ConstraintLayout {
         )
     }
 
+    fun setImageShapeByCorners(
+        topLeft: Float,
+        topRight: Float,
+        bottomRight: Float,
+        bottomLeft: Float
+    ) {
+        ShapeAppearanceModel.Builder().setTopLeftCornerSize(topLeft).setTopRightCornerSize(topRight)
+            .setBottomRightCornerSize(bottomRight).setBottomLeftCornerSize(bottomLeft).build().let(this::setImageShape)
+    }
+
     fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {

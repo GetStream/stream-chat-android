@@ -1,11 +1,18 @@
 package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.getstream.sdk.chat.adapter.constraintViewToParentBySide
+import com.google.android.material.shape.AbsoluteCornerSize
+import com.google.android.material.shape.CornerSize
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
 
@@ -27,6 +34,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             2 -> showTwo(attachments.first(), attachments[1])
             else -> Unit
         }
+        (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
     }
 
     private fun showOne(first: Attachment) {
@@ -43,12 +51,36 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         first.imageUrl?.let(mediaAttachmentView::showImageByUrl)
     }
 
-    /*fun setShapeModel(shapeAppearanceModel: ShapeAppearanceModel) {
-        this
-    }*/
+    override fun setBackground(background: Drawable) {
+        super.setBackground(background)
+        if (background is MaterialShapeDrawable) {
+            applyToImages(background.shapeAppearanceModel)
+        }
+    }
+
+    private fun applyToImages(shapeAppearanceModel: ShapeAppearanceModel) {
+        val topLeftCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getTopLeftCornerSize)
+        val topRightCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getTopRightCornerSize)
+        val bottomRightCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getBottomRightCornerSize)
+        val bottomLeftCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getBottomLeftCornerSize)
+        (shapeAppearanceModel.topLeftCornerSize as? AbsoluteCornerSize)?.let {
+            when (val stateCopy = state) {
+                is State.OneView -> stateCopy.mediaAttachmentView.setImageShapeByCorners(
+                    topLeftCorner,
+                    topRightCorner,
+                    bottomRightCorner,
+                    bottomLeftCorner
+                )
+            }
+        }
+    }
+
+    private fun ShapeAppearanceModel.getCornerSize(selector: (ShapeAppearanceModel) -> CornerSize): Float {
+        return ((selector(this) as? AbsoluteCornerSize)?.cornerSize ?: 0f - STROKE_WIDTH).takeIf { it >= 0f }
+            .getOrDefault(0f)
+    }
 
     private fun showTwo(first: Attachment, second: Attachment) {
-
     }
 
     private sealed class State {
@@ -59,5 +91,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     companion object {
         private val DEFAULT_LAYOUT_PARAMS: LayoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT)
+        private val STROKE_WIDTH = 2.dpToPxPrecise()
     }
 }
