@@ -5,7 +5,10 @@
     android:id="@+id/optionContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/stream_ui_selectable_item_background_white"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:paddingTop="16dp"
     >
 

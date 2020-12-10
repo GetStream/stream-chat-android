@@ -83,7 +83,9 @@ class ChatFragment : Fragment() {
                     is ChatViewModel.NavigationEvent.NavigateToChatInfo -> findNavController().navigateSafely(
                         ChatFragmentDirections.actionChatFragmentToChatInfoFragment(event.cid)
                     )
-                    is ChatViewModel.NavigationEvent.NavigateToGroupChatInfo -> Unit // TODO: Will be implemented in a separate task
+                    is ChatViewModel.NavigationEvent.NavigateToGroupChatInfo -> findNavController().navigateSafely(
+                        ChatFragmentDirections.actionChatFragmentToGroupChatInfoFragment(event.cid)
+                    )
                 }
             }
         )

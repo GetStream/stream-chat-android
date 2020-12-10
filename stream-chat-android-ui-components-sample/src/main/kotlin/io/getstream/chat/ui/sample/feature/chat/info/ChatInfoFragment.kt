@@ -14,6 +14,7 @@ import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
+import java.lang.IllegalStateException
 
 class ChatInfoFragment : Fragment() {
 
@@ -62,10 +63,10 @@ class ChatInfoFragment : Fragment() {
         binding.optionsRecyclerView.adapter = adapter
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.SharedMedia -> Unit // Not supported yet
-                ChatInfoItem.Option.SharedFiles -> Unit // Not supported yet
+                ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
                 ChatInfoItem.Option.SharedGroups -> {
-                    val memberId = viewModel.state.value!!.member.getUserId()
+                    val memberId = viewModel.state.value!!.chatMember.member.getUserId()
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
                             memberId
@@ -83,7 +84,7 @@ class ChatInfoFragment : Fragment() {
                             .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
                     }
                 }
-                is ChatInfoItem.Option.Stateful -> Unit
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
         }
     }
