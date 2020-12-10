@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -44,10 +45,15 @@ class GroupChatInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.optionsRecyclerView.adapter = adapter
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
-        binding.addChannelButton.setOnClickListener {
-            context.getFragmentManager()?.let {
-                GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
-                    .show(it, GroupChatInfoAddUsersDialogFragment.TAG)
+        if (!isDistinctChannel()) {
+            binding.addChannelButton.apply {
+                isVisible = true
+                setOnClickListener {
+                    context.getFragmentManager()?.let {
+                        GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
+                            .show(it, GroupChatInfoAddUsersDialogFragment.TAG)
+                    }
+                }
             }
         }
         bindGroupInfoViewModel()
@@ -57,6 +63,10 @@ class GroupChatInfoFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+    // Distinct channel == channel created without id (based on members).
+    // There is no possibility to modify distinct channel members.
+    private fun isDistinctChannel(): Boolean = args.cid.contains("!members")
 
     private fun bindGroupInfoViewModel() {
         subscribeForChannelMutesUpdatedEvents()
