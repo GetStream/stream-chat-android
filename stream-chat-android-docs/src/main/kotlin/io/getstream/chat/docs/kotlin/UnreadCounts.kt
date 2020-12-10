@@ -20,7 +20,9 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
     inner class Unread {
         fun getUnreadCount() {
             client.setUser(
-                User("user-id"), "{{ chat_user_token }}", object : InitConnectionListener() {
+                User("user-id"),
+                "{{ chat_user_token }}",
+                object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         val user = data.user
                         val unreadChannels = user.unreadChannels
