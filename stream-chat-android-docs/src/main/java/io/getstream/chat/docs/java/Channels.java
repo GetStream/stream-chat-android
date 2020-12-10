@@ -31,18 +31,18 @@ import static java.util.Collections.emptyList;
 
 public class Channels {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/initialize_channel/?language=java">Channel Initialization</a>
      */
     class ChannelInitialization {
         public void initialization() {
-            // Create channel controller using channel type and channel id
-            ChannelClient channelController = client.channel("channel-type", "channel-id");
+            // Create channel client using channel type and channel id
+            ChannelClient channelClient = client.channel("channel-type", "channel-id");
 
-            // Or create channel controller using channel cid
-            ChannelClient anotherChannelController = client.channel("cid");
+            // Or create channel client using channel cid
+            ChannelClient anotherChannelClient = client.channel("cid");
         }
     }
 
@@ -69,7 +69,7 @@ public class Channels {
      */
     class WatchingAChannel {
         public void watchingChannel() {
-            channelController.watch().enqueue(result -> {
+            channelClient.watch().enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -82,7 +82,7 @@ public class Channels {
          * @see <a href="https://getstream.io/chat/docs/watch_channel/?language=java#unwatching">Unwacthing</a>
          */
         public void stopWatchingChannel() {
-            channelController.stopWatching().enqueue(result -> {
+            channelClient.stopWatching().enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel unwatched
                 } else {
@@ -218,7 +218,7 @@ public class Channels {
             channelData.put("color", "green");
             Message updateMessage = new Message();
             updateMessage.setText("Thierry changed the channel color to green");
-            channelController.update(updateMessage, channelData).enqueue(result -> {
+            channelClient.update(updateMessage, channelData).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -238,7 +238,7 @@ public class Channels {
          */
         public void addingAndRemovingChannelMembers() {
             // Add member with id "thierry" and "josh"
-            channelController.addMembers("thierry", "josh").enqueue(result -> {
+            channelClient.addMembers("thierry", "josh").enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -247,7 +247,7 @@ public class Channels {
             });
 
             // Remove member with id "thierry" and "josh"
-            channelController.removeMembers("thierry", "josh").enqueue(result -> {
+            channelClient.removeMembers("thierry", "josh").enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -293,7 +293,7 @@ public class Channels {
             data.put("members", members);
             data.put("invites", invites);
 
-            channelController.create(data).enqueue(result -> {
+            channelClient.create(data).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -306,7 +306,7 @@ public class Channels {
          * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=java#accepting-an-invite">Accept an Invite</a>
          */
         public void acceptingAnInvite() {
-            channelController.acceptInvite("Nick joined this channel!").enqueue(result -> {
+            channelClient.acceptInvite("Nick joined this channel!").enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -319,7 +319,7 @@ public class Channels {
          * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=java#rejecting-an-invite">Rejecting an Invite</a>
          */
         public void rejectingAnInvite() {
-            channelController.rejectInvite().enqueue(result -> {
+            channelClient.rejectInvite().enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -375,7 +375,7 @@ public class Channels {
     class DeletingAndHidingAChannel {
 
         public void deletingAChannel() {
-            channelController.delete().enqueue(result -> {
+            channelClient.delete().enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -389,7 +389,7 @@ public class Channels {
          */
         public void hidingAChannel() {
             // Hides the channel until a new message is added there
-            channelController.hide(false).enqueue(result -> {
+            channelClient.hide(false).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is hidden
                 } else {
@@ -398,7 +398,7 @@ public class Channels {
             });
 
             // Shows a previously hidden channel
-            channelController.show().enqueue(result -> {
+            channelClient.show().enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is shown
                 } else {
@@ -407,7 +407,7 @@ public class Channels {
             });
 
             // Hide the channel and clear the message history
-            channelController.hide(true).enqueue(result -> {
+            channelClient.hide(true).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is hidden
                 } else {
@@ -490,7 +490,7 @@ public class Channels {
          */
         public void removeAChannelMute() {
             // Unmute channel for current user
-            channelController.unmute().enqueue(result -> {
+            channelClient.unmute().enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is unmuted
                 } else {
@@ -514,7 +514,7 @@ public class Channels {
             FilterObject filterByName = Filters.eq("name", "tommaso");
 
             // 2. Call queryMembers with that filter
-            channelController.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
+            channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Member> members = result.data();
                 } else {
@@ -547,7 +547,7 @@ public class Channels {
             // We can order the results too with QuerySort param
             // Here example to order results by member created at descending
             QuerySort<Member> createdAtDescendingSort = new QuerySort<Member>().desc("created_at");
-            channelController.queryMembers(offset, limit, new FilterObject(), createdAtDescendingSort, emptyList()).enqueue(result -> {
+            channelClient.queryMembers(offset, limit, new FilterObject(), createdAtDescendingSort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Member> members = result.data();
                 } else {

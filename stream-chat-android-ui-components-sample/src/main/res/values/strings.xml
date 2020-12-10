@@ -63,4 +63,11 @@
     <string name="chat_info_option_shared_groups">Shared Groups</string>
     <string name="chat_info_option_delete_conversation">Delete Conversation</string>
     <string name="chat_info_delete_conversation_confirm">Are you sure you want to delete this contact?</string>
+
+    <string name="chat_group_info_owner">Owner</string>
+    <string name="chat_group_info_option_mute">Mute Group</string>
+    <string name="chat_group_info_option_leave">Leave Group</string>
+    <string name="chat_group_info_option_members_separator_title">%d more</string>
+    <string name="chat_group_info_edit_name_label">NAME</string>
+    <string name="chat_group_info_edit_name_hint">Add a group name</string>
 </resources>
