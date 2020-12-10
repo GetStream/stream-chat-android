@@ -19,18 +19,18 @@ import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.docs.StaticInstances.TAG
 
-class Channels(val client: ChatClient, val channelController: ChannelClient) {
+class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 
     /**
      * @see <a href="https://getstream.io/chat/docs/initialize_channel/?language=kotlin">Channel Initialization</a>
      */
     inner class ChannelInitialization {
         fun initialization() {
-            // Create channel controller using channel type and channel id
-            val channelController = client.channel("channel-type", "channel-id")
+            // Create channel client using channel type and channel id
+            val channelClient = client.channel("channel-type", "channel-id")
 
-            // Or create channel controller using channel cid
-            val anotherChannelController = client.channel("cid")
+            // Or create channel client using channel cid
+            val anotherChannelClient = client.channel("cid")
         }
     }
 
@@ -57,7 +57,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
      */
     inner class WatchingAChannel {
         fun watchingChannel() {
-            channelController.watch().enqueue { result ->
+            channelClient.watch().enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -70,7 +70,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          * @see <a href="https://getstream.io/chat/docs/watch_channel/?language=kotlin#unwatching">Unwacthing</a>
          */
         fun stopWatchingChannel() {
-            channelController.stopWatching().enqueue { result ->
+            channelClient.stopWatching().enqueue { result ->
                 if (result.isSuccess) {
                     // Channel unwatched
                 } else {
@@ -202,7 +202,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             val updateMessage = Message().apply {
                 text = "Thierry changed the channel color to green"
             }
-            channelController.update(updateMessage, channelData).enqueue { result ->
+            channelClient.update(updateMessage, channelData).enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -222,7 +222,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          */
         fun addingAndRemovingChannelMembers() {
             // Add member with id "thierry" and "josh"
-            channelController.addMembers("thierry", "josh").enqueue { result ->
+            channelClient.addMembers("thierry", "josh").enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -231,7 +231,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Remove member with id "thierry" and "josh"
-            channelController.removeMembers("thierry", "josh").enqueue { result ->
+            channelClient.removeMembers("thierry", "josh").enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -278,7 +278,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
                 "invites" to invites
             )
 
-            channelController.create(data).enqueue { result ->
+            channelClient.create(data).enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -291,7 +291,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#accepting-an-invite">Accept an Invite</a>
          */
         fun acceptingAnInvite() {
-            channelController.acceptInvite("Nick joined this channel!").enqueue { result ->
+            channelClient.acceptInvite("Nick joined this channel!").enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -304,7 +304,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#rejecting-an-invite">Rejecting an Invite</a>
          */
         fun rejectingAnInvite() {
-            channelController.rejectInvite().enqueue { result ->
+            channelClient.rejectInvite().enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -352,7 +352,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
     inner class DeletingAndHidingAChannel {
 
         fun deletingAChannel() {
-            channelController.delete().enqueue { result ->
+            channelClient.delete().enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
@@ -366,7 +366,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          */
         fun hidingAChannel() {
             // Hides the channel until a new message is added there
-            channelController.hide().enqueue { result ->
+            channelClient.hide().enqueue { result ->
                 if (result.isSuccess) {
                     // Channel is hidden
                 } else {
@@ -375,7 +375,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Shows a previously hidden channel
-            channelController.show().enqueue { result ->
+            channelClient.show().enqueue { result ->
                 if (result.isSuccess) {
                     // Channel is shown
                 } else {
@@ -384,7 +384,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             }
 
             // Hide the channel and clear the message history
-            channelController.hide(clearHistory = true).enqueue { result ->
+            channelClient.hide(clearHistory = true).enqueue { result ->
                 if (result.isSuccess) {
                     // Channel is hidden
                 } else {
@@ -462,7 +462,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
          */
         fun removeAChannelMute() {
             // Unmute channel for current user
-            channelController.unmute().enqueue { result ->
+            channelClient.unmute().enqueue { result ->
                 if (result.isSuccess) {
                     // Channel is unmuted
                 } else {
@@ -486,7 +486,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             val filterByName = Filters.eq("name", "tommaso")
 
             // 2. Call queryMembers with that filter
-            channelController.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
+            channelClient.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
                 if (result.isSuccess) {
                     val members = result.data()
                 } else {
@@ -519,7 +519,7 @@ class Channels(val client: ChatClient, val channelController: ChannelClient) {
             // We can order the results too with QuerySort param
             // Here example to order results by member created at descending
             val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
-            channelController.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort)
+            channelClient.queryMembers(offset, limit, FilterObject(), createdAtDescendingSort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val members = result.data()

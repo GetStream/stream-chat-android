@@ -17,7 +17,7 @@ import java.io.File
 
 class Messages(
     val client: ChatClient,
-    val channelController: ChannelClient,
+    val channelClient: ChannelClient,
     val message: Message,
     val parentMessage: Message
 ) {
@@ -47,7 +47,7 @@ class Messages(
             message.mentionedUsers.add(User("josh-id"))
 
             // Send the message to the channel
-            channelController.sendMessage(message).enqueue {
+            channelClient.sendMessage(message).enqueue {
                 if (it.isSuccess) {
                     val sentMessage = it.data()
                 } else {
@@ -60,7 +60,7 @@ class Messages(
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=kotlin#get-a-message">Get A Message</a>
          */
         fun getAMessage() {
-            channelController.getMessage("message-id").enqueue {
+            channelClient.getMessage("message-id").enqueue {
                 if (it.isSuccess) {
                     val message = it.data()
                 } else {
@@ -77,7 +77,7 @@ class Messages(
             message.text = "my updated text"
 
             // Send the message to the channel
-            channelController.updateMessage(message).enqueue {
+            channelClient.updateMessage(message).enqueue {
                 if (it.isSuccess) {
                     val updatedMessage = it.data()
                 } else {
@@ -90,7 +90,7 @@ class Messages(
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=kotlin#delete-a-message">Delete A Message</a>
          */
         fun deleteAMessage() {
-            channelController.deleteMessage("message-id").enqueue {
+            channelClient.deleteMessage("message-id").enqueue {
                 if (it.isSuccess) {
                     val deletedMessage = it.data()
                 } else {
@@ -109,7 +109,7 @@ class Messages(
             val anyOtherFile = File("path")
 
             // Upload an image
-            channelController.sendImage(
+            channelClient.sendImage(
                 imageFile,
                 object : ProgressCallback {
                     override fun onSuccess(file: String) {
@@ -127,7 +127,7 @@ class Messages(
             )
 
             // Upload a file
-            channelController.sendFile(
+            channelClient.sendFile(
                 anyOtherFile,
                 object : ProgressCallback {
                     override fun onSuccess(file: String) {
@@ -152,7 +152,7 @@ class Messages(
     inner class Reactions {
         fun sendAReaction() {
             val reaction = Reaction("message-id", "like", 1)
-            channelController.sendReaction(reaction).enqueue {
+            channelClient.sendReaction(reaction).enqueue {
                 if (it.isSuccess) {
                     val sentReaction = it.data()
                 } else {
@@ -165,7 +165,7 @@ class Messages(
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=kotlin#removing-a-reaction">Removing A Reaction</a>
          */
         fun removeAReaction() {
-            channelController.deleteReaction("message-id", "like").enqueue {
+            channelClient.deleteReaction("message-id", "like").enqueue {
                 if (it.isSuccess) {
                     val message = it.data()
                 } else {
@@ -179,7 +179,7 @@ class Messages(
          */
         fun paginatingReactions() {
             // Get the first 10 reactions
-            channelController.getReactions("message-id", 0, 10).enqueue {
+            channelClient.getReactions("message-id", 0, 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
@@ -188,7 +188,7 @@ class Messages(
             }
 
             // Get the second 10 reactions
-            channelController.getReactions("message-id", 10, 10).enqueue {
+            channelClient.getReactions("message-id", 10, 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
@@ -198,7 +198,7 @@ class Messages(
 
             // Get 10 reactions after particular reaction
             val reactionId = "reaction-id"
-            channelController.getReactions("message-id", reactionId, 10).enqueue {
+            channelClient.getReactions("message-id", reactionId, 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
@@ -213,7 +213,7 @@ class Messages(
         fun cumulativeReactions() {
             val score = 5
             val reaction = Reaction("message-id", "like", score)
-            channelController.sendReaction(reaction).enqueue {
+            channelClient.sendReaction(reaction).enqueue {
                 if (it.isSuccess) {
                     val sentReaction = it.data()
                 } else {
@@ -234,7 +234,7 @@ class Messages(
             message.parentId = parentMessage.id
 
             // Send the message to the channel
-            channelController.sendMessage(message).enqueue {
+            channelClient.sendMessage(message).enqueue {
                 if (it.isSuccess) {
                     val sentMessage = it.data()
                 } else {
@@ -274,7 +274,7 @@ class Messages(
     inner class SilentMessages {
         fun silentMessage() {
             val message = Message("text-of-a-message", silent = true)
-            channelController.sendMessage(message).enqueue {
+            channelClient.sendMessage(message).enqueue {
                 if (it.isSuccess) {
                     val sentMessage = it.data()
                 } else {
