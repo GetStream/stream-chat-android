@@ -15,9 +15,11 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.getFragmentManager
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
+import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
 
 class GroupChatInfoFragment : Fragment() {
 
@@ -42,6 +44,12 @@ class GroupChatInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.optionsRecyclerView.adapter = adapter
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
+        binding.addChannelButton.setOnClickListener {
+            context.getFragmentManager()?.let {
+                GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
+                    .show(it, GroupChatInfoAddUsersDialogFragment.TAG)
+            }
+        }
         bindGroupInfoViewModel()
     }
 

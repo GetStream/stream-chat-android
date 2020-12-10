@@ -2,9 +2,7 @@ package com.getstream.sdk.chat.view
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-@InternalStreamChatApi
 public class EndlessScrollListener(
     private val loadMoreListener: () -> Unit
 ) : RecyclerView.OnScrollListener() {
