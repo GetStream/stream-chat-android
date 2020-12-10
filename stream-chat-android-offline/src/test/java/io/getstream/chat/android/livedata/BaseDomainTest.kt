@@ -253,7 +253,6 @@ internal open class BaseDomainTest {
                 return 1000
             }
         }
-        chatDomainImpl.scope = testCoroutines.scope
         chatDomain = chatDomainImpl
 
         chatDomainImpl.errorEvents.observeForever(
