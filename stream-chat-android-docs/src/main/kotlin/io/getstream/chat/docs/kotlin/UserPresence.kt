@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.docs.StaticInstances
 
-class UserPresence(val client: ChatClient, val channelController: ChannelClient) {
+class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
 
     /**
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=kotlin#invisible">Invisible</a>
@@ -35,7 +35,7 @@ class UserPresence(val client: ChatClient, val channelController: ChannelClient)
             presence = true
             data["members"] = listOf("john", "jack")
         }
-        channelController.watch(watchRequest).enqueue {
+        channelClient.watch(watchRequest).enqueue {
             if (it.isSuccess) {
                 val channel = it.data()
             } else {

@@ -26,7 +26,7 @@ import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class UserPresence {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=java#invisible">Invisible</a>
@@ -61,7 +61,7 @@ public class UserPresence {
         WatchChannelRequest watchRequest = new WatchChannelRequest();
         watchRequest.setPresence(true);
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
-        channelController.watch(watchRequest).enqueue(result -> {
+        channelClient.watch(watchRequest).enqueue(result -> {
             if (result.isSuccess()) {
                 Channel channel = result.data();
             } else {
