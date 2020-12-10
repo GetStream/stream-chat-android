@@ -40,7 +40,6 @@ import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import com.getstream.sdk.chat.view.channels.ChannelsView
-import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -51,6 +50,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
+import io.getstream.chat.android.ui.messages.reactions.ReactionsOverlayDialogFragment
+import io.getstream.chat.android.ui.utils.ReactionType
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.use
 import kotlin.math.max
 import kotlin.math.min
@@ -176,17 +178,21 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
-            MessageMoreActionDialog(
-                context,
-                channel,
-                message,
-                currentUser,
-                style,
-                onMessageEditHandler,
-                onMessageDeleteHandler,
-                onStartThreadHandler,
-                onMessageFlagHandler
-            ).show()
+            context.getFragmentManager()?.let {
+                // TODO: pass a real MessageItem instead of mock
+                val mockMessageItem = MessageItem(
+                    message.apply {
+                        latestReactions.forEach { it.type = ReactionType.LOVE.type }
+                        ownReactions.forEach { it.type = ReactionType.LOVE.type }
+                    },
+                    positions = listOf(MessageListItem.Position.BOTTOM),
+                    isMine = false
+                )
+
+                ReactionsOverlayDialogFragment.newInstance(mockMessageItem)
+                    .apply { setReactionClickListener {} }
+                    .show(it, ReactionsOverlayDialogFragment.TAG)
+            }
         }
     private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
     private val DEFAULT_READ_STATE_CLICK_LISTENER =
@@ -308,6 +314,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initUnseenMessagesView() {
         binding.newMessagesTV.visibility = GONE
     }
+
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
         style = MessageListViewStyle(context, attrs)
     }
