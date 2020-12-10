@@ -12,4 +12,12 @@ internal object DateConverter {
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
     }
+
+    fun toDate(localDateTime: LocalDateTime): Date {
+        return Date(
+            localDateTime.atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        )
+    }
 }
