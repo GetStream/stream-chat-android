@@ -115,7 +115,8 @@ internal class ChannelControllerImpl(
     val unfilteredMessages = _messages.map { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    val sortedVisibleMessages = messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    private val sortedVisibleMessages: StateFlow<List<Message>> =
+        messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
     override val messages: LiveData<List<Message>> = sortedVisibleMessages.asLiveData()
 
     private val _messagesState: StateFlow<ChannelController.MessagesState> =
