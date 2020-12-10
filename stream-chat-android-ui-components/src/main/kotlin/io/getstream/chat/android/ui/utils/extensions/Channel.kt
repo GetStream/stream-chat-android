@@ -105,7 +105,7 @@ internal fun Channel.getLastMessagePreviewText(
 
         val attachments: SpannableString? = message.attachments
             .takeIf { it.isNotEmpty() }
-            ?.map { attachment ->
+            ?.mapNotNull { attachment ->
                 attachment.title?.let { title ->
                     "${getAttachmentPrefix(context, attachment)} $title"
                 } ?: attachment.name
