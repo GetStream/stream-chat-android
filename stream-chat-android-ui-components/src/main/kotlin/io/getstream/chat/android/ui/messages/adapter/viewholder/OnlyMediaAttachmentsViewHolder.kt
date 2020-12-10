@@ -25,7 +25,7 @@ public class OnlyMediaAttachmentsViewHolder(
     }
 
     private fun showImage(imageAttachment: Attachment, isMine: Boolean) {
-        constraintView(isMine, binding.mediaAttachmentView, binding.root)
-        imageAttachment.imageUrl?.let(binding.mediaAttachmentView::showImageByUrl)
+        constraintView(isMine, binding.mediaAttachmentsGroupView, binding.root)
+        binding.mediaAttachmentsGroupView.showAttachments(imageAttachment)
     }
 }
