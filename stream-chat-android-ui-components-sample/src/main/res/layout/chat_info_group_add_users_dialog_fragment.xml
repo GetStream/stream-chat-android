@@ -37,7 +37,7 @@
                 android:paddingVertical="8dp"
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
+                app:spanCount="4"
                 tools:listitem="@layout/chat_info_group_add_users_item"
                 />
 
