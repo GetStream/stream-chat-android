@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageDeletedBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 
@@ -18,7 +19,7 @@ public class MessageDeletedViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    override fun bindData(data: MessageListItem.MessageItem) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         val shouldBeVisible = data.message.deletedAt != null && data.isMine
         binding.root.run {
             isVisible = shouldBeVisible
