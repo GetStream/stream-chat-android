@@ -507,18 +507,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
     }
 
-    /**
-     * Use the more explicit [setMessageViewHolderFactory] method instead.
-     */
-    @Deprecated(
-        message = "Use the more explicit setMessageViewHolderFactory method instead.",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
-    )
-    public fun setViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
-        setMessageViewHolderFactory(messageListItemViewHolderFactory)
-    }
-
     override fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
