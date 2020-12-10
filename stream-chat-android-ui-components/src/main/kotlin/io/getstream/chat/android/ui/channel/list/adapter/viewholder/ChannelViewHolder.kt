@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import io.getstream.chat.android.ui.utils.formatMessageDate
 import kotlin.math.absoluteValue
 
-public class ChannelListItemViewHolder(
+public class ChannelViewHolder(
     parent: ViewGroup,
     override val channelClickListener: ChannelListView.ChannelClickListener,
     override val channelLongClickListener: ChannelListView.ChannelClickListener,
