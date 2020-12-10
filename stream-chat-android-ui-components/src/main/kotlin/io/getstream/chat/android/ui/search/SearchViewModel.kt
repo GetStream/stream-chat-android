@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.utils.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -22,7 +23,6 @@ public class SearchViewModel : ViewModel() {
         val canLoadMore: Boolean,
         val results: List<Message>,
         val isLoading: Boolean,
-        val isError: Boolean,
     )
 
     private companion object {
@@ -32,7 +32,6 @@ public class SearchViewModel : ViewModel() {
             query = "",
             results = emptyList(),
             isLoading = false,
-            isError = false,
             canLoadMore = true,
         )
     }
@@ -47,15 +46,27 @@ public class SearchViewModel : ViewModel() {
     private val _state: MutableLiveData<State> = MutableLiveData(INITIAL_STATE)
     public val state: LiveData<State> = _state
 
+    private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
+    public val errorEvents: LiveData<Event<Unit>> = _errorEvents
+
     private val logger = ChatLogger.get("SearchViewModel")
 
     public fun setQuery(query: String) {
+        if (query.isEmpty()) {
+            _state.value = State(
+                query = query,
+                canLoadMore = false,
+                results = emptyList(),
+                isLoading = false
+            )
+            return
+        }
+
         scope.launch {
             _state.value = State(
                 query = query,
                 results = emptyList(),
                 isLoading = true,
-                isError = false,
                 canLoadMore = true,
             )
             fetchServerResults()
@@ -113,8 +124,8 @@ public class SearchViewModel : ViewModel() {
             _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,
-                isError = true,
             )
+            _errorEvents.setValue(Event(Unit))
         }
     }
 }
