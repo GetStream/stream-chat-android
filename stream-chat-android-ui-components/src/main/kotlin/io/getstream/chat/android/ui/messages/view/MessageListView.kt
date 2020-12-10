@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -53,6 +52,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.reactions.ReactionsOverlayDialogFragment
+import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
+import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.use
@@ -74,8 +75,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
-    private var optionsView: View? = null
-
     private var newMessagesTextSingle: String? = null
     private var newMessagesTextPlural: String? = null
 
@@ -92,6 +91,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private lateinit var emptyStateViewContainer: ViewGroup
 
     private var lastSeenMessage: MessageListItem? = null
+
+    private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -155,17 +156,21 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListenerView { _, view ->
-            optionsView = view
+        MessageLongClickListenerView { message, view ->
+            context.getFragmentManager()?.let { framentManager ->
+                // TODO: pass a real MessageItem instead of mock
+                val mockMessageItem = MessageItem(
+                    message.apply {
+                        latestReactions.forEach { it.type = ReactionType.LOVE.type }
+                        ownReactions.forEach { it.type = ReactionType.LOVE.type }
+                    },
+                    positions = listOf(MessageListItem.Position.BOTTOM),
+                    isMine = false
+                )
 
-            binding.shadowLayer.isVisible = true
-
-            if (view.parent != null && view.parent is ViewGroup) {
-                (view.parent as ViewGroup).removeView(view)
+                MessageOptionsOverlayDialogFragment.newInstance(mockMessageItem, messageOptionsConfiguration)
+                    .show(framentManager, ReactionsOverlayDialogFragment.TAG)
             }
-
-            binding.messageOptions.optionsMessageContainer.addView(optionsView)
-            binding.messageOptions.optionRootContainer.isVisible = true
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -250,7 +255,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         initUnseenMessagesView()
         initLoadingView()
         initEmptyStateView()
-        initShadowLayer()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -272,18 +276,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initEmptyStateView() {
         emptyStateView = binding.defaultEmptyStateView
         emptyStateViewContainer = binding.emptyStateViewContainer
-    }
-
-    private fun initShadowLayer() {
-        binding.shadowLayer.setOnClickListener { hideBlurLayer() }
-        binding.messageOptions.optionsMessageContainer.setOnClickListener { hideBlurLayer() }
-    }
-
-    private fun hideBlurLayer() {
-        binding.messageOptions.optionsMessageContainer.removeView(optionsView)
-        binding.messageOptions.optionRootContainer.isVisible = false
-
-        binding.shadowLayer.isVisible = false
     }
 
     private fun initScrollButtonBehaviour() {
@@ -380,111 +372,61 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun configureMessageOptions(tArray: TypedArray) {
         val iconsTint = tArray.getColor(
             R.styleable.MessageListView_streamMessageOptionIconColor,
-            ContextCompat.getColor(context, R.color.stream_ui_gray_light)
+            ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        binding.messageOptions.replyTV.text =
-            tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
-
-        tArray.getResourceId(
+        val replyText = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        val replyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
-        ).let { drawableRes ->
-            binding.messageOptions
-                .replyTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
 
-        binding.messageOptions.threadReplyTV.text =
+        val threadReplyText =
             tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
-
-        tArray.getResourceId(
+        val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
-        ).let { drawableRes ->
-            binding.messageOptions
-                .threadReplyTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
 
-        binding.messageOptions.copyTV.text =
-            tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
-
-        tArray.getResourceId(
+        val copyText = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        val copyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
-        ).let { drawableRes ->
-            binding.messageOptions
-                .copyTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
 
-        binding.messageOptions.muteTV.text =
-            tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute User"
-
-        tArray.getResourceId(
+        val muteText = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute"
+        val muteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
-        ).let { drawableRes ->
-            binding.messageOptions
-                .muteTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
 
-        binding.messageOptions.blockTV.text =
-            tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block User"
-
-        tArray.getResourceId(
+        val blockText = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block user"
+        val blockIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
-        ).let { drawableRes ->
-            binding.messageOptions
-                .blockTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null)?.apply { setTint(iconsTint) },
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
 
-        binding.messageOptions.deleteTV.text =
-            tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete message"
-        binding.messageOptions.deleteTV.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
-
-        tArray.getResourceId(
+        val deleteText = tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete user"
+        val deleteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete
-        ).let { drawableRes ->
-            binding.messageOptions
-                .deleteTV
-                .setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, drawableRes, null),
-                    null,
-                    null,
-                    null
-                )
-        }
+        )
+
+        messageOptionsConfiguration = MessageOptionsView.Configuration(
+            iconsTint = iconsTint,
+            replyText = replyText,
+            replyIcon = replyIcon,
+            threadReplyText = threadReplyText,
+            threadReplyIcon = threadReplyIcon,
+            copyText = copyText,
+            copyIcon = copyIcon,
+            muteText = muteText,
+            muteIcon = muteIcon,
+            blockText = blockText,
+            blockIcon = blockIcon,
+            deleteText = deleteText,
+            deleteIcon = deleteIcon
+        )
     }
 
     private fun lastPosition(): Int {

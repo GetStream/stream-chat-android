@@ -109,8 +109,4 @@
         android:visibility="gone"
         />
 
-    <include
-        android:id="@+id/message_options"
-        layout="@layout/stream_ui_message_options"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
