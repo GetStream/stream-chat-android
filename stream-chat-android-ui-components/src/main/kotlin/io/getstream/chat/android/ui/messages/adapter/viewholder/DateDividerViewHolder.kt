@@ -4,6 +4,7 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 
@@ -18,8 +19,13 @@ public class DateDividerViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root) {
 
-    override fun bindData(data: MessageListItem.DateSeparatorItem) {
+    override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff?) {
         binding.dateLabel.text =
-            DateUtils.getRelativeTimeSpanString(data.date.time, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
+            DateUtils.getRelativeTimeSpanString(
+                data.date.time,
+                System.currentTimeMillis(),
+                DateUtils.DAY_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_RELATIVE
+            )
     }
 }
