@@ -15,21 +15,16 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageListItemAdapter
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.IMessageListView
-import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -50,6 +45,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import kotlin.math.max
 import kotlin.math.min
 
@@ -210,9 +207,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         giphySendListener = DEFAULT_GIPHY_SEND_LISTENER
     )
 
-    private lateinit var bubbleHelper: MessageListView.BubbleHelper
-    private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
-    private lateinit var messageViewHolderFactory: MessageViewHolderFactory
+    private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -434,29 +429,12 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun initAdapter() {
-        // Create default AttachmentViewHolderFactory if needed
-        if (::attachmentViewHolderFactory.isInitialized.not()) {
-            attachmentViewHolderFactory = AttachmentViewHolderFactory()
-        }
         // Create default ViewHolderFactory if needed
-        if (::messageViewHolderFactory.isInitialized.not()) {
-            messageViewHolderFactory = MessageViewHolderFactory()
-        }
-        // Create default BubbleHelper if needed
-        if (::bubbleHelper.isInitialized.not()) {
-            bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, context)
+        if (::messageListItemViewHolderFactory.isInitialized.not()) {
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
-        // Inject Attachment factory
-        attachmentViewHolderFactory.listenerContainer = listenerContainer
-        attachmentViewHolderFactory.bubbleHelper = bubbleHelper
-
-        // Inject Message factory
-        messageViewHolderFactory.listenerContainer = listenerContainer
-        messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
-        messageViewHolderFactory.bubbleHelper = bubbleHelper
-
-        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
+        adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
@@ -524,14 +502,9 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         binding.scrollIconIV.setImageDrawable(drawable)
     }
 
-    public fun setAttachmentViewHolderFactory(attachmentViewHolderFactory: AttachmentViewHolderFactory) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewHolderFactory first" }
-        this.attachmentViewHolderFactory = attachmentViewHolderFactory
-    }
-
-    public fun setMessageViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
+    public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
-        this.messageViewHolderFactory = messageViewHolderFactory
+        this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
     }
 
     /**
@@ -542,13 +515,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         level = DeprecationLevel.WARNING,
         replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
     )
-    public fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
-        setMessageViewHolderFactory(messageViewHolderFactory)
-    }
-
-    public fun setBubbleHelper(bubbleHelper: MessageListView.BubbleHelper) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
-        this.bubbleHelper = bubbleHelper
+    public fun setViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
+        setMessageViewHolderFactory(messageListItemViewHolderFactory)
     }
 
     override fun displayNewMessage(listItem: MessageListItemWrapper) {

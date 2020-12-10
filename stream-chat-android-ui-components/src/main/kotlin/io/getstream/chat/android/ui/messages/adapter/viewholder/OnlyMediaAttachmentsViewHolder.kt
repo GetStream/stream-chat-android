@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamItemMessageAttachmentsOnlyBinding
@@ -21,7 +22,7 @@ public class OnlyMediaAttachmentsViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    override fun bindData(data: MessageListItem.MessageItem) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (data.message.attachments.firstOrNull()?.type == "image") {
             showImage(data.message.attachments.first(), data.isMine)
         }
