@@ -3,14 +3,13 @@ package io.getstream.chat.docs.kotlin
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.docs.StaticInstances.TAG
 
-class MultiTenantsAndTeams(val client: ChatClient, val channelController: ChannelClient) {
+class MultiTenantsAndTeams(val client: ChatClient) {
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=kotlin">Multi Tenants & Teams</a>
+     * @see <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=kotlin#channel-team">Multi Tenants & Teams</a>
      */
     fun createTeamChannel() {
         // Create channel with id red-general for red team

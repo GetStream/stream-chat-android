@@ -12,13 +12,15 @@ class Translation(val client: ChatClient) {
      * @see <a href="https://getstream.io/chat/docs/translation/?language=kotlin#message-translation-endpoint">Message Translation</a>
      */
     fun messageTranslation() {
-        // Translate message to french
-        val channelController = client.channel("messaging:general")
+        // Translate message to French
+        val channelClient = client.channel("messaging:general")
         val message = Message(text = "Hello, I would like to have more information about your product.")
-        val frenchLanguage = "fr"
-        channelController.sendMessage(message).enqueue { result ->
+
+        channelClient.sendMessage(message).enqueue { result ->
             if (result.isSuccess) {
                 val messageId = result.data().id
+                val frenchLanguage = "fr"
+
                 client.translate(messageId, frenchLanguage).enqueue { translationResult ->
                     if (translationResult.isSuccess) {
                         val translatedMessage = translationResult.data()

@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.docs.StaticInstances.TAG
 
-class UnreadCounts(val client: ChatClient, val channelController: ChannelClient) {
+class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
 
     /**
      * @see <a href="https://getstream.io/chat/docs/unread/?language=kotlin">Unread</a>
@@ -20,9 +20,7 @@ class UnreadCounts(val client: ChatClient, val channelController: ChannelClient)
     inner class Unread {
         fun getUnreadCount() {
             client.setUser(
-                User("user-id"),
-                "{{ chat_user_token }}",
-                object : InitConnectionListener() {
+                User("user-id"), "{{ chat_user_token }}", object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         val user = data.user
                         val unreadChannels = user.unreadChannels
@@ -33,7 +31,7 @@ class UnreadCounts(val client: ChatClient, val channelController: ChannelClient)
         }
 
         fun markRead() {
-            channelController.markRead().enqueue { result ->
+            channelClient.markRead().enqueue { result ->
                 if (result.isSuccess) {
                     // Messages in the channel marked as read
                 } else {
@@ -43,7 +41,7 @@ class UnreadCounts(val client: ChatClient, val channelController: ChannelClient)
         }
 
         fun listeningReadEvents() {
-            channelController.subscribeFor(
+            channelClient.subscribeFor(
                 NewMessageEvent::class,
                 NotificationMessageNewEvent::class,
                 MarkAllReadEvent::class,

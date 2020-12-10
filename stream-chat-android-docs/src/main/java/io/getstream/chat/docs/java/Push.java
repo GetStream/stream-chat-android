@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.docs.R;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -16,12 +15,12 @@ public class Push {
     private ChatClient client;
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Android & Firebase</a>
+     * @see <a href="https://getstream.io/chat/docs/push_android/?language=java">Android & Firebase</a>
      */
     class AndroidAndFirebase {
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
+         * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
          */
         public void registeringDevice() {
             client.addDevice("firebase-token").enqueue(result -> {
@@ -30,12 +29,11 @@ public class Push {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
+         * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
          */
         public void setupNotifications() {
             int notificationChannelId = R.string.stream_chat_notification_channel_id;
@@ -71,12 +69,12 @@ public class Push {
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Device</a>
+     * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java">Device</a>
      */
     class Device {
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
+         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#register-a-device">Register a Device</a>
          */
         public void registerADevice() {
             client.addDevice("firebase-token").enqueue(result -> {
@@ -85,12 +83,11 @@ public class Push {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#unregister-a-device">Unregister a Device</a>
+         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#unregister-a-device">Unregister a Device</a>
          */
         public void unregisterADevice() {
             client.deleteDevice("firebase-token").enqueue(result -> {
@@ -99,7 +96,6 @@ public class Push {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }

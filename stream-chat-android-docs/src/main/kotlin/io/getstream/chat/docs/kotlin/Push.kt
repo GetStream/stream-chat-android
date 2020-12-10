@@ -44,7 +44,7 @@ class Push(val context: Context, val client: ChatClient) {
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Device</a>
+     * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin">Device</a>
      */
     inner class Device {
 

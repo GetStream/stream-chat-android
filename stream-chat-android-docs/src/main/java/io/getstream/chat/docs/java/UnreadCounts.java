@@ -18,7 +18,7 @@ import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class UnreadCounts {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/unread/?language=java">Unread</a>
@@ -38,18 +38,17 @@ public class UnreadCounts {
         }
 
         public void markRead() {
-            channelController.markRead().enqueue(result -> {
+            channelClient.markRead().enqueue(result -> {
                 if (result.isSuccess()) {
                     // Messages in the channel marked as read
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
         public void listeningReadEvents() {
-            channelController.subscribeFor(
+            channelClient.subscribeFor(
                     new Class[]{
                             NewMessageEvent.class,
                             NotificationMessageNewEvent.class,
