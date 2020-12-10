@@ -437,7 +437,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.getDefault(context)
+            messageDateFormatter = DateFormatter.from(context)
         }
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)

@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.format
+import com.getstream.sdk.chat.utils.formatDate
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.name
 
@@ -45,7 +45,7 @@ internal class UsernameAndDateConfigurator(
 
         if (style.isMessageDateShow && date != null) {
             binding.tvMessagedate.isVisible = true
-            binding.tvMessagedate.text = dateFormatter.format(date)
+            binding.tvMessagedate.text = dateFormatter.formatDate(date)
         } else {
             binding.tvMessagedate.isVisible = false
         }

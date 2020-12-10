@@ -435,7 +435,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.getDefault(context)
+            messageDateFormatter = DateFormatter.from(context)
         }
 
         // Inject Attachment factory

@@ -47,7 +47,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     protected ChannelListView.ChannelClickListener channelClickListener;
     protected ChannelListView.ChannelClickListener channelLongClickListener;
     protected ChannelListViewStyle style;
-    protected DateFormatter defaultDateFormatter = DateFormatter.getDefault(itemView.getContext());
+    protected DateFormatter defaultDateFormatter = DateFormatter.from(itemView.getContext());
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -179,7 +179,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configLastMessageDate(Channel channel) {
-        String date = DateFormatterKt.format(defaultDateFormatter, channel.getLastMessageAt());
+        String date = DateFormatterKt.formatDate(defaultDateFormatter, channel.getLastMessageAt());
         tv_date.setText(date);
     }
 
