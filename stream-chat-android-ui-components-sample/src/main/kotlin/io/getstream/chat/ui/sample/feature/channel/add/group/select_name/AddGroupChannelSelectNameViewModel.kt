@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 
@@ -29,6 +30,7 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
             val result = ChatClient.instance()
                 .createChannel(
                     channelType = CHANNEL_TYPE_MESSAGING,
+                    channelId = UUID.randomUUID().toString(),
                     members = members.map { it.id } + currentUserId,
                     extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name)
                 ).await()
