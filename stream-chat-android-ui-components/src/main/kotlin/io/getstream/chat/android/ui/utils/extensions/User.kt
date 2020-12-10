@@ -3,10 +3,14 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.text.format.DateUtils
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 
-internal fun List<User>.withoutCurrentUser() = this.filter { !it.isCurrentUser() }
+internal fun List<User>.withoutCurrentUser(): List<User> {
+    val currentUser = ChatDomain.instance().currentUser
+    return filter { it.id != currentUser.id }
+}
 
 internal fun User.isCurrentUser(): Boolean {
     return if (ChatDomain.isInitialized) {
@@ -27,3 +31,6 @@ public fun User.getLastSeenText(context: Context): String {
         )
     }
 }
+
+internal fun User.asMention(context: Context): String =
+    context.getString(R.string.stream_ui_mention_user_name_template, name)
