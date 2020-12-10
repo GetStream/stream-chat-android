@@ -156,19 +156,17 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListenerView { message, view ->
+        MessageLongClickListenerView { message, _ ->
             context.getFragmentManager()?.let { framentManager ->
                 // TODO: pass a real MessageItem instead of mock
                 val mockMessageItem = MessageItem(
-                    message.apply {
-                        latestReactions.forEach { it.type = ReactionType.LOVE.type }
-                        ownReactions.forEach { it.type = ReactionType.LOVE.type }
-                    },
+                    message,
                     positions = listOf(MessageListItem.Position.BOTTOM),
                     isMine = false
                 )
 
-                MessageOptionsOverlayDialogFragment.newInstance(mockMessageItem, messageOptionsConfiguration)
+                MessageOptionsOverlayDialogFragment
+                    .newInstance(mockMessageItem, messageOptionsConfiguration)
                     .show(framentManager, ReactionsOverlayDialogFragment.TAG)
             }
         }
