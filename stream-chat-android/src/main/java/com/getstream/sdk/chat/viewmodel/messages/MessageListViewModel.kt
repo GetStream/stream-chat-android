@@ -55,7 +55,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val currentUser: User = domain.currentUser
 
     init {
-        stateMerger.value = State.Loading
+        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
         domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
