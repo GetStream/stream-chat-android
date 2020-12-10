@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
 
-class Events(val client: ChatClient, val channelController: ChannelClient) {
+class Events(val client: ChatClient, val channelClient: ChannelClient) {
 
     /**
      * @see <a href="https://getstream.io/chat/docs/event_object/?language=kotlin">Event Object</a>
@@ -27,7 +27,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
     inner class ListeningForEvents {
         fun listenSpecificChannelEvents() {
             // Subscribe for new message events
-            val disposable: Disposable = channelController
+            val disposable: Disposable = channelClient
                 .subscribeFor<NewMessageEvent> { newMessageEvent ->
                     // To get the message
                     val message = newMessageEvent.message
@@ -38,7 +38,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
         }
 
         fun listenAllChannelEvents() {
-            val disposable: Disposable = channelController
+            val disposable: Disposable = channelClient
                 .subscribe { event: ChatEvent ->
                     when (event) {
                         is NewMessageEvent -> {
@@ -103,10 +103,10 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
     inner class TypingEvents {
         fun sendTypingEvents() {
             // Sends a typing.start event if it's been more than 3000 ms since the last event
-            channelController.keystroke().enqueue()
+            channelClient.keystroke().enqueue()
 
             // Sends an event typing.stop to all channel participants
-            channelController.stopTyping().enqueue()
+            channelClient.stopTyping().enqueue()
         }
     }
 
@@ -116,7 +116,7 @@ class Events(val client: ChatClient, val channelController: ChannelClient) {
     inner class NotificationEvents {
         fun notificationEvents() {
             // An example of how listen event when a user is added to a channel
-            channelController.subscribeFor<NotificationAddedToChannelEvent> { notificationEvent ->
+            channelClient.subscribeFor<NotificationAddedToChannelEvent> { notificationEvent ->
                 // Handle event
             }
         }

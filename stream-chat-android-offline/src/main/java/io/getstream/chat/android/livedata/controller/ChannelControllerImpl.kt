@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -979,6 +980,9 @@ internal class ChannelControllerImpl(
                 setWatcherCount(event.watcherCount)
             }
             is ChannelUpdatedEvent -> {
+                updateChannelData(event.channel)
+            }
+            is ChannelUpdatedByUserEvent -> {
                 updateChannelData(event.channel)
             }
             is ChannelHiddenEvent -> {

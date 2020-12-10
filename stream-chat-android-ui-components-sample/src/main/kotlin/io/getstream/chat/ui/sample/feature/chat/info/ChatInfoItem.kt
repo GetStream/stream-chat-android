@@ -10,11 +10,13 @@ sealed class ChatInfoItem {
 
     val id: String
         get() = when (this) {
-            is MemberItem -> member.getUserId()
+            is MemberItem -> chatMember.member.getUserId()
             else -> this::class.java.simpleName
         }
 
-    data class MemberItem(val member: Member) : ChatInfoItem()
+    data class MemberItem(val chatMember: ChatMember) : ChatInfoItem()
+    data class MembersSeparator(val membersToShow: Int) : ChatInfoItem()
+    data class ChannelName(val name: String) : ChatInfoItem()
     object Separator : ChatInfoItem()
 
     sealed class Option : ChatInfoItem() {
@@ -67,6 +69,16 @@ sealed class ChatInfoItem {
             override val showRightArrow: Boolean = false
         }
 
+        object LeaveGroup : Option() {
+            override val iconResId: Int
+                get() = R.drawable.ic_leave_group
+            override val textResId: Int
+                get() = R.string.chat_group_info_option_leave
+            override val tintResId: Int
+                get() = R.color.black
+            override val showRightArrow: Boolean = false
+        }
+
         sealed class Stateful : Option() {
             abstract val isChecked: Boolean
 
@@ -79,11 +91,20 @@ sealed class ChatInfoItem {
                     get() = R.color.black
             }
 
-            data class Mute(override val isChecked: Boolean) : Stateful() {
+            data class MuteUser(override val isChecked: Boolean) : Stateful() {
                 override val iconResId: Int
                     get() = R.drawable.ic_mute
                 override val textResId: Int
                     get() = R.string.chat_info_option_mute_user
+                override val tintResId: Int
+                    get() = R.color.black
+            }
+
+            data class MuteChannel(override val isChecked: Boolean) : Stateful() {
+                override val iconResId: Int
+                    get() = R.drawable.ic_mute
+                override val textResId: Int
+                    get() = R.string.chat_group_info_option_mute
                 override val tintResId: Int
                     get() = R.color.black
             }
@@ -99,3 +120,5 @@ sealed class ChatInfoItem {
         }
     }
 }
+
+data class ChatMember(val member: Member, val isOwner: Boolean = false)

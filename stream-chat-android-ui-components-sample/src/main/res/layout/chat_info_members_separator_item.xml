@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/membersSeparatorTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/stream_ui_selectable_item_background_white"
+    android:clickable="true"
+    android:drawablePadding="16dp"
+    android:focusable="true"
+    android:padding="24dp"
+    android:singleLine="true"
+    android:textColor="@color/boulder"
+    android:textSize="@dimen/stream_ui_text_medium"
+    app:drawableStartCompat="@drawable/ic_icon_down"
+    tools:text="10 more"
+    />
