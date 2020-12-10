@@ -52,8 +52,7 @@ public class ChannelsViewModel(
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
                             is QueryChannelsController.ChannelsState.Loading -> State.Loading
-                            is QueryChannelsController.ChannelsState.OfflineNoResults,
-                            is QueryChannelsController.ChannelsState.Failed -> State.NoChannelsAvailable
+                            is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
                             is QueryChannelsController.ChannelsState.Result ->
                                 State.Result(channelState.channels.filterNot { it.hidden == true })
                         }

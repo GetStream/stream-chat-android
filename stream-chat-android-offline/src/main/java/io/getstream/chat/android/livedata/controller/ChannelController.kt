@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -93,8 +92,6 @@ public interface ChannelController {
         public object Loading : MessagesState()
         /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
         public object OfflineNoResults : MessagesState()
-        /** If we have no offline data and get an error from the API */
-        public class Failed(public val error: ChatError) : MessagesState()
         /** The list of messages, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
          * @see ChatDomainImpl.online

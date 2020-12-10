@@ -74,7 +74,6 @@ public class MessageListViewModel @JvmOverloads constructor(
                         when (messageState) {
                             is ChannelController.MessagesState.NoQueryActive,
                             is ChannelController.MessagesState.Loading -> value = State.Loading
-                            is ChannelController.MessagesState.Failed,
                             is ChannelController.MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
                             is ChannelController.MessagesState.Result -> {
                                 removeSource(channelController.messagesState)
