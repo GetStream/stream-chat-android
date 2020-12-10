@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.cast
 
 public class ChannelListView @JvmOverloads constructor(
@@ -69,7 +69,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     private fun canScrollUpForChannelEvent(): Boolean = layoutManager.findFirstVisibleItemPosition() < 3
 
-    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory) {
+    public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
         requireAdapter().viewHolderFactory = factory
     }
 
