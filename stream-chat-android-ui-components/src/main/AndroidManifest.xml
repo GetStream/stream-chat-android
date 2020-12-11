@@ -14,10 +14,6 @@
                 android:name="io.getstream.chat.android.ui.startup.ImageLoaderFactoryInitializer"
                 android:value="androidx.startup"
                 />
-            <meta-data
-                android:name="io.getstream.chat.android.ui.utils.ThreeTenInitializer"
-                android:value="androidx.startup"
-                />
         </provider>
     </application>
 </manifest>

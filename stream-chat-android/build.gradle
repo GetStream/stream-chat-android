@@ -78,6 +78,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-offline")
 
+    implementation Dependencies.androidxStartup
+    api Dependencies.threeTenAbp
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.constraintLayout
@@ -135,4 +137,5 @@ dependencies {
     testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.kluent
     testImplementation Dependencies.coroutinesTest
+    testImplementation Dependencies.burst
 }

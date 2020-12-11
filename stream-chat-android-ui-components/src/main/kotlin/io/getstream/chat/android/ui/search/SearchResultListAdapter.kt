@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.search.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.SearchResultListView.SearchResultSelectedListener
-import io.getstream.chat.android.ui.utils.DateFormatter
 
 public class SearchResultListAdapter(
     context: Context

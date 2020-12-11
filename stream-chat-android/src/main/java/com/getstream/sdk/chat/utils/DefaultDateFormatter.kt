@@ -1,8 +1,8 @@
-package io.getstream.chat.android.ui.utils
+package com.getstream.sdk.chat.utils
 
 import android.content.Context
 import android.text.format.DateFormat
-import io.getstream.chat.android.ui.R
+import com.getstream.sdk.chat.R
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -21,7 +21,7 @@ internal class DefaultDateFormatter(
         // Re-evaluated every time to account for runtime Locale changes
         get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
 
-    override fun formatMessageDate(localDateTime: LocalDateTime?): String {
+    override fun formatDate(localDateTime: LocalDateTime?): String {
         localDateTime ?: return ""
 
         val localDate = localDateTime.toLocalDate()
@@ -61,7 +61,7 @@ internal class DefaultDateFormatter(
         override fun now(): LocalDate = LocalDate.now()
 
         override fun yesterdayString(): String {
-            return context.getString(R.string.stream_ui_message_preview_yesterday)
+            return context.getString(R.string.stream_yesterday)
         }
 
         override fun is24Hour(): Boolean {

@@ -295,6 +295,11 @@
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment"
             app:destination="@id/componentBrowserUserReactionsFragment"
             />
+
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserScrollButtonView"
+            app:destination="@id/componentBrowserScrollButtonViewFragment"
+            />
     </fragment>
 
     <fragment
@@ -411,6 +416,12 @@
         android:id="@+id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyMediaAttachmentsMessagesFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserScrollButtonViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.ScrollButtonViewComponentBrowserFragment"
+        android:label="ComponentBrowserScrollButtonViewFragment"
         />
 
 </navigation>

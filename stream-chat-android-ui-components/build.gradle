@@ -95,7 +95,6 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
-    implementation Dependencies.threeTenAbp
 
     // Tests
     testImplementation project(":stream-chat-android-test")

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,9 +16,11 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.getFragmentManager
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
+import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
 
 class GroupChatInfoFragment : Fragment() {
 
@@ -42,6 +45,17 @@ class GroupChatInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.optionsRecyclerView.adapter = adapter
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
+        if (!isDistinctChannel()) {
+            binding.addChannelButton.apply {
+                isVisible = true
+                setOnClickListener {
+                    context.getFragmentManager()?.let {
+                        GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
+                            .show(it, GroupChatInfoAddUsersDialogFragment.TAG)
+                    }
+                }
+            }
+        }
         bindGroupInfoViewModel()
     }
 
@@ -49,6 +63,10 @@ class GroupChatInfoFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+    // Distinct channel == channel created without id (based on members).
+    // There is no possibility to modify distinct channel members.
+    private fun isDistinctChannel(): Boolean = args.cid.contains("!members")
 
     private fun bindGroupInfoViewModel() {
         subscribeForChannelMutesUpdatedEvents()

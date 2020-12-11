@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.mentions.MentionsListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.mentions.MentionsListView.MentionSelectedListener
 import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
-import io.getstream.chat.android.ui.utils.DateFormatter
 
 public class MentionsListAdapter(
     context: Context

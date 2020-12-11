@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.adapter
+package com.getstream.sdk.chat.utils
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -17,7 +17,7 @@ internal class ListenerDelegateTest {
     private var listener1: TestListener = mock()
     private var listener2: TestListener = mock()
 
-    private var delegate: TestListener by ListenerContainerImpl.ListenerDelegate(
+    private var delegate: TestListener by ListenerDelegate(
         initialValue = listener1,
         wrap = { realListener ->
             object : TestListener {
