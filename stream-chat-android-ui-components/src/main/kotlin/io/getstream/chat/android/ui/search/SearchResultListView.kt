@@ -38,10 +38,8 @@ public class SearchResultListView : ViewFlipper {
 
     private val adapter = SearchResultListAdapter(context)
 
-    private val scrollListener = EndlessScrollListener {
+    private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()
-    }.apply {
-        loadMoreThreshold = LOAD_MORE_THRESHOLD
     }
 
     private fun init(attrs: AttributeSet?) {
@@ -73,10 +71,10 @@ public class SearchResultListView : ViewFlipper {
             val count = messages.count()
             binding.searchInfoBar.text =
                 resources.getQuantityString(R.plurals.stream_ui_search_result_list_result_count, count, count)
-            scrollListener.paginationEnabled = true
+            scrollListener.enablePagination()
         } else {
             binding.emptyLabel.text = resources.getString(R.string.stream_ui_search_result_list_result_empty, query)
-            scrollListener.paginationEnabled = false
+            scrollListener.disablePagination()
         }
 
         adapter.submitList(messages)
@@ -84,7 +82,7 @@ public class SearchResultListView : ViewFlipper {
 
     public fun showLoading() {
         displayedChild = Flipper.LOADING
-        scrollListener.paginationEnabled = false
+        scrollListener.disablePagination()
     }
 
     public fun showError() {
