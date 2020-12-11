@@ -12,12 +12,26 @@
         <flag name="italic" value="2" />
     </attr>
     <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
-        <enum name="top" value="0"/>
-        <enum name="bottom" value="1"/>
+        <enum name="top" value="0" />
+        <enum name="bottom" value="1" />
     </attr>
 
     <attr name="streamUiAvatarWidth" format="dimension|reference" />
     <attr name="streamUiAvatarHeight" format="dimension|reference" />
+
+    <attr name="streamUiReadStateTextSize" format="dimension|reference" />
+    <attr name="streamUiReadStateTextColor" format="color|reference" />
+    <attr name="streamUiReadStateTextFont" format="reference" />
+    <attr name="streamUiReadStateTextFontAssets" format="string" />
+    <attr name="streamUiReadStateTextStyle">
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
+    </attr>
+    <attr name="streamUiShowReadState" format="boolean" />
+    <attr name="streamUiReadStateAvatarWidth" format="dimension|reference" />
+    <attr name="streamUiReadStateAvatarHeight" format="dimension|reference" />
+
 
     <declare-styleable name="AvatarView">
         <attr name="streamUiAvatarBorderWidth" />
@@ -213,7 +227,205 @@
     </declare-styleable>
 
     <declare-styleable name="AttachmentGallery">
-        <attr name="streamUiCountText" format="string"/>
-        <attr name="streamUiCountTextColor" format="color|reference"/>
+        <attr name="streamUiCountText" format="string" />
+        <attr name="streamUiCountTextColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MessageListView">
+        <!-- Scroll button-->
+        <attr name="streamUiScrollButtonEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonColor" format="color|reference" />
+        <attr name="streamUiScrollButtonRippleColor" format="color|reference" />
+        <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
+        <attr name="streamUiScrollButtonIcon" format="reference" />
+        <!--ReadStateView-->
+        <attr name="streamUiShowReadState" />
+        <attr name="streamUiReadStateAvatarWidth" />
+        <attr name="streamUiReadStateAvatarHeight" />
+        <attr name="streamUiReadStateTextSize" />
+        <attr name="streamUiReadStateTextColor" />
+        <attr name="streamUiReadStateTextFont" />
+        <attr name="streamUiReadStateTextFontAssets" />
+        <attr name="streamUiReadStateTextStyle" />
+        <!-- DeliveredStateView -->
+        <attr name="streamUiShowDeliveredState" format="boolean" />
+        <!--Reaction-->
+        <attr name="streamUiReactionEnabled" format="boolean" />
+        <!--ReactionView-->
+        <attr name="streamUiReactionViewBgDrawable" format="reference" />
+        <attr name="streamUiReactionViewBgColor" format="color" />
+        <attr name="streamUiReactionViewEmojiSize" format="dimension|reference" />
+        <attr name="streamUiReactionViewEmojiMargin" format="dimension|reference" />
+        <!--Reaction Dialog-->
+        <attr name="streamUiReactionInputbgColor" format="color" />
+        <attr name="streamUiReactionInputEmojiSize" format="dimension|reference" />
+        <attr name="streamUiReactionInputEmojiMargin" format="dimension|reference" />
+        <!--Message-->
+        <attr name="streamUiMessageTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiMessageTextSizeTheirs" format="dimension|reference" />
+
+        <attr name="streamUiMessageTextColorMine" format="color" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+        <attr name="streamUiMessageTextFontMine" format="reference" />
+        <attr name="streamUiMessageTextFontMineAssets" format="string" />
+        <attr name="streamUiMessageTextFontTheirs" format="reference" />
+        <attr name="streamUiMessageTextFontTheirsAssets" format="string" />
+        <attr name="streamUiMessageTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageUserNameTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageUserNameTextColor" format="color" />
+        <attr name="streamUiMessageUserNameTextFont" format="reference" />
+        <attr name="streamUiMessageUserNameTextFontAssets" format="string" />
+        <attr name="streamUiMessageUserNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageDateTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiMessageDateTextColorMine" format="color" />
+        <attr name="streamUiMessageDateTextFontMine" format="reference" />
+        <attr name="streamUiMessageDateTextFontAssetsMine" format="string" />
+        <attr name="streamUiMessageDateTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageDateTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageDateTextColorTheirs" format="color" />
+        <attr name="streamUiMessageDateTextFontTheirs" format="reference" />
+        <attr name="streamUiMessageDateTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiMessageDateTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageBubbleDrawableMine" format="reference" />
+        <attr name="streamUiMessageBubbleDrawableTheirs" format="reference" />
+
+        <attr name="streamUiMessageTopLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamUiMessageTopRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamUiMessageBottomRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamUiMessageBottomLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamUiMessageTopLeftCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageTopRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageBottomRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageBottomLeftCornerRadiusTheirs" format="dimension|reference" />
+
+        <attr name="streamUiMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
+        <attr name="streamUiMessageBorderColorMine" format="color" />
+        <attr name="streamUiMessageBorderColorTheirs" format="color" />
+        <attr name="streamUiMessageBorderWidthMine" format="dimension|reference" />
+        <attr name="streamUiMessageBorderWidthTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageLinkTextColorMine" format="color" />
+        <attr name="streamUiMessageLinkTextColorTheirs" format="color" />
+        <!-- Attachment-->
+        <attr name="streamUiAttachmentTitleTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiAttachmentTitleTextColorMine" format="color" />
+        <attr name="streamUiAttachmentTitleTextFontMine" format="reference" />
+        <attr name="streamUiAttachmentTitleTextFontAssetsMine" format="string" />
+        <attr name="streamUiAttachmentTitleTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiAttachmentTitleTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiAttachmentTitleTextColorTheirs" format="color" />
+        <attr name="streamUiAttachmentTitleTextFontTheirs" format="reference" />
+        <attr name="streamUiAttachmentTitleTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiAttachmentTitleTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiAttachmentBackgroundColorMine" format="color" />
+        <attr name="streamUiAttachmentBackgroundColorTheirs" format="color" />
+        <attr name="streamUiAttachmentBorderColorMine" format="color" />
+        <attr name="streamUiAttachmentBorderColorTheirs" format="color" />
+
+        <attr name="streamUiAttachmentDescriptionTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiAttachmentDescriptionTextColorMine" format="color" />
+        <attr name="streamUiAttachmentDescriptionTextFontMine" format="reference" />
+        <attr name="streamUiAttachmentDescriptionTextFontAssetsMine" format="string" />
+        <attr name="streamUiAttachmentDescriptionTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiAttachmentDescriptionTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiAttachmentDescriptionTextColorTheirs" format="color" />
+        <attr name="streamUiAttachmentDescriptionTextFontTheirs" format="reference" />
+        <attr name="streamUiAttachmentDescriptionTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiAttachmentDescriptionTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiAttachmentFileSizeTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiAttachmentFileSizeTextColorMine" format="color" />
+        <attr name="streamUiAttachmentFileSizeTextFontMine" format="reference" />
+        <attr name="streamUiAttachmentFileSizeTextFontAssetsMine" format="string" />
+        <attr name="streamUiAttachmentFileSizeTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiAttachmentFileSizeTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiAttachmentFileSizeTextColorTheirs" format="color" />
+        <attr name="streamUiAttachmentFileSizeTextFontTheirs" format="reference" />
+        <attr name="streamUiAttachmentFileSizeTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiAttachmentFileSizeTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiAttachmentPreviewMaxLines" format="integer" />
+
+        <attr name="streamUiThreadEnabled" format="boolean" />
+        <!--Date Separator-->
+        <attr name="streamUiDateSeparatorDateTextSize" format="dimension|reference" />
+        <attr name="streamUiDateSeparatorDateTextColor" format="color" />
+        <attr name="streamUiDateSeparatorDateTextFont" format="reference" />
+        <attr name="streamUiDateSeparatorDateTextFontAssets" format="string" />
+        <attr name="streamUiDateSeparatorDateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiDateSeparatorLineWidth" format="dimension|reference" />
+        <attr name="streamUiDateSeparatorLineColor" format="color" />
+        <attr name="streamUiDateSeparatorLineDrawable" format="reference" />
+
+        <attr name="streamUiUserNameShow" format="boolean" />
+        <attr name="streamUiMessageDateShow" format="boolean" />
+        <attr name="streamUiLoadMoreThreshold" format="integer" />
+
+        <!-- Text of the empty state label -->
+        <attr name="streamUiMessagesEmptyStateLabelText" format="string" />
+
+        <!-- MessageMoreActionDialog -->
+        <attr name="streamUiStartThreadMessageActionEnabled" format="boolean" />
+        <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiFlagMessageActionEnabled" format="boolean" />
+        <attr name="streamUiDeleteMessageActionEnabled" format="boolean" />
+        <attr name="streamUiEditMessageActionEnabled" format="boolean" />
     </declare-styleable>
 </resources>

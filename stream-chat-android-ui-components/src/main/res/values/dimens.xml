@@ -80,4 +80,10 @@
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy">48dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_radius">3dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_offset">10dp</dimen>
+
+    <!--ScrollButtonView-->
+    <dimen name="stream_ui_scroll_button_size">40dp</dimen>
+    <dimen name="stream_ui_scroll_button_unread_badge_size">20dp</dimen>
+    <dimen name="stream_ui_scroll_button_unread_badge_padding_horizontal">4dp</dimen>
+    <dimen name="stream_ui_scroll_button_unread_badge_text_size">11sp</dimen>
 </resources>
