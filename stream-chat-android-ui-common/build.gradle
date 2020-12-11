@@ -5,7 +5,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.hiya.jacoco-android'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'com.github.dcendents.android-maven'
@@ -13,10 +12,11 @@ apply plugin: 'com.github.dcendents.android-maven'
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
     PUBLISH_VERSION = Configuration.versionName
-    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-components'
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-common'
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+
 
 android {
     compileSdkVersion Configuration.compileSdkVersion
@@ -27,12 +27,6 @@ android {
         versionName Configuration.versionName
 
         vectorDrawables.useSupportLibrary = true
-    }
-
-    resourcePrefix 'stream_ui_'
-
-    buildFeatures {
-        viewBinding true
     }
 
     compileOptions {
@@ -68,40 +62,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=kotlin.contracts.ExperimentalContracts',
                 '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
 
 dependencies {
-    api project(":stream-chat-android-ui-common")
-    api project(":stream-chat-android") // TODO remove
-
-    implementation Dependencies.kotlinStdLib
-    implementation Dependencies.coroutinesCore
-    implementation Dependencies.androidxAppCompat
-    implementation Dependencies.androidLegacySupport
-    implementation Dependencies.constraintLayout
-    implementation Dependencies.materialComponents
-    implementation Dependencies.drawabletoolbox
-    implementation Dependencies.fragmentKtx
-    implementation Dependencies.androidxViewPager2
-    implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.lottie
-    implementation Dependencies.photoview
-    implementation Dependencies.coil
-    implementation Dependencies.coilGif
-    implementation Dependencies.coilVideo
-    implementation Dependencies.androidxStartup
-
-    // Tests
-    testImplementation project(":stream-chat-android-test")
-
-    testImplementation Dependencies.junitJupiterApi
-    testImplementation Dependencies.junitJupiterParams
-    testRuntimeOnly Dependencies.junitJupiterEngine
-    testRuntimeOnly Dependencies.junitVintageEngine
-    testImplementation Dependencies.truth
-    testImplementation Dependencies.burst
+    api project(":stream-chat-android-offline")
 }
