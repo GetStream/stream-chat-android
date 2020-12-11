@@ -4,16 +4,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 public class EndlessScrollListener(
-    private val loadMoreListener: () -> Unit
+    private val loadMoreThreshold: Int,
+    private val loadMoreListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
-    public var paginationEnabled: Boolean = false
-    public var loadMoreThreshold: Int = 0
-        set(value) {
-            require(value >= 0) { "Load more threshold must not be negative" }
-            field = value
-        }
+    init {
+        require(loadMoreThreshold >= 0) { "Load more threshold must not be negative" }
+    }
 
+    private var paginationEnabled: Boolean = false
     private var scrollStateReset = true
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -72,5 +71,13 @@ public class EndlessScrollListener(
         ) {
             scrollStateReset = true
         }
+    }
+
+    public fun enablePagination() {
+        paginationEnabled = true
+    }
+
+    public fun disablePagination() {
+        paginationEnabled = false
     }
 }

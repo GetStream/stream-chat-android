@@ -23,10 +23,8 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
     private val adapter: GroupChatInfoAddUsersAdapter = GroupChatInfoAddUsersAdapter()
     private val viewModel: GroupChatInfoAddUsersViewModel by viewModels { ChatViewModelFactory(cid) }
     private var loadMoreListener: LoadMoreListener? = null
-    private val scrollListener = EndlessScrollListener {
+    private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.loadMore()
-    }.apply {
-        loadMoreThreshold = LOAD_MORE_THRESHOLD
     }
 
     private var _binding: ChatInfoGroupAddUsersDialogFragmentBinding? = null
@@ -95,21 +93,21 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
         binding.progressBar.isVisible = true
         binding.recyclerView.isVisible = false
         binding.emptyView.isVisible = false
-        scrollListener.paginationEnabled = false
+        scrollListener.disablePagination()
     }
 
     private fun showResults(users: List<User>) {
         binding.progressBar.isVisible = false
         binding.recyclerView.isVisible = true
         binding.emptyView.isVisible = false
-        scrollListener.paginationEnabled = true
+        scrollListener.enablePagination()
         adapter.submitList(users)
     }
 
     private fun showEmptyState() {
         binding.progressBar.isVisible = false
         binding.recyclerView.isVisible = false
-        scrollListener.paginationEnabled = false
+        scrollListener.disablePagination()
         binding.emptyView.isVisible = true
     }
 

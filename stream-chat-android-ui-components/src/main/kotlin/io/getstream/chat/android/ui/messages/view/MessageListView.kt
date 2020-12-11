@@ -124,9 +124,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
-    private val loadMoreListener = EndlessScrollListener {
-        endRegionReachedHandler()
-    }
+    private lateinit var loadMoreListener: EndlessScrollListener
+    private var loadMoreThreshold: Int = context.resources.getInteger(R.integer.stream_load_more_threshold)
 
     private lateinit var channel: Channel
     private lateinit var currentUser: User
@@ -241,6 +240,10 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             configureAttributes(attr)
         }
 
+        loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+            endRegionReachedHandler()
+        }
+
         initScrollButtonBehaviour()
 
         hasScrolledUp = false
@@ -310,7 +313,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
-        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+        loadMoreThreshold = tArray.getInteger(
             R.styleable.MessageListView_streamLoadMoreThreshold,
             context.resources.getInteger(R.integer.stream_load_more_threshold)
         )
@@ -367,7 +370,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     override fun setLoadingMore(loadingMore: Boolean) {
-        loadMoreListener.paginationEnabled = !loadingMore
+        if (loadingMore) {
+            loadMoreListener.disablePagination()
+        } else {
+            loadMoreListener.enablePagination()
+        }
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
