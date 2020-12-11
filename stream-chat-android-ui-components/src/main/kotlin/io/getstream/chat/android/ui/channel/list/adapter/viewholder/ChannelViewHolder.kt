@@ -5,7 +5,6 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -29,12 +28,12 @@ import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import kotlin.math.absoluteValue
 
-public class ChannelViewHolder(
+public class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
-    override val channelClickListener: ChannelListView.ChannelClickListener,
-    override val channelLongClickListener: ChannelListView.ChannelClickListener,
-    override val channelDeleteListener: ChannelListView.ChannelClickListener,
-    override val userClickListener: ChannelListView.UserClickListener,
+    override val channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    override val channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    override val channelDeleteListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    override val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
     override val style: ChannelListViewStyle?,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,

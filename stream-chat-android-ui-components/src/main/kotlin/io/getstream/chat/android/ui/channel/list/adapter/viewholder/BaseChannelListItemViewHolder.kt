@@ -9,16 +9,10 @@ import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 
 public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    protected open val channelClickListener: ChannelListView.ChannelClickListener =
-        ChannelListView.ChannelClickListener.DEFAULT
-
-    protected open val channelLongClickListener: ChannelListView.ChannelClickListener =
-        ChannelListView.ChannelClickListener.DEFAULT
-
-    protected open val channelDeleteListener: ChannelListView.ChannelClickListener =
-        ChannelListView.ChannelClickListener.DEFAULT
-
-    protected open val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT
+    public abstract val channelClickListener: ChannelListView.ChannelClickListener
+    public abstract val channelLongClickListener: ChannelListView.ChannelClickListener
+    public abstract val channelDeleteListener: ChannelListView.ChannelClickListener
+    public abstract val userClickListener: ChannelListView.UserClickListener
 
     protected open val style: ChannelListViewStyle? = null
 

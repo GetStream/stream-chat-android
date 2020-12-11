@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 
-public class ChannelListItemListenerContainer(
+public class ChannelListListenerProxy(
     channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,

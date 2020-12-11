@@ -74,19 +74,19 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProxy.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setChannelLongClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProxy.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
-        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
+        requireAdapter().listenerProxy.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
     public fun setChannelDeleteListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProxy.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
