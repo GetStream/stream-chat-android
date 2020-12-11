@@ -235,24 +235,29 @@ public class ChannelViewHolder(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
-        // set the X to the preserved open / closed state
-        root.x = when (swipeStateByChannelCid[cid]) {
+        // restore the view's last state
+        val menuState = swipeStateByChannelCid[cid]
+        root.x = when (menuState) {
             MenuState.Open -> -optionsMenuWidth
             MenuState.Closed, null -> 0f
         }
 
         var startX = 0f
         var startY = 0f
-        val dragRange = -optionsMenuWidth..0f
+        var prevX = 0f
+        val swipeRange = -optionsMenuWidth..0f
         var swiping = false
 
         root.setOnTouchListener { view, event ->
             when (event.action) {
 
                 MotionEvent.ACTION_DOWN -> {
-                    // store our initial touch coordinate values so we can determine deltas
-                    startX = event.x
-                    startY = event.y
+                    // store the starting x & y so we can calculate total deltas
+                    startX = event.rawX
+                    startY = event.rawY
+
+                    // initialize the previous x to the start values
+                    prevX = startX
 
                     swiping = false
 
@@ -260,22 +265,26 @@ public class ChannelViewHolder(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
+                    // calculate the total delta for both axes
+                    val totalDeltaX = event.rawX - startX
+                    val totalDeltaY = event.rawY - startY
 
-                    // calculate the deltas
-                    val deltaY = event.y - startY
-                    val deltaX = event.x - startX
+                    // calculate the delta from the last event to this one
+                    val lastMoveDeltaX = event.rawX - prevX
+                    // now that we've calculated, update the previous x value with this event's x
+                    prevX = event.rawX
 
-                    // determine if it's a swipe by comparing axis delta magnitude
-                    swiping = deltaX.absoluteValue > deltaY.absoluteValue
+                    // determine if it's a swipe by comparing total axis delta magnitude
+                    swiping = totalDeltaX.absoluteValue > totalDeltaY.absoluteValue
 
                     when {
                         swiping -> {
-                            // determine the new x value by adding the delta
-                            val projectedX = view.x + deltaX
+                            // determine the new x value by adding the delta calculated from the move
+                            val projectedX = view.x + lastMoveDeltaX
                             // clamp it and animate if necessary
-                            projectedX.coerceIn(dragRange).let { clampedX ->
+                            projectedX.coerceIn(swipeRange).let { clampedX ->
                                 // set the new x if it's different
-                                if (view.x != projectedX) {
+                                if (view.x != clampedX) {
                                     view.x = clampedX
                                 }
                             }
@@ -288,15 +297,15 @@ public class ChannelViewHolder(
                 // determine snap and animate to it on action up
                 MotionEvent.ACTION_UP -> {
 
-                    val snap = when {
+                    val snapValue = when {
                         view.x <= -(optionsMenuWidth * .5) -> -optionsMenuWidth
                         else -> 0f
                     }
 
-                    view.animate().x(snap).setStartDelay(0).setDuration(100).start()
+                    view.animate().x(snapValue).setStartDelay(0).setDuration(100).start()
 
                     // persist channel item's menu state
-                    swipeStateByChannelCid[cid] = if (snap < 0) MenuState.Open else MenuState.Closed
+                    swipeStateByChannelCid[cid] = if (snapValue < 0) MenuState.Open else MenuState.Closed
 
                     swiping // consume if swiping
                 }
