@@ -22,7 +22,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 
-import com.getstream.sdk.chat.BuildConfig;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.source.builder.DefaultMediaSourceBuilder;
 import com.getstream.sdk.chat.utils.exomedia.core.source.builder.MediaSourceBuilder;
@@ -30,8 +32,7 @@ import com.getstream.sdk.chat.utils.exomedia.util.MediaSourceUtil;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import static io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION;
 
 /**
  * Provides the functionality to determine which {@link MediaSource} should be used
@@ -43,7 +44,7 @@ public class MediaSourceProvider {
 
     @NonNull
     @SuppressLint("DefaultLocale")
-    protected String userAgent = String.format(USER_AGENT_FORMAT, BuildConfig.STREAM_CHAT_UI_VERSION, Build.VERSION.RELEASE, Build.MODEL);
+    protected String userAgent = String.format(USER_AGENT_FORMAT, STREAM_CHAT_VERSION, Build.VERSION.RELEASE, Build.MODEL);
 
     @Nullable
     protected static SourceTypeBuilder findByProviders(@NonNull Uri uri) {

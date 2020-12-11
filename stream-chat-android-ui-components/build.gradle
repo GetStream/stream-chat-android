@@ -26,8 +26,6 @@ android {
         targetSdkVersion Configuration.targetSdkVersion
         versionName Configuration.versionName
 
-        buildConfigField 'String', 'STREAM_CHAT_UI_COMPONENTS_VERSION', "\"$version\""
-
         vectorDrawables.useSupportLibrary = true
     }
 

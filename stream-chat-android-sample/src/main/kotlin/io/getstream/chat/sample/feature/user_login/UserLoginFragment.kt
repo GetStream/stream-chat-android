@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.getstream.sdk.chat.BuildConfig
+import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
@@ -55,7 +55,7 @@ class UserLoginFragment : Fragment() {
                 LinearLayoutManager.VERTICAL
             )
         )
-        binding.sdkVersion.text = getString(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_UI_VERSION)
+        binding.sdkVersion.text = getString(R.string.sdk_version_template, STREAM_CHAT_VERSION)
 
         viewModel.state.observe(
             viewLifecycleOwner,
