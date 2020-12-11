@@ -28,7 +28,8 @@ class GroupChatInfoAddUsersViewModel(
     val userAddedState: LiveData<Boolean> = _userAddedState
 
     init {
-        chatDomain.useCases.getChannelController(cid).enqueue { result ->
+        viewModelScope.launch {
+            val result = chatDomain.useCases.getChannelController(cid).await()
             if (result.isSuccess) {
                 members = result.data().members
                 viewModelScope.launch {
@@ -83,37 +84,36 @@ class GroupChatInfoAddUsersViewModel(
     }
 
     private suspend fun fetchUsers() {
-        members.value?.let { currentMembers ->
-            val currentState = _state.value!!
-            val filter = if (currentState.query.isEmpty()) {
+        val currentMembers = members.value ?: return
+        val currentState = _state.value!!
+        val filter = if (currentState.query.isEmpty()) {
+            Filters.nin("id", currentMembers.map { it.getUserId() })
+        } else {
+            Filters.and(
+                Filters.autocomplete("name", currentState.query),
                 Filters.nin("id", currentMembers.map { it.getUserId() })
-            } else {
-                Filters.and(
-                    Filters.autocomplete("name", currentState.query),
-                    Filters.nin("id", currentMembers.map { it.getUserId() })
-                )
-            }
+            )
+        }
 
-            val result = ChatClient.instance().queryUsers(
-                QueryUsersRequest(
-                    filter = filter,
-                    offset = currentState.results.size,
-                    limit = QUERY_LIMIT,
-                )
-            ).await()
+        val result = ChatClient.instance().queryUsers(
+            QueryUsersRequest(
+                filter = filter,
+                offset = currentState.results.size,
+                limit = QUERY_LIMIT,
+            )
+        ).await()
 
-            if (result.isSuccess) {
-                _state.value = currentState.copy(
-                    results = currentState.results + result.data(),
-                    isLoading = false,
-                    canLoadMore = result.data().size == QUERY_LIMIT
-                )
-            } else {
-                _state.value = currentState.copy(
-                    isLoading = false,
-                    canLoadMore = true,
-                )
-            }
+        if (result.isSuccess) {
+            _state.value = currentState.copy(
+                results = currentState.results + result.data(),
+                isLoading = false,
+                canLoadMore = result.data().size == QUERY_LIMIT
+            )
+        } else {
+            _state.value = currentState.copy(
+                isLoading = false,
+                canLoadMore = true,
+            )
         }
     }
 
