@@ -16,7 +16,6 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView.SwipeEventListe
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
 
 public class ChannelListView @JvmOverloads constructor(
@@ -45,7 +44,7 @@ public class ChannelListView @JvmOverloads constructor(
         adapter = ChannelListItemAdapter().apply {
             listenerContainer.swipeEventListener = SwipeEventListener { event ->
                 layoutManager.verticalScrollEnabled = when (event) {
-                    is ChannelViewHolder.SwipeEvent.Move -> false
+                    is SwipeEvent.Move -> false
                     else -> true
                 }
             }
@@ -169,7 +168,7 @@ public class ChannelListView @JvmOverloads constructor(
             public val DEFAULT: SwipeEventListener = SwipeEventListener { }
         }
 
-        public fun onSwipeEvent(event: ChannelViewHolder.SwipeEvent)
+        public fun onSwipeEvent(event: SwipeEvent)
     }
 
     public fun interface EndReachedListener {
@@ -192,5 +191,10 @@ public class ChannelListView @JvmOverloads constructor(
         fun setPaginationEnabled(enabled: Boolean) {
             this.enabled = enabled
         }
+    }
+
+    public sealed class SwipeEvent {
+        public data class Move(val viewHolder: ViewHolder, val dX: Float) : SwipeEvent()
+        public object End : SwipeEvent()
     }
 }

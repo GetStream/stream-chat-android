@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -235,11 +234,6 @@ public class ChannelViewHolder(
         }
     }
 
-    public sealed class SwipeEvent {
-        public data class Move(val viewHolder: RecyclerView.ViewHolder, val dX: Float) : SwipeEvent()
-        public object End : SwipeEvent()
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
         // restore the view's last state
@@ -294,7 +288,7 @@ public class ChannelViewHolder(
                                 }
                             }
                             // send a swipe move event
-                            swipeEventListener.onSwipeEvent(SwipeEvent.Move(this@ChannelViewHolder, lastMoveDeltaX))
+                            swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.Move(this@ChannelViewHolder, lastMoveDeltaX))
                         }
                     }
                     // consume if we are swiping
@@ -312,7 +306,7 @@ public class ChannelViewHolder(
                     // persist channel item's menu state
                     swipeStateByChannelCid[cid] = if (snapValue < 0) MenuState.Open else MenuState.Closed
                     // signal end of swipe
-                    swipeEventListener.onSwipeEvent(SwipeEvent.End)
+                    swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
                     // consume if we were swiping
                     swiping
                 }
@@ -325,7 +319,7 @@ public class ChannelViewHolder(
                     // no longer swiping...
                     swiping = false
                     // signal end of swipe, just in case
-                    swipeEventListener.onSwipeEvent(SwipeEvent.End)
+                    swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
                     // consume the cancel event if we were swiping
                     swiping
                 }

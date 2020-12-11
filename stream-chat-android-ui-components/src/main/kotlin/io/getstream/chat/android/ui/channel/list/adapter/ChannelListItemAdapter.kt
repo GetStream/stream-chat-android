@@ -11,11 +11,11 @@ import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
 internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
-    public var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
+    var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
-    public var listenerContainer: ChannelListItemListenerContainer = ChannelListItemListenerContainer()
+    var listenerContainer: ChannelListItemListenerContainer = ChannelListItemListenerContainer()
 
-    public var endReached: Boolean = true
+    var endReached: Boolean = true
         set(value) {
             if (value) {
                 // if we've reached the end, remove the last item
@@ -24,9 +24,9 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             field = value
         }
 
-    public companion object {
-        public val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
-        public val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
+    companion object {
+        val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
+        val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
             nameChanged = false,
             avatarViewChanged = false,
             lastMessageChanged = false,
