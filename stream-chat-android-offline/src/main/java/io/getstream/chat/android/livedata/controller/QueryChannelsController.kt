@@ -40,7 +40,7 @@ public interface QueryChannelsController {
     public val endOfChannels: LiveData<Boolean>
     /**
      * The list of channels
-     * Typically we recommend using channelsState instead, it's a bit more complex but ensures
+     * Typically we recommend using [channelsState] instead, it's a bit more complex but ensures
      * that you're handling all edge cases
      *
      * @see channelsState
