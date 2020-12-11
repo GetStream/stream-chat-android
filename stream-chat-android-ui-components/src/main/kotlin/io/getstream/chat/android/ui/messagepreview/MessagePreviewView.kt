@@ -67,8 +67,8 @@ public class MessagePreviewView : FrameLayout {
     }
 
     private fun formatChannelName(message: Message): CharSequence {
-        val channel = message.channel
-        return if (channel != null && channel.memberCount > 2) {
+        val channel = message.channelInfo
+        return if (channel?.name != null && channel.memberCount > 2) {
             Html.fromHtml(
                 context.getString(
                     R.string.stream_ui_message_sender_title_in_channel,

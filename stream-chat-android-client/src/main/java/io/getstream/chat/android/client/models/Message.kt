@@ -84,7 +84,8 @@ public data class Message(
     var showInChannel: Boolean = false,
 
     @IgnoreSerialisation
+    @SerializedName("channel")
     @InternalStreamChatApi
-    var channel: Channel? = null,
+    var channelInfo: ChannelInfo? = null,
 
 ) : CustomObject

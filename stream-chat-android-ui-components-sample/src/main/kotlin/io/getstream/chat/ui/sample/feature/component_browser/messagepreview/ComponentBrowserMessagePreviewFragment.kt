@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessagePreviewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 import java.util.Date
@@ -32,6 +33,7 @@ class ComponentBrowserMessagePreviewFragment : Fragment() {
         _binding = null
     }
 
+    @InternalStreamChatApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -41,11 +43,10 @@ class ComponentBrowserMessagePreviewFragment : Fragment() {
                 user = randomUser(),
                 createdAt = Date(120, 7, 15, 14, 22),
                 text = "Hello world, how are you doing?",
-                channel = Channel(
+                channelInfo = ChannelInfo(
                     memberCount = 2,
-                ).apply {
-                    name = "Direct Message"
-                }
+                    name = "Direct Message",
+                ),
             )
         )
 
@@ -55,11 +56,10 @@ class ComponentBrowserMessagePreviewFragment : Fragment() {
                 user = randomUser(),
                 createdAt = Date(120, 7, 15, 14, 22),
                 text = "Hello world, how are you doing?",
-                channel = Channel(
+                channelInfo = ChannelInfo(
                     memberCount = 3,
-                ).apply {
-                    name = "General"
-                }
+                    name = "General",
+                ),
             )
         )
 
@@ -112,11 +112,10 @@ class ComponentBrowserMessagePreviewFragment : Fragment() {
                 },
                 createdAt = Date(120, 7, 15, 14, 22),
                 text = "This is a really long message which will not fit on a single line in the preview",
-                channel = Channel(
+                channelInfo = ChannelInfo(
                     memberCount = 3,
-                ).apply {
-                    name = "General Team Chat"
-                }
+                    name = "General Team Chat",
+                ),
             )
         )
     }
