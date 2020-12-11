@@ -67,10 +67,6 @@ class ChannelListFragment : Fragment() {
                 ChatLogger.instance.logD(it.name, "delete me!")
             }
 
-            setMoreOptionsClickListener {
-                ChatLogger.instance.logD(it.name, "Show more options!")
-            }
-
             viewModel.bindView(this, viewLifecycleOwner)
         }
 

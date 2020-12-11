@@ -12,8 +12,11 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
@@ -31,14 +34,25 @@ public class ChannelsView @JvmOverloads constructor(
 
     init {
         addView(channelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+
         emptyStateView.apply {
             isVisible = false
             addView(this, defaultChildLayoutParams)
         }
+
         loadingView.apply {
             isVisible = false
             addView(loadingView, defaultChildLayoutParams)
         }
+
+        setMoreOptionsClickListener { channel ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                ChannelActionsDialogFragment
+                    .newInstance(channel.cid, !channel.isDirectMessaging())
+                    .show(fragmentManager, null)
+            }
+        }
+
         parseAttrs(attrs)
     }
 
