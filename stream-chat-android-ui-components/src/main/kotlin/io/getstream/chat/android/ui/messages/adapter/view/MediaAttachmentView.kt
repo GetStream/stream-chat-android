@@ -3,12 +3,13 @@ package io.getstream.chat.android.ui.messages.adapter.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ImageLoader.load
-import com.getstream.sdk.chat.adapter.constraintViewToParentBySide
+import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
@@ -26,15 +27,15 @@ internal class MediaAttachmentView : ConstraintLayout {
         defStyleRes
     )
 
-    private val binding: StreamUiMediaAttachmentViewBinding = StreamUiMediaAttachmentViewBinding.inflate(LayoutInflater.from(context)).also {
-        it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        val padding = 1.dpToPx()
-        it.root.setPadding(padding, padding, padding, padding)
-        addView(it.root)
-        constraintViewToParentBySide(it.root, ConstraintSet.LEFT)
-        constraintViewToParentBySide(it.root, ConstraintSet.TOP)
-    }
-
+    internal val binding: StreamUiMediaAttachmentViewBinding =
+        StreamUiMediaAttachmentViewBinding.inflate(LayoutInflater.from(context)).also {
+            it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+            val padding = 1.dpToPx()
+            it.root.setPadding(padding, padding, padding, padding)
+            addView(it.root)
+            constrainViewToParentBySide(it.root, ConstraintSet.LEFT)
+            constrainViewToParentBySide(it.root, ConstraintSet.TOP)
+        }
 
     fun showLoading(isLoading: Boolean) {
         binding.loadImage.isVisible = isLoading
@@ -65,5 +66,9 @@ internal class MediaAttachmentView : ConstraintLayout {
             alpha = 128
             setTint(ContextCompat.getColor(context, R.color.stream_ui_black))
         }
+    }
+
+    fun setImageScaleType(scaleType: ImageView.ScaleType) {
+        binding.imageView.scaleType = scaleType
     }
 }

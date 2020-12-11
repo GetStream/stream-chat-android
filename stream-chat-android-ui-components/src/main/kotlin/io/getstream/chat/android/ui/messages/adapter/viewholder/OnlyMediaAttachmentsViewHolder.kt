@@ -19,13 +19,13 @@ public class OnlyMediaAttachmentsViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem) {
-        if (data.message.attachments.firstOrNull()?.type == "image") {
-            showImage(data.message.attachments.first(), data.isMine)
+        if (data.message.attachments.all { it.type == "image" }) {
+            showAttachments(data.message.attachments, data.isMine)
         }
     }
 
-    private fun showImage(imageAttachment: Attachment, isMine: Boolean) {
+    private fun showAttachments(imageAttachments: Collection<Attachment>, isMine: Boolean) {
         constraintView(isMine, binding.mediaAttachmentsGroupView, binding.root)
-        binding.mediaAttachmentsGroupView.showAttachments(imageAttachment)
+        binding.mediaAttachmentsGroupView.showAttachments(*imageAttachments.toTypedArray())
     }
 }

@@ -31,7 +31,7 @@ class OnlyAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBro
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri2))),
+                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1), Attachment(type = "image", imageUrl = uri2))),
                 positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),

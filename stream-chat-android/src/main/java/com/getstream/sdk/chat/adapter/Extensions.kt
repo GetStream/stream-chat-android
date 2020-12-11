@@ -19,8 +19,13 @@ public fun ConstraintLayout.updateConstraints(actions: ConstraintSet.() -> Unit)
 }
 
 @InternalStreamChatApi
-public fun ConstraintLayout.constraintViewToParentBySide(view: View, side: Int) {
+public fun ConstraintLayout.constrainViewToParentBySide(view: View, side: Int) {
     updateConstraints {
-        connect(view.id, side, ConstraintSet.PARENT_ID, side)
+        constrainViewToParentBySide(view, side)
     }
+}
+
+@InternalStreamChatApi
+public fun ConstraintSet.constrainViewToParentBySide(view: View, side: Int) {
+    connect(view.id, side, ConstraintSet.PARENT_ID, side)
 }
