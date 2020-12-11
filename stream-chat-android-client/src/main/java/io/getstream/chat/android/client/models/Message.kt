@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 public data class Message(
@@ -80,6 +81,10 @@ public data class Message(
     val i18n: Map<String, String> = mapOf(),
 
     @SerializedName("show_in_channel")
-    var showInChannel: Boolean = false
+    var showInChannel: Boolean = false,
+
+    @IgnoreSerialisation
+    @InternalStreamChatApi
+    var channel: Channel? = null,
 
 ) : CustomObject

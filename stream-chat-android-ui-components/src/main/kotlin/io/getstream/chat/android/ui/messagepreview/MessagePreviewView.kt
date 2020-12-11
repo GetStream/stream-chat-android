@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messagepreview
 
 import android.content.Context
+import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -8,7 +9,10 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
+import io.getstream.chat.android.ui.utils.extensions.bold
+import io.getstream.chat.android.ui.utils.extensions.singletonList
 
 public class MessagePreviewView : FrameLayout {
 
@@ -55,10 +59,43 @@ public class MessagePreviewView : FrameLayout {
         attrs ?: return
     }
 
-    public fun setMessage(message: Message) {
+    public fun setMessage(message: Message, currentUserMention: String? = null) {
         binding.avatarView.setUserData(message.user)
-        binding.channelNameLabel.text = message.user.name
-        binding.messageLabel.text = message.text
+        binding.senderNameLabel.text = formatChannelName(message)
+        binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
         binding.messageTimeLabel.text = dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
+    }
+
+    private fun formatChannelName(message: Message): CharSequence {
+        val channel = message.channel
+        return if (channel != null && channel.memberCount > 2) {
+            Html.fromHtml(
+                context.getString(
+                    R.string.stream_ui_message_sender_title_in_channel,
+                    message.user.name,
+                    channel.name,
+                )
+            )
+        } else {
+            message.user.name.bold()
+        }
+    }
+
+    private fun formatMessagePreview(message: Message, currentUserMention: String?): CharSequence {
+        val attachmentsNames = message.attachments
+            .mapNotNull { attachment ->
+                attachment.title ?: attachment.name
+            }
+
+        if (attachmentsNames.isNotEmpty()) {
+            return context.getString(R.string.stream_ui_message_file, attachmentsNames.joinToString())
+        }
+
+        if (currentUserMention != null) {
+            // bold mentions of the current user
+            return message.text.trim().bold(currentUserMention.singletonList())
+        }
+
+        return message.text.trim()
     }
 }
