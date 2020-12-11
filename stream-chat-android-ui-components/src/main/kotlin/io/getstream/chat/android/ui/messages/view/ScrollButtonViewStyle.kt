@@ -5,13 +5,13 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 
-public class ScrollButtonViewStyle(
-    public val scrollButtonEnabled: Boolean,
-    public val scrollButtonUnreadEnabled: Boolean,
-    public val scrollButtonColor: Int,
-    public val scrollButtonRippleColor: Int,
-    public val scrollButtonBadgeColor: Int,
-    public val scrollButtonIcon: Drawable?
+internal class ScrollButtonViewStyle(
+    val scrollButtonEnabled: Boolean,
+    val scrollButtonUnreadEnabled: Boolean,
+    val scrollButtonColor: Int,
+    val scrollButtonRippleColor: Int,
+    val scrollButtonBadgeColor: Int,
+    val scrollButtonIcon: Drawable?
 ) {
 
     internal class Builder(private val a: TypedArray) {

@@ -6,9 +6,9 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
-public class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
+internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
 
-    public val scrollButtonViewStyle: ScrollButtonViewStyle
+    internal val scrollButtonViewStyle: ScrollButtonViewStyle
 
     init {
         context.obtainStyledAttributes(
