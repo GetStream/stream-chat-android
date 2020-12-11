@@ -1,38 +1,23 @@
 package com.getstream.sdk.chat.utils
 
-import android.annotation.SuppressLint
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import android.content.Context
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import org.threeten.bp.LocalDateTime
 import java.util.Date
-import java.util.Locale
 
-internal object DateFormatter {
+public interface DateFormatter {
+    public fun formatDate(localDateTime: LocalDateTime?): String
 
-    @SuppressLint("ConstantLocale")
-    private val DEFAULT_LOCALE = Locale.getDefault()
-    private val DATE_FORMAT: DateFormat = SimpleDateFormat("MMM d", DEFAULT_LOCALE)
-    private val TIME_FORMAT: DateFormat = SimpleDateFormat("HH:mm", DEFAULT_LOCALE)
-
-    /**
-     * Formats the given [date] as 24h time if it's on the current day, and
-     * as a month/day format date otherwise.
-     */
-    @JvmStatic
-    fun formatAsTimeOrDate(date: Date?): String {
-        return when {
-            date == null -> ""
-            isFromToday(date) -> TIME_FORMAT.format(date)
-            else -> DATE_FORMAT.format(date)
-        }
+    public companion object {
+        @JvmStatic
+        public fun from(context: Context): DateFormatter = DefaultDateFormatter(context)
     }
+}
 
-    private fun isFromToday(date: Date): Boolean {
-        val today = Calendar.getInstance()
-        val dateCalendar = Calendar.getInstance().apply {
-            time = date
-        }
-        return today[Calendar.DAY_OF_YEAR] == dateCalendar[Calendar.DAY_OF_YEAR] &&
-            today[Calendar.YEAR] == dateCalendar[Calendar.YEAR]
-    }
+/**
+ * Extension to be able to format objects of the deprecated [Date] type.
+ */
+@InternalStreamChatApi
+public fun DateFormatter.formatDate(date: Date?): String {
+    return formatDate(date?.let(DateConverter::toLocalDateTime))
 }

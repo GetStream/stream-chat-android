@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
@@ -206,6 +207,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         DEFAULT_GIPHY_SEND_LISTENER
     )
 
+    private lateinit var messageDateFormatter: DateFormatter
     private lateinit var bubbleHelper: BubbleHelper
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
     private lateinit var messageViewHolderFactory: MessageViewHolderFactory
@@ -438,6 +440,10 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, context)
         }
 
+        if (::messageDateFormatter.isInitialized.not()) {
+            messageDateFormatter = DateFormatter.from(context)
+        }
+
         // Inject Attachment factory
         attachmentViewHolderFactory.listenerContainer = listenerContainer
         attachmentViewHolderFactory.bubbleHelper = bubbleHelper
@@ -446,6 +452,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         messageViewHolderFactory.listenerContainer = listenerContainer
         messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
         messageViewHolderFactory.bubbleHelper = bubbleHelper
+        messageViewHolderFactory.messageDateFormatter = messageDateFormatter
 
         adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
         adapter.setHasStableIds(true)
@@ -538,8 +545,13 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
+    }
+
+    public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        this.messageDateFormatter = messageDateFormatter
     }
 
     override fun displayNewMessage(listItem: MessageListItemWrapper) {

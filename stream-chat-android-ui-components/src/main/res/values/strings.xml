@@ -73,7 +73,4 @@
         <item quantity="one">%d Message Reaction</item>
         <item quantity="other">%d Message Reactions</item>
     </plurals>
-
-    <!-- Message Preview -->
-    <string name="stream_ui_message_preview_yesterday">Yesterday</string>
 </resources>
