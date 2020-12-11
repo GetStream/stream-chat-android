@@ -6,7 +6,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal inline val ViewGroup.inflater: LayoutInflater
+@InternalStreamChatApi
+public inline val ViewGroup.inflater: LayoutInflater
     get() = LayoutInflater.from(context)
 
 @InternalStreamChatApi
