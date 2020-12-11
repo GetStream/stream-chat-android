@@ -12,8 +12,8 @@
         <flag name="italic" value="2" />
     </attr>
     <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
-        <enum name="top" value="0"/>
-        <enum name="bottom" value="1"/>
+        <enum name="top" value="0" />
+        <enum name="bottom" value="1" />
     </attr>
 
     <attr name="streamUiAvatarWidth" format="dimension|reference" />
@@ -213,7 +213,17 @@
     </declare-styleable>
 
     <declare-styleable name="AttachmentGallery">
-        <attr name="streamUiCountText" format="string"/>
-        <attr name="streamUiCountTextColor" format="color|reference"/>
+        <attr name="streamUiCountText" format="string" />
+        <attr name="streamUiCountTextColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MessageListView">
+        <!-- Scroll button-->
+        <attr name="streamUiScrollButtonEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonColor" format="color|reference" />
+        <attr name="streamUiScrollButtonRippleColor" format="color|reference" />
+        <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
+        <attr name="streamUiScrollButtonIcon" format="reference" />
     </declare-styleable>
 </resources>
