@@ -9,7 +9,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListI
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
-public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
+internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
     public var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
@@ -32,11 +32,6 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             lastMessageChanged = false,
             readStateChanged = false
         )
-    }
-
-    public enum class ChannelItemType {
-        DEFAULT,
-        LOADING_MORE
     }
 
     // If we haven't reached the end of the channels, and we're in the last position, we're loading more
@@ -77,6 +72,7 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
                 deleteClickListener,
                 moreOptionsClickListener,
                 userClickListener,
+                swipeEventListener,
                 style
             )
         }

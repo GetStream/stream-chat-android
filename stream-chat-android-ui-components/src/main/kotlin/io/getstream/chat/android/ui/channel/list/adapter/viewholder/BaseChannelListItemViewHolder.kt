@@ -23,6 +23,8 @@ public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerVi
 
     protected open val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT
 
+    protected open val swipeEventListener: ChannelListView.SwipeEventListener = ChannelListView.SwipeEventListener.DEFAULT
+
     protected open val style: ChannelListViewStyle? = null
 
     public abstract fun bind(channel: Channel, diff: ChannelDiff)

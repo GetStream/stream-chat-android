@@ -12,9 +12,11 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.SwipeEventListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
 
 public class ChannelListView @JvmOverloads constructor(
@@ -24,15 +26,30 @@ public class ChannelListView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
 
     private var endReachedListener: EndReachedListener? = null
-    private val layoutManager: LinearLayoutManager
+    private val layoutManager: VerticalScrollPauseLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
 
+    internal class VerticalScrollPauseLayoutManager(context: Context) : LinearLayoutManager(context) {
+        var verticalScrollEnabled: Boolean = true
+
+        override fun canScrollVertically(): Boolean {
+            return verticalScrollEnabled && super.canScrollVertically()
+        }
+    }
+
     init {
         setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(context)
+        layoutManager = VerticalScrollPauseLayoutManager(context)
         setLayoutManager(layoutManager)
-        adapter = ChannelListItemAdapter()
+        adapter = ChannelListItemAdapter().apply {
+            listenerContainer.swipeEventListener = SwipeEventListener { event ->
+                layoutManager.verticalScrollEnabled = when (event) {
+                    is ChannelViewHolder.SwipeEvent.Move -> false
+                    else -> true
+                }
+            }
+        }
         parseStyleAttributes(context, attrs)
         addItemDecoration(dividerDecoration)
     }
@@ -93,6 +110,10 @@ public class ChannelListView @JvmOverloads constructor(
         requireAdapter().listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
+    public fun setSwipeEventListener(listener: SwipeEventListener?) {
+        requireAdapter().listenerContainer.swipeEventListener = listener ?: SwipeEventListener.DEFAULT
+    }
+
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
         dividerDecoration.drawableResource = drawableResource
     }
@@ -141,6 +162,14 @@ public class ChannelListView @JvmOverloads constructor(
         }
 
         public fun onClick(channel: Channel)
+    }
+
+    public fun interface SwipeEventListener {
+        public companion object {
+            public val DEFAULT: SwipeEventListener = SwipeEventListener { }
+        }
+
+        public fun onSwipeEvent(event: ChannelViewHolder.SwipeEvent)
     }
 
     public fun interface EndReachedListener {

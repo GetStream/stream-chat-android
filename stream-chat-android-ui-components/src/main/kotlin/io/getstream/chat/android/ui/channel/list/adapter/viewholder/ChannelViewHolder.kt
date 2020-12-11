@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -36,6 +37,7 @@ public class ChannelViewHolder(
     override val channelDeleteListener: ChannelListView.ChannelClickListener,
     override val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     override val userClickListener: ChannelListView.UserClickListener,
+    override val swipeEventListener: ChannelListView.SwipeEventListener,
     override val style: ChannelListViewStyle?,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
@@ -233,6 +235,11 @@ public class ChannelViewHolder(
         }
     }
 
+    public sealed class SwipeEvent {
+        public data class Move(val viewHolder: RecyclerView.ViewHolder, val dX: Float) : SwipeEvent()
+        public object End : SwipeEvent()
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
         // restore the view's last state
@@ -255,13 +262,12 @@ public class ChannelViewHolder(
                     // store the starting x & y so we can calculate total deltas
                     startX = event.rawX
                     startY = event.rawY
-
                     // initialize the previous x to the start values
                     prevX = startX
-
+                    // don't know if it's a swipe yet; assume it's not
                     swiping = false
-
-                    false // don't consume
+                    // don't consume
+                    swiping
                 }
 
                 MotionEvent.ACTION_MOVE -> {
@@ -273,7 +279,6 @@ public class ChannelViewHolder(
                     val lastMoveDeltaX = event.rawX - prevX
                     // now that we've calculated, update the previous x value with this event's x
                     prevX = event.rawX
-
                     // determine if it's a swipe by comparing total axis delta magnitude
                     swiping = totalDeltaX.absoluteValue > totalDeltaY.absoluteValue
 
@@ -288,40 +293,44 @@ public class ChannelViewHolder(
                                     view.x = clampedX
                                 }
                             }
+                            // send a swipe move event
+                            swipeEventListener.onSwipeEvent(SwipeEvent.Move(this@ChannelViewHolder, lastMoveDeltaX))
                         }
                     }
-
-                    swiping // consume if swiping
+                    // consume if we are swiping
+                    swiping
                 }
 
-                // determine snap and animate to it on action up
                 MotionEvent.ACTION_UP -> {
-
+                    // determine snap value
                     val snapValue = when {
                         view.x <= -(optionsMenuWidth * .5) -> -optionsMenuWidth
                         else -> 0f
                     }
-
+                    // animate to snap
                     view.animate().x(snapValue).setStartDelay(0).setDuration(100).start()
-
                     // persist channel item's menu state
                     swipeStateByChannelCid[cid] = if (snapValue < 0) MenuState.Open else MenuState.Closed
-
-                    swiping // consume if swiping
+                    // signal end of swipe
+                    swipeEventListener.onSwipeEvent(SwipeEvent.End)
+                    // consume if we were swiping
+                    swiping
                 }
 
-                // snap closed on cancel
                 MotionEvent.ACTION_CANCEL -> {
-
+                    // animate closed
                     view.animate().x(0f).setStartDelay(0).setDuration(100).start()
-
                     // persist channel item's menu state as closed
                     swipeStateByChannelCid[cid] = MenuState.Closed
-
-                    false // don't consume
+                    // no longer swiping...
+                    swiping = false
+                    // signal end of swipe, just in case
+                    swipeEventListener.onSwipeEvent(SwipeEvent.End)
+                    // consume the cancel event if we were swiping
+                    swiping
                 }
 
-                else -> false // don't consume
+                else -> false
             }
         }
     }

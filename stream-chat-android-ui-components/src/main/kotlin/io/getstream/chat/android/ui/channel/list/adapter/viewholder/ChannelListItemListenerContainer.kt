@@ -8,34 +8,41 @@ public class ChannelListItemListenerContainer(
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     moreOptionsClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
+    swipeEventListener: ChannelListView.SwipeEventListener = ChannelListView.SwipeEventListener.DEFAULT
 ) {
-    public var channelClickListener: ChannelListView.ChannelClickListener by Provider(channelClickListener) { getClickListener ->
+    public var channelClickListener: ChannelListView.ChannelClickListener by Provider(channelClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getClickListener().onClick(channel)
+            getListener().onClick(channel)
         }
     }
 
-    public var channelLongClickListener: ChannelListView.ChannelClickListener by Provider(channelLongClickListener) { getClickListener ->
+    public var channelLongClickListener: ChannelListView.ChannelClickListener by Provider(channelLongClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getClickListener().onClick(channel)
+            getListener().onClick(channel)
         }
     }
 
-    public var deleteClickListener: ChannelListView.ChannelClickListener by Provider(deleteClickListener) { getClickListener ->
+    public var deleteClickListener: ChannelListView.ChannelClickListener by Provider(deleteClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getClickListener().onClick(channel)
+            getListener().onClick(channel)
         }
     }
 
-    public var moreOptionsClickListener: ChannelListView.ChannelClickListener by Provider(moreOptionsClickListener) { getClickListener ->
+    public var moreOptionsClickListener: ChannelListView.ChannelClickListener by Provider(moreOptionsClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getClickListener().onClick(channel)
+            getListener().onClick(channel)
         }
     }
 
-    public var userClickListener: ChannelListView.UserClickListener by Provider(userClickListener) { getClickListener ->
+    public var userClickListener: ChannelListView.UserClickListener by Provider(userClickListener) { getListener ->
         ChannelListView.UserClickListener { user ->
-            getClickListener().onUserClick(user)
+            getListener().onUserClick(user)
+        }
+    }
+
+    public var swipeEventListener: ChannelListView.SwipeEventListener by Provider(swipeEventListener) { getListener ->
+        ChannelListView.SwipeEventListener { event ->
+            getListener().onSwipeEvent(event)
         }
     }
 }
