@@ -125,7 +125,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private lateinit var loadMoreListener: EndlessScrollListener
-    private var loadMoreThreshold: Int = context.resources.getInteger(R.integer.stream_load_more_threshold)
 
     private lateinit var channel: Channel
     private lateinit var currentUser: User
@@ -240,10 +239,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             configureAttributes(attr)
         }
 
-        loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
-            endRegionReachedHandler()
-        }
-
         initScrollButtonBehaviour()
 
         hasScrolledUp = false
@@ -313,10 +308,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
-        loadMoreThreshold = tArray.getInteger(
+        tArray.getInteger(
             R.styleable.MessageListView_streamLoadMoreThreshold,
             context.resources.getInteger(R.integer.stream_load_more_threshold)
-        )
+        ).also { loadMoreThreshold ->
+            loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                endRegionReachedHandler()
+            }
+        }
 
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
