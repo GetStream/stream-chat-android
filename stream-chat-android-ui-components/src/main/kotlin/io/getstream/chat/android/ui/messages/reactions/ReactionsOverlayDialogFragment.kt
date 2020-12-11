@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapp
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.getDimension
-import java.io.Serializable
 
 internal class ReactionsOverlayDialogFragment : DialogFragment() {
 
@@ -28,9 +27,7 @@ internal class ReactionsOverlayDialogFragment : DialogFragment() {
 
     private val messageViewHolderFactory = MessageListItemViewHolderFactory()
     private val messageItem: MessageListItem.MessageItem by lazy {
-        val wrapper = requireArguments().getSerializable(ARG_MESSAGE)
-        wrapper as MessageItemWrapper
-        wrapper.messageListItem
+        requireArguments().getSerializable(ARG_MESSAGE) as MessageListItem.MessageItem
     }
     private lateinit var messageView: View
 
@@ -145,8 +142,6 @@ internal class ReactionsOverlayDialogFragment : DialogFragment() {
         )
     }
 
-    private class MessageItemWrapper(val messageListItem: MessageListItem.MessageItem) : Serializable
-
     companion object {
         const val TAG = "reactions"
 
@@ -154,7 +149,7 @@ internal class ReactionsOverlayDialogFragment : DialogFragment() {
 
         fun newInstance(messageItem: MessageListItem.MessageItem): ReactionsOverlayDialogFragment {
             return ReactionsOverlayDialogFragment().apply {
-                arguments = bundleOf(ARG_MESSAGE to MessageItemWrapper(messageItem))
+                arguments = bundleOf(ARG_MESSAGE to messageItem)
             }
         }
     }

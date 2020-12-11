@@ -171,7 +171,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             context.getFragmentManager()?.let {
                 // TODO: pass a real MessageItem instead of mock
                 val mockMessageItem = MessageItem(
-                    message.apply {
+                    message.copy(text = "MOCKED TEXT: ${message.text}").apply {
                         latestReactions.forEach { it.type = ReactionType.LOVE.type }
                         ownReactions.forEach { it.type = ReactionType.LOVE.type }
                     },
