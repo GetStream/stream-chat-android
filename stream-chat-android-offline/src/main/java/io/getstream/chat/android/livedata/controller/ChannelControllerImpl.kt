@@ -366,7 +366,7 @@ internal class ChannelControllerImpl(
         runChannelQuery(QueryChannelPaginationRequest(limit))
     }
 
-    fun loadMoreMessagesRequest(
+    private fun loadMoreMessagesRequest(
         limit: Int = 30,
         direction: Pagination
     ): QueryChannelPaginationRequest {
@@ -1321,6 +1321,24 @@ internal class ChannelControllerImpl(
             // Note that we don't handle offline storage for threads at the moment.
         }
         return result
+    }
+
+    internal suspend fun loadMessagesAroundMessageId(messageId: String, offset: Int): Result<Message> {
+        val result = client.getMessage(messageId).execute()
+        val message = if (result.isSuccess) {
+            result.data()
+        } else {
+            null
+        }
+        return if (message != null) {
+            _messages.value = emptyMap()
+            upsertMessage(message)
+            loadNewerMessages(offset)
+            loadOlderMessages(offset)
+            Result(message)
+        } else {
+            Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
+        }
     }
 
     companion object {
