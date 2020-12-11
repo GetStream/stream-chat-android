@@ -19,7 +19,7 @@
     <attr name="streamUiAvatarWidth" format="dimension|reference" />
     <attr name="streamUiAvatarHeight" format="dimension|reference" />
 
-    <declare-styleable name="StreamUiAvatarView">
+    <declare-styleable name="AvatarView">
         <attr name="streamUiAvatarBorderWidth" />
         <attr name="streamUiAvatarBorderColor" />
         <attr name="streamUiAvatarTextSize" />
@@ -82,7 +82,7 @@
     </declare-styleable>
 
     <!--ChannelsHeaderView-->
-    <declare-styleable name="StreamUiChannelListHeaderView">
+    <declare-styleable name="ChannelListHeaderView">
         <attr name="streamUiAvatarWidth" />
         <attr name="streamUiAvatarHeight" />
         <attr name="streamUiAvatarBorderWidth" />
@@ -128,7 +128,7 @@
     </declare-styleable>
 
     <!--MessageListHeaderView-->
-    <declare-styleable name="StreamUiMessagesHeaderView" parent="AvatarView">
+    <declare-styleable name="MessagesHeaderView" parent="AvatarView">
         <attr name="streamUiMessagesHeaderShowUserAvatar" format="boolean" />
 
         <attr name="streamUiMessagesHeaderTitleTextSize" format="dimension|reference" />
@@ -185,45 +185,34 @@
     </declare-styleable>
 
     <!--ReactionsView-->
-    <declare-styleable name="StreamUiReactionsViewStyle">
+    <declare-styleable name="ReactionsView">
         <attr name="streamUiReactionsViewOrientation" format="enum">
-            <enum name="left" value="0"/>
-            <enum name="right" value="1"/>
-            <enum name="undefined" value="2"/>
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="undefined" value="2" />
         </attr>
 
-        <attr name="streamUiViewReactionsBubbleColorMine" format="color|reference" />
-        <attr name="streamUiViewReactionsBubbleBorderColorMine" format="color|reference" />
-        <attr name="streamUiViewReactionsBubbleColorTheirs" format="color|reference" />
-        <attr name="streamUiViewReactionsTotalHeight" format="dimension" />
-        <attr name="streamUiViewReactionsHorizontalPadding" format="dimension" />
-        <attr name="streamUiViewReactionsItemSize" format="dimension" />
-        <attr name="streamUiViewReactionsItemMargin" format="dimension" />
-        <attr name="streamUiViewReactionsBubbleHeight" format="dimension" />
-        <attr name="streamUiViewReactionsBubbleRadius" format="dimension" />
-        <attr name="streamUiViewReactionsLargeTailBubbleCy" format="dimension" />
-        <attr name="streamUiViewReactionsLargeTailBubbleRadius" format="dimension" />
-        <attr name="streamUiViewReactionsLargeTailBubbleOffset" format="dimension" />
-        <attr name="streamUiViewReactionsSmallTailBubbleCy" format="dimension" />
-        <attr name="streamUiViewReactionsSmallTailBubbleRadius" format="dimension" />
-        <attr name="streamUiViewReactionsSmallTailBubbleOffset" format="dimension" />
-
-        <attr name="streamUiEditReactionsBubbleColor" format="color|reference" />
-        <attr name="streamUiEditReactionsTotalHeight" format="dimension" />
-        <attr name="streamUiEditReactionsHorizontalPadding" format="dimension" />
-        <attr name="streamUiEditReactionsItemSize" format="dimension" />
-        <attr name="streamUiEditReactionsItemMargin" format="dimension" />
-        <attr name="streamUiEditReactionsBubbleHeight" format="dimension" />
-        <attr name="streamUiEditReactionsBubbleRadius" format="dimension" />
-        <attr name="streamUiEditReactionsLargeTailBubbleCy" format="dimension" />
-        <attr name="streamUiEditReactionsLargeTailBubbleRadius" format="dimension" />
-        <attr name="streamUiEditReactionsLargeTailBubbleOffset" format="dimension" />
-        <attr name="streamUiEditReactionsSmallTailBubbleCy" format="dimension" />
-        <attr name="streamUiEditReactionsSmallTailBubbleRadius" format="dimension" />
-        <attr name="streamUiEditReactionsSmallTailBubbleOffset" format="dimension" />
+        <attr name="streamUiReactionsBubbleColorMine" format="color|reference" />
+        <attr name="streamUiReactionsBubbleColorTheirs" format="color|reference" />
+        <attr name="streamUiReactionsTotalHeight" format="dimension" />
+        <attr name="streamUiReactionsHorizontalPadding" format="dimension" />
+        <attr name="streamUiReactionsItemSize" format="dimension" />
+        <attr name="streamUiReactionsItemMargin" format="dimension" />
+        <attr name="streamUiReactionsBubbleHeight" format="dimension" />
+        <attr name="streamUiReactionsBubbleRadius" format="dimension" />
+        <attr name="streamUiReactionsLargeTailBubbleCy" format="dimension" />
+        <attr name="streamUiReactionsLargeTailBubbleRadius" format="dimension" />
+        <attr name="streamUiReactionsLargeTailBubbleOffset" format="dimension" />
+        <attr name="streamUiReactionsSmallTailBubbleCy" format="dimension" />
+        <attr name="streamUiReactionsSmallTailBubbleRadius" format="dimension" />
+        <attr name="streamUiReactionsSmallTailBubbleOffset" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="StreamUiAttachmentGalleryView">
+    <declare-styleable name="ViewReactionsView">
+        <attr name="streamUiReactionsBubbleBorderColorMine" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AttachmentGallery">
         <attr name="streamUiCountText" format="string"/>
         <attr name="streamUiCountTextColor" format="color|reference"/>
     </declare-styleable>

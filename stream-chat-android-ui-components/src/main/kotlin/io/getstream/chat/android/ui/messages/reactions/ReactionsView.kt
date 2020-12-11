@@ -93,9 +93,9 @@ public abstract class ReactionsView : RecyclerView {
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.StreamUiReactionsViewStyle, 0, 0).use {
+        context.obtainStyledAttributes(attrs, R.styleable.ReactionsView, 0, 0).use {
             orientation =
-                it.getEnum(R.styleable.StreamUiReactionsViewStyle_streamUiReactionsViewOrientation, Orientation.UNDEFINED)
+                it.getEnum(R.styleable.ReactionsView_streamUiReactionsViewOrientation, Orientation.UNDEFINED)
         }
     }
 
