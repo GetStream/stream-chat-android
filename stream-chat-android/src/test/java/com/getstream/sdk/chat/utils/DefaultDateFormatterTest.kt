@@ -1,8 +1,7 @@
-package io.getstream.chat.android.ui.utils
+package com.getstream.sdk.chat.utils
 
 import com.google.common.truth.Truth
 import com.squareup.burst.BurstJUnit4
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -25,13 +24,13 @@ internal class DefaultDateFormatterTest {
         override fun dateTimePattern(): String = dateTimePattern
     }
 
-    @Test
+    @org.junit.Test
     fun `Date formatting is correct`(testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
             TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern)
         )
 
-        val formattedDate = formatter.formatMessageDate(testCase.dateToFormat)
+        val formattedDate = formatter.formatDate(testCase.dateToFormat)
 
         Truth.assertThat(formattedDate).isEqualTo(testCase.expectedResult)
     }

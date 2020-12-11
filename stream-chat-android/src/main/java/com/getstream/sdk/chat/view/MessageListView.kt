@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -123,9 +124,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
-    private val loadMoreListener = EndlessScrollListener {
-        endRegionReachedHandler()
-    }
+    private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
     private lateinit var currentUser: User
@@ -209,6 +208,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         DEFAULT_GIPHY_SEND_LISTENER
     )
 
+    private lateinit var messageDateFormatter: DateFormatter
     private lateinit var bubbleHelper: BubbleHelper
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
     private lateinit var messageViewHolderFactory: MessageViewHolderFactory
@@ -301,10 +301,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
-        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+        tArray.getInteger(
             R.styleable.MessageListView_streamLoadMoreThreshold,
             context.resources.getInteger(R.integer.stream_load_more_threshold)
-        )
+        ).also { loadMoreThreshold ->
+            loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                endRegionReachedHandler()
+            }
+        }
 
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
@@ -358,7 +362,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     override fun setLoadingMore(loadingMore: Boolean) {
-        loadMoreListener.paginationEnabled = !loadingMore
+        if (loadingMore) {
+            loadMoreListener.disablePagination()
+        } else {
+            loadMoreListener.enablePagination()
+        }
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
@@ -426,6 +434,10 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, context)
         }
 
+        if (::messageDateFormatter.isInitialized.not()) {
+            messageDateFormatter = DateFormatter.from(context)
+        }
+
         // Inject Attachment factory
         attachmentViewHolderFactory.listenerContainer = listenerContainer
         attachmentViewHolderFactory.bubbleHelper = bubbleHelper
@@ -434,6 +446,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         messageViewHolderFactory.listenerContainer = listenerContainer
         messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
         messageViewHolderFactory.bubbleHelper = bubbleHelper
+        messageViewHolderFactory.messageDateFormatter = messageDateFormatter
 
         adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
         adapter.setHasStableIds(true)
@@ -526,8 +539,13 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
+    }
+
+    public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        this.messageDateFormatter = messageDateFormatter
     }
 
     override fun displayNewMessage(listItem: MessageListItemWrapper) {

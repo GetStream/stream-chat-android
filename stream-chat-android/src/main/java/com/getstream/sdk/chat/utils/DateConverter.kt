@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.utils
+package com.getstream.sdk.chat.utils
 
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -11,5 +11,13 @@ internal object DateConverter {
         return Instant.ofEpochMilli(date.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
+    }
+
+    fun toDate(localDateTime: LocalDateTime): Date {
+        return Date(
+            localDateTime.atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        )
     }
 }

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.utils
+package com.getstream.sdk.chat.startup
 
 import android.content.Context
 import androidx.startup.Initializer
