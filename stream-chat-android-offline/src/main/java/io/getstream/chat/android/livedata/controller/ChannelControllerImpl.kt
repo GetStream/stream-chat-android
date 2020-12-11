@@ -63,8 +63,10 @@ import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -113,11 +115,23 @@ internal class ChannelControllerImpl(
     val unfilteredMessages = _messages.map { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
+    private val sortedVisibleMessages: StateFlow<List<Message>> =
+        messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    override val messages: LiveData<List<Message>> = sortedVisibleMessages.asLiveData()
 
-    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
+    private val _messagesState: StateFlow<ChannelController.MessagesState> =
+        _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
+            when {
+                loading -> ChannelController.MessagesState.Loading
+                messages.isEmpty() -> ChannelController.MessagesState.OfflineNoResults
+                else -> ChannelController.MessagesState.Result(messages)
+            }
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelController.MessagesState.NoQueryActive)
+    override val messagesState = _messagesState.asLiveData()
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): LiveData<List<Message>> {
+    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages).asLiveData()
+
+    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): Flow<List<Message>> {
         return messages.map { messageMap ->
             messageMap.values
                 .asSequence()
@@ -125,7 +139,7 @@ internal class ChannelControllerImpl(
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
-        }.asLiveData()
+        }
     }
 
     /** the number of people currently watching the channel */
@@ -344,15 +358,11 @@ internal class ChannelControllerImpl(
 
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
-        if (_loading.value == true) {
+        if (_loading.value) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
             return
         }
-        _loading.value = true
-        val pagination = QueryChannelPaginationRequest(limit)
-        runChannelQuery(pagination)
-
-        _loading.value = false
+        runChannelQuery(QueryChannelPaginationRequest(limit))
     }
 
     fun loadMoreMessagesRequest(
@@ -380,36 +390,29 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        if (_loadingOlderMessages.value) {
-            logger.logI("Another request to load older messages is in progress. Ignoring this request.")
-            return Result(
-                null,
-                ChatError("Another request to load older messages is in progress. Ignoring this request.")
-            )
-        }
-        _loadingOlderMessages.value = true
-        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
-        val result = runChannelQuery(pagination)
-        _loadingOlderMessages.value = false
-        return result
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.LESS_THAN))
     }
 
     suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        if (_loadingNewerMessages.value) {
-            logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
-            return Result(
-                null,
-                ChatError("Another request to load newer messages is in progress. Ignoring this request.")
-            )
-        }
-        _loadingNewerMessages.value = true
-        val pagination = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
-        val result = runChannelQuery(pagination)
-        _loadingNewerMessages.value = false
-        return result
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
     }
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+        val loader = when (pagination.messageFilterDirection) {
+            Pagination.GREATER_THAN,
+            Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
+            Pagination.LESS_THAN,
+            Pagination.LESS_THAN_OR_EQUAL -> _loadingOlderMessages
+            null -> _loading
+        }
+        if (loader.value) {
+            logger.logI("Another request to load messages is in progress. Ignoring this request.")
+            return Result(
+                null,
+                ChatError("Another request to load messages is in progress. Ignoring this request.")
+            )
+        }
+        loader.value = true
         // first we load the data from room and update the messages and channel livedata
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
@@ -429,7 +432,7 @@ internal class ChannelControllerImpl(
         }
 
         // if we are online we we run the actual API call
-        return if (queryOnlineJob != null) {
+        val result = if (queryOnlineJob != null) {
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
@@ -440,6 +443,8 @@ internal class ChannelControllerImpl(
             recoveryNeeded = true
             Result(localChannel, null)
         }
+        loader.value = false
+        return result
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
@@ -447,7 +452,6 @@ internal class ChannelControllerImpl(
 
         selectedChannel?.also { channel ->
             channel.config = domainImpl.getChannelConfig(channel.type)
-            _loading.value = false
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 

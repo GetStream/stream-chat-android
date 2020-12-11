@@ -51,7 +51,7 @@ internal suspend fun waitForSetUser(
     client: ChatClient,
     user: User,
     token: String,
-    timeMillis: Long = 1000
+    timeMillis: Long = 5000
 ) {
     val lock = CompletableDeferred<Unit>()
     client.setUser(

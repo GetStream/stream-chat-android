@@ -89,6 +89,7 @@ private class Fixture {
     private val queryChannelsController: QueryChannelsController = mock()
 
     private val channelsLiveData: MutableLiveData<List<Channel>> = MutableLiveData()
+    private val channelsState = MutableLiveData<QueryChannelsController.ChannelsState>()
 
     init {
         When calling chatDomain.currentUser doReturn user
@@ -104,14 +105,19 @@ private class Fixture {
         When calling queryChannelsControllerResult.data() doReturn queryChannelsController
         When calling useCases.queryChannelsLoadMore doReturn queryChannelsLoadMore
         When calling queryChannelsController.channels doReturn channelsLiveData
+        When calling queryChannelsController.channelsState doReturn channelsState
         When calling queryChannelsController.loading doReturn MutableLiveData()
         When calling queryChannelsController.loadingMore doReturn MutableLiveData()
     }
 
-    fun givenNoChannelsAvailable(): Fixture = givenInitialChannelList(emptyList())
+    fun givenNoChannelsAvailable(): Fixture = apply {
+        channelsLiveData.postValue(emptyList())
+        channelsState.postValue(QueryChannelsController.ChannelsState.OfflineNoResults)
+    }
 
     fun givenInitialChannelList(channels: List<Channel>): Fixture {
         channelsLiveData.postValue(channels)
+        channelsState.postValue(QueryChannelsController.ChannelsState.Result(channels))
         return this
     }
 
@@ -125,7 +131,9 @@ private class Fixture {
         val mockCall: Call<List<Channel>> = mock()
         When calling queryChannelsLoadMore.invoke(any(), any(), any(), any()) doReturn mockCall
         When calling mockCall.enqueue() doAnswer {
-            channelsLiveData.postValue((channelsLiveData.value ?: emptyList()) + moreChannels)
+            val channels = (channelsLiveData.value ?: emptyList()) + moreChannels
+            channelsLiveData.postValue(channels)
+            channelsState.postValue(QueryChannelsController.ChannelsState.Result(channels))
         }
         return this
     }

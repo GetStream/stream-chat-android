@@ -95,6 +95,7 @@ internal class MessageListViewModelTest {
     private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<TypingEvent>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
+    private val messageState = MutableLiveData<ChannelController.MessagesState>()
 
     @BeforeEach
     fun setup() {
@@ -106,6 +107,7 @@ internal class MessageListViewModelTest {
         whenever(deleteMessageResult.data()) doReturn deletedMessage
         whenever(deleteMessageResult.isSuccess) doReturn true
         whenever(domain.currentUser) doReturn CURRENT_USER
+        whenever(channelController.messagesState) doReturn messageState
         whenever(channelController.messages) doReturn messages
         whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
@@ -127,6 +129,8 @@ internal class MessageListViewModelTest {
 
         messages.value = MESSAGES
         reads.value = listOf(CHANNEL_USER_READ)
+
+        messageState.value = ChannelController.MessagesState.Result(MESSAGES)
 
         domain.useCases.shouldNotBeNull()
         useCases.watchChannel.shouldNotBeNull()
@@ -184,8 +188,8 @@ internal class MessageListViewModelTest {
     @Test
     fun `Should return from thread to normal mode on back click`() {
         val viewModel = MessageListViewModel(CID, domain, client)
-        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
         val states = viewModel.state.observeAll()
+        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
 
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 
