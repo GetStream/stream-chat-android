@@ -14,21 +14,29 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.utils.InstantTaskExecutorExtension
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class QueryChannelsControllerImplTest {
+
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
+
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
         runBlockingTest {
             val channelController = mock<ChannelControllerImpl>()
-            val sut = Fixture()
+            val sut = Fixture(testCoroutines.scope)
                 .givenNewChannelController(channelController)
                 .setupChatControllersInstantiation()
                 .get()
@@ -42,7 +50,7 @@ internal class QueryChannelsControllerImplTest {
     @Test
     fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
         runBlockingTest {
-            val sut = Fixture()
+            val sut = Fixture(testCoroutines.scope)
                 .givenNewChannelController(mock())
                 .setupChatControllersInstantiation()
                 .get()
@@ -58,7 +66,7 @@ internal class QueryChannelsControllerImplTest {
     @Test
     fun `when add channel twice if filter matches should post value to liveData only one value`() =
         runBlockingTest {
-            val sut = Fixture()
+            val sut = Fixture(testCoroutines.scope)
                 .givenNewChannelController(mock())
                 .setupChatControllersInstantiation()
                 .get()
@@ -73,13 +81,14 @@ internal class QueryChannelsControllerImplTest {
         }
 }
 
-private class Fixture {
+private class Fixture(scope: CoroutineScope) {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
 
     init {
         whenever(chatDomainImpl.currentUser) doReturn mock()
         whenever(chatDomainImpl.job) doReturn Job()
+        whenever(chatDomainImpl.scope) doReturn scope
     }
 
     fun givenNewChannelController(channelControllerImpl: ChannelControllerImpl): Fixture {

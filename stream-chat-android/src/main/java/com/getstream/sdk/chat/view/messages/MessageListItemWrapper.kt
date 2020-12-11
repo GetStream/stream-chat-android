@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
  */
 public data class MessageListItemWrapper(
     val items: List<MessageListItem> = listOf(),
-    var loadingMore: Boolean = false,
     val hasNewMessages: Boolean = false,
     val isTyping: Boolean = false,
     val isThread: Boolean = false
