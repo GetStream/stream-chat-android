@@ -7,6 +7,8 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
+import com.getstream.sdk.chat.adapter.horizontalChainInParent
+import com.getstream.sdk.chat.adapter.verticalChainInParent
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -28,16 +30,20 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     )
 
     private var state: State = State.Empty
+    private var isMine: Boolean = true
 
-    fun showAttachments(vararg attachments: Attachment) {
+    fun showAttachments(isMine: Boolean, vararg attachments: Attachment) {
+        this.isMine = isMine
         when (attachments.size) {
             1 -> showOne(attachments.first())
             2 -> showTwo(attachments.first(), attachments[1])
             3 -> showThree(attachments.first(), attachments[1], attachments[2])
+            4 -> showFour(attachments.first(), attachments[1], attachments[2], attachments[3])
             else -> Unit
         }
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
     }
+
 
     private fun showOne(first: Attachment) {
         removeAllViews()
@@ -60,21 +66,13 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewTwo = createMediaAttachmentView(context).also { addView(it) }
         state = State.TwoViews(viewOne, viewTwo)
         ConstraintSet().apply {
+            constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
+            constrainHeight(viewTwo.id, LayoutParams.MATCH_PARENT)
             constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
             constrainViewToParentBySide(viewTwo, ConstraintSet.TOP)
             constrainViewToParentBySide(viewOne, ConstraintSet.BOTTOM)
             constrainViewToParentBySide(viewTwo, ConstraintSet.BOTTOM)
-            constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
-            constrainHeight(viewTwo.id, LayoutParams.MATCH_PARENT)
-            createHorizontalChain(
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.LEFT,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.RIGHT,
-                intArrayOf(viewOne.id, viewTwo.id),
-                null,
-                ConstraintSet.CHAIN_SPREAD
-            )
+            horizontalChainInParent(viewOne, viewTwo)
             applyTo(this@MediaAttachmentsGroupView)
         }
         first.imageUrl?.let(viewOne::showImageByUrl)
@@ -89,40 +87,37 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         state = State.ThreeViews(viewOne, viewTwo, viewThree)
         ConstraintSet().apply {
             constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
-            constrainViewToParentBySide(viewThree, ConstraintSet.RIGHT)
             constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
-            createHorizontalChain(
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.LEFT,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.RIGHT,
-                intArrayOf(viewOne.id, viewTwo.id),
-                null,
-                ConstraintSet.CHAIN_SPREAD
-            )
-            createHorizontalChain(
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.LEFT,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.RIGHT,
-                intArrayOf(viewOne.id, viewThree.id),
-                null,
-                ConstraintSet.CHAIN_SPREAD
-            )
-            createVerticalChain(
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM,
-                intArrayOf(viewTwo.id, viewThree.id),
-                null,
-                ConstraintSet.CHAIN_SPREAD
-            )
+            horizontalChainInParent(viewOne, viewTwo)
+            horizontalChainInParent(viewOne, viewThree)
+            verticalChainInParent(viewTwo, viewThree)
             applyTo(this@MediaAttachmentsGroupView)
         }
         first.imageUrl?.let(viewOne::showImageByUrl)
         second.imageUrl?.let(viewTwo::showImageByUrl)
         third.imageUrl?.let(viewThree::showImageByUrl)
+    }
+
+    private fun showFour(first: Attachment, second: Attachment, third: Attachment, fourth: Attachment) {
+        removeAllViews()
+        val viewOne = createMediaAttachmentView(context).also { addView(it) }
+        val viewTwo = createMediaAttachmentView(context).also { addView(it) }
+        val viewThree = createMediaAttachmentView(context).also { addView(it) }
+        val viewFour = createMediaAttachmentView(context).also { addView(it) }
+        state = State.FourViews(viewOne, viewTwo, viewThree, viewFour)
+        ConstraintSet().apply {
+            constrainHeight(viewOne.id, LayoutParams.WRAP_CONTENT)
+            constrainHeight(viewThree.id, LayoutParams.WRAP_CONTENT)
+            horizontalChainInParent(viewOne, viewTwo)
+            horizontalChainInParent(viewThree, viewFour)
+            verticalChainInParent(viewOne, viewThree)
+            verticalChainInParent(viewTwo, viewFour)
+            applyTo(this@MediaAttachmentsGroupView)
+        }
+        first.imageUrl?.let(viewOne::showImageByUrl)
+        second.imageUrl?.let(viewTwo::showImageByUrl)
+        third.imageUrl?.let(viewThree::showImageByUrl)
+        fourth.imageUrl?.let(viewFour::showImageByUrl)
     }
 
     override fun setBackground(background: Drawable) {
@@ -153,6 +148,12 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
                 stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, 0f, 0f)
                 stateCopy.viewThree.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
             }
+            is State.FourViews -> {
+                stateCopy.viewOne.setImageShapeByCorners(topLeftCorner, 0f, 0f, 0f)
+                stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, 0f, 0f)
+                stateCopy.viewThree.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
+                stateCopy.viewFour.setImageShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
+            }
         }
     }
 
@@ -169,6 +170,12 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             val viewOne: MediaAttachmentView,
             val viewTwo: MediaAttachmentView,
             val viewThree: MediaAttachmentView
+        ) : State()
+        data class FourViews(
+            val viewOne: MediaAttachmentView,
+            val viewTwo: MediaAttachmentView,
+            val viewThree: MediaAttachmentView,
+            val viewFour: MediaAttachmentView
         ) : State()
     }
 

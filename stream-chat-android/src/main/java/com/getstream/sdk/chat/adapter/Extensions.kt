@@ -29,3 +29,29 @@ public fun ConstraintLayout.constrainViewToParentBySide(view: View, side: Int) {
 public fun ConstraintSet.constrainViewToParentBySide(view: View, side: Int) {
     connect(view.id, side, ConstraintSet.PARENT_ID, side)
 }
+
+@InternalStreamChatApi
+public fun ConstraintSet.horizontalChainInParent(vararg views: View) {
+    createHorizontalChain(
+        ConstraintSet.PARENT_ID,
+        ConstraintSet.LEFT,
+        ConstraintSet.PARENT_ID,
+        ConstraintSet.RIGHT,
+        views.map(View::getId).toIntArray(),
+        null,
+        ConstraintSet.CHAIN_SPREAD
+    )
+}
+
+@InternalStreamChatApi
+public fun ConstraintSet.verticalChainInParent(vararg views: View) {
+    createVerticalChain(
+        ConstraintSet.PARENT_ID,
+        ConstraintSet.TOP,
+        ConstraintSet.PARENT_ID,
+        ConstraintSet.BOTTOM,
+        views.map(View::getId).toIntArray(),
+        null,
+        ConstraintSet.CHAIN_SPREAD
+    )
+}
