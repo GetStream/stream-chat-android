@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.messages.adapter.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -66,9 +65,5 @@ internal class MediaAttachmentView : ConstraintLayout {
             alpha = 128
             setTint(ContextCompat.getColor(context, R.color.stream_ui_black))
         }
-    }
-
-    fun setImageScaleType(scaleType: ImageView.ScaleType) {
-        binding.imageView.scaleType = scaleType
     }
 }

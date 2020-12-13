@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
@@ -89,14 +88,13 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewThree = createMediaAttachmentView(context).also { addView(it) }
         state = State.ThreeViews(viewOne, viewTwo, viewThree)
         ConstraintSet().apply {
-            constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
-            constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
-            setupMinHeight(viewOne)
             setupMinHeight(viewTwo)
             setupMinHeight(viewThree)
             horizontalChainInParent(viewOne, viewTwo)
             horizontalChainInParent(viewOne, viewThree)
             verticalChainInParent(viewTwo, viewThree)
+            connect(viewOne.id, ConstraintSet.TOP, viewTwo.id, ConstraintSet.TOP)
+            connect(viewOne.id, ConstraintSet.BOTTOM, viewThree.id, ConstraintSet.BOTTOM)
             applyTo(this@MediaAttachmentsGroupView)
         }
         first.imageUrl?.let(viewOne::showImageByUrl)
@@ -112,8 +110,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewFour = createMediaAttachmentView(context).also { addView(it) }
         state = State.FourViews(viewOne, viewTwo, viewThree, viewFour)
         ConstraintSet().apply {
-            constrainHeight(viewOne.id, LayoutParams.WRAP_CONTENT)
-            constrainHeight(viewThree.id, LayoutParams.WRAP_CONTENT)
             setupMinHeight(viewOne)
             setupMinHeight(viewTwo)
             setupMinHeight(viewThree)
@@ -191,7 +187,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     companion object {
         private val MIN_HEIGHT_PX = 95.dpToPx()
-        private val DEFAULT_SCALE_TYPE = ImageView.ScaleType.CENTER_CROP
         private val STROKE_WIDTH = 2.dpToPxPrecise()
 
         private fun createMediaAttachmentView(context: Context): MediaAttachmentView =
