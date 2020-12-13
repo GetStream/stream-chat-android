@@ -26,6 +26,6 @@ public class OnlyMediaAttachmentsViewHolder(
 
     private fun showAttachments(imageAttachments: Collection<Attachment>, isMine: Boolean) {
         constraintView(isMine, binding.mediaAttachmentsGroupView, binding.root)
-        binding.mediaAttachmentsGroupView.showAttachments(isMine, *imageAttachments.toTypedArray())
+        binding.mediaAttachmentsGroupView.showAttachments(*imageAttachments.toTypedArray())
     }
 }

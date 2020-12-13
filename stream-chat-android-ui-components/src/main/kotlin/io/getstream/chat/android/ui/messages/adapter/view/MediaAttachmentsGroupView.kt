@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.view
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -14,6 +15,7 @@ import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 
@@ -50,6 +52,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         state = State.OneView(mediaAttachmentView)
         ConstraintSet().apply {
             constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
+            setupMinHeight(mediaAttachmentView)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
@@ -66,6 +69,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         ConstraintSet().apply {
             constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
             constrainHeight(viewTwo.id, LayoutParams.MATCH_PARENT)
+            setupMinHeight(viewOne)
+            setupMinHeight(viewTwo)
             constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
             constrainViewToParentBySide(viewTwo, ConstraintSet.TOP)
             constrainViewToParentBySide(viewOne, ConstraintSet.BOTTOM)
@@ -86,6 +91,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         ConstraintSet().apply {
             constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
             constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
+            setupMinHeight(viewOne)
+            setupMinHeight(viewTwo)
+            setupMinHeight(viewThree)
             horizontalChainInParent(viewOne, viewTwo)
             horizontalChainInParent(viewOne, viewThree)
             verticalChainInParent(viewTwo, viewThree)
@@ -106,6 +114,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         ConstraintSet().apply {
             constrainHeight(viewOne.id, LayoutParams.WRAP_CONTENT)
             constrainHeight(viewThree.id, LayoutParams.WRAP_CONTENT)
+            setupMinHeight(viewOne)
+            setupMinHeight(viewTwo)
+            setupMinHeight(viewThree)
+            setupMinHeight(viewFour)
             horizontalChainInParent(viewOne, viewTwo)
             horizontalChainInParent(viewThree, viewFour)
             verticalChainInParent(viewOne, viewThree)
@@ -178,6 +190,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     companion object {
+        private val MIN_HEIGHT_PX = 95.dpToPx()
         private val DEFAULT_SCALE_TYPE = ImageView.ScaleType.CENTER_CROP
         private val STROKE_WIDTH = 2.dpToPxPrecise()
 
@@ -185,5 +198,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             MediaAttachmentView(context).apply {
                 id = generateViewId()
             }
+
+        private fun ConstraintSet.setupMinHeight(view: View) {
+            this.constrainMinHeight(view.id, MIN_HEIGHT_PX)
+        }
     }
 }

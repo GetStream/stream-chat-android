@@ -64,8 +64,8 @@ class OnlyAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBro
             MessageListItem.MessageItem(
                 message = Message(
                     attachments = mutableListOf(
-                        Attachment(type = "image", imageUrl = uri1),
                         Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri1),
                         Attachment(type = "image", imageUrl = uri3)
                     )
                 ),
