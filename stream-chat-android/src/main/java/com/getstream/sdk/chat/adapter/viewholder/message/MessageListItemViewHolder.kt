@@ -33,7 +33,6 @@ public open class MessageListItemViewHolder(
     bubbleHelper: BubbleHelper,
     messageClickListener: MessageClickListener,
     messageLongClickListener: MessageLongClickListener,
-    messageLongClickListenerView: MessageLongClickListenerView,
     messageRetryListener: MessageListView.MessageRetryListener,
     reactionViewClickListener: ReactionViewClickListener,
     userClickListener: MessageListView.UserClickListener,
@@ -52,7 +51,6 @@ public open class MessageListItemViewHolder(
         bubbleHelper,
         messageClickListener,
         messageLongClickListener,
-        messageLongClickListenerView,
         messageRetryListener
     )
     private val attachmentConfigurator = AttachmentConfigurator(

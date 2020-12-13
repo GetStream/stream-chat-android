@@ -5,7 +5,6 @@ import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -16,7 +15,6 @@ import kotlin.reflect.KProperty
 public class ListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
-    messageLongClickListenerView: MessageLongClickListenerView = MessageLongClickListenerView(EmptyFunctions.TWO_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
     attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
@@ -42,14 +40,6 @@ public class ListenerContainerImpl(
     ) { realListener ->
         MessageLongClickListener { message ->
             realListener().onMessageLongClick(message)
-        }
-    }
-
-    override var messageLongClickListenerView: MessageLongClickListenerView by ListenerDelegate(
-        messageLongClickListenerView
-    ) { realListener ->
-        MessageLongClickListenerView { message, view ->
-            realListener().onMessageLongClick2(message, view)
         }
     }
 

@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 public interface ListenerContainer {
     public var messageClickListener: MessageClickListener
     public var messageLongClickListener: MessageLongClickListener
-    public var messageLongClickListenerView: MessageLongClickListenerView
     public var messageRetryListener: MessageRetryListener
     public var attachmentClickListener: AttachmentClickListener
     public var reactionViewClickListener: ReactionViewClickListener

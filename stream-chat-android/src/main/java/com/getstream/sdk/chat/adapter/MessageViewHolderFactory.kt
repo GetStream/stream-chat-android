@@ -65,7 +65,6 @@ public open class MessageViewHolderFactory {
                     bubbleHelper,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
-                    listenerContainer.messageLongClickListenerView,
                     listenerContainer.messageRetryListener,
                     listenerContainer.reactionViewClickListener,
                     listenerContainer.userClickListener,
