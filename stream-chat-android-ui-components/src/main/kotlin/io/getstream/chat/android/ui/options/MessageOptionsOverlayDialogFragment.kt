@@ -105,9 +105,9 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
             }
 
         when (messageView) {
-            is MessagePlainTextViewHolder -> messageView.run { bind(messageItem) }
+            is MessagePlainTextViewHolder -> messageView.bind(messageItem)
 
-            is OnlyMediaAttachmentsViewHolder -> messageView.apply { bind(messageItem) }
+            is OnlyMediaAttachmentsViewHolder -> messageView.bind(messageItem)
         }
     }
 
