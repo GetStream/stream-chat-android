@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBind
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import java.io.Serializable
 
 internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
@@ -96,17 +96,19 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
      * TODO: find out a consistent way to get message bounds across all message view holders
      */
     private fun setupMessageView() {
-        messageView = messageViewHolderFactory
+        val messageView = messageViewHolderFactory
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
-            )
-            .cast<MessagePlainTextViewHolder>()
-            .apply {
-                addMessageView(itemView)
-                bind(messageItem)
-            }.binding
-            .messageText
+            ).also { viewHolder ->
+                addMessageView(viewHolder.itemView)
+            }
+
+        when (messageView) {
+            is MessagePlainTextViewHolder -> messageView.run { bind(messageItem) }
+
+            is OnlyMediaAttachmentsViewHolder -> messageView.apply { bind(messageItem) }
+        }
     }
 
     private fun addMessageView(messageView: View) {
