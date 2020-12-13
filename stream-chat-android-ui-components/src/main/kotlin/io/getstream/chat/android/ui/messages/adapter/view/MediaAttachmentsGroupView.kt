@@ -30,10 +30,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     )
 
     private var state: State = State.Empty
-    private var isMine: Boolean = true
 
-    fun showAttachments(isMine: Boolean, vararg attachments: Attachment) {
-        this.isMine = isMine
+    fun showAttachments(vararg attachments: Attachment) {
         when (attachments.size) {
             1 -> showOne(attachments.first())
             2 -> showTwo(attachments.first(), attachments[1])
@@ -151,8 +149,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             is State.FourViews -> {
                 stateCopy.viewOne.setImageShapeByCorners(topLeftCorner, 0f, 0f, 0f)
                 stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, 0f, 0f)
-                stateCopy.viewThree.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
-                stateCopy.viewFour.setImageShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
+                stateCopy.viewThree.setImageShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
+                stateCopy.viewFour.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
             }
         }
     }
