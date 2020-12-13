@@ -43,7 +43,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
     }
 
-
     private fun showOne(first: Attachment) {
         removeAllViews()
         val mediaAttachmentView = createMediaAttachmentView(context)
@@ -51,7 +50,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         state = State.OneView(mediaAttachmentView)
         ConstraintSet().apply {
             constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
-            setupMinHeight(mediaAttachmentView)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
@@ -66,10 +64,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewTwo = createMediaAttachmentView(context).also { addView(it) }
         state = State.TwoViews(viewOne, viewTwo)
         ConstraintSet().apply {
-            constrainHeight(viewOne.id, LayoutParams.MATCH_PARENT)
-            constrainHeight(viewTwo.id, LayoutParams.MATCH_PARENT)
-            setupMinHeight(viewOne)
-            setupMinHeight(viewTwo)
+            setupMinHeight(viewOne, false)
+            setupMinHeight(viewTwo, false)
             constrainViewToParentBySide(viewOne, ConstraintSet.TOP)
             constrainViewToParentBySide(viewTwo, ConstraintSet.TOP)
             constrainViewToParentBySide(viewOne, ConstraintSet.BOTTOM)
@@ -88,8 +84,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewThree = createMediaAttachmentView(context).also { addView(it) }
         state = State.ThreeViews(viewOne, viewTwo, viewThree)
         ConstraintSet().apply {
-            setupMinHeight(viewTwo)
-            setupMinHeight(viewThree)
+            setupMinHeight(viewTwo, true)
+            setupMinHeight(viewThree, true)
             horizontalChainInParent(viewOne, viewTwo)
             horizontalChainInParent(viewOne, viewThree)
             verticalChainInParent(viewTwo, viewThree)
@@ -110,10 +106,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         val viewFour = createMediaAttachmentView(context).also { addView(it) }
         state = State.FourViews(viewOne, viewTwo, viewThree, viewFour)
         ConstraintSet().apply {
-            setupMinHeight(viewOne)
-            setupMinHeight(viewTwo)
-            setupMinHeight(viewThree)
-            setupMinHeight(viewFour)
+            setupMinHeight(viewOne, true)
+            setupMinHeight(viewTwo, true)
+            setupMinHeight(viewThree, true)
+            setupMinHeight(viewFour, true)
             horizontalChainInParent(viewOne, viewTwo)
             horizontalChainInParent(viewThree, viewFour)
             verticalChainInParent(viewOne, viewThree)
@@ -177,6 +173,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             val viewTwo: MediaAttachmentView,
             val viewThree: MediaAttachmentView
         ) : State()
+
         data class FourViews(
             val viewOne: MediaAttachmentView,
             val viewTwo: MediaAttachmentView,
@@ -194,8 +191,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
                 id = generateViewId()
             }
 
-        private fun ConstraintSet.setupMinHeight(view: View) {
-            this.constrainMinHeight(view.id, MIN_HEIGHT_PX)
+        private fun ConstraintSet.setupMinHeight(view: View, isQuarter: Boolean) {
+            this.constrainMinHeight(view.id, if (isQuarter) MIN_HEIGHT_PX else 2 * MIN_HEIGHT_PX)
         }
     }
 }
