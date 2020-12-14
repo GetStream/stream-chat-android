@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,12 +46,12 @@ class HomeFragment : Fragment() {
         viewModel.events.observe(
             viewLifecycleOwner,
             EventObserver {
-                navigateToLoginScreen()
+                navigateSafely(R.id.action_to_userLoginFragment)
             }
         )
         binding.channelListHeaderView.apply {
             setOnAddChannelButtonClickListener {
-                findNavController().navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+                navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
             }
             viewModel.online.observe(viewLifecycleOwner) { isOnline ->
                 if (isOnline) {
@@ -63,21 +63,6 @@ class HomeFragment : Fragment() {
             setUser(viewModel.currentUser)
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
-            }
-        }
-        binding.navigationView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.directChatFragment -> {
-                    findNavController().navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
-                    true
-                }
-                R.id.groupChatFragment -> {
-                    findNavController().navigateSafely(R.id.action_homeFragment_to_addGroupChannelFragment)
-                    true
-                }
-                else -> {
-                    false
-                }
             }
         }
     }
@@ -106,6 +91,22 @@ class HomeFragment : Fragment() {
         avatarView = header.findViewById(R.id.avatarView)
         nameTextView = header.findViewById(R.id.nameTextView)
 
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.directChatFragment -> {
+                    navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+                    binding.drawerLayout.close()
+                    true
+                }
+                R.id.groupChatFragment -> {
+                    navigateSafely(R.id.action_homeFragment_to_addGroupChannelFragment)
+                    binding.drawerLayout.close()
+                    true
+                }
+                else -> false
+            }
+        }
+
         binding.signOutTextView.setOnClickListener {
             viewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
         }
@@ -117,9 +118,5 @@ class HomeFragment : Fragment() {
 
         nameTextView.text = state.user.name
         avatarView.setUserData(state.user)
-    }
-
-    private fun navigateToLoginScreen() {
-        findNavController().navigateSafely(R.id.action_to_userLoginFragment)
     }
 }
