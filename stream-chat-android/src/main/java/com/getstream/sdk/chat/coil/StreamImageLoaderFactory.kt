@@ -24,7 +24,7 @@ public class StreamImageLoaderFactory(
                 val cacheControlInterceptor = Interceptor { chain ->
                     chain.proceed(chain.request())
                         .newBuilder()
-                        .header("Cache-Control", "max-age=31536000,public")
+                        .header("Cache-Control", "max-age=3600,public")
                         .build()
                 }
                 // Don't limit concurrent network requests by host.
