@@ -10,6 +10,8 @@
     - 24 vs 12 hr controlled by user's System settings.
 
 ## stream-chat-android-client
+- Add `ChatClient::isValidRemoteMessage` method to know if a RemoteMessage is valid for Stream
 
 ## stream-chat-android-offline
 - Add updating `channelData` after receiving `ChannelUpdatedByUserEvent`
+- Fix crash when a push notification arrives from other provider different than Stream
