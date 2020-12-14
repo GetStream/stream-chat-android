@@ -80,7 +80,7 @@ internal class ChatNotifications private constructor(
     }
 
     private fun handleRemoteMessage(message: RemoteMessage) {
-        if (handler.isValid(message)) {
+        if (isValid(message)) {
             val firebaseParser = handler.getFirebaseMessageParser()
             val data = firebaseParser.parse(message)
             if (!wasNotificationDisplayed(data.messageId)) {
@@ -91,6 +91,8 @@ internal class ChatNotifications private constructor(
             logger.logE("Push payload is not configured correctly: {${message.data}}")
         }
     }
+
+    fun isValid(message: RemoteMessage) = handler.isValid(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
