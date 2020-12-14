@@ -7,7 +7,6 @@ apply plugin: 'com.hiya.jacoco-android'
 apply plugin: 'kotlin-android'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
-apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -25,8 +24,6 @@ android {
         minSdkVersion Configuration.minSdkVersion
         targetSdkVersion Configuration.targetSdkVersion
         versionName Configuration.versionName
-
-        buildConfigField 'String', 'STREAM_CHAT_UI_VERSION', "\"$version\""
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -76,7 +73,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    api project(":stream-chat-android-offline")
+    api project(":stream-chat-android-ui-common")
 
     implementation Dependencies.androidxStartup
     api Dependencies.threeTenAbp
