@@ -31,6 +31,7 @@ internal fun Channel.getLastMessage(): Message? =
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
         .filter { !it.silent }
+        .filter { !it.shadowed }
         .filter { it.type == ModelType.message_regular }
         .maxByOrNull { it.getCreatedAtOrThrow() }
 
@@ -107,7 +108,12 @@ internal fun Channel.getLastMessagePreviewText(
             .takeIf { it.isNotEmpty() }
             ?.mapNotNull { attachment ->
                 attachment.title?.let { title ->
-                    "${getAttachmentPrefix(context, attachment)} $title"
+                    val prefix = getAttachmentPrefix(context, attachment)
+                    if (prefix != null) {
+                        "$prefix $title"
+                    } else {
+                        title
+                    }
                 } ?: attachment.name
             }
             ?.joinToString()

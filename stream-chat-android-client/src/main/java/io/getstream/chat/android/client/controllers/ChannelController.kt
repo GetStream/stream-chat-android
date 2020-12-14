@@ -38,8 +38,10 @@ public interface ChannelController {
     public fun updateMessage(message: Message): Call<Message>
     public fun deleteMessage(messageId: String): Call<Message>
     public fun getMessage(messageId: String): Call<Message>
-    public fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>
-    public fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit>
+    public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+    public fun unBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+    public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+    public fun removeShadowBan(targetId: String): Call<Unit>
     public fun markMessageRead(messageId: String): Call<Unit>
     public fun markRead(): Call<Unit>
     public fun delete(): Call<Channel>

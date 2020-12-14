@@ -6,15 +6,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.mentions.MentionsListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.mentions.MentionsListView.MentionSelectedListener
 import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
-import io.getstream.chat.android.ui.utils.DateFormatter
+import io.getstream.chat.android.ui.utils.extensions.asMention
+import io.getstream.chat.android.ui.utils.extensions.context
 
 public class MentionsListAdapter(
-    context: Context
+    context: Context,
+    private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var mentionSelectedListener: MentionSelectedListener? = null
@@ -51,7 +55,7 @@ public class MentionsListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            view.setMessage(message)
+            view.setMessage(message, chatDomain.currentUser.asMention(context))
         }
     }
 

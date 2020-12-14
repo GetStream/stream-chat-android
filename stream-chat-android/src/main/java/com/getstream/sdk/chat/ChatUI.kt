@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
+import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.livedata.ChatDomain
 
@@ -34,7 +35,7 @@ public class ChatUI internal constructor(
     public val urlSigner: UrlSigner
 ) {
     public val version: String
-        get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
+        get() = BuildConfig.BUILD_TYPE + ":" + STREAM_CHAT_VERSION
 
     public class Builder(private val appContext: Context) {
 

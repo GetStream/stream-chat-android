@@ -11,7 +11,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.FirebaseMessageParser
+import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
@@ -25,9 +28,9 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
     private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingService")
 
-    private val syncModule by lazy {
-        SyncProvider(this)
-    }
+    private val syncModule by lazy { SyncProvider(this) }
+    private val notificationConfig: NotificationConfig by lazy { syncModule.notificationConfigStore.get() }
+    private val firebaseMessageParser: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(notificationConfig) }
 
     override fun onNewToken(token: String) {
         if (ChatClient.isInitialized) {
@@ -51,15 +54,14 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
+        if (!ChatClient.isValidRemoteMessage(message, notificationConfig)) {
+            return
+        }
         createSyncNotificationChannel()
-        showForegroundNotification(syncModule.notificationConfigStore.get().smallIcon)
-
-        val data = message.data
-        val channelId = data["channel_id"].toString()
-        val channelType = data["channel_type"].toString()
-        val cid = "$channelType:$channelId"
+        showForegroundNotification(notificationConfig.smallIcon)
 
         GlobalScope.launch(DispatcherProvider.IO) {
+            val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
             if (ChatDomain.isInitialized) {
                 performSync(ChatDomain.instance(), cid)
 

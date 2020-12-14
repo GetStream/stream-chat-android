@@ -25,6 +25,7 @@
             android:insetTop="0dp"
             android:insetRight="0dp"
             android:insetBottom="0dp"
+            android:visibility="gone"
             app:backgroundTint="@color/stream_ui_white"
             app:cornerRadius="20dp"
             app:icon="@drawable/ic_member_add"

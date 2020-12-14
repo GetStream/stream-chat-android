@@ -1,0 +1,71 @@
+import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.Configuration
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.hiya.jacoco-android'
+apply plugin: 'kotlin-android'
+apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-common'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+
+
+android {
+    compileSdkVersion Configuration.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
+        versionName Configuration.versionName
+
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            unitTests.returnDefaultValues = true
+            // Show the result of every unit test, even if it passes.
+            all {
+                testLogging {
+                    events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        all {
+            it.java.srcDir "src/$it.name/kotlin"
+        }
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
+        ]
+    }
+}
+
+dependencies {
+    api project(":stream-chat-android-offline")
+}

@@ -42,7 +42,7 @@ public class ChannelListView @JvmOverloads constructor(
         layoutManager = VerticalScrollPauseLayoutManager(context)
         setLayoutManager(layoutManager)
         adapter = ChannelListItemAdapter().apply {
-            listenerContainer.swipeEventListener = SwipeEventListener { event ->
+            listenerProvider.swipeEventListener = SwipeEventListener { event ->
                 layoutManager.verticalScrollEnabled = when (event) {
                     is SwipeEvent.Move -> false
                     else -> true
@@ -90,27 +90,27 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProvider.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setChannelLongClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProvider.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
-        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
+        requireAdapter().listenerProvider.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
     public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProvider.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerProvider.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setSwipeEventListener(listener: SwipeEventListener?) {
-        requireAdapter().listenerContainer.swipeEventListener = listener ?: SwipeEventListener.DEFAULT
+        requireAdapter().listenerProvider.swipeEventListener = listener ?: SwipeEventListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {

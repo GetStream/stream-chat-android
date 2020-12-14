@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import java.io.Serializable
 import java.util.Date
 import java.util.zip.CRC32
 import java.util.zip.Checksum
@@ -48,7 +49,7 @@ public sealed class MessageListItem {
         val positions: List<Position> = listOf(),
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf()
-    ) : MessageListItem() {
+    ) : MessageListItem(), Serializable {
         public val isTheirs: Boolean
             get() = !isMine
     }

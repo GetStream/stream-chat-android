@@ -268,7 +268,6 @@
 
         <TextView
             android:id="@+id/messageListComponentBrowser"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -276,11 +275,11 @@
             android:background="@drawable/shape_component_browser_item_background"
             android:padding="16dp"
             android:text="Message list"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             />
 
         <TextView
             android:id="@+id/typingIndicatorBrowser"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -288,6 +287,7 @@
             android:background="@drawable/shape_component_browser_item_background"
             android:padding="16dp"
             android:text="Typing indicator"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             />
 
         <LinearLayout
@@ -314,6 +314,38 @@
             <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
                 android:id="@+id/userReactionsView"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/scrollButtonViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/scrollButtonViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="ScrollButtonView"
+                />
+
+            <io.getstream.chat.android.ui.messages.view.ScrollButtonView
+                android:id="@+id/scrollButtonView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:clickable="false"

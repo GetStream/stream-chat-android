@@ -16,7 +16,7 @@ internal fun Channel.computeLastMessage(): Message? {
     val messages = messages
     for (i in messages.indices.reversed()) {
         val message = messages[i]
-        if (message.deletedAt == null && message.type == ModelType.message_regular) {
+        if (message.deletedAt == null && message.type == ModelType.message_regular && !message.shadowed) {
             return message
         }
     }

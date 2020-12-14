@@ -3,9 +3,9 @@ package io.getstream.chat.ui.sample.feature.user_login
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.transform.CircleCropTransformation
-import io.getstream.chat.ui.sample.R
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.ItemOptionsBinding
 import io.getstream.chat.ui.sample.databinding.ItemUserBinding
@@ -68,12 +68,13 @@ class UserViewHolder(
     fun bindUser(user: SampleUser) {
         itemView.apply {
             binding.nameTextView.text = user.name
-            binding.avatarImageView.load(user.image) {
-                placeholder(R.drawable.ic_avatar_placeholder)
-                error(R.drawable.ic_avatar_placeholder)
-                fallback(R.drawable.ic_avatar_placeholder)
-                transformations(CircleCropTransformation())
-            }
+            binding.avatarImageView.setUserData(
+                User().apply {
+                    image = user.image
+                    name = user.name
+                    id = user.id
+                }
+            )
         }
     }
 }

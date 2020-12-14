@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -42,6 +43,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -55,6 +57,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -70,6 +73,9 @@ public class ChatClient internal constructor(
     private val clientStateService: ClientStateService = ClientStateService()
 ) {
     private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService)
+
+    @InternalStreamChatApi
+    public val notificationHandler: ChatNotificationHandler = notifications.handler
 
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -555,7 +561,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_CLIENT_VERSION
+    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
 
     public fun acceptInvite(
         channelType: String,
@@ -640,14 +646,15 @@ public class ChatClient internal constructor(
         targetId: String,
         channelType: String,
         channelId: String,
-        reason: String,
-        timeout: Int
+        reason: String?,
+        timeout: Int?
     ): Call<Unit> = api.banUser(
-        targetId,
-        timeout,
-        reason,
-        channelType,
-        channelId
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+        shadow = false
     ).map {
         Unit
     }
@@ -657,9 +664,40 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String
     ): Call<Unit> = api.unBanUser(
-        targetId,
-        channelType,
-        channelId
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = false
+    ).map {
+        Unit
+    }
+
+    public fun shadowBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        reason: String?,
+        timeout: Int?
+    ): Call<Unit> = api.banUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+        shadow = true
+    ).map {
+        Unit
+    }
+
+    public fun removeShadowBan(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): Call<Unit> = api.unBanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = true
     ).map {
         Unit
     }
@@ -795,6 +833,8 @@ public class ChatClient internal constructor(
         }
     }
 
+    private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean = notifications.isValidRemoteMessage(remoteMessage)
+
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
@@ -927,5 +967,8 @@ public class ChatClient internal constructor(
 
         public val isInitialized: Boolean
             get() = instance != null
+
+        public fun isValidRemoteMessage(remoteMessage: RemoteMessage, defaultNotificationConfig: NotificationConfig = NotificationConfig()): Boolean =
+            instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
     }
 }
