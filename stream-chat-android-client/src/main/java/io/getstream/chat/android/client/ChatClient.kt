@@ -561,7 +561,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_CLIENT_VERSION
+    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
 
     public fun acceptInvite(
         channelType: String,
