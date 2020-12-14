@@ -69,6 +69,8 @@
 
     <!--EditReactionsView-->
     <dimen name="stream_ui_edit_reactions_total_height">54dp</dimen>
+    <dimen name="stream_ui_edit_reactions_total_width">216dp</dimen>
+    <dimen name="stream_ui_edit_reactions_horizontal_offset">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_item_margin">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_item_size">24dp</dimen>
