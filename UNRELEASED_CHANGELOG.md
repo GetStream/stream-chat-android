@@ -12,7 +12,7 @@
 
 ## stream-chat-android-client
 - Add `ChatClient::isValidRemoteMessage` method to know if a RemoteMessage is valid for Stream
-- Improve `banUser` and `uBanUser` methods - make `reason` and `timeout` parameter nullable
+- Improve `banUser` and `unBanUser` methods - make `reason` and `timeout` parameter nullable
 - Add support for shadow ban - add `shadowBanUser` and `removeShadowBan` methods to `ChatClient` and `ChannelClient`
 
 ## stream-chat-android-offline
