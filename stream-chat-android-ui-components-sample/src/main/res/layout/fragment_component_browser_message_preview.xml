@@ -36,7 +36,37 @@
             >
 
             <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
-                android:id="@+id/messagePreviewView"
+                android:id="@+id/messagePreviewViewDirectMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewViewInChannel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewViewWithImageAttachment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewViewWithFileAttachment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewViewWithMentions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
+                android:id="@+id/messagePreviewViewWithLongText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
