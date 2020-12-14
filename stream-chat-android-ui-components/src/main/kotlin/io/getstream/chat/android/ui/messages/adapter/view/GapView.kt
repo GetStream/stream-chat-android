@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.messages.adapter
+package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
 import android.util.AttributeSet
