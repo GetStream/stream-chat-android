@@ -41,7 +41,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
         ChannelConfigEntity::class,
         SyncStateEntity::class
     ],
-    version = 28,
+    version = 29,
     exportSchema = false
 )
 
