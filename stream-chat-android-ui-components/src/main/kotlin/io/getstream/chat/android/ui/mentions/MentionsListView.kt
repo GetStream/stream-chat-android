@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 
 public class MentionsListView : RecyclerView {
 
@@ -25,7 +26,7 @@ public class MentionsListView : RecyclerView {
         init(attrs)
     }
 
-    private val adapter = MentionsListAdapter(context)
+    private val adapter = MentionsListAdapter(context, ChatDomain.instance())
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
