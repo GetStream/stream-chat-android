@@ -74,4 +74,8 @@
         <item quantity="one">%d Message Reaction</item>
         <item quantity="other">%d Message Reactions</item>
     </plurals>
+
+    <!-- Message Preview -->
+    <string name="stream_ui_message_file">File: %s</string>
+    <string name="stream_ui_message_sender_title_in_channel">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>
