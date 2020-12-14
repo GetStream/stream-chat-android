@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
+import com.getstream.sdk.chat.adapter.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
@@ -32,8 +33,10 @@ internal class MediaAttachmentView : ConstraintLayout {
             val padding = 1.dpToPx()
             it.root.setPadding(padding, padding, padding, padding)
             addView(it.root)
-            constrainViewToParentBySide(it.root, ConstraintSet.LEFT)
-            constrainViewToParentBySide(it.root, ConstraintSet.TOP)
+            updateConstraints {
+                constrainViewToParentBySide(it.root, ConstraintSet.LEFT)
+                constrainViewToParentBySide(it.root, ConstraintSet.TOP)
+            }
         }
 
     fun showLoading(isLoading: Boolean) {
