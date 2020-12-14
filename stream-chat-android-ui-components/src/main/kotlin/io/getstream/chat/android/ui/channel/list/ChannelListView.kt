@@ -25,32 +25,29 @@ public class ChannelListView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
 
     private var endReachedListener: EndReachedListener? = null
-    private val layoutManager: VerticalScrollPauseLayoutManager
+    private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
 
-    internal class VerticalScrollPauseLayoutManager(context: Context) : LinearLayoutManager(context) {
-        var verticalScrollEnabled: Boolean = true
-
-        override fun canScrollVertically(): Boolean {
-            return verticalScrollEnabled && super.canScrollVertically()
-        }
-    }
-
     init {
         setHasFixedSize(true)
-        layoutManager = VerticalScrollPauseLayoutManager(context)
+        layoutManager = ScrollPauseLinearLayoutManager(context)
         setLayoutManager(layoutManager)
-        adapter = ChannelListItemAdapter().apply {
+        adapter = createAdapter()
+        parseStyleAttributes(context, attrs)
+        addItemDecoration(dividerDecoration)
+    }
+
+    private fun createAdapter(): ChannelListItemAdapter {
+        return ChannelListItemAdapter().apply {
+            // set the default swipe event listener - pauses scrolling while swiping
             listenerProvider.swipeEventListener = SwipeEventListener { event ->
                 layoutManager.verticalScrollEnabled = when (event) {
-                    is SwipeEvent.Move -> false
+                    is SwipeEvent.Swiping -> false
                     else -> true
                 }
             }
         }
-        parseStyleAttributes(context, attrs)
-        addItemDecoration(dividerDecoration)
     }
 
     private fun parseStyleAttributes(context: Context, attrs: AttributeSet?) {
@@ -194,7 +191,7 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public sealed class SwipeEvent {
-        public data class Move(val viewHolder: ViewHolder, val dX: Float) : SwipeEvent()
+        public data class Swiping(val viewHolder: ViewHolder, val dX: Float) : SwipeEvent()
         public object End : SwipeEvent()
     }
 }

@@ -248,6 +248,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         var prevX = 0f
         val swipeRange = -optionsMenuWidth..0f
         var swiping = false
+        var wasSwiping = false
 
         root.setOnTouchListener { view, event ->
             when (event.action) {
@@ -268,11 +269,12 @@ public class ChannelViewHolder @JvmOverloads constructor(
                     // calculate the total delta for both axes
                     val totalDeltaX = event.rawX - startX
                     val totalDeltaY = event.rawY - startY
-
                     // calculate the delta from the last event to this one
                     val lastMoveDeltaX = event.rawX - prevX
                     // now that we've calculated, update the previous x value with this event's x
                     prevX = event.rawX
+                    // store the old swiping value so we can determine if we were ever swiping
+                    wasSwiping = swiping
                     // determine if it's a swipe by comparing total axis delta magnitude
                     swiping = totalDeltaX.absoluteValue > totalDeltaY.absoluteValue
 
@@ -287,13 +289,16 @@ public class ChannelViewHolder @JvmOverloads constructor(
                                     view.x = clampedX
                                 }
                             }
-                            // send a swipe move event
+                            // send a swiping event
                             swipeEventListener.onSwipeEvent(
-                                ChannelListView.SwipeEvent.Move(
-                                    this@ChannelViewHolder,
-                                    lastMoveDeltaX
-                                )
+                                ChannelListView.SwipeEvent.Swiping(this@ChannelViewHolder, lastMoveDeltaX)
                             )
+                        }
+
+                        // we were swiping, but are no longer
+                        wasSwiping && !swiping -> {
+                            // axis magnitude dictates we're no longer swiping
+                            swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
                         }
                     }
                     // consume if we are swiping
@@ -312,21 +317,25 @@ public class ChannelViewHolder @JvmOverloads constructor(
                     swipeStateByChannelCid[cid] = if (snapValue < 0) MenuState.Open else MenuState.Closed
                     // signal end of swipe
                     swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
+                    wasSwiping = false
                     // consume if we were swiping
                     swiping
                 }
 
                 MotionEvent.ACTION_CANCEL -> {
-                    // animate closed
-                    view.animate().x(0f).setStartDelay(0).setDuration(100).start()
-                    // persist channel item's menu state as closed
-                    swipeStateByChannelCid[cid] = MenuState.Closed
-                    // no longer swiping...
-                    swiping = false
-                    // signal end of swipe, just in case
-                    swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
-                    // consume the cancel event if we were swiping
-                    swiping
+                    // take action if we were swiping, otherwise leave it alone
+                    if (wasSwiping) {
+                        view.animate().x(0f).setStartDelay(0).setDuration(100).start()
+                        // persist channel item's menu state as closed
+                        swipeStateByChannelCid[cid] = MenuState.Closed
+                        // no longer swiping...
+                        swiping = false
+                        wasSwiping = false
+                        // signal end of swipe, just in case
+                        swipeEventListener.onSwipeEvent(ChannelListView.SwipeEvent.End)
+                    }
+
+                    wasSwiping
                 }
 
                 else -> false
