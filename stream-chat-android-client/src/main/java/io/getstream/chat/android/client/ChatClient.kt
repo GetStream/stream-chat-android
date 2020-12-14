@@ -801,7 +801,7 @@ public class ChatClient internal constructor(
         }
     }
 
-    public fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean = notifications.isValidRemoteMessage(remoteMessage)
+    private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean = notifications.isValidRemoteMessage(remoteMessage)
 
     public class Builder(private val apiKey: String, private val appContext: Context) {
 

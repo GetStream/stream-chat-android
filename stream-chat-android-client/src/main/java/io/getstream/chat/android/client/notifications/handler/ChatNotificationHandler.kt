@@ -185,7 +185,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     public open fun getFirebaseMessageParser(): FirebaseMessageParser = firebaseMessageParserImpl
-    public open fun isValidRemoteMessage(message: RemoteMessage): Boolean = getFirebaseMessageParser().isValidRemoteMessage(message)
+    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean = getFirebaseMessageParser().isValidRemoteMessage(message)
 
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
         if (drawable is BitmapDrawable) {
