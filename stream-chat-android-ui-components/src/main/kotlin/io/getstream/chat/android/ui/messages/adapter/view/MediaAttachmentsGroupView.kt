@@ -34,11 +34,17 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     fun showAttachments(vararg attachments: Attachment) {
         when (attachments.size) {
+            0 -> Unit
             1 -> showOne(attachments.first())
             2 -> showTwo(attachments.first(), attachments[1])
             3 -> showThree(attachments.first(), attachments[1], attachments[2])
-            4 -> showFour(attachments.first(), attachments[1], attachments[2], attachments[3])
-            else -> Unit
+            else -> showFour(
+                attachments.first(),
+                attachments[1],
+                attachments[2],
+                attachments[3],
+                attachments.size - MAX_PREVIEW_COUNT
+            )
         }
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
     }
@@ -98,7 +104,13 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         third.imageUrl?.let(viewThree::showImageByUrl)
     }
 
-    private fun showFour(first: Attachment, second: Attachment, third: Attachment, fourth: Attachment) {
+    private fun showFour(
+        first: Attachment,
+        second: Attachment,
+        third: Attachment,
+        fourth: Attachment,
+        andMoreCount: Int = 0
+    ) {
         removeAllViews()
         val viewOne = createMediaAttachmentView(context).also { addView(it) }
         val viewTwo = createMediaAttachmentView(context).also { addView(it) }
@@ -119,7 +131,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         first.imageUrl?.let(viewOne::showImageByUrl)
         second.imageUrl?.let(viewTwo::showImageByUrl)
         third.imageUrl?.let(viewThree::showImageByUrl)
-        fourth.imageUrl?.let(viewFour::showImageByUrl)
+        fourth.imageUrl?.let { imageUrl -> viewFour.showImageByUrl(imageUrl, andMoreCount) }
     }
 
     override fun setBackground(background: Drawable) {
@@ -183,6 +195,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     companion object {
+        private const val MAX_PREVIEW_COUNT = 4
         private val MIN_HEIGHT_PX = 95.dpToPx()
         private val STROKE_WIDTH = 2.dpToPxPrecise()
 

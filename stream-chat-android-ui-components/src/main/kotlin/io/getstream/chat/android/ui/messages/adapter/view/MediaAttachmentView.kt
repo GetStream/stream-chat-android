@@ -40,13 +40,24 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.loadImage.isVisible = isLoading
     }
 
-    fun showImageByUrl(imageUrl: String) {
+    fun showImageByUrl(imageUrl: String, andMoreCount: Int = NO_MORE_COUNT) {
         binding.imageView.load(
             uri = imageUrl,
             placeholderResId = R.drawable.stream_ui_picture_placeholder,
             onStart = { showLoading(true) },
-            onComplete = { showLoading(false) }
+            onComplete = {
+                showLoading(false)
+                if (andMoreCount > NO_MORE_COUNT) {
+                    showMoreCount(andMoreCount)
+                }
+            }
         )
+    }
+
+    private fun showMoreCount(andMoreCount: Int) {
+        binding.moreCount.isVisible = true
+        binding.moreCountLabel.text =
+            context.resources.getString(R.string.stream_ui_attachments_more_count_prefix, andMoreCount)
     }
 
     fun setImageShapeByCorners(
@@ -62,8 +73,14 @@ internal class MediaAttachmentView : ConstraintLayout {
     fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            alpha = 128
-            setTint(ContextCompat.getColor(context, R.color.stream_ui_black))
+            setTint(ContextCompat.getColor(context, R.color.stream_ui_black_50))
         }
+        binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(ContextCompat.getColor(context, R.color.stream_ui_black_30))
+        }
+    }
+
+    companion object {
+        private const val NO_MORE_COUNT = 0
     }
 }

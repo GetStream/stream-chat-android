@@ -62,6 +62,7 @@
 
     <!-- Message list -->
     <string name="stream_ui_message_deleted_label">Message deleted</string>
+    <string name="stream_ui_attachments_more_count_prefix">+%d</string>
 
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">
