@@ -144,7 +144,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener {
-            //Todo: Implement listener
+            // Todo: Implement listener
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
