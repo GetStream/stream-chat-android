@@ -11,7 +11,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,11 +18,12 @@
         >
 
         <TextView
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/add_group_channel_select_name_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textStyle="bold"
             />
     </androidx.appcompat.widget.Toolbar>
 
@@ -31,9 +31,9 @@
     <TextView
         android:id="@+id/nameTitleTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:gravity="center_vertical"
         android:text="@string/add_group_channel_select_name_choose_title"
         android:textColor="@color/stream_ui_black_50"
         android:textSize="@dimen/stream_ui_text_small"
@@ -46,19 +46,17 @@
         android:id="@+id/nameEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
         android:background="@color/stream_transparent"
         android:hint="@string/add_group_channel_select_name_choose_hint"
         android:inputType="text"
-        android:padding="0dp"
         android:singleLine="true"
         android:textColor="@color/stream_ui_black"
         android:textColorHint="@color/stream_ui_black_50"
         android:textSize="@dimen/stream_ui_text_medium"
+        app:layout_constraintBaseline_toBaselineOf="@id/nameTitleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/nameTitleTextView"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:ignore="Autofill"
         />
 
@@ -70,38 +68,28 @@
         app:constraint_referenced_ids="nameTitleTextView,nameEditText"
         />
 
-    <View
-        android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_channel_header_separator_height"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/stream_ui_divider"
+    <TextView
+        android:id="@+id/membersTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:background="@color/stream_ui_alabaster"
+        android:gravity="start|center_vertical"
+        android:paddingHorizontal="@dimen/spacing_small"
+        android:textColor="@color/stream_ui_black_50"
+        android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nameBarrier"
         />
 
-    <TextView
-        android:id="@+id/membersTitleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/stream_ui_concrete"
-        android:padding="8dp"
-        android:textColor="@color/stream_ui_black_50"
-        android:textSize="@dimen/stream_ui_text_small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separator"
-        />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/membersRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/stream_ui_concrete"
+        android:background="@color/stream_ui_alabaster"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingBottom="16dp"
+        android:paddingBottom="@dimen/spacing_medium"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
