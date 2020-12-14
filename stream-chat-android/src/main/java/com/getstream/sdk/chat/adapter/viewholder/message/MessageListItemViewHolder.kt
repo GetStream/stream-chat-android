@@ -20,7 +20,6 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle

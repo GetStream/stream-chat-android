@@ -4,7 +4,6 @@ import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
