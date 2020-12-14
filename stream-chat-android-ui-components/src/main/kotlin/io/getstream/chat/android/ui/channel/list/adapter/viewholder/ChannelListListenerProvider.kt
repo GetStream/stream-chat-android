@@ -8,7 +8,7 @@ public class ChannelListListenerProvider(
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     moreOptionsClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
-    swipeEventListener: ChannelListView.SwipeEventListener = ChannelListView.SwipeEventListener.DEFAULT
+    swipeEventListener: ChannelListView.ViewHolderSwipeDelegate = ChannelListView.ViewHolderSwipeDelegate.DEFAULT
 ) {
     public var channelClickListener: ChannelListView.ChannelClickListener by Provider(channelClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
@@ -40,9 +40,9 @@ public class ChannelListListenerProvider(
         }
     }
 
-    public var swipeEventListener: ChannelListView.SwipeEventListener by Provider(swipeEventListener) { getListener ->
-        ChannelListView.SwipeEventListener { event ->
-            getListener().onSwipeEvent(event)
-        }
-    }
+    // public var swipeDelegate: ChannelListView.ViewHolderSwipeDelegate by Provider(swipeEventListener) { getListener ->
+    //     ChannelListView.ViewHolderSwipeDelegate { event ->
+    //         getListener().onSwipeEvent(event)
+    //     }
+    // }
 }
