@@ -1323,7 +1323,11 @@ internal class ChannelControllerImpl(
         return result
     }
 
-    internal suspend fun loadMessagesAroundMessageId(messageId: String, offset: Int): Result<Message> {
+    internal suspend fun loadMessageById(
+        messageId: String,
+        newerMessagesOffset: Int,
+        olderMessagesOffset: Int
+    ): Result<Message> {
         val result = client.getMessage(messageId).execute()
         val message = if (result.isSuccess) {
             result.data()
@@ -1333,8 +1337,8 @@ internal class ChannelControllerImpl(
         return if (message != null) {
             _messages.value = emptyMap()
             upsertMessage(message)
-            loadNewerMessages(offset)
-            loadOlderMessages(offset)
+            loadNewerMessages(newerMessagesOffset)
+            loadOlderMessages(olderMessagesOffset)
             Result(message)
         } else {
             Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
