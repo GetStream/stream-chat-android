@@ -135,7 +135,7 @@ class ComponentBrowserHomeFragment : Fragment() {
                 user = randomUser(),
                 createdAt = Date(2020, 7, 15, 14, 22),
                 text = "Hello world, how are you doing?",
-            )
+            ),
         )
         binding.messagePreviewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment)
