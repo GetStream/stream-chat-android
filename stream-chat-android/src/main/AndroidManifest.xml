@@ -15,26 +15,6 @@
         <activity android:name=".view.activity.AttachmentDocumentActivity" />
         <activity android:name=".view.activity.AttachmentActivity" />
 
-        <service
-            android:name="io.getstream.chat.android.livedata.service.sync.OfflineSyncFirebaseMessagingService"
-            android:exported="false"
-            >
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <receiver
-            android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
-            android:enabled="true"
-            android:exported="false"
-            >
-            <intent-filter>
-                <action android:name="com.getstream.sdk.chat.READ" />
-                <action android:name="com.getstream.sdk.chat.REPLY" />
-            </intent-filter>
-        </receiver>
-
         <provider
             android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"
