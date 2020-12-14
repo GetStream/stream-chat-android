@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.docs.TokenService;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -230,7 +229,6 @@ public class ClientAndUsers {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
 
         }
@@ -247,7 +245,6 @@ public class ClientAndUsers {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -267,7 +264,6 @@ public class ClientAndUsers {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
 
@@ -287,7 +283,6 @@ public class ClientAndUsers {
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
-                return Unit.INSTANCE;
             });
         }
     }

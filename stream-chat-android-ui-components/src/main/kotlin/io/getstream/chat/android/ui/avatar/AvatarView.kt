@@ -82,7 +82,10 @@ public class AvatarView : AppCompatImageView {
     private fun drawOnlineStatus(canvas: Canvas) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val cx = width - (width / 8f)
-            val cy = height / 8f
+            val cy: Float = when (avatarStyle.onlineIndicatorPosition) {
+                OnlineIndicatorPosition.TOP -> height / 8f
+                OnlineIndicatorPosition.BOTTOM -> height - height / 8f
+            }
             canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
             canvas.drawCircle(cx, cy, width / 10f, onlineIndicatorPaint)
         }
@@ -97,6 +100,11 @@ public class AvatarView : AppCompatImageView {
                 borderPaint
             )
         }
+    }
+
+    public enum class OnlineIndicatorPosition {
+        TOP,
+        BOTTOM
     }
 
     internal companion object {

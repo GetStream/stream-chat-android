@@ -6,17 +6,17 @@ import io.getstream.chat.android.client.events.TypingStopEvent;
 import kotlin.Unit;
 
 public class TypingIndicators {
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/typing_indicators/?language=java#sending-start-and-stop-typing-events">Sending Start and Stop Typing</a>
      */
     public void sendingStartAndStopTypingEvents() {
         // Sends a typing.start event at most once every two seconds
-        channelController.keystroke().enqueue(result -> Unit.INSTANCE);
+        channelClient.keystroke().enqueue();
 
         // Sends the typing.stop event
-        channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
+        channelClient.stopTyping().enqueue();
     }
 
     /**
@@ -24,7 +24,7 @@ public class TypingIndicators {
      */
     public void receivingTypingEvents() {
         // Add typing start event handling
-        channelController.subscribeFor(
+        channelClient.subscribeFor(
                 new Class[]{TypingStartEvent.class},
                 event -> {
                     // Handle change
@@ -33,7 +33,7 @@ public class TypingIndicators {
         );
 
         // Add typing stop event handling
-        channelController.subscribeFor(
+        channelClient.subscribeFor(
                 new Class[]{TypingStopEvent.class},
                 event -> {
                     // Handle change

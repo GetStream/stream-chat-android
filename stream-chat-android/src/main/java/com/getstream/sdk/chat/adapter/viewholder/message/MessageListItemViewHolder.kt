@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.configurators.SpaceConf
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UserAvatarConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UsernameAndDateConfigurator
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -31,6 +32,7 @@ public open class MessageListItemViewHolder(
     channel: Channel,
     viewHolderFactory: AttachmentViewHolderFactory,
     bubbleHelper: BubbleHelper,
+    dateFormatter: DateFormatter,
     messageClickListener: MessageClickListener,
     messageLongClickListener: MessageLongClickListener,
     messageLongClickListenerView: MessageLongClickListenerView,
@@ -44,7 +46,7 @@ public open class MessageListItemViewHolder(
 
     private val marginConfigurator = MarginConfigurator(binding, style)
     private val spaceConfigurator = SpaceConfigurator(binding)
-    private val usernameAndDateConfigurator = UsernameAndDateConfigurator(binding, style)
+    private val usernameAndDateConfigurator = UsernameAndDateConfigurator(binding, style, dateFormatter)
     private val messageTextConfigurator = MessageTextConfigurator(
         binding,
         context,

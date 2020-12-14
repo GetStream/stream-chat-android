@@ -27,7 +27,9 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
+import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
@@ -79,8 +81,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private lateinit var loadingViewContainer: ViewGroup
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
-
-    private var lastSeenMessage: MessageListItem? = null
+    private var lastSeenMessageInChannel: MessageListItem? = null
+    private var lastSeenMessageInThread: MessageListItem? = null
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -122,9 +124,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
-    private val loadMoreListener = EndlessScrollListener {
-        endRegionReachedHandler()
-    }
+    private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
     private lateinit var currentUser: User
@@ -208,6 +208,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         DEFAULT_GIPHY_SEND_LISTENER
     )
 
+    private lateinit var messageDateFormatter: DateFormatter
     private lateinit var bubbleHelper: BubbleHelper
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
     private lateinit var messageViewHolderFactory: MessageViewHolderFactory
@@ -300,10 +301,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
-        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+        tArray.getInteger(
             R.styleable.MessageListView_streamLoadMoreThreshold,
             context.resources.getInteger(R.integer.stream_load_more_threshold)
-        )
+        ).also { loadMoreThreshold ->
+            loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                endRegionReachedHandler()
+            }
+        }
 
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
@@ -357,7 +362,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     override fun setLoadingMore(loadingMore: Boolean) {
-        loadMoreListener.paginationEnabled = !loadingMore
+        if (loadingMore) {
+            loadMoreListener.disablePagination()
+        } else {
+            loadMoreListener.enablePagination()
+        }
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
@@ -376,8 +385,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                     firstVisiblePosition = currentFirstVisible
 
                     val realLastVisibleMessage =
-                        min(max(currentLastVisible, lastSeenMessagePosition()), currentList.size)
-                    lastSeenMessage = currentList[realLastVisibleMessage]
+                        min(max(currentLastVisible, getLastSeenMessagePosition()), currentList.size)
+                    updateLastSeen(currentList[realLastVisibleMessage])
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
                     scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
@@ -405,13 +414,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    private fun lastSeenMessagePosition(): Int {
-        val lastMessageId = lastSeenMessage?.getStableId()
-        return adapter.currentList.indexOfLast { message ->
-            message?.getStableId() == lastMessageId
-        }
-    }
-
     override fun init(channel: Channel, currentUser: User) {
         this.currentUser = currentUser
         this.channel = channel
@@ -432,6 +434,10 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, context)
         }
 
+        if (::messageDateFormatter.isInitialized.not()) {
+            messageDateFormatter = DateFormatter.from(context)
+        }
+
         // Inject Attachment factory
         attachmentViewHolderFactory.listenerContainer = listenerContainer
         attachmentViewHolderFactory.bubbleHelper = bubbleHelper
@@ -440,6 +446,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         messageViewHolderFactory.listenerContainer = listenerContainer
         messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
         messageViewHolderFactory.bubbleHelper = bubbleHelper
+        messageViewHolderFactory.messageDateFormatter = messageDateFormatter
 
         adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
         adapter.setHasStableIds(true)
@@ -532,8 +539,13 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
+    }
+
+    public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        this.messageDateFormatter = messageDateFormatter
     }
 
     override fun displayNewMessage(listItem: MessageListItemWrapper) {
@@ -548,22 +560,19 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         buffer.hold()
         val entities = listItem.items
 
-        // Adapter initialization for channel and thread swapping
-        val backFromThread = adapter.isThread && listItem.isThread
+        val startThreadMode = !adapter.isThread && listItem.isThread
 
-        if (adapter.isThread != listItem.isThread) {
-            adapter.isThread = listItem.isThread
-        }
+        adapter.isThread = listItem.isThread
 
         val oldSize = adapter.itemCount
 
         adapter.submitList(entities) {
-            continueMessageAdd(backFromThread, listItem, entities, oldSize)
+            continueMessageAdd(startThreadMode, listItem, entities, oldSize)
         }
     }
 
     private fun continueMessageAdd(
-        backFromThread: Boolean,
+        startThreadMode: Boolean,
         listItem: MessageListItemWrapper,
         entities: List<MessageListItem>,
         oldSize: Int
@@ -571,11 +580,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         val newSize = adapter.itemCount
         val sizeGrewBy = newSize - oldSize
 
-        // Scroll to origin position on return from thread
-        if (backFromThread) {
-            // TODO review this, supposed to be the thread parent position
+        if (startThreadMode) {
             layoutManager.scrollToPosition(0)
-            lastMessageReadHandler.invoke()
             buffer.active()
             return
         }
@@ -630,8 +636,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                 newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             ) {
                 layoutManager.scrollToPosition(adapter.itemCount - 1)
-            } else if (!listItem.loadingMore) {
-                val unseenItems = newSize - lastSeenMessagePosition() - 1
+            } else {
+                val unseenItems = newSize - getLastSeenMessagePosition() - 1
                 scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
             }
             // we want to mark read if there is a new message
@@ -645,7 +651,24 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun scrolledBottom(delta: Int): Boolean {
-        return lastSeenMessagePosition() + delta >= lastPosition()
+        return getLastSeenMessagePosition() + delta >= lastPosition()
+    }
+
+    private fun getLastSeenMessagePosition(): Int {
+        val lastMessageId = when (adapter.isThread) {
+            true -> lastSeenMessageInThread
+            false -> lastSeenMessageInChannel
+        }?.getStableId()
+        return adapter.currentList.indexOfLast { message ->
+            message?.getStableId() == lastMessageId
+        }
+    }
+
+    private fun updateLastSeen(messageListItem: MessageListItem?) {
+        when (adapter.isThread) {
+            true -> lastSeenMessageInThread = messageListItem
+            false -> lastSeenMessageInChannel = messageListItem
+        }.exhaustive
     }
 
     /**

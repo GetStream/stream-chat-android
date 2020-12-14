@@ -37,6 +37,12 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomChannel())
         }
+        binding.headerOnlineLongBadge.apply {
+            showBackButtonBadge("2334")
+            setTitle("Chat title")
+            setOnlineStateSubtitle("Chat status")
+            setAvatar(randomChannel())
+        }
         binding.headerOnlineNoBadgeStatus.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")

@@ -14,53 +14,14 @@
         android:scrollbars="vertical"
         />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/scrollBottomBtn"
+    <io.getstream.chat.android.ui.messages.view.ScrollButtonView
+        android:id="@+id/scrollToBottomButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:animateLayoutChanges="true"
-        android:background="@drawable/stream_shape_round"
-        android:minWidth="50dp"
-        android:minHeight="35dp"
-        android:orientation="horizontal"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible"
-        >
-
-        <ImageView
-            android:id="@+id/scrollIconIV"
-            android:layout_width="12dp"
-            android:layout_height="12sp"
-            android:layout_gravity="center"
-            android:layout_marginStart="19dp"
-            android:layout_marginEnd="20dp"
-            android:src="@drawable/stream_bottom_arrow"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/newMessagesTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="20dp"
-            android:textColor="@android:color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/scrollIconIV"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/scrollIconIV"
-            app:layout_constraintTop_toTopOf="@id/scrollIconIV"
-            tools:text="5 New messages"
-            tools:visibility="visible"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:visibility="gone"
+        />
 
     <FrameLayout
         android:id="@+id/loadingViewContainer"
@@ -104,8 +65,8 @@
         android:id="@+id/blurLayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="#C000"
+        android:visibility="gone"
         />
 
     <ScrollView
@@ -113,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
-import io.getstream.chat.android.ui.utils.DateFormatter
-import io.getstream.chat.android.ui.utils.formatMessageDate
 
 public class MessagePreviewView : FrameLayout {
 
@@ -59,6 +59,6 @@ public class MessagePreviewView : FrameLayout {
         binding.avatarView.setUserData(message.user)
         binding.channelNameLabel.text = message.user.name
         binding.messageLabel.text = message.text
-        binding.messageTimeLabel.text = dateFormatter.formatMessageDate(message.createdAt ?: message.createdLocallyAt)
+        binding.messageTimeLabel.text = dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
     }
 }

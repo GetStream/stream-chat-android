@@ -36,6 +36,14 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
+    <style name="StreamUiSelectedGroupMembersStyle" parent="StreamUiBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+        <item name="streamUiAvatarOnlineIndicatorPosition">bottom</item>
+    </style>
+
     <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
     </style>
@@ -104,5 +112,21 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
         <item name="streamAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUiBadgeStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:background">@drawable/stream_ui_badge_bg</item>
+        <item name="android:backgroundTint">@color/stream_ui_light_red</item>
+        <item name="android:minWidth">16dp</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 </resources>

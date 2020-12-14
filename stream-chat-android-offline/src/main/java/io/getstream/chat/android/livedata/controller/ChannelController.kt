@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
+import io.getstream.chat.android.livedata.ChatDomainImpl
 
 /**
  * The Channel Controller exposes convenient livedata objects to build your chat interface
@@ -28,6 +29,13 @@ public interface ChannelController {
     public val channelId: String
     /** a list of messages sorted by message.createdAt */
     public val messages: LiveData<List<Message>>
+    /**
+     * Similar to the messages field, but returns the a MessagesState object
+     * This sealed class makes it easier to verify that you've implemented all possible error/no result states
+     *
+     * @see MessagesState
+     */
+    public val messagesState: LiveData<MessagesState>
     /** Old messages loaded from history of conversation */
     public val oldMessages: LiveData<List<Message>>
     /** the number of people currently watching the channel */
@@ -67,4 +75,27 @@ public interface ChannelController {
 
     public val hidden: LiveData<Boolean>
     public val muted: LiveData<Boolean>
+
+    public sealed class MessagesState {
+        /** The ChannelController is initialized but no query is currently running.
+         * If you know that a query will be started you typically want to display a loading icon.
+         * */
+        public object NoQueryActive : MessagesState()
+        /** Indicates we are loading the first page of results.
+         * We are in this state if ChannelController.loading is true
+         * For seeing if we're loading more results have a look at loadingNewerMessages and loadingOlderMessages
+         *
+         * @see loading
+         * @see loadingNewerMessages
+         * @see loadingOlderMessages
+         * */
+        public object Loading : MessagesState()
+        /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
+        public object OfflineNoResults : MessagesState()
+        /** The list of messages, loaded either from offline storage or an API call.
+         * Observe chatDomain.online to know if results are currently up to date
+         * @see ChatDomainImpl.online
+         * */
+        public data class Result(val messages: List<Message>) : MessagesState()
+    }
 }

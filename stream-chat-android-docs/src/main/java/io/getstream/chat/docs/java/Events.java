@@ -15,7 +15,7 @@ import kotlin.Unit;
 
 public class Events {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/event_object/?language=java">Event Object</a>
@@ -45,7 +45,7 @@ public class Events {
         }
 
         public void listenAllChannelEvents() {
-            Disposable disposable = channelController.subscribe((ChatEvent event) -> {
+            Disposable disposable = channelClient.subscribe((ChatEvent event) -> {
                 if (event instanceof NewMessageEvent) {
                     // To get the message
                     Message message = ((NewMessageEvent) event).getMessage();
@@ -119,10 +119,10 @@ public class Events {
     class TypingEvents {
         public void sendTypingEvent() {
             // Sends a typing.start event if it's been more than 3000 ms since the last event
-            channelController.keystroke().enqueue(result -> Unit.INSTANCE);
+            channelClient.keystroke().enqueue();
 
             // Sends an event typing.stop to all channel participants
-            channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
+            channelClient.stopTyping().enqueue();
         }
     }
 
@@ -132,7 +132,7 @@ public class Events {
     class NotificationEvents {
         public void notificationEvents() {
             // An example of how listen event when a user is added to a channel
-            channelController.subscribeFor(
+            channelClient.subscribeFor(
                     new Class[]{NotificationAddedToChannelEvent.class},
                     addedToChannelEvent -> {
                         // Handle event

@@ -26,7 +26,7 @@ import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class UserPresence {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
 
     /**
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=java#invisible">Invisible</a>
@@ -61,13 +61,12 @@ public class UserPresence {
         WatchChannelRequest watchRequest = new WatchChannelRequest();
         watchRequest.setPresence(true);
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
-        channelController.watch(watchRequest).enqueue(result -> {
+        channelClient.watch(watchRequest).enqueue(result -> {
             if (result.isSuccess()) {
                 Channel channel = result.data();
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // 2. Query some channels with presence events
@@ -91,7 +90,6 @@ public class UserPresence {
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // 3. Query some users for presence event
@@ -106,7 +104,6 @@ public class UserPresence {
             } else {
                 Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
-            return Unit.INSTANCE;
         });
 
         // Finally, Subscribe to events
