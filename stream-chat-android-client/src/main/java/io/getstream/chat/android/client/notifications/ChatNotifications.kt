@@ -80,10 +80,8 @@ internal class ChatNotifications private constructor(
     }
 
     private fun handleRemoteMessage(message: RemoteMessage) {
-
-        val firebaseParser = handler.getFirebaseMessageParser()
-
-        if (firebaseParser.isValid(message)) {
+        if (handler.isValid(message)) {
+            val firebaseParser = handler.getFirebaseMessageParser()
             val data = firebaseParser.parse(message)
             if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
