@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,19 +53,17 @@ class UserLoginFragment : Fragment() {
                 LinearLayoutManager.VERTICAL
             )
         )
-        binding.sdkVersion.text = getString(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_UI_COMPONENTS_VERSION)
+        binding.sdkVersion.text =
+            getString(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_UI_COMPONENTS_VERSION)
 
-        viewModel.state.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it) {
-                    is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
-                    is State.RedirectToChannels -> redirectToHomeScreen()
-                    is State.Loading -> changeLoadingIndicatorVisibility(true)
-                    is State.Error -> showErrorMessage(it.errorMessage)
-                }
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
+                is State.RedirectToChannels -> redirectToHomeScreen()
+                is State.Loading -> changeLoadingIndicatorVisibility(true)
+                is State.Error -> showErrorMessage(it.errorMessage)
             }
-        )
+        }
 
         activity?.intent?.apply {
             val channelId = getStringExtra(EXTRA_CHANNEL_ID)

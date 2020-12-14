@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:background="?selectableItemBackground"
-    android:padding="@dimen/spacing_medium"
+    android:paddingHorizontal="@dimen/spacing_small"
     >
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarImageView"
-        android:layout_width="@dimen/login_avatar_size"
-        android:layout_height="@dimen/login_avatar_size"
+        style="@style/StreamUiChannelListAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,8 +24,9 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_advanced_options"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="16sp"
+        android:textColor="@color/stream_black"
+        android:textSize="14sp"
+        android:textStyle="bold"
         tools:text="@tools:sample/full_names"
         />
 
@@ -37,8 +37,8 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_user_subtitle"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/grey_dark"
+        android:textColor="@color/boulder"
+        android:textSize="12sp"
         />
 
     <androidx.constraintlayout.helper.widget.Flow
@@ -58,9 +58,10 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/arrowImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp"
+        android:scaleType="center"
         android:src="@drawable/ic_arrow_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
