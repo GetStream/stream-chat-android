@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -42,6 +43,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -795,6 +797,8 @@ public class ChatClient internal constructor(
         }
     }
 
+    public fun isValid(remoteMessage: RemoteMessage): Boolean = notifications.isValid(remoteMessage)
+
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
@@ -927,5 +931,8 @@ public class ChatClient internal constructor(
 
         public val isInitialized: Boolean
             get() = instance != null
+
+        public fun isValid(remoteMessage: RemoteMessage, defaultNotificationConfig: NotificationConfig = NotificationConfig()): Boolean =
+            instance?.isValid(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
     }
 }
