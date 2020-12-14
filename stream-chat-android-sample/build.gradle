@@ -67,6 +67,23 @@ android {
         }
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        demo {
+            dimension "version"
+        }
+        full {
+            dimension "version"
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if (variant.buildType.name == "debug" && names.contains("full")) {
+            setIgnore(true)
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
