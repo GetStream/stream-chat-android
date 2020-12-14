@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 
@@ -36,7 +37,7 @@ public class SearchResultListView : ViewFlipper {
 
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = SearchResultListAdapter(context)
+    private val adapter = SearchResultListAdapter(context, ChatDomain.instance())
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()

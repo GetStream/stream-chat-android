@@ -8,12 +8,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.search.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.SearchResultListView.SearchResultSelectedListener
+import io.getstream.chat.android.ui.utils.extensions.asMention
+import io.getstream.chat.android.ui.utils.extensions.context
 
 public class SearchResultListAdapter(
-    context: Context
+    context: Context,
+    private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
@@ -50,7 +54,7 @@ public class SearchResultListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message)
+            binding.root.setMessage(message, chatDomain.currentUser.asMention(context))
         }
     }
 

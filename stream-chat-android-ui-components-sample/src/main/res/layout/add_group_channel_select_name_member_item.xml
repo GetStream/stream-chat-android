@@ -3,32 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginVertical="8dp"
-    android:paddingStart="8dp"
-    android:paddingEnd="16dp"
+    android:layout_height="64dp"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/memberAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
+        style="@style/StreamUiChannelListAvatarStyle"
+        android:layout_marginStart="@dimen/spacing_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamAvatarBorderWidth="0dp"
         />
 
     <TextView
         android:id="@+id/memberNameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="@dimen/spacing_small"
         android:singleLine="true"
         android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/deleteMemberButton"
         app:layout_constraintStart_toEndOf="@id/memberAvatar"
@@ -39,7 +34,7 @@
         android:id="@+id/deleteMemberButton"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="@dimen/spacing_medium"
         android:background="?android:selectableItemBackground"
         android:cropToPadding="true"
         android:scaleType="center"
@@ -53,7 +48,7 @@
 
     <View
         android:id="@+id/separator"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/stream_channel_header_separator_height"
         android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
