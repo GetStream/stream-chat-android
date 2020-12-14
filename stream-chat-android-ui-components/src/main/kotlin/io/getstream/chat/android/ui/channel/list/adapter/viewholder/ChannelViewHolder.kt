@@ -31,11 +31,11 @@ import kotlin.math.absoluteValue
 
 public class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
-    override val channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    override val channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    override val channelDeleteListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    override val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
-    override val style: ChannelListViewStyle?,
+    private val channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val channelDeleteListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
+    private val style: ChannelListViewStyle?,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
         parent,
