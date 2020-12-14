@@ -49,7 +49,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createMediaAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return OnlyMediaAttachmentsViewHolder(parentView)
+        return OnlyMediaAttachmentsViewHolder(parentView, listenerContainer)
     }
 
     public open fun createAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
