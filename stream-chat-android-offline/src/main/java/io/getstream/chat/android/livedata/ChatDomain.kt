@@ -6,7 +6,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
@@ -160,8 +159,7 @@ public interface ChatDomain {
             level = DeprecationLevel.ERROR
         )
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
-            ChatLogger.get("ChatDomain").logE("This method is deprecated, you should configure it into the ChatClient")
-            return this
+            throw java.lang.IllegalStateException("This method is deprecated, you should configure it into the ChatClient")
         }
 
         public fun build(): ChatDomain {
