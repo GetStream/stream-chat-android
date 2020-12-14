@@ -31,22 +31,70 @@ class OnlyAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBro
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri2))),
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2)
+                    )
+                ),
                 positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri3))),
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3)
+                    )
+                ),
                 positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1))),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2)
+                    )
+                ),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1))),
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri3)
+                    )
+                ),
+                positions = listOf(MessageListItem.Position.MIDDLE),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3),
+                        Attachment(type = "image", imageUrl = uri1)
+                    )
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3),
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3),
+                    )
+                ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             )
