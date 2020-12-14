@@ -256,12 +256,40 @@ public class ChannelClient internal constructor(
         return client.sendMessage(channelType, channelId, message)
     }
 
-    override fun banUser(targetId: String, reason: String, timout: Int): Call<Unit> {
-        return client.banUser(targetId, channelType, channelId, reason, timout)
+    override fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
+        return client.banUser(
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId,
+            reason = reason,
+            timeout = timeout,
+        )
     }
 
-    override fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit> {
-        return client.unBanUser(targetId, channelType, channelId)
+    override fun unBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
+        return client.unBanUser(
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId,
+        )
+    }
+
+    override fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
+        return client.shadowBanUser(
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId,
+            reason = reason,
+            timeout = timeout,
+        )
+    }
+
+    override fun removeShadowBan(targetId: String): Call<Unit> {
+        return client.removeShadowBan(
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId,
+        )
     }
 
     override fun markMessageRead(messageId: String): Call<Unit> {
