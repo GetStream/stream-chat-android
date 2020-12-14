@@ -80,7 +80,7 @@ internal class ChatNotifications private constructor(
     }
 
     private fun handleRemoteMessage(message: RemoteMessage) {
-        if (isValid(message)) {
+        if (isValidRemoteMessage(message)) {
             val firebaseParser = handler.getFirebaseMessageParser()
             val data = firebaseParser.parse(message)
             if (!wasNotificationDisplayed(data.messageId)) {
@@ -92,7 +92,7 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun isValid(message: RemoteMessage) = handler.isValid(message)
+    fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id

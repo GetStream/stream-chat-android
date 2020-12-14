@@ -54,7 +54,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        if (!ChatClient.isValid(message, notificationConfig)) {
+        if (!ChatClient.isValidRemoteMessage(message, notificationConfig)) {
             return
         }
         createSyncNotificationChannel()

@@ -19,7 +19,7 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         logger.logD("onMessageReceived(): $remoteMessage")
-        if (!ChatClient.isValid(remoteMessage, defaultNotificationConfig)) {
+        if (!ChatClient.isValidRemoteMessage(remoteMessage, defaultNotificationConfig)) {
             return
         }
         createSyncNotificationChannel()

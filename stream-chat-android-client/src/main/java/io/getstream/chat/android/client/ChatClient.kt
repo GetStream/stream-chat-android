@@ -801,7 +801,7 @@ public class ChatClient internal constructor(
         }
     }
 
-    public fun isValid(remoteMessage: RemoteMessage): Boolean = notifications.isValid(remoteMessage)
+    public fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean = notifications.isValidRemoteMessage(remoteMessage)
 
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
@@ -936,7 +936,7 @@ public class ChatClient internal constructor(
         public val isInitialized: Boolean
             get() = instance != null
 
-        public fun isValid(remoteMessage: RemoteMessage, defaultNotificationConfig: NotificationConfig = NotificationConfig()): Boolean =
-            instance?.isValid(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
+        public fun isValidRemoteMessage(remoteMessage: RemoteMessage, defaultNotificationConfig: NotificationConfig = NotificationConfig()): Boolean =
+            instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
     }
 }

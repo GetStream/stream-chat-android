@@ -12,7 +12,7 @@ public class FirebaseMessageParserImpl(private val config: NotificationConfig) :
     private val channelTypeKey = config.firebaseChannelIdKey
     private val channelIdKey = config.firebaseChannelTypeKey
 
-    override fun isValid(message: RemoteMessage): Boolean = message.isValid(config)
+    override fun isValidRemoteMessage(message: RemoteMessage): Boolean = message.isValid(config)
 
     override fun parse(message: RemoteMessage): FirebaseMessageParser.Data {
         val messageId = message.data[messageIdKey]!!
