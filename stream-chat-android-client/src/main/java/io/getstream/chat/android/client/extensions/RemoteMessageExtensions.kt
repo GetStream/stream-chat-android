@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.extensions
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 
-public fun RemoteMessage.isValid(notificationConfig: NotificationConfig): Boolean =
+internal fun RemoteMessage.isValid(notificationConfig: NotificationConfig): Boolean =
     setOf(
         notificationConfig.firebaseMessageIdKey,
         notificationConfig.firebaseChannelIdKey,
