@@ -9,6 +9,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import com.google.gson.Gson
+import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -342,7 +343,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun getVersion(): String {
-        return BuildConfig.STREAM_CHAT_OFFLINE_VERSION + "-" + BuildConfig.BUILD_TYPE
+        return STREAM_CHAT_VERSION + "-" + BuildConfig.BUILD_TYPE
     }
 
     private fun stopClean() {

@@ -16,6 +16,12 @@ object AppConfig {
             token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYzN2U1OGQtZDhiMC00NzZhLWE0ZjItZjg2MTFlMGQ4NWQ5In0.l3u9P1NKhJ91rI1tzOcABGh045Kj69-iVkC2yUtohVw"
         ),
         SampleUser(
+            name = "Fra",
+            image = "https://www.doppelme.com/E9E9E9/fra/crop.png",
+            id = "Fra",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiRnJhIn0.ENQGHEsAL3WjVhd_qTiJa_9ojGKi2ftJ8xlocT8SVX4"
+        ),
+        SampleUser(
             name = "Carter",
             image = "https://www.doppelme.com/E9E9E9/carter/crop.png",
             id = "6d95273b-33f0-40f5-b07c-0da261092074",

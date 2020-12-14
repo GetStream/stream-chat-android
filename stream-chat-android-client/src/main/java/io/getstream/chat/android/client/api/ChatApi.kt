@@ -618,10 +618,11 @@ internal class ChatApi(
 
     fun banUser(
         targetId: String,
-        timeout: Int,
-        reason: String,
+        timeout: Int?,
+        reason: String?,
         channelType: String,
-        channelId: String
+        channelId: String,
+        shadow: Boolean,
     ): Call<CompletableResponse> {
         return retrofitApi.banUser(
             apiKey = apiKey,
@@ -631,7 +632,8 @@ internal class ChatApi(
                 timeout = timeout,
                 reason = reason,
                 channelType = channelType,
-                channelId = channelId
+                channelId = channelId,
+                shadow = shadow,
             )
         )
     }
@@ -639,14 +641,16 @@ internal class ChatApi(
     fun unBanUser(
         targetId: String,
         channelType: String,
-        channelId: String
+        channelId: String,
+        shadow: Boolean,
     ): Call<CompletableResponse> {
         return retrofitApi.unBanUser(
             apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,
             channelId = channelId,
-            channelType = channelType
+            channelType = channelType,
+            shadow = shadow,
         )
     }
 

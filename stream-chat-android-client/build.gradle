@@ -26,7 +26,7 @@ android {
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'STREAM_CHAT_CLIENT_VERSION', "\"$version\""
+        buildConfigField 'String', 'STREAM_CHAT_VERSION', "\"$version\""
     }
     buildTypes {
         release {

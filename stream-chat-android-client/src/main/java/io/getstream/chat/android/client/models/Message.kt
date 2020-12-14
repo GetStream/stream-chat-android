@@ -77,6 +77,8 @@ public data class Message(
 
     var silent: Boolean = false,
 
+    var shadowed: Boolean = false,
+
     @IgnoreSerialisation
     val i18n: Map<String, String> = mapOf(),
 

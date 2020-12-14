@@ -279,7 +279,8 @@ internal interface RetrofitApi {
         @Query("client_id") connectionId: String,
         @Query("target_user_id") targetUserId: String,
         @Query("type") channelType: String,
-        @Query("id") channelId: String
+        @Query("id") channelId: String,
+        @Query("shadow") shadow: Boolean,
     ): RetrofitCall<CompletableResponse>
 
     //endregion

@@ -43,7 +43,7 @@ internal class UsersApiCallsTests {
             mock.retrofitApi.banUser(
                 mock.apiKey,
                 mock.connectionId,
-                BanUserRequest(targetUserId, timeout, reason, mock.channelType, mock.channelId)
+                BanUserRequest(targetUserId, timeout, reason, mock.channelType, mock.channelId, shadow = false)
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
@@ -72,7 +72,8 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 targetUserId,
                 mock.channelType,
-                mock.channelId
+                mock.channelId,
+                shadow = false,
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
