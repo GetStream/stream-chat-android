@@ -6,6 +6,7 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
@@ -107,7 +108,6 @@ public interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
         internal fun database(db: ChatDatabase): Builder {
@@ -155,18 +155,15 @@ public interface ChatDomain {
             return this
         }
 
-        // TODO: do we even need this, or is it better to have it at the low level client?
+        @Deprecated("This method is deprecated, you should configure it into the ChatClient")
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
-            this.notificationConfig = notificationConfig
+            ChatLogger.get("ChatDomain").logE("This method is deprecated, you should configure it into the ChatClient")
             return this
         }
 
         public fun build(): ChatDomain {
-
-            storeNotificationConfig(notificationConfig)
-
+            storeNotificationConfig(client.notificationHandler.config)
             ChatDomain.instance = buildImpl()
-
             return ChatDomain.instance()
         }
 

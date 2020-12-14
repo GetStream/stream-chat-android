@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
 internal class ChatNotifications private constructor(
-    private val handler: ChatNotificationHandler,
+    val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context
 ) {
