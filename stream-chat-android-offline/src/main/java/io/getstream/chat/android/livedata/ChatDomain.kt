@@ -155,7 +155,10 @@ public interface ChatDomain {
             return this
         }
 
-        @Deprecated("This method is deprecated, you should configure it into the ChatClient")
+        @Deprecated(
+            message = "This method is deprecated, you should configure it into the ChatClient",
+            level = DeprecationLevel.ERROR
+        )
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
             ChatLogger.get("ChatDomain").logE("This method is deprecated, you should configure it into the ChatClient")
             return this
