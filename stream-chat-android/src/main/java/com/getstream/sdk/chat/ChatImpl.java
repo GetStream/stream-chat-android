@@ -2,6 +2,9 @@ package com.getstream.sdk.chat;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
@@ -12,8 +15,6 @@ import com.getstream.sdk.chat.utils.strings.ChatStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
@@ -170,7 +171,7 @@ class ChatImpl implements Chat {
         ChatDomain domain = domainBuilder
                 .userPresenceEnabled()
                 .enableBackgroundSync()
-                .notificationConfig(chatNotificationHandler.getConfig()).build();
+                .build();
 
         // create a copy ChatUI implementation for backward compat
         ChatUI.Builder uiBuilder =
