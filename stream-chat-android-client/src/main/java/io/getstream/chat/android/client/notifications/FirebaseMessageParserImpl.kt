@@ -3,8 +3,10 @@ package io.getstream.chat.android.client.notifications
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal class FirebaseMessageParserImpl(val config: NotificationConfig) : FirebaseMessageParser {
+@InternalStreamChatApi
+public class FirebaseMessageParserImpl(private val config: NotificationConfig) : FirebaseMessageParser {
 
     private val messageIdKey = config.firebaseMessageIdKey
     private val channelTypeKey = config.firebaseChannelIdKey
