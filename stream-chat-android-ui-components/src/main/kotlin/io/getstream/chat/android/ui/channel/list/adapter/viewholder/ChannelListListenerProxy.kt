@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
+import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 
 public class ChannelListListenerProxy(
