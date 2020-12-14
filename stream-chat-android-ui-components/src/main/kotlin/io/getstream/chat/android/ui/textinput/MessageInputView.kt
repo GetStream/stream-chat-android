@@ -429,7 +429,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun refreshControlsState() {
-        val hasText = !binding.etMessageTextInput.text.toString().isNullOrBlank()
+        val hasText = binding.etMessageTextInput.text.toString().isNotBlank()
         val hasAttachments = attachmentController.selectedAttachments.isNotEmpty()
 
         if (hasText || hasAttachments) {
