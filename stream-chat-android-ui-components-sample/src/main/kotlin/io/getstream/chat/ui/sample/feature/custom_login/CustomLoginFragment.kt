@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.BuildConfig
+import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -41,7 +41,7 @@ class CustomLoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initToolbar(binding.toolbar)
         binding.sdkVersion.text =
-            getString(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_UI_VERSION)
+            getString(R.string.sdk_version_template, STREAM_CHAT_VERSION)
         binding.loginButton.setOnClickListener {
             viewModel.loginButtonClicked(collectCredentials())
         }

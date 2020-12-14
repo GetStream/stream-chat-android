@@ -107,7 +107,6 @@ public interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
         internal fun database(db: ChatDatabase): Builder {
@@ -155,18 +154,17 @@ public interface ChatDomain {
             return this
         }
 
-        // TODO: do we even need this, or is it better to have it at the low level client?
+        @Deprecated(
+            message = "This method is deprecated, you should configure it into the ChatClient",
+            level = DeprecationLevel.ERROR
+        )
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
-            this.notificationConfig = notificationConfig
-            return this
+            throw java.lang.IllegalStateException("This method is deprecated, you should configure it into the ChatClient")
         }
 
         public fun build(): ChatDomain {
-
-            storeNotificationConfig(notificationConfig)
-
+            storeNotificationConfig(client.notificationHandler.config)
             ChatDomain.instance = buildImpl()
-
             return ChatDomain.instance()
         }
 

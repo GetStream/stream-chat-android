@@ -24,7 +24,7 @@ import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class Messages {
     private ChatClient client;
-    private ChannelClient channelController;
+    private ChannelClient channelClient;
     private Message message;
     private Message parentMessage;
 
@@ -54,7 +54,7 @@ public class Messages {
             message.getMentionedUsers().add(user);
 
             // Send the message to the channel
-            channelController.sendMessage(message).enqueue(result -> {
+            channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message sentMessage = result.data();
                 } else {
@@ -67,7 +67,7 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=java#get-a-message">Get A Message</a>
          */
         public void getAMessage() {
-            channelController.getMessage("message-id").enqueue(result -> {
+            channelClient.getMessage("message-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     Message message = result.data();
                 } else {
@@ -84,7 +84,7 @@ public class Messages {
             message.setText("my updated text");
 
             // Send the message to the channel
-            channelController.updateMessage(message).enqueue(result -> {
+            channelClient.updateMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message updatedMessage = result.data();
                 } else {
@@ -97,7 +97,7 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=java#delete-a-message">Delete A Message</a>
          */
         public void deleteAMessage() {
-            channelController.deleteMessage("message-id").enqueue(result -> {
+            channelClient.deleteMessage("message-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     Message deletedMessage = result.data();
                 } else {
@@ -116,7 +116,7 @@ public class Messages {
             File anyOtherFile = new File("path");
 
             // Upload an image
-            channelController.sendImage(imageFile, new ProgressCallback() {
+            channelClient.sendImage(imageFile, new ProgressCallback() {
                 @Override
                 public void onSuccess(@NotNull String file) {
                     String fileUrl = file;
@@ -134,7 +134,7 @@ public class Messages {
             });
 
             // Upload a file
-            channelController.sendFile(anyOtherFile, new ProgressCallback() {
+            channelClient.sendFile(anyOtherFile, new ProgressCallback() {
                 @Override
                 public void onSuccess(@NotNull String file) {
                     String fileUrl = file;
@@ -163,7 +163,7 @@ public class Messages {
             reaction.setType("like");
             reaction.setScore(1);
 
-            channelController.sendReaction(reaction).enqueue(result -> {
+            channelClient.sendReaction(reaction).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
@@ -176,7 +176,7 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=java#removing-a-reaction">Removing A Reaction</a>
          */
         public void removeAReaction() {
-            channelController.deleteReaction("message-id", "like").enqueue(result -> {
+            channelClient.deleteReaction("message-id", "like").enqueue(result -> {
                 if (result.isSuccess()) {
                     Message message = result.data();
                 } else {
@@ -190,7 +190,7 @@ public class Messages {
          */
         public void paginatingReactions() {
             // Get the first 10 reactions
-            channelController.getReactions("message-id", 0, 10).enqueue(result -> {
+            channelClient.getReactions("message-id", 0, 10).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Reaction> reactions = result.data();
                 } else {
@@ -199,7 +199,7 @@ public class Messages {
             });
 
             // Get the second 10 reactions
-            channelController.getReactions("message-id", 10, 10).enqueue(result -> {
+            channelClient.getReactions("message-id", 10, 10).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Reaction> reactions = result.data();
                 } else {
@@ -209,7 +209,7 @@ public class Messages {
 
             // Get 10 reactions after particular reaction
             String reactionId = "reaction-id";
-            channelController.getReactions("message-id", reactionId, 10).enqueue(result -> {
+            channelClient.getReactions("message-id", reactionId, 10).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Message> messages = result.data();
                 } else {
@@ -228,7 +228,7 @@ public class Messages {
             reaction.setType("like");
             reaction.setScore(score);
 
-            channelController.sendReaction(reaction).enqueue(result -> {
+            channelClient.sendReaction(reaction).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
@@ -249,7 +249,7 @@ public class Messages {
             message.setParentId(parentMessage.getId());
 
             // Send the message to the channel
-            channelController.sendMessage(message).enqueue(result -> {
+            channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message sentMessage = result.data();
                 } else {
@@ -292,7 +292,7 @@ public class Messages {
             message.setText("text-of-a-message");
             message.setSilent(true);
 
-            channelController.sendMessage(message).enqueue(result -> {
+            channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message sentMessage = result.data();
                 } else {

@@ -57,6 +57,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupUserReactionsView()
         setupMessageList()
         setupTypingIndicator()
+        setupScrollButtonView()
     }
 
     private fun setupMessageList() {
@@ -134,7 +135,7 @@ class ComponentBrowserHomeFragment : Fragment() {
                 user = randomUser(),
                 createdAt = Date(2020, 7, 15, 14, 22),
                 text = "Hello world, how are you doing?",
-            )
+            ),
         )
         binding.messagePreviewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment)
@@ -159,6 +160,13 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.userReactionsView.setMessage(randomMessage(reactionsSize = 2, ownReactionsSize = 1))
         binding.userReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
+        }
+    }
+
+    private fun setupScrollButtonView() {
+        binding.scrollButtonView.setUnreadCount(11)
+        binding.scrollButtonViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserScrollButtonView)
         }
     }
 }

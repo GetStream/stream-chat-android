@@ -3,18 +3,26 @@ package io.getstream.chat.android.ui.search
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.LinearLayout
+import android.widget.Toast
+import android.widget.ViewFlipper
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 
-public class SearchResultListView : LinearLayout {
+public class SearchResultListView : ViewFlipper {
 
     private companion object {
         const val LOAD_MORE_THRESHOLD = 10
+    }
+
+    private object Flipper {
+        const val RESULTS = 0
+        const val EMPTY = 1
+        const val LOADING = 2
     }
 
     private val binding = StreamUiSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
@@ -27,28 +35,16 @@ public class SearchResultListView : LinearLayout {
         init(attrs)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init(attrs)
-    }
-
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = SearchResultListAdapter(context)
+    private val adapter = SearchResultListAdapter(context, ChatDomain.instance())
 
-    private val scrollListener = EndlessScrollListener {
+    private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()
-    }.apply {
-        loadMoreThreshold = LOAD_MORE_THRESHOLD
     }
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
-
-        orientation = VERTICAL
 
         binding.searchListView.apply {
             setHasFixedSize(true)
@@ -67,22 +63,31 @@ public class SearchResultListView : LinearLayout {
         attrs ?: return
     }
 
-    public fun setMessages(messages: List<Message>) {
-        val count = messages.count()
-        binding.searchInfoBar.text = when (count) {
-            0 -> resources.getString(R.string.stream_ui_search_result_list_result_count_empty)
-            else -> resources.getQuantityString(R.plurals.stream_ui_search_result_list_result_count, count, count)
+    public fun setMessages(query: String, messages: List<Message>) {
+        val isEmpty = messages.isEmpty()
+
+        displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
+
+        if (!isEmpty) {
+            val count = messages.count()
+            binding.searchInfoBar.text =
+                resources.getQuantityString(R.plurals.stream_ui_search_result_list_result_count, count, count)
+            scrollListener.enablePagination()
+        } else {
+            binding.emptyLabel.text = resources.getString(R.string.stream_ui_search_result_list_result_empty, query)
+            scrollListener.disablePagination()
         }
+
         adapter.submitList(messages)
     }
 
-    public fun showLoading(isLoading: Boolean) {
-        // TODO display loading
-        scrollListener.paginationEnabled = !isLoading
+    public fun showLoading() {
+        displayedChild = Flipper.LOADING
+        scrollListener.disablePagination()
     }
 
-    public fun showError(isError: Boolean) {
-        // TODO display errors
+    public fun showError() {
+        Toast.makeText(context, R.string.stream_ui_search_result_list_error, Toast.LENGTH_SHORT).show()
     }
 
     public fun setSearchResultSelectedListener(searchResultSelectedListener: SearchResultSelectedListener?) {

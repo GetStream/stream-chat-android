@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
 internal class ChatNotifications private constructor(
-    private val handler: ChatNotificationHandler,
+    val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context
 ) {
@@ -80,10 +80,8 @@ internal class ChatNotifications private constructor(
     }
 
     private fun handleRemoteMessage(message: RemoteMessage) {
-
-        val firebaseParser = handler.getFirebaseMessageParser()
-
-        if (firebaseParser.isValid(message)) {
+        if (isValidRemoteMessage(message)) {
+            val firebaseParser = handler.getFirebaseMessageParser()
             val data = firebaseParser.parse(message)
             if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
@@ -93,6 +91,8 @@ internal class ChatNotifications private constructor(
             logger.logE("Push payload is not configured correctly: {${message.data}}")
         }
     }
+
+    fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id

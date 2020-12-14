@@ -1,8 +1,10 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -10,7 +12,6 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.utils.ModelType
-import java.util.Date
 
 internal fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
     members
@@ -26,15 +27,12 @@ internal fun Channel.getDisplayName(): String = name.takeIf { it.isNotEmpty() }
     ?: getUsers().joinToString { it.name }
 
 internal fun Channel.getLastMessage(): Message? =
-    messages
-        .asSequence()
+    messages.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
         .filter { !it.silent }
         .filter { it.type == ModelType.message_regular }
         .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
-
-internal fun Channel.getCurrentUserLastMessage(): Message? = getLastMessageByUserId(getCurrentUser().id)
 
 internal fun Channel.getLastMessageByUserId(userId: String): Message? =
     messages.lastOrNull {
@@ -45,28 +43,11 @@ internal fun Channel.getLastMessageByUserId(userId: String): Message? =
             !it.isEphemeral()
     }
 
-internal fun Channel.getUnreadUsers(): List<ChannelUserRead> =
-    read.filter { it.lastRead?.before(lastMessageAt) == true }
-
-internal fun Channel.getLastMessageReadCount(): Int =
-    read.filter { userRead ->
-        lastMessageAt?.let { lastMessage ->
-            userRead.lastRead?.before(lastMessage)
-        } == false
-    }.count()
-
-internal fun Channel.getLastMessageTime(): Date? = getLastMessage()?.let { it.createdAt ?: it.createdLocallyAt }
-
-internal fun Channel.getCurrentUser(): User = ChatDomain.instance().currentUser
-
-internal fun Channel.getCurrentUserRead(): ChannelUserRead? =
-    read.firstOrNull { it.user.id == getCurrentUser().id }
-
 internal fun Channel.diff(other: Channel): ChannelDiff =
     ChannelDiff(
         nameChanged = name != other.name,
         avatarViewChanged = getUsers() != other.getUsers(),
-        readStateChanged = unreadCount != other.unreadCount,
+        readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage()
     )
 
@@ -91,21 +72,60 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
     )
 
     return if (onlineUsers > 0) {
-        context.getString(R.string.stream_ui_message_list_header_group_member_count_with_online, groupMembers, onlineUsers)
+        context.getString(
+            R.string.stream_ui_message_list_header_group_member_count_with_online,
+            groupMembers,
+            onlineUsers
+        )
     } else {
         groupMembers
     }
 }
 
-internal fun Channel.lastMessageByCurrentUserWasRead(): Boolean {
-    return getCurrentUserLastMessage()?.let { currentUserLastMessage ->
-        read.any { channelRead ->
-            val lastMessageCreatedAt = currentUserLastMessage.createdAt
-            if (lastMessageCreatedAt != null) {
-                channelRead.lastRead?.before(lastMessageCreatedAt)?.not() ?: false
-            } else {
-                false
-            }
-        }
-    } ?: false
+internal fun Channel.isMessageRead(message: Message): Boolean {
+    val currentUser = ChatDomain.instance().currentUser
+    return read.filterNot { it.user.id == currentUser.id }
+        .mapNotNull { it.lastRead }
+        .any { it.time >= message.getCreatedAtOrThrow().time }
 }
+
+internal fun Channel.isDirectMessaging(): Boolean = getUsers().size == 1
+
+// None of the strings used to assemble the preview message are translatable - concatenation here should be fine
+internal fun Channel.getLastMessagePreviewText(
+    context: Context,
+    isDirectMessaging: Boolean = false
+): SpannableStringBuilder? {
+    return getLastMessage()?.let { message ->
+        val sender = message.getSenderDisplayName(context, isDirectMessaging)
+
+        // bold mentions of the current user
+        val currentUserMention = ChatDomain.instance().currentUser.asMention(context)
+        val previewText: SpannableString = message.text.trim().bold(currentUserMention.singletonList())
+
+        val attachments: SpannableString? = message.attachments
+            .takeIf { it.isNotEmpty() }
+            ?.mapNotNull { attachment ->
+                attachment.title?.let { title ->
+                    val prefix = getAttachmentPrefix(context, attachment)
+                    if (prefix != null) {
+                        "$prefix $title"
+                    } else {
+                        title
+                    }
+                } ?: attachment.name
+            }
+            ?.joinToString()
+            ?.italicize()
+
+        listOf(sender, previewText, attachments)
+            .filterNot { it.isNullOrEmpty() }
+            .joinTo(SpannableStringBuilder(), ": ")
+    }
+}
+
+private fun getAttachmentPrefix(context: Context, attachment: Attachment): String? =
+    when (attachment.type) {
+        ModelType.attach_giphy -> context.getString(R.string.stream_last_message_attachment_giphy)
+        else -> null
+    }

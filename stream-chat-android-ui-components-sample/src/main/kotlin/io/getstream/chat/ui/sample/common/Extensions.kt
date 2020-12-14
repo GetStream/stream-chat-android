@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
@@ -61,6 +63,10 @@ fun NavController.navigateSafely(@IdRes resId: Int) {
     }
 }
 
+fun Fragment.navigateSafely(@IdRes resId: Int) {
+    findNavController().navigateSafely(resId)
+}
+
 fun Fragment.initToolbar(toolbar: Toolbar) {
     (requireActivity() as AppCompatActivity).run {
         setSupportActionBar(toolbar)
@@ -94,3 +100,6 @@ fun Context?.getFragmentManager(): FragmentManager? {
         else -> null
     }
 }
+
+val ChannelData.name: String
+    get() = (extraData["name"] as? String) ?: ""

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     >
 
-    <io.getstream.chat.android.ui.messages.adapter.GapView
+    <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

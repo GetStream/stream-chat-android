@@ -51,8 +51,7 @@ import java.util.Date
  */
 internal class MessageListItemLiveData(
     private val currentUser: User,
-    newMessagesLd: LiveData<List<Message>>,
-    oldMessagesLd: LiveData<List<Message>>,
+    messages: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
@@ -69,11 +68,8 @@ internal class MessageListItemLiveData(
     private var lastMessageID = ""
 
     init {
-        addSource(newMessagesLd) { value ->
-            messagesChanged(value, true)
-        }
-        addSource(oldMessagesLd) { value ->
-            messagesChanged(value, false)
+        addSource(messages) { value ->
+            messagesChanged(value)
         }
         addSource(readsLd) { value ->
             readsChanged(value)
@@ -86,11 +82,11 @@ internal class MessageListItemLiveData(
     }
 
     @UiThread
-    internal fun messagesChanged(messages: List<Message>, isNewMessages: Boolean) {
+    internal fun messagesChanged(messages: List<Message>) {
         messageItemsBase = groupMessages(messages)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value)
         val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        val wrapped = wrapMessages(out, hasNewMessages, !isNewMessages)
+        val wrapped = wrapMessages(out, hasNewMessages)
         value = wrapped
     }
 
@@ -141,9 +137,9 @@ internal class MessageListItemLiveData(
      * It's fast enough though
      */
     private fun groupMessages(messages: List<Message>?): List<MessageListItem> {
+        hasNewMessages = false
         if (messages == null || messages.isEmpty()) return emptyList()
 
-        hasNewMessages = false
         val newLastMessageId: String = messages[messages.size - 1].id
         if (newLastMessageId != lastMessageID) {
             hasNewMessages = true
@@ -236,14 +232,12 @@ internal class MessageListItemLiveData(
     private fun wrapMessages(
         items: List<MessageListItem>,
         hasNewMessages: Boolean = false,
-        loadingMore: Boolean = false
     ): MessageListItemWrapper {
         return MessageListItemWrapper(
             items = items,
             isThread = isThread,
             isTyping = typingUsers.isNotEmpty(),
             hasNewMessages = hasNewMessages,
-            loadingMore = loadingMore
         )
     }
 

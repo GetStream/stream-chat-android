@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.DateFormatter;
+import com.getstream.sdk.chat.utils.DateFormatterKt;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.extensions.ChannelUtils;
 import com.getstream.sdk.chat.utils.extensions.MemberUtils;
@@ -46,6 +47,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     protected ChannelListView.ChannelClickListener channelClickListener;
     protected ChannelListView.ChannelClickListener channelLongClickListener;
     protected ChannelListViewStyle style;
+    protected DateFormatter defaultDateFormatter = DateFormatter.from(itemView.getContext());
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -177,7 +179,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configLastMessageDate(Channel channel) {
-        tv_date.setText(DateFormatter.formatAsTimeOrDate(channel.getLastMessageAt()));
+        String date = DateFormatterKt.formatDate(defaultDateFormatter, channel.getLastMessageAt());
+        tv_date.setText(date);
     }
 
     protected void configReadState(Channel channel) {

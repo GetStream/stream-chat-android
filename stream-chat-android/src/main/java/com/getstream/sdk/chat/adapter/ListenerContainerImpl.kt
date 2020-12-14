@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.adapter
 
+import com.getstream.sdk.chat.utils.ListenerDelegate
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -8,10 +10,8 @@ import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
-public class ListenerContainerImpl(
+internal class ListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
@@ -87,40 +87,6 @@ public class ListenerContainerImpl(
     ) { realListener ->
         GiphySendListener { message, action ->
             realListener().onGiphySend(message, action)
-        }
-    }
-
-    /**
-     * A property delegate to be used with listeners.
-     *
-     * The real listener stored in [realListener] isn't exposed externally, it's only
-     * accessible through the [wrapper].
-     *
-     * The [wrapper] is exposed by the getter, and a reference to it can be safely stored
-     * long-term.
-     *
-     * Setting new listeners via the setter will update the underlying listener, and
-     * calls to the [wrapper] will then be forwarded to the latest [realListener] that
-     * was set.
-     *
-     * @param wrap A function that has to produce the wrapper listener. The listener being
-     *             wrapped can be referenced by calling the realListener() method. This
-     *             function always returns the current listener, even if it changes.
-     */
-    public class ListenerDelegate<L : Any>(
-        initialValue: L,
-        wrap: (realListener: () -> L) -> L
-    ) : ReadWriteProperty<Any?, L> {
-
-        private var realListener: L = initialValue
-        private val wrapper: L = wrap { realListener }
-
-        override fun getValue(thisRef: Any?, property: KProperty<*>): L {
-            return wrapper
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: L) {
-            realListener = value
         }
     }
 }

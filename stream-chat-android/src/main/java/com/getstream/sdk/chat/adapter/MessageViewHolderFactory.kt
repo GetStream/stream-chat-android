@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.LoadingMoreViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.MessageListItemViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.ThreadSeparatorViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.TypingIndicatorViewHolder
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
@@ -32,6 +33,8 @@ public open class MessageViewHolderFactory {
     public lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
 
     public lateinit var bubbleHelper: MessageListView.BubbleHelper
+
+    public lateinit var messageDateFormatter: DateFormatter
 
     public open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
@@ -63,6 +66,7 @@ public open class MessageViewHolderFactory {
                     channel,
                     attachmentViewHolderFactory,
                     bubbleHelper,
+                    messageDateFormatter,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
                     listenerContainer.messageRetryListener,

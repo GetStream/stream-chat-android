@@ -1,7 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.messages.adapter.GapView
+import io.getstream.chat.android.ui.messages.adapter.view.GapView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder

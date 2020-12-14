@@ -33,6 +33,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public val config: NotificationConfig = NotificationConfig()
 ) {
     private val logger = ChatLogger.get("ChatNotificationHandler")
+    private val firebaseMessageParserImpl: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(config) }
 
     public open fun onChatEvent(event: ChatEvent): Boolean {
         return false
@@ -83,11 +84,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         context.getString(config.notificationChannelName)
 
     public open fun getSmallIcon(): Int = config.smallIcon
-
     public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
-
     public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
-
     public open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 
     public open fun getErrorCaseNotificationTitle(): String =
@@ -186,9 +184,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
-    public open fun getFirebaseMessageParser(): FirebaseMessageParser {
-        return FirebaseMessageParserImpl(this)
-    }
+    public open fun getFirebaseMessageParser(): FirebaseMessageParser = firebaseMessageParserImpl
+    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean = getFirebaseMessageParser().isValidRemoteMessage(message)
 
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
         if (drawable is BitmapDrawable) {

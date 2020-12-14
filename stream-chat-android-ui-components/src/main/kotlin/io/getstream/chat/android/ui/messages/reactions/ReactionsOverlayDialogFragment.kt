@@ -28,9 +28,7 @@ internal class ReactionsOverlayDialogFragment : DialogFragment() {
 
     private val messageViewHolderFactory = MessageListItemViewHolderFactory()
     private val messageItem: MessageListItem.MessageItem by lazy {
-        val wrapper = requireArguments().getSerializable(ARG_MESSAGE)
-        wrapper as MessageItemWrapper
-        wrapper.messageListItem
+        requireArguments().getSerializable(ARG_MESSAGE) as MessageListItem.MessageItem
     }
     private lateinit var messageView: View
 
