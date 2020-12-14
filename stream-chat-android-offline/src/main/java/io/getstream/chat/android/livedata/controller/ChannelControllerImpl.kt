@@ -136,6 +136,7 @@ internal class ChannelControllerImpl(
             messageMap.values
                 .asSequence()
                 .filter { it.parentId == null || it.showInChannel }
+                .filter { !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()

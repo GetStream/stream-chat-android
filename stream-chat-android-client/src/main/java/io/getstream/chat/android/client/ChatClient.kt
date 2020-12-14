@@ -640,14 +640,15 @@ public class ChatClient internal constructor(
         targetId: String,
         channelType: String,
         channelId: String,
-        reason: String,
-        timeout: Int
+        reason: String?,
+        timeout: Int?
     ): Call<Unit> = api.banUser(
-        targetId,
-        timeout,
-        reason,
-        channelType,
-        channelId
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+        shadow = false
     ).map {
         Unit
     }
@@ -657,9 +658,40 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String
     ): Call<Unit> = api.unBanUser(
-        targetId,
-        channelType,
-        channelId
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = false
+    ).map {
+        Unit
+    }
+
+    public fun shadowBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        reason: String?,
+        timeout: Int?
+    ): Call<Unit> = api.banUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+        shadow = true
+    ).map {
+        Unit
+    }
+
+    public fun removeShadowBan(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): Call<Unit> = api.unBanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = true
     ).map {
         Unit
     }
