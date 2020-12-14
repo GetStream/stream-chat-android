@@ -148,6 +148,7 @@ internal class MessageRepository(
             message.reactionCounts = reactionCounts.toMutableMap()
             message.reactionScores = reactionScores.toMutableMap()
             message.syncStatus = syncStatus
+            message.shadowed = shadowed
 
             message.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
             message.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
@@ -173,6 +174,7 @@ internal class MessageRepository(
             extraData = model.extraData,
             reactionCounts = model.reactionCounts,
             reactionScores = model.reactionScores,
+            shadowed = model.shadowed,
             // for these we need a little map,
             latestReactions = model.latestReactions.map(::ReactionEntity),
             ownReactions = model.ownReactions.map(::ReactionEntity),
