@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
@@ -10,6 +11,9 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainText
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 
 public open class MessageListItemViewHolderFactory {
+
+    public var listenerContainer: ListenerContainer? = null
+
     public fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {
             MessageListItemViewType.DATE_DIVIDER -> createDateDividerViewHolder(parentView)
@@ -33,7 +37,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createPlainTextViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return MessagePlainTextViewHolder(parentView)
+        return MessagePlainTextViewHolder(parentView, listenerContainer)
     }
 
     public open fun createReplyMessageViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
@@ -45,7 +49,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createMediaAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return OnlyMediaAttachmentsViewHolder(parentView)
+        return OnlyMediaAttachmentsViewHolder(parentView, listenerContainer)
     }
 
     public open fun createAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
