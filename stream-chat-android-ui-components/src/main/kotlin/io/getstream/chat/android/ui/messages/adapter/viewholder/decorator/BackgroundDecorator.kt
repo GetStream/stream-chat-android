@@ -66,6 +66,13 @@ internal class BackgroundDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
+        val shapeAppearanceModel = ShapeAppearanceModel.builder()
+            .setTopLeftCornerSize(DEFAULT_CORNER_RADIUS)
+            .setTopRightCornerSize(DEFAULT_CORNER_RADIUS)
+            .build()
+        viewHolder.binding.mediaAttachmentsGroupView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_transparent))
+        }
     }
 
     companion object {
