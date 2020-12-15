@@ -6,6 +6,7 @@
 ## stream-chat-android-client
 - Improve `banUser` and `unBanUser` methods - make `reason` and `timeout` parameter nullable
 - Add support for shadow ban - add `shadowBanUser` and `removeShadowBan` methods to `ChatClient` and `ChannelClient`
+- Add `shadowBanned` property to `Member` class
 
 ## stream-chat-android-offline
 - Add filtering `shadowed` messages
