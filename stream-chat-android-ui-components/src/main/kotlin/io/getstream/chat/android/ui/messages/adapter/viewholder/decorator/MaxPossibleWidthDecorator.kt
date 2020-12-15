@@ -12,7 +12,7 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        (viewHolder.binding.mediaAttachmentsGroupView.layoutParams as ConstraintLayout.LayoutParams).apply {
+        viewHolder.binding.mediaAttachmentsGroupView.updateLayoutParams<ConstraintLayout.LayoutParams> {
             matchConstraintPercentWidth = MAX_POSSIBLE_WIDTH_FACTOR
         }
     }
