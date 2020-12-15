@@ -447,6 +447,9 @@ public class ChatClient internal constructor(
         return api.searchMessages(request)
     }
 
+    public fun getFileAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+        getAttachments(channelType, channelId, offset, limit, "file")
+
     public fun getImageAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, "image")
 
