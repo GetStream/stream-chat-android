@@ -9,6 +9,8 @@
 - Add `shadowBanned` property to `Member` class
 - Add `ChatClient::getImageAttachments` method to obtain image attachments from a channel
 - Add `ChatClient::getFileAttachments` method to obtain file attachments from a channel
+- Add `ChannelClient::getImageAttachments` method to obtain image attachments from a channel
+- Add `ChannelClient::getFileAttachments` method to obtain file attachments from a channel
 
 ## stream-chat-android-offline
 - Add filtering `shadowed` messages
