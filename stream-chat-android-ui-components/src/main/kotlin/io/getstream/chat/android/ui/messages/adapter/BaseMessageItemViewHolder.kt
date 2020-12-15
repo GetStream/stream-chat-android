@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPos
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
-    internal val decorators = listOf<Decorator>(BackgroundDecorator(), GapDecorator(), MaxPossibleWidthDecorator())
+    private val decorators = listOf<Decorator>(BackgroundDecorator(), GapDecorator(), MaxPossibleWidthDecorator())
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
         decorators.forEach { it.decorate(this, data) }
