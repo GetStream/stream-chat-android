@@ -1,19 +1,28 @@
 package io.getstream.chat.android.ui.channel.list.adapter
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerProxy
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
 public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
-    public var viewHolderFactory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder> =
-        ChannelViewHolderFactory()
+    public var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
+
+    public val listenerProxy: ChannelListListenerProxy = ChannelListListenerProxy()
+
+    public var endReached: Boolean = true
+        set(value) {
+            if (value) {
+                // if we've reached the end, remove the last item
+                notifyItemRemoved(itemCount)
+            }
+            field = value
+        }
 
     public companion object {
         public val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
@@ -25,45 +34,59 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         )
     }
 
-    /**
-     * Returns the layout for the channel items.
-     * Its behavior is such that specifying a layout in the [BaseChannelViewHolderFactory] takes precedence.
-     * If the layout is omitted, the layout specified in the style is used.
-     * If the style layout is omitted, our default layout resource is used.
-     *
-     * @return the resolved layout resource
-     */
-    private fun getChannelItemLayout(): Int =
-        viewHolderFactory.viewHolderLayout
-            ?: style?.channelPreviewLayout
-            ?: R.layout.stream_ui_channel_list_item_view
+    public enum class ChannelItemType {
+        DEFAULT,
+        LOADING_MORE
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder =
-        LayoutInflater.from(parent.context)
-            .inflate(getChannelItemLayout(), parent, false)
-            .let { viewHolderFactory.createChannelViewHolder(it) }
+    // If we haven't reached the end of the channels, and we're in the last position, we're loading more
+    private fun isLoadingMore(position: Int) = !endReached && position == itemCount - 1
 
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            isLoadingMore(position) -> ChannelItemType.LOADING_MORE.ordinal
+            else -> ChannelItemType.DEFAULT.ordinal
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount().let { realCount ->
+            when {
+                // if the list isn't empty, and we haven't reached the end, always offset +1 for the loading more view
+                !endReached && realCount > 0 -> realCount + 1
+                else -> realCount
+            }
+        }
+    }
+
+    override fun getItem(position: Int): Channel? {
+        return when {
+            // don't try to fetch an item that isn't in the data set
+            isLoadingMore(position) -> null
+            else -> super.getItem(position)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
+        return with(listenerProxy) {
+            viewHolderFactory.createViewHolder(
+                parent,
+                ChannelItemType.values()[viewType],
+                channelClickListener,
+                channelLongClickListener,
+                deleteClickListener,
+                userClickListener,
+                style
+            )
+        }
+    }
+
+    /* Loading view doesn't require any binding. Only bind if a channel item is retrieved */
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
-        holder.bind(
-            getItem(position),
-            payloads.firstOrDefault(EVERYTHING_CHANGED).cast(),
-            channelClickListener,
-            channelLongClickListener,
-            deleteClickListener,
-            userClickListener,
-            style
-        )
+        getItem(position)?.let { holder.bind(it, payloads.firstOrDefault(EVERYTHING_CHANGED).cast()) }
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
-        holder.bind(
-            getItem(position),
-            NOTHING_CHANGED,
-            channelClickListener,
-            channelLongClickListener,
-            deleteClickListener,
-            userClickListener,
-            style
-        )
+        getItem(position)?.let { holder.bind(it, NOTHING_CHANGED) }
     }
 }
