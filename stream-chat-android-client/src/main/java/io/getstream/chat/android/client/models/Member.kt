@@ -15,5 +15,7 @@ public data class Member(
     @SerializedName("invite_accepted_at")
     var inviteAcceptedAt: Date? = null,
     @SerializedName("invite_rejected_at")
-    var inviteRejectedAt: Date? = null
+    var inviteRejectedAt: Date? = null,
+    @SerializedName("shadow_banned")
+    var shadowBanned: Boolean = false,
 ) : UserEntity

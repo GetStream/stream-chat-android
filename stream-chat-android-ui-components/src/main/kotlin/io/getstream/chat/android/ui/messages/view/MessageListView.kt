@@ -25,7 +25,7 @@ import com.getstream.sdk.chat.view.IMessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListenerView
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -143,17 +143,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListenerView { _, view ->
-            optionsView = view
-
-            binding.blurLayer.isVisible = true
-
-            if (view.parent != null && view.parent is ViewGroup) {
-                (view.parent as ViewGroup).removeView(view)
-            }
-
-            binding.messageOptionsContainer.addView(optionsView)
-            binding.messageOptionsScroll.isVisible = true
+        MessageLongClickListener {
+            // Todo: Implement listener
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -198,7 +189,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private val listenerContainer: ListenerContainer = ListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
-        messageLongClickListenerView = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+        messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
         attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
@@ -408,6 +399,9 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         if (::messageDateFormatter.isInitialized.not()) {
             messageDateFormatter = DateFormatter.from(context)
         }
+
+        messageListItemViewHolderFactory.listenerContainer = this.listenerContainer
+
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
 
@@ -597,16 +591,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
         listenerContainer.messageClickListener =
             messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
-    }
-
-    /**
-     * Sets the message long click listener to be used by MessageListView.
-     *
-     * @param messageLongClickListener The listener to use. If null, the default will be used instead.
-     */
-    public fun setMessageLongClickListener(messageLongClickListenerView: MessageLongClickListenerView?) {
-        listenerContainer.messageLongClickListenerView =
-            messageLongClickListenerView ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**

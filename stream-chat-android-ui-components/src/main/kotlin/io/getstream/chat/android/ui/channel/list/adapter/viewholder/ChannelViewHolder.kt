@@ -2,8 +2,9 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
-import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
@@ -28,7 +29,19 @@ import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import kotlin.math.absoluteValue
 
-public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
+public class ChannelViewHolder @JvmOverloads constructor(
+    parent: ViewGroup,
+    private val channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val channelDeleteListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    private val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
+    private val style: ChannelListViewStyle?,
+    private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
+        parent.inflater,
+        parent,
+        false
+    )
+) : BaseChannelListItemViewHolder(binding.root) {
 
     internal sealed class MenuState {
         internal object Open : MenuState()
@@ -47,31 +60,14 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
         private val swipeStateByChannelCid = mutableMapOf<String, MenuState>()
     }
 
-    public val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.bind(itemView)
-
-    public override fun bind(
-        channel: Channel,
-        diff: ChannelDiff,
-        channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
-        channelDeleteListener: ChannelListView.ChannelClickListener,
-        userClickListener: ChannelListView.UserClickListener,
-        style: ChannelListViewStyle?
-    ) {
-        configureForeground(diff, channel, userClickListener, channelClickListener, channelLongClickListener, style)
+    public override fun bind(channel: Channel, diff: ChannelDiff) {
+        configureForeground(diff, channel)
         binding.itemBackgroundView.deleteImageView.setOnClickListener {
             channelDeleteListener.onClick(channel)
         }
     }
 
-    private fun configureForeground(
-        diff: ChannelDiff,
-        channel: Channel,
-        userClickListener: ChannelListView.UserClickListener,
-        channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
-        style: ChannelListViewStyle?
-    ) {
+    private fun configureForeground(diff: ChannelDiff, channel: Channel) {
         binding.itemForegroundView.apply {
             configureSwipeBehavior(channel.cid)
 
@@ -184,7 +180,6 @@ public class ChannelListItemViewHolder(itemView: View) : BaseChannelListItemView
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
-
         when {
             !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
                 messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_all)

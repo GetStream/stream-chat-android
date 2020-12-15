@@ -12,8 +12,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 public class ChannelsView @JvmOverloads constructor(
@@ -24,7 +23,9 @@ public class ChannelsView @JvmOverloads constructor(
     private val CHANNEL_LIST_VIEW_ID = R.id.stream_channels_list_view_id
 
     private var emptyStateView: View = defaultEmptyStateView()
+
     private var loadingView: View = defaultLoadingView()
+
     private val channelListView: ChannelListView =
         ChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
 
@@ -98,7 +99,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param factory the custom factory to be used when generating item view holders
      */
-    public fun setViewHolderFactory(factory: BaseChannelViewHolderFactory<BaseChannelListItemViewHolder>) {
+    public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
         channelListView.setViewHolderFactory(factory)
     }
 
@@ -133,7 +134,7 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setChannelDeleteListener(listener)
     }
 
-    public fun setOnEndReachedListener(listener: () -> Unit) {
+    public fun setOnEndReachedListener(listener: ChannelListView.EndReachedListener) {
         channelListView.setOnEndReachedListener(listener)
     }
 
@@ -159,6 +160,10 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun setPaginationEnabled(enabled: Boolean) {
         channelListView.setPaginationEnabled(enabled)
+    }
+
+    public fun reachedEndOfChannels(endReached: Boolean) {
+        channelListView.reachedEndOfChannels(endReached)
     }
 
     private companion object {
