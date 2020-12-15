@@ -66,7 +66,7 @@ class ChatInfoFragment : Fragment() {
                 ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
                 ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
                 ChatInfoItem.Option.SharedGroups -> {
-                    val memberId = viewModel.state.value!!.chatMember.member.getUserId()
+                    val memberId = viewModel.state.value!!.member.getUserId()
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
                             memberId

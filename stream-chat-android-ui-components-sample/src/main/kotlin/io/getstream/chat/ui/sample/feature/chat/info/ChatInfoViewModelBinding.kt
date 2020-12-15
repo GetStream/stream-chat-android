@@ -27,7 +27,7 @@ fun ChatInfoViewModel.bindView(view: ChatInfoFragment, lifecycleOwner: Lifecycle
     state.observe(lifecycleOwner) { state ->
         view.showOptions(
             listOf(
-                ChatInfoItem.MemberItem(state.chatMember),
+                ChatInfoItem.MemberItem(state.member),
                 ChatInfoItem.Separator,
                 ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled),
                 ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted),

@@ -10,10 +10,8 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.common.name
-import io.getstream.chat.ui.sample.feature.chat.info.ChatMember
 import kotlinx.coroutines.launch
 
 class GroupChatInfoViewModel(
@@ -38,8 +36,7 @@ class GroupChatInfoViewModel(
 
                 // Update members
                 _state.addSource(controller.members) { members ->
-                    val channelData = controller.channelData.value!!
-                    updateMembers(members, channelData.createdBy)
+                    updateMembers(members)
                 }
 
                 _state.addSource(controller.channelData) { channelData ->
@@ -79,14 +76,11 @@ class GroupChatInfoViewModel(
         }
     }
 
-    private fun updateMembers(members: List<Member>, owner: User) {
+    private fun updateMembers(members: List<Member>) {
         val currentState = _state.value!!
-        val membersToShow = members.map {
-            ChatMember(it, isOwner = it.getUserId() == owner.id)
-        }
         _state.value =
             currentState.copy(
-                members = membersToShow,
+                members = members,
                 shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size <= COLLAPSED_MEMBERS_COUNT,
                 membersToShowCount = members.size - COLLAPSED_MEMBERS_COUNT
             )
@@ -111,7 +105,7 @@ class GroupChatInfoViewModel(
     }
 
     data class State(
-        val members: List<ChatMember>,
+        val members: List<Member>,
         val channelName: String,
         val channelMuted: Boolean,
         val shouldExpandMembers: Boolean?,

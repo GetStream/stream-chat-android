@@ -38,8 +38,7 @@ class ChatInfoViewModel(
             if (result.isSuccess) {
                 val member = result.data().first()
                 // Update member and member block status
-                _state.value =
-                    _state.value!!.copy(chatMember = ChatMember(member, false), isMemberBlocked = member.shadowBanned)
+                _state.value = _state.value!!.copy(member = member, isMemberBlocked = member.shadowBanned)
                 // Update channel notifications
                 updateChannelNotificationsStatus(chatDomain.currentUser.channelMutes)
 
@@ -47,7 +46,7 @@ class ChatInfoViewModel(
                 _state.addSource(chatDomain.muted) { mutes ->
                     val currentState = state.value!!
                     _state.value =
-                        currentState.copy(isMemberMuted = mutes.any { it.target.id == currentState.chatMember.member.getUserId() })
+                        currentState.copy(isMemberMuted = mutes.any { it.target.id == currentState.member.getUserId() })
                 }
             } else {
                 // TODO: Handle error
@@ -87,9 +86,9 @@ class ChatInfoViewModel(
         viewModelScope.launch {
             val currentState = _state.value!!
             val result = if (isEnabled) {
-                channelClient.muteUser(currentState.chatMember.member.getUserId()).await()
+                channelClient.muteUser(currentState.member.getUserId()).await()
             } else {
-                channelClient.unmuteUser(currentState.chatMember.member.getUserId()).await()
+                channelClient.unmuteUser(currentState.member.getUserId()).await()
             }
             if (result.isError) {
                 // Handle error in a better way
@@ -103,12 +102,12 @@ class ChatInfoViewModel(
             val currentState = _state.value!!
             val result = if (isEnabled) {
                 channelClient.shadowBanUser(
-                    targetId = currentState.chatMember.member.getUserId(),
+                    targetId = currentState.member.getUserId(),
                     reason = null,
                     timeout = null
                 ).await()
             } else {
-                channelClient.removeShadowBan(currentState.chatMember.member.getUserId()).await()
+                channelClient.removeShadowBan(currentState.member.getUserId()).await()
             }
             if (result.isError) {
                 // TODO: Show error message
@@ -128,7 +127,7 @@ class ChatInfoViewModel(
     }
 
     data class State(
-        val chatMember: ChatMember = ChatMember(member = Member(User())),
+        val member: Member = Member(User()),
         val notificationsEnabled: Boolean = false,
         val isMemberMuted: Boolean = false,
         val isMemberBlocked: Boolean = false
