@@ -33,7 +33,7 @@ internal fun Channel.getLastMessage(): Message? =
         .filter { !it.silent }
         .filter { !it.shadowed }
         .filter { it.type == ModelType.message_regular }
-        .maxByOrNull { it.createdAt ?: it.createdLocallyAt!! }
+        .maxByOrNull { it.getCreatedAtOrThrow() }
 
 internal fun Channel.getLastMessageByUserId(userId: String): Message? =
     messages.lastOrNull {
@@ -85,7 +85,7 @@ internal fun Channel.getGroupSubtitle(context: Context): String {
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
     val currentUser = ChatDomain.instance().currentUser
-    return read.filterNot { it.user.id == currentUser.id }
+    return read.filter { it.user.id != currentUser.id }
         .mapNotNull { it.lastRead }
         .any { it.time >= message.getCreatedAtOrThrow().time }
 }

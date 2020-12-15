@@ -85,8 +85,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
 
-    private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
-
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -462,6 +460,9 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         if (::messageDateFormatter.isInitialized.not()) {
             messageDateFormatter = DateFormatter.from(context)
         }
+
+        messageListItemViewHolderFactory.listenerContainer = this.listenerContainer
+
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
 
@@ -651,16 +652,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
         listenerContainer.messageClickListener =
             messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
-    }
-
-    /**
-     * Sets the message long click listener to be used by MessageListView.
-     *
-     * @param messageLongClickListener The listener to use. If null, the default will be used instead.
-     */
-    public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
-        listenerContainer.messageLongClickListener =
-            messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**
