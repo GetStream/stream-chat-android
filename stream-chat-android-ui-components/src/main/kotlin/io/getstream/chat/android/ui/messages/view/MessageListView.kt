@@ -125,6 +125,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
+    private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
+
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
