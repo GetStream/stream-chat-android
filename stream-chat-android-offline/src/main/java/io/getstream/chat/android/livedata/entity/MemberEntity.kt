@@ -26,6 +26,9 @@ internal data class MemberEntity(var userId: String) {
     /** the date the invite was rejected */
     var inviteRejectedAt: Date? = null
 
+    /** if channel member is shadow banned */
+    var shadowBanned: Boolean = false
+
     /** creates a memberEntity from the member */
     constructor(r: Member) : this(r.getUserId()) {
         role = r.role ?: r.user.role
@@ -34,6 +37,7 @@ internal data class MemberEntity(var userId: String) {
         isInvited = r.isInvited ?: false
         inviteAcceptedAt = r.inviteAcceptedAt
         inviteRejectedAt = r.inviteRejectedAt
+        shadowBanned = r.shadowBanned
     }
 
     /** converts a member entity into a member */
@@ -44,6 +48,6 @@ internal data class MemberEntity(var userId: String) {
                 .logE("userMap is missing the user with id='$userId` needed to create this member")
             return null
         }
-        return Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+        return Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt, shadowBanned)
     }
 }

@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
+import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
 import com.getstream.sdk.chat.adapter.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
@@ -36,7 +37,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
             clear(view.id, ConstraintSet.LEFT)
             clear(view.id, ConstraintSet.RIGHT)
             val anchorSide = if (isMine) ConstraintSet.RIGHT else ConstraintSet.LEFT
-            connect(view.id, anchorSide, ConstraintSet.PARENT_ID, anchorSide)
+            constrainViewToParentBySide(view, anchorSide)
         }
     }
 }
