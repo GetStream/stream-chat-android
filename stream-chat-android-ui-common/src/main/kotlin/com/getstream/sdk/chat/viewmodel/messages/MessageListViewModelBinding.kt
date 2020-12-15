@@ -2,6 +2,7 @@
 
 package com.getstream.sdk.chat.viewmodel.messages
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.IMessageListView
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
