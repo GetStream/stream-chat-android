@@ -43,6 +43,9 @@ class GroupChatInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.headerView.setBackButtonClickListener {
+            requireActivity().onBackPressed()
+        }
         binding.optionsRecyclerView.adapter = adapter
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
         if (!isDistinctChannel()) {
