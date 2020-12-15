@@ -15,7 +15,7 @@ public open class ChannelListItemViewHolderFactory {
         deleteClickListener: ChannelListView.ChannelClickListener,
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
-        swipeEventListener: ChannelListView.ViewHolderSwipeDelegate,
+        swipeListener: ChannelListView.SwipeListener,
         style: ChannelListViewStyle?
     ): BaseChannelListItemViewHolder {
         return when (channelItemType) {
@@ -26,7 +26,7 @@ public open class ChannelListItemViewHolderFactory {
                 deleteClickListener,
                 moreOptionsClickListener,
                 userClickListener,
-                swipeEventListener,
+                swipeListener,
                 style
             )
 
@@ -41,7 +41,7 @@ public open class ChannelListItemViewHolderFactory {
         deleteClickListener: ChannelListView.ChannelClickListener,
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
-        swipeEventListener: ChannelListView.ViewHolderSwipeDelegate,
+        swipeListener: ChannelListView.SwipeListener,
         style: ChannelListViewStyle?
     ): BaseChannelListItemViewHolder {
         return ChannelItemViewHolder(
@@ -51,7 +51,7 @@ public open class ChannelListItemViewHolderFactory {
             deleteClickListener,
             moreOptionsClickListener,
             userClickListener,
-            swipeEventListener,
+            swipeListener,
             style
         )
     }

@@ -152,8 +152,8 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setMoreOptionsClickListener(listener)
     }
 
-    public fun setSwipeEventListener(listener: ChannelListView.ViewHolderSwipeDelegate?) {
-        channelListView.setSwipeDelegate(listener)
+    public fun setSwipeListener(listener: ChannelListView.SwipeListener?) {
+        channelListView.setSwipeListener(listener)
     }
 
     public fun setOnEndReachedListener(listener: ChannelListView.EndReachedListener?) {

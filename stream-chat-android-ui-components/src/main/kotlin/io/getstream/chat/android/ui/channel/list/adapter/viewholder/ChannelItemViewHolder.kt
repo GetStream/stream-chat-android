@@ -1,7 +1,5 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
-import android.annotation.SuppressLint
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -27,7 +25,6 @@ import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
-import kotlin.math.absoluteValue
 
 public class ChannelItemViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
@@ -36,7 +33,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
     private val channelDeleteListener: ChannelListView.ChannelClickListener,
     private val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     private val userClickListener: ChannelListView.UserClickListener,
-    private val swipeDelegate: ChannelListView.ViewHolderSwipeDelegate,
+    private val swipeListener: ChannelListView.SwipeListener,
     private val style: ChannelListViewStyle?,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
@@ -76,7 +73,8 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
 
     private fun configureForeground(diff: ChannelDiff, channel: Channel) {
         binding.itemForegroundView.apply {
-            configureSwipeBehavior(channel.cid)
+
+            setSwipeListener(root, swipeListener)
 
             diff.run {
                 if (nameChanged) {
@@ -227,96 +225,6 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
             channelNameLabel.setTextSizePx(style.channelTitleText.size.toFloat())
             lastMessageLabel.setTextSizePx(style.lastMessage.size.toFloat())
             lastMessageTimeLabel.setTextSizePx(style.lastMessageDateText.size.toFloat())
-        }
-    }
-
-    public val multiSwipeEnabled: Boolean = false
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
-        var startX = 0f
-        var startY = 0f
-        var prevX = 0f
-        var swiping = false
-        var wasSwiping = false
-        val position = absoluteAdapterPosition
-
-        // restore the view's last state
-        swipeDelegate.onRestoreSwipePosition(this@ChannelItemViewHolder, absoluteAdapterPosition)
-
-        root.setOnTouchListener { _, event ->
-
-            val rawX = event.rawX
-            val rawY = event.rawY
-
-            when (event.action) {
-
-                MotionEvent.ACTION_DOWN -> {
-                    // store the starting x & y so we can calculate total deltas
-                    startX = rawX
-                    startY = rawY
-                    // initialize the previous x to the start values
-                    prevX = startX
-                    // don't know if it's a swipe yet; assume it's not
-                    swiping = false
-                    // don't consume
-                    swiping
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-                    // calculate the total delta for both axes
-                    val totalDeltaX = rawX - startX
-                    val totalDeltaY = rawY - startY
-                    // calculate the delta from the last event to this one
-                    val lastMoveDeltaX = rawX - prevX
-                    // now that we've calculated, update the previous x value with this event's x
-                    prevX = rawX
-                    // store the old swiping value so we can determine if we were ever swiping
-                    wasSwiping = swiping
-                    // determine if it's a swipe by comparing total axis delta magnitude
-                    swiping = totalDeltaX.absoluteValue > totalDeltaY.absoluteValue
-
-                    when {
-                        // we've started swiping
-                        !wasSwiping && swiping -> {
-                            swipeDelegate.onSwipeStarted(this@ChannelItemViewHolder, position, rawX, rawY)
-                        }
-                        // signal swipe movement
-                        swiping -> {
-                            swipeDelegate.onSwipeChanged(this@ChannelItemViewHolder, position, lastMoveDeltaX)
-                        }
-                        // axis magnitude measurement has dictated we are no longer swiping
-                        wasSwiping && !swiping -> {
-                            swipeDelegate.onSwipeEnded(this@ChannelItemViewHolder, position, rawX, rawY)
-                        }
-                    }
-                    // consume if we are swiping
-                    swiping
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    // signal end of swipe
-                    swipeDelegate.onSwipeEnded(this@ChannelItemViewHolder, position, rawX, rawY)
-                    wasSwiping = false
-                    // consume if we were swiping
-                    swiping
-                }
-
-                MotionEvent.ACTION_CANCEL -> {
-                    // take action if we were swiping, otherwise leave it alone
-                    if (wasSwiping) {
-                        // no longer swiping...
-                        swiping = false
-                        wasSwiping = false
-                        // signal cancellation
-                        swipeDelegate.onSwipeCanceled(this@ChannelItemViewHolder, position, rawX, rawY)
-                    }
-
-                    wasSwiping
-                }
-
-                else -> false
-            }
         }
     }
 }

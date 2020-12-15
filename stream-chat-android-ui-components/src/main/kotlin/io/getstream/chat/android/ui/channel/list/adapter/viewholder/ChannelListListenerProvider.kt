@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
+import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 
 public class ChannelListListenerProvider(
@@ -8,7 +9,7 @@ public class ChannelListListenerProvider(
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     moreOptionsClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
-    swipeEventListener: ChannelListView.ViewHolderSwipeDelegate = ChannelListView.ViewHolderSwipeDelegate.DEFAULT
+    swipeListener: ChannelListView.SwipeListener = ChannelListView.SwipeListener.DEFAULT
 ) {
     public var channelClickListener: ChannelListView.ChannelClickListener by Provider(channelClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->
@@ -40,9 +41,37 @@ public class ChannelListListenerProvider(
         }
     }
 
-    // public var swipeDelegate: ChannelListView.ViewHolderSwipeDelegate by Provider(swipeEventListener) { getListener ->
-    //     ChannelListView.ViewHolderSwipeDelegate { event ->
-    //         getListener().onSwipeEvent(event)
-    //     }
-    // }
+    public var swipeListener: ChannelListView.SwipeListener by Provider(swipeListener) { getDelegate ->
+        object : ChannelListView.SwipeListener {
+            override fun onSwipeStarted(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
+                getDelegate().onSwipeStarted(viewHolder, adapterPosition, x, y)
+            }
+
+            override fun onSwipeChanged(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, dX: Float) {
+                getDelegate().onSwipeChanged(viewHolder, adapterPosition, dX)
+            }
+
+            override fun onSwipeCompleted(
+                viewHolder: RecyclerView.ViewHolder,
+                adapterPosition: Int,
+                x: Float,
+                y: Float
+            ) {
+                getDelegate().onSwipeCompleted(viewHolder, adapterPosition, x, y)
+            }
+
+            override fun onSwipeCanceled(
+                viewHolder: RecyclerView.ViewHolder,
+                adapterPosition: Int,
+                x: Float,
+                y: Float
+            ) {
+                getDelegate().onSwipeCanceled(viewHolder, adapterPosition, x, y)
+            }
+
+            override fun onRestoreSwipePosition(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int) {
+                getDelegate().onRestoreSwipePosition(viewHolder, adapterPosition)
+            }
+        }
+    }
 }

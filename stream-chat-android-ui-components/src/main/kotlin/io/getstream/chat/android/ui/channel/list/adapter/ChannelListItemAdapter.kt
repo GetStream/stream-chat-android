@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.channel.list.adapter
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -15,8 +14,6 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
     val listenerProvider: ChannelListListenerProvider = ChannelListListenerProvider()
-
-    var swipeDelegate: ChannelListView.ViewHolderSwipeDelegate = ChannelListView.ViewHolderSwipeDelegate.DEFAULT
 
     var endReached: Boolean = true
         set(value) {
@@ -75,7 +72,7 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
                 deleteClickListener,
                 moreOptionsClickListener,
                 userClickListener,
-                swipeDelegate,
+                swipeListener,
                 style
             )
         }
