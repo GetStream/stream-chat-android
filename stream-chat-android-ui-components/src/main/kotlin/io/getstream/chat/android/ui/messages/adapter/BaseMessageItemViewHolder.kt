@@ -1,22 +1,24 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
-import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
-import com.getstream.sdk.chat.adapter.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
-    private val decorators = listOf<Decorator>(BackgroundDecorator(), GapDecorator(), MaxPossibleWidthDecorator())
+    private val decorators = listOf<Decorator>(
+        BackgroundDecorator(),
+        GapDecorator(),
+        MaxPossibleWidthDecorator(),
+        GravityDecorator()
+    )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
         decorators.forEach { it.decorate(this, data) }
