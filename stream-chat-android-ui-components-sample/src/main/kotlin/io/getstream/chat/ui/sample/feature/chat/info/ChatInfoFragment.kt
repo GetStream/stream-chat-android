@@ -80,13 +80,13 @@ class ChatInfoFragment : Fragment() {
 
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            viewModel.onEvent(
+            viewModel.onAction(
                 when (option) {
-                    is ChatInfoItem.Option.Stateful.Notifications -> ChatInfoViewModel.Event.OptionNotificationClicked(
+                    is ChatInfoItem.Option.Stateful.Notifications -> ChatInfoViewModel.Action.OptionNotificationClicked(
                         isChecked
                     )
-                    is ChatInfoItem.Option.Stateful.MuteUser -> ChatInfoViewModel.Event.OptionMuteUserClicked(isChecked)
-                    is ChatInfoItem.Option.Stateful.Block -> ChatInfoViewModel.Event.OptionBlockUserClicked(isChecked)
+                    is ChatInfoItem.Option.Stateful.MuteUser -> ChatInfoViewModel.Action.OptionMuteUserClicked(isChecked)
+                    is ChatInfoItem.Option.Stateful.Block -> ChatInfoViewModel.Action.OptionBlockUserClicked(isChecked)
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
                 }
             )
@@ -108,7 +108,7 @@ class ChatInfoFragment : Fragment() {
                         ChatInfoDeleteChannelDialogFragment.newInstance()
                             .apply {
                                 setDeleteChannelListener {
-                                    viewModel.onEvent(ChatInfoViewModel.Event.DeleteChannel)
+                                    viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
                                 }
                             }
                             .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
@@ -121,7 +121,7 @@ class ChatInfoFragment : Fragment() {
 
     private fun subscribeForChannelMutesUpdatedEvents() {
         ChatClient.instance().subscribeFor<NotificationChannelMutesUpdatedEvent>(viewLifecycleOwner) {
-            viewModel.onEvent(ChatInfoViewModel.Event.ChannelMutesUpdated(it.me.channelMutes))
+            viewModel.onAction(ChatInfoViewModel.Action.ChannelMutesUpdated(it.me.channelMutes))
         }
     }
 }

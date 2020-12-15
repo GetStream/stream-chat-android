@@ -54,13 +54,13 @@ class ChatInfoViewModel(
         }
     }
 
-    fun onEvent(event: Event) {
-        when (event) {
-            is Event.OptionNotificationClicked -> switchNotifications(event.isEnabled)
-            is Event.OptionMuteUserClicked -> switchUserMute(event.isEnabled)
-            is Event.OptionBlockUserClicked -> switchUserBlock(event.isEnabled)
-            is Event.ChannelMutesUpdated -> updateChannelNotificationsStatus(event.channelMutes)
-            is Event.DeleteChannel -> deleteChannel()
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.OptionNotificationClicked -> switchNotifications(action.isEnabled)
+            is Action.OptionMuteUserClicked -> switchUserMute(action.isEnabled)
+            is Action.OptionBlockUserClicked -> switchUserBlock(action.isEnabled)
+            is Action.ChannelMutesUpdated -> updateChannelNotificationsStatus(action.channelMutes)
+            is Action.ChannelDeleted -> deleteChannel()
         }
     }
 
@@ -133,11 +133,11 @@ class ChatInfoViewModel(
         val isMemberBlocked: Boolean = false
     )
 
-    sealed class Event {
-        data class OptionNotificationClicked(val isEnabled: Boolean) : Event()
-        data class OptionMuteUserClicked(val isEnabled: Boolean) : Event()
-        data class OptionBlockUserClicked(val isEnabled: Boolean) : Event()
-        data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Event()
-        object DeleteChannel : Event()
+    sealed class Action {
+        data class OptionNotificationClicked(val isEnabled: Boolean) : Action()
+        data class OptionMuteUserClicked(val isEnabled: Boolean) : Action()
+        data class OptionBlockUserClicked(val isEnabled: Boolean) : Action()
+        data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
+        object ChannelDeleted : Action()
     }
 }
