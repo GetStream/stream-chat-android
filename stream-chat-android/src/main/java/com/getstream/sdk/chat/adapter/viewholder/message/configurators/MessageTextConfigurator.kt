@@ -35,7 +35,6 @@ internal class MessageTextConfigurator(
     private val bubbleHelper: MessageListView.BubbleHelper,
     private val messageClickListener: MessageListView.MessageClickListener,
     private val messageLongClickListener: MessageListView.MessageLongClickListener?,
-    private val messageLongClickListenerView: MessageListView.MessageLongClickListenerView? = null,
     private val messageRetryListener: MessageListView.MessageRetryListener
 ) : Configurator {
 
@@ -173,11 +172,7 @@ internal class MessageTextConfigurator(
             }
             isLongClick = true
 
-            if (messageLongClickListenerView != null) {
-                messageLongClickListenerView.onMessageLongClick2(message, binding.itemMessageContainer)
-            } else {
-                messageLongClickListener?.onMessageLongClick(message)
-            }
+            messageLongClickListener?.onMessageLongClick(message)
 
             true
         }
