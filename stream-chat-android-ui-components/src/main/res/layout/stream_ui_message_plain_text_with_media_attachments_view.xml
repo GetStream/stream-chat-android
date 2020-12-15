@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <io.getstream.chat.android.ui.messages.adapter.view.GapView
+        android:id="@+id/gapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/backgroundView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintWidth_percent="0.5"
+        android:orientation="vertical">
+
+    <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
+        android:id="@+id/mediaAttachmentsGroupView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp"/>
+
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/stream_ui_spacing_medium"
+        android:paddingTop="@dimen/stream_ui_spacing_small"
+        android:paddingRight="@dimen/stream_ui_spacing_medium"
+        android:paddingBottom="@dimen/stream_ui_spacing_small"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:lineHeight="16sp"
+        android:hyphenationFrequency="normal"
+        android:gravity="start"
+        android:textColor="@color/stream_ui_black"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

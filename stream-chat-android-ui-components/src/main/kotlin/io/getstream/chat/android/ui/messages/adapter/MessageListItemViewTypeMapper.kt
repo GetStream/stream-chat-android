@@ -46,5 +46,5 @@ internal object MessageListItemViewTypeMapper {
         }
     }
 
-    private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type == ModelType.attach_image }
+    internal fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type == ModelType.attach_image }
 }

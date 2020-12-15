@@ -6,6 +6,7 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 internal class MaxPossibleWidthDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -22,6 +23,15 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
             viewHolder.binding.messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 matchConstraintMaxWidth = maxWidth(viewHolder.binding.root)
             }
+        }
+    }
+
+    override fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        viewHolder.binding.backgroundView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            matchConstraintPercentWidth = MAX_POSSIBLE_WIDTH_FACTOR
         }
     }
 

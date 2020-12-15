@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class BackgroundDecorator : BaseDecorator() {
@@ -58,6 +59,13 @@ internal class BackgroundDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.mediaAttachmentsGroupView, data)
+    }
+
+    override fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
     }
 
     companion object {
