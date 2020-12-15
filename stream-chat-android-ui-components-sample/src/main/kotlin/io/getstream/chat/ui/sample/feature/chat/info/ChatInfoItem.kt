@@ -10,11 +10,11 @@ sealed class ChatInfoItem {
 
     val id: String
         get() = when (this) {
-            is MemberItem -> chatMember.member.getUserId()
+            is MemberItem -> member.getUserId()
             else -> this::class.java.simpleName
         }
 
-    data class MemberItem(val chatMember: ChatMember) : ChatInfoItem()
+    data class MemberItem(val member: Member) : ChatInfoItem()
     data class MembersSeparator(val membersToShow: Int) : ChatInfoItem()
     data class ChannelName(val name: String) : ChatInfoItem()
     object Separator : ChatInfoItem()
@@ -120,5 +120,3 @@ sealed class ChatInfoItem {
         }
     }
 }
-
-data class ChatMember(val member: Member, val isOwner: Boolean = false)
