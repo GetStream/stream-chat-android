@@ -31,8 +31,10 @@ import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.Member
@@ -443,6 +445,23 @@ public class ChatClient internal constructor(
 
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
+    }
+
+    public fun getFileAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+        getAttachments(channelType, channelId, offset, limit, "file")
+
+    public fun getImageAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+        getAttachments(channelType, channelId, offset, limit, "image")
+
+    private fun getAttachments(channelType: String, channelId: String, offset: Int, limit: Int, type: String): Call<List<Attachment>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", type)
+
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter)).map { messages ->
+            messages.flatMap { message ->
+                message.attachments
+            }
+        }
     }
 
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
