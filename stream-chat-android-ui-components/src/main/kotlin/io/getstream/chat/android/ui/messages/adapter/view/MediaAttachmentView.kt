@@ -8,8 +8,8 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ImageLoader.load
-import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
-import com.getstream.sdk.chat.adapter.updateConstraints
+import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R

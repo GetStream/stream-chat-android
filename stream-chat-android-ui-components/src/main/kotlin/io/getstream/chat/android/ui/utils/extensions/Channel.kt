@@ -108,7 +108,7 @@ internal fun Channel.getLastMessagePreviewText(
             .takeIf { it.isNotEmpty() }
             ?.mapNotNull { attachment ->
                 attachment.title?.let { title ->
-                    val prefix = getAttachmentPrefix(context, attachment)
+                    val prefix = getAttachmentPrefix(attachment)
                     if (prefix != null) {
                         "$prefix $title"
                     } else {
@@ -125,8 +125,8 @@ internal fun Channel.getLastMessagePreviewText(
     }
 }
 
-private fun getAttachmentPrefix(context: Context, attachment: Attachment): String? =
+private fun getAttachmentPrefix(attachment: Attachment): String? =
     when (attachment.type) {
-        ModelType.attach_giphy -> context.getString(R.string.stream_last_message_attachment_giphy)
+        ModelType.attach_giphy -> "/giphy"
         else -> null
     }

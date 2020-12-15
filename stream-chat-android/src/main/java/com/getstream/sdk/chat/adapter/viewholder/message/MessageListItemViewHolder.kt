@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.AttachmentConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.IndicatorConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.MarginConfigurator
@@ -16,6 +15,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UserAvata
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UsernameAndDateConfigurator
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener

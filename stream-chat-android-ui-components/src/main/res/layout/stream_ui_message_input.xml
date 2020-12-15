@@ -56,7 +56,7 @@
             android:id="@+id/sendMessageButtonDisabled"
             android:layout_width="@dimen/stream_ui_message_input_button_size"
             android:layout_height="@dimen/stream_ui_message_input_button_size"
-            android:src="@drawable/stream_ic_filled_right_arrow"
+            android:src="@drawable/stream_ui_ic_filled_right_arrow"
             tools:visibility="gone"
             />
 
@@ -64,7 +64,7 @@
             android:id="@+id/sendMessageButtonEnabled"
             android:layout_width="@dimen/stream_ui_message_input_button_size"
             android:layout_height="@dimen/stream_ui_message_input_button_size"
-            android:src="@drawable/stream_ic_filled_up_arrow"
+            android:src="@drawable/stream_ui_ic_filled_up_arrow"
             tools:visibility="visible"
             />
 

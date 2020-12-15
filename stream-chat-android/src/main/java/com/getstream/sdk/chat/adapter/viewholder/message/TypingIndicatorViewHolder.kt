@@ -8,8 +8,8 @@ import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemTypeIndicatorBinding
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 

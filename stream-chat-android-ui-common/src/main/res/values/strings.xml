@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Permissions -->
+    <string name="stream_permissions_camera_title">Camera and Storage Access Permission</string>
+    <string name="stream_permissions_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
+    <string name="stream_permissions_storage_title">Storage Access Permissions</string>
+    <string name="stream_permissions_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_permissions_setting_message">Enable permissions on App Settings</string>
+    <string name="stream_permissions_setting_button">Settings</string>
+
+    <!-- Media capture -->
+    <string name="stream_input_camera_title">Capture Image or Video</string>
+
+    <!--Attachment View-->
+    <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
+    <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>
+    <string name="stream_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
+
+    <!--Message Date-->
+    <string name="stream_date_yesterday">Yesterday</string>
+</resources>

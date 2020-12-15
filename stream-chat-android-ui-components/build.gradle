@@ -75,7 +75,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-ui-common")
-    api project(":stream-chat-android") // TODO remove
 
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.coroutinesCore

@@ -227,12 +227,12 @@ public class MessageInputView : ConstraintLayout {
 
             layoutParams.width = typedArray.getDimensionPixelSize(
                 R.styleable.StreamUiMessageInputView_streamUiAttachButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
                 R.styleable.StreamUiMessageInputView_streamUiAttachButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_height)
             )
 
             setOnClickListener {
@@ -273,12 +273,12 @@ public class MessageInputView : ConstraintLayout {
 
             layoutParams.width = typedArray.getDimensionPixelSize(
                 R.styleable.StreamUiMessageInputView_streamUiLightningButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
                 R.styleable.StreamUiMessageInputView_streamUiLightningButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_height)
             )
 
             setOnClickListener {
@@ -362,7 +362,7 @@ public class MessageInputView : ConstraintLayout {
             setHintTextColor(
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiMessageInputHintTextColor,
-                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                    ContextCompat.getColor(context, R.color.stream_ui_gray_dark)
                 )
             )
 
@@ -402,12 +402,12 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendButton(typedArray: TypedArray) {
         iconDisabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIcon)
-            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
+            ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_filled_right_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIcon)
-            ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
+            ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_filled_up_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
 
         DrawableCompat.setTintList(

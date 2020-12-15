@@ -5,8 +5,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding

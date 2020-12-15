@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 
@@ -93,7 +93,7 @@ internal class MediaAttachmentAdapter(
             if (attachment.type == ModelType.attach_video) {
                 binding.videoLengthTextView.isVisible = true
                 binding.videoLogoImageView.isVisible = true
-                binding.videoLengthTextView.text = StringUtility.convertVideoLength(attachment.videoLength)
+                binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
                 binding.videoLengthTextView.isVisible = false
                 binding.videoLogoImageView.isVisible = false

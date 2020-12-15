@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 import io.getstream.chat.android.ui.utils.UiUtils
 
@@ -62,7 +62,7 @@ internal class FileAttachmentAdapter(
         fun bind(attachment: AttachmentMetaData) {
             binding.fileTypeImageView.setImageResource(UiUtils.getIcon(attachment.mimeType))
             binding.fileNameTextView.text = attachment.title
-            binding.fileSizeTextView.text = StringUtility.convertFileSizeByteCount(attachment.size)
+            binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
             binding.root.setOnClickListener {
                 onAttachmentClick(attachment)
             }
