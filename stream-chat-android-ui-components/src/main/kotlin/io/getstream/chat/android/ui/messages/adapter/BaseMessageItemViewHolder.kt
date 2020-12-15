@@ -31,13 +31,4 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         bind(messageListItem as T, diff)
 
     public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
-
-    protected fun constraintView(isMine: Boolean, view: View, layout: ConstraintLayout) {
-        layout.updateConstraints {
-            clear(view.id, ConstraintSet.LEFT)
-            clear(view.id, ConstraintSet.RIGHT)
-            val anchorSide = if (isMine) ConstraintSet.RIGHT else ConstraintSet.LEFT
-            constrainViewToParentBySide(view, anchorSide)
-        }
-    }
 }
