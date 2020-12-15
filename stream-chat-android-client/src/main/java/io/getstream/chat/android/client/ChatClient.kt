@@ -446,7 +446,10 @@ public class ChatClient internal constructor(
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
     }
-    
+
+    public fun getImageAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+        getAttachments(channelType, channelId, offset, limit, "image")
+
     private fun getAttachments(channelType: String, channelId: String, offset: Int, limit: Int, type: String): Call<List<Attachment>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
