@@ -1,7 +1,10 @@
 package io.getstream.chat.android.ui.utils
 
+import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
+import io.getstream.chat.android.ui.R
 import kotlin.math.roundToInt
 
 internal fun adjustColorLBrightness(color: Int, factor: Float): Int {
@@ -25,3 +28,19 @@ internal fun getColorList(normalColor: Int, pressedColor: Int, disabledColor: In
     ),
     intArrayOf(normalColor, pressedColor, disabledColor)
 )
+
+internal fun getBackgroundColor(context: Context): Int {
+    return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+        Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_alabaster
+        Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_black
+        else -> R.color.stream_ui_alabaster
+    }
+}
+
+internal fun getTextColor(context: Context) : Int {
+    return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+        Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_ui_black
+        Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
+        else -> R.color.stream_ui_black
+    }
+}

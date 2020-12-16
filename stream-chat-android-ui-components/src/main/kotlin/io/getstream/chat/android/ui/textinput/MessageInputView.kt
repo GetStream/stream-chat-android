@@ -24,7 +24,9 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
+import io.getstream.chat.android.ui.utils.getBackgroundColor
 import io.getstream.chat.android.ui.utils.getColorList
+import io.getstream.chat.android.ui.utils.getTextColor
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -122,11 +124,16 @@ public class MessageInputView : ConstraintLayout {
             configSendButton(typedArray)
             configSendAlsoToChannelCheckboxVisibility(typedArray)
         }
+        configColours()
         configSendAlsoToChannelCheckbox()
         configClearAttachmentsButton()
         configAttachmentButtonBehavior()
         configSendButtonListener()
         configText()
+    }
+
+    private fun configColours() {
+        binding.root.setBackgroundColor(ContextCompat.getColor(context, getBackgroundColor(context)))
     }
 
     private fun configText() {
@@ -318,7 +325,7 @@ public class MessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiMessageInputTextColor,
-                    ContextCompat.getColor(context, getTextColor())
+                    ContextCompat.getColor(context, getTextColor(context))
                 )
             )
 
@@ -350,14 +357,6 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
-    private fun getTextColor() : Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_black
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_white
-            else -> R.color.stream_white
-        }
-    }
-
     private fun handleKeyStroke() {
         if (messageText.isNotEmpty()) {
             typingListener?.onKeystroke()
@@ -371,8 +370,6 @@ public class MessageInputView : ConstraintLayout {
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIcon)
             ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
-
-        iconDisabledSendButtonDrawable!!.setTint(ContextCompat.getColor(context, getDisableIconColor()))
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIcon)
@@ -421,10 +418,14 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageDisabled.alpha = 1F
         binding.ivSendMessageEnabled.alpha = 0F
     }
-
-    private fun getDisabledSendButtonIconColor() : Int = R.color.stream_ui_grey_medium_light
-
-    private fun getDisableIconColor() : Int = R.color.stream_ui_grey_medium_light
+    
+    private fun getDisabledSendButtonIconColor() : Int  {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_ui_grey_medium_light
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_disabled_send_message_dark_theme
+            else -> R.color.stream_ui_grey_medium_light
+        }
+    }
 
     private fun configClearAttachmentsButton() {
         binding.clearMessageInputButton.setOnClickListener {

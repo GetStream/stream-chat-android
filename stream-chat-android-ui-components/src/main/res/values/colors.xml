@@ -12,7 +12,7 @@
     <color name="stream_ui_text_grey">@color/stream_ui_grey</color>
     <color name="stream_ui_text_color_black_translucent">#88000000</color>
     <color name="stream_ui_text_red">#FF3742</color>
-
+    
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_ui_avatar_gradient_green">#81C784</color>
     <color name="stream_ui_avatar_gradient_blue">#4FC3F7</color>
@@ -52,4 +52,6 @@
     <color name="stream_ui_attachment_dialog_header_color">#F5F5F5</color>
     <color name="stream_ui_attachment_dialog_button_enabled">#7A7A7A</color>
     <color name="stream_ui_attachment_dialog_button_disabled">#E6E6E6</color>
+
+    <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
 </resources>
