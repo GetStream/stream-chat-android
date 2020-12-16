@@ -26,14 +26,17 @@ internal class DefaultDateFormatter(
 
         val localDate = localDateTime.toLocalDate()
         return when {
-            localDate.isToday() -> {
-                val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
-                formatter.format(localDateTime.toLocalTime())
-            }
+            localDate.isToday() -> formatTime(localDateTime)
             localDate.isYesterday() -> dateContext.yesterdayString()
             localDate.isWithinLastWeek() -> dateFormatterDayOfWeek.format(localDate)
             else -> dateFormatterFullDate.format(localDate)
         }
+    }
+
+    override fun formatTime(localDateTime: LocalDateTime?): String {
+        localDateTime ?: return ""
+        val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
+        return formatter.format(localDateTime.toLocalTime())
     }
 
     private fun LocalDate.isToday(): Boolean {

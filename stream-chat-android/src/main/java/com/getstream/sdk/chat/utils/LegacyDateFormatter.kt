@@ -4,7 +4,11 @@ import org.threeten.bp.LocalDateTime
 import java.util.Date
 
 public abstract class LegacyDateFormatter : DateFormatter {
-    public abstract fun format(date: Date?): String
+    public abstract fun formatDate(date: Date?): String
+    public abstract fun formatTime(date: Date?): String
     final override fun formatDate(localDateTime: LocalDateTime?): String =
-        format(localDateTime?.let(DateConverter::toDate))
+        formatDate(localDateTime?.let(DateConverter::toDate))
+
+    final override fun formatTime(localDateTime: LocalDateTime?): String =
+        formatTime(localDateTime?.let(DateConverter::toDate))
 }

@@ -7,6 +7,7 @@ import java.util.Date
 
 public interface DateFormatter {
     public fun formatDate(localDateTime: LocalDateTime?): String
+    public fun formatTime(localDateTime: LocalDateTime?): String
 
     public companion object {
         @JvmStatic
@@ -20,4 +21,12 @@ public interface DateFormatter {
 @InternalStreamChatApi
 public fun DateFormatter.formatDate(date: Date?): String {
     return formatDate(date?.let(DateConverter::toLocalDateTime))
+}
+
+/**
+ * Extension to be able to format objects of the deprecated [Date] type.
+ */
+@InternalStreamChatApi
+public fun DateFormatter.formatTime(date: Date?): String {
+    return formatTime(date?.let(DateConverter::toLocalDateTime))
 }
