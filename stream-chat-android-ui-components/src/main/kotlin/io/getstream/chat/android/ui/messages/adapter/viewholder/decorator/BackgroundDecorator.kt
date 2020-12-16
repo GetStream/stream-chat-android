@@ -9,6 +9,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
@@ -73,6 +74,13 @@ internal class BackgroundDecorator : BaseDecorator() {
         viewHolder.binding.mediaAttachmentsGroupView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_transparent))
         }
+    }
+
+    override fun decorateOnlyFileAttachmentsMessage(
+        viewHolder: OnlyFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        setDefaultBackgroundDrawable(viewHolder.binding.fileAttachmentsView, data)
     }
 
     companion object {
