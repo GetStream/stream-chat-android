@@ -14,6 +14,7 @@
         app:layout_constraintStart_toStartOf="@+id/messageText"
         app:layout_constraintEnd_toEndOf="@+id/messageText"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -42,8 +43,17 @@
         android:hyphenationFrequency="normal"
         android:textColor="@color/stream_ui_black"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintTop_toTopOf="@id/gapView"
         tools:text="@tools:sample/lorem"
+        />
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/gapView"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         />
 
     <androidx.constraintlayout.widget.Guideline

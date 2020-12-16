@@ -8,6 +8,10 @@ import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 
 internal class TimeDecorator(private val dateFormatter: DateFormatter) : BaseDecorator() {
 
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        setupTime(viewHolder.binding.tvTime, data)
+    }
+
     private fun setupTime(textView: TextView, data: MessageListItem.MessageItem) {
         textView.text = dateFormatter.formatTime(data.message.getCreatedAtOrThrow())
     }
