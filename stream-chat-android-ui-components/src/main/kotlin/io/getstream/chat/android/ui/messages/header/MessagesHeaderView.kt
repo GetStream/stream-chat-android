@@ -143,11 +143,20 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private fun configColors() {
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_white
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_dark_background
-            else -> R.color.stream_ui_white
-        }.let { colorRes ->
-            binding.headerRoot.setBackgroundColor(ContextCompat.getColor(context, colorRes))
+            Configuration.UI_MODE_NIGHT_YES -> {
+                binding.headerRoot.setBackgroundColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.stream_ui_dark_background
+                    )
+                )
+
+                binding.backButton.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_white))
+            }
+            else -> {
+                binding.headerRoot.setBackgroundColor(ContextCompat.getColor(context, R.color.stream_ui_white))
+                binding.backButton.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_black))
+            }
         }
     }
 
@@ -187,7 +196,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_black_translucent)
+                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelFontAssets,
@@ -198,6 +207,14 @@ public class MessagesHeaderView : ConstraintLayout {
                 Typeface.BOLD
             )
             .build()
+    }
+
+    private fun getTextColor(lightColour: Int): Int {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> lightColour
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
+            else -> lightColour
+        }
     }
 
     private fun configOfflineLabel(attrs: TypedArray) {
@@ -222,7 +239,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_black_translucent)
+                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelFontAssets,
@@ -252,7 +269,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_black_translucent)
+                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelFontAssets,
@@ -306,7 +323,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_black)
+                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_black))
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleFontAssets,

@@ -5,7 +5,6 @@
     android:id="@+id/headerRoot"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_default_header_height"
-    android:background="?android:attr/colorBackground"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,7 +51,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="5sp"
-        android:textColor="@color/stream_ui_text_black"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
