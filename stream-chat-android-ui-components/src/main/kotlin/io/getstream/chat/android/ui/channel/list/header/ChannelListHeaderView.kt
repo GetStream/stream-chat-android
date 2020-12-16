@@ -19,6 +19,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBin
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
+import io.getstream.chat.android.ui.utils.getTextColor
 
 public class ChannelListHeaderView : ConstraintLayout {
 
@@ -162,7 +163,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                ContextCompat.getColor(context, getTextColor())
+                ContextCompat.getColor(context, getTextColor(context))
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,
@@ -172,14 +173,6 @@ public class ChannelListHeaderView : ConstraintLayout {
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextStyle,
                 Typeface.BOLD
             ).build()
-    }
-
-    private fun getTextColor(): Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_black
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
-            else -> R.color.stream_ui_black
-        }
     }
 
     public fun setUser(user: User) {

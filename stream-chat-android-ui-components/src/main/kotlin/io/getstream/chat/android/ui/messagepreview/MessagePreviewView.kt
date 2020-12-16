@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.singletonList
+import io.getstream.chat.android.ui.utils.getBackgroundColor
 
 public class MessagePreviewView : FrameLayout {
 
@@ -60,13 +61,7 @@ public class MessagePreviewView : FrameLayout {
     }
 
     private fun getItemBackgroundColor(): Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_alabaster
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_black
-            else -> R.color.stream_ui_alabaster
-        }.let { colorRes ->
-            ContextCompat.getColor(context, colorRes)
-        }
+        return getBackgroundColor(context).let { colorRes -> ContextCompat.getColor(context, colorRes) }
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
