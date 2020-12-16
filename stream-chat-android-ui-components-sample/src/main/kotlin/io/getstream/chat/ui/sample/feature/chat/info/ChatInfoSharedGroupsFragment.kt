@@ -68,7 +68,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                 findNavController().navigateSafely(ChatInfoSharedGroupsFragmentDirections.actionOpenChat(it.cid, null))
             }
 
-            (layoutInflater.inflate(R.layout.shared_groups_empty_view, view, false) as TextView).apply {
+            SharedGroupsEmptyViewBinding.inflate(layoutInflater).root.apply {
                 text = getString(R.string.chat_info_option_shared_groups_empty_title, args.memberName)
                 setEmptyStateView(this)
             }
