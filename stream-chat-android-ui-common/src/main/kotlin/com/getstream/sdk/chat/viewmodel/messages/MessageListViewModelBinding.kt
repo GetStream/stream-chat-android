@@ -50,4 +50,7 @@ public fun MessageListViewModel.bindView(view: IMessageListView, lifecycleOwner:
         }
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
+    targetMessage.observe(lifecycleOwner) {
+        view.scrollToMessage(it)
+    }
 }

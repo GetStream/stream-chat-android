@@ -15,8 +15,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 /**
@@ -43,6 +41,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val loadMoreLiveData: LiveData<Boolean> = _loadMoreLiveData
     private val _channel = MediatorLiveData<Channel>()
     public val channel: LiveData<Channel> = _channel
+    private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
+    public val targetMessage: LiveData<Message> = _targetMessage
 
     /**
      * Whether the user is viewing a thread
@@ -59,43 +59,13 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
-        if (messageId.isNullOrEmpty()) {
-            domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
-                if (channelControllerResult.isSuccess) {
-                    val channelController = channelControllerResult.data()
-                    _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
-                    val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
-                    messageListData = MessageListItemLiveData(
-                        currentUser,
-                        channelController.messages,
-                        channelController.reads,
-                        typingIds,
-                        false,
-                        ::dateSeparator
-                    )
-                    stateMerger.apply {
-                        addSource(channelController.messagesState) { messageState ->
-                            when (messageState) {
-                                is ChannelController.MessagesState.NoQueryActive,
-                                is ChannelController.MessagesState.Loading -> value = State.Loading
-                                is ChannelController.MessagesState.OfflineNoResults -> value =
-                                    State.Result(MessageListItemWrapper())
-                                is ChannelController.MessagesState.Result -> {
-                                    removeSource(channelController.messagesState)
-                                    onNormalModeEntered()
-                                }
-                            }
-                        }
-                    }
-                    _reads.addSource(channelController.reads) { _reads.value = it }
-                    _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
-                }
-            }
-        } else {
-            domain.useCases.watchChannel(cid, 1).enqueue { channelControllerResult ->
+
+        domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
+            if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
+
                 messageListData = MessageListItemLiveData(
                     currentUser,
                     channelController.messages,
@@ -104,6 +74,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     false,
                     ::dateSeparator
                 )
+
                 stateMerger.apply {
                     addSource(channelController.messagesState) { messageState ->
                         when (messageState) {
@@ -118,14 +89,17 @@ public class MessageListViewModel @JvmOverloads constructor(
                         }
                     }
                 }
-                if (channelControllerResult.isSuccess) {
-                    GlobalScope.launch {
-                        domain.useCases.loadMessageById(
-                            cid,
-                            messageId!!,
-                            0,
-                            0
-                        ).enqueue()
+                _reads.addSource(channelController.reads) { _reads.value = it }
+                _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
+
+                if (messageId != null && messageId.isNotEmpty()) {
+                    domain.useCases.loadMessageById(
+                        cid,
+                        messageId,
+                        MESSAGES_LIMIT,
+                        MESSAGES_LIMIT
+                    ).enqueue {
+                        _targetMessage.value = it.data()
                     }
                 }
             }
@@ -277,6 +251,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object Loading : State()
         public data class Result(val messageListItem: MessageListItemWrapper) : State()
         public object NavigateUp : State()
+        public data class ScrollToMessage(val message: Message) : State()
     }
 
     public sealed class Event {
