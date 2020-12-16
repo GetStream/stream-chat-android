@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
@@ -9,7 +10,7 @@
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@+id/marginStart"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -19,8 +20,21 @@
         android:layout_height="wrap_content"
         android:padding="1dp"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintStart_toStartOf="@+id/marginStart"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        android:layout_width="@dimen/stream_ui_avatar_size_medium"
+        android:layout_height="@dimen/stream_ui_avatar_size_medium"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
         />
 
     <androidx.constraintlayout.widget.Guideline
