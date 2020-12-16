@@ -59,5 +59,6 @@ public class CommandMentionListItemAdapter extends BaseAdapter {
     public void configMentions(StreamItemMentionBinding binding, int position) {
         User user = items.get(position);
         binding.avatar.setUser(user, style.getAvatarStyle());
+        binding.tvUsername.setText(user.getExtraValue("name", ""));
     }
 }

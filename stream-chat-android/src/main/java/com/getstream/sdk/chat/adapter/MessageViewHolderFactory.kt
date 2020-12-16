@@ -69,7 +69,6 @@ public open class MessageViewHolderFactory {
                     messageDateFormatter,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
-                    listenerContainer.messageLongClickListenerView,
                     listenerContainer.messageRetryListener,
                     listenerContainer.reactionViewClickListener,
                     listenerContainer.userClickListener,

@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
 import com.getstream.sdk.chat.utils.ListenerDelegate
-import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -41,11 +40,6 @@ internal class ListenerContainerImpl(
             realListener().onMessageLongClick(message)
         }
     }
-
-    override var messageLongClickListenerView: MessageListView.MessageLongClickListenerView =
-        MessageListView.MessageLongClickListenerView { message, _ ->
-            messageLongClickListener.onMessageLongClick(message)
-        }
 
     override var messageRetryListener: MessageRetryListener by ListenerDelegate(
         messageRetryListener
