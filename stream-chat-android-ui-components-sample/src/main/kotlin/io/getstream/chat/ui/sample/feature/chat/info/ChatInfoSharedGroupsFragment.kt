@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -28,7 +29,8 @@ class ChatInfoSharedGroupsFragment : Fragment() {
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id, args.memberId)),
-                Filters.ne("draft", true)
+                Filters.ne("draft", true),
+                Filters.greaterThan("member_count", 2),
             ),
         )
     }
@@ -64,6 +66,11 @@ class ChatInfoSharedGroupsFragment : Fragment() {
 
             setChannelClickListener {
                 findNavController().navigateSafely(ChatInfoSharedGroupsFragmentDirections.actionOpenChat(it.cid, null))
+            }
+
+            (layoutInflater.inflate(R.layout.shared_groups_empty_view, view, false) as TextView).apply {
+                text = getString(R.string.chat_info_option_shared_groups_empty_title, args.memberName)
+                setEmptyStateView(this)
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
