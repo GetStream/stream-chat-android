@@ -8,8 +8,12 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 
 internal fun List<User>.withoutCurrentUser(): List<User> {
-    val currentUser = ChatDomain.instance().currentUser
-    return filter { it.id != currentUser.id }
+    return if (ChatDomain.isInitialized) {
+        val currentUser = ChatDomain.instance().currentUser
+        filter { it.id != currentUser.id }
+    } else {
+        this
+    }
 }
 
 internal fun User.isCurrentUser(): Boolean {
