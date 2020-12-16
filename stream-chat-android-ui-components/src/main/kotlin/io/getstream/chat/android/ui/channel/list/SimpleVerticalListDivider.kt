@@ -34,7 +34,7 @@ internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
             ?.let { outRect.set(0, 0, 0, determineHeight()) }
     }
 
-    private fun getDividerDrawable(context: Context) : Int {
+    private fun getDividerDrawable(context: Context): Int {
         return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> R.drawable.stream_ui_divider_dark
 

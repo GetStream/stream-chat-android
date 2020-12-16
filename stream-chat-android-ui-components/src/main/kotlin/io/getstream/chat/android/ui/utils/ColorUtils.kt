@@ -37,9 +37,9 @@ internal fun getBackgroundColor(context: Context): Int {
     }
 }
 
-internal fun getTextColor(context: Context) : Int {
+internal fun getTextColor(context: Context): Int {
     return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-        Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_ui_black
+        Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_black
         Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
         else -> R.color.stream_ui_black
     }
