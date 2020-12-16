@@ -3,6 +3,7 @@
 package io.getstream.chat.android.ui.mentions
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.livedata.utils.EventObserver
 
 /**
  * Binds [MentionsListView] with [MentionsListViewModel], updating the view's state
@@ -10,7 +11,23 @@ import androidx.lifecycle.LifecycleOwner
  */
 @JvmName("bind")
 public fun MentionsListViewModel.bindView(view: MentionsListView, lifecycleOwner: LifecycleOwner) {
-    mentions.observe(lifecycleOwner) { messages ->
-        view.setMessages(messages)
+    state.observe(lifecycleOwner) { state ->
+        when {
+            state.isLoading -> {
+                view.showLoading()
+            }
+            else -> {
+                view.setMessages(state.results)
+            }
+        }
+    }
+    errorEvents.observe(
+        lifecycleOwner,
+        EventObserver {
+            view.showError()
+        }
+    )
+    view.setLoadMoreListener {
+        this.loadMore()
     }
 }

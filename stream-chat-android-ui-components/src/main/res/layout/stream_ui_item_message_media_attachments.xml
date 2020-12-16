@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,11 +8,20 @@
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@+id/messageText"
-        app:layout_constraintEnd_toEndOf="@+id/messageText"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
+        android:id="@+id/mediaAttachmentsGroupView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -27,23 +35,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
-        />
-
-    <TextView
-        android:id="@+id/messageText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/stream_ui_spacing_medium"
-        android:paddingTop="@dimen/stream_ui_spacing_small"
-        android:paddingRight="@dimen/stream_ui_spacing_medium"
-        android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:lineHeight="16sp"
-        android:hyphenationFrequency="normal"
-        android:textColor="@color/stream_ui_black"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
-        tools:text="@tools:sample/lorem"
         />
 
     <androidx.constraintlayout.widget.Guideline

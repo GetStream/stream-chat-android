@@ -5,6 +5,7 @@ import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.exhaustive
 
 internal interface Decorator {
@@ -17,9 +18,15 @@ internal abstract class BaseDecorator : Decorator {
             is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data as MessageListItem.MessageItem)
             is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data as MessageListItem.MessageItem)
             is OnlyMediaAttachmentsViewHolder -> decorateOnlyMediaAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
+            is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
             else -> Unit
         }.exhaustive
     }
+
+    protected open fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = Unit
 
     protected open fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,

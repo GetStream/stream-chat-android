@@ -73,8 +73,16 @@ class ChatFragment : Fragment() {
     }
 
     private fun initChatViewModel() {
-        binding.header.setAvatarClickListener {
-            chatViewModel.onAction(ChatViewModel.Action.AvatarClicked)
+        binding.header.apply {
+            setAvatarClickListener {
+                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+            }
+            setTitleClickListener {
+                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+            }
+            setSubtitleClickListener {
+                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+            }
         }
         chatViewModel.navigationEvent.observe(
             viewLifecycleOwner,
