@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-    <LinearLayout
+    <View
         android:id="@+id/backgroundView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@+id/mediaAttachmentsGroupView"
+        app:layout_constraintStart_toStartOf="@+id/mediaAttachmentsGroupView"
+        app:layout_constraintTop_toTopOf="@+id/mediaAttachmentsGroupView"
+        />
 
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
         android:id="@+id/mediaAttachmentsGroupView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="1dp"/>
+        android:padding="1dp"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toTopOf="@id/gapView"
+        />
 
     <TextView
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="start"
+        android:hyphenationFrequency="normal"
+        android:lineHeight="16sp"
         android:paddingLeft="@dimen/stream_ui_spacing_medium"
         android:paddingTop="@dimen/stream_ui_spacing_small"
         android:paddingRight="@dimen/stream_ui_spacing_medium"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:lineHeight="16sp"
-        android:hyphenationFrequency="normal"
-        android:gravity="start"
-        android:textColor="@color/stream_ui_black"/>
-
-    </LinearLayout>
+        android:textColor="@color/stream_ui_black"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/mediaAttachmentsGroupView"
+        />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
@@ -55,6 +64,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
+        />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@+id/gapView"
         />
 
     <androidx.constraintlayout.widget.Guideline
