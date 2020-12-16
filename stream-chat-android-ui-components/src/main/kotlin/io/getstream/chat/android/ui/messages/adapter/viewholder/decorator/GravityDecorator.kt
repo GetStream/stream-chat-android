@@ -12,7 +12,7 @@ internal class GravityDecorator : BaseDecorator() {
             clear(messageViewId, ConstraintSet.START)
             clear(messageViewId, ConstraintSet.END)
             if (data.isTheirs) {
-                connect(messageViewId, ConstraintSet.START, viewHolder.binding.marginStart.id, ConstraintSet.START)
+                connect(messageViewId, ConstraintSet.START, viewHolder.binding.avatarView.id, ConstraintSet.END)
             } else {
                 connect(messageViewId, ConstraintSet.END, viewHolder.binding.marginEnd.id, ConstraintSet.END)
             }
