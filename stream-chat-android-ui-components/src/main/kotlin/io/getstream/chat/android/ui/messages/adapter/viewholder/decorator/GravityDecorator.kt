@@ -18,6 +18,4 @@ internal class GravityDecorator : BaseDecorator() {
             }
         }
     }
-
-
 }
