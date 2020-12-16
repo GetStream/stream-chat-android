@@ -8,19 +8,8 @@ internal object MessageListItemViewTypeMapper {
     fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
 
     fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
-        return when (viewTypeValue) {
-            MessageListItemViewType.DATE_DIVIDER.ordinal -> MessageListItemViewType.DATE_DIVIDER
-            MessageListItemViewType.MESSAGE_DELETED.ordinal -> MessageListItemViewType.MESSAGE_DELETED
-            MessageListItemViewType.PLAIN_TEXT.ordinal -> MessageListItemViewType.PLAIN_TEXT
-            MessageListItemViewType.REPLY_MESSAGE.ordinal -> MessageListItemViewType.REPLY_MESSAGE
-            MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS.ordinal -> MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
-            MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS.ordinal -> MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
-            MessageListItemViewType.MEDIA_ATTACHMENTS.ordinal -> MessageListItemViewType.MEDIA_ATTACHMENTS
-            MessageListItemViewType.ATTACHMENTS.ordinal -> MessageListItemViewType.ATTACHMENTS
-            MessageListItemViewType.LOADING_INDICATOR.ordinal -> MessageListItemViewType.LOADING_INDICATOR
-            MessageListItemViewType.THREAD_SEPARATOR.ordinal -> MessageListItemViewType.THREAD_SEPARATOR
-            else -> error("View type must be a value from MessageListItemViewType")
-        }
+        return MessageListItemViewType.values().find { it.ordinal == viewTypeValue }
+            ?: error("View type must be a value from MessageListItemViewType")
     }
 
     private fun listItemToViewType(messageListItem: MessageListItem): MessageListItemViewType {

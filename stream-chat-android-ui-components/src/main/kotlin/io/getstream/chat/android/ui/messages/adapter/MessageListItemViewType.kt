@@ -10,5 +10,5 @@ public enum class MessageListItemViewType {
     MEDIA_ATTACHMENTS,
     ATTACHMENTS,
     LOADING_INDICATOR,
-    THREAD_SEPARATOR
+    THREAD_SEPARATOR,
 }
