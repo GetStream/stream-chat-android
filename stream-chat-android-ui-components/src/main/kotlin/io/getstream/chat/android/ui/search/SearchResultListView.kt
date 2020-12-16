@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
+import android.content.res.Configuration
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -49,12 +50,12 @@ public class SearchResultListView : ViewFlipper {
         binding.searchListView.apply {
             setHasFixedSize(true)
             adapter = this@SearchResultListView.adapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    context,
-                    LinearLayoutManager.VERTICAL
-                )
-            )
+
+            val configuration = resources.configuration
+            if (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES) {
+                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+            }
+
             addOnScrollListener(scrollListener)
         }
     }

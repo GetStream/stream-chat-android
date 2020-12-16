@@ -1,10 +1,12 @@
 package io.getstream.chat.android.ui.messagepreview
 
 import android.content.Context
+import android.content.res.Configuration
 import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
@@ -52,7 +54,19 @@ public class MessagePreviewView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
+        binding.contentRoot.setBackgroundColor(getItemBackgroundColor())
+
         parseAttrs(attrs)
+    }
+
+    private fun getItemBackgroundColor(): Int {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_alabaster
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_black
+            else -> R.color.stream_ui_alabaster
+        }.let { colorRes ->
+            ContextCompat.getColor(context, colorRes)
+        }
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
