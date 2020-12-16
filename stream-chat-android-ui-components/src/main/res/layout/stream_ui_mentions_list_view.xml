@@ -5,41 +5,21 @@
     tools:parentTag="android.widget.ViewFlipper"
     >
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mentionsListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        >
-
-        <TextView
-            android:id="@+id/searchInfoBar"
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@drawable/stream_ui_search_info_bar_gradient"
-            android:paddingStart="8dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="8dp"
-            android:textSize="@dimen/stream_ui_text_small"
-            tools:text="5 results"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/searchListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="15"
-            tools:listitem="@layout/stream_ui_item_search_result"
-            />
-
-    </LinearLayout>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="15"
+        tools:listitem="@layout/stream_ui_item_mention"
+        />
 
     <LinearLayout
         android:id="@+id/emptyContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="40dp"
         >
@@ -48,7 +28,7 @@
             android:id="@+id/emptyImage"
             android:layout_width="112dp"
             android:layout_height="112dp"
-            android:src="@drawable/stream_ui_ic_search_empty"
+            android:src="@drawable/stream_ui_ic_mentions_empty"
             tools:ignore="ContentDescription"
             />
 
@@ -61,10 +41,10 @@
             android:layout_marginEnd="24dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@string/stream_ui_mentions_list_empty"
             android:textAlignment="center"
             android:textColor="@color/stream_ui_black_50"
             android:textSize="@dimen/stream_ui_text_medium"
-            tools:text="No result for 'query'"
             />
 
     </LinearLayout>

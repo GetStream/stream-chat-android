@@ -26,7 +26,7 @@ class MentionsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMentionsBinding.inflate(inflater, container, false)
         return binding.root
     }
