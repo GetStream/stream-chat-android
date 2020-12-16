@@ -20,6 +20,7 @@ public class OnlyFileAttachmentsViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        binding.fileAttachmentsView.setAttachments(data.message.attachments)
         binding.fileAttachmentsView.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
