@@ -13,11 +13,18 @@ public fun ChannelsViewModel.bindView(
 ) {
     state.observe(lifecycle) { channelState ->
         when (channelState) {
-            is ChannelsViewModel.State.Loading -> view.showLoadingView()
-
+            is ChannelsViewModel.State.NoChannelsAvailable -> {
+                view.showEmptyStateView()
+                view.hideLoadingView()
+            }
+            is ChannelsViewModel.State.Loading -> {
+                view.hideEmptyStateView()
+                view.showLoadingView()
+            }
             is ChannelsViewModel.State.Result -> {
                 view.setChannels(channelState.channels)
                 view.hideLoadingView()
+                view.hideEmptyStateView()
             }
         }
     }

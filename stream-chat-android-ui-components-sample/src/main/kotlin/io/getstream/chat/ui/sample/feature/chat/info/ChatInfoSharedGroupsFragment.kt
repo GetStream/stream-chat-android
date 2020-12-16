@@ -28,7 +28,8 @@ class ChatInfoSharedGroupsFragment : Fragment() {
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id, args.memberId)),
-                Filters.ne("draft", true)
+                Filters.ne("draft", true),
+                Filters.greaterThan("member_count", 2),
             ),
         )
     }
@@ -64,6 +65,11 @@ class ChatInfoSharedGroupsFragment : Fragment() {
 
             setChannelClickListener {
                 findNavController().navigateSafely(ChatInfoSharedGroupsFragmentDirections.actionOpenChat(it.cid, null))
+            }
+
+            SharedGroupsEmptyViewBinding.inflate(layoutInflater).root.apply {
+                text = getString(R.string.chat_info_option_shared_groups_empty_title, args.memberName)
+                setEmptyStateView(this)
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
