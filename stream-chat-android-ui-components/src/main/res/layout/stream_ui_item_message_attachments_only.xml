@@ -34,8 +34,6 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
-        app:streamAvatarHeight="@dimen/stream_ui_avatar_size_medium"
-        app:streamAvatarWidth="@dimen/stream_ui_avatar_size_medium"
         tools:src="@tools:sample/avatars"
         />
 
