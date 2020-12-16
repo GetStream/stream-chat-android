@@ -4,6 +4,7 @@ import androidx.constraintlayout.widget.Guideline
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 internal class MaxPossibleWidthDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -22,6 +23,13 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
         val marginEndPercent = if (data.isTheirs) THEIR_END_PERCENT else END_PERCENT
         marginStart.setGuidelinePercent(marginStartPercent)
         marginEnd.setGuidelinePercent(marginEndPercent)
+    }
+
+    override fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
 
     companion object {

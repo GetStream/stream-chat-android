@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 internal class AvatarDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -15,6 +16,13 @@ internal class AvatarDecorator : BaseDecorator() {
     }
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        setupAvatar(viewHolder.binding.avatarView, data)
+    }
+
+    override fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
