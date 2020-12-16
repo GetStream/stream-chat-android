@@ -13,17 +13,26 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
+import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.attachments.AttachmentController
+import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
+import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
+import io.getstream.chat.android.ui.attachments.AttachmentSource
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.suggestions.SuggestionListController
-import io.getstream.chat.android.ui.utils.extensions.EMPTY
-import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
+import io.getstream.chat.android.ui.suggestions.SuggestionListView
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.getColorList
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -57,25 +66,14 @@ public class MessageInputView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageInputBinding
     private lateinit var suggestionListController: SuggestionListController
-    private lateinit var attachmentController: AttachmentController
+    private lateinit var suggestionListView: SuggestionListView
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
 
-    public var messageText: String
-        get() = binding.etMessageTextInput.text.toString()
-        set(text) {
-            binding.etMessageTextInput.apply {
-                requestFocus()
-                setText(text)
-                setSelection(getText()?.length ?: 0)
-            }
-        }
-
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
-        configText()
     }
 
     public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
@@ -85,6 +83,31 @@ public class MessageInputView : ConstraintLayout {
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
     private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
+
+    private val attachmentSelectionListener = object : AttachmentSelectionListener {
+        override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
+            if (attachments.isNotEmpty()) {
+                when (attachmentSource) {
+                    AttachmentSource.MEDIA,
+                    AttachmentSource.CAMERA -> {
+                        binding.messageInputFieldView.mode =
+                            MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
+                    }
+                    AttachmentSource.FILE -> {
+                        GlobalScope.launch(DispatcherProvider.Main) {
+                            val attachments = withContext(DispatcherProvider.IO) {
+                                val uris = attachments.mapNotNull(AttachmentMetaData::uri)
+                                StorageHelper().getAttachmentsFromUriList(context, uris).toMutableList()
+                            }
+
+                            binding.messageInputFieldView.mode =
+                                MessageInputFieldView.Mode.FileAttachmentMode(attachments)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public fun setOnSendButtonClickListener(listener: OnMessageSendButtonClickListener?) {
         this.onSendButtonClickListener = listener
@@ -110,9 +133,15 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController.commands = commands
     }
 
+    public fun setSuggestionListView(suggestionListView: SuggestionListView) {
+        this.suggestionListView = suggestionListView
+        configSuggestionListView()
+    }
+
     @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamUiMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
+        suggestionListView = binding.suggestionListView
 
         context.obtainStyledAttributes(attr, R.styleable.StreamUiMessageInputView).use { typedArray ->
             configAttachmentButton(typedArray)
@@ -122,54 +151,21 @@ public class MessageInputView : ConstraintLayout {
             configSendAlsoToChannelCheckboxVisibility(typedArray)
         }
         configSendAlsoToChannelCheckbox()
-        configClearAttachmentsButton()
-        configAttachmentButtonBehavior()
         configSendButtonListener()
-        configText()
-    }
-
-    private fun configText() {
-        inputMode.let {
-            messageText = when (it) {
-                is InputMode.Edit -> it.oldMessage.text
-                else -> ""
-            }
-        }
+        configSuggestionListView()
     }
 
     private fun configSendButtonListener() {
-        binding.ivSendMessageEnabled.setOnClickListener {
+        binding.sendMessageButtonEnabled.setOnClickListener {
             onSendButtonClickListener?.onClick()
-
             inputMode.let {
                 when (it) {
-                    is InputMode.Normal -> {
-                        if (attachmentController.selectedAttachments.isEmpty()) {
-                            sendMessageHandler.sendMessage(messageText)
-                        } else {
-                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
-                            sendMessageHandler.sendMessageWithAttachments(messageText, attachedFiles)
-                        }
-                    }
-                    is InputMode.Thread -> {
-                        val parentMessage = it.parentMessage
-                        val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-                        if (attachmentController.selectedAttachments.isEmpty()) {
-                            sendMessageHandler.sendToThread(
-                                parentMessage,
-                                messageText,
-                                binding.sendAlsoToChannel.isChecked
-                            )
-                        } else {
-                            val attachedFiles = attachmentController.getSelectedAttachmentsFiles()
-                            sendMessageHandler.sendToThreadWithAttachments(parentMessage, messageText, sendAlsoToChannel, attachedFiles)
-                        }
-                    }
-                    is InputMode.Edit -> sendMessageHandler.editMessage(it.oldMessage, messageText)
+                    is InputMode.Normal -> sendMessage()
+                    is InputMode.Thread -> sendThreadMessage(it.parentMessage)
+                    is InputMode.Edit -> editMessage(it.oldMessage)
                 }
             }
-            messageText = ""
-            attachmentController.clearSelectedAttachments()
+            binding.messageInputFieldView.clearContent()
         }
     }
 
@@ -196,7 +192,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton(typedArray: TypedArray) {
-        binding.ivOpenAttachment.run {
+        binding.attachmentsButton.run {
             isVisible = typedArray.getBoolean(R.styleable.StreamUiMessageInputView_streamUiAttachButtonEnabled, true)
 
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiAttachButtonIcon)
@@ -205,17 +201,17 @@ public class MessageInputView : ConstraintLayout {
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
-                    typedArray.getColor(
+                    normalColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_dark)
+                        context.getColorCompat(R.color.stream_ui_grey)
                     ),
-                    typedArray.getColor(
+                    selectedColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_blue)
                     ),
-                    typedArray.getColor(
+                    disabledColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiAttachButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
+                        context.getColorCompat(R.color.stream_ui_grey_medium_light)
                     )
                 )
             )
@@ -229,11 +225,19 @@ public class MessageInputView : ConstraintLayout {
                 R.styleable.StreamUiMessageInputView_streamUiAttachButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
+
+            setOnClickListener {
+                context.getFragmentManager()?.let {
+                    AttachmentDialogFragment.newInstance()
+                        .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
+                        .show(it, AttachmentDialogFragment.TAG)
+                }
+            }
         }
     }
 
     private fun configLightningButton(typedArray: TypedArray) {
-        binding.ivOpenEmojis.run {
+        binding.commandsButton.run {
             isVisible =
                 typedArray.getBoolean(R.styleable.StreamUiMessageInputView_streamUiLightningButtonEnabled, true)
 
@@ -243,17 +247,17 @@ public class MessageInputView : ConstraintLayout {
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
-                    typedArray.getColor(
+                    normalColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconColor,
-                        ContextCompat.getColor(context, R.color.stream_gray_dark)
+                        context.getColorCompat(R.color.stream_ui_grey)
                     ),
-                    typedArray.getColor(
+                    selectedColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_blue)
                     ),
-                    typedArray.getColor(
+                    disabledColor = typedArray.getColor(
                         R.styleable.StreamUiMessageInputView_streamUiLightningButtonIconPressedColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_gray_light)
+                        context.getColorCompat(R.color.stream_ui_grey_medium_light)
                     )
                 )
             )
@@ -267,15 +271,24 @@ public class MessageInputView : ConstraintLayout {
                 R.styleable.StreamUiMessageInputView_streamUiLightningButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
+
+            setOnClickListener {
+                if (suggestionListView.isSuggestionListVisible()) {
+                    suggestionListController.hideSuggestionList()
+                } else {
+                    isSelected = true
+                    suggestionListController.showAvailableCommands()
+                }
+            }
         }
     }
 
     private fun showSendMessageEnabled() {
-        val fadeAnimator = binding.ivSendMessageDisabled.run {
+        val fadeAnimator = binding.sendMessageButtonDisabled.run {
             ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
         }
 
-        val appearAnimator = binding.ivSendMessageEnabled.run {
+        val appearAnimator = binding.sendMessageButtonEnabled.run {
             ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
         }
 
@@ -288,11 +301,11 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun showSendMessageDisabled() {
-        val fadeAnimator = binding.ivSendMessageEnabled.run {
+        val fadeAnimator = binding.sendMessageButtonEnabled.run {
             ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
         }
 
-        val appearAnimator = binding.ivSendMessageDisabled.run {
+        val appearAnimator = binding.sendMessageButtonDisabled.run {
             ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
         }
 
@@ -305,15 +318,25 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configTextInput(typedArray: TypedArray) {
-        suggestionListController = SuggestionListController(binding.suggestionListView, binding.etMessageTextInput)
+        binding.messageInputFieldView.setContentChangeListener(
+            object : MessageInputFieldView.ContentChangeListener {
+                override fun onMessageTextChanged(messageText: String) {
+                    refreshControlsState()
+                    handleKeyStroke()
+                    suggestionListController.showSuggestions(messageText)
+                }
 
-        binding.etMessageTextInput.doAfterTextChanged {
-            suggestionListController.onTextChanged(it?.toString() ?: "")
-            refreshControlsState()
-            handleKeyStroke()
-        }
+                override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
+                    refreshControlsState()
+                }
 
-        binding.etMessageTextInput.run {
+                override fun onModeChanged(mode: MessageInputFieldView.Mode) {
+                    refreshControlsState()
+                }
+            }
+        )
+
+        binding.messageInputFieldView.run {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiMessageInputTextColor,
@@ -335,22 +358,43 @@ public class MessageInputView : ConstraintLayout {
                 ).toFloat()
             )
 
-            hint = typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint)
+            setHint(typedArray.getText(R.styleable.StreamUiMessageInputView_streamUiMessageInputHint))
 
-            isVerticalScrollBarEnabled = typedArray.getBoolean(
-                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarEnabled,
-                false
+            setInputFieldScrollBarEnabled(
+                typedArray.getBoolean(
+                    R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarEnabled,
+                    false
+                )
             )
 
-            isScrollbarFadingEnabled = typedArray.getBoolean(
-                R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarFadingEnabled,
-                false
+            setInputFieldScrollbarFadingEnabled(
+                typedArray.getBoolean(
+                    R.styleable.StreamUiMessageInputView_streamUiMessageInputScrollbarFadingEnabled,
+                    false
+                )
             )
         }
     }
 
+    private fun configSuggestionListView() {
+        suggestionListController = SuggestionListController(suggestionListView) {
+            binding.commandsButton.isSelected = false
+        }
+        suggestionListView.setOnSuggestionClickListener(
+            object : SuggestionListView.OnSuggestionClickListener {
+                override fun onMentionClick(user: User) {
+                    binding.messageInputFieldView.autoCompleteUser(user)
+                }
+
+                override fun onCommandClick(command: Command) {
+                    binding.messageInputFieldView.autoCompleteCommand(command)
+                }
+            }
+        )
+    }
+
     private fun handleKeyStroke() {
-        if (messageText.isNotEmpty()) {
+        if (binding.messageInputFieldView.messageText.isNotEmpty()) {
             typingListener?.onKeystroke()
         } else {
             typingListener?.onStopTyping()
@@ -371,17 +415,17 @@ public class MessageInputView : ConstraintLayout {
         DrawableCompat.setTintList(
             iconEnabledSendButtonDrawable!!,
             getColorList(
-                typedArray.getColor(
+                normalColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_input_message_send_button)
+                    context.getColorCompat(R.color.stream_ui_blue)
                 ),
-                typedArray.getColor(
+                selectedColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
-                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                    context.getColorCompat(R.color.stream_ui_blue)
                 ),
-                typedArray.getColor(
+                disabledColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                    context.getColorCompat(R.color.stream_ui_grey_medium_light)
                 )
             )
         )
@@ -389,66 +433,75 @@ public class MessageInputView : ConstraintLayout {
         DrawableCompat.setTintList(
             iconDisabledSendButtonDrawable!!,
             getColorList(
-                typedArray.getColor(
+                normalColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_ui_black)
+                    ContextCompat.getColor(context, R.color.stream_ui_blue)
                 ),
-                typedArray.getColor(
+                selectedColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
-                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                    ContextCompat.getColor(context, R.color.stream_ui_blue)
                 ),
-                typedArray.getColor(
+                disabledColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                    ContextCompat.getColor(context, R.color.stream_ui_grey_medium_light)
                 )
             )
         )
 
-        binding.ivSendMessageDisabled.setImageDrawable(iconDisabledSendButtonDrawable)
-        binding.ivSendMessageEnabled.setImageDrawable(iconEnabledSendButtonDrawable)
+        binding.sendMessageButtonDisabled.setImageDrawable(iconDisabledSendButtonDrawable)
+        binding.sendMessageButtonEnabled.setImageDrawable(iconEnabledSendButtonDrawable)
 
-        binding.ivSendMessageDisabled.alpha = 1F
-        binding.ivSendMessageEnabled.alpha = 0F
-    }
+        binding.sendMessageButtonDisabled.alpha = 1F
+        binding.sendMessageButtonEnabled.alpha = 0F
 
-    private fun configClearAttachmentsButton() {
-        binding.clearMessageInputButton.setOnClickListener {
-            attachmentController.clearSelectedAttachments()
-            binding.etMessageTextInput.setText(String.EMPTY)
-            refreshControlsState()
-        }
-    }
-
-    private fun configAttachmentButtonBehavior() {
-        attachmentController = AttachmentController(context, binding.mediaComposer, binding.fileComposer) {
-            refreshControlsState()
-        }
-        binding.ivOpenAttachment.setOnClickListener {
-            attachmentController.openAttachmentDialog()
-        }
+        binding.sendMessageButtonDisabled.isEnabled = false
     }
 
     private fun refreshControlsState() {
-        val hasText = binding.etMessageTextInput.text.toString().isNotBlank()
-        val hasAttachments = attachmentController.selectedAttachments.isNotEmpty()
+        val isCommandMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
+        val hasContent = binding.messageInputFieldView.hasContent()
 
-        if (hasText || hasAttachments) {
+        binding.attachmentsButton.isVisible = !isCommandMode
+        binding.commandsButton.isVisible = !isCommandMode
+        binding.commandsButton.isEnabled = !hasContent
+        if (hasContent) {
             showSendMessageEnabled()
         } else {
             showSendMessageDisabled()
         }
+    }
 
-        if (hasAttachments) {
-            binding.ivOpenEmojis.isVisible = false
-            binding.ivOpenAttachment.isVisible = false
-            binding.clearMessageInputButton.isVisible = true
-            binding.etMessageTextInput.setHint(R.string.stream_ui_attachment_input_hint)
+    private fun sendMessage() {
+        if (binding.messageInputFieldView.hasAttachments()) {
+            sendMessageHandler.sendMessageWithAttachments(
+                binding.messageInputFieldView.messageText,
+                binding.messageInputFieldView.getAttachedFiles()
+            )
         } else {
-            binding.ivOpenEmojis.isVisible = true
-            binding.ivOpenAttachment.isVisible = true
-            binding.clearMessageInputButton.isVisible = false
-            binding.etMessageTextInput.hint = null
+            sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText)
         }
+    }
+
+    private fun sendThreadMessage(parentMessage: Message) {
+        val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
+        if (binding.messageInputFieldView.hasAttachments()) {
+            sendMessageHandler.sendToThreadWithAttachments(
+                parentMessage,
+                binding.messageInputFieldView.messageText,
+                sendAlsoToChannel,
+                binding.messageInputFieldView.getAttachedFiles()
+            )
+        } else {
+            sendMessageHandler.sendToThread(
+                parentMessage,
+                binding.messageInputFieldView.messageText,
+                sendAlsoToChannel
+            )
+        }
+    }
+
+    private fun editMessage(oldMessage: Message) {
+        sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
     }
 
     private companion object {
