@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.messagepreview
 
 import android.content.Context
-import android.content.res.Configuration
 import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
