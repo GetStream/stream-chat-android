@@ -22,7 +22,6 @@ public class MessagePlainTextViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        constraintView(data.isMine, binding.messageText, binding.root)
         binding.messageText.text = data.message.text
         binding.messageText.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
