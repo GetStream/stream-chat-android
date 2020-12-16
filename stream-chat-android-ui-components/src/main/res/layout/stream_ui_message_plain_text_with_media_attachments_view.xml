@@ -16,9 +16,9 @@
         android:id="@+id/backgroundView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toStartOf="@+id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/gapView"
-        app:layout_constraintWidth_percent="0.5"
         android:orientation="vertical">
 
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
@@ -42,5 +42,21 @@
         android:textColor="@color/stream_ui_black"/>
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="20dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

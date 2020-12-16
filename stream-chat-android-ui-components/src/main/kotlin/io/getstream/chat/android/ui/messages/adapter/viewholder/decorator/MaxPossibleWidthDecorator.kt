@@ -29,7 +29,7 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        //applyMaxPossibleWidth()
+        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
 
     companion object {

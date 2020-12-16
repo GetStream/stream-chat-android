@@ -19,10 +19,13 @@ public class PlainTextWithMediaAttachmentsViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        constraintView(data.isMine, binding.backgroundView, binding.root)
         binding.messageText.text = data.message.text
         if (data.message.attachments.isMedia()) {
             binding.mediaAttachmentsGroupView.showAttachments(*data.message.attachments.toTypedArray())
+        }
+        binding.backgroundView.setOnLongClickListener {
+            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
+            true
         }
     }
 }
