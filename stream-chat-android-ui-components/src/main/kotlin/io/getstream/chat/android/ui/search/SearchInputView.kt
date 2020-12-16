@@ -1,13 +1,16 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
+import android.content.res.Configuration
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.Debouncer
 
@@ -72,6 +75,14 @@ public class SearchInputView : FrameLayout {
 
         binding.clearInputButton.setOnClickListener {
             clear()
+        }
+
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_black
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_white
+            else -> R.color.stream_white
+        }.let { color ->
+            binding.searchIcon.setColorFilter(ContextCompat.getColor(context, color))
         }
 
         updateClearButtonVisibility(query)
