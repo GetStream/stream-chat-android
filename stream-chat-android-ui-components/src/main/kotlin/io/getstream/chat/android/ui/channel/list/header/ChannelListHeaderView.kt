@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.channel.list.header
 
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -40,11 +41,23 @@ public class ChannelListHeaderView : ConstraintLayout {
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
+        configColors()
+
         context.obtainStyledAttributes(attrs, R.styleable.ChannelListHeaderView).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
             configAddChannelButton(typedArray)
+        }
+    }
+
+    private fun configColors() {
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_white
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_dark_background
+            else -> R.color.stream_ui_white
+        }.let { colorRes ->
+            binding.channelListHeader.setBackgroundColor(ContextCompat.getColor(context, colorRes))
         }
     }
 
@@ -130,7 +143,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_black)
+                ContextCompat.getColor(context, getTextColor())
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
@@ -149,7 +162,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_black)
+                ContextCompat.getColor(context, getTextColor())
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,
@@ -159,6 +172,14 @@ public class ChannelListHeaderView : ConstraintLayout {
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextStyle,
                 Typeface.BOLD
             ).build()
+    }
+
+    private fun getTextColor(): Int {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_black
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
+            else -> R.color.stream_ui_black
+        }
     }
 
     public fun setUser(user: User) {

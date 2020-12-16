@@ -26,6 +26,7 @@
     <color name="stream_ui_black_50">#80000000</color>
     <color name="stream_ui_black_60">#99000000</color>
     <color name="stream_ui_white">#FFFFFF</color>
+    <color name="stream_ui_dark_background">#101418</color>
     <color name="stream_ui_alabaster">#FCFCFC</color>
     <color name="stream_ui_concrete">#F2F2F2</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>

@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.header
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -51,6 +52,8 @@ public class MessagesHeaderView : ConstraintLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
+        configColors()
+
         context.obtainStyledAttributes(attrs, R.styleable.MessagesHeaderView).use {
             configUserAvatar(it)
             configTitle(it)
@@ -136,6 +139,16 @@ public class MessagesHeaderView : ConstraintLayout {
 
     public fun hideAvatar() {
         binding.avatar.isVisible = false
+    }
+
+    private fun configColors() {
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_white
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_dark_background
+            else -> R.color.stream_ui_white
+        }.let { colorRes ->
+            binding.headerRoot.setBackgroundColor(ContextCompat.getColor(context, colorRes))
+        }
     }
 
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {

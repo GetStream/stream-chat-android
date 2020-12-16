@@ -73,12 +73,16 @@ public class SearchInputView : FrameLayout {
             }
         }
 
-        binding.clearInputButton.setOnClickListener {
-            clear()
+        binding.clearInputButton.run {
+            setOnClickListener {
+                clear()
+            }
+
+            setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_grey_dark))
         }
 
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_black
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_dark_background
             Configuration.UI_MODE_NIGHT_YES -> R.color.stream_white
             else -> R.color.stream_white
         }.let { color ->
