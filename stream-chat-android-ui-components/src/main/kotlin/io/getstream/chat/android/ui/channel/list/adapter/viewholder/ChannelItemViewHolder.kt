@@ -40,15 +40,13 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         parent,
         false
     )
-) : BaseChannelListItemViewHolder(binding.root) {
+) : SwipeViewHolder(binding.root) {
 
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
     public companion object {
         public const val OPTIONS_COUNT: Int = 2
-
-        // persists menu states for channels - becomes necessary when view holders are recycled
     }
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {

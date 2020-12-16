@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelItemType
 
 public open class ChannelListItemViewHolderFactory {
 
-    public fun createViewHolder(
+    internal fun createViewHolder(
         parentView: ViewGroup,
         channelItemType: ChannelItemType,
         channelClickListener: ChannelListView.ChannelClickListener,
