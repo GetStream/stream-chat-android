@@ -37,5 +37,8 @@ class MessageListComponentBrowserFragment : Fragment() {
         binding.onlyMediaAttachments.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyMediaAttachmentsMessages)
         }
+        binding.plainTextWithMediaAttachments.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextWithMediaAttachmentsMessages)
+        }
     }
 }
