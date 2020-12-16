@@ -1,21 +1,38 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.constrainViewEndToEndOfView
+import com.getstream.sdk.chat.adapter.constrainViewStartToEndOfView
 import com.getstream.sdk.chat.adapter.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 
 internal class GravityDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         viewHolder.binding.root.updateConstraints {
-            val messageViewId = viewHolder.binding.messageText.id
-            clear(messageViewId, ConstraintSet.START)
-            clear(messageViewId, ConstraintSet.END)
-            if (data.isTheirs) {
-                connect(messageViewId, ConstraintSet.START, viewHolder.binding.avatarView.id, ConstraintSet.END)
-            } else {
-                connect(messageViewId, ConstraintSet.END, viewHolder.binding.marginEnd.id, ConstraintSet.END)
-            }
+            applyGravity(viewHolder.binding.messageText, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+        }
+    }
+
+    override fun decorateOnlyMediaAttachmentsMessage(
+        viewHolder: OnlyMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        viewHolder.binding.root.updateConstraints {
+            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+        }
+    }
+
+    private fun ConstraintSet.applyGravity(targetView: View, startView: View, endView: View, data: MessageListItem.MessageItem) {
+        clear(targetView.id, ConstraintSet.START)
+        clear(targetView.id, ConstraintSet.END)
+        if (data.isTheirs) {
+            constrainViewStartToEndOfView(targetView, startView)
+        } else {
+            constrainViewEndToEndOfView(targetView, endView)
         }
     }
 }

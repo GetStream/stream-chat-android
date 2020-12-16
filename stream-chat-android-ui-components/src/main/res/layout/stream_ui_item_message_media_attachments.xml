@@ -12,6 +12,7 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/mediaAttachmentsGroupView"
         />
 
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
@@ -21,7 +22,7 @@
         android:padding="1dp"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -35,6 +36,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
+        />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/gapView"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         />
 
     <androidx.constraintlayout.widget.Guideline
