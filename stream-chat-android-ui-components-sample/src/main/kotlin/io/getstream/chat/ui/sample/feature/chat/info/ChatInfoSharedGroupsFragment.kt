@@ -19,6 +19,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedGroupsBinding
+import io.getstream.chat.ui.sample.databinding.SharedGroupsEmptyViewBinding
 
 class ChatInfoSharedGroupsFragment : Fragment() {
 
