@@ -91,6 +91,14 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.offlineRetryButton.setOnClickListener { listener.onClick() }
     }
 
+    public fun setTitleClickListener(listener: OnClickListener) {
+        binding.title.setOnClickListener { listener.onClick() }
+    }
+
+    public fun setSubtitleClickListener(listener: OnClickListener) {
+        binding.subtitleContainer.setOnClickListener { listener.onClick() }
+    }
+
     public fun showBackButtonBadge(text: String) {
         binding.backButtonBadge.apply {
             this.isVisible = true
