@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messages.view
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,11 +41,13 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamMessageListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.reactions.ReactionsOverlayDialogFragment
+import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
+import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.android.ui.utils.extensions.exhaustive
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
@@ -63,9 +67,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private lateinit var style: MessageListViewStyle
 
-    private lateinit var binding: StreamMessageListViewBinding
-
-    private var optionsView: View? = null
+    private lateinit var binding: StreamUiMessageListViewBinding
 
     private var newMessagesTextSingle: String? = null
     private var newMessagesTextPlural: String? = null
@@ -123,6 +125,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
+    private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
+
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -143,8 +147,19 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
-        MessageLongClickListener {
-            // Todo: Implement listener
+        MessageLongClickListener { message ->
+            context.getFragmentManager()?.let { framentManager ->
+                // TODO: pass a real MessageItem instead of mock
+                val mockMessageItem = MessageItem(
+                    message,
+                    positions = listOf(MessageListItem.Position.BOTTOM),
+                    isMine = false
+                )
+
+                MessageOptionsOverlayDialogFragment
+                    .newInstance(mockMessageItem, messageOptionsConfiguration)
+                    .show(framentManager, ReactionsOverlayDialogFragment.TAG)
+            }
         }
 
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
@@ -220,13 +235,12 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     }
 
     private fun init(context: Context, attr: AttributeSet?) {
-        binding = StreamMessageListViewBinding.inflate(context.inflater, this, true)
+        binding = StreamUiMessageListViewBinding.inflate(context.inflater, this, true)
 
         initRecyclerView()
         initUnseenMessagesButton()
         initLoadingView()
         initEmptyStateView()
-        initBlurLayer()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -246,18 +260,6 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private fun initEmptyStateView() {
         emptyStateView = binding.defaultEmptyStateView
         emptyStateViewContainer = binding.emptyStateViewContainer
-    }
-
-    private fun initBlurLayer() {
-        binding.blurLayer.setOnClickListener { hideBlurLayer() }
-        binding.messageOptionsContainer.setOnClickListener { hideBlurLayer() }
-    }
-
-    private fun hideBlurLayer() {
-        binding.messageOptionsContainer.removeView(optionsView)
-        binding.messageOptionsScroll.isVisible = false
-
-        binding.blurLayer.isVisible = false
     }
 
     private fun initRecyclerView() {
@@ -324,11 +326,72 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                 }
             }
 
+        configureMessageOptions(tArray)
         tArray.recycle()
     }
 
     private fun lastPosition(): Int {
         return adapter.itemCount - 1
+    }
+
+    private fun configureMessageOptions(tArray: TypedArray) {
+        val iconsTint = tArray.getColor(
+            R.styleable.MessageListView_streamMessageOptionIconColor,
+            ContextCompat.getColor(context, R.color.stream_ui_grey)
+        )
+
+        val replyText = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        val replyIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamReplyOptionIcon,
+            R.drawable.stream_ui_ic_arrow_curve_left
+        )
+
+        val threadReplyText =
+            tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
+        val threadReplyIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamThreadReplyOptionIcon,
+            R.drawable.stream_ui_ic_thread_reply
+        )
+
+        val copyText = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        val copyIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamCopyOptionIcon,
+            R.drawable.stream_ui_ic_copy
+        )
+
+        val muteText = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute"
+        val muteIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamMuteOptionIcon,
+            R.drawable.stream_ui_ic_mute
+        )
+
+        val blockText = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block user"
+        val blockIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamBlockOptionIcon,
+            R.drawable.stream_ui_ic_user_block
+        )
+
+        val deleteText = tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete user"
+        val deleteIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamDeleteOptionIcon,
+            R.drawable.stream_ui_ic_delete
+        )
+
+        messageOptionsConfiguration = MessageOptionsView.Configuration(
+            iconsTint = iconsTint,
+            replyText = replyText,
+            replyIcon = replyIcon,
+            threadReplyText = threadReplyText,
+            threadReplyIcon = threadReplyIcon,
+            copyText = copyText,
+            copyIcon = copyIcon,
+            muteText = muteText,
+            muteIcon = muteIcon,
+            blockText = blockText,
+            blockIcon = blockIcon,
+            deleteText = deleteText,
+            deleteIcon = deleteIcon
+        )
     }
 
     override fun setLoadingMore(loadingMore: Boolean) {

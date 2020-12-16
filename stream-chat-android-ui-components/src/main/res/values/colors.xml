@@ -6,6 +6,7 @@
     <color name="stream_ui_grey">#808080</color>
     <color name="stream_ui_grey_medium_light">#CCCCCC</color>
     <color name="stream_ui_grey_light">#F5F5F5</color>
+    <color name="stream_ui_grey_dark">#989898</color>
     <color name="stream_ui_grey_light_opacity_50">#80E6E6E6</color>
     <color name="stream_ui_light_red">#FF3742</color>
 

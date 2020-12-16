@@ -2,21 +2,36 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@+id/messageText"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        android:layout_width="@dimen/stream_ui_avatar_size_medium"
+        android:layout_height="@dimen/stream_ui_avatar_size_medium"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
         />
 
     <TextView
         android:id="@+id/messageText"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/stream_ui_spacing_medium"
         android:paddingTop="@dimen/stream_ui_spacing_small"
@@ -25,10 +40,25 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:lineHeight="16sp"
         android:hyphenationFrequency="normal"
-        android:gravity="start"
         android:textColor="@color/stream_ui_black"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@id/gapView"
+        tools:text="@tools:sample/lorem"
         />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="20dp"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

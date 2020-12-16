@@ -11,7 +11,7 @@
         style="@style/StreamUiUserAvatarStyle"
         android:layout_width="@dimen/stream_ui_avatar_size_medium"
         android:layout_height="@dimen/stream_ui_avatar_size_medium"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

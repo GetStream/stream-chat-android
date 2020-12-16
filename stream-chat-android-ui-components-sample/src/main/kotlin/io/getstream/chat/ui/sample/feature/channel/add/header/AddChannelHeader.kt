@@ -19,7 +19,7 @@ interface AddChannelHeader {
 
     fun setAddMemberButtonClickListener(listener: AddMemberButtonClickListener)
 
-    fun setMemberClickListener(listener: MemberClickListener)
+    fun setMemberClickListener(listener: MemberClickListener?)
 }
 
 fun interface MembersInputChangedListener {
