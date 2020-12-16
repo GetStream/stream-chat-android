@@ -4,7 +4,7 @@
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_white"
+    android:background="?android:attr/colorBackground"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-medium"
-        android:textColor="@color/stream_ui_black"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
         app:layout_constraintTop_toTopOf="parent"
