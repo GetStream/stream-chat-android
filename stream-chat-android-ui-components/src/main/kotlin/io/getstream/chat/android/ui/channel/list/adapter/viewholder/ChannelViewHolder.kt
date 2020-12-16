@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
-public class ChannelItemViewHolder @JvmOverloads constructor(
+public class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
     private val channelLongClickListener: ChannelListView.ChannelClickListener,

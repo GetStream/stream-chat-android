@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.channel.list.adapter
 
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -15,15 +14,6 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
     val listenerProvider: ChannelListListenerProvider = ChannelListListenerProvider()
 
-    var endReached: Boolean = true
-        set(value) {
-            if (value) {
-                // if we've reached the end, remove the last item
-                notifyItemRemoved(itemCount)
-            }
-            field = value
-        }
-
     companion object {
         val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
         val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
@@ -34,31 +24,10 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         )
     }
 
-    // If we haven't reached the end of the channels, and we're in the last position, we're loading more
-    private fun isLoadingMore(position: Int) = !endReached && position == itemCount - 1
-
     override fun getItemViewType(position: Int): Int {
-        return when {
-            isLoadingMore(position) -> ChannelItemType.LOADING_MORE.ordinal
-            else -> ChannelItemType.DEFAULT.ordinal
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return super.getItemCount().let { realCount ->
-            when {
-                // if the list isn't empty, and we haven't reached the end, always offset +1 for the loading more view
-                !endReached && realCount > 0 -> realCount + 1
-                else -> realCount
-            }
-        }
-    }
-
-    override fun getItem(position: Int): Channel? {
-        return when {
-            // don't try to fetch an item that isn't in the data set
-            isLoadingMore(position) -> null
-            else -> super.getItem(position)
+        return when (getItem(position)) {
+            is ChannelListItem.LoadingMoreItem -> ChannelItemType.LOADING_MORE.ordinal
+            is ChannelListItem.ChannelItem -> ChannelItemType.DEFAULT.ordinal
         }
     }
 
@@ -78,12 +47,23 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         }
     }
 
-    /* Loading view doesn't require any binding. Only bind if a channel item is retrieved */
+    private fun bind(
+        position: Int,
+        holder: BaseChannelListItemViewHolder,
+        payload: ChannelDiff
+    ) {
+        when (val channelItem = getItem(position)) {
+            is ChannelListItem.LoadingMoreItem -> Unit
+
+            is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
+        }
+    }
+
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
-        getItem(position)?.let { holder.bind(it, payloads.firstOrDefault(EVERYTHING_CHANGED).cast()) }
+        bind(position, holder, payloads.firstOrDefault(EVERYTHING_CHANGED).cast())
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, NOTHING_CHANGED) }
+        bind(position, holder, NOTHING_CHANGED)
     }
 }

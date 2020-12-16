@@ -6,7 +6,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.databinding.StreamChannelListLoadingViewBinding
 import io.getstream.chat.android.ui.utils.extensions.inflater
 
-public class LoadingMoreViewHolder(
+public class ChannelListLoadingMoreViewHolder(
     parent: ViewGroup,
     binding: StreamChannelListLoadingViewBinding = StreamChannelListLoadingViewBinding.inflate(
         parent.inflater,

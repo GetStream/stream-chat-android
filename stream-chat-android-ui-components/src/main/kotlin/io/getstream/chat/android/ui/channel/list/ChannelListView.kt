@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -28,6 +29,7 @@ public class ChannelListView @JvmOverloads constructor(
     private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
+    private var loadingMore = false
 
     init {
         setHasFixedSize(true)
@@ -120,12 +122,36 @@ public class ChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
-    public fun reachedEndOfChannels(endReached: Boolean) {
-        requireAdapter().endReached = endReached
+    public fun setChannels(channels: List<ChannelListItem>) {
+        requireAdapter().submitList(channels)
     }
 
-    public fun setChannels(channels: List<Channel>) {
-        requireAdapter().submitList(channels)
+    public fun showLoadingMore(show: Boolean) {
+        requireAdapter().let { adapter ->
+            val currentList = adapter.currentList
+            val mutableCopy = currentList.toMutableList()
+
+            val showLoadingMore = show && !loadingMore
+            val hideLoadingMore = !show && loadingMore
+
+            when {
+                showLoadingMore -> {
+                    loadingMore = true
+                    mutableCopy.add(ChannelListItem.LoadingMoreItem)
+                }
+
+                hideLoadingMore -> {
+                    loadingMore = false
+                    mutableCopy.remove(ChannelListItem.LoadingMoreItem)
+                }
+            }
+
+            adapter.submitList(mutableCopy) {
+                if (showLoadingMore) {
+                    layoutManager.scrollToPosition(mutableCopy.size - 1)
+                }
+            }
+        }
     }
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {

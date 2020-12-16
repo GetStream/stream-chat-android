@@ -16,7 +16,7 @@ internal class ChannelItemSwipeListener(
 ) : ChannelListView.SwipeListener {
 
     private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * ChannelItemViewHolder.OPTIONS_COUNT
+    private val optionsMenuWidth = menuItemWidth * ChannelViewHolder.OPTIONS_COUNT
     private val openValue = -optionsMenuWidth
     private val closedValue = 0f
     private val swipeRange = openValue..closedValue
@@ -35,7 +35,7 @@ internal class ChannelItemSwipeListener(
     }
 
     override fun onSwipeChanged(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, dX: Float) {
-        viewHolder.safeCast<ChannelItemViewHolder>()?.let { channelViewHolder ->
+        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
             val itemViewForeground = channelViewHolder.getItemViewForeground()
             // determine the new x value by adding the delta calculated from the move
             val projectedX = itemViewForeground.x + dX
@@ -50,7 +50,7 @@ internal class ChannelItemSwipeListener(
     }
 
     override fun onSwipeCompleted(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
-        viewHolder.safeCast<ChannelItemViewHolder>()?.let { channelViewHolder ->
+        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
             val itemViewForeground = channelViewHolder.getItemViewForeground()
             // determine snap value
             val snapValue = when {
@@ -76,7 +76,7 @@ internal class ChannelItemSwipeListener(
     }
 
     override fun onSwipeCanceled(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
-        viewHolder.safeCast<ChannelItemViewHolder>()?.let { channelViewHolder ->
+        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
             // animate closed
             channelViewHolder
                 .getItemViewForeground()
@@ -90,7 +90,7 @@ internal class ChannelItemSwipeListener(
     }
 
     override fun onRestoreSwipePosition(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int) {
-        viewHolder.safeCast<ChannelItemViewHolder>()?.let { channelViewHolder ->
+        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
             channelViewHolder.getItemViewForeground().x = when (swipeStateByPosition[adapterPosition]) {
                 SwipeState.Open -> -optionsMenuWidth
                 else -> 0f
@@ -117,7 +117,7 @@ internal class ChannelItemSwipeListener(
                 swipeStateByPosition[swipeStateEntry.key] = SwipeState.Closed
                 // if the view holder currently visible, animate it closed
                 recyclerView.findViewHolderForAdapterPosition(swipeStateEntry.key)
-                    ?.safeCast<ChannelItemViewHolder>()
+                    ?.safeCast<ChannelViewHolder>()
                     ?.let { viewHolder ->
                         val viewCompletelyVisible =
                             layoutManager.isViewPartiallyVisible(viewHolder.itemView, true, false)

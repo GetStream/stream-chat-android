@@ -44,7 +44,7 @@ public open class ChannelListItemViewHolderFactory {
         swipeListener: ChannelListView.SwipeListener,
         style: ChannelListViewStyle?
     ): BaseChannelListItemViewHolder {
-        return ChannelItemViewHolder(
+        return ChannelViewHolder(
             parentView,
             channelClickListener,
             channelLongClickListener,
@@ -57,6 +57,6 @@ public open class ChannelListItemViewHolderFactory {
     }
 
     public open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-        return LoadingMoreViewHolder(parentView)
+        return ChannelListLoadingMoreViewHolder(parentView)
     }
 }
