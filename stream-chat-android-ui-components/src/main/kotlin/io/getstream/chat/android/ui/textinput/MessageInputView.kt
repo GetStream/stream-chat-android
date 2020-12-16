@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -317,7 +318,7 @@ public class MessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiMessageInputTextColor,
-                    ContextCompat.getColor(context, R.color.stream_ui_black)
+                    ContextCompat.getColor(context, getTextColor())
                 )
             )
 
@@ -349,6 +350,14 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    private fun getTextColor() : Int {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO ->  R.color.stream_black
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_white
+            else -> R.color.stream_white
+        }
+    }
+
     private fun handleKeyStroke() {
         if (messageText.isNotEmpty()) {
             typingListener?.onKeystroke()
@@ -362,6 +371,8 @@ public class MessageInputView : ConstraintLayout {
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIcon)
             ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
             ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
+
+        iconDisabledSendButtonDrawable!!.setTint(ContextCompat.getColor(context, getDisableIconColor()))
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.StreamUiMessageInputView_streamUiSendButtonEnabledIcon)
@@ -391,7 +402,7 @@ public class MessageInputView : ConstraintLayout {
             getColorList(
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, R.color.stream_ui_black)
+                    ContextCompat.getColor(context, getDisabledSendButtonIconColor())
                 ),
                 typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
@@ -410,6 +421,10 @@ public class MessageInputView : ConstraintLayout {
         binding.ivSendMessageDisabled.alpha = 1F
         binding.ivSendMessageEnabled.alpha = 0F
     }
+
+    private fun getDisabledSendButtonIconColor() : Int = R.color.stream_ui_grey_medium_light
+
+    private fun getDisableIconColor() : Int = R.color.stream_ui_grey_medium_light
 
     private fun configClearAttachmentsButton() {
         binding.clearMessageInputButton.setOnClickListener {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white"
+    android:background="?android:attr/colorBackground"
     >
 
     <io.getstream.chat.android.ui.suggestions.SuggestionListView
@@ -115,7 +115,6 @@
             android:paddingEnd="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="18dp"
             android:scrollbars="vertical"
-            android:textColor="@color/stream_ui_black"
             android:textColorHint="@color/stream_ui_grey_light"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"

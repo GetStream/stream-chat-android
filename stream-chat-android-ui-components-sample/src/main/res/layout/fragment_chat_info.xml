@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/stream_white"
+        android:background="?android:attr/colorBackground"
         />
 
     <androidx.recyclerview.widget.RecyclerView

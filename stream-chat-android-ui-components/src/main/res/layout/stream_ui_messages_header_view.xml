@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_default_header_height"
-    android:background="@color/stream_ui_white"
+    android:background="?android:attr/colorBackground"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
