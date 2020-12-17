@@ -41,7 +41,7 @@ public class MessageInputFieldView : FrameLayout {
         when (newMode) {
             is Mode.FileAttachmentMode -> switchToFileAttachmentMode(newMode)
             is Mode.MediaAttachmentMode -> switchToMediaAttachmentMode(newMode)
-            is Mode.MessageMode -> switchToNormalMode()
+            is Mode.MessageMode -> switchToMessageMode()
             is Mode.EditMessageMode -> switchToEditMode(newMode)
             is Mode.CommandMode -> switchToCommandMode(newMode)
         }
@@ -191,7 +191,7 @@ public class MessageInputFieldView : FrameLayout {
         selectedAttachmentsChanged()
     }
 
-    private fun switchToNormalMode() {
+    private fun switchToMessageMode() {
         binding.commandBadge.isVisible = false
         binding.clearCommandButton.isVisible = false
         binding.messageEditText.hint = normalModeHint

@@ -65,8 +65,6 @@ public class MessageInputView : ConstraintLayout {
     private var currentAnimatorSet: AnimatorSet? = null
 
     private lateinit var binding: StreamUiMessageInputBinding
-    private lateinit var suggestionListController: SuggestionListController
-    private lateinit var suggestionListView: SuggestionListView
 
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
@@ -83,6 +81,7 @@ public class MessageInputView : ConstraintLayout {
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
     private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
+    private var suggestionListController: SuggestionListController? = null
 
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
@@ -126,22 +125,33 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public fun configureMembers(members: List<Member>) {
-        suggestionListController.users = members.map { it.user }
+        suggestionListController?.users = members.map { it.user }
     }
 
     public fun configureCommands(commands: List<Command>) {
-        suggestionListController.commands = commands
+        suggestionListController?.commands = commands
     }
 
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
-        this.suggestionListView = suggestionListView
-        configSuggestionListView()
+        suggestionListView.setOnSuggestionClickListener(
+            object : SuggestionListView.OnSuggestionClickListener {
+                override fun onMentionClick(user: User) {
+                    binding.messageInputFieldView.autoCompleteUser(user)
+                }
+
+                override fun onCommandClick(command: Command) {
+                    binding.messageInputFieldView.autoCompleteCommand(command)
+                }
+            }
+        )
+        suggestionListController = SuggestionListController(suggestionListView) {
+            binding.commandsButton.isSelected = false
+        }
     }
 
     @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamUiMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
-        suggestionListView = binding.suggestionListView
 
         context.obtainStyledAttributes(attr, R.styleable.StreamUiMessageInputView).use { typedArray ->
             configAttachmentButton(typedArray)
@@ -152,7 +162,6 @@ public class MessageInputView : ConstraintLayout {
         }
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
-        configSuggestionListView()
     }
 
     private fun configSendButtonListener() {
@@ -273,11 +282,13 @@ public class MessageInputView : ConstraintLayout {
             )
 
             setOnClickListener {
-                if (suggestionListView.isSuggestionListVisible()) {
-                    suggestionListController.hideSuggestionList()
-                } else {
-                    isSelected = true
-                    suggestionListController.showAvailableCommands()
+                suggestionListController?.let {
+                    if (it.isSuggestionListVisible()) {
+                        it.hideSuggestionList()
+                    } else {
+                        isSelected = true
+                        it.showAvailableCommands()
+                    }
                 }
             }
         }
@@ -298,6 +309,8 @@ public class MessageInputView : ConstraintLayout {
             playSequentially(fadeAnimator, appearAnimator)
             start()
         }
+
+        binding.sendMessageButtonEnabled.isEnabled = true
     }
 
     private fun showSendMessageDisabled() {
@@ -315,6 +328,8 @@ public class MessageInputView : ConstraintLayout {
             playSequentially(fadeAnimator, appearAnimator)
             start()
         }
+
+        binding.sendMessageButtonEnabled.isEnabled = false
     }
 
     private fun configTextInput(typedArray: TypedArray) {
@@ -323,7 +338,7 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    suggestionListController.showSuggestions(messageText)
+                    suggestionListController?.showSuggestions(messageText)
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
@@ -374,23 +389,6 @@ public class MessageInputView : ConstraintLayout {
                 )
             )
         }
-    }
-
-    private fun configSuggestionListView() {
-        suggestionListController = SuggestionListController(suggestionListView) {
-            binding.commandsButton.isSelected = false
-        }
-        suggestionListView.setOnSuggestionClickListener(
-            object : SuggestionListView.OnSuggestionClickListener {
-                override fun onMentionClick(user: User) {
-                    binding.messageInputFieldView.autoCompleteUser(user)
-                }
-
-                override fun onCommandClick(command: Command) {
-                    binding.messageInputFieldView.autoCompleteCommand(command)
-                }
-            }
-        )
     }
 
     private fun handleKeyStroke() {
@@ -455,6 +453,7 @@ public class MessageInputView : ConstraintLayout {
         binding.sendMessageButtonEnabled.alpha = 0F
 
         binding.sendMessageButtonDisabled.isEnabled = false
+        binding.sendMessageButtonEnabled.isEnabled = false
     }
 
     private fun refreshControlsState() {

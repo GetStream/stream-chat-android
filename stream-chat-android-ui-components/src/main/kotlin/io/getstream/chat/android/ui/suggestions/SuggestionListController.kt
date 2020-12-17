@@ -40,6 +40,10 @@ internal class SuggestionListController(
         dismissListener.onDismissed()
     }
 
+    fun isSuggestionListVisible(): Boolean {
+        return suggestionListView.isSuggestionListVisible()
+    }
+
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
 
     private fun String.isMentionMessage() = MENTION_PATTERN.matcher(this).find()

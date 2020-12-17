@@ -8,15 +8,6 @@
     android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
     >
 
-    <io.getstream.chat.android.ui.suggestions.SuggestionListView
-        android:id="@+id/suggestionListView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/attachmentsButton"
         android:layout_width="@dimen/stream_ui_message_input_button_size"
@@ -48,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/sendAlsoToChannel"
         app:layout_constraintEnd_toStartOf="@id/sendButtonContainer"
         app:layout_constraintStart_toEndOf="@id/commandsButton"
-        app:layout_constraintTop_toBottomOf="@id/suggestionListView"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <FrameLayout
