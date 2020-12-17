@@ -18,9 +18,9 @@
         android:id="@+id/scrollToBottomButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
         />
 
     <FrameLayout
@@ -39,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
+
     </FrameLayout>
 
     <FrameLayout
@@ -60,5 +61,35 @@
             tools:text="No messages"
             />
     </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/blurLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#C000"
+        android:visibility="gone"
+        />
+
+    <ScrollView
+        android:id="@+id/messageOptionsScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <FrameLayout
+            android:id="@+id/messageOptionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:minHeight="200dp"
+            />
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

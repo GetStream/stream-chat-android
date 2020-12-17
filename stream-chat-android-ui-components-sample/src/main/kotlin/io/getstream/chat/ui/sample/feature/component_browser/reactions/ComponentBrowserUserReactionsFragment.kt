@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserUserReactionsViewBinding
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessageWithReactions
 
 class ComponentBrowserUserReactionsFragment : Fragment() {
     private var _binding: FragmentComponentBrowserUserReactionsViewBinding? = null
@@ -30,11 +30,11 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            userReactionsView1.setMessage(randomMessage(reactionsSize = 1, ownReactionsSize = 0))
+            userReactionsView1.setMessage(randomMessageWithReactions(reactionsSize = 1, ownReactionsSize = 0))
             userReactionsView1.setReactionClickListener { showToast(it.type) }
-            userReactionsView2.setMessage(randomMessage(reactionsSize = 2, ownReactionsSize = 1))
-            userReactionsView3.setMessage(randomMessage(reactionsSize = 5, ownReactionsSize = 2))
-            userReactionsView4.setMessage(randomMessage(reactionsSize = 30, ownReactionsSize = 5))
+            userReactionsView2.setMessage(randomMessageWithReactions(reactionsSize = 2, ownReactionsSize = 1))
+            userReactionsView3.setMessage(randomMessageWithReactions(reactionsSize = 5, ownReactionsSize = 2))
+            userReactionsView4.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 5))
         }
     }
 }
