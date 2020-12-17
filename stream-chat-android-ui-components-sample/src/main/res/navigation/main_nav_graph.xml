@@ -215,6 +215,12 @@
             app:nullable="false"
             />
 
+        <argument
+            android:name="memberName"
+            app:argType="string"
+            app:nullable="false"
+            />
+
         <action
             android:id="@+id/action_open_chat"
             app:destination="@id/chatFragment"
