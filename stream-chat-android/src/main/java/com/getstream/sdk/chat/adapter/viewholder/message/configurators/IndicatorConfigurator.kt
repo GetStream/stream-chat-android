@@ -8,7 +8,6 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
-import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
 import com.getstream.sdk.chat.adapter.viewholder.message.isEphemeral
@@ -16,6 +15,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.adapter.viewholder.message.isInThread
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.ReadStateStyle
 import io.getstream.chat.android.client.models.ChannelUserRead

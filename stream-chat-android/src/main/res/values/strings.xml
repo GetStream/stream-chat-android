@@ -22,15 +22,7 @@
     <string name="stream_input_type_select_file">Select your file</string>
     <string name="stream_input_type_command">Commands matching</string>
     <string name="stream_input_type_auto_mention">Searching for people</string>
-    <string name="stream_input_camera_title">Capture Image or Video</string>
     <string name="stream_message_length_exceeded_error">"Max message length (%s) exceeded."</string>
-
-    <string name="stream_permissions_camera_title">Camera and Storage Access Permission</string>
-    <string name="stream_permissions_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
-    <string name="stream_permissions_storage_title">Storage Access Permissions</string>
-    <string name="stream_permissions_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
-    <string name="stream_permissions_setting_message">Enable permissions on App Settings</string>
-    <string name="stream_permissions_setting_button">Settings</string>
 
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
@@ -66,13 +58,8 @@
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
-
     <string name="stream_last_message_attachment_giphy" translatable="false">/giphy</string>
 
-    <!--Attachment View-->
-    <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
-    <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>
-    <string name="stream_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
     <!--Giphy send view-->
     <string name="stream_giphy_send">Send</string>
     <string name="stream_giphy_shuffle">Shuffle</string>

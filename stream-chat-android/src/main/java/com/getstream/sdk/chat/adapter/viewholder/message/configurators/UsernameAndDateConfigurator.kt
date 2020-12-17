@@ -8,10 +8,10 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
-import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatDate
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.name

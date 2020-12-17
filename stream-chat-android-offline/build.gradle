@@ -57,9 +57,6 @@ android {
             testCoverageEnabled true
         }
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlinX'
-    }
 }
 
 kapt {

@@ -10,7 +10,6 @@ jobs:
   build_sample_app:
     name: Build Sample App
     runs-on: ubuntu-18.04
-
     steps:
       - uses: actions/checkout@v2
       - name: set up JDK 1.8
@@ -26,7 +25,7 @@ jobs:
           gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-sample:assembleDemoRelease --stacktrace
-      - name: Upload testDebugUnitTest Results
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: stream-chat-android-sample-release
@@ -38,10 +37,10 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: stream-testers
           file: stream-chat-android-sample/build/outputs/apk/demo/release/stream-chat-android-sample-demo-release.apk
+
   build_ui_components_sample_app:
     name: Build UI-Components Sample App
     runs-on: ubuntu-18.04
-
     steps:
       - uses: actions/checkout@v2
       - name: set up JDK 1.8
@@ -57,7 +56,7 @@ jobs:
           gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
-      - name: Upload testDebugUnitTest Results
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: stream-chat-android-ui-components-sample-release

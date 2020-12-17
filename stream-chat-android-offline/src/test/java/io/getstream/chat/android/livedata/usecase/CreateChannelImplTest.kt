@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

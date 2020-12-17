@@ -97,6 +97,3 @@ internal fun Channel.getLastMessageReads(
     readLastMessage.sortWith { o1, o2 -> o1.lastRead!!.compareTo(o2.lastRead) }
     return readLastMessage
 }
-
-internal val Channel.isDraft: Boolean
-    get() = getExtraValue("draft", false)

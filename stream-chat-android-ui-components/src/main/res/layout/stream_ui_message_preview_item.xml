@@ -18,8 +18,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamAvatarHeight="@dimen/stream_ui_avatar_size_medium"
-        app:streamAvatarWidth="@dimen/stream_ui_avatar_size_medium"
         tools:src="@tools:sample/avatars"
         />
 

@@ -26,9 +26,9 @@ internal class SelectedMediaAttachmentAdapter(
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
 
-        override fun bind(attachment: AttachmentMetaData) {
-            bindAttachmentImage(attachment)
-            bindClickListener(attachment)
+        override fun bind(item: AttachmentMetaData) {
+            bindAttachmentImage(item)
+            bindClickListener(item)
         }
 
         private fun bindAttachmentImage(attachment: AttachmentMetaData) {

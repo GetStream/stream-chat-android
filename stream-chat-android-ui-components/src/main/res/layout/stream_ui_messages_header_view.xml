@@ -26,7 +26,7 @@
             android:layout_marginLeft="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stream_ui_content_description_back_button"
-            android:src="@drawable/stream_arrow_left"
+            android:src="@drawable/stream_ui_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"

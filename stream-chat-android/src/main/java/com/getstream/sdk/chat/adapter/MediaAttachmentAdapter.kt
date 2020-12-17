@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.Constant
+import com.getstream.sdk.chat.utils.AttachmentConstants
 
 internal class MediaAttachmentAdapter(
     private var attachments: List<AttachmentMetaData> = emptyList(),
@@ -65,7 +65,7 @@ internal class MediaAttachmentAdapter(
                 binding.ivMedia.load(attachment.uri, R.drawable.stream_placeholder)
             }
             binding.ivSelectMark.isVisible = attachment.isSelected
-            binding.ivLargeFileMark.isVisible = attachment.size > Constant.MAX_UPLOAD_FILE_SIZE
+            binding.ivLargeFileMark.isVisible = attachment.size > AttachmentConstants.MAX_UPLOAD_FILE_SIZE
             itemView.setOnClickListener { listener(attachment) }
         }
     }

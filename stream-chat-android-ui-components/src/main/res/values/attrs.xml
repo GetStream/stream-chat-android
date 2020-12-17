@@ -16,9 +16,6 @@
         <enum name="bottom" value="1" />
     </attr>
 
-    <attr name="streamUiAvatarWidth" format="dimension|reference" />
-    <attr name="streamUiAvatarHeight" format="dimension|reference" />
-
     <declare-styleable name="AvatarView">
         <attr name="streamUiAvatarBorderWidth" />
         <attr name="streamUiAvatarBorderColor" />
@@ -83,8 +80,6 @@
 
     <!--ChannelsHeaderView-->
     <declare-styleable name="ChannelListHeaderView">
-        <attr name="streamUiAvatarWidth" />
-        <attr name="streamUiAvatarHeight" />
         <attr name="streamUiAvatarBorderWidth" />
         <attr name="streamUiAvatarBorderColor" />
         <attr name="streamUiAvatarTextSize" />
@@ -125,6 +120,69 @@
         <attr name="streamUiAddChannelButtonIcon" format="reference" />
         <attr name="streamUiAddChannelButtonTint" format="color|reference" />
         <attr name="streamUiAddChannelBackgroundTint" format="color|reference" />
+    </declare-styleable>
+
+    <!--ChannelListView-->
+    <declare-styleable name="ChannelListView">
+        <attr name="streamUiChannelPreviewLayout" format="reference" />
+        <attr name="streamUiChannelTitleTextColor" format="color|reference" />
+        <attr name="streamUiChannelTitleTextFont" format="reference" />
+        <attr name="streamUiChannelTitleTextFontAssets" format="string" />
+        <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiChannelTitleUnreadTextColor" format="color|reference" />
+        <attr name="streamUiChannelTitleUnreadTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiChannelWithOutNameTitleText" format="string" />
+        <attr name="streamUiLastMessageDateTextColor" format="color|reference" />
+        <attr name="streamUiLastMessageDateTextFont" format="reference" />
+        <attr name="streamUiLastMessageDateTextFontAssets" format="string" />
+        <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageDateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiLastMessageDateUnreadTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiLastMessageTextColor" format="color|reference" />
+        <attr name="streamUiLastMessageTextFont" format="reference" />
+        <attr name="streamUiLastMessageTextFontAssets" format="string" />
+        <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiLastMessageUnreadTextColor" format="color|reference" />
+        <attr name="streamUiLastMessageUnreadTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiReadStateAvatarHeight" format="dimension|reference" />
+        <attr name="streamUiReadStateAvatarWidth" format="dimension|reference" />
+        <attr name="streamUiReadStateTextColor" format="color|reference" />
+        <attr name="streamUiReadStateTextFont" format="reference" />
+        <attr name="streamUiReadStateTextFontAssets" format="string" />
+        <attr name="streamUiReadStateTextSize" format="dimension|reference" />
+        <attr name="streamUiReadStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiShowReadState" format="boolean" />
     </declare-styleable>
 
     <!--MessageListHeaderView-->
@@ -225,5 +283,31 @@
         <attr name="streamUiScrollButtonRippleColor" format="color|reference" />
         <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
         <attr name="streamUiScrollButtonIcon" format="reference" />
+
+        <attr name="streamUiLoadMoreThreshold" format="integer" />
+        <attr name="streamUiMessagesEmptyStateLabelText" format="string" />
+        <attr name="streamUiNewMessagesBehaviour" format="enum">
+            <enum name="scroll_to_bottom" value="0" />
+            <enum name="count_new_messages" value="1" />
+        </attr>
+
+        <attr name="streamUiReplyOptionMessage" format="string" />
+        <attr name="streamUiReplyOptionIcon" format="reference" />
+        <attr name="streamUiThreadReplyOptionMessage" format="string" />
+        <attr name="streamUiThreadReplyOptionIcon" format="reference" />
+        <attr name="streamUiCopyOptionMessage" format="string" />
+        <attr name="streamUiCopyOptionIcon" format="reference" />
+        <attr name="streamUiMuteOptionMessage" format="string" />
+        <attr name="streamUiMuteOptionIcon" format="reference" />
+        <attr name="streamUiBlockOptionMessage" format="string" />
+        <attr name="streamUiBlockOptionIcon" format="reference" />
+        <attr name="streamUiDeleteOptionMessage" format="string" />
+        <attr name="streamUiDeleteOptionIcon" format="reference" />
+        <attr name="streamUiMessageOptionIconColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ChannelsView">
+        <attr name="streamUiChannelsEmptyStateLabelText" format="string" />
+        <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
     </declare-styleable>
 </resources>
