@@ -1,15 +1,14 @@
 package io.getstream.chat.android.ui.messages.adapter
 
-import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.utils.ListenerDelegate
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
-import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
-import com.getstream.sdk.chat.view.MessageListView.UserClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 
 internal class ListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),

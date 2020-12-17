@@ -77,6 +77,12 @@ class ChatFragment : Fragment() {
             setAvatarClickListener {
                 chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
             }
+            setTitleClickListener {
+                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+            }
+            setSubtitleClickListener {
+                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+            }
         }
         chatViewModel.navigationEvent.observe(
             viewLifecycleOwner,
@@ -109,6 +115,9 @@ class ChatFragment : Fragment() {
                 editMessage.postValue(it)
             }
         }
+
+        // set external suggestion view which is displayed over message list
+        binding.messageInputView.setSuggestionListView(binding.suggestionListView)
     }
 
     private fun initMessagesViewModel() {

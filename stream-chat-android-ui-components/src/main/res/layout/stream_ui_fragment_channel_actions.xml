@@ -49,8 +49,8 @@
             android:clipToPadding="false"
             android:orientation="horizontal"
             android:overScrollMode="never"
-            android:paddingStart="@dimen/stream_reaction_margin"
-            android:paddingEnd="@dimen/stream_reaction_margin"
+            android:paddingStart="@dimen/stream_ui_spacing_small"
+            android:paddingEnd="@dimen/stream_ui_spacing_small"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />

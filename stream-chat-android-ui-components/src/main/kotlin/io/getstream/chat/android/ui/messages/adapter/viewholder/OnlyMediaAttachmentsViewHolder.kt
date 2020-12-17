@@ -2,12 +2,12 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper.isMedia
 
 public class OnlyMediaAttachmentsViewHolder(

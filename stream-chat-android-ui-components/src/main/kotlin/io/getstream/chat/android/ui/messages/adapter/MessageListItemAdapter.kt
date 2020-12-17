@@ -3,8 +3,6 @@ package io.getstream.chat.android.ui.messages.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItemDiffCallback
-import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 
 public class MessageListItemAdapter(
     private val viewHolderFactory: MessageListItemViewHolderFactory

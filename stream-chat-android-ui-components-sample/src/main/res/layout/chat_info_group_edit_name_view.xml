@@ -25,7 +25,7 @@
         android:id="@+id/nameEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/stream_transparent"
+        android:background="@color/stream_ui_transparent"
         android:hint="@string/chat_group_info_edit_name_hint"
         android:imeOptions="actionDone"
         android:inputType="text"
@@ -53,7 +53,7 @@
         app:layout_constraintEnd_toStartOf="@id/checkButton"
         app:layout_constraintStart_toEndOf="@id/nameEditText"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/black"
+        app:tint="@color/boulder"
         tools:ignore="ContentDescription"
         />
 

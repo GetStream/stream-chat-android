@@ -18,7 +18,7 @@
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_channel_header_separator_height"
+        android:layout_height="@dimen/stream_ui_channel_header_separator_height"
         android:background="@drawable/stream_ui_divider"
         />
 

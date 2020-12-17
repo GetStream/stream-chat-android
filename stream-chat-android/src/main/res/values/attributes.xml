@@ -13,20 +13,4 @@
         <attr name="stream_ci_shadowRadius" format="float" />
         <attr name="stream_ci_shadowColor" format="color" />
     </declare-styleable>
-    <!--exomedia-->
-    <declare-styleable name="Stream_VideoView">
-        <attr name="stream_useDefaultControls" format="boolean" />
-        <attr name="stream_useTextureViewBacking" format="boolean" />
-        <attr name="stream_videoViewApiImpl" format="reference" />
-        <attr name="stream_videoViewApiImplLegacy" format="reference" />
-        <attr name="stream_measureBasedOnAspectRatio" format="boolean" />
-        <attr name="stream_videoScale" format="enum">
-            <enum name="center" value="0" />
-            <enum name="centerCrop" value="1" />
-            <enum name="centerInside" value="2" />
-            <enum name="fitCenter" value="3" />
-            <enum name="fitXY" value="4" />
-            <enum name="none" value="5" />
-        </attr>
-    </declare-styleable>
 </resources>
