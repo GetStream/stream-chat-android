@@ -28,6 +28,8 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    resourcePrefix 'stream_'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -68,4 +70,46 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-offline")
+
+    implementation Dependencies.activityKtx
+    implementation Dependencies.androidxAnnotations
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.androidxRecyclerview
+    implementation Dependencies.androidxStartup
+    implementation Dependencies.constraintLayout
+
+    api Dependencies.threeTenAbp
+
+    implementation Dependencies.coil
+    implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
+
+    implementation Dependencies.dexter
+
+    api Dependencies.exoplayerCore
+    api Dependencies.exoplayerDash
+    api Dependencies.exoplayerHls
+    api Dependencies.exoplayerSmoothstreaming
+
+    implementation Dependencies.fresco
+    implementation Dependencies.photodraweeview
+
+    implementation Dependencies.markwonCore
+    implementation Dependencies.markwonLinkify
+    implementation Dependencies.markwonextStrikethrough
+    implementation Dependencies.markwonImage
+
+
+    testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.androidxArchCoreTest
+    testImplementation Dependencies.burst
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.truth
 }

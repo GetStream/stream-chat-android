@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 
-internal class SuggestionListView : FrameLayout {
+public class SuggestionListView : FrameLayout {
 
     private val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
         StreamUiSuggestionListViewBinding.inflate(it, this)
@@ -20,11 +20,11 @@ internal class SuggestionListView : FrameLayout {
 
     private var listener: OnSuggestionClickListener? = null
 
-    constructor(context: Context) : super(context)
+    public constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -37,33 +37,37 @@ internal class SuggestionListView : FrameLayout {
         }
     }
 
-    fun setSuggestions(suggestions: Suggestions) {
+    public fun setSuggestions(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {
                 if (suggestions.users.isEmpty()) {
-                    clearSuggestions()
+                    hideSuggestionList()
                 } else {
-                    mentionsAdapter.submitList(suggestions.users)
+                    mentionsAdapter.submitList(suggestions.users.take(MAX_SUGGESTIONS))
                     binding.commandsTitleTextView.isVisible = false
                 }
             }
             is Suggestions.CommandSuggestions -> {
                 if (suggestions.commands.isEmpty()) {
-                    clearSuggestions()
+                    hideSuggestionList()
                 } else {
-                    commandsAdapter.submitList(suggestions.commands)
+                    commandsAdapter.submitList(suggestions.commands.take(MAX_SUGGESTIONS))
                     binding.commandsTitleTextView.isVisible = true
                 }
             }
         }
     }
 
-    fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
+    public fun isSuggestionListVisible(): Boolean {
+        return binding.suggestionsCardView.isVisible
+    }
+
+    public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
         this.listener = listener
     }
 
-    fun clearSuggestions() {
+    public fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
             commandsAdapter.submitList(emptyList())
             mentionsAdapter.submitList(emptyList())
@@ -71,14 +75,18 @@ internal class SuggestionListView : FrameLayout {
         }
     }
 
-    interface OnSuggestionClickListener {
-        fun onMentionClick(user: User)
+    public interface OnSuggestionClickListener {
+        public fun onMentionClick(user: User)
 
-        fun onCommandClick(command: Command)
+        public fun onCommandClick(command: Command)
     }
 
-    sealed class Suggestions {
-        data class MentionSuggestions(val users: List<User>) : Suggestions()
-        data class CommandSuggestions(val commands: List<Command>) : Suggestions()
+    public sealed class Suggestions {
+        public data class MentionSuggestions(val users: List<User>) : Suggestions()
+        public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
+    }
+
+    private companion object {
+        private const val MAX_SUGGESTIONS: Int = 4
     }
 }

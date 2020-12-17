@@ -13,11 +13,11 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper

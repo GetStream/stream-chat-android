@@ -71,7 +71,7 @@ internal class BackgroundDecorator : BaseDecorator() {
             .setTopRightCornerSize(DEFAULT_CORNER_RADIUS)
             .build()
         viewHolder.binding.mediaAttachmentsGroupView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_transparent))
+            setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_ui_transparent))
         }
     }
 

@@ -75,51 +75,18 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-ui-common")
 
-    implementation Dependencies.androidxStartup
-    api Dependencies.threeTenAbp
     implementation Dependencies.kotlinStdLib
-    implementation Dependencies.androidxAppCompat
-    implementation Dependencies.constraintLayout
-    implementation Dependencies.androidLegacySupport
-    api Dependencies.androidxRecyclerview
     implementation Dependencies.activityKtx
-    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.androidLegacySupport
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.androidxLifecycleViewModelKtx
-
-    implementation Dependencies.roomRuntime
-
-    implementation Dependencies.okhttp
-    implementation Dependencies.okhttpLoggingInterceptor
-
-    implementation Dependencies.retrofit
-    implementation Dependencies.retrofitGsonConverter
-
-    implementation Dependencies.gson
+    implementation Dependencies.androidxMedia
+    implementation Dependencies.constraintLayout
+    api Dependencies.androidxRecyclerview
 
     implementation Dependencies.drawabletoolbox
-    implementation Dependencies.markwonCore
-    implementation Dependencies.markwonLinkify
-    implementation Dependencies.markwonextStrikethrough
-    implementation Dependencies.markwonImage
-
-    implementation Dependencies.fresco
-    implementation Dependencies.photodraweeview
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.dexter
-
-    implementation Dependencies.firebaseMessaging
-
-    implementation Dependencies.androidxMedia
-    implementation Dependencies.coil
-    implementation Dependencies.coilGif
-    implementation Dependencies.coilVideo
-
-    // ExoPlayer
-    api Dependencies.exoplayerCore
-    api Dependencies.exoplayerDash
-    api Dependencies.exoplayerHls
-    api Dependencies.exoplayerSmoothstreaming
 
     // Tests
     testImplementation project(":stream-chat-android-test")
@@ -134,5 +101,4 @@ dependencies {
     testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.kluent
     testImplementation Dependencies.coroutinesTest
-    testImplementation Dependencies.burst
 }

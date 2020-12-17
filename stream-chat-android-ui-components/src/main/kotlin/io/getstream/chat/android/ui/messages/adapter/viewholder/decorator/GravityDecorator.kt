@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import androidx.constraintlayout.widget.ConstraintSet
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.updateConstraints
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 
 internal class GravityDecorator : BaseDecorator() {

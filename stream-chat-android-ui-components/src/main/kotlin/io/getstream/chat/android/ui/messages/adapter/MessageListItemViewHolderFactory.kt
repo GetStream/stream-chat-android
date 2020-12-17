@@ -2,9 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
