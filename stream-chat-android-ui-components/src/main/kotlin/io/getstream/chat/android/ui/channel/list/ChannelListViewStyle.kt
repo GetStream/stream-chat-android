@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarStyle
 
 public class ChannelListViewStyle internal constructor(context: Context, attrs: AttributeSet?) {
@@ -26,10 +26,6 @@ public class ChannelListViewStyle internal constructor(context: Context, attrs: 
 
     private var channelWithoutNameText = ""
 
-    public fun getChannelWithoutNameText(): String =
-        channelWithoutNameText.takeIf(String::isNotBlank)
-            ?: resources.getString(R.string.stream_channel_unknown_title)
-
     public var avatarBorderColor: Int
         get() = avatarStyle.avatarBorderColor
         set(@ColorRes value: Int) {
@@ -46,106 +42,106 @@ public class ChannelListViewStyle internal constructor(context: Context, attrs: 
 
         channelTitleText = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamChannelTitleTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_title)
+                R.styleable.ChannelListView_streamUiChannelTitleTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_title)
             )
             color(
-                R.styleable.ChannelListView_streamChannelTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
+                R.styleable.ChannelListView_streamUiChannelTitleTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_channel_item_text_color)
             )
             font(
-                R.styleable.ChannelListView_streamChannelTitleTextFontAssets,
-                R.styleable.ChannelListView_streamChannelTitleTextFont
+                R.styleable.ChannelListView_streamUiChannelTitleTextFontAssets,
+                R.styleable.ChannelListView_streamUiChannelTitleTextFont
             )
-            style(R.styleable.ChannelListView_streamChannelTitleTextStyle, Typeface.BOLD)
+            style(R.styleable.ChannelListView_streamUiChannelTitleTextStyle, Typeface.BOLD)
         }.build()
 
         channelTitleUnreadText = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamChannelTitleTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_title)
+                R.styleable.ChannelListView_streamUiChannelTitleTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_title)
             )
             color(
-                R.styleable.ChannelListView_streamChannelTitleUnreadTextColor,
-                ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
+                R.styleable.ChannelListView_streamUiChannelTitleUnreadTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_channel_item_text_color)
             )
             font(
-                R.styleable.ChannelListView_streamChannelTitleTextFontAssets,
-                R.styleable.ChannelListView_streamChannelTitleTextFont
+                R.styleable.ChannelListView_streamUiChannelTitleTextFontAssets,
+                R.styleable.ChannelListView_streamUiChannelTitleTextFont
             )
-            style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
+            style(R.styleable.ChannelListView_streamUiChannelTitleUnreadTextStyle, Typeface.BOLD)
         }.build()
 
-        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)
+        attributes.getString(R.styleable.ChannelListView_streamUiChannelWithOutNameTitleText)
             ?.let { channelWithoutNameText = it }
 
         lastMessage = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamLastMessageTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_message)
+                R.styleable.ChannelListView_streamUiLastMessageTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_message)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageTextColor,
-                ContextCompat.getColor(context, R.color.stream_gray_dark)
+                R.styleable.ChannelListView_streamUiLastMessageTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_gray_dark)
             )
             font(
-                R.styleable.ChannelListView_streamLastMessageTextFontAssets,
-                R.styleable.ChannelListView_streamLastMessageTextFont
+                R.styleable.ChannelListView_streamUiLastMessageTextFontAssets,
+                R.styleable.ChannelListView_streamUiLastMessageTextFont
             )
-            style(R.styleable.ChannelListView_streamLastMessageTextStyle, Typeface.NORMAL)
+            style(R.styleable.ChannelListView_streamUiLastMessageTextStyle, Typeface.NORMAL)
         }.build()
 
         lastMessageUnread = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamLastMessageTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_message)
+                R.styleable.ChannelListView_streamUiLastMessageTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_message)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageUnreadTextColor,
-                ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
+                R.styleable.ChannelListView_streamUiLastMessageUnreadTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_channel_item_text_color)
             )
             font(
-                R.styleable.ChannelListView_streamLastMessageTextFontAssets,
-                R.styleable.ChannelListView_streamLastMessageTextFont
+                R.styleable.ChannelListView_streamUiLastMessageTextFontAssets,
+                R.styleable.ChannelListView_streamUiLastMessageTextFont
             )
-            style(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD)
+            style(R.styleable.ChannelListView_streamUiLastMessageUnreadTextStyle, Typeface.BOLD)
         }.build()
 
         lastMessageDateText = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamLastMessageDateTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_message_date)
+                R.styleable.ChannelListView_streamUiLastMessageDateTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_message_date)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageDateTextColor,
-                ContextCompat.getColor(context, R.color.stream_gray_dark)
+                R.styleable.ChannelListView_streamUiLastMessageDateTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_gray_dark)
             )
             font(
-                R.styleable.ChannelListView_streamLastMessageDateTextFontAssets,
-                R.styleable.ChannelListView_streamLastMessageDateTextFont
+                R.styleable.ChannelListView_streamUiLastMessageDateTextFontAssets,
+                R.styleable.ChannelListView_streamUiLastMessageDateTextFont
             )
-            style(R.styleable.ChannelListView_streamLastMessageDateTextStyle, Typeface.NORMAL)
+            style(R.styleable.ChannelListView_streamUiLastMessageDateTextStyle, Typeface.NORMAL)
         }.build()
 
         lastMessageDateUnreadText = TextStyle.Builder(attributes).apply {
             size(
-                R.styleable.ChannelListView_streamLastMessageDateTextSize,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_item_message_date)
+                R.styleable.ChannelListView_streamUiLastMessageDateTextSize,
+                resources.getDimensionPixelSize(R.dimen.stream_ui_channel_item_message_date)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageDateTextColor,
-                ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
+                R.styleable.ChannelListView_streamUiLastMessageDateTextColor,
+                ContextCompat.getColor(context, R.color.stream_ui_channel_item_text_color)
             )
             font(
-                R.styleable.ChannelListView_streamLastMessageDateTextFontAssets,
-                R.styleable.ChannelListView_streamLastMessageDateTextFont
+                R.styleable.ChannelListView_streamUiLastMessageDateTextFontAssets,
+                R.styleable.ChannelListView_streamUiLastMessageDateTextFont
             )
-            style(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD)
+            style(R.styleable.ChannelListView_streamUiLastMessageDateUnreadTextStyle, Typeface.BOLD)
         }.build()
 
         with(attributes) {
             channelPreviewLayout = getResourceId(
-                R.styleable.ChannelListView_streamChannelPreviewLayout,
+                R.styleable.ChannelListView_streamUiChannelPreviewLayout,
                 io.getstream.chat.android.ui.R.layout.stream_ui_channel_list_item_view
             )
             // Avatar
@@ -154,23 +150,23 @@ public class ChannelListViewStyle internal constructor(context: Context, attrs: 
             // Read State
 
             readStateStyle = ReadStateStyle.Builder(this, context)
-                .isReadStateEnabled(R.styleable.ChannelListView_streamShowReadState, true)
+                .isReadStateEnabled(R.styleable.ChannelListView_streamUiShowReadState, true)
                 .readStateAvatarWidth(
-                    R.styleable.ChannelListView_streamReadStateAvatarWidth,
-                    resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_width)
+                    R.styleable.ChannelListView_streamUiReadStateAvatarWidth,
+                    resources.getDimensionPixelSize(R.dimen.stream_ui_read_state_avatar_width)
                 )
                 .readStateAvatarHeight(
-                    R.styleable.ChannelListView_streamReadStateAvatarHeight,
-                    resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_height)
+                    R.styleable.ChannelListView_streamUiReadStateAvatarHeight,
+                    resources.getDimensionPixelSize(R.dimen.stream_ui_read_state_avatar_height)
                 )
                 .readStateText(
-                    textSize = R.styleable.ChannelListView_streamReadStateTextSize,
-                    defaultTextSize = R.dimen.stream_read_state_text_size,
-                    textColor = R.styleable.ChannelListView_streamReadStateTextColor,
+                    textSize = R.styleable.ChannelListView_streamUiReadStateTextSize,
+                    defaultTextSize = R.dimen.stream_ui_read_state_text_size,
+                    textColor = R.styleable.ChannelListView_streamUiReadStateTextColor,
                     defaultTextColor = Color.BLACK,
-                    textFontAssetsStyleableId = R.styleable.ChannelListView_streamReadStateTextFontAssets,
-                    textFontStyleableId = R.styleable.ChannelListView_streamReadStateTextFont,
-                    textStyleStyleableId = R.styleable.ChannelListView_streamReadStateTextStyle,
+                    textFontAssetsStyleableId = R.styleable.ChannelListView_streamUiReadStateTextFontAssets,
+                    textFontStyleableId = R.styleable.ChannelListView_streamUiReadStateTextFont,
+                    textStyleStyleableId = R.styleable.ChannelListView_streamUiReadStateTextStyle,
                     textStyleDefault = Typeface.BOLD
                 )
                 .build()

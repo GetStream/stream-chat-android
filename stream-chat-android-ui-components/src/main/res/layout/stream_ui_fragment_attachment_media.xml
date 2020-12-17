@@ -23,7 +23,7 @@
         android:id="@+id/emptyPlaceholderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/stream_no_media_error"
+        android:text="@string/stream_ui_no_media_error"
         android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_ui_text_large"
         android:visibility="gone"

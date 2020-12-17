@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginTop="16dp"
+    android:drawablePadding="48dp"
+    android:textColor="@color/boulder"
+    android:textSize="@dimen/stream_ui_text_medium"
+    app:drawableTopCompat="@drawable/empty_shared_groups"
+    tools:text="@string/chat_info_option_shared_groups_empty_title"
+    />

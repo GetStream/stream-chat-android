@@ -8,16 +8,18 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
+import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
 
 class AddChannelHeaderView : FrameLayout, AddChannelHeader {
 
     override val viewContext: Context
         get() = context
     override var membersInputListener: MembersInputChangedListener = MembersInputChangedListener { }
+    private var memberClickListener: MemberClickListener? = null
     private val binding = AddChannelHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
-    private val adapter = AddChannelMembersAdapter()
     private val inputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
     private val query: String
         get() = binding.inputEditText.text.trim().toString()
@@ -39,7 +41,6 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
     }
 
     private fun init(attrs: AttributeSet?) {
-        binding.membersRecyclerView.adapter = adapter
         binding.inputEditText.doAfterTextChanged {
             inputDebouncer.submit {
                 membersInputListener.onMembersInputChanged(query)
@@ -48,8 +49,17 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
     }
 
     override fun setMembers(members: List<User>) {
-        adapter.submitList(members)
-        binding.membersRecyclerView.isVisible = members.isNotEmpty()
+        binding.membersChipGroup.apply {
+            removeAllViews()
+            members.forEach { member ->
+                addView(
+                    MemberItemView(context).apply {
+                        render(member)
+                    }
+                )
+            }
+            isVisible = members.isNotEmpty()
+        }
     }
 
     override fun showInput() {
@@ -75,8 +85,8 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         binding.addMemberButton.setOnClickListener { listener.onButtonClick() }
     }
 
-    override fun setMemberClickListener(listener: MemberClickListener) {
-        adapter.memberClickListener = listener
+    override fun setMemberClickListener(listener: MemberClickListener?) {
+        memberClickListener = listener
     }
 
     override fun onDetachedFromWindow() {
@@ -86,5 +96,26 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
 
     companion object {
         private const val TYPING_DEBOUNCE_MS = 300L
+    }
+
+    private inner class MemberItemView : FrameLayout {
+
+        private val binding = AddChannelMemberItemBinding.inflate(LayoutInflater.from(context), this, true)
+
+        constructor(context: Context) : super(context)
+
+        constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+        constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+            context,
+            attrs,
+            defStyleAttr
+        )
+
+        fun render(member: User) {
+            binding.memberContainer.setOnClickListener { memberClickListener?.onMemberClicked(member) }
+            binding.memberNameTextView.text = member.name
+            binding.memberAvatar.setUserData(member)
+        }
     }
 }

@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createMessage
-import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -25,6 +24,7 @@ import io.getstream.chat.android.livedata.usecase.SendMessageWithAttachments
 import io.getstream.chat.android.livedata.usecase.StopTyping
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomCID
 import org.amshove.kluent.Verify

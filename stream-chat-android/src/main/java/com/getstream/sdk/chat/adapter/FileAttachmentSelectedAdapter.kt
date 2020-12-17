@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachFileBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.UiUtils
 
 internal class FileAttachmentSelectedAdapter(
@@ -37,7 +37,7 @@ internal class FileAttachmentSelectedAdapter(
         binding.ivSelectMark.isVisible = false
         binding.tvClose.visibility = View.INVISIBLE
         binding.progressBar.isVisible = false
-        binding.tvFileSize.text = StringUtility.convertFileSizeByteCount(attachment.size)
+        binding.tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
         if (!localAttach) return
         binding.tvClose.isVisible = true
         binding.tvClose.setOnClickListener { cancelListener(attachment) }

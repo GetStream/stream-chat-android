@@ -99,10 +99,4 @@
     <dimen name="stream_date_separator_line_margin_start">20dp</dimen>
     <dimen name="stream_date_separator_line_margin_end">20dp</dimen>
     <dimen name="stream_date_separator_text">12sp</dimen>
-    <!--exomedia-->
-    <dimen name="stream_exomedia_min_button_height">44dp</dimen>
-    <dimen name="stream_exomedia_leanback_ripple_selector_size">90dp</dimen>
-    <dimen name="stream_exomedia_leanback_controls_height">64dp</dimen>
-    <dimen name="stream_exomedia_leanback_controls_bottom_margin">64dp</dimen>
-    <dimen name="stream_exomedia_leanback_controls_horizontal_margin">132dp</dimen>
 </resources>

@@ -58,7 +58,7 @@ class AddGroupChannelHeaderView : FrameLayout, AddChannelHeader {
 
     override fun setAddMemberButtonClickListener(listener: AddMemberButtonClickListener) = Unit
 
-    override fun setMemberClickListener(listener: MemberClickListener) {
+    override fun setMemberClickListener(listener: MemberClickListener?) {
         adapter.memberClickListener = listener
     }
 }

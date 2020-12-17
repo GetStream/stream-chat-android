@@ -23,27 +23,24 @@ class AddGroupChannelMembersAdapter :
         }
     ) {
 
-    var memberClickListener: MemberClickListener = MemberClickListener { }
+    var memberClickListener: MemberClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         return AddGroupChannelMemberItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { MemberViewHolder(it, memberClickListener) }
+            .let(::MemberViewHolder)
     }
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MemberViewHolder(
-        private val binding: AddGroupChannelMemberItemBinding,
-        private val memberClickListener: MemberClickListener
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class MemberViewHolder(private val binding: AddGroupChannelMemberItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var member: User
 
         init {
-            binding.deleteMemberButton.setOnClickListener { memberClickListener.onMemberClicked(member) }
+            binding.deleteMemberButton.setOnClickListener { memberClickListener?.onMemberClicked(member) }
         }
 
         fun bind(user: User) {

@@ -24,7 +24,7 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_advanced_options"
-        android:textColor="@color/stream_black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         tools:text="@tools:sample/full_names"

@@ -1,2 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="io.getstream.chat.android.ui.common" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.getstream.chat.android.ui.common"
+    >
+
+    <application>
+        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentMediaActivity" />
+        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity" />
+        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentActivity" />
+
+        <provider
+            android:name="com.getstream.sdk.chat.StreamFileProvider"
+            android:authorities="${applicationId}.streamfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/stream_filepaths"
+                />
+        </provider>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge"
+            >
+            <meta-data
+                android:name="com.getstream.sdk.chat.startup.ThreeTenInitializer"
+                android:value="androidx.startup"
+                />
+        </provider>
+    </application>
+
+</manifest>

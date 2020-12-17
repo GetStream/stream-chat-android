@@ -215,6 +215,12 @@
             app:nullable="false"
             />
 
+        <argument
+            android:name="memberName"
+            app:argType="string"
+            app:nullable="false"
+            />
+
         <action
             android:id="@+id/action_open_chat"
             app:destination="@id/chatFragment"
@@ -300,6 +306,11 @@
             android:id="@+id/action_componentBrowserMessageList_to_componentBrowserScrollButtonView"
             app:destination="@id/componentBrowserScrollButtonViewFragment"
             />
+
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView"
+            app:destination="@id/componentBrowserMessageInputFieldViewFragment"
+            />
     </fragment>
 
     <fragment
@@ -380,6 +391,11 @@
             app:destination="@id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserPlainTextWithMediaAttachmentsMessages"
+            app:destination="@id/componentBrowserPlainTextWithMediaAttachmentsMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -419,9 +435,21 @@
         />
 
     <fragment
+        android:id="@+id/componentBrowserPlainTextWithMediaAttachmentsMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserPlainTextWithMediaAttachmentsFragment"
+        />
+
+    <fragment
         android:id="@+id/componentBrowserScrollButtonViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.ScrollButtonViewComponentBrowserFragment"
         android:label="ComponentBrowserScrollButtonViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessageInputFieldViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.textinput.ComponentBrowserMessageInputFieldViewFragment"
+        android:label="ComponentBrowserMessageInputFieldViewFragment"
         />
 
 </navigation>
