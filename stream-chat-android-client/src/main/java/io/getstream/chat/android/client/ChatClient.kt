@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentWithDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Filters
@@ -447,19 +447,40 @@ public class ChatClient internal constructor(
         return api.searchMessages(request)
     }
 
-    public fun getFileAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+    public fun getFileAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int
+    ): Call<List<AttachmentWithDate>> =
         getAttachments(channelType, channelId, offset, limit, "file")
 
-    public fun getImageAttachments(channelType: String, channelId: String, offset: Int, limit: Int): Call<List<Attachment>> =
+    public fun getImageAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int
+    ): Call<List<AttachmentWithDate>> =
         getAttachments(channelType, channelId, offset, limit, "image")
 
-    private fun getAttachments(channelType: String, channelId: String, offset: Int, limit: Int, type: String): Call<List<Attachment>> {
+    private fun getAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        type: String
+    ): Call<List<AttachmentWithDate>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
 
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter)).map { messages ->
             messages.flatMap { message ->
-                message.attachments
+                message.attachments.map { attachment ->
+                    AttachmentWithDate(
+                        attachment = attachment,
+                        createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
+                    )
+                }
             }
         }
     }
@@ -852,7 +873,8 @@ public class ChatClient internal constructor(
         }
     }
 
-    private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean = notifications.isValidRemoteMessage(remoteMessage)
+    private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
+        notifications.isValidRemoteMessage(remoteMessage)
 
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
@@ -987,7 +1009,10 @@ public class ChatClient internal constructor(
         public val isInitialized: Boolean
             get() = instance != null
 
-        public fun isValidRemoteMessage(remoteMessage: RemoteMessage, defaultNotificationConfig: NotificationConfig = NotificationConfig()): Boolean =
+        public fun isValidRemoteMessage(
+            remoteMessage: RemoteMessage,
+            defaultNotificationConfig: NotificationConfig = NotificationConfig()
+        ): Boolean =
             instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
     }
 }
