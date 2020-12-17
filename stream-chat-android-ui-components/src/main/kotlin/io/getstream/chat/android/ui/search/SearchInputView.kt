@@ -84,7 +84,7 @@ public class SearchInputView : FrameLayout {
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_dark_background
             Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
-            else -> R.color.stream_white
+            else -> R.color.stream_ui_white
         }.let { color ->
             binding.searchIcon.setColorFilter(ContextCompat.getColor(context, color))
         }
