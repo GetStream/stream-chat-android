@@ -63,6 +63,7 @@ public class SearchInputView : FrameLayout {
                 debouncedInputChangedListener?.onInputChanged(newQuery)
             }
         }
+
         binding.inputField.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
@@ -82,11 +83,14 @@ public class SearchInputView : FrameLayout {
         }
 
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_dark_background
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
-            else -> R.color.stream_ui_white
-        }.let { color ->
-            binding.searchIcon.setColorFilter(ContextCompat.getColor(context, color))
+            Configuration.UI_MODE_NIGHT_YES -> {
+                binding.searchIcon.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_white))
+                binding.root.setBackgroundResource(R.drawable.stream_ui_shape_search_view_background_dark)
+            }
+            else -> {
+                binding.searchIcon.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_black))
+                binding.root.setBackgroundResource(R.drawable.stream_ui_shape_search_view_background)
+            }
         }
 
         updateClearButtonVisibility(query)
