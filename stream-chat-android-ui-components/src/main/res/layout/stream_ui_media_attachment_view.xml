@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/stream_white"
+            android:textColor="@color/stream_ui_white"
             android:textSize="26sp"
             tools:text="+9"/>
 

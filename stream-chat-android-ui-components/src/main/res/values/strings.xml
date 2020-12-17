@@ -85,4 +85,8 @@
     <!-- Message Preview -->
     <string name="stream_ui_message_file">File: %s</string>
     <string name="stream_ui_message_sender_title_in_channel">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
+
+    <string name="stream_ui_no_media_error">There is no photo or video.</string>
+    <string name="stream_ui_messages_empty_state_label">No messages</string>
+    <string name="stream_ui_channels_empty_state_label">No channels available</string>
 </resources>

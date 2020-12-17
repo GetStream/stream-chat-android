@@ -12,13 +12,13 @@ import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.view.PreviewMessageView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.core.internal.exhaustive
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.properties.Delegates

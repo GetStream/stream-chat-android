@@ -1,13 +1,15 @@
 package com.getstream.sdk.chat;
 
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
+import com.getstream.sdk.chat.utils.MediaStringUtil;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,23 +66,23 @@ public class GetDeletedOrMentionedTextTest {
     @Test
     void convertVideoLengthTest() {
         long videoLength = 216844;
-        assertEquals("60:14:04", StringUtility.convertVideoLength(videoLength));
+        assertEquals("60:14:04", MediaStringUtil.convertVideoLength(videoLength));
     }
 
     @Test
     void convertFileSizeTest() {
         long fileSize = 999;
-        assertEquals("999 B", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("999 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
         fileSize = 110592;
-        assertEquals("110.59 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("110.59 KB", MediaStringUtil.convertFileSizeByteCount(fileSize));
         fileSize = 452984832;
-        assertEquals("452.98 MB", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("452.98 MB", MediaStringUtil.convertFileSizeByteCount(fileSize));
         fileSize = 900000;
-        assertEquals("900 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("900 KB", MediaStringUtil.convertFileSizeByteCount(fileSize));
         fileSize = 0;
-        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("0 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
         fileSize = -100;
-        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("0 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
     }
 
     @Test

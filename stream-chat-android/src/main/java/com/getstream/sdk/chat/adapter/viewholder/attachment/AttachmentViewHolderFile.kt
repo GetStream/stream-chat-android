@@ -3,9 +3,9 @@ package com.getstream.sdk.chat.adapter.viewholder.attachment
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentFileBinding
 import com.getstream.sdk.chat.utils.UiUtils
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener

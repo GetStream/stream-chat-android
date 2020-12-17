@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.messages.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
