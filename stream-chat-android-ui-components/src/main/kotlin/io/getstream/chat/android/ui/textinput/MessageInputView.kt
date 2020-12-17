@@ -30,14 +30,12 @@ import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.suggestions.SuggestionListView
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.EMPTY
-import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import io.getstream.chat.android.ui.utils.getBackgroundColor
 import io.getstream.chat.android.ui.utils.getColorList
+import io.getstream.chat.android.ui.utils.getTextColor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import io.getstream.chat.android.ui.utils.getTextColor
 import java.io.File
 import kotlin.properties.Delegates
 
