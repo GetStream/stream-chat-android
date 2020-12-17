@@ -27,7 +27,7 @@ import kotlin.properties.Delegates
  */
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
-    private val messageId: String?,
+    private val messageId: String? = null,
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance()
 ) : ViewModel() {
