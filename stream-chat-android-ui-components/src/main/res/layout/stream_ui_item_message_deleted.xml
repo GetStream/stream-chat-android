@@ -21,7 +21,7 @@
         android:paddingRight="@dimen/stream_ui_spacing_medium"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
         android:text="@string/stream_ui_message_deleted_label"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textAppearance="@style/StreamTextAppearance"
         android:textColor="@color/stream_ui_black_50"
         />
 

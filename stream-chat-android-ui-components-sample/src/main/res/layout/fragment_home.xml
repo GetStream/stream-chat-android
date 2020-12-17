@@ -72,7 +72,7 @@
             android:maxLines="1"
             android:paddingStart="@dimen/spacing_large"
             android:text="@string/home_drawer_sign_out"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="@style/StreamTextAppearance"
             app:drawableTint="@color/stream_ui_grey_dark"
             />
     </com.google.android.material.navigation.NavigationView>
