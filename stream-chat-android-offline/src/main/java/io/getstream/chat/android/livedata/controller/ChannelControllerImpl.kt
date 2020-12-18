@@ -422,6 +422,9 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runChannelQueryOnline(pagination) }
         } else {
+            // if we are not offline we mark it as needing recovery
+            recoveryNeeded = true
+            logger.logI("Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
             null
         }
         val localChannel = queryOfflineJob.await()
@@ -438,11 +441,16 @@ internal class ChannelControllerImpl(
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
+            } else {
+                if (response.error().isPermanent()) {
+                    logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${response.error()}")
+                } else {
+                    logger.logW("Temporary failure calling channel.watch for channel $cid. Marking the channel as needing recovery. Error was ${response.error()}")
+                    recoveryNeeded = true
+                }
             }
             response
         } else {
-            // if we are not offline we mark it as needing recovery
-            recoveryNeeded = true
             Result(localChannel, null)
         }
         loader.value = false
