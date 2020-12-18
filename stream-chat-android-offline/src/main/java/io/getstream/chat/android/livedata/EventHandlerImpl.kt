@@ -88,7 +88,7 @@ internal class EventHandlerImpl(
                     domainImpl.setOffline()
                 }
                 is ConnectedEvent -> {
-                    logger.logI("123 Received ConnectedEvent, marking the domain as online and initialized")
+                    logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
                     val recovered = domainImpl.isInitialized()
 
                     domainImpl.setOnline()

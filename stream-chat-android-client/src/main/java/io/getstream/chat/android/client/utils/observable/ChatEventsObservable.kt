@@ -28,10 +28,8 @@ internal class ChatEventsObservable(
                 subscription.onNext(event)
             }
         }
-        logger.logI("123 finished subscriptions")
         when (event) {
             is ConnectedEvent -> {
-                logger.logI("123 calling connection listener")
                 client.callConnectionListener(event, null)
             }
             is ErrorEvent -> {

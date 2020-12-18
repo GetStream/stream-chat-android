@@ -424,7 +424,7 @@ internal class ChannelControllerImpl(
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
-            logger.logI("123 Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
+            logger.logI("Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
             null
         }
         val localChannel = queryOfflineJob.await()
