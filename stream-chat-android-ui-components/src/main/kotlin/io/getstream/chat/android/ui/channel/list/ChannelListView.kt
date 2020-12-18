@@ -37,7 +37,7 @@ public class ChannelListView @JvmOverloads constructor(
         setHasFixedSize(true)
         layoutManager = ScrollPauseLinearLayoutManager(context)
         setLayoutManager(layoutManager)
-        adapter = ChannelListItemAdapter()
+        adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
         setMoreOptionsClickListener { channel ->
             context.getFragmentManager()?.let { fragmentManager ->
@@ -46,13 +46,12 @@ public class ChannelListView @JvmOverloads constructor(
                     .show(fragmentManager, null)
             }
         }
-        parseStyleAttributes(context, attrs)
         addItemDecoration(dividerDecoration)
     }
 
-    private fun parseStyleAttributes(context: Context, attrs: AttributeSet?) {
+    private fun parseStyleAttributes(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
         // parse the attributes
-        requireAdapter().style = ChannelListViewStyle(context, attrs).apply {
+        return ChannelListViewStyle(context, attrs).apply {
             // use the background color as a default for the avatar border
             if (avatarBorderColor == -1) {
                 background.let { channelViewBackground ->
@@ -79,8 +78,6 @@ public class ChannelListView @JvmOverloads constructor(
 
         return channelAdapter.cast()
     }
-
-    private fun canScrollUpForChannelEvent(): Boolean = layoutManager.findFirstVisibleItemPosition() < 3
 
     public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
         requireAdapter().viewHolderFactory = factory
@@ -188,10 +185,10 @@ public class ChannelListView @JvmOverloads constructor(
          *
          * @param viewHolder the view holder that is being swiped
          * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the swipe origin
-         * @param y the raw Y of the swipe origin
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
          */
-        public fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float)
+        public fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float? = null, y: Float? = null)
 
         /**
          * Invoked after a swipe has been detected, and movement is occurring.
@@ -208,20 +205,29 @@ public class ChannelListView @JvmOverloads constructor(
          *
          * @param viewHolder the view holder that is being swiped
          * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the swipe completion
-         * @param y the raw Y of the swipe completion
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
          */
-        public fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float)
+        public fun onSwipeCompleted(
+            viewHolder: SwipeViewHolder,
+            adapterPosition: Int,
+            x: Float? = null,
+            y: Float? = null
+        )
 
         /**
          * Invoked when a swipe is canceled.
          *
          * @param viewHolder the view holder that is being swiped
          * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the event that triggered cancellation
-         * @param y the raw Y of the event that triggered cancellation
-         */
-        public fun onSwipeCanceled(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float)
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction         */
+        public fun onSwipeCanceled(
+            viewHolder: SwipeViewHolder,
+            adapterPosition: Int,
+            x: Float? = null,
+            y: Float? = null
+        )
 
         /**
          * Invoked in order to set the [viewHolder]'s initial state when bound. This supports view holder reuse.
@@ -240,8 +246,8 @@ public class ChannelListView @JvmOverloads constructor(
                 override fun onSwipeStarted(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
-                    x: Float,
-                    y: Float
+                    x: Float?,
+                    y: Float?
                 ) {
                     // no-op
                 }
@@ -258,8 +264,8 @@ public class ChannelListView @JvmOverloads constructor(
                 override fun onSwipeCompleted(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
-                    x: Float,
-                    y: Float
+                    x: Float?,
+                    y: Float?
                 ) {
                     // no-op
                 }
@@ -267,8 +273,8 @@ public class ChannelListView @JvmOverloads constructor(
                 override fun onSwipeCanceled(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
-                    x: Float,
-                    y: Float
+                    x: Float?,
+                    y: Float?
                 ) {
                     // no-op
                 }

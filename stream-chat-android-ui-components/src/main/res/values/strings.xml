@@ -21,6 +21,9 @@
     <string name="stream_ui_channels_header_view_online_title">Stream Chat</string>
     <string name="stream_ui_channels_header_view_offline_title">Waiting for network</string>
 
+    <!--Channel List View-->
+    <string name="stream_ui_stream_channel_unknown_title">Channel without name</string>
+
     <!--Channel List Item View-->
     <string name="stream_ui_channel_display_name_self">You</string>
 

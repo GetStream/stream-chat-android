@@ -19,7 +19,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
         internal object Closed : SwipeState()
     }
 
-    override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float) {
+    override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // pause scrolling
         layoutManager.verticalScrollEnabled = false
     }
@@ -37,7 +37,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
         }
     }
 
-    override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float) {
+    override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // determine snap value
         val openedX = viewHolder.getOpenedX()
         val snapValue = when {
@@ -61,7 +61,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
         layoutManager.verticalScrollEnabled = true
     }
 
-    override fun onSwipeCanceled(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float) {
+    override fun onSwipeCanceled(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // animate closed
         viewHolder.getSwipeView().animateSwipeTo(viewHolder.getClosedX())
         // persist swipe state

@@ -47,7 +47,7 @@ public class ChannelListListenerDelegate(
 
     public var swipeListener: ChannelListView.SwipeListener by ListenerDelegate(swipeListener) { getDelegate ->
         object : ChannelListView.SwipeListener {
-            override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float, y: Float) {
+            override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
                 getDelegate().onSwipeStarted(viewHolder, adapterPosition, x, y)
             }
 
@@ -63,8 +63,8 @@ public class ChannelListListenerDelegate(
             override fun onSwipeCompleted(
                 viewHolder: SwipeViewHolder,
                 adapterPosition: Int,
-                x: Float,
-                y: Float
+                x: Float?,
+                y: Float?
             ) {
                 getDelegate().onSwipeCompleted(viewHolder, adapterPosition, x, y)
             }
@@ -72,8 +72,8 @@ public class ChannelListListenerDelegate(
             override fun onSwipeCanceled(
                 viewHolder: SwipeViewHolder,
                 adapterPosition: Int,
-                x: Float,
-                y: Float
+                x: Float?,
+                y: Float?
             ) {
                 getDelegate().onSwipeCanceled(viewHolder, adapterPosition, x, y)
             }

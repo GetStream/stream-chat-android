@@ -35,7 +35,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
     private val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     private val userClickListener: ChannelListView.UserClickListener,
     private val swipeListener: ChannelListView.SwipeListener,
-    private val style: ChannelListViewStyle?,
+    private val style: ChannelListViewStyle,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
         parent,
@@ -51,7 +51,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
     }
 
     private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * ChannelItemViewHolder.OPTIONS_COUNT
+    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
@@ -79,14 +79,10 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
     private fun configureBackground(channel: Channel) {
         binding.itemBackgroundView.apply {
             moreOptionsImageView.setOnClickListener {
-                getSwipeView()
-                    .animate()
-                    .x(getClosedX())
-                    .setStartDelay(0)
-                    .setDuration(200)
-                    .start()
                 channelMoreOptionsListener.onClick(channel)
+                swipeListener.onSwipeCanceled(this@ChannelItemViewHolder, absoluteAdapterPosition)
             }
+
             deleteImageView.setOnClickListener {
                 channelDeleteListener.onClick(channel)
             }
@@ -121,7 +117,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
 
             configureClickListeners(channel, channelClickListener, channelLongClickListener)
 
-            style?.let { applyStyle(this, it) }
+            applyStyle(style)
         }
     }
 
@@ -141,7 +137,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
-        channelNameLabel.text = channel.getDisplayName()
+        channelNameLabel.text = channel.getDisplayName(context)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView(
@@ -149,11 +145,14 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener
     ) {
-        avatarView.setChannelData(channel)
-        avatarView.setOnClickListener {
-            when {
-                channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
-                else -> channelClickListener.onClick(channel)
+        avatarView.apply {
+            setStyle(style.avatarStyle)
+            setChannelData(channel)
+            setOnClickListener {
+                when {
+                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    else -> channelClickListener.onClick(channel)
+                }
             }
         }
     }
@@ -238,7 +237,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
 
     private var styleApplied = false
 
-    private fun applyStyle(binding: StreamUiChannelListItemForegroundViewBinding, style: ChannelListViewStyle) {
+    private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
         if (styleApplied) {
             return
         }

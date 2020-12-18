@@ -26,6 +26,10 @@ public class ChannelListViewStyle internal constructor(context: Context, attrs: 
 
     private var channelWithoutNameText = ""
 
+    public fun getChannelWithoutNameText(): String =
+        channelWithoutNameText.takeIf(String::isNotBlank)
+            ?: resources.getString(R.string.stream_ui_stream_channel_unknown_title)
+
     public var avatarBorderColor: Int
         get() = avatarStyle.avatarBorderColor
         set(@ColorRes value: Int) {

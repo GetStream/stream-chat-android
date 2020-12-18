@@ -1,15 +1,20 @@
 package io.getstream.chat.android.ui.channel.list.adapter
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerDelegate
 import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.utils.extensions.diff
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
-internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
+internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
+    ListAdapter<Channel, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
     var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
@@ -25,6 +30,15 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
         }
 
     companion object {
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<Channel> = object : DiffUtil.ItemCallback<Channel>() {
+            override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid
+
+            override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
+                !oldItem.diff(newItem).hasDifference()
+
+            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any = oldItem.diff(newItem)
+        }
+
         val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
         val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
             nameChanged = false,
