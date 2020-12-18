@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
 
-internal object UiUtils {
+public object UiUtils {
 
     private val reactionTypes: Map<String, Int> = ReactionType.values()
         .associate { it.type to it.iconRes }
@@ -33,7 +33,7 @@ internal object UiUtils {
         ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )
 
-    fun getIcon(mimeType: String?): Int {
+    public fun getIcon(mimeType: String?): Int {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }
@@ -44,7 +44,7 @@ internal object UiUtils {
         }
     }
 
-    fun getReactionTypes(): Map<String, Int> {
+    internal fun getReactionTypes(): Map<String, Int> {
         return reactionTypes
     }
 }

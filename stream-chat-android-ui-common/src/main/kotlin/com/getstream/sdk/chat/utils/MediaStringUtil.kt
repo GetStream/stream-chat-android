@@ -1,11 +1,9 @@
 package com.getstream.sdk.chat.utils
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.DecimalFormat
 import kotlin.math.ln
 import kotlin.math.pow
 
-@InternalStreamChatApi
 public object MediaStringUtil {
 
     @JvmStatic

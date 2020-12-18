@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.feature.chat.info
+package io.getstream.chat.ui.sample.feature.chat.info.shared
 
 import android.os.Bundle
 import android.view.LayoutInflater
