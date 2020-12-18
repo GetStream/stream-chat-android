@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -1328,7 +1329,7 @@ internal class ChannelControllerImpl(
         newerMessagesOffset: Int,
         olderMessagesOffset: Int
     ): Result<Message> {
-        val result = domainImpl.scope.async { client.getMessage(messageId).execute() }.await()
+        val result = client.getMessage(messageId).await()
         if (result.isError) {
             return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
