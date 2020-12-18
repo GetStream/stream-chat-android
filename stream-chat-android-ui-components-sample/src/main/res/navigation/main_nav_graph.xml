@@ -414,6 +414,11 @@
             app:destination="@id/componentBrowserPlainTextWithMediaAttachmentsMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserOnlyFileAttachmentsMessages"
+            app:destination="@id/componentBrowserOnlyFileAttachmentsMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -448,7 +453,7 @@
 
     <fragment
         android:id="@+id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyAttachmentsMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyMediaAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyMediaAttachmentsMessagesFragment"
         />
 
@@ -468,6 +473,12 @@
         android:id="@+id/componentBrowserMessageInputFieldViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.textinput.ComponentBrowserMessageInputFieldViewFragment"
         android:label="ComponentBrowserMessageInputFieldViewFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserOnlyFileAttachmentsMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserOnlyFileAttachmentsMessagesFragment"
         />
 
 </navigation>
