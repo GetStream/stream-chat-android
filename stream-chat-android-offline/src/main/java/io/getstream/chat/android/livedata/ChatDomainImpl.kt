@@ -99,7 +99,7 @@ internal class ChatDomainImpl internal constructor(
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
-    internal val recoveryEnabled: Boolean = true,
+    internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
@@ -598,13 +598,7 @@ internal class ChatDomainImpl internal constructor(
         // 0 ensure load is complete
         initJob.join()
 
-        // 1 Watch all channels that failed, it is needed for channels that are created locally, in other case it won't be created on the server
-        activeChannelMapImpl
-            .values
-            .filter { it.errorWatching }
-            .forEach { it.watch() }
-
-        // 2 update the results for queries that are actively being shown right now
+        // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
@@ -624,7 +618,7 @@ internal class ChatDomainImpl internal constructor(
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
-        // 3 update the data for all channels that are being show right now...
+        // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
         val cids: List<String> = activeChannelMapImpl
             .entries
@@ -651,18 +645,19 @@ internal class ChatDomainImpl internal constructor(
             }
         }
 
-        // 4 retry any failed requests
+        // 3 retry any failed requests
         if (isOnline()) {
             retryFailedEntities()
         }
 
-        // 5 recover events
-        if (recoveryNeeded && isOnline()) {
+        // 4 recover events
+        if (isOnline()) {
             replayEventsForActiveChannels()
         }
     }
 
     private suspend fun retryFailedEntities() {
+        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messages = retryMessages()
