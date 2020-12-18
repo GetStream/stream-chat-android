@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="login_text">@color/white</color>
+
+    <color name="component_browser_sub_card">#000</color>
+
+    <color name="component_browser_background">#000</color>
 </resources>

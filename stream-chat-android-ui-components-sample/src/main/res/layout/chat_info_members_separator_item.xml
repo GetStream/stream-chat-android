@@ -14,5 +14,6 @@
     android:textColor="@color/boulder"
     android:textSize="@dimen/stream_ui_text_medium"
     app:drawableStartCompat="@drawable/ic_icon_down"
+    android:drawableTint="@color/stream_ui_icon_default_tint"
     tools:text="10 more"
     />

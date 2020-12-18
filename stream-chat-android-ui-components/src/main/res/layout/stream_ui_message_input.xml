@@ -40,6 +40,7 @@
         app:layout_constraintEnd_toStartOf="@id/sendButtonContainer"
         app:layout_constraintStart_toEndOf="@id/commandsButton"
         app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="40dp"
         />
 
     <FrameLayout

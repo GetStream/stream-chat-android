@@ -46,6 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/optionTextView"
         app:layout_constraintTop_toTopOf="@id/optionImageView"
+        app:tint="@color/stream_ui_icon_default_tint"
         tools:ignore="ContentDescription"
         />
 

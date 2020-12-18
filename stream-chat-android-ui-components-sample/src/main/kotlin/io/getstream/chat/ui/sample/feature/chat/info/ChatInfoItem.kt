@@ -38,7 +38,7 @@ sealed class ChatInfoItem {
             override val textResId: Int
                 get() = R.string.chat_info_option_media
             override val tintResId: Int
-                get() = R.color.black
+                get() = R.color.stream_ui_icon_default_tint
         }
 
         object SharedFiles : Option() {
@@ -47,7 +47,7 @@ sealed class ChatInfoItem {
             override val textResId: Int
                 get() = R.string.chat_info_option_files
             override val tintResId: Int
-                get() = R.color.black
+                get() = R.color.stream_ui_icon_default_tint
         }
 
         object SharedGroups : Option() {
@@ -56,7 +56,7 @@ sealed class ChatInfoItem {
             override val textResId: Int
                 get() = R.string.chat_info_option_shared_groups
             override val tintResId: Int
-                get() = R.color.black
+                get() = R.color.stream_ui_icon_default_tint
         }
 
         object DeleteConversation : Option() {
@@ -75,7 +75,7 @@ sealed class ChatInfoItem {
             override val textResId: Int
                 get() = R.string.chat_group_info_option_leave
             override val tintResId: Int
-                get() = R.color.black
+                get() = R.color.stream_ui_icon_default_tint
             override val showRightArrow: Boolean = false
         }
 
@@ -88,7 +88,7 @@ sealed class ChatInfoItem {
                 override val textResId: Int
                     get() = R.string.chat_info_option_notifications
                 override val tintResId: Int
-                    get() = R.color.black
+                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class MuteUser(override val isChecked: Boolean) : Stateful() {
@@ -97,7 +97,7 @@ sealed class ChatInfoItem {
                 override val textResId: Int
                     get() = R.string.chat_info_option_mute_user
                 override val tintResId: Int
-                    get() = R.color.black
+                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class MuteChannel(override val isChecked: Boolean) : Stateful() {
@@ -106,7 +106,7 @@ sealed class ChatInfoItem {
                 override val textResId: Int
                     get() = R.string.chat_group_info_option_mute
                 override val tintResId: Int
-                    get() = R.color.black
+                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class Block(override val isChecked: Boolean) : Stateful() {
@@ -115,7 +115,7 @@ sealed class ChatInfoItem {
                 override val textResId: Int
                     get() = R.string.chat_info_option_block_user
                 override val tintResId: Int
-                    get() = R.color.black
+                    get() = R.color.stream_ui_icon_default_tint
             }
         }
     }

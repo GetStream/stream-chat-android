@@ -63,7 +63,21 @@
     <color name="stream_ui_channel_item_text_color">@color/stream_ui_black</color>
     <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
 
+    <color name="stream_ui_background_default">@color/stream_ui_white</color>
     <color name="stream_ui_background_light">@color/stream_ui_white</color>
     <color name="stream_ui_background_alabaster">@color/stream_ui_alabaster</color>
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
+    <color name="stream_ui_background_alabaster_black">@color/stream_ui_alabaster</color>
+    <color name="stream_ui_icon_default_tint">@color/stream_ui_black</color>
+    <color name="stream_ui_icon_light_tint">@color/stream_ui_grey_dark</color>
+
+    <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
+    <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>
+
+    <color name="stream_ui_divider_tint">@color/stream_ui_grey_light</color>
+    <color name="stream_ui_divider_tint_light">@color/stream_ui_grey_medium_light</color>
+
+    <color name="stream_ui_section_item_color">@color/stream_ui_gray_light</color>
+
+    <color name="stream_ui_input_border">#2D2E2E</color>
+
 </resources>

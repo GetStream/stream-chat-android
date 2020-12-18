@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".ComponentBrowserAttachmentGalleryFragment"
     >
 
@@ -13,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:streamUiCountText="%s -> %s"
-        app:streamUiCountTextColor="@color/black"
+        app:streamUiCountTextColor="@color/stream_ui_text_color_strong"
         />
 
 </FrameLayout>
