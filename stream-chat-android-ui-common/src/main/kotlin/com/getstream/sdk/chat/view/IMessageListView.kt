@@ -22,4 +22,5 @@ public interface IMessageListView {
     public fun hideLoadingView()
     public fun displayNewMessage(listItem: MessageListItemWrapper)
     public fun setLoadingMore(loadingMore: Boolean)
+    public fun scrollToMessage(message: Message)
 }
