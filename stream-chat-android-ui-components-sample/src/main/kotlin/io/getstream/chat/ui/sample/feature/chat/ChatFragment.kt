@@ -19,6 +19,7 @@ import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class ChatFragment : Fragment() {
 
@@ -54,6 +55,11 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     private fun configureBackButtonHandling() {

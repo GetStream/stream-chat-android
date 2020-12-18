@@ -21,6 +21,7 @@ import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class GroupChatInfoFragment : Fragment() {
 
@@ -60,6 +61,11 @@ class GroupChatInfoFragment : Fragment() {
             }
         }
         bindGroupInfoViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     override fun onDestroyView() {

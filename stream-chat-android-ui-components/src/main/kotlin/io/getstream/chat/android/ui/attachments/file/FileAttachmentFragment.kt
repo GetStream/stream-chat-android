@@ -49,7 +49,7 @@ public class FileAttachmentFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = StreamUiFragmentAttachmentFileBinding.inflate(inflater, container, false)
         return binding.root
     }
