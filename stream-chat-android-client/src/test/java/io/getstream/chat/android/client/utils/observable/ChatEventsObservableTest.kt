@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.utils.observable
 
+import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -22,7 +23,7 @@ internal class ChatEventsObservableTest {
     @Before
     fun before() {
         socket = FakeChatSocket()
-        observable = ChatEventsObservable(socket, connectionListener)
+        observable = ChatEventsObservable(socket, mock())
         result = mutableListOf()
     }
 
