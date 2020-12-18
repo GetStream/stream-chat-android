@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
 
-class OnlyAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
+class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
