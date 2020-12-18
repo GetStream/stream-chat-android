@@ -18,6 +18,7 @@ import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelBinding
 import io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel
 import io.getstream.chat.ui.sample.feature.channel.add.bindView
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class AddGroupChannelFragment : Fragment() {
 
@@ -35,7 +36,7 @@ class AddGroupChannelFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddGroupChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,6 +55,11 @@ class AddGroupChannelFragment : Fragment() {
                 }
             }
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     override fun onDestroyView() {
