@@ -662,7 +662,6 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private suspend fun retryFailedEntities() {
-        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messages = retryMessages()
