@@ -99,7 +99,7 @@ internal class ChatDomainImpl internal constructor(
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
-    internal var recoveryEnabled: Boolean = true,
+    internal val recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
