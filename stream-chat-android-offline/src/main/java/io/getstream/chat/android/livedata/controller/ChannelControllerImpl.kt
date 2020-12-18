@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -110,7 +111,7 @@ internal class ChannelControllerImpl(
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
-
+    internal var errorWatching = false
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
 
@@ -364,9 +365,10 @@ internal class ChannelControllerImpl(
             return
         }
         runChannelQuery(QueryChannelPaginationRequest(limit))
+        errorWatching = recoveryNeeded
     }
 
-    fun loadMoreMessagesRequest(
+    private fun loadMoreMessagesRequest(
         limit: Int = 30,
         direction: Pagination
     ): QueryChannelPaginationRequest {
@@ -398,7 +400,7 @@ internal class ChannelControllerImpl(
         return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
     }
 
-    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+    private suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val loader = when (pagination.messageFilterDirection) {
             Pagination.GREATER_THAN,
             Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
@@ -421,6 +423,8 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runChannelQueryOnline(pagination) }
         } else {
+            // if we are not offline we mark it as needing recovery
+            recoveryNeeded = true
             null
         }
         val localChannel = queryOfflineJob.await()
@@ -440,8 +444,6 @@ internal class ChannelControllerImpl(
             }
             response
         } else {
-            // if we are not offline we mark it as needing recovery
-            recoveryNeeded = true
             Result(localChannel, null)
         }
         loader.value = false
@@ -1145,13 +1147,13 @@ internal class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    internal suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateLiveDataFromChannel(localChannel)
     }
 
-    internal suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)
@@ -1321,6 +1323,23 @@ internal class ChannelControllerImpl(
             // Note that we don't handle offline storage for threads at the moment.
         }
         return result
+    }
+
+    internal suspend fun loadMessageById(
+        messageId: String,
+        newerMessagesOffset: Int,
+        olderMessagesOffset: Int
+    ): Result<Message> {
+        val result = client.getMessage(messageId).await()
+        if (result.isError) {
+            return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
+        }
+        val message = result.data()
+        _messages.value = emptyMap()
+        upsertMessage(message)
+        loadNewerMessages(newerMessagesOffset)
+        loadOlderMessages(olderMessagesOffset)
+        return Result(message)
     }
 
     companion object {

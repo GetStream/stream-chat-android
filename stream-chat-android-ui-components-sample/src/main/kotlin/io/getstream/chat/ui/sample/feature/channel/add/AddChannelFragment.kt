@@ -16,6 +16,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentAddChannelBinding
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class AddChannelFragment : Fragment() {
 
@@ -36,6 +37,11 @@ class AddChannelFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initToolbar(binding.toolbar)
         bindAddChannelView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     override fun onDestroyView() {

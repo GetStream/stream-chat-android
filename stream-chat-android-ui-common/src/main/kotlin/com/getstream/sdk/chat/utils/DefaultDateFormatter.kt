@@ -5,6 +5,7 @@ import android.text.format.DateFormat
 import io.getstream.chat.android.ui.common.R
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.Locale
 
@@ -26,14 +27,17 @@ internal class DefaultDateFormatter(
 
         val localDate = localDateTime.toLocalDate()
         return when {
-            localDate.isToday() -> {
-                val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
-                formatter.format(localDateTime.toLocalTime())
-            }
+            localDate.isToday() -> formatTime(localDateTime.toLocalTime())
             localDate.isYesterday() -> dateContext.yesterdayString()
             localDate.isWithinLastWeek() -> dateFormatterDayOfWeek.format(localDate)
             else -> dateFormatterFullDate.format(localDate)
         }
+    }
+
+    override fun formatTime(localTime: LocalTime?): String {
+        localTime ?: return ""
+        val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
+        return formatter.format(localTime)
     }
 
     private fun LocalDate.isToday(): Boolean {
