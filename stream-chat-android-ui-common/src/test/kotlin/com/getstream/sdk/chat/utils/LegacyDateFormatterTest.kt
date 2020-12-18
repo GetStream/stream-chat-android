@@ -31,7 +31,7 @@ internal class LegacyDateFormatterTest {
 
         val expected = Date(
             120, // year, starts from 1900
-            3,// month, 0-indexed
+            3, // month, 0-indexed
             19, // date
             15, // hours
             50, // minutes
