@@ -10,9 +10,8 @@
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/mediaAttachmentsGroupView"
         />
 
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
