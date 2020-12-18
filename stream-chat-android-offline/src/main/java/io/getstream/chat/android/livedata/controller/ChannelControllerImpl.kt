@@ -422,6 +422,8 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runChannelQueryOnline(pagination) }
         } else {
+            // if we are not offline we mark it as needing recovery
+            recoveryNeeded = true
             null
         }
         val localChannel = queryOfflineJob.await()
@@ -441,8 +443,6 @@ internal class ChannelControllerImpl(
             }
             response
         } else {
-            // if we are not offline we mark it as needing recovery
-            recoveryNeeded = true
             Result(localChannel, null)
         }
         loader.value = false
