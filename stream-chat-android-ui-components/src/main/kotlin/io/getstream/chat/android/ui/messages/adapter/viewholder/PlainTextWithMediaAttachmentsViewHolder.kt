@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.databinding.StreamUiMessagePlainTextWithMediaAttachmentsViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWithMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapp
 public class PlainTextWithMediaAttachmentsViewHolder(
     parent: ViewGroup,
     private val listenerContainer: ListenerContainer?,
-    internal val binding: StreamUiMessagePlainTextWithMediaAttachmentsViewBinding = StreamUiMessagePlainTextWithMediaAttachmentsViewBinding.inflate(
+    internal val binding: StreamUiItemMessagePlainTextWithMediaAttachmentsBinding = StreamUiItemMessagePlainTextWithMediaAttachmentsBinding.inflate(
         LayoutInflater.from(parent.context),
         parent,
         false
