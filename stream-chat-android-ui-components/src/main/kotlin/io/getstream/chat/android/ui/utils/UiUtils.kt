@@ -2,10 +2,8 @@ package io.getstream.chat.android.ui.utils
 
 import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 
-@InternalStreamChatApi
 public object UiUtils {
 
     private val reactionTypes: Map<String, Int> = ReactionType.values()

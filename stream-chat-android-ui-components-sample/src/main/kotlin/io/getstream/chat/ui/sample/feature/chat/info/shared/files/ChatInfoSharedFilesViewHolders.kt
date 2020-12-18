@@ -3,7 +3,6 @@ package io.getstream.chat.ui.sample.feature.chat.info.shared.files
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileDateDividerBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileItemBinding
@@ -34,7 +33,6 @@ class ChatInfoSharedFileViewHolder(
         binding.fileItemContainer.setOnClickListener { attachmentClickListener?.onClick(attachmentItem) }
     }
 
-    @InternalStreamChatApi
     override fun bind(item: SharedAttachment.AttachmentItem) {
         attachmentItem = item
         binding.fileTypeImageView.setImageResource(UiUtils.getIcon(item.attachment.mimeType))
