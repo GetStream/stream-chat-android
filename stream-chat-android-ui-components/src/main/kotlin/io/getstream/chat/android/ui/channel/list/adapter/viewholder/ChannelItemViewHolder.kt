@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
@@ -17,10 +18,10 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroun
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
-import io.getstream.chat.android.ui.utils.extensions.inflater
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
@@ -49,18 +50,41 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         public const val OPTIONS_COUNT: Int = 2
     }
 
+    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
+    private val optionsMenuWidth = menuItemWidth * ChannelItemViewHolder.OPTIONS_COUNT
+
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
         configureBackground(channel)
     }
 
-    public fun getItemViewForeground(): View = binding.itemForegroundView.root
+    override fun getSwipeView(): View {
+        return binding.itemForegroundView.root
+    }
 
-    public fun getItemViewBackground(): View = binding.itemBackgroundView.root
+    override fun getOpenedX(): Float {
+        return -optionsMenuWidth
+    }
+
+    override fun getClosedX(): Float {
+        return 0f
+    }
+
+    override fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float> {
+        val openedX = getOpenedX()
+        val closedX = getClosedX()
+        return openedX.coerceAtMost(closedX)..openedX.coerceAtLeast(closedX)
+    }
 
     private fun configureBackground(channel: Channel) {
         binding.itemBackgroundView.apply {
             moreOptionsImageView.setOnClickListener {
+                getSwipeView()
+                    .animate()
+                    .x(getClosedX())
+                    .setStartDelay(0)
+                    .setDuration(200)
+                    .start()
                 channelMoreOptionsListener.onClick(channel)
             }
             deleteImageView.setOnClickListener {

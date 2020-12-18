@@ -7,6 +7,12 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView
 import kotlin.math.absoluteValue
 
 public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
+
+    public abstract fun getSwipeView(): View
+    public abstract fun getOpenedX(): Float
+    public abstract fun getClosedX(): Float
+    public abstract fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float>
+
     @SuppressLint("ClickableViewAccessibility")
     public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener) {
         var startX = 0f
@@ -57,7 +63,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                         }
                         // signal swipe movement
                         swiping -> {
-                            swipeListener.onSwipeChanged(this, position, lastMoveDeltaX)
+                            swipeListener.onSwipeChanged(this, position, lastMoveDeltaX, totalDeltaX)
                         }
                         // axis magnitude measurement has dictated we are no longer swiping
                         wasSwiping && !swiping -> {

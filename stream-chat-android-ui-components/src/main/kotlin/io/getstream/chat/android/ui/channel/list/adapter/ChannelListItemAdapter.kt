@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerProvider
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerDelegate
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
@@ -13,7 +13,7 @@ internal class ChannelListItemAdapter : BaseChannelListItemAdapter() {
 
     var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
-    val listenerProvider: ChannelListListenerProvider = ChannelListListenerProvider()
+    val listenerProvider: ChannelListListenerDelegate = ChannelListListenerDelegate()
 
     var endReached: Boolean = true
         set(value) {

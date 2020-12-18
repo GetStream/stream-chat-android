@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import android.view.ViewGroup
+import com.getstream.sdk.chat.adapter.inflater
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.databinding.StreamChannelListLoadingViewBinding
-import io.getstream.chat.android.ui.utils.extensions.inflater
 
 public class LoadingMoreViewHolder(
     parent: ViewGroup,
@@ -15,7 +15,5 @@ public class LoadingMoreViewHolder(
     )
 ) : BaseChannelListItemViewHolder(binding.root) {
 
-    override fun bind(channel: Channel, diff: ChannelDiff) {
-        // no-op
-    }
+    override fun bind(channel: Channel, diff: ChannelDiff): Unit = Unit
 }
