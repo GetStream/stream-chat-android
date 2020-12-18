@@ -251,7 +251,6 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object Loading : State()
         public data class Result(val messageListItem: MessageListItemWrapper) : State()
         public object NavigateUp : State()
-        public data class ScrollToMessage(val message: Message) : State()
     }
 
     public sealed class Event {
