@@ -72,6 +72,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
 import java.io.File
@@ -1328,21 +1329,16 @@ internal class ChannelControllerImpl(
         newerMessagesOffset: Int,
         olderMessagesOffset: Int
     ): Result<Message> {
-        val result = client.getMessage(messageId).execute()
-        val message = if (result.isSuccess) {
-            result.data()
-        } else {
-            null
+        val result = withContext(domainImpl.scope.coroutineContext) { client.getMessage(messageId).execute() }
+        if (result.isError) {
+            return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
-        return if (message != null) {
-            _messages.value = emptyMap()
-            upsertMessage(message)
-            loadNewerMessages(newerMessagesOffset)
-            loadOlderMessages(olderMessagesOffset)
-            Result(message)
-        } else {
-            Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
-        }
+        val message = result.data()
+        _messages.value = emptyMap()
+        upsertMessage(message)
+        loadNewerMessages(newerMessagesOffset)
+        loadOlderMessages(olderMessagesOffset)
+        return Result(message)
     }
 
     companion object {
