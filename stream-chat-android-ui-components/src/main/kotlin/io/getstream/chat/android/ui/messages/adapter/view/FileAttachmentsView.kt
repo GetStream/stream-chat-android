@@ -41,7 +41,6 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
                 outRect.bottom = marginPx
             }
         }
-
     }
 }
 
