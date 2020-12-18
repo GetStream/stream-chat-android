@@ -1,7 +1,10 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.constrainViewEndToEndOfView
 import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
@@ -13,8 +16,14 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMed
 
 internal class GravityDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        viewHolder.binding.messageText.updateLayoutParams<FrameLayout.LayoutParams> {
+            gravity = if (data.isTheirs) {
+                Gravity.START
+            } else {
+                Gravity.END
+            }
+        }
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.messageText, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
             applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
@@ -46,7 +55,12 @@ internal class GravityDecorator : BaseDecorator() {
         }
     }
 
-    private fun ConstraintSet.applyGravity(targetView: View, startView: View, endView: View, data: MessageListItem.MessageItem) {
+    private fun ConstraintSet.applyGravity(
+        targetView: View,
+        startView: View,
+        endView: View,
+        data: MessageListItem.MessageItem
+    ) {
         clear(targetView.id, ConstraintSet.START)
         clear(targetView.id, ConstraintSet.END)
         if (data.isTheirs) {

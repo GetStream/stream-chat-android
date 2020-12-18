@@ -28,6 +28,14 @@
         tools:src="@tools:sample/avatars"
         />
 
+    <FrameLayout
+        android:id="@+id/textContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@id/gapView">
+
     <TextView
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
@@ -40,11 +48,10 @@
         android:lineHeight="16sp"
         android:hyphenationFrequency="normal"
         android:textColor="@color/stream_ui_black"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintEnd_toEndOf="@id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
         tools:text="@tools:sample/lorem"
         />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvTime"
