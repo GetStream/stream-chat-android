@@ -21,7 +21,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         GravityDecorator(),
-        TimeDecorator(DateFormatter.from(itemView.context))
+        TimeDecorator(DateFormatter.from(itemView.context)),
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {

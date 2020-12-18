@@ -1,6 +1,6 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
-import androidx.core.view.isVisible
+import android.view.View
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -38,6 +38,10 @@ internal class AvatarDecorator : BaseDecorator() {
         if (data.isTheirs) {
             avatarView.setUserData(data.message.user)
         }
-        avatarView.isVisible = data.isTheirs
+        avatarView.visibility = when {
+            data.isTheirs && data.positions.contains(MessageListItem.Position.BOTTOM) -> View.VISIBLE
+            data.isTheirs -> View.INVISIBLE
+            else -> View.GONE
+        }
     }
 }

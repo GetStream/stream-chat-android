@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.utils.extensions.constrainViewEndToEndOfView
 import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
@@ -29,6 +30,15 @@ internal class GravityDecorator : BaseDecorator() {
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        viewHolder.binding.root.updateConstraints {
+            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+        }
+    }
+
+    override fun decorateOnlyFileAttachmentsMessage(
+        viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
         viewHolder.binding.root.updateConstraints {
