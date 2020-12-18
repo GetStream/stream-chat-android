@@ -11,7 +11,7 @@ public interface LoadMessageById {
      * Loads message for a given message id and channel id
      *
      * @param cid: the full channel id IE messaging:123
-     * @param messageId: the id of the message id
+     * @param messageId: the id of the message
      * @param olderMessagesOffset: how many new messages to load before the requested message
      * @param newerMessagesOffset: how many new messages to load after the requested message
      *
