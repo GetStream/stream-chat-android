@@ -598,12 +598,13 @@ internal class ChatDomainImpl internal constructor(
         // 0 ensure load is complete
         initJob.join()
 
+        // 1 Watch all channels that failed, it is needed for channels that are created locally, in other case it won't be created on the server
         activeChannelMapImpl
             .values
             .filter { it.errorWatching }
             .forEach { it.watch() }
 
-        // 1 update the results for queries that are actively being shown right now
+        // 2 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
@@ -623,7 +624,7 @@ internal class ChatDomainImpl internal constructor(
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
-        // 2 update the data for all channels that are being show right now...
+        // 3 update the data for all channels that are being show right now...
         // exclude ones we just updated
         val cids: List<String> = activeChannelMapImpl
             .entries
@@ -650,12 +651,12 @@ internal class ChatDomainImpl internal constructor(
             }
         }
 
-        // 3 retry any failed requests
+        // 4 retry any failed requests
         if (isOnline()) {
             retryFailedEntities()
         }
 
-        // 4 recover events
+        // 5 recover events
         if (recoveryNeeded && isOnline()) {
             replayEventsForActiveChannels()
         }
