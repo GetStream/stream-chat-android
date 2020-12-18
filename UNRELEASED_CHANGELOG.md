@@ -4,6 +4,7 @@
 - Add filtering `shadowed` messages when computing last channel message
 - Add filtering `draft` channels
 - Add `DateFormatter::formatTime` method to format only time of a date
+- Fix `ChatUtils::devToken` method
 
 ## stream-chat-android-client
 - Improve `banUser` and `unBanUser` methods - make `reason` and `timeout` parameter nullable
