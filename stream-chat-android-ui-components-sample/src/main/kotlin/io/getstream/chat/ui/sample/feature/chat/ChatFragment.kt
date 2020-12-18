@@ -49,7 +49,7 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        headerViewModel.bindView(binding.header, viewLifecycleOwner)
+        headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
@@ -67,13 +67,13 @@ class ChatFragment : Fragment() {
                 }
             )
         }
-        binding.header.setBackButtonClickListener {
+        binding.messagesHeaderView.setBackButtonClickListener {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
     }
 
     private fun initChatViewModel() {
-        binding.header.apply {
+        binding.messagesHeaderView.apply {
             setAvatarClickListener {
                 chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
             }
@@ -101,7 +101,7 @@ class ChatFragment : Fragment() {
 
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
-            bindView(binding.input, viewLifecycleOwner)
+            bindView(binding.messageInputView, viewLifecycleOwner)
             messageListViewModel.mode.observe(
                 viewLifecycleOwner,
                 {
@@ -111,15 +111,18 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
-            binding.messageList.setOnMessageEditHandler {
+            binding.messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
         }
+
+        // set external suggestion view which is displayed over message list
+        binding.messageInputView.setSuggestionListView(binding.suggestionListView)
     }
 
     private fun initMessagesViewModel() {
         messageListViewModel
-            .apply { bindView(binding.messageList, viewLifecycleOwner) } // TODO replace with new design message list
+            .apply { bindView(binding.messageListView, viewLifecycleOwner) } // TODO replace with new design message list
             .apply {
                 state.observe(
                     viewLifecycleOwner,

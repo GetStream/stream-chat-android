@@ -31,7 +31,7 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
         ).use {
             avatarBorderWidth = it.getDimensionPixelSize(
                 R.styleable.AvatarView_streamUiAvatarBorderWidth,
-                context.getDimension(R.dimen.stream_channel_avatar_border_width)
+                context.getDimension(R.dimen.stream_ui_avatar_border_width)
             )
             avatarBorderColor = it.getColor(
                 R.styleable.AvatarView_streamUiAvatarBorderColor,
@@ -40,7 +40,7 @@ public class AvatarStyle internal constructor(context: Context, attrs: Attribute
             avatarInitialText = TextStyle.Builder(it)
                 .size(
                     R.styleable.AvatarView_streamUiAvatarTextSize,
-                    context.getDimension(R.dimen.stream_channel_initials)
+                    context.getDimension(R.dimen.stream_ui_avatar_initials)
                 )
                 .color(
                     R.styleable.AvatarView_streamUiAvatarTextColor,

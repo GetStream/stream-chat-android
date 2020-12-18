@@ -8,10 +8,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemDateSeparatorBinding
 import com.getstream.sdk.chat.enums.Dates
 import com.getstream.sdk.chat.enums.label
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import java.util.Date
 
