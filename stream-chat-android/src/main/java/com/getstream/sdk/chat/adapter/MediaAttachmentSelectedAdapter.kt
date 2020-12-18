@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class MediaAttachmentSelectedAdapter(
@@ -84,7 +84,7 @@ internal class MediaAttachmentSelectedAdapter(
             }
 
             if (ModelType.attach_video == attachment.type) {
-                binding.tvLength.text = StringUtility.convertVideoLength(attachment.videoLength)
+                binding.tvLength.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
                 binding.tvLength.text = ""
             }

@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.createAttachment
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.Constant
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -26,7 +26,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If media attachment size is more than max upload file size Should show message`() {
         val attachment = createAttachmentMetaDataWithAttachment().apply {
-            size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
+            size = AttachmentConstants.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
         }
 
         sut.selectMediaAttachment(attachment)
@@ -80,7 +80,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `Should show error message when at least one file attachment size is more than max upload file size`() {
         val attachment = createAttachmentMetaDataWithAttachment().apply {
-            size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
+            size = AttachmentConstants.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
         }
 
         val sut = Fixture().givenAttachmentsFromUriState(listOf(attachment)).please()
@@ -149,7 +149,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `Should show error message when attachment from camera is too big`() {
         val attachment = createAttachmentMetaDataWithAttachment().apply {
-            size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
+            size = AttachmentConstants.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
         }
 
         sut.selectAttachmentFromCamera(attachment)

@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/stream_transparent"
+        android:background="@color/stream_ui_transparent"
         android:hint="@string/stream_ui_search_input_view_hint"
         android:imeOptions="actionSearch"
         android:inputType="text"

@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

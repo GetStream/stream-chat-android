@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.Constant
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -177,7 +177,7 @@ internal class AttachmentsController(
     }
 
     private fun selectFileAttachments(attachments: List<AttachmentMetaData>) {
-        val filteredAttachments = attachments.filter { it.size <= Constant.MAX_UPLOAD_FILE_SIZE }
+        val filteredAttachments = attachments.filter { it.size <= AttachmentConstants.MAX_UPLOAD_FILE_SIZE }
         if (filteredAttachments.size < attachments.size) {
             view.showMessage(R.string.stream_large_size_file_error)
         }
@@ -189,7 +189,7 @@ internal class AttachmentsController(
     }
 
     internal fun selectMediaAttachment(attachment: AttachmentMetaData) {
-        if (attachment.size > Constant.MAX_UPLOAD_FILE_SIZE) {
+        if (attachment.size > AttachmentConstants.MAX_UPLOAD_FILE_SIZE) {
             view.showMessage(R.string.stream_large_size_file_error)
         } else {
             if (!selectedAttachments.contains(attachment)) {

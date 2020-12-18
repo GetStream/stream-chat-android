@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
