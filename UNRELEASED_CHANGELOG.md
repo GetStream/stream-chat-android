@@ -17,6 +17,7 @@
 ## stream-chat-android-offline
 - Add filtering `shadowed` messages
 - Add new usecase `LoadMessageById` to fetch message by id with offset older and newer messages
+- Watch Channel if there was previous error
 
 ## stream-chat-android-ui-common
 - Add `messageId` arg to `MessageListViewModel`'s constructor allowing to load message by id and messages around it
