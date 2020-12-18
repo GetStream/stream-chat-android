@@ -631,17 +631,25 @@ internal class ChatDomainImpl internal constructor(
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
+        var missingChannelIds = listOf<String>()
         if (cids.isNotEmpty()) {
             val filter = `in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
             val result = client.queryChannels(request).execute()
             if (result.isSuccess) {
                 val channels = result.data()
+                val foundChannelIds = channels.map { it.id }
                 for (c in channels) {
-                    val channelRepo = this.channel(c)
-                    channelRepo.updateLiveDataFromChannel(c)
+                    val channelController = this.channel(c)
+                    channelController.updateLiveDataFromChannel(c)
                 }
+                missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
                 storeStateForChannels(channels)
+            }
+            // create channels that are not present on the API
+            for (c in missingChannelIds) {
+                val channelController = this.channel(c)
+                channelController.watch()
             }
         }
 
