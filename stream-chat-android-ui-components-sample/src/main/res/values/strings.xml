@@ -60,6 +60,8 @@
     <string name="chat_info_option_block_user">Block User</string>
     <string name="chat_info_option_media">Photo &amp; Videos</string>
     <string name="chat_info_option_files">Files</string>
+    <string name="chat_info_option_shared_files_empty_title">No files</string>
+    <string name="chat_info_option_shared_files_empty_description">Files sent in this chat will appear here.</string>
     <string name="chat_info_option_shared_groups">Shared Groups</string>
     <string name="chat_info_option_shared_groups_empty_title">Groups shared with %s will appear here.</string>
     <string name="chat_info_option_delete_conversation">Delete Conversation</string>

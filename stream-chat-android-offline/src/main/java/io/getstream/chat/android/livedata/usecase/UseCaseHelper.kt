@@ -53,6 +53,11 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
     public val loadNewerMessages: LoadNewerMessages = LoadNewerMessagesImpl(chatDomainImpl)
 
     /**
+     * Loads a message for a given message id, optionally with a offset of newer and older messages.
+     */
+    public val loadMessageById: LoadMessageById = LoadMessageByIdImpl(chatDomainImpl)
+
+    /**
      * Load more channels for the given query.
      */
     public val queryChannelsLoadMore: QueryChannelsLoadMore = QueryChannelsLoadMoreImpl(chatDomainImpl)

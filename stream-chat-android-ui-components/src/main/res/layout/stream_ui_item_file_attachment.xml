@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:foreground="?selectableItemBackground"
+    android:background="@drawable/stream_ui_shape_selected_media_round"
+    >
+
+    <ImageView
+        android:id="@+id/fileTypeIcon"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_file_csv"
+        />
+
+    <TextView
+        android:id="@+id/fileTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/stream_ui_text_black"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/fileSize"
+        app:layout_constraintEnd_toStartOf="@id/actionButton"
+        app:layout_constraintStart_toEndOf="@id/fileTypeIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="SlimAaron.pdf"
+        />
+
+    <TextView
+        android:id="@+id/fileSize"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:textColor="@color/stream_ui_text_grey"
+        android:textSize="@dimen/stream_ui_text_small"
+        app:layout_goneMarginStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/actionButton"
+        app:layout_constraintStart_toEndOf="@id/progressBar"
+        app:layout_constraintTop_toBottomOf="@id/fileTitle"
+        tools:text="123 KB"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:indeterminateDrawable="@drawable/stream_rotating_indeterminate_progress_gradient"
+        app:layout_constraintTop_toBottomOf="@id/fileTitle"
+        app:layout_constraintStart_toStartOf="@id/fileTitle"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/actionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/stream_ui_ic_icon_download"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="ContentDescription"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

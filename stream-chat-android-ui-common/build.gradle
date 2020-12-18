@@ -106,6 +106,8 @@ dependencies {
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
 
+    testImplementation Dependencies.threeTenBp
+
     testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.burst
     testImplementation Dependencies.kluent

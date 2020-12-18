@@ -19,12 +19,13 @@ import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
 
-    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid) }
+    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid, args.messageId) }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
@@ -54,6 +55,11 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     private fun configureBackButtonHandling() {
