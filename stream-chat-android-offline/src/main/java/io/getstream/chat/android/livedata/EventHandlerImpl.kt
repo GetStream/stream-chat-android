@@ -431,12 +431,15 @@ internal class EventHandlerImpl(
                     domainImpl.setOffline()
                 }
                 is ConnectedEvent -> {
+                    val recovered = domainImpl.isInitialized()
+
                     domainImpl.setOnline()
                     domainImpl.setInitialized()
-                    domainImpl.connectionRecovered(domainImpl.recoveryEnabled)
-                }
-                is HealthEvent -> {
-                    domainImpl.connectionRecovered(false)
+                    if (recovered && domainImpl.recoveryEnabled) {
+                        domainImpl.connectionRecovered(true)
+                    } else {
+                        domainImpl.connectionRecovered(false)
+                    }
                 }
             }
         }

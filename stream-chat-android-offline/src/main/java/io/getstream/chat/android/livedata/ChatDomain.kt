@@ -26,7 +26,7 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 public interface ChatDomain {
 
     /** the current user on the chatDomain object, same as client.getCurrentUser() */
-    public val currentUser: User
+    public var currentUser: User
 
     /** if offline is enabled */
     public var offlineEnabled: Boolean
