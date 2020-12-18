@@ -19,6 +19,16 @@ public fun ConstraintSet.constrainViewToParentBySide(view: View, side: Int) {
 }
 
 @InternalStreamChatApi
+public fun ConstraintSet.constrainViewStartToEndOfView(startView: View, endView: View) {
+    connect(startView.id, ConstraintSet.START, endView.id, ConstraintSet.END)
+}
+
+@InternalStreamChatApi
+public fun ConstraintSet.constrainViewEndToEndOfView(startView: View, endView: View) {
+    connect(startView.id, ConstraintSet.END, endView.id, ConstraintSet.END)
+}
+
+@InternalStreamChatApi
 public fun ConstraintSet.horizontalChainInParent(vararg views: View) {
     createHorizontalChain(
         ConstraintSet.PARENT_ID,

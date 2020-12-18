@@ -62,7 +62,7 @@ import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentWithDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
@@ -421,9 +421,9 @@ public class ChannelClient internal constructor(
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
 
-    public fun getFileAttachments(offset: Int, limit: Int): Call<List<Attachment>> =
+    public fun getFileAttachments(offset: Int, limit: Int): Call<List<AttachmentWithDate>> =
         client.getFileAttachments(channelType, channelId, offset, limit)
 
-    public fun getImageAttachments(offset: Int, limit: Int): Call<List<Attachment>> =
+    public fun getImageAttachments(offset: Int, limit: Int): Call<List<AttachmentWithDate>> =
         client.getImageAttachments(channelType, channelId, offset, limit)
 }
