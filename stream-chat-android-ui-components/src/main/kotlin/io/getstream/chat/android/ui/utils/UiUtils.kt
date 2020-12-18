@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.R
 
-internal object UiUtils {
+public object UiUtils {
 
     private val reactionTypes: Map<String, Int> = ReactionType.values()
         .associate { it.type to it.iconRes }
@@ -27,24 +27,24 @@ internal object UiUtils {
         ModelType.attach_mime_xlsx to R.drawable.stream_ui_ic_file_xlsx,
         ModelType.attach_mime_ppt to R.drawable.stream_ui_ic_file_ppt,
         ModelType.attach_mime_pptx to R.drawable.stream_ui_ic_file_pptx,
-        ModelType.attach_mime_mov to R.drawable.stream_ic_file_mov,
-        ModelType.attach_mime_mp4 to R.drawable.stream_ic_file_mov,
-        ModelType.attach_mime_m4a to R.drawable.stream_ic_file_mp3,
-        ModelType.attach_mime_mp3 to R.drawable.stream_ic_file_mp3,
+        ModelType.attach_mime_mov to R.drawable.stream_ui_ic_file_mov,
+        ModelType.attach_mime_mp4 to R.drawable.stream_ui_ic_file_mov,
+        ModelType.attach_mime_m4a to R.drawable.stream_ui_ic_file_mp3,
+        ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )
 
-    fun getIcon(mimeType: String?): Int {
+    public fun getIcon(mimeType: String?): Int {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }
         return mimeTypesToIconResMap[mimeType] ?: when {
-            mimeType.contains("audio") -> R.drawable.stream_ic_file_mp3
-            mimeType.contains("video") -> R.drawable.stream_ic_file_mov
+            mimeType.contains("audio") -> R.drawable.stream_ui_ic_file_mp3
+            mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
             else -> R.drawable.stream_ui_ic_file
         }
     }
 
-    fun getReactionTypes(): Map<String, Int> {
+    internal fun getReactionTypes(): Map<String, Int> {
         return reactionTypes
     }
 }

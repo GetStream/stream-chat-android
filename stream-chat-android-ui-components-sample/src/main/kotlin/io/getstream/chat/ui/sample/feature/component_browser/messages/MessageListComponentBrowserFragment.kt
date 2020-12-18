@@ -14,7 +14,7 @@ class MessageListComponentBrowserFragment : Fragment() {
     private var _binding: FragmentComponentBrowserMessageListBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentComponentBrowserMessageListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,6 +36,12 @@ class MessageListComponentBrowserFragment : Fragment() {
         }
         binding.onlyMediaAttachments.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyMediaAttachmentsMessages)
+        }
+        binding.plainTextWithMediaAttachments.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextWithMediaAttachmentsMessages)
+        }
+        binding.onlyFileAttachments.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyFileAttachmentsMessages)
         }
     }
 }

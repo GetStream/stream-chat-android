@@ -34,7 +34,7 @@ public class FileAttachmentFragment : Fragment() {
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
     private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter {
-        updateMediaAttachment(it)
+        updateFileAttachment(it)
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
@@ -49,7 +49,7 @@ public class FileAttachmentFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = StreamUiFragmentAttachmentFileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -72,7 +72,7 @@ public class FileAttachmentFragment : Fragment() {
         attachmentSelectionListener = null
     }
 
-    private fun updateMediaAttachment(attachmentMetaData: AttachmentMetaData) {
+    private fun updateFileAttachment(attachmentMetaData: AttachmentMetaData) {
         if (attachmentMetaData.isSelected) {
             attachmentMetaData.isSelected = false
             selectedAttachments = selectedAttachments - attachmentMetaData

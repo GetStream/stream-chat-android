@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="stream_ui_spacing_small">8dp</dimen>
     <dimen name="stream_ui_spacing_medium">16dp</dimen>
+    <dimen name="stream_ui_spacing_small">8dp</dimen>
+    <dimen name="stream_ui_spacing_tiny">4dp</dimen>
 
     <dimen name="stream_ui_text_small">12sp</dimen>
     <dimen name="stream_ui_text_medium">14sp</dimen>
@@ -14,6 +15,8 @@
     <dimen name="stream_ui_avatar_text_size_small">14sp</dimen>
     <dimen name="stream_ui_avatar_text_size_medium">16sp</dimen>
     <dimen name="stream_ui_avatar_text_size_large">24sp</dimen>
+    <dimen name="stream_ui_avatar_initials">14sp</dimen>
+    <dimen name="stream_ui_avatar_border_width">3dp</dimen>
 
     <!--Command Suggestions-->
     <dimen name="stream_ui_command_icon_size">24dp</dimen>
@@ -28,6 +31,8 @@
     <dimen name="stream_ui_channel_actions_member_height">80dp</dimen>
 
     <dimen name="stream_ui_text_size_input">14sp</dimen>
+    <dimen name="stream_ui_attachment_button_width">25dp</dimen>
+    <dimen name="stream_ui_attachment_button_height">25dp</dimen>
 
     <!-- headers -->
     <dimen name="stream_ui_default_header_height">56dp</dimen>
@@ -37,6 +42,7 @@
     <dimen name="stream_ui_channel_list_item_option_icon_width">50dp</dimen>
     <dimen name="stream_ui_channel_item_progress_bar_size">16dp</dimen>
     <dimen name="stream_ui_channel_list_item_loading_height">90dp</dimen>
+    <dimen name="stream_ui_channel_header_separator_height">1dp</dimen>
 
     <!--Attachment Dialog-->
     <dimen name="stream_ui_attachment_dialog_page_height">320dp</dimen>
@@ -90,4 +96,16 @@
     <dimen name="stream_ui_scroll_button_unread_badge_size">20dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_padding_horizontal">4dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_text_size">11sp</dimen>
+
+    <!--MessageInputFieldView-->
+    <dimen name="stream_ui_message_input_command_icon_size">16dp</dimen>
+    <dimen name="stream_ui_message_input_button_size">24dp</dimen>
+
+    <dimen name="stream_ui_read_state_avatar_height">14dp</dimen>
+    <dimen name="stream_ui_read_state_avatar_width">14dp</dimen>
+    <dimen name="stream_ui_read_state_text_size">8sp</dimen>
+
+    <dimen name="stream_ui_channel_item_title">15sp</dimen>
+    <dimen name="stream_ui_channel_item_message">13sp</dimen>
+    <dimen name="stream_ui_channel_item_message_date">11sp</dimen>
 </resources>

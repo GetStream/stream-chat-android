@@ -2,13 +2,13 @@ package io.getstream.chat.android.ui.messages.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 public open class MessageListItemViewHolderFactory {
 
@@ -20,7 +20,8 @@ public open class MessageListItemViewHolderFactory {
             MessageListItemViewType.MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT -> createPlainTextViewHolder(parentView)
             MessageListItemViewType.REPLY_MESSAGE -> createReplyMessageViewHolder(parentView)
-            MessageListItemViewType.PLAIN_TEXT_WITH_ATTACHMENTS -> createPlainTextWithAttachmentsViewHolder(parentView)
+            MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(parentView)
+            MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(parentView)
             MessageListItemViewType.MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
             MessageListItemViewType.ATTACHMENTS -> createAttachmentsViewHolder(parentView)
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
@@ -44,8 +45,12 @@ public open class MessageListItemViewHolderFactory {
         return createBaseMessageItemViewHolder(parentView)
     }
 
-    public open fun createPlainTextWithAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
+    public open fun createPlainTextWithFileAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
         return createBaseMessageItemViewHolder(parentView)
+    }
+
+    private fun createPlainTextWithMediaAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
+        return PlainTextWithMediaAttachmentsViewHolder(parentView, listenerContainer)
     }
 
     public open fun createMediaAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
@@ -53,7 +58,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createBaseMessageItemViewHolder(parentView)
+        return OnlyFileAttachmentsViewHolder(parentView, listenerContainer)
     }
 
     public open fun createLoadingIndicatorViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {

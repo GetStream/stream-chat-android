@@ -17,7 +17,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagesHeaderViewBinding
+import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class MessagesHeaderView : ConstraintLayout {
@@ -70,8 +72,8 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.avatar.setUserData(user)
     }
 
-    public fun setTitle(title: String) {
-        binding.title.text = title
+    public fun setTitle(title: String?) {
+        binding.title.text = title.getOrDefault(String.EMPTY)
         binding.title.isVisible = true
     }
 
@@ -89,6 +91,14 @@ public class MessagesHeaderView : ConstraintLayout {
 
     public fun setRetryClickListener(listener: OnClickListener) {
         binding.offlineRetryButton.setOnClickListener { listener.onClick() }
+    }
+
+    public fun setTitleClickListener(listener: OnClickListener) {
+        binding.title.setOnClickListener { listener.onClick() }
+    }
+
+    public fun setSubtitleClickListener(listener: OnClickListener) {
+        binding.subtitleContainer.setOnClickListener { listener.onClick() }
     }
 
     public fun showBackButtonBadge(text: String) {

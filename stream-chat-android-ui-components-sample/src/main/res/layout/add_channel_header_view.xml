@@ -21,17 +21,12 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/membersRecyclerView"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/membersChipGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="4dp"
-        android:orientation="vertical"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/bottomBarrier"
         app:layout_constraintEnd_toStartOf="@id/addMemberButton"
         app:layout_constraintStart_toEndOf="@id/addMemberTextView"
@@ -44,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/stream_transparent"
+        android:background="@color/stream_ui_transparent"
         android:drawableEnd="@drawable/ic_member"
         android:hint="@string/add_member_hint"
         android:inputType="text"
@@ -56,7 +51,7 @@
         app:layout_constraintBottom_toBottomOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addMemberTextView"
-        app:layout_constraintTop_toBottomOf="@id/membersRecyclerView"
+        app:layout_constraintTop_toBottomOf="@id/membersChipGroup"
         tools:ignore="Autofill"
         />
 
@@ -68,7 +63,7 @@
         android:layout_marginBottom="12dp"
         android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_member_add"
-        app:layout_constraintBottom_toBottomOf="@id/membersRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@id/membersChipGroup"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="ContentDescription"
         />
@@ -84,7 +79,7 @@
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_channel_header_separator_height"
+        android:layout_height="@dimen/stream_ui_channel_header_separator_height"
         android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
         />

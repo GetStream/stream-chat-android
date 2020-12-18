@@ -1,54 +1,47 @@
 package io.getstream.chat.android.ui.suggestions
 
-import android.widget.EditText
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import java.util.regex.Pattern
 
 internal class SuggestionListController(
     private val suggestionListView: SuggestionListView,
-    private val messageTextInput: EditText
+    private val dismissListener: SuggestionListDismissListener
 ) {
     var users: List<User> = emptyList()
         set(value) {
             field = value
-            onTextChanged(messageText)
+            showSuggestions(messageText)
         }
     var commands: List<Command> = emptyList()
         set(value) {
             field = value
-            onTextChanged(messageText)
+            showSuggestions(messageText)
         }
+    private var messageText: String = String.EMPTY
 
-    private var messageText: String
-        get() = messageTextInput.text.toString()
-        set(text) {
-            messageTextInput.requestFocus()
-            messageTextInput.setText(text)
-            messageTextInput.setSelection(messageTextInput.text.length)
+    fun showSuggestions(messageText: String) {
+        this.messageText = messageText
+        when {
+            messageText.isCommandMessage() -> suggestionListView.setSuggestions(messageText.getCommandSuggestions())
+            messageText.isMentionMessage() -> suggestionListView.setSuggestions(messageText.getMentionSuggestions())
+            else -> hideSuggestionList()
         }
-
-    init {
-        suggestionListView.setOnSuggestionClickListener(
-            object : SuggestionListView.OnSuggestionClickListener {
-                override fun onMentionClick(user: User) {
-                    messageText = "${messageText.substringBeforeLast("@")}@${user.name} "
-                }
-
-                override fun onCommandClick(command: Command) {
-                    messageText = "/${command.name} "
-                }
-            }
-        )
     }
 
-    fun onTextChanged(inputText: String) {
-        when {
-            inputText.isCommandMessage() -> suggestionListView.setSuggestions(inputText.getCommandSuggestions())
-            inputText.isMentionMessage() -> suggestionListView.setSuggestions(inputText.getMentionSuggestions())
-            else -> suggestionListView.clearSuggestions()
-        }
+    fun showAvailableCommands() {
+        suggestionListView.setSuggestions(SuggestionListView.Suggestions.CommandSuggestions(commands))
+    }
+
+    fun hideSuggestionList() {
+        suggestionListView.hideSuggestionList()
+        dismissListener.onDismissed()
+    }
+
+    fun isSuggestionListVisible(): Boolean {
+        return suggestionListView.isSuggestionListVisible()
     }
 
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
@@ -67,6 +60,10 @@ internal class SuggestionListController(
         return users
             .filter { it.name.contains(namePattern, true) }
             .let { SuggestionListView.Suggestions.MentionSuggestions(it) }
+    }
+
+    internal fun interface SuggestionListDismissListener {
+        fun onDismissed()
     }
 
     companion object {

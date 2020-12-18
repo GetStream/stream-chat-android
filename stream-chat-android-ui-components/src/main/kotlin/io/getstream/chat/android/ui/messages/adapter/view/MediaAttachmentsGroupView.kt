@@ -6,9 +6,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import com.getstream.sdk.chat.adapter.constrainViewToParentBySide
-import com.getstream.sdk.chat.adapter.horizontalChainInParent
-import com.getstream.sdk.chat.adapter.verticalChainInParent
+import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
+import com.getstream.sdk.chat.utils.extensions.horizontalChainInParent
+import com.getstream.sdk.chat.utils.extensions.verticalChainInParent
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable

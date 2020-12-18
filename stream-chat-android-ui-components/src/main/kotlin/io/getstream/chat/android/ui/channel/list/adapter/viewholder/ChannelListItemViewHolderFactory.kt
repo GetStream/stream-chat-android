@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelItemType
 
 public open class ChannelListItemViewHolderFactory {
 
-    public fun createViewHolder(
+    internal fun createViewHolder(
         parentView: ViewGroup,
         channelItemType: ChannelItemType,
         channelClickListener: ChannelListView.ChannelClickListener,
@@ -16,7 +16,7 @@ public open class ChannelListItemViewHolderFactory {
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         swipeListener: ChannelListView.SwipeListener,
-        style: ChannelListViewStyle?
+        style: ChannelListViewStyle
     ): BaseChannelListItemViewHolder {
         return when (channelItemType) {
             ChannelItemType.DEFAULT -> createChannelViewHolder(
@@ -42,7 +42,7 @@ public open class ChannelListItemViewHolderFactory {
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         swipeListener: ChannelListView.SwipeListener,
-        style: ChannelListViewStyle?
+        style: ChannelListViewStyle
     ): BaseChannelListItemViewHolder {
         return ChannelViewHolder(
             parentView,

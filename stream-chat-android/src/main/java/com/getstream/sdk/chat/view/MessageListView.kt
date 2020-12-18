@@ -29,7 +29,6 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
-import com.getstream.sdk.chat.utils.extensions.exhaustive
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
@@ -49,6 +48,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.exhaustive
 import kotlin.math.max
 import kotlin.math.min
 
@@ -366,6 +366,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             loadMoreListener.disablePagination()
         } else {
             loadMoreListener.enablePagination()
+        }
+    }
+
+    override fun scrollToMessage(message: Message) {
+        val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
+        targetListItem?.let {
+            val position = adapter.currentList.indexOf(it)
+            binding.chatMessagesRV.layoutManager?.scrollToPosition(position)
         }
     }
 

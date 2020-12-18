@@ -22,8 +22,11 @@ jobs:
         run: |
           git fetch --unshallow
           sudo bash -c "echo '$GPG_KEY_CONTENTS' | base64 -d > '$SIGNING_SECRET_KEY_RING_FILE'"
-      - name: Release build and source jar generation
-        run: ./gradlew :stream-chat-android:assembleRelease :stream-chat-android-client:assembleRelease :stream-chat-android-core:assemble :stream-chat-android-offline:assembleRelease :stream-chat-android-ui-components:assembleRelease
+      - name: Release build
+        # assembleRelease for all modules, excluding non-library modules: sample, ui-components sample, docs
+        run: ./gradlew assembleRelease -x :stream-chat-android-sample:assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease
+      - name: Source jar and dokka
+        run: ./gradlew androidSourcesJar javadocJar
       - name: Publish to MavenCentral
         run: ./gradlew publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseRepository
         env:

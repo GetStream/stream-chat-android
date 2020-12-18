@@ -17,10 +17,12 @@ import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getFragmentManager
+import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class GroupChatInfoFragment : Fragment() {
 
@@ -60,6 +62,11 @@ class GroupChatInfoFragment : Fragment() {
             }
         }
         bindGroupInfoViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustResize()
     }
 
     override fun onDestroyView() {
@@ -116,7 +123,9 @@ class GroupChatInfoFragment : Fragment() {
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
-                ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
+                )
                 ChatInfoItem.Option.LeaveGroup -> viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }

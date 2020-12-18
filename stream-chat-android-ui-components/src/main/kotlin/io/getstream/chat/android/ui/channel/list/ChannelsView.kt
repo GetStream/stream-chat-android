@@ -11,19 +11,16 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    private val CHANNEL_LIST_VIEW_ID = R.id.stream_channels_list_view_id
+    private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
     private var emptyStateView: View = defaultEmptyStateView()
 
@@ -45,20 +42,12 @@ public class ChannelsView @JvmOverloads constructor(
             addView(loadingView, defaultChildLayoutParams)
         }
 
-        setMoreOptionsClickListener { channel ->
-            context.getFragmentManager()?.let { fragmentManager ->
-                ChannelActionsDialogFragment
-                    .newInstance(channel.cid, !channel.isDirectMessaging())
-                    .show(fragmentManager, null)
-            }
-        }
-
         parseAttrs(attrs)
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
-            it.getText(R.styleable.ChannelsView_streamChannelsEmptyStateLabelText)?.let { emptyStateText ->
+            it.getText(R.styleable.ChannelsView_streamUiChannelsEmptyStateLabelText)?.let { emptyStateText ->
                 emptyStateView.apply {
                     if (this is TextView) {
                         text = emptyStateText
@@ -66,7 +55,10 @@ public class ChannelsView @JvmOverloads constructor(
                 }
             }
 
-            it.getResourceId(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable, R.drawable.stream_ui_divider)
+            it.getResourceId(
+                R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable,
+                R.drawable.stream_ui_divider
+            )
                 .let { separator ->
                     channelListView.setItemSeparator(separator)
                 }
@@ -205,6 +197,6 @@ public class ChannelsView @JvmOverloads constructor(
     private fun defaultLoadingView(): View = ProgressBar(context)
 
     private fun defaultEmptyStateView(): View = TextView(context).apply {
-        setText(R.string.stream_channels_empty_state_label)
+        setText(R.string.stream_ui_channels_empty_state_label)
     }
 }

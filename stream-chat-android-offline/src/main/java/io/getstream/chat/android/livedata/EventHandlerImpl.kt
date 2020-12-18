@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata
 
-import exhaustive
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -59,6 +58,7 @@ import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.extensions.setMember
@@ -431,15 +431,12 @@ internal class EventHandlerImpl(
                     domainImpl.setOffline()
                 }
                 is ConnectedEvent -> {
-                    val recovered = domainImpl.isInitialized()
-
                     domainImpl.setOnline()
                     domainImpl.setInitialized()
-                    if (recovered && domainImpl.recoveryEnabled) {
-                        domainImpl.connectionRecovered(true)
-                    } else {
-                        domainImpl.connectionRecovered(false)
-                    }
+                    domainImpl.connectionRecovered(domainImpl.recoveryEnabled)
+                }
+                is HealthEvent -> {
+                    domainImpl.connectionRecovered(false)
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.viewmodel
 
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
-import com.getstream.sdk.chat.utils.InstantTaskExecutorExtension
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -14,7 +13,9 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.usecase.CreateChannel
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.observeAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldContainSame

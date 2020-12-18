@@ -19,6 +19,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.setBadgeNumber
 import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
+import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
 
 class HomeFragment : Fragment() {
 
@@ -65,6 +66,11 @@ class HomeFragment : Fragment() {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useAdjustNothing()
     }
 
     override fun onDestroyView() {

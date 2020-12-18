@@ -23,7 +23,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
 
     fun onAction(action: Action) {
         when (action) {
-            Action.AvatarClicked -> {
+            Action.HeaderClicked -> {
                 val controller = requireNotNull(channelController)
                 controller.members.value?.let { members ->
                     _navigationEvent.value = Event(
@@ -39,7 +39,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
     }
 
     sealed class Action {
-        object AvatarClicked : Action()
+        object HeaderClicked : Action()
     }
 
     sealed class NavigationEvent {

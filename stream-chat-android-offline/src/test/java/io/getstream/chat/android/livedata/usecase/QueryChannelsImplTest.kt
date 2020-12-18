@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.calendar
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

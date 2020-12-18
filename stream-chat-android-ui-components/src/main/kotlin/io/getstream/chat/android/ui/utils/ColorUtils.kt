@@ -17,11 +17,11 @@ internal fun adjustColorLBrightness(color: Int, factor: Float): Int {
     )
 }
 
-internal fun getColorList(normalColor: Int, pressedColor: Int, disabledColor: Int) = ColorStateList(
+internal fun getColorList(normalColor: Int, selectedColor: Int, disabledColor: Int) = ColorStateList(
     arrayOf(
-        intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_pressed),
-        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
+        intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_selected),
+        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected),
         intArrayOf(-android.R.attr.state_enabled)
     ),
-    intArrayOf(normalColor, pressedColor, disabledColor)
+    intArrayOf(normalColor, selectedColor, disabledColor)
 )

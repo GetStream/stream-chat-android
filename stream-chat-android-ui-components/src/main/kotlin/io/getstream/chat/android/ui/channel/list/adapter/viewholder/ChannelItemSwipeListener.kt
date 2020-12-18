@@ -1,27 +1,17 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
-import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ScrollPauseLinearLayoutManager
-import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.safeCast
 
-internal class ChannelItemSwipeListener(
-    context: Context,
+internal class ChannelItemSwipeListener @JvmOverloads constructor(
     val recyclerView: RecyclerView,
-    val layoutManager: ScrollPauseLinearLayoutManager
+    val layoutManager: ScrollPauseLinearLayoutManager,
+    private val swipeStateByPosition: MutableMap<Int, SwipeState> = mutableMapOf(),
+    private var multiSwipeEnabled: Boolean = false
 ) : ChannelListView.SwipeListener {
-
-    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * ChannelViewHolder.OPTIONS_COUNT
-    private val openValue = -optionsMenuWidth
-    private val closedValue = 0f
-    private val swipeRange = openValue..closedValue
-    private val swipeStateByPosition = mutableMapOf<Int, SwipeState>()
-    var multiSwipeEnabled: Boolean = false
 
     // Represents the internal swipe state of the ViewHolder
     sealed class SwipeState {
@@ -29,76 +19,67 @@ internal class ChannelItemSwipeListener(
         internal object Closed : SwipeState()
     }
 
-    override fun onSwipeStarted(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
+    override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // pause scrolling
         layoutManager.verticalScrollEnabled = false
     }
 
-    override fun onSwipeChanged(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, dX: Float) {
-        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
-            val itemViewForeground = channelViewHolder.getItemViewForeground()
-            // determine the new x value by adding the delta calculated from the move
-            val projectedX = itemViewForeground.x + dX
-            // clamp it and animate if necessary
-            projectedX.coerceIn(swipeRange).let { clampedX ->
-                // set the new x if it's different
-                if (itemViewForeground.x != clampedX) {
-                    itemViewForeground.x = clampedX
-                }
+    override fun onSwipeChanged(viewHolder: SwipeViewHolder, adapterPosition: Int, dX: Float, totalDeltaX: Float) {
+        // our edge starts at 0, so our x can always be clamped into our delta range
+        val projectedX = viewHolder.getSwipeView().x + dX
+        // clamp it and animate if necessary
+        projectedX.coerceIn(viewHolder.getSwipeDeltaRange()).let { clampedX ->
+            // set the new x if it's different
+            val swipeView = viewHolder.getSwipeView()
+            if (swipeView.x != clampedX) {
+                swipeView.x = clampedX
             }
         }
     }
 
-    override fun onSwipeCompleted(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
-        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
-            val itemViewForeground = channelViewHolder.getItemViewForeground()
-            // determine snap value
-            val snapValue = when {
-                itemViewForeground.x <= openValue / 2 -> openValue
-                else -> closedValue
-            }
-            // animate to snap
-            itemViewForeground.animateSwipeToValue(snapValue)
-            // determine swipe state
-            val swipeState = when {
-                snapValue < 0 -> SwipeState.Open
-                else -> SwipeState.Closed
-            }
-            // persist swipe state for the current item
-            swipeStateByPosition[adapterPosition] = swipeState
-            // potentially reset all other items
-            if (!multiSwipeEnabled && swipeState == SwipeState.Open) {
-                closeAllOtherPositions(adapterPosition)
-            }
-            // re-enable scrolling
-            layoutManager.verticalScrollEnabled = true
+    override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
+        // determine snap value
+        val openedX = viewHolder.getOpenedX()
+        val snapValue = when {
+            viewHolder.getSwipeView().x <= openedX / 2 -> openedX
+            else -> viewHolder.getClosedX()
         }
-    }
-
-    override fun onSwipeCanceled(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int, x: Float, y: Float) {
-        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
-            // animate closed
-            channelViewHolder
-                .getItemViewForeground()
-                .animateSwipeToValue(closedValue)
-            // persist swipe state
-            swipeStateByPosition[adapterPosition] = SwipeState.Closed
+        // animate to snap
+        viewHolder.getSwipeView().animateSwipeTo(snapValue)
+        // determine swipe state
+        val swipeState = when {
+            snapValue < 0 -> SwipeState.Open
+            else -> SwipeState.Closed
         }
-
+        // persist swipe state for the current item
+        swipeStateByPosition[adapterPosition] = swipeState
+        // potentially reset all other items
+        if (!multiSwipeEnabled && swipeState == SwipeState.Open) {
+            closeAllOtherPositions(adapterPosition)
+        }
         // re-enable scrolling
         layoutManager.verticalScrollEnabled = true
     }
 
-    override fun onRestoreSwipePosition(viewHolder: RecyclerView.ViewHolder, adapterPosition: Int) {
-        viewHolder.safeCast<ChannelViewHolder>()?.let { channelViewHolder ->
-            channelViewHolder.getItemViewForeground().x = when (swipeStateByPosition[adapterPosition]) {
-                SwipeState.Open -> -optionsMenuWidth
-                else -> 0f
+    override fun onSwipeCanceled(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
+        // animate closed
+        viewHolder.getSwipeView().animateSwipeTo(viewHolder.getClosedX())
+        // persist swipe state
+        swipeStateByPosition[adapterPosition] = SwipeState.Closed
+        // re-enable scrolling
+        layoutManager.verticalScrollEnabled = true
+    }
+
+    override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) {
+        viewHolder.apply {
+            getSwipeView().x = when (swipeStateByPosition[adapterPosition]) {
+                SwipeState.Open -> getOpenedX()
+                else -> getClosedX()
             }
         }
     }
 
-    private fun View.animateSwipeToValue(value: Float) {
+    private fun View.animateSwipeTo(value: Float) {
         animate()
             .x(value)
             .setStartDelay(0)
@@ -125,9 +106,7 @@ internal class ChannelItemSwipeListener(
                             layoutManager.isViewPartiallyVisible(viewHolder.itemView, false, false)
                         val onScreen = viewCompletelyVisible || viewPartiallyVisible
                         if (onScreen) {
-                            viewHolder
-                                .getItemViewForeground()
-                                .animateSwipeToValue(closedValue)
+                            viewHolder.getSwipeView().animateSwipeTo(viewHolder.getClosedX())
                         }
                     }
             }

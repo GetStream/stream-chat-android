@@ -14,7 +14,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -24,32 +23,32 @@ import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.IMessageListView
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
-import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
-import com.getstream.sdk.chat.view.MessageListView.UserClickListener
-import com.getstream.sdk.chat.view.channels.ChannelsView
-import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
+import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.reactions.ReactionsOverlayDialogFragment
+import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.ReactionType
-import io.getstream.chat.android.ui.utils.extensions.exhaustive
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlin.math.max
 import kotlin.math.min
@@ -63,6 +62,11 @@ import kotlin.math.min
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
 public class MessageListView : ConstraintLayout, IMessageListView {
+
+    private companion object {
+        const val LOAD_MORE_TRESHOLD = 10
+    }
+
     private var firstVisiblePosition = 0
 
     private lateinit var style: MessageListViewStyle
@@ -193,9 +197,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
     private val DEFAULT_READ_STATE_CLICK_LISTENER =
         ReadStateClickListener { reads: List<ChannelUserRead> ->
-            ReadUsersDialog(context)
-                .setReads(reads)
-                .show()
+            // TODO implement
         }
     private val DEFAULT_GIPHY_SEND_LISTENER =
         GiphySendListener { message, action ->
@@ -289,8 +291,8 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
         tArray.getInteger(
-            R.styleable.MessageListView_streamLoadMoreThreshold,
-            context.resources.getInteger(R.integer.stream_load_more_threshold)
+            R.styleable.MessageListView_streamUiLoadMoreThreshold,
+            LOAD_MORE_TRESHOLD,
         ).also { loadMoreThreshold ->
             loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
                 endRegionReachedHandler()
@@ -306,18 +308,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
         scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
 
-        newMessagesTextSingle =
-            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
-        newMessagesTextPlural =
-            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural)
         newMessagesBehaviour = NewMessagesBehaviour.parseValue(
             tArray.getInt(
-                R.styleable.MessageListView_streamNewMessagesBehaviour,
+                R.styleable.MessageListView_streamUiNewMessagesBehaviour,
                 NewMessagesBehaviour.COUNT_UPDATE.value
             )
         )
 
-        tArray.getText(R.styleable.MessageListView_streamMessagesEmptyStateLabelText)
+        tArray.getText(R.styleable.MessageListView_streamUiMessagesEmptyStateLabelText)
             ?.let { emptyStateText ->
                 emptyStateView.let {
                     if (it is TextView) {
@@ -336,44 +334,44 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     private fun configureMessageOptions(tArray: TypedArray) {
         val iconsTint = tArray.getColor(
-            R.styleable.MessageListView_streamMessageOptionIconColor,
+            R.styleable.MessageListView_streamUiMessageOptionIconColor,
             ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        val replyText = tArray.getString(R.styleable.MessageListView_streamReplyOptionMessage) ?: "Reply"
+        val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage) ?: "Reply"
         val replyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamReplyOptionIcon,
+            R.styleable.MessageListView_streamUiReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
         val threadReplyText =
-            tArray.getString(R.styleable.MessageListView_streamThreadReplyOptionMessage) ?: "Thread Reply"
+            tArray.getString(R.styleable.MessageListView_streamUiThreadReplyOptionMessage) ?: "Thread Reply"
         val threadReplyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamThreadReplyOptionIcon,
+            R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
         )
 
-        val copyText = tArray.getString(R.styleable.MessageListView_streamCopyOptionMessage) ?: "Copy"
+        val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage) ?: "Copy"
         val copyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamCopyOptionIcon,
+            R.styleable.MessageListView_streamUiCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
         )
 
-        val muteText = tArray.getString(R.styleable.MessageListView_streamMuteOptionMessage) ?: "Mute"
+        val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage) ?: "Mute"
         val muteIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamMuteOptionIcon,
+            R.styleable.MessageListView_streamUiMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
         )
 
-        val blockText = tArray.getString(R.styleable.MessageListView_streamBlockOptionMessage) ?: "Block user"
+        val blockText = tArray.getString(R.styleable.MessageListView_streamUiBlockOptionMessage) ?: "Block user"
         val blockIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamBlockOptionIcon,
+            R.styleable.MessageListView_streamUiBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
         )
 
-        val deleteText = tArray.getString(R.styleable.MessageListView_streamDeleteOptionMessage) ?: "Delete user"
+        val deleteText = tArray.getString(R.styleable.MessageListView_streamUiDeleteOptionMessage) ?: "Delete user"
         val deleteIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamDeleteOptionIcon,
+            R.styleable.MessageListView_streamUiDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete
         )
 
@@ -399,6 +397,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             loadMoreListener.disablePagination()
         } else {
             loadMoreListener.enablePagination()
+        }
+    }
+
+    override fun scrollToMessage(message: Message) {
+        val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
+        targetListItem?.let {
+            val position = adapter.currentList.indexOf(it)
+            binding.chatMessagesRV.layoutManager?.scrollToPosition(position)
         }
     }
 
@@ -739,6 +745,38 @@ public class MessageListView : ConstraintLayout, IMessageListView {
 
     public fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
         this.onStartThreadListener = onStartThreadListener
+    }
+
+    public fun interface MessageClickListener {
+        public fun onMessageClick(message: Message)
+    }
+
+    public fun interface MessageRetryListener {
+        public fun onRetryMessage(message: Message)
+    }
+
+    public fun interface MessageLongClickListener {
+        public fun onMessageLongClick(message: Message)
+    }
+
+    public fun interface AttachmentClickListener {
+        public fun onAttachmentClick(message: Message, attachment: Attachment)
+    }
+
+    public fun interface GiphySendListener {
+        public fun onGiphySend(message: Message, action: GiphyAction)
+    }
+
+    public fun interface UserClickListener {
+        public fun onUserClick(user: User)
+    }
+
+    public fun interface ReadStateClickListener {
+        public fun onReadStateClick(reads: List<ChannelUserRead>)
+    }
+
+    public fun interface ReactionViewClickListener {
+        public fun onReactionViewClick(message: Message)
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {

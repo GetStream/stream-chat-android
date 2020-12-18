@@ -1,68 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    >
 
-    <TextView
-        android:id="@+id/pageTitle"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Component Browser Message List"
-        android:layout_margin="8dp"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"
-        />
-
-    <TextView
-        android:id="@+id/deletedMessages"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:padding="16dp"
-        android:text="Deleted messages"
-        />
+        android:orientation="vertical"
+        >
 
-    <TextView
-        android:id="@+id/dateDivider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:padding="16dp"
-        android:text="Date divider"
-        />
+        <TextView
+            android:id="@+id/pageTitle"
+            style="@style/TextAppearance.MaterialComponents.Headline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center_horizontal"
+            android:text="Component Browser Message List"
+            />
 
-    <TextView
-        android:id="@+id/plainTextMessages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:padding="16dp"
-        android:text="Plain text messages"
-        />
+        <TextView
+            android:id="@+id/deletedMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Deleted messages"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
 
-    <TextView
-        android:id="@+id/onlyMediaAttachments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_component_browser_item_background"
-        android:padding="16dp"
-        android:text="Only media attachments messages"
-        />
+        <TextView
+            android:id="@+id/dateDivider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Date divider"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/plainTextMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Plain text messages"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
+
+        <TextView
+            android:id="@+id/onlyMediaAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Only media attachments messages"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
+
+        <TextView
+            android:id="@+id/plainTextWithMediaAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Plain text with media attachments"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
+
+        <TextView
+            android:id="@+id/onlyFileAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Only file attachments messages"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            />
+
+    </LinearLayout>
+
+</ScrollView>

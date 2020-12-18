@@ -12,9 +12,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.utils.InstantTaskExecutorExtension
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job

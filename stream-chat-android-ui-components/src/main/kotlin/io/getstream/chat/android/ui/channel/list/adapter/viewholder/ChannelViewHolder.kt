@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -17,10 +18,10 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroun
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
-import io.getstream.chat.android.ui.utils.extensions.inflater
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
@@ -34,37 +35,54 @@ public class ChannelViewHolder @JvmOverloads constructor(
     private val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     private val userClickListener: ChannelListView.UserClickListener,
     private val swipeListener: ChannelListView.SwipeListener,
-    private val style: ChannelListViewStyle?,
+    private val style: ChannelListViewStyle,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
         parent,
         false
     )
-) : BaseChannelListItemViewHolder(binding.root) {
+) : SwipeViewHolder(binding.root) {
 
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
     public companion object {
         public const val OPTIONS_COUNT: Int = 2
-
-        // persists menu states for channels - becomes necessary when view holders are recycled
     }
+
+    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
+    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
         configureBackground(channel)
     }
 
-    public fun getItemViewForeground(): View = binding.itemForegroundView.root
+    override fun getSwipeView(): View {
+        return binding.itemForegroundView.root
+    }
 
-    public fun getItemViewBackground(): View = binding.itemBackgroundView.root
+    override fun getOpenedX(): Float {
+        return -optionsMenuWidth
+    }
+
+    override fun getClosedX(): Float {
+        return 0f
+    }
+
+    override fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float> {
+        val openedX = getOpenedX()
+        val closedX = getClosedX()
+        return openedX.coerceAtMost(closedX)..openedX.coerceAtLeast(closedX)
+    }
 
     private fun configureBackground(channel: Channel) {
         binding.itemBackgroundView.apply {
             moreOptionsImageView.setOnClickListener {
                 channelMoreOptionsListener.onClick(channel)
+                swipeListener.onSwipeCanceled(this@ChannelViewHolder, absoluteAdapterPosition)
             }
+
             deleteImageView.setOnClickListener {
                 channelDeleteListener.onClick(channel)
             }
@@ -99,7 +117,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
             configureClickListeners(channel, channelClickListener, channelLongClickListener)
 
-            style?.let { applyStyle(this, it) }
+            applyStyle(style)
         }
     }
 
@@ -119,7 +137,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
-        channelNameLabel.text = channel.getDisplayName()
+        channelNameLabel.text = channel.getDisplayName(context)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView(
@@ -127,11 +145,14 @@ public class ChannelViewHolder @JvmOverloads constructor(
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener
     ) {
-        avatarView.setChannelData(channel)
-        avatarView.setOnClickListener {
-            when {
-                channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
-                else -> channelClickListener.onClick(channel)
+        avatarView.apply {
+            setStyle(style.avatarStyle)
+            setChannelData(channel)
+            setOnClickListener {
+                when {
+                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    else -> channelClickListener.onClick(channel)
+                }
             }
         }
     }
@@ -216,7 +237,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
     private var styleApplied = false
 
-    private fun applyStyle(binding: StreamUiChannelListItemForegroundViewBinding, style: ChannelListViewStyle) {
+    private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
         if (styleApplied) {
             return
         }

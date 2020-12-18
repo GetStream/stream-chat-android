@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

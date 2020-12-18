@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getFragmentManager
@@ -94,12 +95,15 @@ class ChatInfoFragment : Fragment() {
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
-                ChatInfoItem.Option.SharedFiles -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
+                )
                 ChatInfoItem.Option.SharedGroups -> {
-                    val memberId = viewModel.state.value!!.member.getUserId()
+                    val member = viewModel.state.value!!.member
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
-                            memberId
+                            member.getUserId(),
+                            member.user.name,
                         )
                     )
                 }

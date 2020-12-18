@@ -2,13 +2,30 @@ package io.getstream.chat.android.ui.mentions
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.widget.Toast
+import android.widget.ViewFlipper
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.databinding.StreamUiMentionsListViewBinding
 
-public class MentionsListView : RecyclerView {
+public class MentionsListView : ViewFlipper {
+
+    private companion object {
+        const val LOAD_MORE_THRESHOLD = 10
+    }
+
+    private object Flipper {
+        const val RESULTS = 0
+        const val EMPTY = 1
+        const val LOADING = 2
+    }
+
+    private val binding = StreamUiMentionsListViewBinding.inflate(LayoutInflater.from(context), this)
 
     public constructor(context: Context) : super(context) {
         init(null)
@@ -18,29 +35,28 @@ public class MentionsListView : RecyclerView {
         init(attrs)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init(attrs)
-    }
-
     private val adapter = MentionsListAdapter(context, ChatDomain.instance())
+
+    private var loadMoreListener: LoadMoreListener? = null
+
+    private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
+        loadMoreListener?.onLoadMoreRequested()
+    }
 
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
-        setHasFixedSize(true)
-        setAdapter(adapter)
-        layoutManager = LinearLayoutManager(context).apply {
-            orientation = LinearLayoutManager.VERTICAL
-        }
-        addItemDecoration(
-            DividerItemDecoration(
-                context,
-                LinearLayoutManager.VERTICAL
+
+        binding.mentionsListRecyclerView.apply {
+            setHasFixedSize(true)
+            adapter = this@MentionsListView.adapter
+            addItemDecoration(
+                DividerItemDecoration(
+                    context,
+                    LinearLayoutManager.VERTICAL
+                )
             )
-        )
+            addOnScrollListener(scrollListener)
+        }
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
@@ -48,6 +64,10 @@ public class MentionsListView : RecyclerView {
     }
 
     public fun setMessages(messages: List<Message>) {
+        val isEmpty = messages.isEmpty()
+
+        displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
+
         adapter.submitList(messages)
     }
 
@@ -55,7 +75,24 @@ public class MentionsListView : RecyclerView {
         adapter.setMentionSelectedListener(mentionSelectedListener)
     }
 
+    public fun showLoading() {
+        displayedChild = Flipper.LOADING
+        scrollListener.disablePagination()
+    }
+
+    public fun showError() {
+        Toast.makeText(context, R.string.stream_ui_mentions_list_error, Toast.LENGTH_SHORT).show()
+    }
+
+    public fun setLoadMoreListener(loadMoreListener: LoadMoreListener?) {
+        this.loadMoreListener = loadMoreListener
+    }
+
     public fun interface MentionSelectedListener {
         public fun onMentionSelected(message: Message)
+    }
+
+    public fun interface LoadMoreListener {
+        public fun onLoadMoreRequested()
     }
 }
