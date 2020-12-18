@@ -72,7 +72,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
 import java.io.File
@@ -1329,7 +1328,7 @@ internal class ChannelControllerImpl(
         newerMessagesOffset: Int,
         olderMessagesOffset: Int
     ): Result<Message> {
-        val result = withContext(domainImpl.scope.coroutineContext) { client.getMessage(messageId).execute() }
+        val result = domainImpl.scope.async { client.getMessage(messageId).execute() }.await()
         if (result.isError) {
             return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
