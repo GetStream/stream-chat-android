@@ -25,15 +25,20 @@ internal class FileAttachmentsView : RecyclerView {
         layoutManager = LinearLayoutManager(context)
     }
 
-    fun setAttachments(attachments: List<Attachment>) {
-        adapter = FileAttachmentsAdapter(attachments)
+    fun setAttachments(attachments: List<Attachment>, listener: (Attachment) -> Unit) {
+        adapter = FileAttachmentsAdapter(attachments, listener)
     }
 }
 
-private class FileAttachmentsAdapter(private val attachments: List<Attachment>) :
-    RecyclerView.Adapter<FileAttachmentViewHolder>() {
+private class FileAttachmentsAdapter(
+    private val attachments: List<Attachment>,
+    private val listener: (Attachment) -> Unit = {}
+) : RecyclerView.Adapter<FileAttachmentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
-        return StreamUiItemFileAttachmentBinding.inflate(parent.inflater, parent, false).let(::FileAttachmentViewHolder)
+        return FileAttachmentViewHolder(
+            StreamUiItemFileAttachmentBinding.inflate(parent.inflater, parent, false),
+            listener
+        )
     }
 
     override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int) {
@@ -43,7 +48,10 @@ private class FileAttachmentsAdapter(private val attachments: List<Attachment>) 
     override fun getItemCount(): Int = attachments.size
 }
 
-private class FileAttachmentViewHolder(private val binding: StreamUiItemFileAttachmentBinding) :
+private class FileAttachmentViewHolder(
+    private val binding: StreamUiItemFileAttachmentBinding,
+    private val listener: (Attachment) -> Unit
+) :
     RecyclerView.ViewHolder(binding.root) {
 
     init {
@@ -62,6 +70,7 @@ private class FileAttachmentViewHolder(private val binding: StreamUiItemFileAtta
         binding.fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
         binding.fileTitle.text = attachment.title
         binding.fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+        binding.actionButton.setOnClickListener { listener(attachment) }
     }
 
     companion object {
