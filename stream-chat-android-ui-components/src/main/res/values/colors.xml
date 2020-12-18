@@ -32,7 +32,6 @@
     <color name="stream_ui_black_50">#80000000</color>
     <color name="stream_ui_black_60">#99000000</color>
     <color name="stream_ui_white">#FFFFFF</color>
-    <color name="stream_ui_dark_background">#101418</color>
     <color name="stream_ui_alabaster">#FCFCFC</color>
     <color name="stream_ui_concrete">#F2F2F2</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>
@@ -62,6 +61,9 @@
     <color name="stream_ui_input_message_send_button">#0076FF</color>
 
     <color name="stream_ui_channel_item_text_color">@color/stream_ui_black</color>
-
     <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
+
+    <color name="stream_ui_background_light">@color/stream_ui_white</color>
+    <color name="stream_ui_background_alabaster">@color/stream_ui_alabaster</color>
+    <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
 </resources>

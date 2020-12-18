@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.textinput
 
 import android.content.Context
-import android.content.res.Configuration
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -102,12 +101,6 @@ public class MessageInputFieldView : FrameLayout {
                 R.drawable.stream_ui_ic_command,
                 R.dimen.stream_ui_message_input_command_icon_size
             )
-
-            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_NO -> R.drawable.stream_ui_shape_edit_text_round
-                Configuration.UI_MODE_NIGHT_YES -> R.drawable.stream_ui_shape_edit_text_round_dark
-                else -> R.drawable.stream_ui_shape_edit_text_round
-            }.let(root::setBackgroundResource)
         }
     }
 

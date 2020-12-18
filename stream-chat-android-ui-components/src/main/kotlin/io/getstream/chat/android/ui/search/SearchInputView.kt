@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
-import android.content.res.Configuration
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -74,24 +73,10 @@ public class SearchInputView : FrameLayout {
             }
         }
 
-        binding.clearInputButton.run {
-            setOnClickListener {
-                clear()
-            }
-
-            setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_grey_dark))
+        binding.clearInputButton.setOnClickListener {
+            clear()
         }
 
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                binding.searchIcon.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_white))
-                binding.root.setBackgroundResource(R.drawable.stream_ui_shape_search_view_background_dark)
-            }
-            else -> {
-                binding.searchIcon.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_black))
-                binding.root.setBackgroundResource(R.drawable.stream_ui_shape_search_view_background)
-            }
-        }
 
         updateClearButtonVisibility(query)
     }

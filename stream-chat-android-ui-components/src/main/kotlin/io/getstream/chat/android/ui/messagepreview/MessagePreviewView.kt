@@ -54,13 +54,7 @@ public class MessagePreviewView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        binding.contentRoot.setBackgroundColor(getItemBackgroundColor())
-
         parseAttrs(attrs)
-    }
-
-    private fun getItemBackgroundColor(): Int {
-        return getBackgroundColor(context).let { colorRes -> ContextCompat.getColor(context, colorRes) }
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {

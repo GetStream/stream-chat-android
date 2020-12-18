@@ -52,8 +52,6 @@ public class MessagesHeaderView : ConstraintLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
-        configColors()
-
         context.obtainStyledAttributes(attrs, R.styleable.MessagesHeaderView).use {
             configUserAvatar(it)
             configTitle(it)
@@ -147,25 +145,6 @@ public class MessagesHeaderView : ConstraintLayout {
 
     public fun hideAvatar() {
         binding.avatar.isVisible = false
-    }
-
-    private fun configColors() {
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                binding.headerRoot.setBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.stream_ui_dark_background
-                    )
-                )
-
-                binding.backButton.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_white))
-            }
-            else -> {
-                binding.headerRoot.setBackgroundColor(ContextCompat.getColor(context, R.color.stream_ui_white))
-                binding.backButton.setColorFilter(ContextCompat.getColor(context, R.color.stream_ui_black))
-            }
-        }
     }
 
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {

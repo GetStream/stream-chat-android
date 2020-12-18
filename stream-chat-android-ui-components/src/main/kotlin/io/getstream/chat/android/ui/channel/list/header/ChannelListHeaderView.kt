@@ -42,23 +42,11 @@ public class ChannelListHeaderView : ConstraintLayout {
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        configColors()
-
         context.obtainStyledAttributes(attrs, R.styleable.ChannelListHeaderView).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
             configAddChannelButton(typedArray)
-        }
-    }
-
-    private fun configColors() {
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_white
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_dark_background
-            else -> R.color.stream_ui_white
-        }.let { colorRes ->
-            binding.channelListHeader.setBackgroundColor(ContextCompat.getColor(context, colorRes))
         }
     }
 

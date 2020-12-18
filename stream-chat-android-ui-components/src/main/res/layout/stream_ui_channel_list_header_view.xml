@@ -5,7 +5,7 @@
     android:id="@+id/channelListHeader"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/stream_ui_background_light"
     tools:layout_height="@dimen/stream_ui_default_header_height"
     >
 

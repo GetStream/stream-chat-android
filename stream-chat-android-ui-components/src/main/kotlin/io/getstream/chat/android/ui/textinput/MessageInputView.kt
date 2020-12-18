@@ -30,7 +30,6 @@ import io.getstream.chat.android.ui.suggestions.SuggestionListController
 import io.getstream.chat.android.ui.suggestions.SuggestionListView
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.getBackgroundColor
 import io.getstream.chat.android.ui.utils.getColorList
 import io.getstream.chat.android.ui.utils.getTextColor
 import kotlinx.coroutines.GlobalScope
@@ -163,13 +162,8 @@ public class MessageInputView : ConstraintLayout {
             configSendButton(typedArray)
             configSendAlsoToChannelCheckboxVisibility(typedArray)
         }
-        configColours()
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
-    }
-
-    private fun configColours() {
-        binding.root.setBackgroundColor(ContextCompat.getColor(context, getBackgroundColor(context)))
     }
 
     private fun configSendButtonListener() {

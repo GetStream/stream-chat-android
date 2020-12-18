@@ -5,7 +5,7 @@
     android:id="@+id/content_root"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_message_preview_item_height"
-    android:background="@color/stream_ui_alabaster"
+    android:background="@color/stream_ui_background_alabaster"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView

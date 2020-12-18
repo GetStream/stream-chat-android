@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="stream_ui_channel_item_text_color">@color/stream_ui_white</color>
+
+    <color name="stream_ui_background_light">#101418</color>
+
+    <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
+
+    <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
+</resources>
