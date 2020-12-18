@@ -5,7 +5,6 @@ import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
