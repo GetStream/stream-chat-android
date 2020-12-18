@@ -1012,7 +1012,8 @@ public class ChatClient internal constructor(
         public fun isValidRemoteMessage(
             remoteMessage: RemoteMessage,
             defaultNotificationConfig: NotificationConfig = NotificationConfig()
-        ): Boolean =
-            instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
+        ): Boolean {
+            return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
+        }
     }
 }
