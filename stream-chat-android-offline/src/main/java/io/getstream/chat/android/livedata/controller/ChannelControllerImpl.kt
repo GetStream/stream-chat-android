@@ -111,7 +111,7 @@ internal class ChannelControllerImpl(
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
-
+    internal var errorWatching = false
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
 
@@ -365,6 +365,7 @@ internal class ChannelControllerImpl(
             return
         }
         runChannelQuery(QueryChannelPaginationRequest(limit))
+        errorWatching = recoveryNeeded
     }
 
     private fun loadMoreMessagesRequest(
