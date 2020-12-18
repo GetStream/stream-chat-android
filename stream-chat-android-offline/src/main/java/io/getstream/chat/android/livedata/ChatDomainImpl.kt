@@ -598,6 +598,11 @@ internal class ChatDomainImpl internal constructor(
         // 0 ensure load is complete
         initJob.join()
 
+        activeChannelMapImpl
+            .values
+            .filter { it.errorWatching }
+            .forEach { it.watch() }
+
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
