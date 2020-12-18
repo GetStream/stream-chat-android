@@ -170,7 +170,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

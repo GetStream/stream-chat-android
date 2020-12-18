@@ -70,6 +70,7 @@ internal class EventHandlerImpl(
     private val domainImpl: ChatDomainImpl
 ) {
     private var logger = ChatLogger.get("EventHandler")
+    private var firstConnect = true
 
     internal fun handleEvents(events: List<ChatEvent>) {
         handleConnectEvents(events)
@@ -94,11 +95,21 @@ internal class EventHandlerImpl(
                     domainImpl.setOnline()
                     domainImpl.setInitialized()
                     domainImpl.scope.launch {
-                        if (recovered && domainImpl.recoveryEnabled) {
-                            domainImpl.connectionRecovered(true)
-                        } else {
-                            domainImpl.connectionRecovered(false)
+                        if (domainImpl.recoveryEnabled) {
+                            // the first time we connect we should only run recovery against channels and queries that had a failure
+                            if (firstConnect) {
+                                firstConnect = false
+                                domainImpl.connectionRecovered(false)
+                            } else {
+                                // the second time (ie coming from background, or reconnecting we should recover all)
+                                domainImpl.connectionRecovered(true)
+                            }
                         }
+                    }
+                }
+                is HealthEvent -> {
+                    domainImpl.scope.launch {
+                        domainImpl.retryFailedEntities()
                     }
                 }
             }
