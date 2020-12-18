@@ -1,25 +1,41 @@
 package io.getstream.chat.android.client.utils.observable
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import java.util.Date
 
-internal class ChatEventsObservable(private val socket: ChatSocket) {
+internal class ChatEventsObservable(
+    private val socket: ChatSocket,
+    private var client: ChatClient
+) {
 
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
+    private val logger = ChatLogger.get("ChatEventsObservable")
 
     private fun onNext(event: ChatEvent) {
         subscriptions.forEach { subscription ->
             if (!subscription.isDisposed) {
                 subscription.onNext(event)
+            }
+        }
+        logger.logI("123 finished subscriptions")
+        when (event) {
+            is ConnectedEvent -> {
+                logger.logI("123 calling connection listener")
+                client.callConnectionListener(event, null)
+            }
+            is ErrorEvent -> {
+                client.callConnectionListener(null, event.error)
             }
         }
         subscriptions = subscriptions.filterNot(Disposable::isDisposed).toSet()

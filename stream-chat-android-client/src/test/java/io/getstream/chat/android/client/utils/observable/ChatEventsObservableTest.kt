@@ -22,7 +22,7 @@ internal class ChatEventsObservableTest {
     @Before
     fun before() {
         socket = FakeChatSocket()
-        observable = ChatEventsObservable(socket)
+        observable = ChatEventsObservable(socket, connectionListener)
         result = mutableListOf()
     }
 
