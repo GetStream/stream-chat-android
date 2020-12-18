@@ -130,5 +130,12 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
-    <style name="StreamTextAppearance" parent="TextAppearance.MaterialComponents.Body2"/>
+    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2"/>
+
+    <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorAccent">@color/stream_ui_blue</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>>
+        <item name="background">?android:attr/colorBackground</item>
+    </style>
+
 </resources>
