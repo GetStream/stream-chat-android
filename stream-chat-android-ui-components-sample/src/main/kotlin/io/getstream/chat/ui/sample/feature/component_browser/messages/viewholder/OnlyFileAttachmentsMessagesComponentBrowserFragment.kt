@@ -1,24 +1,25 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 
 class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
-            getDummyDeletedMessagesList(requireContext()),
+            getDummyDeletedMessagesList(),
             { viewGroup -> OnlyFileAttachmentsViewHolder(viewGroup, null) },
             OnlyFileAttachmentsViewHolder::bind
         )
     }
 
-    private fun getDummyDeletedMessagesList(context: Context): List<MessageListItem.MessageItem> {
+    @OptIn(InternalStreamChatApi::class)
+    private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
         val attachmentPdf = Attachment(
             type = "file",
             mimeType = ModelType.attach_mime_pdf,

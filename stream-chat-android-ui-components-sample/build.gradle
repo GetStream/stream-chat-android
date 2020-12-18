@@ -120,7 +120,7 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-Xopt-in=kotlin.RequiresOptIn',
         ]
     }
 }
