@@ -399,7 +399,7 @@ internal class ChannelControllerImpl(
         return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
     }
 
-    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+    private suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val loader = when (pagination.messageFilterDirection) {
             Pagination.GREATER_THAN,
             Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
@@ -1146,13 +1146,13 @@ internal class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    internal suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateLiveDataFromChannel(localChannel)
     }
 
-    internal suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)
