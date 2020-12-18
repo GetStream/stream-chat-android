@@ -1,7 +1,5 @@
 package io.getstream.chat.android.ui.channel.list
 
-import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -29,17 +27,9 @@ internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         parent.context
-            .let { ContextCompat.getDrawable(it, getDividerDrawable(it)) }
+            .let { ContextCompat.getDrawable(it, R.drawable.stream_ui_divider) }
             ?.also { drawable = it }
             ?.let { outRect.set(0, 0, 0, determineHeight()) }
-    }
-
-    private fun getDividerDrawable(context: Context): Int {
-        return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> R.drawable.stream_ui_divider_dark
-
-            else -> R.drawable.stream_ui_divider
-        }
     }
 
     override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {

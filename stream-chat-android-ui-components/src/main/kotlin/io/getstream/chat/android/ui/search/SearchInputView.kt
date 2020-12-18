@@ -77,7 +77,6 @@ public class SearchInputView : FrameLayout {
             clear()
         }
 
-
         updateClearButtonVisibility(query)
     }
 

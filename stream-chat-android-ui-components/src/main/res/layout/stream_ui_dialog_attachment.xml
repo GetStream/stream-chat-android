@@ -24,7 +24,6 @@
             style="@style/StreamUiAttachmentDialogToggleButton"
             android:layout_marginStart="6dp"
             android:background="@drawable/stream_ui_attachment_permission_media"
-
             />
 
         <ToggleButton

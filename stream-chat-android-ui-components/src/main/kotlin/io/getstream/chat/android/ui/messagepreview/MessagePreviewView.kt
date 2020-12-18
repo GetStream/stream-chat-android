@@ -14,7 +14,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.singletonList
-import io.getstream.chat.android.ui.utils.getBackgroundColor
 
 public class MessagePreviewView : FrameLayout {
 
