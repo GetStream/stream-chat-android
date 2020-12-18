@@ -656,7 +656,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         // 4 recover events
-        if (isOnline()) {
+        if (recoveryNeeded && isOnline()) {
             replayEventsForActiveChannels()
         }
     }
