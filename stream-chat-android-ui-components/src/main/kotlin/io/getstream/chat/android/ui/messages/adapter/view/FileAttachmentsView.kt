@@ -1,7 +1,9 @@
 package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.utils.UiUtils
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class FileAttachmentsView : RecyclerView {
@@ -23,10 +26,22 @@ internal class FileAttachmentsView : RecyclerView {
 
     init {
         layoutManager = LinearLayoutManager(context)
+        addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
     }
 
     fun setAttachments(attachments: List<Attachment>, listener: (Attachment) -> Unit) {
         adapter = FileAttachmentsAdapter(attachments, listener)
+    }
+}
+
+private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        parent.adapter?.let { adapter ->
+            if (parent.getChildAdapterPosition(view) != adapter.itemCount - 1) {
+                outRect.bottom = marginPx
+            }
+        }
+
     }
 }
 
@@ -68,9 +83,9 @@ private class FileAttachmentViewHolder(
 
     fun bind(attachment: Attachment) {
         binding.fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
-        binding.fileTitle.text = attachment.title
+        binding.fileTitle.text = attachment.title ?: attachment.name
         binding.fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-        binding.actionButton.setOnClickListener { listener(attachment) }
+        binding.root.setOnClickListener { listener(attachment) }
     }
 
     companion object {
