@@ -10,16 +10,22 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageInputViewModel
  *
  * @param cid: the channel id in the format messaging:123
+ * @param messageId: the id of the target message to displayed
  *
  * @see MessageListViewModel
  * @see ChannelHeaderViewModel
  * @see MessageInputViewModel
  */
-public class ChannelViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
+public class ChannelViewModelFactory(
+    private val cid: String,
+    private val messageId: String? = null
+) :
+    ViewModelProvider.Factory {
+
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid) },
+        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

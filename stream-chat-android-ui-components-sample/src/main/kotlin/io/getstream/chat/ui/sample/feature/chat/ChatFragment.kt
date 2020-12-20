@@ -25,7 +25,7 @@ class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
 
-    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid) }
+    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid, args.messageId) }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }

@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -366,7 +367,7 @@ internal class ChannelControllerImpl(
         runChannelQuery(QueryChannelPaginationRequest(limit))
     }
 
-    fun loadMoreMessagesRequest(
+    private fun loadMoreMessagesRequest(
         limit: Int = 30,
         direction: Pagination
     ): QueryChannelPaginationRequest {
@@ -421,6 +422,9 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runChannelQueryOnline(pagination) }
         } else {
+            // if we are not offline we mark it as needing recovery
+            recoveryNeeded = true
+            logger.logI("Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
             null
         }
         val localChannel = queryOfflineJob.await()
@@ -437,11 +441,16 @@ internal class ChannelControllerImpl(
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
+            } else {
+                if (response.error().isPermanent()) {
+                    logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${response.error()}")
+                } else {
+                    logger.logW("Temporary failure calling channel.watch for channel $cid. Marking the channel as needing recovery. Error was ${response.error()}")
+                    recoveryNeeded = true
+                }
             }
             response
         } else {
-            // if we are not offline we mark it as needing recovery
-            recoveryNeeded = true
             Result(localChannel, null)
         }
         loader.value = false
@@ -1321,6 +1330,23 @@ internal class ChannelControllerImpl(
             // Note that we don't handle offline storage for threads at the moment.
         }
         return result
+    }
+
+    internal suspend fun loadMessageById(
+        messageId: String,
+        newerMessagesOffset: Int,
+        olderMessagesOffset: Int
+    ): Result<Message> {
+        val result = client.getMessage(messageId).await()
+        if (result.isError) {
+            return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
+        }
+        val message = result.data()
+        _messages.value = emptyMap()
+        upsertMessage(message)
+        loadNewerMessages(newerMessagesOffset)
+        loadOlderMessages(olderMessagesOffset)
+        return Result(message)
     }
 
     companion object {

@@ -10,7 +10,7 @@
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -35,6 +35,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
+        />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mediaAttachmentsGroupView"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         />
 
     <androidx.constraintlayout.widget.Guideline

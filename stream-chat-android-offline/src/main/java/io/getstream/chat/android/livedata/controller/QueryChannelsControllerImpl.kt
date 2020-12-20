@@ -204,6 +204,7 @@ internal class QueryChannelsControllerImpl(
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
         } else {
+            logger.logI("Query with filter $filter failed, marking it as recovery needed")
             recoveryNeeded = true
             domainImpl.addError(response.error())
         }
@@ -237,6 +238,8 @@ internal class QueryChannelsControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runQueryOnline(pagination) }
         } else {
+            logger.logI("Query with filter $filter can't run since we are offline, marking it as recovery needed")
+            recoveryNeeded = true
             null
         }
         val channels = queryOfflineJob.await().also { offlineChannels ->
@@ -259,7 +262,6 @@ internal class QueryChannelsControllerImpl(
                 }
             }
         } else {
-            recoveryNeeded = true
             channels?.let { Result(it) }
                 ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }

@@ -3,12 +3,14 @@ package io.getstream.chat.android.ui.messages.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.TimeDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View
@@ -18,7 +20,8 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
-        GravityDecorator()
+        GravityDecorator(),
+        TimeDecorator(DateFormatter.from(itemView.context)),
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
