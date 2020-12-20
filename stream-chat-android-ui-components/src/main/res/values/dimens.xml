@@ -9,9 +9,11 @@
     <dimen name="stream_ui_text_large">16sp</dimen>
 
     <!--AvatarView-->
+    <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
     <dimen name="stream_ui_avatar_size_small">32dp</dimen>
     <dimen name="stream_ui_avatar_size_medium">40dp</dimen>
     <dimen name="stream_ui_avatar_size_large">64dp</dimen>
+    <dimen name="stream_ui_avatar_text_size_tiny">12sp</dimen>
     <dimen name="stream_ui_avatar_text_size_small">14sp</dimen>
     <dimen name="stream_ui_avatar_text_size_medium">16sp</dimen>
     <dimen name="stream_ui_avatar_text_size_large">24sp</dimen>
