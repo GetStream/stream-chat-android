@@ -16,13 +16,16 @@ internal interface Decorator {
 
 internal abstract class BaseDecorator : Decorator {
     override fun <T : MessageListItem> decorate(viewHolder: BaseMessageItemViewHolder<T>, data: T) {
+        if (data !is MessageListItem.MessageItem) {
+            return
+        }
         when (viewHolder) {
-            is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data as MessageListItem.MessageItem)
-            is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data as MessageListItem.MessageItem)
-            is OnlyMediaAttachmentsViewHolder -> decorateOnlyMediaAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
-            is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
-            is OnlyFileAttachmentsViewHolder -> decorateOnlyFileAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
-            is PlainTextWithFileAttachmentsViewHolder -> decoratePlainTextWithFileAttachmentsMessage(viewHolder, data as MessageListItem.MessageItem)
+            is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data)
+            is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data)
+            is OnlyMediaAttachmentsViewHolder -> decorateOnlyMediaAttachmentsMessage(viewHolder, data)
+            is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data)
+            is OnlyFileAttachmentsViewHolder -> decorateOnlyFileAttachmentsMessage(viewHolder, data)
+            is PlainTextWithFileAttachmentsViewHolder -> decoratePlainTextWithFileAttachmentsMessage(viewHolder, data)
             else -> Unit
         }.exhaustive
     }
