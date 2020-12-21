@@ -22,6 +22,28 @@ import java.io.Serializable
 
 internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
+    companion object {
+        const val TAG = "messageOptions"
+
+        private const val ARG_MESSAGE = "message"
+        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
+        private const val ARG_HANDLERS = "handlers"
+
+        fun newInstance(
+            messageItem: MessageListItem.MessageItem,
+            configuration: MessageOptionsView.Configuration,
+            handlers: Handlers
+        ): MessageOptionsOverlayDialogFragment {
+            return MessageOptionsOverlayDialogFragment().apply {
+                arguments = bundleOf(
+                    ARG_MESSAGE to MessageItemWrapper(messageItem),
+                    ARG_OPTIONS_CONFIG to configuration,
+                    ARG_HANDLERS to handlers
+                )
+            }
+        }
+    }
+
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
@@ -67,6 +89,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         configureMessageOptions(
             requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
         )
+        setupClickListeners()
     }
 
     override fun onDestroy() {
@@ -90,6 +113,17 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
     private fun configureMessageOptions(configuration: MessageOptionsView.Configuration) {
         binding.messageOptionsView.configure(configuration)
+    }
+
+    private fun setupClickListeners() {
+        val handlers = requireArguments().getSerializable(ARG_HANDLERS) as Handlers
+
+        binding.messageOptionsView.run {
+            setDeleteMessageListener {
+                handlers.deleteClickHandler(messageItem.message)
+            }
+        }
+        handlers.deleteClickHandler
     }
 
     override fun onStart() {
@@ -140,22 +174,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         fun onReactionClick(message: Message, reactionType: String)
     }
 
-    companion object {
-        const val TAG = "messageOptions"
-
-        private const val ARG_MESSAGE = "message"
-        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-
-        fun newInstance(
-            messageItem: MessageListItem.MessageItem,
-            configuration: MessageOptionsView.Configuration
-        ): MessageOptionsOverlayDialogFragment {
-            return MessageOptionsOverlayDialogFragment().apply {
-                arguments = bundleOf(
-                    ARG_MESSAGE to MessageItemWrapper(messageItem),
-                    ARG_OPTIONS_CONFIG to configuration
-                )
-            }
-        }
-    }
+    internal class Handlers(
+        val deleteClickHandler: (Message) -> Unit
+    ) : Serializable
 }

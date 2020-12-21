@@ -19,87 +19,87 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/stream_ui_background_light"
+            android:divider="@color/stream_ui_divider_tint_light"
             android:minWidth="200dp"
             android:orientation="vertical"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:divider="@color/stream_ui_divider"
-            android:background="@color/stream_ui_background_light"
             android:showDividers="middle"
             >
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingBottom="12dp"
                 android:id="@+id/replyTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingBottom="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
                 tools:text="Reply"
                 />
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
                 android:id="@+id/threadReplyTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_thread_reply"
                 tools:text="Thread Reply"
                 />
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
                 android:id="@+id/copyTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_copy"
                 tools:text="Copy message"
                 />
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
                 android:id="@+id/muteTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_mute"
                 tools:text="Mute User"
                 />
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
                 android:id="@+id/blockTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_user_block"
                 tools:text="Block User"
                 />
 
             <TextView
-                android:paddingStart="12dp"
-                android:paddingTop="12dp"
                 android:id="@+id/deleteTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
                 tools:drawableStart="@drawable/stream_ui_ic_delete"
                 tools:text="Delete Message"
                 />

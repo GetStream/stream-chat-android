@@ -153,14 +153,18 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { framentManager ->
+                val handlers = MessageOptionsOverlayDialogFragment.Handlers(
+                    deleteClickHandler = onMessageDeleteHandler
+                )
+
                 MessageOptionsOverlayDialogFragment
-                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
+                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration, handlers)
                     .apply {
                         setReactionClickListener { message, reactionType ->
                             onMessageReactionHandler(message, reactionType)
                         }
                     }
-                    .show(framentManager, ReactionsOverlayDialogFragment.TAG)
+                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 

@@ -82,7 +82,7 @@
     <string name="stream_ui_message_option_copy">Copy</string>
     <string name="stream_ui_message_option_mute">Mute</string>
     <string name="stream_ui_message_option_block_user">Block user</string>
-    <string name="stream_ui_message_option_delete_user">Delete user</string>
+    <string name="stream_ui_message_option_delete_user">Delete Message</string>
 
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">

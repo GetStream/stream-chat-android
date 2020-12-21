@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import java.io.Serializable
@@ -79,5 +80,11 @@ public class MessageOptionsView : FrameLayout {
             null,
             null
         )
+    }
+
+    public fun setDeleteMessageListener(onDelete: () -> Unit) {
+        binding.deleteTV.setOnClickListener {
+            onDelete()
+        }
     }
 }
