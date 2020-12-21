@@ -365,6 +365,11 @@
             android:id="@+id/action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView"
             app:destination="@id/componentBrowserMessageInputFieldViewFragment"
             />
+
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment"
+            app:destination="@id/componentBrowserMessageReplyViewFragment"
+            />
     </fragment>
 
     <fragment
@@ -520,6 +525,12 @@
         android:id="@+id/componentBrowserOnlyFileAttachmentsMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyFileAttachmentsMessagesFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserMessageReplyViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageReplyViewComponentBrowserFragment"
+        android:label="ComponentBrowserMessageReplyViewFragment"
         />
 
     <fragment

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mediaAttachmentContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/stream_ui_spacing_tiny"
+    >
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamUiReplyAvatarStyle"
+        android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/replyContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/replyContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:padding="@dimen/stream_ui_spacing_tiny"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <FrameLayout
+            android:id="@+id/logoContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            app:layout_constraintEnd_toStartOf="@+id/replyText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <ImageView
+                android:id="@+id/thumbImageView"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+            <ImageView
+                android:id="@+id/fileTypeImageView"
+                android:layout_width="34dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/replyText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:lineHeight="14sp"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:textColor="@color/stream_ui_black"
+            android:textColorLink="@color/stream_ui_blue"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/logoContainer"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@tools:sample/lorem/random"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
