@@ -5,4 +5,5 @@
     <color name="component_browser_sub_card">#000</color>
 
     <color name="component_browser_background">#000</color>
+    <color name="component_browser_background_light">#000</color>
 </resources>
