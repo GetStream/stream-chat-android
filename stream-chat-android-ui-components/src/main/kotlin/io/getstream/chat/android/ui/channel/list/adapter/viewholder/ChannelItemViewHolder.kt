@@ -197,11 +197,9 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
 
         lastMessage ?: return
 
-        /**
-         * read - if the last message doesn't belong to current user, or if channel reads indicates it
-         * delivered - if the last message belongs to the current user and reads indicate it wasn't read
-         * pending - if the sync status says it's pending
-         */
+         // read - if the last message doesn't belong to current user, or if channel reads indicates it
+         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
+         // pending - if the sync status says it's pending
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
