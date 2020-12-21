@@ -65,7 +65,7 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing typing information 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(20)
+        Truth.assertThat(duration).isLessThan(25)
     }
 
     @Test
