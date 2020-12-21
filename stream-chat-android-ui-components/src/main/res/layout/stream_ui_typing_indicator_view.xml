@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:alpha="0.9"
-    android:background="@color/stream_ui_white"
+    android:background="@color/stream_ui_background_default"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="8dp"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        android:textColor="@color/stream_ui_text_grey"
+        android:textColor="@color/stream_ui_text_color_light"
         tools:text="One user is typing"
         />
 

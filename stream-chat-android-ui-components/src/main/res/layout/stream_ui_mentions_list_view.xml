@@ -43,7 +43,7 @@
             android:maxLines="1"
             android:text="@string/stream_ui_mentions_list_empty"
             android:textAlignment="center"
-            android:textColor="@color/stream_ui_black_50"
+            android:textColor="@color/stream_ui_text_color_light"
             android:textSize="@dimen/stream_ui_text_medium"
             />
 

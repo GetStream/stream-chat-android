@@ -27,7 +27,7 @@ internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         parent.context
-            .let { ContextCompat.getDrawable(it, drawableResource) }
+            .let { ContextCompat.getDrawable(it, R.drawable.stream_ui_divider) }
             ?.also { drawable = it }
             ?.let { outRect.set(0, 0, 0, determineHeight()) }
     }
