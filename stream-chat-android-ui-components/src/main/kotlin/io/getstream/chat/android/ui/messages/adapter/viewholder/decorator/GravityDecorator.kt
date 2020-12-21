@@ -1,8 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
-import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -17,12 +16,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMed
 
 internal class GravityDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.messageText.updateLayoutParams<FrameLayout.LayoutParams> {
-            gravity = if (data.isTheirs) {
-                Gravity.START
-            } else {
-                Gravity.END
-            }
+        viewHolder.binding.messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            horizontalBias = if (data.isTheirs) 0f else 1f
         }
         viewHolder.binding.root.updateConstraints {
             applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
