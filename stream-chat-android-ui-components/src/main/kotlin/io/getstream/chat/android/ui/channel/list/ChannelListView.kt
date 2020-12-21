@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
@@ -22,22 +27,29 @@ public class ChannelListView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
 
     private var endReachedListener: EndReachedListener? = null
-    private val layoutManager: LinearLayoutManager
+    private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
 
     init {
         setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(context)
+        layoutManager = ScrollPauseLinearLayoutManager(context)
         setLayoutManager(layoutManager)
-        adapter = ChannelListItemAdapter()
-        parseStyleAttributes(context, attrs)
+        adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
+        setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
+        setMoreOptionsClickListener { channel ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                ChannelActionsDialogFragment
+                    .newInstance(channel.cid, !channel.isDirectMessaging())
+                    .show(fragmentManager, null)
+            }
+        }
         addItemDecoration(dividerDecoration)
     }
 
-    private fun parseStyleAttributes(context: Context, attrs: AttributeSet?) {
+    private fun parseStyleAttributes(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
         // parse the attributes
-        requireAdapter().style = ChannelListViewStyle(context, attrs)
+        return ChannelListViewStyle(context, attrs)
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {
@@ -55,26 +67,32 @@ public class ChannelListView @JvmOverloads constructor(
         return channelAdapter.cast()
     }
 
-    private fun canScrollUpForChannelEvent(): Boolean = layoutManager.findFirstVisibleItemPosition() < 3
-
     public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
         requireAdapter().viewHolderFactory = factory
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProxy.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setChannelLongClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProxy.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
-        requireAdapter().listenerProxy.userClickListener = listener ?: UserClickListener.DEFAULT
+        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
-    public fun setChannelDeleteListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProxy.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+    public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
+        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+    }
+
+    public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
+        requireAdapter().listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
+    }
+
+    public fun setSwipeListener(listener: SwipeListener?) {
+        requireAdapter().listenerContainer.swipeListener = listener ?: SwipeListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
@@ -146,6 +164,113 @@ public class ChannelListView @JvmOverloads constructor(
 
         fun setPaginationEnabled(enabled: Boolean) {
             this.enabled = enabled
+        }
+    }
+
+    public interface SwipeListener {
+        /**
+         * Invoked when a swipe is detected.
+         *
+         * @param viewHolder the view holder that is being swiped
+         * @param adapterPosition the internal adapter position of the item being bound
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
+         */
+        public fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float? = null, y: Float? = null)
+
+        /**
+         * Invoked after a swipe has been detected, and movement is occurring.
+         *
+         * @param viewHolder the view holder that is being swiped
+         * @param adapterPosition the internal adapter position of the item being bound
+         * @param dX the change from the previous swipe touch event to the current
+         * @param totalDeltaX the change from the first touch event to the current
+         */
+        public fun onSwipeChanged(viewHolder: SwipeViewHolder, adapterPosition: Int, dX: Float, totalDeltaX: Float)
+
+        /**
+         * Invoked when a swipe is successfully completed naturally, without cancellation.
+         *
+         * @param viewHolder the view holder that is being swiped
+         * @param adapterPosition the internal adapter position of the item being bound
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
+         */
+        public fun onSwipeCompleted(
+            viewHolder: SwipeViewHolder,
+            adapterPosition: Int,
+            x: Float? = null,
+            y: Float? = null
+        )
+
+        /**
+         * Invoked when a swipe is canceled.
+         *
+         * @param viewHolder the view holder that is being swiped
+         * @param adapterPosition the internal adapter position of the item being bound
+         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
+         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction         */
+        public fun onSwipeCanceled(
+            viewHolder: SwipeViewHolder,
+            adapterPosition: Int,
+            x: Float? = null,
+            y: Float? = null
+        )
+
+        /**
+         * Invoked in order to set the [viewHolder]'s initial state when bound. This supports view holder reuse.
+         * When items are scrolled off-screen and the view holder is reused, it becomes important to
+         * track the swiped state and determine if the view holder should appear as swiped for the item
+         * being bound.
+         *
+         * @param viewHolder the view holder being bound
+         * @param adapterPosition the internal adapter position of the item being bound
+         */
+        public fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int)
+
+        public companion object {
+
+            public val DEFAULT: SwipeListener = object : SwipeListener {
+                override fun onSwipeStarted(
+                    viewHolder: SwipeViewHolder,
+                    adapterPosition: Int,
+                    x: Float?,
+                    y: Float?
+                ) {
+                    // no-op
+                }
+
+                override fun onSwipeChanged(
+                    viewHolder: SwipeViewHolder,
+                    adapterPosition: Int,
+                    dX: Float,
+                    totalDeltaX: Float
+                ) {
+                    // no-op
+                }
+
+                override fun onSwipeCompleted(
+                    viewHolder: SwipeViewHolder,
+                    adapterPosition: Int,
+                    x: Float?,
+                    y: Float?
+                ) {
+                    // no-op
+                }
+
+                override fun onSwipeCanceled(
+                    viewHolder: SwipeViewHolder,
+                    adapterPosition: Int,
+                    x: Float?,
+                    y: Float?
+                ) {
+                    // no-op
+                }
+
+                override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) {
+                    // no-op
+                }
+            }
         }
     }
 }
