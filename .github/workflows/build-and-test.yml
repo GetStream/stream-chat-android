@@ -45,3 +45,9 @@ jobs:
           java-version: 1.8
       - name: Unit tests
         run: ./gradlew test --stacktrace
+      - name: Upload testDebugUnitTest results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: testDebugUnitTest
+          path: ./**/build/reports/tests/testDebugUnitTest
