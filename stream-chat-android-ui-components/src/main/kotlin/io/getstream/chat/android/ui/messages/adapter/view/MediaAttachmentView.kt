@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
@@ -39,11 +40,16 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
-    fun showLoading(isLoading: Boolean) {
+    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
+        val url = attachment.thumbUrl ?: attachment.imageUrl ?: return
+        showImageByUrl(url, andMoreCount)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
         binding.loadImage.isVisible = isLoading
     }
 
-    fun showImageByUrl(imageUrl: String, andMoreCount: Int = NO_MORE_COUNT) {
+    private fun showImageByUrl(imageUrl: String, andMoreCount: Int) {
         binding.imageView.load(
             uri = imageUrl,
             placeholderResId = R.drawable.stream_ui_picture_placeholder,
