@@ -72,7 +72,6 @@ internal class MediaAttachmentView : ConstraintLayout {
             onComplete = {
                 showLoading(false)
                 onCompleteCallback()
-
             }
         )
     }

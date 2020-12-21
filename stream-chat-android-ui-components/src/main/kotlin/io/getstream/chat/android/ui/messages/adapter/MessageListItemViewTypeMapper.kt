@@ -5,6 +5,8 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 
 internal object MessageListItemViewTypeMapper {
+    private val MEDIA_ATTACHMENT_TYPES: Collection<String> = listOf(ModelType.attach_image, ModelType.attach_giphy)
+
     fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
 
     fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
@@ -35,5 +37,7 @@ internal object MessageListItemViewTypeMapper {
         }
     }
 
-    internal fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type == ModelType.attach_image }
+    internal fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type in MEDIA_ATTACHMENT_TYPES }
+
+
 }
