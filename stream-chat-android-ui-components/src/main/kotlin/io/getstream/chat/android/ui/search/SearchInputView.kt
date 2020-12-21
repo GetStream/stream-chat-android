@@ -60,6 +60,7 @@ public class SearchInputView : FrameLayout {
                 debouncedInputChangedListener?.onInputChanged(newQuery)
             }
         }
+
         binding.inputField.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {

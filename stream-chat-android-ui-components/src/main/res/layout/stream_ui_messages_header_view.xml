@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_default_header_height"
-    android:background="@color/stream_ui_white"
+    android:background="@color/stream_ui_background_light"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/stream_ui_icon_default_tint"
             />
 
         <TextView
@@ -51,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="5sp"
-        android:textColor="@color/stream_ui_text_black"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
