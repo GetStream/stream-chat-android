@@ -9,10 +9,9 @@ public interface HideChannel {
     /**
      * Hides the channel with the specified id
      *
-     * @param cid: the full channel id IE messaging:123
+     * @param cid: the full channel id i. e. messaging:123
      * @param keepHistory: boolean, if you want to keep the history of this channel or not
      *
-     * @return A call object with Unit as the return type
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */
     public operator fun invoke(cid: String, keepHistory: Boolean): Call<Unit>

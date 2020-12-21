@@ -10,11 +10,9 @@ public interface ThreadLoadMore {
     /**
      * Loads more messages for the specified thread
      *
-     * @param cid: the full channel id IE messaging:123
+     * @param cid: the full channel id i. e. messaging:123
      * @param parentId: the parentId of the thread
      * @param messageLimit: how many new messages to load
-     *
-     * @return A call object with List<Message> as the return type
      */
     public operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 }

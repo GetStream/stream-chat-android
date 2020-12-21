@@ -11,7 +11,6 @@ public interface EditMessage {
      * Edits the specified message. Local storage is updated immediately
      * The API request is retried according to the retry policy specified on the chatDomain
      * @param message the message to edit
-     * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(message: Message): Call<Message>

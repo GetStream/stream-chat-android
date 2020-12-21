@@ -10,11 +10,10 @@ public interface MarkRead {
     /**
      * Marks the messages on the specified channel as read
      *
-     * @param cid: the full channel id IE messaging:123
+     * @param cid: the full channel id i. e. messaging:123
      *
-     * @return A call object with Boolean as the return type.
-     * True if the mark read event was sent.
-     * False if there was no need to mark read (IE the messages are already marked as read)
+     * @return True if the mark read event was sent. False if there was no need to mark read
+     *         (i. e. the messages are already marked as read).
      */
     public operator fun invoke(cid: String): Call<Boolean>
 }

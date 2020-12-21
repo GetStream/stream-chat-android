@@ -20,7 +20,6 @@ public interface QueryChannels {
      * @param limit the number of channels to retrieve
      * @param messageLimit how many messages to retrieve per channel
      *
-     * @return A call object with QueryChannelsController as the return type
      * @see io.getstream.chat.android.livedata.controller.QueryChannelsController
      * @see io.getstream.chat.android.client.utils.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
