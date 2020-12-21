@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
@@ -44,7 +45,8 @@ public class MessageOptionsView : FrameLayout {
         val blockText: String,
         val blockIcon: Int,
         val deleteText: String,
-        val deleteIcon: Int
+        val deleteIcon: Int,
+        val copyTextEnabled: Boolean
     ) : Serializable
 
     private fun configureMessageOptions(configuration: Configuration) {
@@ -52,7 +54,14 @@ public class MessageOptionsView : FrameLayout {
 
         binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
         binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
-        binding.copyTV.configureListItem(configuration.copyText, configuration.copyIcon, iconsTint)
+
+        if (configuration.copyTextEnabled) {
+            binding.copyTV.isVisible = true
+            binding.copyTV.configureListItem(configuration.copyText, configuration.copyIcon, iconsTint)
+        } else {
+            binding.copyTV.isVisible = false
+        }
+
         binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
         binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
 
@@ -68,6 +77,18 @@ public class MessageOptionsView : FrameLayout {
         }
     }
 
+    public fun setDeleteMessageListener(onDelete: () -> Unit) {
+        binding.deleteTV.setOnClickListener {
+            onDelete()
+        }
+    }
+
+    public fun setCopyListener(onCopy: () -> Unit) {
+        binding.copyTV.setOnClickListener {
+            onCopy()
+        }
+    }
+
     private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int) {
         this.text = text
         this.setLeftDrawable(icon, iconTint)
@@ -80,11 +101,5 @@ public class MessageOptionsView : FrameLayout {
             null,
             null
         )
-    }
-
-    public fun setDeleteMessageListener(onDelete: () -> Unit) {
-        binding.deleteTV.setOnClickListener {
-            onDelete()
-        }
     }
 }

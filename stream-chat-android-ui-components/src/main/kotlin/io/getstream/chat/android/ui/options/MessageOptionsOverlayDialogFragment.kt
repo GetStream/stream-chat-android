@@ -1,6 +1,9 @@
 package io.getstream.chat.android.ui.options
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -122,8 +125,19 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
             setDeleteMessageListener {
                 handlers.deleteClickHandler(messageItem.message)
             }
+
+            setCopyListener {
+                copyText(messageItem.message)
+            }
         }
         handlers.deleteClickHandler
+    }
+
+    private fun copyText(message: Message) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", message.text)
+        clipboard.setPrimaryClip(clip)
+        dismiss()
     }
 
     override fun onStart() {

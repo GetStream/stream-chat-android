@@ -377,6 +377,8 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_delete
         )
 
+        val copyTextEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyText = replyText,
@@ -390,7 +392,8 @@ public class MessageListView : ConstraintLayout {
             blockText = blockText,
             blockIcon = blockIcon,
             deleteText = deleteText,
-            deleteIcon = deleteIcon
+            deleteIcon = deleteIcon,
+            copyTextEnabled = copyTextEnabled
         )
     }
 

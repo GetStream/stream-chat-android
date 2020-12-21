@@ -220,6 +220,7 @@
         <attr name="streamUiDeleteOptionMessage" format="string" />
         <attr name="streamUiDeleteOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionIconColor" format="color" />
+        <attr name="streamUiCopyMessageActionEnabled" format="color" />
     </declare-styleable>
 
     <declare-styleable name="ChannelsView">
