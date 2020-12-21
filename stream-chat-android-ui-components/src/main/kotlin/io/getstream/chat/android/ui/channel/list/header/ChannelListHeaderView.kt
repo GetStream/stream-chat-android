@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
@@ -49,14 +48,10 @@ public class ChannelListHeaderView : ConstraintLayout {
     }
 
     private fun configUserAvatar(typedArray: TypedArray) {
+        val showAvatar = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowUserAvatar, true)
         binding.userAvatar.apply {
-            if (typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowUserAvatar, true)) {
-                visibility = View.VISIBLE
-                isClickable = true
-            } else {
-                visibility = View.INVISIBLE
-                isClickable = false
-            }
+            isVisible = showAvatar
+            isClickable = showAvatar
         }
     }
 
@@ -94,13 +89,11 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
-            if (typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowAddChannelButton, true)) {
-                visibility = View.VISIBLE
-                isClickable = true
-            } else {
-                visibility = View.INVISIBLE
-                isClickable = false
-            }
+            val showAddChannelButton = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowAddChannelButton, true)
+
+            isVisible = showAddChannelButton
+            isClickable = showAddChannelButton
+
             layoutParams = layoutParams.apply {
                 height = typedArray.getDimensionPixelSize(
                     R.styleable.ChannelListHeaderView_streamUiAddChannelButtonHeight,
