@@ -15,7 +15,7 @@ internal interface Decorator {
 }
 
 internal abstract class BaseDecorator : Decorator {
-    override fun <T : MessageListItem> decorate(viewHolder: BaseMessageItemViewHolder<T>, data: T) {
+    final override fun <T : MessageListItem> decorate(viewHolder: BaseMessageItemViewHolder<T>, data: T) {
         if (data !is MessageListItem.MessageItem) {
             return
         }
