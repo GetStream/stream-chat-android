@@ -20,7 +20,7 @@ internal class GravityDecorator : BaseDecorator() {
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
 
@@ -29,7 +29,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
 
@@ -38,7 +38,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
 
@@ -47,7 +47,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
 
@@ -56,7 +56,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+            applyGravity(viewHolder.binding.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
 

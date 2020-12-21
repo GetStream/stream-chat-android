@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import java.util.Date
 
 class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
     override fun createAdapter(): RecyclerView.Adapter<*> {
@@ -27,7 +28,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(text = "Ut enim ad minim veniam"),
+                message = Message(text = "Ut enim ad minim veniam", createdAt = Date()),
                 positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
@@ -40,7 +41,12 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                 message = Message(text = "Whaaat?"),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
-            )
+            ),
+            MessageListItem.MessageItem(
+                message = Message(text = "Ephemeral", createdAt = Date(), type = "ephemeral"),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                isMine = true,
+            ),
         )
     }
 }

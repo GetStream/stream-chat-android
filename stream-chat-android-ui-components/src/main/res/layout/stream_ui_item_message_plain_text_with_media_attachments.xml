@@ -67,7 +67,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_time"
+        android:id="@+id/messageFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
