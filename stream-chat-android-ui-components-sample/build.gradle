@@ -147,5 +147,6 @@ dependencies {
     implementation Dependencies.firebaseCrashlytics
 
     implementation Dependencies.coil
+    implementation Dependencies.coilGif
     implementation Dependencies.shimmer
 }

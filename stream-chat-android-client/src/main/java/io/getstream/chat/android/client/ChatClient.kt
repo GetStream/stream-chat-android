@@ -25,6 +25,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
+import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.extensions.isImage
 import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -448,7 +451,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int
     ): Call<List<AttachmentWithDate>> =
-        getAttachments(channelType, channelId, offset, limit, "file")
+        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
     public fun getImageAttachments(
         channelType: String,
@@ -456,7 +459,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int
     ): Call<List<AttachmentWithDate>> =
-        getAttachments(channelType, channelId, offset, limit, "image")
+        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
 
     private fun getAttachments(
         channelType: String,
@@ -470,12 +473,17 @@ public class ChatClient internal constructor(
 
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter)).map { messages ->
             messages.flatMap { message ->
-                message.attachments.map { attachment ->
-                    AttachmentWithDate(
-                        attachment = attachment,
-                        createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
-                    )
+                if (type == ATTACHMENT_TYPE_IMAGE) {
+                    message.attachments.filter { attachment -> attachment.isImage }
+                } else {
+                    message.attachments
                 }
+                    .map { attachment ->
+                        AttachmentWithDate(
+                            attachment = attachment,
+                            createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
+                        )
+                    }
             }
         }
     }

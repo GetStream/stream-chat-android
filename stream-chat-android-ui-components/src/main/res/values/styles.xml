@@ -36,6 +36,13 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
+    <style name="StreamUiReplyAvatarStyle" parent="StreamUiBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
     <style name="StreamUiSelectedGroupMembersStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>

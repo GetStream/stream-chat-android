@@ -13,8 +13,7 @@ public interface GetThread {
      *
      * @param cid the full channel id. ie messaging:123
      * @param parentId the message id for the parent of this thread
-
-     * @return A call object with ThreadController as the return type
+     *
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
     public operator fun invoke(cid: String, parentId: String): Call<ThreadController>

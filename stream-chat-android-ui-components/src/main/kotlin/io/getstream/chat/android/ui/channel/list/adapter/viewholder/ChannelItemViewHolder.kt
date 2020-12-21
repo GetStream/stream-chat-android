@@ -243,9 +243,9 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         }
 
         binding.apply {
-            channelNameLabel.setTextSizePx(style.channelTitleText.size.toFloat())
-            lastMessageLabel.setTextSizePx(style.lastMessage.size.toFloat())
-            lastMessageTimeLabel.setTextSizePx(style.lastMessageDateText.size.toFloat())
+            channelNameLabel.setTextSizePx(style.channelTitleTextSize)
+            lastMessageLabel.setTextSizePx(style.lastMessageSize)
+            lastMessageTimeLabel.setTextSizePx(style.lastMessageDateTextSize)
         }
     }
 }

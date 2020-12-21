@@ -61,6 +61,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupTypingIndicator()
         setupScrollButtonView()
         setupMessageInputFieldView()
+        setupMessageReplyView()
     }
 
     private fun setupMessageList() {
@@ -177,6 +178,19 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.messageInputFieldView.mode = MessageInputFieldView.Mode.CommandMode(randomCommand())
         binding.messageInputFieldViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView)
+        }
+    }
+
+    private fun setupMessageReplyView() {
+        binding.messageReplyView.setMessage(
+            Message(
+                text = "Lorem ipsum dolor",
+                user = randomUser()
+            ),
+            true
+        )
+        binding.messageReplyViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment)
         }
     }
 }

@@ -44,7 +44,7 @@ public class SuggestionListView : FrameLayout {
                 if (suggestions.users.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    mentionsAdapter.submitList(suggestions.users.take(MAX_SUGGESTIONS))
+                    mentionsAdapter.submitList(suggestions.users)
                     binding.commandsTitleTextView.isVisible = false
                 }
             }
@@ -52,7 +52,7 @@ public class SuggestionListView : FrameLayout {
                 if (suggestions.commands.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    commandsAdapter.submitList(suggestions.commands.take(MAX_SUGGESTIONS))
+                    commandsAdapter.submitList(suggestions.commands)
                     binding.commandsTitleTextView.isVisible = true
                 }
             }
@@ -84,9 +84,5 @@ public class SuggestionListView : FrameLayout {
     public sealed class Suggestions {
         public data class MentionSuggestions(val users: List<User>) : Suggestions()
         public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
-    }
-
-    private companion object {
-        private const val MAX_SUGGESTIONS: Int = 4
     }
 }

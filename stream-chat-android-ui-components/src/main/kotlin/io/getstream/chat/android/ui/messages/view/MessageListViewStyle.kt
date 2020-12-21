@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
 internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
@@ -40,7 +41,7 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                 )
                 .scrollButtonIcon(
                     R.styleable.MessageListView_streamUiScrollButtonIcon,
-                    context.getDrawable(R.drawable.stream_ui_ic_down)
+                    context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                 ).build()
         }
     }

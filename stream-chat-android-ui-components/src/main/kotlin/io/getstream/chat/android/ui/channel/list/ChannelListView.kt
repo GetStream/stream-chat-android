@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui.channel.list
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -51,17 +49,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     private fun parseStyleAttributes(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
         // parse the attributes
-        return ChannelListViewStyle(context, attrs).apply {
-            // use the background color as a default for the avatar border
-            if (avatarBorderColor == -1) {
-                background.let { channelViewBackground ->
-                    avatarBorderColor = when (channelViewBackground) {
-                        is ColorDrawable -> channelViewBackground.color
-                        else -> Color.WHITE
-                    }
-                }
-            }
-        }
+        return ChannelListViewStyle(context, attrs)
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {

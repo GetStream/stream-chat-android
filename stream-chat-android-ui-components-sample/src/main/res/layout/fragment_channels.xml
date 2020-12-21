@@ -23,11 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchInputView"
-        app:streamUiChannelPreviewLayout="@layout/stream_ui_channel_list_item_view"
-        app:streamUiReadStateAvatarHeight="15dp"
-        app:streamUiReadStateAvatarWidth="15dp"
-        app:streamUiReadStateTextSize="9sp"
-        app:streamUiShowReadState="true"
         />
 
     <io.getstream.chat.android.ui.search.SearchResultListView
