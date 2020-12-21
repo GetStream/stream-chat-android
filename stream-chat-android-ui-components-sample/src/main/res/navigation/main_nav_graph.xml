@@ -419,6 +419,11 @@
             app:destination="@id/componentBrowserOnlyFileAttachmentsMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserPlainTextWithFileAttachmentsMessages"
+            app:destination="@id/componentBrowserPlainTextWithFileAttachmentsMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -479,6 +484,12 @@
         android:id="@+id/componentBrowserOnlyFileAttachmentsMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyFileAttachmentsMessagesFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserPlainTextWithFileAttachmentsMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserPlainTextWithFileAttachmentsFragment"
         />
 
 </navigation>

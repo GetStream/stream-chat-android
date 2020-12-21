@@ -349,7 +349,7 @@ public class MessageInputView : ConstraintLayout {
                 ).toFloat()
             )
 
-            setHint(typedArray.getText(R.styleable.MessageInputView_streamUiMessageInputHint))
+            typedArray.getText(R.styleable.MessageInputView_streamUiMessageInputHint)?.let(this::setHint)
 
             setInputFieldScrollBarEnabled(
                 typedArray.getBoolean(

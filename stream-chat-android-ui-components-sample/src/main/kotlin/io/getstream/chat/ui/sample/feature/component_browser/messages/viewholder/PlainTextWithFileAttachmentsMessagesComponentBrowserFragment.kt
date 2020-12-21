@@ -6,15 +6,15 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 
-class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
+class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(),
-            { viewGroup -> OnlyFileAttachmentsViewHolder(viewGroup, null) },
-            OnlyFileAttachmentsViewHolder::bind
+            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, null) },
+            PlainTextWithFileAttachmentsViewHolder::bind
         )
     }
 
@@ -58,31 +58,33 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
         )
         return listOf(
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentPdf)),
+                message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
                 positions = listOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
-                    attachments = mutableListOf(attachment7z, attachmentPdf)
+                    attachments = mutableListOf(attachment7z, attachmentPdf),
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 ),
                 positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
-                    attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt)
+                    attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
+                    text = "Hi!"
                 ),
                 positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls)),
+                message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls), text = "Lorem ipsum dolor sit amet"),
                 positions = listOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z)),
+                message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z), text = "Another message"),
                 positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = false
             ),
@@ -93,7 +95,8 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachment7z,
                         attachmentTxt,
                         attachmentDoc
-                    )
+                    ),
+                    text = "Bye!!!"
                 ),
                 positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
@@ -107,7 +110,8 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachmentTxt,
                         attachmentDoc,
                         attachmentXls,
-                    )
+                    ),
+                    text = "Bye!!!"
                 ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
