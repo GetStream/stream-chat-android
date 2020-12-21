@@ -17,7 +17,7 @@ internal object MessageListItemViewTypeMapper {
             is MessageListItem.DateSeparatorItem -> MessageListItemViewType.DATE_DIVIDER
             is MessageListItem.LoadingMoreIndicatorItem -> MessageListItemViewType.LOADING_INDICATOR
             is MessageListItem.ThreadSeparatorItem -> MessageListItemViewType.THREAD_SEPARATOR
-            is MessageListItem.ReadStateItem -> TODO("In current design there isn't any example of it")
+            is MessageListItem.ReadStateItem -> MessageListItemViewType.READ_STATE
             is MessageListItem.MessageItem -> messageItemToViewType(messageListItem)
             is MessageListItem.TypingItem -> MessageListItemViewType.TYPING_INDICATOR
         }
