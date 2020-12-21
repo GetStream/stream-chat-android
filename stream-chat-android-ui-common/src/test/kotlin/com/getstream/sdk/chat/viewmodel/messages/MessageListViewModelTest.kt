@@ -142,7 +142,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should display progressbar and messages`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         val stateList = viewModel.state.observeAll()
 
         stateList.first() shouldBeEqualTo MessageListViewModel.State.Loading
@@ -157,7 +157,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should request more messages when end region reached`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
@@ -167,7 +167,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should delete message`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
@@ -177,7 +177,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should flag message`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.FlagMessage(MESSAGE))
@@ -187,7 +187,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should return from thread to normal mode on back click`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         val states = viewModel.state.observeAll()
         viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
 
@@ -226,7 +226,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should navigate up from normal mode on back click`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         val states = viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
@@ -236,7 +236,7 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should display thread messages when thread mode entered`() {
-        val viewModel = MessageListViewModel(CID, domain, client)
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         val states = viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))

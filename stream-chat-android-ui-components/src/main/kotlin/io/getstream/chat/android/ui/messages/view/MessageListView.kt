@@ -400,6 +400,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
     }
 
+    override fun scrollToMessage(message: Message) {
+        val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
+        targetListItem?.let {
+            val position = adapter.currentList.indexOf(it)
+            binding.chatMessagesRV.layoutManager?.scrollToPosition(position)
+        }
+    }
+
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
         binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
         binding.chatMessagesRV.addOnScrollListener(

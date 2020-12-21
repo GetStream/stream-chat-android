@@ -11,7 +11,6 @@ public interface CreateChannel {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      *
      * @param channel the channel object
-     * @return A call object with Channel as the return type
      */
     public operator fun invoke(channel: Channel): Call<Channel>
 }

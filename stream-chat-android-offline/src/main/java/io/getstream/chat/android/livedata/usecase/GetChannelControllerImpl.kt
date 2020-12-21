@@ -12,8 +12,7 @@ public interface GetChannelController {
      * Returns a ChannelController for given cid
      *
      * @param cid the full channel id. ie messaging:123
-
-     * @return A call object with ChannelController as the return type
+     *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
     public operator fun invoke(cid: String): Call<ChannelController>

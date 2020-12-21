@@ -14,7 +14,6 @@ public interface QueryChannelsLoadMore {
      * @param sort the sort for the channels, by default will sort on last_message_at
      * @param limit the number of channels to retrieve
      * @param messageLimit how many messages to fetch per chanel
-     * @return A call object with List<Channel> as the return type
      * @see io.getstream.chat.android.client.utils.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
