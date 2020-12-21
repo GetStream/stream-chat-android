@@ -21,7 +21,6 @@ public open class MessageListItemViewHolderFactory {
             MessageListItemViewType.DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MessageListItemViewType.MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            MessageListItemViewType.REPLY_MESSAGE -> createReplyMessageViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(parentView)
             MessageListItemViewType.MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
@@ -44,10 +43,6 @@ public open class MessageListItemViewHolderFactory {
 
     public open fun createPlainTextViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
         return MessagePlainTextViewHolder(parentView, listenerContainer)
-    }
-
-    public open fun createReplyMessageViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createEmptyMessageItemViewHolder(parentView)
     }
 
     public open fun createPlainTextWithFileAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
