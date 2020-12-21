@@ -6,15 +6,15 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 
 class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(),
-            { viewGroup -> OnlyFileAttachmentsViewHolder(viewGroup, null) },
-            OnlyFileAttachmentsViewHolder::bind
+            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, null) },
+            PlainTextWithFileAttachmentsViewHolder::bind
         )
     }
 
