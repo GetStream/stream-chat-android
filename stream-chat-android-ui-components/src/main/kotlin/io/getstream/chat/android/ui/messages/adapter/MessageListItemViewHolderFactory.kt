@@ -26,6 +26,8 @@ public open class MessageListItemViewHolderFactory {
             MessageListItemViewType.ATTACHMENTS -> createAttachmentsViewHolder(parentView)
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
             MessageListItemViewType.THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
+            MessageListItemViewType.TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
+            MessageListItemViewType.READ_STATE -> createEmptyMessageItemViewHolder(parentView)
         }
     }
 
@@ -42,11 +44,11 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createReplyMessageViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createBaseMessageItemViewHolder(parentView)
+        return createEmptyMessageItemViewHolder(parentView)
     }
 
     public open fun createPlainTextWithFileAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createBaseMessageItemViewHolder(parentView)
+        return createEmptyMessageItemViewHolder(parentView)
     }
 
     private fun createPlainTextWithMediaAttachmentsViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
@@ -62,14 +64,14 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createLoadingIndicatorViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createBaseMessageItemViewHolder(parentView)
+        return createEmptyMessageItemViewHolder(parentView)
     }
 
     public open fun createThreadSeparatorViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createBaseMessageItemViewHolder(parentView)
+        return createEmptyMessageItemViewHolder(parentView)
     }
 
-    private fun createBaseMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<MessageListItem> {
+    private fun createEmptyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<MessageListItem> {
         return object : BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
