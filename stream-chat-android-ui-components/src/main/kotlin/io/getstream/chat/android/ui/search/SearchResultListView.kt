@@ -49,12 +49,9 @@ public class SearchResultListView : ViewFlipper {
         binding.searchListView.apply {
             setHasFixedSize(true)
             adapter = this@SearchResultListView.adapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    context,
-                    LinearLayoutManager.VERTICAL
-                )
-            )
+
+            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+
             addOnScrollListener(scrollListener)
         }
     }

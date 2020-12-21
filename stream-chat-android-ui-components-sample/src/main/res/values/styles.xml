@@ -1,9 +1,8 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppTheme" parent="StreamUiBaseStyle">
         <item name="colorPrimary">@color/stream_color_primary</item>
         <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
-        <item name="colorAccent">@color/stream_color_accent</item>
     </style>
 
     <style name="LoginEditText">

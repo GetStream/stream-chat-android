@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/stream_ui_background_default"
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
@@ -27,13 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_black"
+        android:textColor="@color/stream_ui_text_color_strong"
         android:textSize="@dimen/stream_ui_text_large"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+        tools:text="An Amazing Guy"
         />
 
     <TextView
@@ -42,13 +44,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Las seen 3 days ago"
         />
 
     <TextView
@@ -57,12 +60,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/chat_group_info_owner"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Some owner here"
         />
 
     <Space

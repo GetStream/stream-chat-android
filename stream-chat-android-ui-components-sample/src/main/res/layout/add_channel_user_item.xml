@@ -5,7 +5,7 @@
     android:id="@+id/userContainer"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/stream_ui_white"
+    android:background="@color/stream_ui_background_default"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_black"
+        android:textColor="@color/stream_ui_text_color_strong"
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
@@ -31,6 +31,7 @@
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Some user"
         />
 
     <TextView
@@ -39,13 +40,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_small"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/checkboxImageView"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
+        tools:text="last seen one hours ago"
         />
 
     <ImageView
