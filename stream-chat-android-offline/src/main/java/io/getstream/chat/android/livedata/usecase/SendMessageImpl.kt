@@ -13,7 +13,6 @@ public interface SendMessage {
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
      * @param message the message to send
-     * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Call<Message>
