@@ -111,7 +111,7 @@ internal class ChannelControllerImpl(
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
-    internal var errorWatching = false
+
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
 
@@ -365,7 +365,6 @@ internal class ChannelControllerImpl(
             return
         }
         runChannelQuery(QueryChannelPaginationRequest(limit))
-        errorWatching = recoveryNeeded
     }
 
     private fun loadMoreMessagesRequest(
@@ -400,7 +399,7 @@ internal class ChannelControllerImpl(
         return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
     }
 
-    private suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val loader = when (pagination.messageFilterDirection) {
             Pagination.GREATER_THAN,
             Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
@@ -425,6 +424,7 @@ internal class ChannelControllerImpl(
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
+            logger.logI("Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
             null
         }
         val localChannel = queryOfflineJob.await()
@@ -441,6 +441,13 @@ internal class ChannelControllerImpl(
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
                 updateLiveDataFromChannel(response.data())
+            } else {
+                if (response.error().isPermanent()) {
+                    logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${response.error()}")
+                } else {
+                    logger.logW("Temporary failure calling channel.watch for channel $cid. Marking the channel as needing recovery. Error was ${response.error()}")
+                    recoveryNeeded = true
+                }
             }
             response
         } else {
@@ -1147,13 +1154,13 @@ internal class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    private suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    internal suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateLiveDataFromChannel(localChannel)
     }
 
-    private suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    internal suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)

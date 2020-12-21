@@ -5,6 +5,7 @@ import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
@@ -82,13 +83,14 @@ public class MessagePreviewView : FrameLayout {
     }
 
     private fun formatMessagePreview(message: Message, currentUserMention: String?): CharSequence {
-        val attachmentsNames = message.attachments
+        val fileAttachmentsNames = message.attachments
+            .filter { it.type == ModelType.attach_file }
             .mapNotNull { attachment ->
                 attachment.title ?: attachment.name
             }
 
-        if (attachmentsNames.isNotEmpty()) {
-            return context.getString(R.string.stream_ui_message_file, attachmentsNames.joinToString())
+        if (fileAttachmentsNames.isNotEmpty()) {
+            return context.getString(R.string.stream_ui_message_file, fileAttachmentsNames.joinToString())
         }
 
         if (currentUserMention != null) {
