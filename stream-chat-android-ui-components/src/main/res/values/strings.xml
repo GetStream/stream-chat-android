@@ -71,6 +71,14 @@
     <string name="stream_ui_message_deleted_label">Message deleted</string>
     <string name="stream_ui_attachments_more_count_prefix">+%d</string>
 
+    <!-- Message options -->
+    <string name="stream_ui_message_option_reply">Reply</string>
+    <string name="stream_ui_message_option_thread_reply">Thread reply</string>
+    <string name="stream_ui_message_option_copy">Copy</string>
+    <string name="stream_ui_message_option_mute">Mute</string>
+    <string name="stream_ui_message_option_block_user">Block user</string>
+    <string name="stream_ui_message_option_delete_user">Delete user</string>
+
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">
         <item quantity="one">%s is typing</item>
