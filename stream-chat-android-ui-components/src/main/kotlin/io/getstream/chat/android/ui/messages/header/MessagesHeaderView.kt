@@ -7,7 +7,6 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
@@ -149,7 +148,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {
         val textStyle = getSearchingForNetworkTextStyle(attrs)
         binding.searchingForNetworkText.apply {
-            text = attrs.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelText)
+            text = attrs.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelText)
                 ?: context.getString(R.string.stream_ui_message_list_header_searching_for_network)
             setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
@@ -262,13 +261,9 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private fun configBackButton(attrs: TypedArray) {
         binding.backButtonContainer.apply {
-            if (attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowBackButton, true)) {
-                visibility = View.VISIBLE
-                isClickable = true
-            } else {
-                visibility = View.INVISIBLE
-                isClickable = false
-            }
+            val showBackButton = attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowBackButton, true)
+            isVisible = showBackButton
+            isClickable = showBackButton
         }
         binding.backButtonBadge.apply {
             isVisible =
@@ -314,14 +309,11 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     private fun configUserAvatar(attrs: TypedArray) {
+        val showAvatar =
+            attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowUserAvatar, true)
         binding.avatar.apply {
-            if (attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowUserAvatar, true)) {
-                visibility = View.VISIBLE
-                isClickable = true
-            } else {
-                visibility = View.INVISIBLE
-                isClickable = false
-            }
+            isVisible = showAvatar
+            isClickable = showAvatar
         }
     }
 

@@ -91,15 +91,15 @@ internal fun randomCommand(): Command {
     return Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
 }
 
+internal fun randomImageUrl(): String {
+    val category = listOf("men", "women").random()
+    val index = (0..99).random()
+    return "https://randomuser.me/api/portraits/$category/$index.jpg"
+}
+
 private fun randomReactions(size: Int): List<Reaction> {
     return List(size) {
         val randomReactionType = ReactionType.values()[Random().nextInt(ReactionType.values().size)]
         Reaction(user = randomUser(), type = randomReactionType.type)
     }
-}
-
-private fun randomImageUrl(): String {
-    val category = listOf("men", "women").random()
-    val index = (0..99).random()
-    return "https://randomuser.me/api/portraits/$category/$index.jpg"
 }

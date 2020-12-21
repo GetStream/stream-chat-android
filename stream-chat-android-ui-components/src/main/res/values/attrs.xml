@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="streamUiAvatarBorderWidth" format="dimension|reference" />
-    <attr name="streamUiAvatarBorderColor" format="color|reference" />
-    <attr name="streamUiAvatarTextSize" format="dimension|reference" />
-    <attr name="streamUiAvatarTextColor" format="color|reference" />
-    <attr name="streamUiAvatarTextFont" format="reference" />
-    <attr name="streamUiAvatarTextFontAssets" format="string" />
-    <attr name="streamUiAvatarTextStyle">
-        <flag name="normal" value="0" />
-        <flag name="bold" value="1" />
-        <flag name="italic" value="2" />
-    </attr>
-    <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
-        <enum name="top" value="0" />
-        <enum name="bottom" value="1" />
-    </attr>
-
     <declare-styleable name="AvatarView">
-        <attr name="streamUiAvatarBorderWidth" />
-        <attr name="streamUiAvatarBorderColor" />
-        <attr name="streamUiAvatarTextSize" />
-        <attr name="streamUiAvatarTextColor" />
-        <attr name="streamUiAvatarTextFont" />
-        <attr name="streamUiAvatarTextFontAssets" />
-        <attr name="streamUiAvatarTextStyle" />
+        <attr name="streamUiAvatarBorderColor" format="color|reference" />
+        <attr name="streamUiAvatarBorderWidth" format="dimension|reference" />
+        <attr name="streamUiAvatarTextSize" format="dimension|reference" />
+        <attr name="streamUiAvatarTextColor" format="color|reference" />
+        <attr name="streamUiAvatarTextFont" format="reference" />
+        <attr name="streamUiAvatarTextFontAssets" format="string" />
+        <attr name="streamUiAvatarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
         <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
-        <attr name="streamUiAvatarOnlineIndicatorPosition" />
+        <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
     </declare-styleable>
 
     <!--MessageInputViewNew-->
-    <declare-styleable name="StreamUiMessageInputView">
+    <declare-styleable name="MessageInputView">
         <!--Attachment Button-->
         <attr name="streamUiAttachButtonEnabled" format="boolean" />
         <attr name="streamUiAttachButtonIcon" format="reference" />
@@ -46,7 +37,6 @@
         <attr name="streamUiLightningButtonIconColor" format="color|reference" />
         <attr name="streamUiLightningButtonIconPressedColor" format="color|reference" />
         <attr name="streamUiLightningButtonIconDisabledColor" format="color|reference" />
-        <attr name="streamUiLightningButtonSelectedIconColor" format="color|reference" />
         <attr name="streamUiLightningButtonWidth" format="dimension|reference" />
         <attr name="streamUiLightningButtonHeight" format="dimension|reference" />
 
@@ -55,13 +45,6 @@
         <attr name="streamUiMessageInputTextSize" format="dimension|reference" />
         <attr name="streamUiMessageInputTextColor" format="color|reference" />
         <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
-        <attr name="streamUiMessageInputTextFont" format="reference" />
-        <attr name="streamUiMessageInputTextFontAssets" format="string" />
-        <attr name="streamUiMessageInputTextStyle" format="enum">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1" />
-            <enum name="italic" value="2" />
-        </attr>
         <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
 
@@ -71,8 +54,6 @@
         <attr name="streamUiSendButtonPressedIconColor" format="color|reference" />
         <attr name="streamUiSendButtonEnabledIcon" format="reference" />
         <attr name="streamUiSendButtonDisabledIcon" format="reference" />
-        <attr name="streamUiSendButtonWidth" format="dimension|reference" />
-        <attr name="streamUiSendButtonHeight" format="dimension|reference" />
 
         <!-- "Also send to channel" CheckBox -->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
@@ -80,13 +61,6 @@
 
     <!--ChannelsHeaderView-->
     <declare-styleable name="ChannelListHeaderView">
-        <attr name="streamUiAvatarBorderWidth" />
-        <attr name="streamUiAvatarBorderColor" />
-        <attr name="streamUiAvatarTextSize" />
-        <attr name="streamUiAvatarTextColor" />
-        <attr name="streamUiAvatarTextFont" />
-        <attr name="streamUiAvatarTextFontAssets" />
-        <attr name="streamUiAvatarTextStyle" />
         <attr name="streamUiShowUserAvatar" format="boolean" />
 
         <attr name="streamUiOnlineTitleText" format="string|reference" />
@@ -124,65 +98,9 @@
 
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
-        <attr name="streamUiChannelPreviewLayout" format="reference" />
-        <attr name="streamUiChannelTitleTextColor" format="color|reference" />
-        <attr name="streamUiChannelTitleTextFont" format="reference" />
-        <attr name="streamUiChannelTitleTextFontAssets" format="string" />
         <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
-        <attr name="streamUiChannelTitleTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiChannelTitleUnreadTextColor" format="color|reference" />
-        <attr name="streamUiChannelTitleUnreadTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiChannelWithOutNameTitleText" format="string" />
-        <attr name="streamUiLastMessageDateTextColor" format="color|reference" />
-        <attr name="streamUiLastMessageDateTextFont" format="reference" />
-        <attr name="streamUiLastMessageDateTextFontAssets" format="string" />
         <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
-        <attr name="streamUiLastMessageDateTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiLastMessageDateUnreadTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiLastMessageTextColor" format="color|reference" />
-        <attr name="streamUiLastMessageTextFont" format="reference" />
-        <attr name="streamUiLastMessageTextFontAssets" format="string" />
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
-        <attr name="streamUiLastMessageTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiLastMessageUnreadTextColor" format="color|reference" />
-        <attr name="streamUiLastMessageUnreadTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-
-        <attr name="streamUiReadStateAvatarHeight" format="dimension|reference" />
-        <attr name="streamUiReadStateAvatarWidth" format="dimension|reference" />
-        <attr name="streamUiReadStateTextColor" format="color|reference" />
-        <attr name="streamUiReadStateTextFont" format="reference" />
-        <attr name="streamUiReadStateTextFontAssets" format="string" />
-        <attr name="streamUiReadStateTextSize" format="dimension|reference" />
-        <attr name="streamUiReadStateTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
-        <attr name="streamUiShowReadState" format="boolean" />
     </declare-styleable>
 
     <!--MessageListHeaderView-->
@@ -224,9 +142,7 @@
         <attr name="streamUiMessagesHeaderShowSearchingForNetworkProgressBar" format="boolean" />
         <attr name="streamUiMessagesHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
 
-        <attr name="streamUiMessagesHeaderBackButtonDrawable" format="reference" />
         <attr name="streamUiMessagesHeaderShowBackButton" format="boolean" />
-
         <attr name="streamUiMessagesHeaderShowBackButtonBadge" format="boolean" />
         <attr name="streamUiMessagesHeaderBackButtonBadgeBackgroundColor" format="color" />
 
