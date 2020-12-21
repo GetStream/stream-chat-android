@@ -1,9 +1,12 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -49,33 +52,41 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
-        // TODO review this logic for the BOTTOM check
-        if (data.positions.contains(MessageListItem.Position.BOTTOM).not()) {
+        fun hideIndicator() {
             imageView.isVisible = false
+        }
+
+        fun showIndicator(@DrawableRes drawableRes: Int) {
+            imageView.isVisible = true
+            imageView.setImageResource(drawableRes)
+        }
+
+        // TODO review this logic for the BOTTOM check
+        if (BOTTOM !in data.positions) {
+            hideIndicator()
             return
         }
 
         if (!data.isMine) {
-            imageView.isVisible = false
+            hideIndicator()
             return
         }
 
-        imageView.isVisible = true
-
         when (data.message.syncStatus) {
             SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
-                imageView.setImageResource(R.drawable.stream_ui_ic_clock)
+                showIndicator(R.drawable.stream_ui_ic_clock)
             }
             SyncStatus.COMPLETED -> {
                 if (data.messageReadBy.isNotEmpty()) {
-                    imageView.setImageResource(R.drawable.stream_ui_ic_check_all)
-                } else if (data.messageReadBy.isEmpty()) {
-                    imageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
+                    showIndicator(R.drawable.stream_ui_ic_check_all)
+                } else {
+                    showIndicator(R.drawable.stream_ui_ic_check_gray)
                 }
             }
             SyncStatus.FAILED_PERMANENTLY -> {
-                // no direction on this yet
+                // This case is covered by a separate Decorator
+                hideIndicator()
             }
-        }
+        }.exhaustive
     }
 }
