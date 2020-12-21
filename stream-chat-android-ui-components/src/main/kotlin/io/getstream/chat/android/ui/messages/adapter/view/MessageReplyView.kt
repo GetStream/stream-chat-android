@@ -47,7 +47,7 @@ public class MessageReplyView : FrameLayout {
         binding.root.updateConstraints {
             clear(R.id.avatarView, ConstraintSet.START)
             clear(R.id.avatarView, ConstraintSet.END)
-            clear(R.id.replyContainer, ConstraintSet.END)
+            clear(R.id.replyContainer, ConstraintSet.START)
             clear(R.id.replyContainer, ConstraintSet.END)
         }
         binding.avatarView.updateLayoutParams<ConstraintLayout.LayoutParams> {
