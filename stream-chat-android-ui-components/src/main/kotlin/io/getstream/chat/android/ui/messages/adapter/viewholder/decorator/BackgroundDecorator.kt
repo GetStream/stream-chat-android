@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedVi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
@@ -81,6 +82,13 @@ internal class BackgroundDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.fileAttachmentsView, data)
+    }
+
+    override fun decoratePlainTextWithFileAttachmentsMessage(
+        viewHolder: PlainTextWithFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
     }
 
     companion object {

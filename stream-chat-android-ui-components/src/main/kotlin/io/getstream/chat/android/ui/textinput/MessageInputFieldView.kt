@@ -29,7 +29,7 @@ public class MessageInputFieldView : FrameLayout {
         StreamUiMessageInputFieldBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_field_attachment_hint)
-    private val normalModeHint = context.getString(R.string.stream_ui_message_input_field_message_hint)
+    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_field_message_hint)
     private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter()
     private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter()
     private val storageHelper = StorageHelper()
@@ -37,15 +37,8 @@ public class MessageInputFieldView : FrameLayout {
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
 
-    public var mode: Mode by Delegates.observable(Mode.MessageMode) { _, _, newMode ->
-        when (newMode) {
-            is Mode.FileAttachmentMode -> switchToFileAttachmentMode(newMode)
-            is Mode.MediaAttachmentMode -> switchToMediaAttachmentMode(newMode)
-            is Mode.MessageMode -> switchToMessageMode()
-            is Mode.EditMessageMode -> switchToEditMode(newMode)
-            is Mode.CommandMode -> switchToCommandMode(newMode)
-        }
-        contentChangeListener?.onModeChanged(newMode)
+    public var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
+        if (oldMode != newMode) onModeChanged(newMode)
     }
 
     public var messageText: String
@@ -101,6 +94,7 @@ public class MessageInputFieldView : FrameLayout {
                 R.drawable.stream_ui_ic_command,
                 R.dimen.stream_ui_message_input_command_icon_size
             )
+            onModeChanged(mode)
         }
     }
 
@@ -121,7 +115,7 @@ public class MessageInputFieldView : FrameLayout {
     }
 
     public fun setHint(hint: CharSequence?) {
-        binding.messageEditText.hint = hint
+        normalModeHint = hint
     }
 
     public fun setInputFieldScrollBarEnabled(enabled: Boolean) {
@@ -165,6 +159,17 @@ public class MessageInputFieldView : FrameLayout {
         selectedFileAttachmentAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
+    }
+
+    private fun onModeChanged(currentMode: Mode) {
+        when (currentMode) {
+            is Mode.FileAttachmentMode -> switchToFileAttachmentMode(currentMode)
+            is Mode.MediaAttachmentMode -> switchToMediaAttachmentMode(currentMode)
+            is Mode.MessageMode -> switchToMessageMode()
+            is Mode.EditMessageMode -> switchToEditMode(currentMode)
+            is Mode.CommandMode -> switchToCommandMode(currentMode)
+        }
+        contentChangeListener?.onModeChanged(currentMode)
     }
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
