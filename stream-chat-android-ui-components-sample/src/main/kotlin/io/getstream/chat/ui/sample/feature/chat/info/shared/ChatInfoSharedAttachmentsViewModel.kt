@@ -76,11 +76,11 @@ class ChatInfoSharedAttachmentsViewModel(
                 .groupBy { mapDate(it.createdAt) }
                 .flatMap { (date, attachments) ->
                     mutableListOf(SharedAttachment.DateDivider(date)) + attachments.map {
-                        SharedAttachment.AttachmentItem(it.attachment)
+                        SharedAttachment.AttachmentItem(it)
                     }
                 }
         } else {
-            attachments.map { SharedAttachment.AttachmentItem(it.attachment) }
+            attachments.map { SharedAttachment.AttachmentItem(it) }
         }
     }
 

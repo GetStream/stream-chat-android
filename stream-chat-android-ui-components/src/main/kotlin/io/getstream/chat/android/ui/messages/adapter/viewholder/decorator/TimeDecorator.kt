@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 
@@ -33,6 +34,13 @@ internal class TimeDecorator(private val dateFormatter: DateFormatter) : BaseDec
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        setupTime(viewHolder.binding.tvTime, data)
+    }
+
+    override fun decoratePlainTextWithFileAttachmentsMessage(
+        viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
         setupTime(viewHolder.binding.tvTime, data)

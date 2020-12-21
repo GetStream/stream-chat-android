@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
@@ -33,6 +34,13 @@ internal class AvatarDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) {
+        setupAvatar(viewHolder.binding.avatarView, viewHolder.binding.fileAttachmentsView, data)
+    }
+
+    override fun decoratePlainTextWithFileAttachmentsMessage(
+        viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
         setupAvatar(viewHolder.binding.avatarView, viewHolder.binding.fileAttachmentsView, data)
