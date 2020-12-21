@@ -425,7 +425,7 @@ public class MessageInputView : ConstraintLayout {
                 ),
                 disabledColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, getDisabledSendButtonIconColor())
+                    ContextCompat.getColor(context, getDisabledSendButtonIconColorStateDisabled())
                 )
             )
         )
@@ -442,9 +442,17 @@ public class MessageInputView : ConstraintLayout {
 
     private fun getDisabledSendButtonIconColor(): Int {
         return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_grey_medium_light
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_blue
             Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_disabled_send_message_dark_theme
-            else -> R.color.stream_ui_grey_medium_light
+            else -> R.color.stream_ui_blue
+        }
+    }
+
+    private fun getDisabledSendButtonIconColorStateDisabled(): Int {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_grey_gainsboro
+            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_disabled_send_message_dark_theme
+            else -> R.color.stream_ui_grey_gainsboro
         }
     }
 
