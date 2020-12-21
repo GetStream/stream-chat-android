@@ -23,7 +23,7 @@ class ChatInfoSharedFilesAdapter : ListAdapter<SharedAttachment, BaseViewHolder<
     }
 ) {
 
-    private val dateFormat: DateFormat = SimpleDateFormat("MMM yy", Locale.getDefault())
+    private val dateFormat: DateFormat = SimpleDateFormat("MMM yyyy", Locale.getDefault())
     private var attachmentClickListener: AttachmentClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {

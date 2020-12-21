@@ -10,9 +10,8 @@ public interface SendReaction {
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain
-     * @param cid: the full channel id IE messaging:123
+     * @param cid: the full channel id i. e. messaging:123
      * @param reaction the reaction to add
-     * @return A call object with Reaction as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(cid: String, reaction: Reaction): Call<Reaction>

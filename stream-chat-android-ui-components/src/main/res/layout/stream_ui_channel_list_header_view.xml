@@ -5,7 +5,7 @@
     android:id="@+id/channelListHeader"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/stream_ui_background_light"
     tools:layout_height="@dimen/stream_ui_default_header_height"
     >
 
@@ -90,7 +90,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_ui_channel_header_separator_height"
-        android:background="@color/stream_ui_gray_light"
+        android:background="@color/stream_ui_divider_tint_light"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

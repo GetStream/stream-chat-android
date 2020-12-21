@@ -20,16 +20,16 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/messageText"
-        app:layout_constraintEnd_toEndOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintStart_toStartOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintTop_toTopOf="@id/mediaAttachmentsGroupView"
+        app:layout_constraintEnd_toEndOf="@id/fileAttachmentsView"
+        app:layout_constraintStart_toStartOf="@id/fileAttachmentsView"
+        app:layout_constraintTop_toTopOf="@id/fileAttachmentsView"
         />
 
-    <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
-        android:id="@+id/mediaAttachmentsGroupView"
+    <io.getstream.chat.android.ui.messages.adapter.view.FileAttachmentsView
+        android:id="@+id/fileAttachmentsView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="1dp"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -48,9 +48,9 @@
         android:paddingBottom="@dimen/stream_ui_spacing_small"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/stream_ui_black"
-        app:layout_constraintEnd_toEndOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintStart_toStartOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintTop_toBottomOf="@id/mediaAttachmentsGroupView"
+        app:layout_constraintEnd_toEndOf="@id/fileAttachmentsView"
+        app:layout_constraintStart_toStartOf="@id/fileAttachmentsView"
+        app:layout_constraintTop_toBottomOf="@id/fileAttachmentsView"
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView

@@ -122,7 +122,9 @@ class GroupChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.SharedMedia -> Unit // TODO: Not supported yet
+                ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                )
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
                 )

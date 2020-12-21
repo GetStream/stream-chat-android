@@ -35,9 +35,11 @@ class ChatInfoSharedFileViewHolder(
 
     override fun bind(item: SharedAttachment.AttachmentItem) {
         attachmentItem = item
-        binding.fileTypeImageView.setImageResource(UiUtils.getIcon(item.attachment.mimeType))
-        binding.fileNameTextView.text = item.attachment.name
-        binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(item.attachment.fileSize.toLong())
+        with(item.attachmentWithDate.attachment) {
+            binding.fileTypeImageView.setImageResource(UiUtils.getIcon(mimeType))
+            binding.fileNameTextView.text = name
+            binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(fileSize.toLong())
+        }
     }
 }
 

@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui.channel.list
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -53,17 +51,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     private fun parseStyleAttributes(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
         // parse the attributes
-        return ChannelListViewStyle(context, attrs).apply {
-            // use the background color as a default for the avatar border
-            if (avatarBorderColor == -1) {
-                background.let { channelViewBackground ->
-                    avatarBorderColor = when (channelViewBackground) {
-                        is ColorDrawable -> channelViewBackground.color
-                        else -> Color.WHITE
-                    }
-                }
-            }
-        }
+        return ChannelListViewStyle(context, attrs)
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {
@@ -86,27 +74,27 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProvider.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setChannelLongClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProvider.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
-        requireAdapter().listenerProvider.userClickListener = listener ?: UserClickListener.DEFAULT
+        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
     public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProvider.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerProvider.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
+        requireAdapter().listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setSwipeListener(listener: SwipeListener?) {
-        requireAdapter().listenerProvider.swipeListener = listener ?: SwipeListener.DEFAULT
+        requireAdapter().listenerContainer.swipeListener = listener ?: SwipeListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {

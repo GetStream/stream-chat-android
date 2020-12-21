@@ -116,7 +116,7 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
     }
 
     companion object {
-        private const val KILOBYTE = 1024 * 1024
+        private const val KILOBYTE = 1024
         private fun Int.kiloBytes() = this * KILOBYTE
     }
 }

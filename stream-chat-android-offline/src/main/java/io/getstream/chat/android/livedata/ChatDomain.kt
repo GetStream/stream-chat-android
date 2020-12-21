@@ -26,7 +26,7 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 public interface ChatDomain {
 
     /** the current user on the chatDomain object, same as client.getCurrentUser() */
-    public val currentUser: User
+    public var currentUser: User
 
     /** if offline is enabled */
     public var offlineEnabled: Boolean
@@ -170,7 +170,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

@@ -25,7 +25,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
+import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.extensions.isImage
 import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -81,7 +83,7 @@ public class ChatClient internal constructor(
 
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
-    private val eventsObservable = ChatEventsObservable(socket)
+    private val eventsObservable = ChatEventsObservable(socket, this)
     private val lifecycleObserver = StreamLifecycleObserver(
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
@@ -103,11 +105,7 @@ public class ChatClient internal constructor(
                     val connectionId = event.connectionId
                     clientStateService.onConnected(user, connectionId)
                     api.setConnection(user.id, connectionId)
-                    callConnectionListener(event, null)
                     lifecycleObserver.observe()
-                }
-                is ErrorEvent -> {
-                    callConnectionListener(null, event.error)
                 }
                 is DisconnectedEvent -> {
                     clientStateService.onDisconnected()
@@ -453,7 +451,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int
     ): Call<List<AttachmentWithDate>> =
-        getAttachments(channelType, channelId, offset, limit, "file")
+        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
     public fun getImageAttachments(
         channelType: String,
@@ -461,7 +459,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int
     ): Call<List<AttachmentWithDate>> =
-        getAttachments(channelType, channelId, offset, limit, "image")
+        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
 
     private fun getAttachments(
         channelType: String,
@@ -475,12 +473,17 @@ public class ChatClient internal constructor(
 
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter)).map { messages ->
             messages.flatMap { message ->
-                message.attachments.map { attachment ->
-                    AttachmentWithDate(
-                        attachment = attachment,
-                        createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
-                    )
+                if (type == ATTACHMENT_TYPE_IMAGE) {
+                    message.attachments.filter { attachment -> attachment.isImage }
+                } else {
+                    message.attachments
                 }
+                    .map { attachment ->
+                        AttachmentWithDate(
+                            attachment = attachment,
+                            createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
+                        )
+                    }
             }
         }
     }
@@ -835,7 +838,7 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
-    private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
+    internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
         if (connectedEvent != null) {
             val user = connectedEvent.me
             val connectionId = connectedEvent.connectionId

@@ -3,13 +3,13 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 
-public class ChannelListListenerDelegate(
+public class ChannelListListenerContainer(
     channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     moreOptionsClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
-    swipeListener: ChannelListView.SwipeListener = ChannelListView.SwipeListener.DEFAULT
+    swipeListener: ChannelListView.SwipeListener = ChannelListView.SwipeListener.DEFAULT,
 ) {
     public var channelClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(channelClickListener) { getListener ->
         ChannelListView.ChannelClickListener { channel ->

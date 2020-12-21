@@ -204,6 +204,7 @@ internal class QueryChannelsControllerImpl(
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
         } else {
+            logger.logI("Query with filter $filter failed, marking it as recovery needed")
             recoveryNeeded = true
             domainImpl.addError(response.error())
         }
@@ -237,6 +238,7 @@ internal class QueryChannelsControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runQueryOnline(pagination) }
         } else {
+            logger.logI("Query with filter $filter can't run since we are offline, marking it as recovery needed")
             recoveryNeeded = true
             null
         }

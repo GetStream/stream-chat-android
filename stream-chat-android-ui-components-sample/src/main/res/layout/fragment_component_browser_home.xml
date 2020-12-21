@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/stream_ui_background_light"
         >
 
         <TextView
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:orientation="vertical"
             android:padding="16dp"
             >
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AvatarView"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
@@ -54,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:orientation="vertical"
             android:padding="16dp"
             >
@@ -66,6 +68,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="ChannelListHeaderView"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
 
@@ -83,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:orientation="vertical"
             android:padding="16dp"
             >
@@ -95,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="MessagesHeaderView"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
 
@@ -113,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:clickable="true"
             android:descendantFocusability="blocksDescendants"
             android:focusable="true"
@@ -128,6 +132,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="SearchView"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
             <io.getstream.chat.android.ui.search.SearchInputView
@@ -146,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:clickable="true"
             android:descendantFocusability="blocksDescendants"
             android:focusable="true"
@@ -161,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AttachmentGallery - One picture"
-                android:textColor="@color/black"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
             <TextView
@@ -171,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AttachmentGallery - Many pictures"
-                android:textColor="@color/black"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
         </LinearLayout>
@@ -182,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:orientation="vertical"
             android:padding="16dp"
             >
@@ -194,6 +199,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="MessagePreviewView"
+                android:textColor="@color/stream_ui_text_color_strong"
                 />
 
             <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
@@ -209,7 +215,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:padding="16dp"
@@ -218,6 +224,7 @@
             <TextView
                 android:id="@+id/viewReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/stream_ui_text_color_strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -241,7 +248,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:padding="16dp"
@@ -250,6 +257,7 @@
             <TextView
                 android:id="@+id/editReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/stream_ui_text_color_strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -273,7 +281,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:padding="16dp"
             android:text="Message list"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -285,7 +293,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:padding="16dp"
             android:text="Typing indicator"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -297,7 +305,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:padding="16dp"
@@ -306,6 +314,7 @@
             <TextView
                 android:id="@+id/userReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/stream_ui_text_color_strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -329,7 +338,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:padding="16dp"
@@ -338,6 +347,7 @@
             <TextView
                 android:id="@+id/scrollButtonViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/stream_ui_text_color_strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -361,7 +371,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
+            android:background="@color/component_browser_sub_card"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:padding="16dp"
@@ -370,6 +380,7 @@
             <TextView
                 android:id="@+id/messageInputFieldViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/stream_ui_text_color_strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -378,6 +389,38 @@
 
             <io.getstream.chat.android.ui.textinput.MessageInputFieldView
                 android:id="@+id/messageInputFieldView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/messageReplyViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:id="@+id/messageReplyViewLabel"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="MessageReplyView"
+                />
+
+            <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+                android:id="@+id/messageReplyView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

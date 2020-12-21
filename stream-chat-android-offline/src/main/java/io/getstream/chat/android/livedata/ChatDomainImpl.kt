@@ -99,7 +99,7 @@ internal class ChatDomainImpl internal constructor(
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
-    internal val recoveryEnabled: Boolean = true,
+    internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
@@ -580,6 +580,10 @@ internal class ChatDomainImpl internal constructor(
             cids.add(it)
         }
 
+        return replayEventsForChannels(cids)
+    }
+
+    internal suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         val now = Date()
 
         return if (cids.isNotEmpty()) {
@@ -594,21 +598,29 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
+    /**
+     * There are several scenarios in which we need to recover events
+     * - Connection is lost and comes back (everything should be considered stale, so use recover all)
+     * - App goes to the background and comes back (everything should be considered stale, so use recover all)
+     * - We run a queryChannels or channel.watch call and encounter an offline state/or API error (should recover just that query or channel)
+     * - A reaction, message or channel fails to be created. We should retry this every health check (30 seconds or so)
+     *
+     * Calling connectionRecovered triggers:
+     * - queryChannels for the active query (at most 3) that need recovery
+     * - queryChannels for any channels that need recovery
+     * - channel.watch for channels that are not returned by the server
+     * - event recovery for those channels
+     * - API calls to create local channels, messages and reactions
+     */
+    suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0 ensure load is complete
         initJob.join()
 
-        // 1 Watch all channels that failed, it is needed for channels that are created locally, in other case it won't be created on the server
-        activeChannelMapImpl
-            .values
-            .filter { it.errorWatching }
-            .forEach { it.watch() }
-
-        // 2 update the results for queries that are actively being shown right now
+        // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
-            .filter { it.recoveryNeeded || recoveryNeeded }
+            .filter { it.recoveryNeeded || recoverAll }
             .take(3)
         for (queryRepo in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
@@ -624,45 +636,52 @@ internal class ChatDomainImpl internal constructor(
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
-        // 3 update the data for all channels that are being show right now...
+        // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
         val cids: List<String> = activeChannelMapImpl
             .entries
             .asSequence()
-            .filter { it.value.recoveryNeeded || recoveryNeeded }
+            .filter { it.value.recoveryNeeded || recoverAll }
             .filterNot { updatedChannelIds.contains(it.key) }
             .take(30)
             .map { it.key }
             .toList()
 
-        logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
+        val online = isOnline()
+        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
-        if (cids.isNotEmpty()) {
+        var missingChannelIds = listOf<String>()
+        if (cids.isNotEmpty() && online) {
             val filter = `in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
             val result = client.queryChannels(request).execute()
             if (result.isSuccess) {
                 val channels = result.data()
+                val foundChannelIds = channels.map { it.id }
                 for (c in channels) {
-                    val channelRepo = this.channel(c)
-                    channelRepo.updateLiveDataFromChannel(c)
+                    val channelController = this.channel(c)
+                    channelController.updateLiveDataFromChannel(c)
                 }
+                missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
                 storeStateForChannels(channels)
             }
+            // create channels that are not present on the API
+            for (c in missingChannelIds) {
+                val channelController = this.channel(c)
+                channelController.watch()
+            }
+            // 3 recover events
+            replayEventsForChannels(cids)
         }
 
         // 4 retry any failed requests
-        if (isOnline()) {
+        if (online) {
             retryFailedEntities()
-        }
-
-        // 5 recover events
-        if (recoveryNeeded && isOnline()) {
-            replayEventsForActiveChannels()
         }
     }
 
-    private suspend fun retryFailedEntities() {
+    internal suspend fun retryFailedEntities() {
+        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messages = retryMessages()

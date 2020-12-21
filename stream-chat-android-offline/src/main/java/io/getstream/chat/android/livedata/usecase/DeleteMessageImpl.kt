@@ -10,7 +10,6 @@ public interface DeleteMessage {
     /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain
      * @param message the message to mark as deleted
-     * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(message: Message): Call<Message>

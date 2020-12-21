@@ -1,4 +1,13 @@
-# Dic 18th, 2020 - 4.4.8
+# Dec 18th, 2020 - 4.4.9
+
+## stream-chat-android-client
+- improved event recovery behaviour
+
+## stream-chat-android-offline
+- improved event recovery behaviour
+- fixed the chatDomain.Builder boolean usage between userPresence and recoveryEnabled
+
+# Dec 18th, 2020 - 4.4.8
 ## stream-chat-android
 - Add filtering `shadowed` messages when computing last channel message
 - Add filtering `draft` channels
@@ -22,7 +31,7 @@
 ## stream-chat-android-ui-common
 - Add `messageId` arg to `MessageListViewModel`'s constructor allowing to load message by id and messages around it
 
-# Dic 14th, 2020 - 4.4.7
+# Dec 14th, 2020 - 4.4.7
 ## Common changes for all artifacts
 - Updated to Kotlin 1.4.21
 - For Java clients only: deprecated the `Call.enqueue(Function1)` method, please use `Call.enqueue(Callback)` instead

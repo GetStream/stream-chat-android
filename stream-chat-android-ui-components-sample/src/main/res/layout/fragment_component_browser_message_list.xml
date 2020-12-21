@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/component_browser_background"
         android:orientation="vertical"
         >
 
@@ -20,6 +21,7 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:text="Component Browser Message List"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -32,6 +34,7 @@
             android:padding="16dp"
             android:text="Deleted messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -44,6 +47,7 @@
             android:padding="16dp"
             android:text="Date divider"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -56,6 +60,7 @@
             android:padding="16dp"
             android:text="Plain text messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -68,6 +73,7 @@
             android:padding="16dp"
             android:text="Only media attachments messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -80,6 +86,7 @@
             android:padding="16dp"
             android:text="Plain text with media attachments"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
             />
 
         <TextView
@@ -91,6 +98,19 @@
             android:background="@drawable/shape_component_browser_item_background"
             android:padding="16dp"
             android:text="Only file attachments messages"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/stream_ui_text_color_strong"
+            />
+
+        <TextView
+            android:id="@+id/plainTextWithFileAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_component_browser_item_background"
+            android:padding="16dp"
+            android:text="Plain text with file attachments"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             />
 

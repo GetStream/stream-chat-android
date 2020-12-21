@@ -8,7 +8,7 @@
             <corners android:radius="20dp" />
             <stroke
                 android:width="1dp"
-                android:color="@color/stream_ui_black_16"
+                android:color="@color/stream_ui_border_stroke"
                 />
         </shape>
     </item>

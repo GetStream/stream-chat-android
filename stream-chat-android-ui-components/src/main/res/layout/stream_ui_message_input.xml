@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white"
     android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+    android:background="@color/stream_ui_background_alabaster"
     >
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -40,6 +40,7 @@
         app:layout_constraintEnd_toStartOf="@id/sendButtonContainer"
         app:layout_constraintStart_toEndOf="@id/commandsButton"
         app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="40dp"
         />
 
     <FrameLayout
