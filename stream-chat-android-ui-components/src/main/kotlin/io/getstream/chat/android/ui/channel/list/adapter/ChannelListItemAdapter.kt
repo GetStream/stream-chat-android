@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerDelegate
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainer
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.diff
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
@@ -18,7 +18,7 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
 
     var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
-    val listenerProvider: ChannelListListenerDelegate = ChannelListListenerDelegate()
+    val listenerContainer: ChannelListListenerContainer = ChannelListListenerContainer()
 
     var endReached: Boolean = true
         set(value) {
@@ -77,7 +77,7 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return with(listenerProvider) {
+        return with(listenerContainer) {
             viewHolderFactory.createViewHolder(
                 parent,
                 ChannelItemType.values()[viewType],

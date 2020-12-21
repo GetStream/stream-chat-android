@@ -16,7 +16,7 @@ public open class ChannelListItemViewHolderFactory {
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         swipeListener: ChannelListView.SwipeListener,
-        style: ChannelListViewStyle
+        style: ChannelListViewStyle,
     ): BaseChannelListItemViewHolder {
         return when (channelItemType) {
             ChannelItemType.DEFAULT -> createChannelViewHolder(
@@ -42,7 +42,7 @@ public open class ChannelListItemViewHolderFactory {
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
         swipeListener: ChannelListView.SwipeListener,
-        style: ChannelListViewStyle
+        style: ChannelListViewStyle,
     ): BaseChannelListItemViewHolder {
         return ChannelItemViewHolder(
             parentView,

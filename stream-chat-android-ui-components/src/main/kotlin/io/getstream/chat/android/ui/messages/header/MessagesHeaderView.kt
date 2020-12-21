@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagesHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.getDimension
-import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class MessagesHeaderView : ConstraintLayout {
@@ -73,7 +72,7 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     public fun setTitle(title: String?) {
-        binding.title.text = title.getOrDefault(String.EMPTY)
+        binding.title.text = title ?: String.EMPTY
         binding.title.isVisible = true
     }
 
