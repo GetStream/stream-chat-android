@@ -12,7 +12,6 @@ public interface DeleteReaction {
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
      * @param cid the full channel id, ie messaging:123
      * @param reaction the reaction to mark as deleted
-     * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(cid: String, reaction: Reaction): Call<Message>
