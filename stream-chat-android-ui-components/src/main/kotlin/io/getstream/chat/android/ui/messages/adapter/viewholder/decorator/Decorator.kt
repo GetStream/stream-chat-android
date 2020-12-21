@@ -30,33 +30,33 @@ internal abstract class BaseDecorator : Decorator {
         }.exhaustive
     }
 
-    protected open fun decoratePlainTextWithFileAttachmentsMessage(
+    protected abstract fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 
-    protected open fun decorateOnlyFileAttachmentsMessage(
+    protected abstract fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 
-    protected open fun decoratePlainTextWithMediaAttachmentsMessage(
+    protected abstract fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 
-    protected open fun decorateOnlyMediaAttachmentsMessage(
+    protected abstract fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 
-    protected open fun decoratePlainTextMessage(
+    protected abstract fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 
-    protected open fun decorateDeletedMessage(
+    protected abstract fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    )
 }
