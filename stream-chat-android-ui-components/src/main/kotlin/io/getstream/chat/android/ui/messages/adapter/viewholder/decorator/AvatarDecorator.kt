@@ -21,7 +21,7 @@ internal class AvatarDecorator : BaseDecorator() {
     }
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupAvatar(viewHolder.binding.avatarView, viewHolder.binding.textContainer, data)
+        setupAvatar(viewHolder.binding.avatarView, viewHolder.binding.messageText, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
