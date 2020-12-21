@@ -1,10 +1,7 @@
 package io.getstream.chat.android.ui.utils
 
-import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Color
-import io.getstream.chat.android.ui.R
 import kotlin.math.roundToInt
 
 internal fun adjustColorLBrightness(color: Int, factor: Float): Int {
