@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.messages.header
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -183,7 +182,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelColor,
-                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
+                ContextCompat.getColor(context, R.color.stream_ui_text_color_light)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelFontAssets,
@@ -194,14 +193,6 @@ public class MessagesHeaderView : ConstraintLayout {
                 Typeface.BOLD
             )
             .build()
-    }
-
-    private fun getTextColor(lightColour: Int): Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> lightColour
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_white
-            else -> lightColour
-        }
     }
 
     private fun configOfflineLabel(attrs: TypedArray) {
@@ -226,7 +217,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelTextColor,
-                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
+                ContextCompat.getColor(context, R.color.stream_ui_text_color_light)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelFontAssets,
@@ -256,7 +247,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelTextColor,
-                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_text_color_black_translucent))
+                ContextCompat.getColor(context, R.color.stream_ui_text_color_light)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelFontAssets,
@@ -310,7 +301,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleTextColor,
-                ContextCompat.getColor(context, getTextColor(R.color.stream_ui_black))
+                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleFontAssets,

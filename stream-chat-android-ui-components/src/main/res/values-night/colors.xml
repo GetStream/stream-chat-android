@@ -31,4 +31,6 @@
     <color name="stream_ui_section_item_color">#13151B</color>
     <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
 
+    <color name="stream_ui_send_button">@color/stream_ui_disabled_send_message_dark_theme</color>
+    <color name="stream_ui_send_button_disabled">@color/stream_ui_disabled_send_message_dark_theme</color>
 </resources>

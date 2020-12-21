@@ -81,4 +81,6 @@
 
     <color name="stream_ui_input_border">#2D2E2E</color>
 
+    <color name="stream_ui_send_button">@color/stream_ui_blue</color>
+    <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
 </resources>

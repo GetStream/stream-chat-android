@@ -51,10 +51,7 @@ public class SearchResultListView : ViewFlipper {
             setHasFixedSize(true)
             adapter = this@SearchResultListView.adapter
 
-            val configuration = resources.configuration
-            if (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES) {
-                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-            }
+            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             addOnScrollListener(scrollListener)
         }

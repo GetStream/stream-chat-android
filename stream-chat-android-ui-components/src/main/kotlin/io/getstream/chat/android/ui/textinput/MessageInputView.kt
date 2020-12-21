@@ -417,7 +417,7 @@ public class MessageInputView : ConstraintLayout {
             getColorList(
                 normalColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, getDisabledSendButtonIconColor())
+                    ContextCompat.getColor(context, R.color.stream_ui_send_button)
                 ),
                 selectedColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonPressedIconColor,
@@ -425,7 +425,7 @@ public class MessageInputView : ConstraintLayout {
                 ),
                 disabledColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    ContextCompat.getColor(context, getDisabledSendButtonIconColorStateDisabled())
+                    ContextCompat.getColor(context, R.color.stream_ui_send_button_disabled)
                 )
             )
         )
@@ -438,22 +438,6 @@ public class MessageInputView : ConstraintLayout {
 
         binding.sendMessageButtonDisabled.isEnabled = false
         binding.sendMessageButtonEnabled.isEnabled = false
-    }
-
-    private fun getDisabledSendButtonIconColor(): Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_blue
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_disabled_send_message_dark_theme
-            else -> R.color.stream_ui_blue
-        }
-    }
-
-    private fun getDisabledSendButtonIconColorStateDisabled(): Int {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> R.color.stream_ui_grey_gainsboro
-            Configuration.UI_MODE_NIGHT_YES -> R.color.stream_ui_disabled_send_message_dark_theme
-            else -> R.color.stream_ui_grey_gainsboro
-        }
     }
 
     private fun refreshControlsState() {
