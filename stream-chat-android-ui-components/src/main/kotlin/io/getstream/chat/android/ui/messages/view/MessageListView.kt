@@ -356,6 +356,13 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_copy
         )
 
+        val editText = tArray.getString(R.styleable.MessageListView_streamUiEditOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_edit)
+        val editIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiEditOptionIcon,
+            R.drawable.stream_ui_ic_edit
+        )
+
         val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
             ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
@@ -387,6 +394,8 @@ public class MessageListView : ConstraintLayout {
             threadReplyIcon = threadReplyIcon,
             copyText = copyText,
             copyIcon = copyIcon,
+            editText = editText,
+            editIcon = editIcon,
             muteText = muteText,
             muteIcon = muteIcon,
             blockText = blockText,

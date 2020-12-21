@@ -67,6 +67,19 @@
                 />
 
             <TextView
+                android:id="@+id/editTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                tools:drawableStart="@drawable/stream_ui_ic_edit"
+                tools:text="Edit message"
+                />
+
+            <TextView
                 android:id="@+id/muteTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

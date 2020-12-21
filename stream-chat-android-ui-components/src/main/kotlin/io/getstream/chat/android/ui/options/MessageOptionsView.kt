@@ -40,6 +40,8 @@ public class MessageOptionsView : FrameLayout {
         val threadReplyIcon: Int,
         val copyText: String,
         val copyIcon: Int,
+        val editText: String,
+        val editIcon: Int,
         val muteText: String,
         val muteIcon: Int,
         val blockText: String,
@@ -62,6 +64,7 @@ public class MessageOptionsView : FrameLayout {
             binding.copyTV.isVisible = false
         }
 
+        binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
         binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
         binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
 
