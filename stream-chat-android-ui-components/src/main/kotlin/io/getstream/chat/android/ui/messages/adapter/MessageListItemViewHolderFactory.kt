@@ -26,6 +26,7 @@ public open class MessageListItemViewHolderFactory {
             MessageListItemViewType.ATTACHMENTS -> createAttachmentsViewHolder(parentView)
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
             MessageListItemViewType.THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
+            MessageListItemViewType.TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
         }
     }
 

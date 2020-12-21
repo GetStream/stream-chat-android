@@ -19,7 +19,7 @@ internal object MessageListItemViewTypeMapper {
             is MessageListItem.ThreadSeparatorItem -> MessageListItemViewType.THREAD_SEPARATOR
             is MessageListItem.ReadStateItem -> TODO("In current design there isn't any example of it")
             is MessageListItem.MessageItem -> messageItemToViewType(messageListItem)
-            else -> MessageListItemViewType.PLAIN_TEXT
+            is MessageListItem.TypingItem -> MessageListItemViewType.TYPING_INDICATOR
         }
     }
 
