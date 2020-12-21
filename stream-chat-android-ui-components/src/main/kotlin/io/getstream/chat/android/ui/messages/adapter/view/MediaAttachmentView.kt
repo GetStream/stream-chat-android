@@ -15,6 +15,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
+import io.getstream.chat.android.ui.utils.ModelType
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 internal class MediaAttachmentView : ConstraintLayout {
@@ -42,23 +43,36 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.thumbUrl ?: attachment.imageUrl ?: return
-        showImageByUrl(url, andMoreCount)
+        val showMore = {
+            if (andMoreCount > NO_MORE_COUNT) {
+                showMoreCount(andMoreCount)
+            }
+        }
+        val showGiphyLabel = {
+            if (attachment.type == ModelType.attach_giphy) {
+                binding.giphyLabel.isVisible = true
+            }
+        }
+
+        showImageByUrl(url) {
+            showMore()
+            showGiphyLabel()
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.loadImage.isVisible = isLoading
     }
 
-    private fun showImageByUrl(imageUrl: String, andMoreCount: Int) {
+    private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             uri = imageUrl,
             placeholderResId = R.drawable.stream_ui_picture_placeholder,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)
-                if (andMoreCount > NO_MORE_COUNT) {
-                    showMoreCount(andMoreCount)
-                }
+                onCompleteCallback()
+
             }
         )
     }
