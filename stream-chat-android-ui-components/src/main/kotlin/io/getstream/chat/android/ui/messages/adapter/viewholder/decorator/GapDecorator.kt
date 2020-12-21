@@ -6,6 +6,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedVi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 internal class GapDecorator : BaseDecorator() {
@@ -40,6 +41,11 @@ internal class GapDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = setupGapView(viewHolder.binding.gapView, data)
+
+    override fun decoratePlainTextWithFileAttachmentsMessage(
+        viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) = setupGapView(viewHolder.binding.gapView, data)
 }

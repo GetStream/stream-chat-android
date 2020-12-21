@@ -20,6 +20,9 @@
     <dimen name="stream_ui_avatar_initials">14sp</dimen>
     <dimen name="stream_ui_avatar_border_width">3dp</dimen>
 
+    <!--Suggestions-->
+    <dimen name="stream_ui_suggestion_max_height">224dp</dimen>
+
     <!--Command Suggestions-->
     <dimen name="stream_ui_command_icon_size">24dp</dimen>
 

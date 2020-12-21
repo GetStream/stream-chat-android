@@ -50,7 +50,7 @@ class ChatInfoSharedFilesFragment : Fragment() {
         binding.filesRecyclerView.adapter = adapter
         binding.filesRecyclerView.addOnScrollListener(scrollListener)
         adapter.setAttachmentClickListener { attachmentItem ->
-            attachmentItem.attachment.url?.let { url ->
+            attachmentItem.attachmentWithDate.attachment.url?.let { url ->
                 startActivity(
                     Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER).apply {
                         data = Uri.parse(url)

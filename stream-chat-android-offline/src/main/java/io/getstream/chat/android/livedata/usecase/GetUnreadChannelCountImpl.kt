@@ -12,7 +12,6 @@ public interface GetUnreadChannelCount {
      * You might also be interested in GetTotalUnreadCount
      * Or ChannelController.unreadCount
      *
-     * @return A call object with LiveData<Int> as the return type
      * @see io.getstream.chat.android.livedata.usecase.GetTotalUnreadCount
      * @see io.getstream.chat.android.livedata.controller.ChannelController.unreadCount
      */

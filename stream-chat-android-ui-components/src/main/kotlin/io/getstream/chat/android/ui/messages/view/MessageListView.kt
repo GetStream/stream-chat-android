@@ -338,38 +338,44 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage) ?: "Reply"
+        val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_reply)
         val replyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
         val threadReplyText =
-            tArray.getString(R.styleable.MessageListView_streamUiThreadReplyOptionMessage) ?: "Thread Reply"
+            tArray.getString(R.styleable.MessageListView_streamUiThreadReplyOptionMessage)
+                ?: context.getString(R.string.stream_ui_message_option_thread_reply)
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
         )
 
-        val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage) ?: "Copy"
+        val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_copy)
         val copyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
         )
 
-        val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage) ?: "Mute"
+        val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
         )
 
-        val blockText = tArray.getString(R.styleable.MessageListView_streamUiBlockOptionMessage) ?: "Block user"
+        val blockText = tArray.getString(R.styleable.MessageListView_streamUiBlockOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_block_user)
         val blockIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
         )
 
-        val deleteText = tArray.getString(R.styleable.MessageListView_streamUiDeleteOptionMessage) ?: "Delete user"
+        val deleteText = tArray.getString(R.styleable.MessageListView_streamUiDeleteOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_delete_user)
         val deleteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete
