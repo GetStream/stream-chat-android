@@ -146,7 +146,6 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         channelClickListener: ChannelListView.ChannelClickListener
     ) {
         avatarView.apply {
-            setStyle(style.avatarStyle)
             setChannelData(channel)
             setOnClickListener {
                 when {
