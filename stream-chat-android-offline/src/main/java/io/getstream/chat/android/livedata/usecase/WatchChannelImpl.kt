@@ -14,8 +14,7 @@ public interface WatchChannel {
      *
      * @param cid the full channel id. ie messaging:123
      * @param messageLimit how many messages to load on the first request
-
-     * @return A call object with ChannelController as the return type
+     *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
     public operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController>

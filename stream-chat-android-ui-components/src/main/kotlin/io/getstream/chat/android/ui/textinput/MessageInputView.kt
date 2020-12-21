@@ -44,8 +44,6 @@ private const val NO_ICON_MESSAGE_DISABLED_STATE =
 private const val NO_ICON_MESSAGE_ENABLED_STATE =
     "No icon for enabled state of send message button. Please set it in XML."
 
-private const val ANIMATION_DURATION = 100L
-
 public class MessageInputView : ConstraintLayout {
 
     public constructor(context: Context) : super(context) {
@@ -296,42 +294,26 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
-    private fun showSendMessageEnabled() {
-        val fadeAnimator = binding.sendMessageButtonDisabled.run {
-            ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
-        }
-
-        val appearAnimator = binding.sendMessageButtonEnabled.run {
-            ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
-        }
+    private fun setSendMessageButtonEnabled(isEnabled: Boolean) {
+        if (binding.sendMessageButtonEnabled.isEnabled == isEnabled) return
 
         currentAnimatorSet?.cancel()
 
+        val (fadeInView, fadeOutView) = if (isEnabled) {
+            binding.sendMessageButtonEnabled to binding.sendMessageButtonDisabled
+        } else {
+            binding.sendMessageButtonDisabled to binding.sendMessageButtonEnabled
+        }
         currentAnimatorSet = AnimatorSet().apply {
-            playSequentially(fadeAnimator, appearAnimator)
+            duration = 300
+            playTogether(
+                ObjectAnimator.ofFloat(fadeOutView, "alpha", fadeOutView.alpha, 0F),
+                ObjectAnimator.ofFloat(fadeInView, "alpha", fadeInView.alpha, 1F)
+            )
             start()
         }
 
-        binding.sendMessageButtonEnabled.isEnabled = true
-    }
-
-    private fun showSendMessageDisabled() {
-        val fadeAnimator = binding.sendMessageButtonEnabled.run {
-            ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
-        }
-
-        val appearAnimator = binding.sendMessageButtonDisabled.run {
-            ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
-        }
-
-        currentAnimatorSet?.cancel()
-
-        currentAnimatorSet = AnimatorSet().apply {
-            playSequentially(fadeAnimator, appearAnimator)
-            start()
-        }
-
-        binding.sendMessageButtonEnabled.isEnabled = false
+        binding.sendMessageButtonEnabled.isEnabled = isEnabled
     }
 
     private fun configTextInput(typedArray: TypedArray) {
@@ -425,7 +407,7 @@ public class MessageInputView : ConstraintLayout {
                 ),
                 disabledColor = typedArray.getColor(
                     R.styleable.StreamUiMessageInputView_streamUiSendButtonDisabledIconColor,
-                    context.getColorCompat(R.color.stream_ui_grey_medium_light)
+                    context.getColorCompat(R.color.stream_ui_grey_gainsboro)
                 )
             )
         )
@@ -473,11 +455,7 @@ public class MessageInputView : ConstraintLayout {
         binding.attachmentsButton.isVisible = !isCommandMode
         binding.commandsButton.isVisible = !isCommandMode
         binding.commandsButton.isEnabled = !hasContent
-        if (hasContent) {
-            showSendMessageEnabled()
-        } else {
-            showSendMessageDisabled()
-        }
+        setSendMessageButtonEnabled(hasContent)
     }
 
     private fun sendMessage() {

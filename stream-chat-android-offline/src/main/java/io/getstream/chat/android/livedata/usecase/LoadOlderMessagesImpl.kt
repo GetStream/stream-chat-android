@@ -10,10 +10,8 @@ public interface LoadOlderMessages {
     /**
      * Loads older messages for the channel
      *
-     * @param cid: the full channel id IE messaging:123
+     * @param cid: the full channel id i. e. messaging:123
      * @param messageLimit: how many new messages to load
-     *
-     * @return A call object with Channel as the return type
      */
     public operator fun invoke(cid: String, messageLimit: Int): Call<Channel>
 }
