@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
-import android.content.res.Configuration
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Toast
