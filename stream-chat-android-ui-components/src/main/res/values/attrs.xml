@@ -223,5 +223,7 @@
     </declare-styleable>
 
     <declare-styleable name="ChannelsView">
+        <attr name="streamUiChannelsEmptyStateLabelText" format="string" />
+        <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
     </declare-styleable>
 </resources>
