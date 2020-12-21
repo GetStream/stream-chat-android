@@ -29,7 +29,7 @@ public class MessageInputFieldView : FrameLayout {
         StreamUiMessageInputFieldBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_field_attachment_hint)
-    private val normalModeHint = context.getString(R.string.stream_ui_message_input_field_message_hint)
+    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_field_message_hint)
     private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter()
     private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter()
     private val storageHelper = StorageHelper()
@@ -121,7 +121,7 @@ public class MessageInputFieldView : FrameLayout {
     }
 
     public fun setHint(hint: CharSequence?) {
-        binding.messageEditText.hint = hint
+        normalModeHint = hint
     }
 
     public fun setInputFieldScrollBarEnabled(enabled: Boolean) {
