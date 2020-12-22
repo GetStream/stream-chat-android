@@ -67,11 +67,7 @@ class AddChannelViewModel : ViewModel() {
             if (result.isSuccess && isActive) {
                 val users = result.data()
                 _state.postValue(
-                    if (users.isEmpty()) {
-                        State.Empty
-                    } else {
-                        if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users)
-                    }
+                    if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users)
                 )
                 updatePaginationData(users)
             }
@@ -91,7 +87,6 @@ class AddChannelViewModel : ViewModel() {
     private fun createDraftChannel(members: List<User>) {
         if (members.isEmpty()) {
             channelClient = null
-            _state.value = State.HideChannel
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
@@ -104,7 +99,7 @@ class AddChannelViewModel : ViewModel() {
             if (result.isSuccess) {
                 val cid = result.data().cid
                 channelClient = ChatClient.instance().channel(cid)
-                _state.postValue(State.ShowChannel(cid))
+                _state.postValue(State.InitializeChannel(cid))
             }
         }
     }
@@ -134,9 +129,7 @@ class AddChannelViewModel : ViewModel() {
 
     sealed class State {
         object Loading : State()
-        object Empty : State()
-        object HideChannel : State()
-        data class ShowChannel(val cid: String) : State()
+        data class InitializeChannel(val cid: String) : State()
         data class Result(val users: List<User>) : State()
         data class ResultMoreUsers(val users: List<User>) : State()
         data class NavigateToChannel(val cid: String) : State()

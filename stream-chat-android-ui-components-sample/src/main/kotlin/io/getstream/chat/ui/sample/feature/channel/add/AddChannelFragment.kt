@@ -56,18 +56,7 @@ class AddChannelFragment : Fragment() {
         binding.addChannelView.apply {
             messageListViewModel.bindView(messageListView, viewLifecycleOwner)
             messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
-            showMessageListView()
-            hideUsersRecyclerView()
         }
-    }
-
-    private fun cleanChannel() {
-        hideMessageList()
-    }
-
-    private fun hideMessageList() {
-        binding.addChannelView.hideMessageListView()
-        binding.addChannelView.showUsersRecyclerView()
     }
 
     private fun bindAddChannelView() {
@@ -76,22 +65,17 @@ class AddChannelFragment : Fragment() {
             state.observe(viewLifecycleOwner) { state ->
                 // Handle unique states
                 when (state) {
-                    is AddChannelViewModel.State.ShowChannel -> initializeChannel(state.cid)
-                    AddChannelViewModel.State.HideChannel -> cleanChannel()
+                    is AddChannelViewModel.State.InitializeChannel -> initializeChannel(state.cid)
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
                         AddChannelFragmentDirections.actionOpenChat(state.cid, null)
                     )
                     AddChannelViewModel.State.Loading,
-                    AddChannelViewModel.State.Empty,
                     is AddChannelViewModel.State.Result,
                     is AddChannelViewModel.State.ResultMoreUsers -> Unit
                 }
             }
         }
         binding.addChannelView.apply {
-            setAddMemberButtonClickedListener {
-                hideMessageList()
-            }
             setMembersChangedListener {
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MembersChanged(it))
             }

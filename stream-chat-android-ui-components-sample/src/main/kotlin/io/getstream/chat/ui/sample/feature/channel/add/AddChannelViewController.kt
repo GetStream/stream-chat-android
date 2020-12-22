@@ -1,11 +1,14 @@
 package io.getstream.chat.ui.sample.feature.channel.add
 
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.messages.view.MessageListView
+import io.getstream.chat.android.ui.textinput.MessageInputView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeader
 import io.getstream.chat.ui.sample.feature.channel.add.header.MembersInputChangedListener
@@ -15,6 +18,10 @@ class AddChannelViewController(
     private val usersTitle: TextView,
     private val usersRecyclerView: RecyclerView,
     private val createGroupContainer: ViewGroup,
+    private val messageListView: MessageListView,
+    private val messageInputView: MessageInputView,
+    private val emptyStateView: View,
+    private val loadingView: View,
     private val isAddGroupChannel: Boolean,
 ) {
 
@@ -24,7 +31,6 @@ class AddChannelViewController(
     private var isSearching = false
 
     var membersChangedListener = AddChannelView.MembersChangedListener {}
-    var addMemberButtonClickedListener = AddChannelView.AddMemberButtonClickedListener {}
     var searchInputChangedListener = AddChannelView.SearchInputChangedListener { }
 
     init {
@@ -45,8 +51,7 @@ class AddChannelViewController(
             }
             setAddMemberButtonClickListener {
                 this@AddChannelViewController.showInput()
-                addMemberButtonClickedListener.onAddMemberButtonClicked()
-                usersRecyclerView.isVisible = true
+                showUsersView()
             }
             setMemberClickListener {
                 onUserClicked(UserInfo(it, true))
@@ -54,9 +59,11 @@ class AddChannelViewController(
         }
     }
 
-    fun setUsers(users: List<User>, usersSubmittedCallback: () -> Unit) {
+    fun setUsers(users: List<User>) {
         userInfoList.clear()
-        addMoreUsers(users, usersSubmittedCallback)
+        addMoreUsers(users) {
+            showUsersView()
+        }
     }
 
     fun addMoreUsers(users: List<User>, usersSubmittedCallback: () -> Unit = {}) {
@@ -70,6 +77,29 @@ class AddChannelViewController(
         headerView.setMembers(members.toList())
 
         showUsers(userInfoList.map { UserInfo(it.user, members.contains(it.user)) })
+    }
+
+    fun messageInputViewClicked() {
+        if (members.isNotEmpty()) {
+            showMessageListView()
+        }
+    }
+
+    private fun showUsersView() {
+        usersRecyclerView.isVisible = userInfoList.isNotEmpty()
+        emptyStateView.isVisible = userInfoList.isEmpty()
+        usersTitle.isVisible = true
+        messageListView.isVisible = false
+        loadingView.isVisible = false
+    }
+
+    private fun showMessageListView() {
+        usersRecyclerView.isVisible = false
+        emptyStateView.isVisible = false
+        usersTitle.isVisible = false
+        messageListView.isVisible = true
+        loadingView.isVisible = false
+        hideInput()
     }
 
     private fun showUsers(users: List<UserInfo>, usersSubmittedCallback: () -> Unit = {}) {
@@ -93,13 +123,11 @@ class AddChannelViewController(
     private fun hideInput() {
         headerView.hideInput()
         headerView.showAddMemberButton()
-        usersTitle.isVisible = isAddGroupChannel || false
     }
 
     private fun showInput() {
         headerView.showInput()
         headerView.hideAddMemberButton()
-        usersTitle.isVisible = true
     }
 
     private fun onUserClicked(userInfo: UserInfo) {
@@ -111,14 +139,15 @@ class AddChannelViewController(
         }
         if (members.isEmpty()) {
             if (!isAddGroupChannel) {
+                messageInputView.disableSendButton()
                 createGroupContainer.isVisible = true
             }
-            usersRecyclerView.isVisible = true
+            showUsersView()
             showInput()
         } else {
             if (!isAddGroupChannel) {
+                messageInputView.enableSendButton()
                 createGroupContainer.isVisible = false
-                usersRecyclerView.isVisible = false
             }
             hideInput()
         }

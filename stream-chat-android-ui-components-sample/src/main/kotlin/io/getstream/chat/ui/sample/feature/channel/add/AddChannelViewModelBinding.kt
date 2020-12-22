@@ -5,28 +5,14 @@ import androidx.lifecycle.LifecycleOwner
 fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
         when (state) {
-            AddChannelViewModel.State.Loading -> {
-                view.showLoadingView()
-                view.hideUsersRecyclerView()
-                view.hideEmptyStateView()
-            }
-            AddChannelViewModel.State.Empty -> {
-                view.hideUsersRecyclerView()
-                view.hideLoadingView()
-                view.showEmptyStateView()
-            }
+            AddChannelViewModel.State.Loading -> view.showLoadingView()
             is AddChannelViewModel.State.Result -> {
-                view.setUsers(state.users) {
-                    view.hideLoadingView()
-                    view.hideEmptyStateView()
-                    view.showUsersRecyclerView()
-                }
+                view.setUsers(state.users)
             }
             is AddChannelViewModel.State.ResultMoreUsers -> {
                 view.addMoreUsers(state.users)
             }
-            is AddChannelViewModel.State.ShowChannel,
-            AddChannelViewModel.State.HideChannel,
+            is AddChannelViewModel.State.InitializeChannel,
             is AddChannelViewModel.State.NavigateToChannel -> Unit
         }
     }

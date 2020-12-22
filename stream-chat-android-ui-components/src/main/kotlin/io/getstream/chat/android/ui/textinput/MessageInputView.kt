@@ -61,6 +61,7 @@ public class MessageInputView : ConstraintLayout {
     private var iconDisabledSendButtonDrawable: Drawable? = null
     private var iconEnabledSendButtonDrawable: Drawable? = null
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
+    private var isSendButtonEnabled: Boolean = true
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
@@ -122,6 +123,16 @@ public class MessageInputView : ConstraintLayout {
 
     public fun configureCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
+    }
+
+    public fun enableSendButton() {
+        isSendButtonEnabled = true
+        refreshControlsState()
+    }
+
+    public fun disableSendButton() {
+        isSendButtonEnabled = false
+        refreshControlsState()
     }
 
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
@@ -287,11 +298,12 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun setSendMessageButtonEnabled(isEnabled: Boolean) {
-        if (binding.sendMessageButtonEnabled.isEnabled == isEnabled) return
+        val isSendButtonEnabled = isEnabled && this.isSendButtonEnabled
+        if (binding.sendMessageButtonEnabled.isEnabled == isSendButtonEnabled) return
 
         currentAnimatorSet?.cancel()
 
-        val (fadeInView, fadeOutView) = if (isEnabled) {
+        val (fadeInView, fadeOutView) = if (isSendButtonEnabled) {
             binding.sendMessageButtonEnabled to binding.sendMessageButtonDisabled
         } else {
             binding.sendMessageButtonDisabled to binding.sendMessageButtonEnabled
@@ -305,7 +317,7 @@ public class MessageInputView : ConstraintLayout {
             start()
         }
 
-        binding.sendMessageButtonEnabled.isEnabled = isEnabled
+        binding.sendMessageButtonEnabled.isEnabled = isSendButtonEnabled
     }
 
     private fun configTextInput(typedArray: TypedArray) {
@@ -383,6 +395,8 @@ public class MessageInputView : ConstraintLayout {
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.MessageInputView_streamUiSendButtonEnabledIcon)
             ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_up_arrow)
+
+        isSendButtonEnabled = typedArray.getBoolean(R.styleable.MessageInputView_streamUiSendButtonEnabled, true)
 
         DrawableCompat.setTintList(
             iconEnabledSendButtonDrawable!!,
