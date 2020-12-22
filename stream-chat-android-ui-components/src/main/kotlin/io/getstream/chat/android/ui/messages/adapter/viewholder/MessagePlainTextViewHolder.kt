@@ -27,5 +27,8 @@ public class MessagePlainTextViewHolder(
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
         }
+        binding.reactionsView.setReactionClickListener {
+            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
+        }
     }
 }

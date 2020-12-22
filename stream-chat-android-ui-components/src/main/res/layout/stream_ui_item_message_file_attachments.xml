@@ -24,6 +24,14 @@
         app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 
+    <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/fileAttachmentsView"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         android:layout_width="@dimen/stream_ui_avatar_size_medium"
