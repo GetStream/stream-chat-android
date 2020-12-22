@@ -79,9 +79,9 @@ public class MessageOptionsView : FrameLayout {
         }
     }
 
-    public fun setDeleteMessageListener(onDelete: () -> Unit) {
-        binding.deleteTV.setOnClickListener {
-            onDelete()
+    public fun setThreadListener(onThreadReply: () -> Unit) {
+        binding.threadReplyTV.setOnClickListener {
+            onThreadReply()
         }
     }
 
@@ -94,6 +94,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setEditMessageListener(onEdit: () -> Unit) {
         binding.editTV.setOnClickListener {
             onEdit()
+        }
+    }
+
+    public fun setDeleteMessageListener(onDelete: () -> Unit) {
+        binding.deleteTV.setOnClickListener {
+            onDelete()
         }
     }
 

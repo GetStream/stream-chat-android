@@ -154,6 +154,7 @@ public class MessageListView : ConstraintLayout {
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { framentManager ->
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
+                    threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
                     deleteClickHandler = onMessageDeleteHandler
                 )
