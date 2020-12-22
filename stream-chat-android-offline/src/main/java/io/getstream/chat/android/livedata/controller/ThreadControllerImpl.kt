@@ -10,9 +10,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import wasCreatedAfterOrAt
 
@@ -58,7 +56,7 @@ internal class ThreadControllerImpl(
         if (_loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.logI(errorMsg)
-            return Result(null, ChatError(errorMsg))
+            return Result(ChatError(errorMsg))
         }
         _loadingOlderMessages.value = true
         val firstMessage: Message? = sortedVisibleMessages.first().firstOrNull()
