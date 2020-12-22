@@ -90,7 +90,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
             }
         }.exhaustive
 
-        if (data.message.isEphemeral()){
+        if (data.message.isEphemeral()) {
             hideIndicator()
         }
     }
