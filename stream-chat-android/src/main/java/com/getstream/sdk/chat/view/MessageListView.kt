@@ -60,7 +60,7 @@ import kotlin.math.min
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView : ConstraintLayout, IMessageListView {
+public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
 
     private lateinit var style: MessageListViewStyle
@@ -361,7 +361,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         return adapter.itemCount - 1
     }
 
-    override fun setLoadingMore(loadingMore: Boolean) {
+    public fun setLoadingMore(loadingMore: Boolean) {
         if (loadingMore) {
             loadMoreListener.disablePagination()
         } else {
@@ -369,7 +369,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
     }
 
-    override fun scrollToMessage(message: Message) {
+    public fun scrollToMessage(message: Message) {
         val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
         targetListItem?.let {
             val position = adapter.currentList.indexOf(it)
@@ -422,7 +422,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    override fun init(channel: Channel, currentUser: User) {
+    public fun init(channel: Channel, currentUser: User) {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
@@ -473,11 +473,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
-    override fun showLoadingView() {
+    public fun showLoadingView() {
         loadingViewContainer.isVisible = true
     }
 
-    override fun hideLoadingView() {
+    public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
     }
 
@@ -492,11 +492,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
-    override fun showEmptyStateView() {
+    public fun showEmptyStateView() {
         emptyStateViewContainer.isVisible = true
     }
 
-    override fun hideEmptyStateView() {
+    public fun hideEmptyStateView() {
         emptyStateViewContainer.isVisible = false
     }
 
@@ -556,7 +556,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         this.messageDateFormatter = messageDateFormatter
     }
 
-    override fun displayNewMessage(listItem: MessageListItemWrapper) {
+    public fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
 
@@ -748,35 +748,35 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
     }
 
-    override fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
+    public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
 
-    override fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
+    public fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    override fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
+    public fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
         this.onMessageEditHandler = onMessageEditHandler
     }
 
-    override fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
+    public fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
         this.onMessageDeleteHandler = onMessageDeleteHandler
     }
 
-    override fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
+    public fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
         this.onStartThreadHandler = onStartThreadHandler
     }
 
-    override fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
+    public fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
         this.onMessageFlagHandler = onMessageFlagHandler
     }
 
-    override fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
+    public fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
         this.onSendGiphyHandler = onSendGiphyHandler
     }
 
-    override fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
+    public fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
         this.onMessageRetryHandler = onMessageRetryHandler
     }
 

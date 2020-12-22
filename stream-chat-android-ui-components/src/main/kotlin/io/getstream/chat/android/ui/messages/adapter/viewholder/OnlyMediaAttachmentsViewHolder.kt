@@ -31,6 +31,9 @@ public class OnlyMediaAttachmentsViewHolder(
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
         }
+        binding.reactionsView.setReactionClickListener {
+            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
+        }
     }
 
     private fun showAttachments(imageAttachments: Collection<Attachment>, isMine: Boolean) {

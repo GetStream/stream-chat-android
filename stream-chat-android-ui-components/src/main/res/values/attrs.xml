@@ -172,7 +172,6 @@
         <attr name="streamUiReactionsTotalHeight" format="dimension" />
         <attr name="streamUiReactionsHorizontalPadding" format="dimension" />
         <attr name="streamUiReactionsItemSize" format="dimension" />
-        <attr name="streamUiReactionsItemMargin" format="dimension" />
         <attr name="streamUiReactionsBubbleHeight" format="dimension" />
         <attr name="streamUiReactionsBubbleRadius" format="dimension" />
         <attr name="streamUiReactionsLargeTailBubbleCy" format="dimension" />

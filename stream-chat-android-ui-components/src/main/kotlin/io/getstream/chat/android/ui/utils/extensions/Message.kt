@@ -34,3 +34,9 @@ internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
 }
+
+internal fun Message.isSingleReaction(): Boolean {
+    return latestReactions.map { it.type }
+        .toSet()
+        .size == 1
+}

@@ -36,12 +36,7 @@ internal class ReactionsAdapter(
 
         init {
             val itemSize: Int = reactionsViewStyle.itemSize
-            val itemMargin: Int = reactionsViewStyle.itemMargin
             binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                leftMargin = itemMargin
-                rightMargin = itemMargin
-                topMargin = itemMargin
-                bottomMargin = itemMargin
                 width = itemSize
                 height = itemSize
             }

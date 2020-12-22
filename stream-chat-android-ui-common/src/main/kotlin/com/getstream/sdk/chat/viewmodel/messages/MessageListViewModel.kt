@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
@@ -180,6 +181,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.RetryMessage -> {
                 domain.useCases.sendMessage(event.message).enqueue()
             }
+            is Event.MessageReaction -> {
+                onMessageReaction(event.message, event.reactionType)
+            }
         }.exhaustive
     }
 
@@ -242,6 +246,18 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
+    private fun onMessageReaction(message: Message, reactionType: String) {
+        val reaction = Reaction().apply {
+            messageId = message.id
+            type = reactionType
+        }
+        if (message.ownReactions.any { it.type == reactionType }) {
+            domain.useCases.deleteReaction(cid, reaction).enqueue()
+        } else {
+            domain.useCases.sendReaction(cid, reaction).enqueue()
+        }
+    }
+
     private fun onNormalModeEntered() {
         currentMode = Mode.Normal
         resetThread()
@@ -262,6 +278,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class FlagMessage(val message: Message) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
+        public data class MessageReaction(val message: Message, val reactionType: String) : Event()
     }
 
     public sealed class Mode {
