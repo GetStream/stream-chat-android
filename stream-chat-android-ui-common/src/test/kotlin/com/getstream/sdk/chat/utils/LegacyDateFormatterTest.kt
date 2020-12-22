@@ -47,7 +47,7 @@ internal class LegacyDateFormatterTest {
         val legacyFormatter = TestDateFormatter()
         legacyFormatter.formatTime(localTime)
 
-        val expected = Date().apply {
+        val expected = Date(0L).apply {
             hours = 15
             minutes = 50
             seconds = 37
