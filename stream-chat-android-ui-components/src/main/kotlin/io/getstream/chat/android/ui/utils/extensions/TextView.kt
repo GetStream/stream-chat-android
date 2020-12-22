@@ -20,5 +20,5 @@ internal fun TextView.leftDrawable(@DrawableRes id: Int = 0, @DimenRes sizeRes: 
 
 internal fun TextView.leftDrawable(@DrawableRes id: Int = 0) {
     val drawable = ContextCompat.getDrawable(context, id)
-    this.setCompoundDrawables(drawable, null, null, null)
+    this.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
 }

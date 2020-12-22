@@ -102,5 +102,5 @@
     <string name="stream_ui_channels_empty_state_label">No channels available</string>
 
     <!-- Message Footer -->
-    <string name="stream_ui_ephemeral_msg_footer_template">Only visible to you %s</string>
+    <string name="stream_ui_ephemeral_msg_footer">Only visible to you</string>
 </resources>
