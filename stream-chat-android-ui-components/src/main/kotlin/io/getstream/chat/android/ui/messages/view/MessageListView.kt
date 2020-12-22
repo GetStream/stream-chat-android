@@ -154,7 +154,7 @@ public class MessageListView : ConstraintLayout {
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { framentManager ->
                 MessageOptionsOverlayDialogFragment
-                    .newInstance(message.toMessageItem(), messageOptionsConfiguration)
+                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
                     .apply {
                         setReactionClickListener { message, reactionType ->
                             onMessageReactionHandler(message, reactionType)
@@ -177,7 +177,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                ReactionsOverlayDialogFragment.newInstance(message.toMessageItem())
+                ReactionsOverlayDialogFragment.newInstance(message.toMessageItemForOverlay())
                     .apply {
                         setReactionClickListener {
                             onMessageReactionHandler(message, it.type)
@@ -650,7 +650,7 @@ public class MessageListView : ConstraintLayout {
         }.exhaustive
     }
 
-    private fun Message.toMessageItem(): MessageItem {
+    private fun Message.toMessageItemForOverlay(): MessageItem {
         return MessageItem(
             this,
             positions = listOf(MessageListItem.Position.BOTTOM),
