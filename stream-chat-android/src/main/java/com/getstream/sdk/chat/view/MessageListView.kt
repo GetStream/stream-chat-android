@@ -556,7 +556,7 @@ public class MessageListView : ConstraintLayout {
         this.messageDateFormatter = messageDateFormatter
     }
 
-    override fun displayNewMessage(listItem: MessageListItemWrapper) {
+    public fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
 
