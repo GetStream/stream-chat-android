@@ -73,37 +73,37 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         val hasReactions = data.message.latestReactions.isNotEmpty()
-        if (hasReactions) {
-            reactionsView.isVisible = true
+        reactionsView.isVisible = hasReactions
 
-            rootConstraintLayout.updateConstraints {
-                clear(reactionsView.id, ConstraintSet.START)
-                clear(reactionsView.id, ConstraintSet.END)
-            }
-            reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                val offset = if (data.message.isSingleReaction()) {
-                    SINGLE_REACTION_OFFSET
-                } else {
-                    MULTIPLE_REACTIONS_OFFSET
-                }
-                if (data.isTheirs) {
-                    startToEnd = anchor.id
-                    marginStart = -offset
-                } else {
-                    endToStart = anchor.id
-                    marginEnd = -offset
-                }
-            }
-            anchor.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                topMargin = if (hasReactions) REACTIONS_SPACING else 0
-            }
-            reactionsView.setMessage(data.message, data.isMine)
-        } else {
+        if (!hasReactions) {
             anchor.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topMargin = 0
             }
-            reactionsView.isVisible = false
+            return
         }
+
+        rootConstraintLayout.updateConstraints {
+            clear(reactionsView.id, ConstraintSet.START)
+            clear(reactionsView.id, ConstraintSet.END)
+        }
+        reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            val offset = if (data.message.isSingleReaction()) {
+                SINGLE_REACTION_OFFSET
+            } else {
+                MULTIPLE_REACTIONS_OFFSET
+            }
+            if (data.isTheirs) {
+                startToEnd = anchor.id
+                marginStart = -offset
+            } else {
+                endToStart = anchor.id
+                marginEnd = -offset
+            }
+        }
+        anchor.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            topMargin = if (hasReactions) REACTIONS_SPACING else 0
+        }
+        reactionsView.setMessage(data.message, data.isMine)
     }
 
     private companion object {
