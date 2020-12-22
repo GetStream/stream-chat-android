@@ -26,10 +26,6 @@ public class GiphyViewHolder(
         binding.giphyTextLabel.text = trimText(data.message.text)
 
         listenerContainer?.also { listeners ->
-            binding.cardView.setOnLongClickListener {
-                listeners.messageLongClickListener.onMessageLongClick(data.message)
-                true
-            }
             binding.cancelButton.setOnClickListener {
                 listeners.giphySendListener.onGiphySend(
                     data.message,
