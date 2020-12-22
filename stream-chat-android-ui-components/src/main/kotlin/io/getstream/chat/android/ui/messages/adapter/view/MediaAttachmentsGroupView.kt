@@ -61,7 +61,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
             applyTo(this@MediaAttachmentsGroupView)
         }
-        first.imageUrl?.let(mediaAttachmentView::showImageByUrl)
+        mediaAttachmentView.showAttachment(first)
     }
 
     private fun showTwo(first: Attachment, second: Attachment) {
@@ -79,8 +79,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             horizontalChainInParent(viewOne, viewTwo)
             applyTo(this@MediaAttachmentsGroupView)
         }
-        first.imageUrl?.let(viewOne::showImageByUrl)
-        second.imageUrl?.let(viewTwo::showImageByUrl)
+        viewOne.showAttachment(first)
+        viewTwo.showAttachment(second)
     }
 
     private fun showThree(first: Attachment, second: Attachment, third: Attachment) {
@@ -99,9 +99,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             connect(viewOne.id, ConstraintSet.BOTTOM, viewThree.id, ConstraintSet.BOTTOM)
             applyTo(this@MediaAttachmentsGroupView)
         }
-        first.imageUrl?.let(viewOne::showImageByUrl)
-        second.imageUrl?.let(viewTwo::showImageByUrl)
-        third.imageUrl?.let(viewThree::showImageByUrl)
+        viewOne.showAttachment(first)
+        viewTwo.showAttachment(second)
+        viewThree.showAttachment(third)
     }
 
     private fun showFour(
@@ -128,10 +128,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             verticalChainInParent(viewTwo, viewFour)
             applyTo(this@MediaAttachmentsGroupView)
         }
-        first.imageUrl?.let(viewOne::showImageByUrl)
-        second.imageUrl?.let(viewTwo::showImageByUrl)
-        third.imageUrl?.let(viewThree::showImageByUrl)
-        fourth.imageUrl?.let { imageUrl -> viewFour.showImageByUrl(imageUrl, andMoreCount) }
+        viewOne.showAttachment(first)
+        viewTwo.showAttachment(second)
+        viewThree.showAttachment(third)
+        viewFour.showAttachment(fourth, andMoreCount)
     }
 
     override fun setBackground(background: Drawable) {
