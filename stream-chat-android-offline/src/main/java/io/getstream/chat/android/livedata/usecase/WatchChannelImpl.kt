@@ -33,7 +33,7 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
         }
 
         return CoroutineCall(domainImpl.scope) {
-            Result(channelController, null)
+            Result(channelController)
         }
     }
 }

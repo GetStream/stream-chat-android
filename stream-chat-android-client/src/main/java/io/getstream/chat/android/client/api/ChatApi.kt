@@ -107,7 +107,11 @@ internal class ChatApi(
                 connectionId = connectionId,
                 file = file
             )
-            Result(result, null)
+            if (result != null) {
+                Result(result)
+            } else {
+                Result(ChatError("Upload failed"))
+            }
         }
     }
 
@@ -120,7 +124,11 @@ internal class ChatApi(
                 connectionId = connectionId,
                 file = file
             )
-            Result(result, null)
+            if (result != null) {
+                Result(result)
+            } else {
+                Result(ChatError("Upload failed"))
+            }
         }
     }
 
@@ -133,7 +141,7 @@ internal class ChatApi(
                 connectionId = connectionId,
                 url = url
             )
-            Result(Unit, null)
+            Result(Unit)
         }
     }
 
@@ -146,7 +154,7 @@ internal class ChatApi(
                 connectionId = connectionId,
                 url = url
             )
-            Result(Unit, null)
+            Result(Unit)
         }
     }
 

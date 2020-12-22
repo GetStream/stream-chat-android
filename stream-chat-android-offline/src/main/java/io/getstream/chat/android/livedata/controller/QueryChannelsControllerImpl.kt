@@ -226,7 +226,6 @@ internal class QueryChannelsControllerImpl(
         if (loader.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
             return Result(
-                null,
                 ChatError("Another query channels request is in progress. Ignoring this request.")
             )
         }

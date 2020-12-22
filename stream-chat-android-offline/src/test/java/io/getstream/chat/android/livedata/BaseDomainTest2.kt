@@ -119,19 +119,13 @@ internal open class BaseDomainTest2 {
             DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
         }
 
-        val result = Result(listOf(data.channel1), null)
+        val result = Result(listOf(data.channel1))
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
-                Result(
-                    data.channel1,
-                    null
-                )
+                Result(data.channel1)
             )
             on { watch(any<WatchChannelRequest>()) } doReturn TestCall(
-                Result(
-                    data.channel1,
-                    null
-                )
+                Result(data.channel1)
             )
         }
         val events = listOf<ChatEvent>()
@@ -150,10 +144,7 @@ internal open class BaseDomainTest2 {
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any()) } doReturn TestCall(
-                Result(
-                    data.reaction1,
-                    null
-                )
+                Result(data.reaction1)
             )
         }
         When calling client.setUser(any(), any<String>(), any()) doAnswer {

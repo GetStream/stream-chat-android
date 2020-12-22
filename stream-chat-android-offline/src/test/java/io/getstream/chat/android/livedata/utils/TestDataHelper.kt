@@ -258,7 +258,7 @@ internal class TestDataHelper {
     // no created by
     val notificationAddedToChannel3Event = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel3.cid, channel3.type, channel3.id, channel3)
     val user1UpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, Date(), user1updated)
-    val syncHistoryResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
+    val syncHistoryResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
 
     val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, user1, channel1)
     val notificationChannelTruncated = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, user1, channel1)
