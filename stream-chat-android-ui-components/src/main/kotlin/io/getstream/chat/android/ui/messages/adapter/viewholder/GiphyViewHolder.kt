@@ -11,19 +11,19 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 
 public class GiphyViewHolder(
     parent: ViewGroup,
+    private val listenerContainer: ListenerContainer? = null,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         LayoutInflater.from(
             parent.context
         ),
         parent,
         false
-    ),
-    private val listenerContainer: ListenerContainer? = null
+    )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
 
-        binding.giphyTextLabel.text = data.message.text
+        binding.giphyTextLabel.text = trimText(data.message.text)
 
         listenerContainer?.also { listeners ->
             binding.cardView.setOnLongClickListener {
@@ -49,5 +49,13 @@ public class GiphyViewHolder(
                 )
             }
         }
+    }
+
+    private fun trimText(text: String): String {
+        return "\"${text.replace(GIPHY_PREFIX, "")}\""
+    }
+
+    private companion object {
+        private const val GIPHY_PREFIX = "/giphy "
     }
 }

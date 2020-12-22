@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
@@ -50,6 +51,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
     }
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
         fun hideIndicator() {

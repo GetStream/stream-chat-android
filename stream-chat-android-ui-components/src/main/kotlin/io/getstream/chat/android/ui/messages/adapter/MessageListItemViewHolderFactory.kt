@@ -74,7 +74,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     private fun createGiphyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return GiphyViewHolder(parentView)
+        return GiphyViewHolder(parentView, listenerContainer)
     }
 
     private fun createEmptyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<MessageListItem> {

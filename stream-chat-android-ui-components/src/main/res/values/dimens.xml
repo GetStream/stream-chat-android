@@ -8,7 +8,7 @@
     <dimen name="stream_ui_text_medium">14sp</dimen>
     <dimen name="stream_ui_text_large">16sp</dimen>
 
-    <dimen name="stream_ui_elevation_big">16dp</dimen>
+    <dimen name="stream_ui_elevation_big">8dp</dimen>
 
     <!--AvatarView-->
     <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
