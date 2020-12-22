@@ -23,7 +23,9 @@ class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragmen
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(
-                    text = "/giphy Victory", type = ModelType.message_ephemeral, command = ModelType.attach_giphy,
+                    text = "/giphy Victory",
+                    type = ModelType.message_ephemeral,
+                    command = ModelType.attach_giphy,
                     attachments = mutableListOf(
                         Attachment(
                             thumbUrl = "https://media4.giphy.com/media/o75ajIFH0QnQC3nCeD/giphy.gif",
