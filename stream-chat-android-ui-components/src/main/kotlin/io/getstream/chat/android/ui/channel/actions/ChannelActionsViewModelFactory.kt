@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel_actions
+package io.getstream.chat.android.ui.channel.actions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

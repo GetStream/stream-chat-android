@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel_actions
+package io.getstream.chat.android.ui.channel.actions
 
 import android.content.Context
 import android.os.Bundle
@@ -141,7 +141,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             return newInstance(cid, false)
         }
 
-        private fun newInstance(cid: String, isGroup: Boolean): ChannelActionsDialogFragment {
+        fun newInstance(cid: String, isGroup: Boolean): ChannelActionsDialogFragment {
             return ChannelActionsDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_CID, cid)
