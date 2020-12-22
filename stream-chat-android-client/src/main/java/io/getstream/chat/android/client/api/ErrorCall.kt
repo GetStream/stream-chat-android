@@ -13,12 +13,12 @@ internal class ErrorCall<T : Any>(private val e: ChatError) : Call<T> {
     }
 
     override fun execute(): Result<T> {
-        return Result(null, e)
+        return Result(e)
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
         GlobalScope.launch(DispatcherProvider.Main) {
-            callback.onResult(Result(null, e))
+            callback.onResult(Result(e))
         }
     }
 }

@@ -19,10 +19,10 @@ internal class MapCall<T : Any, K : Any>(
 
         return if (resultA.isSuccess) {
             val data = mapper(resultA.data())
-            Result(data, null)
+            Result(data)
         } else {
             val error = resultA.error()
-            Result(null, error)
+            Result(error)
         }
     }
 
@@ -34,10 +34,10 @@ internal class MapCall<T : Any, K : Any>(
 
             if (it.isSuccess) {
                 val data = mapper(it.data())
-                callback.onResult(Result(data, null))
+                callback.onResult(Result(data))
             } else {
                 val error = it.error()
-                callback.onResult(Result(null, error))
+                callback.onResult(Result(error))
             }
         }
     }

@@ -54,6 +54,7 @@
         <attr name="streamUiSendButtonPressedIconColor" format="color|reference" />
         <attr name="streamUiSendButtonEnabledIcon" format="reference" />
         <attr name="streamUiSendButtonDisabledIcon" format="reference" />
+        <attr name="streamUiSendButtonEnabled" format="boolean" />
 
         <!-- "Also send to channel" CheckBox -->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
