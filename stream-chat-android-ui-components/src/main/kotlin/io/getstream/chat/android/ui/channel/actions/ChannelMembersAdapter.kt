@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.channel_actions
+package io.getstream.chat.android.ui.channel.actions
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

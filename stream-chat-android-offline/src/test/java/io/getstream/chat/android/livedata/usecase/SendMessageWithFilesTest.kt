@@ -54,10 +54,8 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     }
 
     private fun mockFileUploadsFailure(files: List<File>) {
-
         for (file in files) {
-            val path: String? = null
-            val result = Result(path, file.toChatError())
+            val result = Result<String>(file.toChatError())
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),

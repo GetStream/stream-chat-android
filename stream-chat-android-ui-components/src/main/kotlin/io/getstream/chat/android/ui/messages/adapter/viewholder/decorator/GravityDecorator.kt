@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.constrainViewEndToEndOfView
 import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -59,6 +60,8 @@ internal class GravityDecorator : BaseDecorator() {
             applyGravity(viewHolder.binding.tvTime, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
         }
     }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun ConstraintSet.applyGravity(
         targetView: View,

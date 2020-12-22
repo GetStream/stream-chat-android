@@ -15,7 +15,5 @@ public class LoadingMoreViewHolder(
     )
 ) : BaseChannelListItemViewHolder(binding.root) {
 
-    override fun bind(channel: Channel, diff: ChannelDiff) {
-        // no-op
-    }
+    override fun bind(channel: Channel, diff: ChannelDiff): Unit = Unit
 }

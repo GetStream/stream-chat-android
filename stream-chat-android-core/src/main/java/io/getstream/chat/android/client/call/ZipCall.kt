@@ -39,7 +39,7 @@ internal class ZipCall<A : Any, B : Any>(
                 return@runBlocking getErrorB(resultB)
             }
 
-            Result(Pair(resultA.data(), resultB.data()), null)
+            Result(Pair(resultA.data(), resultB.data()))
         }
     }
 
@@ -65,21 +65,15 @@ internal class ZipCall<A : Any, B : Any>(
                 return@launch
             }
 
-            performCallback(Result(Pair(resultA.data(), resultB.data()), null))
+            performCallback(Result(Pair(resultA.data(), resultB.data())))
         }
     }
 
     private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
-        return Result(
-            null,
-            ChatError("Error executing callA", resultA.error().cause)
-        )
+        return Result(ChatError("Error executing callA", resultA.error().cause))
     }
 
     private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
-        return Result(
-            null,
-            ChatError("Error executing callB", resultB.error().cause)
-        )
+        return Result(ChatError("Error executing callB", resultB.error().cause))
     }
 }

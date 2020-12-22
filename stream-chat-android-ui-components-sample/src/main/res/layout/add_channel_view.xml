@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/stream_ui_concrete"
     >
 
@@ -37,7 +38,7 @@
         android:id="@+id/createGroupContainer"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="@color/stream_ui_alabaster"
+        android:background="@color/stream_ui_background_alabaster_black"
         android:clipToPadding="false"
         android:gravity="start|center_vertical"
         android:orientation="horizontal"
@@ -65,7 +66,6 @@
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
             android:text="@string/create_group"
-            android:textColor="@color/stream_ui_black"
             android:textSize="@dimen/stream_ui_text_medium"
             android:textStyle="bold"
             />
@@ -78,7 +78,7 @@
         android:gravity="start|center_vertical"
         android:paddingHorizontal="8dp"
         android:text="@string/add_channel_user_list_title"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,6 +93,22 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/messageInputView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/usersTitle"
+        />
+
+    <TextView
+        android:id="@+id/emptyStateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
+        android:text="@string/add_channel_empty_users_title"
+        android:textColor="@color/stream_ui_black_50"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:visibility="visible"
+        app:drawableTopCompat="@drawable/empty_user_search"
         app:layout_constraintBottom_toTopOf="@id/messageInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,5 +133,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:layout_height="56dp"
+        app:streamUiSendButtonEnabled="false"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

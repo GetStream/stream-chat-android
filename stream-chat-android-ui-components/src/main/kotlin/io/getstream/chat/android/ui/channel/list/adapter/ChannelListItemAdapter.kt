@@ -1,21 +1,26 @@
 package io.getstream.chat.android.ui.channel.list.adapter
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerProxy
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainer
 import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.utils.extensions.diff
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 
-public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
+internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
+    ListAdapter<Channel, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
-    public var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
+    var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
-    public val listenerProxy: ChannelListListenerProxy = ChannelListListenerProxy()
+    val listenerContainer: ChannelListListenerContainer = ChannelListListenerContainer()
 
-    public var endReached: Boolean = true
+    var endReached: Boolean = true
         set(value) {
             if (value) {
                 // if we've reached the end, remove the last item
@@ -24,19 +29,23 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
             field = value
         }
 
-    public companion object {
-        public val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
-        public val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
+    companion object {
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<Channel> = object : DiffUtil.ItemCallback<Channel>() {
+            override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid
+
+            override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
+                !oldItem.diff(newItem).hasDifference()
+
+            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any = oldItem.diff(newItem)
+        }
+
+        val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
+        val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
             nameChanged = false,
             avatarViewChanged = false,
             lastMessageChanged = false,
             readStateChanged = false
         )
-    }
-
-    public enum class ChannelItemType {
-        DEFAULT,
-        LOADING_MORE
     }
 
     // If we haven't reached the end of the channels, and we're in the last position, we're loading more
@@ -68,14 +77,16 @@ public class ChannelListItemAdapter : BaseChannelListItemAdapter() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return with(listenerProxy) {
+        return with(listenerContainer) {
             viewHolderFactory.createViewHolder(
                 parent,
                 ChannelItemType.values()[viewType],
                 channelClickListener,
                 channelLongClickListener,
                 deleteClickListener,
+                moreOptionsClickListener,
                 userClickListener,
+                swipeListener,
                 style
             )
         }

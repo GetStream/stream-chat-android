@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -62,6 +63,8 @@ internal class ReactionsDecorator : BaseDecorator() {
             setupReactionsView(root, reactionsView, fileAttachmentsView, data)
         }
     }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,

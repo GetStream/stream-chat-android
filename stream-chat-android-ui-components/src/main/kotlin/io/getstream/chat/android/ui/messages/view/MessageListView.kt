@@ -49,7 +49,6 @@ import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlin.math.max
-import kotlin.math.min
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -423,7 +422,7 @@ public class MessageListView : ConstraintLayout {
                     firstVisiblePosition = currentFirstVisible
 
                     val realLastVisibleMessage =
-                        min(max(currentLastVisible, getLastSeenMessagePosition()), currentList.size)
+                        max(currentLastVisible, getLastSeenMessagePosition()).coerceAtMost(currentList.lastIndex)
                     updateLastSeen(currentList[realLastVisibleMessage])
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage

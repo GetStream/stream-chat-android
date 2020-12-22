@@ -86,19 +86,14 @@ internal class RetrofitCall<T : Any>(
     }
 
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
-        var data: T? = null
-        var error: ChatError? = null
-
-        if (retrofitResponse.isSuccessful) {
+        return if (retrofitResponse.isSuccessful) {
             try {
-                data = retrofitResponse.body()
+                Result(retrofitResponse.body()!!)
             } catch (t: Throwable) {
-                error = failedError(t)
+                Result(failedError(t))
             }
         } else {
-            error = parser.toError(retrofitResponse.raw())
+            Result(parser.toError(retrofitResponse.raw()))
         }
-
-        return Result(data, error)
     }
 }
