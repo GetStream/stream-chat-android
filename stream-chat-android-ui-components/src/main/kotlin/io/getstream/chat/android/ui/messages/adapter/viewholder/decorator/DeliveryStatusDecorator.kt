@@ -68,7 +68,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
             return
         }
 
-        if (!data.isMine) {
+        if (!data.isMine || data.message.isEphemeral()) {
             hideIndicator()
             return
         }
@@ -89,9 +89,5 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
                 hideIndicator()
             }
         }.exhaustive
-
-        if (data.message.isEphemeral()) {
-            hideIndicator()
-        }
     }
 }
