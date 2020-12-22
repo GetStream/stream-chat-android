@@ -11,10 +11,11 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Delive
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.TimeDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
-    itemView: View
+    itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
     private val decorators = listOf<Decorator>(
         BackgroundDecorator(),
@@ -24,6 +25,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         GravityDecorator(),
         DeliveryStatusDecorator(),
         TimeDecorator(DateFormatter.from(itemView.context)),
+        ReactionsDecorator()
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {

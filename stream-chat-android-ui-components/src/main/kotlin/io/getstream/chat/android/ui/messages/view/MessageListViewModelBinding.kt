@@ -1,14 +1,15 @@
 @file:JvmName("MessageListViewModelBinding")
 
-package com.getstream.sdk.chat.viewmodel.messages
+package io.getstream.chat.android.ui.messages.view
 
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.view.IMessageListView
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.FlagMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
@@ -17,7 +18,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
  * Sets the View's handlers and displays new messages based on the ViewModel's state.
  */
 @JvmName("bind")
-public fun MessageListViewModel.bindView(view: IMessageListView, lifecycleOwner: LifecycleOwner) {
+public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     channel.observe(lifecycleOwner) {
         view.init(it, currentUser)
     }
@@ -30,6 +31,9 @@ public fun MessageListViewModel.bindView(view: IMessageListView, lifecycleOwner:
         onEvent(GiphyActionSelected(message, giphyAction))
     }
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
+    view.setOnMessageReactionHandler { message, reactionType ->
+        onEvent(MessageReaction(message, reactionType))
+    }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {

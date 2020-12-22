@@ -67,10 +67,9 @@
     <dimen name="stream_ui_message_preview_item_height">64dp</dimen>
 
     <!--ViewReactionsView-->
-    <dimen name="stream_ui_view_reactions_total_height">36dp</dimen>
+    <dimen name="stream_ui_view_reactions_total_height">32dp</dimen>
     <dimen name="stream_ui_view_reactions_horizontal_padding">2dp</dimen>
-    <dimen name="stream_ui_view_reactions_item_margin">4dp</dimen>
-    <dimen name="stream_ui_view_reactions_item_size">16dp</dimen>
+    <dimen name="stream_ui_view_reactions_item_size">24dp</dimen>
     <dimen name="stream_ui_view_reactions_bubble_height">24dp</dimen>
     <dimen name="stream_ui_view_reactions_bubble_radius">12dp</dimen>
     <dimen name="stream_ui_view_reactions_large_tail_bubble_cy">22dp</dimen>
@@ -85,8 +84,7 @@
     <dimen name="stream_ui_edit_reactions_total_width">216dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_offset">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
-    <dimen name="stream_ui_edit_reactions_item_margin">8dp</dimen>
-    <dimen name="stream_ui_edit_reactions_item_size">24dp</dimen>
+    <dimen name="stream_ui_edit_reactions_item_size">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_height">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_radius">20dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy">36dp</dimen>

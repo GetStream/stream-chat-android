@@ -45,6 +45,14 @@
         tools:text="@tools:sample/lorem"
         />
 
+    <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/messageText"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
     <ImageView
         android:id="@+id/deliveryStatusIcon"
         android:layout_width="16dp"

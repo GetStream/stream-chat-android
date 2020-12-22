@@ -27,5 +27,8 @@ public class PlainTextWithMediaAttachmentsViewHolder(
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
         }
+        binding.reactionsView.setReactionClickListener {
+            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
+        }
     }
 }

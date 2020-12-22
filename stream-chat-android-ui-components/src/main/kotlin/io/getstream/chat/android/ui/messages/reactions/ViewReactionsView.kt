@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.util.AttributeSet
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.isSingleReaction
 
 public class ViewReactionsView : ReactionsView {
 
@@ -23,6 +24,8 @@ public class ViewReactionsView : ReactionsView {
         strokeWidth = bubbleStrokeWidth
         style = Paint.Style.STROKE
     }
+
+    private var isSingleReaction: Boolean = true
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -65,6 +68,8 @@ public class ViewReactionsView : ReactionsView {
 
     override fun setMessage(message: Message, isMyMessage: Boolean) {
         super.setMessage(message, isMyMessage)
+        isSingleReaction = message.isSingleReaction()
+
         val horizontalPadding = if (message.latestReactions.size == 1) {
             0
         } else {
@@ -107,12 +112,9 @@ public class ViewReactionsView : ReactionsView {
     }
 
     private fun createLargeTailBubblePath(isMirrored: Boolean): Path {
-        val offset = reactionsViewStyle.largeTailBubbleOffset.toFloat().let {
-            if (isMirrored) it else -it
-        }
         return Path().apply {
             addCircle(
-                width / 2 + offset,
+                calculateBubbleCenterX(isMirrored, reactionsViewStyle.largeTailBubbleOffset.toFloat()),
                 reactionsViewStyle.largeTailBubbleCy.toFloat(),
                 reactionsViewStyle.largeTailBubbleRadius.toFloat(),
                 Path.Direction.CW
@@ -121,16 +123,33 @@ public class ViewReactionsView : ReactionsView {
     }
 
     private fun createSmallTailBubblePath(isMirrored: Boolean): Path {
-        val offset = reactionsViewStyle.smallTailBubbleOffset.toFloat().let {
-            if (isMirrored) it else -it
-        }
         return Path().apply {
             addCircle(
-                width / 2 + offset,
+                calculateBubbleCenterX(isMirrored, reactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 reactionsViewStyle.smallTailBubbleCy.toFloat(),
                 reactionsViewStyle.smallTailBubbleRadius.toFloat(),
                 Path.Direction.CW
             )
         }
+    }
+
+    private fun calculateBubbleCenterX(isMirrored: Boolean, bubbleOffset: Float): Float {
+        return if (isMirrored) {
+            if (isSingleReaction) {
+                width / 2 + bubbleOffset
+            } else {
+                width + bubbleOffset - MULTIPLE_REACTIONS_BASELINE_OFFSET
+            }
+        } else {
+            if (isSingleReaction) {
+                width / 2 - bubbleOffset
+            } else {
+                MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
+            }
+        }
+    }
+
+    private companion object {
+        private val MULTIPLE_REACTIONS_BASELINE_OFFSET = 32.dpToPx()
     }
 }
