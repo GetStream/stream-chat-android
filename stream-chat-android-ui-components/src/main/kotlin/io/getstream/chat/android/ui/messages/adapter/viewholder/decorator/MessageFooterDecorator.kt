@@ -19,40 +19,40 @@ import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupMessageFooterLabel(viewHolder.binding.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.timeView, data)
+        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.timeView, data)
+        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.timeView, data)
+        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.timeView, data)
+        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.timeView, data)
+        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
