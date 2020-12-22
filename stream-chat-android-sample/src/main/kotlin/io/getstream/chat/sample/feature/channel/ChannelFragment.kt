@@ -11,12 +11,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.getstream.sdk.chat.view.bindView
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.sample.databinding.FragmentChannelBinding
 
 class ChannelFragment : Fragment() {

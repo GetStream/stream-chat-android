@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
@@ -31,6 +32,8 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         wrapper.messageListItem
     }
     private lateinit var messageView: View
+
+    private var reactionClickListener: ReactionClickListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,10 +69,20 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         )
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        reactionClickListener = null
+    }
+
+    fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
+        this.reactionClickListener = reactionClickListener
+    }
+
     private fun setupEditReactionsView() {
         binding.editReactionsView.setMessage(messageItem.message, messageItem.isMine)
         binding.editReactionsView.setReactionClickListener {
-            // dismiss()
+            reactionClickListener?.onReactionClick(messageItem.message, it.type)
+            dismiss()
         }
         binding.messageContainer.setOnClickListener {}
         binding.messageOptionsView.setOnClickListener {}
@@ -122,6 +135,10 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     }
 
     private class MessageItemWrapper(val messageListItem: MessageListItem.MessageItem) : Serializable
+
+    fun interface ReactionClickListener {
+        fun onReactionClick(message: Message, reactionType: String)
+    }
 
     companion object {
         const val TAG = "messageOptions"
