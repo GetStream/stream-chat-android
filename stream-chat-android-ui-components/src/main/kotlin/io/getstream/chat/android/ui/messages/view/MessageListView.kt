@@ -401,19 +401,19 @@ public class MessageListView : ConstraintLayout {
 
         val deleteDialogTitle =
             tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-            ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
 
         val deleteDialogMessage =
             tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-            ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
 
         val deleteDialogPositiveButton =
             tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-            ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
 
         val deleteDialogNegativeButton =
             tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-            ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
 
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
