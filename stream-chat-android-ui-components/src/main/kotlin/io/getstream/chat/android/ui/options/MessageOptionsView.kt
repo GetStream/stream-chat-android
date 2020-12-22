@@ -41,6 +41,8 @@ public class MessageOptionsView : FrameLayout {
         val copyIcon: Int,
         val editText: String,
         val editIcon: Int,
+        val flagText: String,
+        val flagIcon: Int,
         val muteText: String,
         val muteIcon: Int,
         val blockText: String,
@@ -69,6 +71,7 @@ public class MessageOptionsView : FrameLayout {
         }
 
         binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
+        binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
         binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
         binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
 
@@ -99,6 +102,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setEditMessageListener(onEdit: () -> Unit) {
         binding.editTV.setOnClickListener {
             onEdit()
+        }
+    }
+
+    public fun setFlagMessageListener(onFlag: () -> Unit) {
+        binding.flagTV.setOnClickListener {
+            onFlag()
         }
     }
 

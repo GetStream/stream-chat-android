@@ -156,6 +156,7 @@ public class MessageListView : ConstraintLayout {
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
+                    flagClickHandler = onMessageFlagHandler,
                     deleteClickHandler = onMessageDeleteHandler
                 )
 
@@ -325,7 +326,7 @@ public class MessageListView : ConstraintLayout {
         configureMessageOptions(tArray)
         tArray.recycle()
     }
-    
+
     private fun lastPosition(): Int {
         return adapter.itemCount - 1
     }
@@ -363,6 +364,13 @@ public class MessageListView : ConstraintLayout {
         val editIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiEditOptionIcon,
             R.drawable.stream_ui_ic_edit
+        )
+
+        val flagText = tArray.getString(R.styleable.MessageListView_streamUiFlagOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_flag)
+        val flagIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiFlagOptionIcon,
+            R.drawable.stream_ui_ic_flag
         )
 
         val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
@@ -417,6 +425,8 @@ public class MessageListView : ConstraintLayout {
             copyIcon = copyIcon,
             editText = editText,
             editIcon = editIcon,
+            flagText = flagText,
+            flagIcon = flagIcon,
             muteText = muteText,
             muteIcon = muteIcon,
             blockText = blockText,

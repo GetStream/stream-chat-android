@@ -215,6 +215,8 @@
         <attr name="streamUiCopyOptionIcon" format="reference" />
         <attr name="streamUiEditOptionMessage" format="string" />
         <attr name="streamUiEditOptionIcon" format="reference" />
+        <attr name="streamUiFlagOptionMessage" format="string" />
+        <attr name="streamUiFlagOptionIcon" format="reference" />
         <attr name="streamUiMuteOptionMessage" format="string" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
         <attr name="streamUiBlockOptionMessage" format="string" />

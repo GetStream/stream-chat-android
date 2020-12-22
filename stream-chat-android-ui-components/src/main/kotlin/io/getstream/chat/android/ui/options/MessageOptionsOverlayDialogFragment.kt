@@ -133,6 +133,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
                 dismiss()
             }
 
+            setFlagMessageListener {
+                handlers.flagClickHandler(messageItem.message)
+                dismiss()
+            }
+
             setEditMessageListener {
                 handlers.editClickHandler(messageItem.message)
                 dismiss()
@@ -219,6 +224,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     internal class Handlers(
         val threadReplyHandler: (Message) -> Unit,
         val editClickHandler: (Message) -> Unit,
+        val flagClickHandler: (Message) -> Unit,
         val deleteClickHandler: (Message) -> Unit
     ) : Serializable
 }
