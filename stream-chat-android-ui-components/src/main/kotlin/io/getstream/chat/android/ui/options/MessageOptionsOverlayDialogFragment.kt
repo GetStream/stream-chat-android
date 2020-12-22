@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -87,12 +88,12 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
             dismiss()
         }
 
+        val configuration = requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
+
         setupEditReactionsView()
         setupMessageView()
-        configureMessageOptions(
-            requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
-        )
-        setupClickListeners()
+        configureMessageOptions(configuration)
+        setupClickListeners(configuration)
     }
 
     override fun onDestroy() {
@@ -118,7 +119,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         binding.messageOptionsView.configure(configuration)
     }
 
-    private fun setupClickListeners() {
+    private fun setupClickListeners(configuration: MessageOptionsView.Configuration) {
         val handlers = requireArguments().getSerializable(ARG_HANDLERS) as Handlers
 
         binding.messageOptionsView.run {
@@ -129,6 +130,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
             setCopyListener {
                 copyText(messageItem.message)
+                dismiss()
             }
 
             setEditMessageListener {
@@ -137,7 +139,23 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
             }
 
             setDeleteMessageListener {
-                handlers.deleteClickHandler(messageItem.message)
+                if (configuration.deleteConfirmationEnabled) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(configuration.deleteConfirmationTitle)
+                        .setMessage(configuration.deleteConfirmationMessage)
+                        .setPositiveButton(configuration.deleteConfirmationPositiveButton) { dialog, _ ->
+                            handlers.deleteClickHandler(messageItem.message)
+                            dialog.dismiss()
+                            dismiss()
+                        }
+                        .setNegativeButton(configuration.deleteConfirmationNegativeButton) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                } else {
+                    handlers.deleteClickHandler(messageItem.message)
+                    dismiss()
+                }
             }
         }
         handlers.deleteClickHandler

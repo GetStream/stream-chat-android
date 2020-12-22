@@ -325,7 +325,7 @@ public class MessageListView : ConstraintLayout {
         configureMessageOptions(tArray)
         tArray.recycle()
     }
-
+    
     private fun lastPosition(): Int {
         return adapter.itemCount - 1
     }
@@ -388,6 +388,25 @@ public class MessageListView : ConstraintLayout {
 
         val copyTextEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
+        val deleteConfirmationEnabled =
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
+
+        val deleteDialogTitle =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+            ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
+
+        val deleteDialogMessage =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+            ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
+
+        val deleteDialogPositiveButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+            ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
+
+        val deleteDialogNegativeButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+            ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyText = replyText,
@@ -404,7 +423,12 @@ public class MessageListView : ConstraintLayout {
             blockIcon = blockIcon,
             deleteText = deleteText,
             deleteIcon = deleteIcon,
-            copyTextEnabled = copyTextEnabled
+            copyTextEnabled = copyTextEnabled,
+            deleteConfirmationEnabled = deleteConfirmationEnabled,
+            deleteConfirmationTitle = deleteDialogTitle,
+            deleteConfirmationMessage = deleteDialogMessage,
+            deleteConfirmationPositiveButton = deleteDialogPositiveButton,
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton
         )
     }
 

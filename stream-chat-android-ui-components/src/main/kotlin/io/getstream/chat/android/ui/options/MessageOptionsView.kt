@@ -47,7 +47,12 @@ public class MessageOptionsView : FrameLayout {
         val blockIcon: Int,
         val deleteText: String,
         val deleteIcon: Int,
-        val copyTextEnabled: Boolean
+        val copyTextEnabled: Boolean,
+        val deleteConfirmationEnabled: Boolean,
+        val deleteConfirmationTitle: String,
+        val deleteConfirmationMessage: String,
+        val deleteConfirmationPositiveButton: String,
+        val deleteConfirmationNegativeButton: String,
     ) : Serializable
 
     private fun configureMessageOptions(configuration: Configuration) {
