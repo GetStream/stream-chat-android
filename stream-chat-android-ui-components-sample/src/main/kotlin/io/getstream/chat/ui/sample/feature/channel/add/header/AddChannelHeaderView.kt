@@ -69,8 +69,10 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
     }
 
     override fun hideInput() {
+        if (binding.inputEditText.hasFocus()) {
+            Utils.hideSoftKeyboard(binding.inputEditText)
+        }
         binding.inputEditText.isVisible = false
-        Utils.hideSoftKeyboard(binding.inputEditText)
     }
 
     override fun showAddMemberButton() {

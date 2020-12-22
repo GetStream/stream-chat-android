@@ -99,6 +99,22 @@
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
         />
 
+    <TextView
+        android:id="@+id/emptyStateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
+        android:text="@string/add_channel_empty_users_title"
+        android:textColor="@color/stream_ui_black_50"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:visibility="visible"
+        app:drawableTopCompat="@drawable/empty_user_search"
+        app:layout_constraintBottom_toTopOf="@id/messageInputView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/usersTitle"
+        />
+
     <io.getstream.chat.android.ui.messages.view.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="match_parent"
@@ -118,5 +134,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_height="56dp"
+        app:streamUiSendButtonEnabled="false"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
