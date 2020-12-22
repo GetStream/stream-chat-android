@@ -37,7 +37,7 @@ internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : Query
                     queryChannelsControllerImpl.query(limit, messageLimit)
                 }
             }
-            Result(queryChannelsControllerImpl, null)
+            Result(queryChannelsControllerImpl)
         }
     }
 }

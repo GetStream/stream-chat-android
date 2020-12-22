@@ -237,33 +237,33 @@ internal class ChannelControllerImpl(
     }
 
     fun keystroke(): Result<Boolean> {
-        if (!getConfig().isTypingEvents) return Result(false, null)
+        if (!getConfig().isTypingEvents) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
             val result = client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
             return if (result.isSuccess) {
-                Result(result.isSuccess, null)
+                Result(result.isSuccess)
             } else {
-                Result(result.isSuccess, null)
+                Result(result.isSuccess)
             }
         }
-        return Result(false, null)
+        return Result(false)
     }
 
     fun stopTyping(): Result<Boolean> {
-        if (!getConfig().isTypingEvents) return Result(false, null)
+        if (!getConfig().isTypingEvents) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
             val result = client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
             return if (result.isSuccess) {
-                Result(result.isSuccess, null)
+                Result(result.isSuccess)
             } else {
-                Result(null, result.error())
+                Result(result.error())
             }
         }
-        return Result(false, null)
+        return Result(false)
     }
 
     /**
@@ -410,7 +410,6 @@ internal class ChannelControllerImpl(
         if (loader.value) {
             logger.logI("Another request to load messages is in progress. Ignoring this request.")
             return Result(
-                null,
                 ChatError("Another request to load messages is in progress. Ignoring this request.")
             )
         }
@@ -451,7 +450,11 @@ internal class ChannelControllerImpl(
             }
             response
         } else {
-            Result(localChannel, null)
+            if (localChannel != null) {
+                Result(localChannel)
+            } else {
+                Result(ChatError("Local channel was not found"))
+            }
         }
         loader.value = false
         return result
@@ -575,7 +578,7 @@ internal class ChannelControllerImpl(
                 }
 
                 upsertMessage(processedMessage)
-                Result(processedMessage, null)
+                Result(processedMessage)
             } else {
 
                 logger.logE(
@@ -590,11 +593,11 @@ internal class ChannelControllerImpl(
                 }
                 upsertMessage(newMessage)
                 domainImpl.repos.messages.insert(newMessage)
-                Result(newMessage, result.error())
+                Result(result.error())
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
-            Result(newMessage, null)
+            Result(newMessage)
         }
     }
 
@@ -741,7 +744,7 @@ internal class ChannelControllerImpl(
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                Result(result.data(), null)
+                Result(result.data())
             } else {
                 logger.logE(
                     "Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}",
@@ -754,10 +757,10 @@ internal class ChannelControllerImpl(
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.reactions.insertReaction(reaction)
-                Result(null, result.error())
+                Result(result.error())
             }
         }
-        return Result(reaction, null)
+        return Result(reaction)
     }
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> {
@@ -788,7 +791,7 @@ internal class ChannelControllerImpl(
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                Result(result.data(), null)
+                Result(result.data())
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -796,10 +799,15 @@ internal class ChannelControllerImpl(
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.reactions.insertReaction(reaction)
-                Result(null, result.error())
+                Result(result.error())
             }
         }
-        return Result(currentMessage, null)
+
+        return if (currentMessage != null) {
+            Result(currentMessage)
+        } else {
+            Result(ChatError("Local message was not found"))
+        }
     }
 
     private fun setWatcherCount(watcherCount: Int) {
@@ -1242,7 +1250,7 @@ internal class ChannelControllerImpl(
                 upsertMessage(editedMessage)
                 domainImpl.repos.messages.insert(editedMessage)
 
-                return Result(editedMessage, null)
+                return Result(editedMessage)
             } else {
                 editedMessage.syncStatus = if (result.error().isPermanent()) {
                     SyncStatus.FAILED_PERMANENTLY
@@ -1252,10 +1260,10 @@ internal class ChannelControllerImpl(
 
                 upsertMessage(editedMessage)
                 domainImpl.repos.messages.insert(editedMessage)
-                return Result(null, result.error())
+                return Result(result.error())
             }
         }
-        return Result(editedMessage, null)
+        return Result(editedMessage)
     }
 
     suspend fun deleteMessage(message: Message): Result<Message> {
@@ -1278,7 +1286,7 @@ internal class ChannelControllerImpl(
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
                 domainImpl.repos.messages.insert(message)
-                return Result(result.data(), null)
+                return Result(result.data())
             } else {
                 message.syncStatus = if (result.error().isPermanent()) {
                     SyncStatus.FAILED_PERMANENTLY
@@ -1288,10 +1296,10 @@ internal class ChannelControllerImpl(
 
                 upsertMessage(message)
                 domainImpl.repos.messages.insert(message)
-                return Result(null, result.error())
+                return Result(result.error())
             }
         }
-        return Result(message, null)
+        return Result(message)
     }
 
     override fun toChannel(): Channel {
@@ -1339,7 +1347,7 @@ internal class ChannelControllerImpl(
     ): Result<Message> {
         val result = client.getMessage(messageId).await()
         if (result.isError) {
-            return Result(null, ChatError("Error while fetching message from backend. Message id: $messageId"))
+            return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
         val message = result.data()
         _messages.value = emptyMap()

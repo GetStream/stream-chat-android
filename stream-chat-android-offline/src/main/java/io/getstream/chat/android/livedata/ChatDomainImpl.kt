@@ -417,7 +417,7 @@ internal class ChatDomainImpl internal constructor(
                 if (result.isSuccess) {
                     c.syncStatus = SyncStatus.COMPLETED
                     repos.insertChannel(c)
-                    Result(result.data(), null)
+                    Result(result.data())
                 } else {
                     if (result.error().isPermanent()) {
                         c.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -425,13 +425,13 @@ internal class ChatDomainImpl internal constructor(
                         c.syncStatus = SyncStatus.SYNC_NEEDED
                     }
                     repos.insertChannel(c)
-                    Result(null, result.error())
+                    Result(result.error())
                 }
             } else {
-                Result(c, null)
+                Result(c)
             }
         } catch (e: IllegalStateException) {
-            Result(null, ChatError(cause = e))
+            Result(ChatError(cause = e))
         }
 
     fun addError(error: ChatError) {
@@ -594,7 +594,7 @@ internal class ChatDomainImpl internal constructor(
                 }
             }
         } else {
-            Result(emptyList(), null)
+            Result(emptyList())
         }
     }
 
