@@ -54,7 +54,7 @@ public class MessageOptionsView : FrameLayout {
         val deleteConfirmationTitle: String,
         val deleteConfirmationMessage: String,
         val deleteConfirmationPositiveButton: String,
-        val deleteConfirmationNegativeButton: String,
+        val deleteConfirmationNegativeButton: String
     ) : Serializable
 
     private fun configureMessageOptions(configuration: Configuration) {
@@ -114,6 +114,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setDeleteMessageListener(onDelete: () -> Unit) {
         binding.deleteTV.setOnClickListener {
             onDelete()
+        }
+    }
+
+    public fun setMuteUserListener(onMute: () -> Unit) {
+        binding.muteTV.setOnClickListener {
+            onMute()
         }
     }
 

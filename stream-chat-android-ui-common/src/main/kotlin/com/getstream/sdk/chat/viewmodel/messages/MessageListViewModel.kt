@@ -184,6 +184,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType)
             }
+            is Event.MuteUser -> {
+                client.muteUser(event.user.id).enqueue()
+            }
         }.exhaustive
     }
 
@@ -279,6 +282,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(val message: Message, val reactionType: String) : Event()
+        public data class MuteUser(val user: User) : Event()
     }
 
     public sealed class Mode {

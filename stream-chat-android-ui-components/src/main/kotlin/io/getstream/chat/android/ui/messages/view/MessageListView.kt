@@ -128,6 +128,9 @@ public class MessageListView : ConstraintLayout {
     private var onMessageReactionHandler: (Message, String) -> Unit = { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
     }
+    private var onUserMutedHandler: (User) -> Unit = {
+        throw IllegalStateException("onUserMutedHandler must be set.")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -157,6 +160,7 @@ public class MessageListView : ConstraintLayout {
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
                     flagClickHandler = onMessageFlagHandler,
+                    muteClickHandler = onUserMutedHandler,
                     deleteClickHandler = onMessageDeleteHandler
                 )
 
@@ -807,6 +811,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnMessageReactionHandler(onMessageReactionHandler: (Message, String) -> Unit) {
         this.onMessageReactionHandler = onMessageReactionHandler
+    }
+
+    public fun setOnUserMutedHandler(onUserMutedHandler: (User) -> Unit) {
+        this.onUserMutedHandler = onUserMutedHandler
     }
 
     public fun interface MessageClickListener {

@@ -17,6 +17,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
@@ -133,13 +134,18 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
                 dismiss()
             }
 
+            setEditMessageListener {
+                handlers.editClickHandler(messageItem.message)
+                dismiss()
+            }
+
             setFlagMessageListener {
                 handlers.flagClickHandler(messageItem.message)
                 dismiss()
             }
 
-            setEditMessageListener {
-                handlers.editClickHandler(messageItem.message)
+            setMuteUserListener {
+                handlers.muteClickHandler(messageItem.message.user)
                 dismiss()
             }
 
@@ -163,7 +169,6 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
                 }
             }
         }
-        handlers.deleteClickHandler
     }
 
     private fun copyText(message: Message) {
@@ -225,6 +230,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         val threadReplyHandler: (Message) -> Unit,
         val editClickHandler: (Message) -> Unit,
         val flagClickHandler: (Message) -> Unit,
+        val muteClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit
     ) : Serializable
 }

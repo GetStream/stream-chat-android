@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Last
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 
 /**
  * Binds [MessageListView] with [MessageListViewModel].
@@ -34,6 +35,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType))
     }
+    view.setOnUserMutedHandler { onEvent(MuteUser(it)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {
