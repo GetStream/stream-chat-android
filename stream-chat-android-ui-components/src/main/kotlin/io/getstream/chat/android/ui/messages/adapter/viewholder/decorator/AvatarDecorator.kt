@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -45,6 +46,8 @@ internal class AvatarDecorator : BaseDecorator() {
     ) {
         setupAvatar(viewHolder.binding.avatarView, viewHolder.binding.fileAttachmentsView, data)
     }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupAvatar(avatarView: AvatarView, viewNextFromAvatar: View, data: MessageListItem.MessageItem) {
         if (data.isTheirs) {

@@ -37,6 +37,17 @@
         tools:src="@tools:sample/avatars"
         />
 
+    <ImageView
+        android:id="@+id/deliveryStatusIcon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTime"
+        app:layout_constraintEnd_toStartOf="@+id/tvTime"
+        app:layout_constraintTop_toTopOf="@+id/tvTime"
+        tools:src="@drawable/stream_ui_ic_check_all"
+        />
+
     <TextView
         android:id="@+id/messageFooter"
         android:layout_width="wrap_content"
@@ -44,6 +55,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mediaAttachmentsGroupView"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        tools:text="16:25"
         />
 
     <androidx.constraintlayout.widget.Guideline

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
-import android.annotation.SuppressLint
-import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -27,49 +26,73 @@ import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
-import kotlin.math.absoluteValue
 
-public class ChannelViewHolder @JvmOverloads constructor(
+public class ChannelItemViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
-    private val channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    private val channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    private val channelDeleteListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    private val userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
-    private val style: ChannelListViewStyle?,
+    private val channelClickListener: ChannelListView.ChannelClickListener,
+    private val channelLongClickListener: ChannelListView.ChannelClickListener,
+    private val channelDeleteListener: ChannelListView.ChannelClickListener,
+    private val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
+    private val userClickListener: ChannelListView.UserClickListener,
+    private val swipeListener: ChannelListView.SwipeListener,
+    private val style: ChannelListViewStyle,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.inflater,
         parent,
         false
     )
-) : BaseChannelListItemViewHolder(binding.root) {
+) : SwipeViewHolder(binding.root) {
 
-    internal sealed class MenuState {
-        internal object Open : MenuState()
-        internal object Closed : MenuState()
-    }
-
-    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
     public companion object {
-        private const val OPTIONS_COUNT = 2
-
-        // persists menu states for channels - becomes necessary when view holders are recycled
-        private val swipeStateByChannelCid = mutableMapOf<String, MenuState>()
+        public const val OPTIONS_COUNT: Int = 2
     }
+
+    private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
+    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
-        binding.itemBackgroundView.deleteImageView.setOnClickListener {
-            channelDeleteListener.onClick(channel)
+        configureBackground(channel)
+    }
+
+    override fun getSwipeView(): View {
+        return binding.itemForegroundView.root
+    }
+
+    override fun getOpenedX(): Float {
+        return -optionsMenuWidth
+    }
+
+    override fun getClosedX(): Float {
+        return 0f
+    }
+
+    override fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float> {
+        val openedX = getOpenedX()
+        val closedX = getClosedX()
+        return openedX.coerceAtMost(closedX)..openedX.coerceAtLeast(closedX)
+    }
+
+    private fun configureBackground(channel: Channel) {
+        binding.itemBackgroundView.apply {
+            moreOptionsImageView.setOnClickListener {
+                channelMoreOptionsListener.onClick(channel)
+                swipeListener.onSwipeCanceled(this@ChannelItemViewHolder, absoluteAdapterPosition)
+            }
+
+            deleteImageView.setOnClickListener {
+                channelDeleteListener.onClick(channel)
+            }
         }
     }
 
     private fun configureForeground(diff: ChannelDiff, channel: Channel) {
         binding.itemForegroundView.apply {
-            configureSwipeBehavior(channel.cid)
+
+            setSwipeListener(root, swipeListener)
 
             diff.run {
                 if (nameChanged) {
@@ -94,7 +117,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
             configureClickListeners(channel, channelClickListener, channelLongClickListener)
 
-            style?.let { applyStyle(this, it) }
+            applyStyle(style)
         }
     }
 
@@ -114,7 +137,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
-        channelNameLabel.text = channel.getDisplayName()
+        channelNameLabel.text = channel.getDisplayName(context)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView(
@@ -122,11 +145,13 @@ public class ChannelViewHolder @JvmOverloads constructor(
         userClickListener: ChannelListView.UserClickListener,
         channelClickListener: ChannelListView.ChannelClickListener
     ) {
-        avatarView.setChannelData(channel)
-        avatarView.setOnClickListener {
-            when {
-                channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
-                else -> channelClickListener.onClick(channel)
+        avatarView.apply {
+            setChannelData(channel)
+            setOnClickListener {
+                when {
+                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    else -> channelClickListener.onClick(channel)
+                }
             }
         }
     }
@@ -172,11 +197,9 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
         lastMessage ?: return
 
-        /**
-         * read - if the last message doesn't belong to current user, or if channel reads indicates it
-         * delivered - if the last message belongs to the current user and reads indicate it wasn't read
-         * pending - if the sync status says it's pending
-         */
+        // read - if the last message doesn't belong to current user, or if channel reads indicates it
+        // delivered - if the last message belongs to the current user and reads indicate it wasn't read
+        // pending - if the sync status says it's pending
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
@@ -211,7 +234,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
     private var styleApplied = false
 
-    private fun applyStyle(binding: StreamUiChannelListItemForegroundViewBinding, style: ChannelListViewStyle) {
+    private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
         if (styleApplied) {
             return
         }
@@ -220,90 +243,6 @@ public class ChannelViewHolder @JvmOverloads constructor(
             channelNameLabel.setTextSizePx(style.channelTitleTextSize)
             lastMessageLabel.setTextSizePx(style.lastMessageSize)
             lastMessageTimeLabel.setTextSizePx(style.lastMessageDateTextSize)
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun StreamUiChannelListItemForegroundViewBinding.configureSwipeBehavior(cid: String) {
-        // set the X to the preserved open / closed state
-        root.x = when (swipeStateByChannelCid[cid]) {
-            MenuState.Open -> -optionsMenuWidth
-            MenuState.Closed, null -> 0f
-        }
-
-        var startX = 0f
-        var startY = 0f
-        val dragRange = -optionsMenuWidth..0f
-        var swiping = false
-
-        root.setOnTouchListener { view, event ->
-            when (event.action) {
-
-                MotionEvent.ACTION_DOWN -> {
-                    // store our initial touch coordinate values so we can determine deltas
-                    startX = event.x
-                    startY = event.y
-
-                    swiping = false
-
-                    false // don't consume
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-
-                    // calculate the deltas
-                    val deltaY = event.y - startY
-                    val deltaX = event.x - startX
-
-                    // determine if it's a swipe by comparing axis delta magnitude
-                    swiping = deltaX.absoluteValue > deltaY.absoluteValue
-
-                    when {
-                        swiping -> {
-                            // determine the new x value by adding the delta
-                            val projectedX = view.x + deltaX
-                            // clamp it and animate if necessary
-                            projectedX.coerceIn(dragRange).let { clampedX ->
-                                // set the new x if it's different
-                                if (view.x != projectedX) {
-                                    view.x = clampedX
-                                }
-                            }
-                        }
-                    }
-
-                    swiping // consume if swiping
-                }
-
-                // determine snap and animate to it on action up
-                MotionEvent.ACTION_UP -> {
-
-                    val snap = when {
-                        view.x <= -(optionsMenuWidth * .5) -> -optionsMenuWidth
-                        else -> 0f
-                    }
-
-                    view.animate().x(snap).setStartDelay(0).setDuration(100).start()
-
-                    // persist channel item's menu state
-                    swipeStateByChannelCid[cid] = if (snap < 0) MenuState.Open else MenuState.Closed
-
-                    swiping // consume if swiping
-                }
-
-                // snap closed on cancel
-                MotionEvent.ACTION_CANCEL -> {
-
-                    view.animate().x(0f).setStartDelay(0).setDuration(100).start()
-
-                    // persist channel item's menu state as closed
-                    swipeStateByChannelCid[cid] = MenuState.Closed
-
-                    false // don't consume
-                }
-
-                else -> false // don't consume
-            }
         }
     }
 }

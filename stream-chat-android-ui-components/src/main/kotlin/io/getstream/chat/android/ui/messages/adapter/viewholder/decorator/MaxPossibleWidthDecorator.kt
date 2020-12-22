@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import androidx.constraintlayout.widget.Guideline
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -40,6 +41,8 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
     ) {
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun applyMaxPossibleWidth(marginStart: Guideline, marginEnd: Guideline, data: MessageListItem.MessageItem) {
         val marginStartPercent = if (data.isTheirs) START_PERCENT else MINE_START_PERCENT

@@ -44,7 +44,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Unit tests
-        run: ./gradlew test --stacktrace
+        run: ./gradlew testDebug --stacktrace
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()

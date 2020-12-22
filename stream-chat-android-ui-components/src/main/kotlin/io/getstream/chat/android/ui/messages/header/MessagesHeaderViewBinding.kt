@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
 @JvmName("bind")
 public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
-        view.setTitle(it.getDisplayName())
+        view.setTitle(it.getDisplayName(view.context))
         view.setOnlineStateSubtitle(it.getOnlineStateSubtitle(view.context))
         view.setAvatar(channel = it)
     }

@@ -17,3 +17,8 @@ internal fun TextView.leftDrawable(@DrawableRes id: Int = 0, @DimenRes sizeRes: 
     drawable?.setBounds(0, 0, size, size)
     this.setCompoundDrawables(drawable, null, null, null)
 }
+
+internal fun TextView.leftDrawable(@DrawableRes id: Int = 0) {
+    val drawable = ContextCompat.getDrawable(context, id)
+    this.setCompoundDrawables(drawable, null, null, null)
+}

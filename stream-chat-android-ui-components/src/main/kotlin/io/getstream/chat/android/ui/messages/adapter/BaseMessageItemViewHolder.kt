@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
@@ -21,6 +22,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         GravityDecorator(),
+        DeliveryStatusDecorator(),
         TimeDecorator(DateFormatter.from(itemView.context)),
     )
 

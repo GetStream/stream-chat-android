@@ -3,30 +3,34 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelItemType
 
 public open class ChannelListItemViewHolderFactory {
 
-    public fun createViewHolder(
+    internal fun createViewHolder(
         parentView: ViewGroup,
-        channelItemType: ChannelListItemAdapter.ChannelItemType,
+        channelItemType: ChannelItemType,
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
+        moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
-        style: ChannelListViewStyle?
+        swipeListener: ChannelListView.SwipeListener,
+        style: ChannelListViewStyle,
     ): BaseChannelListItemViewHolder {
         return when (channelItemType) {
-            ChannelListItemAdapter.ChannelItemType.DEFAULT -> createChannelViewHolder(
+            ChannelItemType.DEFAULT -> createChannelViewHolder(
                 parentView,
                 channelClickListener,
                 channelLongClickListener,
                 deleteClickListener,
+                moreOptionsClickListener,
                 userClickListener,
+                swipeListener,
                 style
             )
 
-            ChannelListItemAdapter.ChannelItemType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
+            ChannelItemType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
         }
     }
 
@@ -35,15 +39,19 @@ public open class ChannelListItemViewHolderFactory {
         channelClickListener: ChannelListView.ChannelClickListener,
         channelLongClickListener: ChannelListView.ChannelClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
+        moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
-        style: ChannelListViewStyle?
+        swipeListener: ChannelListView.SwipeListener,
+        style: ChannelListViewStyle,
     ): BaseChannelListItemViewHolder {
-        return ChannelViewHolder(
+        return ChannelItemViewHolder(
             parentView,
             channelClickListener,
             channelLongClickListener,
             deleteClickListener,
+            moreOptionsClickListener,
             userClickListener,
+            swipeListener,
             style
         )
     }

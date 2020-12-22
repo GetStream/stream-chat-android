@@ -5,7 +5,7 @@
     android:id="@+id/optionContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/stream_ui_background_default"
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
