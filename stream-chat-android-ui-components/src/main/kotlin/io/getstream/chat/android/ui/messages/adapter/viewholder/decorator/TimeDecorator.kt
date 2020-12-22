@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatTime
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -45,6 +46,8 @@ internal class TimeDecorator(private val dateFormatter: DateFormatter) : BaseDec
     ) {
         setupTime(viewHolder.binding.tvTime, data)
     }
+
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupTime(textView: TextView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()

@@ -46,6 +46,17 @@
         tools:text="@tools:sample/lorem"
         />
 
+    <ImageView
+        android:id="@+id/deliveryStatusIcon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTime"
+        app:layout_constraintEnd_toStartOf="@+id/tvTime"
+        app:layout_constraintTop_toTopOf="@+id/tvTime"
+        tools:src="@drawable/stream_ui_ic_check_all"
+        />
+
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
@@ -53,6 +64,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintEnd_toEndOf="@id/marginEnd"
         app:layout_constraintTop_toBottomOf="@id/messageText"
+        tools:text="16:25"
         />
 
     <androidx.constraintlayout.widget.Guideline
