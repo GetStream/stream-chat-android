@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 
 internal class DeliveryStatusDecorator : BaseDecorator() {
 
@@ -88,5 +89,9 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
                 hideIndicator()
             }
         }.exhaustive
+
+        if (data.message.isEphemeral()){
+            hideIndicator()
+        }
     }
 }
