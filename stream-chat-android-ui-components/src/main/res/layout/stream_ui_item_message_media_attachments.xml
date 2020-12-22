@@ -44,10 +44,14 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <include android:id="@+id/footnote"
+    <include
+        android:id="@+id/footnote"
+        layout="@layout/stream_ui_item_message_footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@+id/mediaAttachmentsGroupView"
-        layout="@layout/stream_ui_item_message_footnote" />
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/marginStart"
