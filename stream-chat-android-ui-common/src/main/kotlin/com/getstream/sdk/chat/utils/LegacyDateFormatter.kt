@@ -24,7 +24,7 @@ public abstract class LegacyDateFormatter : DateFormatter {
         formatTime(localTime?.let(::toTime))
 
     private fun toTime(localTime: LocalTime): Date {
-        return Date().apply {
+        return Date(0L).apply {
             hours = localTime.hour
             minutes = localTime.minute
             seconds = localTime.second
