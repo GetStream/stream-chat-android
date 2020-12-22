@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import java.io.Serializable
@@ -89,6 +88,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setCopyListener(onCopy: () -> Unit) {
         binding.copyTV.setOnClickListener {
             onCopy()
+        }
+    }
+
+    public fun setEditMessageListener(onEdit: () -> Unit) {
+        binding.editTV.setOnClickListener {
+            onEdit()
         }
     }
 

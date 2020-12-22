@@ -122,12 +122,16 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         val handlers = requireArguments().getSerializable(ARG_HANDLERS) as Handlers
 
         binding.messageOptionsView.run {
-            setDeleteMessageListener {
-                handlers.deleteClickHandler(messageItem.message)
-            }
-
             setCopyListener {
                 copyText(messageItem.message)
+            }
+
+            setEditMessageListener {
+                handlers.editClickHandler(messageItem.message)
+            }
+
+            setDeleteMessageListener {
+                handlers.deleteClickHandler(messageItem.message)
             }
         }
         handlers.deleteClickHandler
@@ -189,6 +193,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     }
 
     internal class Handlers(
+        val editClickHandler: (Message) -> Unit,
         val deleteClickHandler: (Message) -> Unit
     ) : Serializable
 }
