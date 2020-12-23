@@ -46,5 +46,8 @@ class MessageListComponentBrowserFragment : Fragment() {
         binding.plainTextWithFileAttachments.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextWithFileAttachmentsMessages)
         }
+        binding.giphyMessage.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserGiphyMessages)
+        }
     }
 }

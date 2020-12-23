@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 
 internal object MessageListItemViewTypeMapper {
     private val MEDIA_ATTACHMENT_TYPES: Collection<String> = listOf(ModelType.attach_image, ModelType.attach_giphy)
@@ -28,6 +29,7 @@ internal object MessageListItemViewTypeMapper {
     private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): MessageListItemViewType {
         return when {
             messageItem.message.deletedAt != null -> MessageListItemViewType.MESSAGE_DELETED
+            messageItem.message.isGiphyEphemeral() -> MessageListItemViewType.GIPHY
             messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isMedia() -> MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
             messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isNotEmpty() -> MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
             messageItem.message.attachments.isMedia() -> MessageListItemViewType.MEDIA_ATTACHMENTS
