@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 
-internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user
+internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user + (replyTo?.users() ?: emptyList())
 
 internal fun Channel.users(): List<User> = members.map(Member::user) +
     read.map(ChannelUserRead::user) +

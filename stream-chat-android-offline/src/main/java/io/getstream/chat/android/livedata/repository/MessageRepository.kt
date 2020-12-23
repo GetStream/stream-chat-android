@@ -72,15 +72,16 @@ internal class MessageRepository(
 
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {
         if (messages.isEmpty()) return
-        for (message in messages) {
+        val messagesToInsert = messages.flatMap(Message::allMessages)
+        for (message in messagesToInsert) {
             require(message.cid.isNotEmpty()) { "message.cid can not be empty" }
         }
-        for (m in messages) {
+        for (m in messagesToInsert) {
             if (messageCache.get(m.id) != null || cache) {
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messages.map { it.toEntity() })
+        messageDao.insertMany(messagesToInsert.map { it.toEntity() })
     }
 
     suspend fun insert(message: Message, cache: Boolean = false) {
@@ -107,3 +108,5 @@ internal class MessageRepository(
         private const val DEFAULT_MESSAGE_LIMIT = 100
     }
 }
+
+private fun Message.allMessages(): List<Message> = listOf(this) + (replyTo?.allMessages() ?: emptyList())
