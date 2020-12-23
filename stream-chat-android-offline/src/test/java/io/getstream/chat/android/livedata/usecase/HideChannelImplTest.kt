@@ -5,7 +5,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.repository.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -18,7 +18,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun loadHidden() = runBlocking {
-        val channelEntity = ChannelEntity(data.channel1)
+        val channelEntity = data.channel1.toEntity()
         channelEntity.hidden = true
         chatDomainImpl.repos.channels.insert(channelEntity)
         // setup the channel controller
@@ -32,7 +32,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun loadHiddenQueryChannels() = runBlocking {
         // insert the channel and queryChannelsResult
-        val channelEntity = ChannelEntity(data.channel1)
+        val channelEntity = data.channel1.toEntity()
         channelEntity.hidden = true
         chatDomainImpl.repos.channels.insert(channelEntity)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))

@@ -8,18 +8,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomChannelEntity
-import io.getstream.chat.android.livedata.randomChannelUserReadEntity
-import io.getstream.chat.android.livedata.randomMemberEntity
 import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomMessageEntity
-import io.getstream.chat.android.livedata.randomReactionEntity
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -73,81 +67,15 @@ internal class RepositoryHelperTests {
     }
 
     @Test
-    fun `When calculate user Ids for list of channels should return list of user IDs according to channels`() {
-        val cid = randomCID()
-        val authorId1 = "authorId1"
-        val authorId2 = "authorId2"
-        val memberId1 = "memberId1"
-        val memberId2 = "memberId2"
-        val readId1 = "readId1"
-        val readId2 = "readId2"
-        val lastMessageUserId = "lastMessageUserId"
-        val lastMessageReactionUserId = "lastMessageReactionUserId"
-        val channelEntity1 = randomChannelEntity().apply {
-            this.cid = cid
-            this.createdByUserId = authorId1
-            members.putAll(
-                listOf(
-                    memberId1 to randomMemberEntity(memberId1),
-                    memberId2 to randomMemberEntity(memberId2)
-                )
-            )
-            reads.putAll(
-                listOf(
-                    readId1 to randomChannelUserReadEntity(readId1),
-                    readId2 to randomChannelUserReadEntity(readId2)
-                )
-            )
-            lastMessage = randomMessageEntity(
-                userId = lastMessageUserId,
-                latestReactions = listOf(randomReactionEntity(userId = lastMessageReactionUserId))
-            )
-        }
-        val channelEntity2 = randomChannelEntity().apply { createdByUserId = authorId2 }
-        val channels = listOf(channelEntity1, channelEntity2)
-        val messageUserId1 = "messageUserId1"
-        val messageUserId2 = "messageUserId2"
-        val reactionUserId1 = "reactionUserId1"
-        val reactionUserId2 = "reactionUserId2"
-        val message1 = randomMessageEntity(
-            cid = cid,
-            userId = messageUserId1,
-            latestReactions = listOf(
-                randomReactionEntity(userId = reactionUserId1),
-                randomReactionEntity(userId = reactionUserId2)
-            )
-        )
-        val message2 = randomMessageEntity(cid = cid, userId = messageUserId2)
-        val messageMap = mapOf(cid to listOf(message1, message2))
-
-        val result = sut.calculateUserIds(channels, messageMap)
-
-        result shouldBeEqualTo setOf(
-            authorId1,
-            authorId2,
-            memberId1,
-            memberId2,
-            readId1,
-            readId2,
-            messageUserId1,
-            messageUserId2,
-            reactionUserId1,
-            reactionUserId2,
-            lastMessageReactionUserId,
-            lastMessageUserId
-        )
-    }
-
-    @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
-            When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
-            val channelEntity1 = randomChannelEntity().apply {
+            When calling users.select("userId") doReturn randomUser(id = "userId")
+            val channelEntity1 = randomChannelEntity(lastMessage = null).apply {
                 cid = "cid1"
                 createdByUserId = "userId"
             }
-            val channelEntity2 = randomChannelEntity().apply {
+            val channelEntity2 = randomChannelEntity(lastMessage = null).apply {
                 cid = "cid2"
                 createdByUserId = "userId"
             }
@@ -164,20 +92,21 @@ internal class RepositoryHelperTests {
     fun `Given request more than last message When select channels Should return channels from DB with messages`() =
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
-            When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
-            val messageEntity1 = randomMessageEntity(id = "messageId1", cid = "cid1", userId = "userId")
-            val messageEntity2 = randomMessageEntity(id = "messageId2", cid = "cid2", userId = "userId")
-            When calling messages.selectMessagesEntitiesForChannel("cid1", paginationRequest) doReturn listOf(
-                messageEntity1
+            val user = randomUser(id = "userId")
+            When calling users.select("userId") doReturn user
+            val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
+            val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
+            When calling messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest), any()) doReturn listOf(
+                message1
             )
-            When calling messages.selectMessagesEntitiesForChannel("cid2", paginationRequest) doReturn listOf(
-                messageEntity2
+            When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest), any()) doReturn listOf(
+                message2
             )
-            val channelEntity1 = randomChannelEntity().apply {
+            val channelEntity1 = randomChannelEntity(lastMessage = null).apply {
                 cid = "cid1"
                 createdByUserId = "userId"
             }
-            val channelEntity2 = randomChannelEntity().apply {
+            val channelEntity2 = randomChannelEntity(lastMessage = null).apply {
                 cid = "cid2"
                 createdByUserId = "userId"
             }

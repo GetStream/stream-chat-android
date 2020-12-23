@@ -1,13 +1,9 @@
 package io.getstream.chat.android.livedata.repository
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
@@ -26,22 +22,6 @@ internal class RepositoryHelper(
     val messages = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
     val syncState = factory.createSyncStateRepository()
-
-    @VisibleForTesting
-    internal fun calculateUserIds(
-        channelEntities: Collection<ChannelEntity>,
-        channelMessagesMap: Map<String, Collection<MessageEntity>>
-    ): Collection<String> {
-        return channelEntities.fold(emptySet<String>()) { acc, channel ->
-            acc + channel.createdByUserId.orEmpty() +
-                channel.members.keys +
-                channel.reads.keys +
-                channel.lastMessage?.let(::userIdsFor).orEmpty()
-        } + channelMessagesMap.values.flatMap { it.flatMap(::userIdsFor) }
-    }
-
-    private fun userIdsFor(message: MessageEntity): List<String> =
-        message.latestReactions.map(ReactionEntity::userId) + message.userId
 
     internal suspend fun selectChannels(
         channelIds: List<String>,

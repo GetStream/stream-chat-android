@@ -22,7 +22,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `inserting a channel and reading it should be equal`() = runBlocking {
         repo.insertChannels(listOf(data.channel1))
         val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
+        val channel = entity!!.toModel({ data.userMap[it]!! }) { null }
         channel.config = data.channel1.config
         channel.watchers = data.channel1.watchers
         channel.watcherCount = data.channel1.watcherCount
@@ -43,7 +43,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `updating a channel should work as intended`() = runBlocking {
         repo.insertChannels(listOf(data.channel1, data.channel1Updated))
         val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
+        val channel = entity!!.toModel({ data.userMap[it]!! }) { null }
 
         // ignore these 4 fields
         channel.config = data.channel1.config
