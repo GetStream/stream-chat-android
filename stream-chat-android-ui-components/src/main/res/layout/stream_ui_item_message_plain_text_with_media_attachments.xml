@@ -28,10 +28,12 @@
         android:id="@+id/mediaAttachmentsGroupView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:padding="1dp"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_goneMarginEnd="0dp"
         />
 
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
@@ -79,6 +81,17 @@
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@+id/messageText"
+        />
+
+    <ImageView
+        android:id="@+id/deliveryFailedIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/stream_ui_ic_warning"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        tools:visibility="visible"
         />
 
     <androidx.constraintlayout.widget.Guideline
