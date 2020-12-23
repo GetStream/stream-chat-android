@@ -19,4 +19,7 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
             view.showSearchingForNetworkLabel()
         }
     }
+    typingUsers.observe(lifecycle) { typingUsers ->
+        view.showTypingStateLabel(typingUsers)
+    }
 }
