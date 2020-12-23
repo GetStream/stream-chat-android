@@ -28,8 +28,9 @@
         android:id="@+id/fileAttachmentsView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:padding="4dp"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsView"
         />
@@ -40,6 +41,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_goneMarginEnd="0dp"
         />
 
     <TextView
@@ -79,6 +81,17 @@
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@+id/messageText"
+        />
+
+    <ImageView
+        android:id="@+id/deliveryFailedIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/stream_ui_ic_warning"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        tools:visibility="visible"
         />
 
     <androidx.constraintlayout.widget.Guideline
