@@ -85,7 +85,6 @@
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
         app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
         app:layout_constraintTop_toTopOf="parent"
-        >
+        />
 
-    </TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>

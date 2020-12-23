@@ -8,48 +8,51 @@ import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 
 internal class DeliveryStatusDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupDeliveryStateIndicator(viewHolder.binding.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupDeliveryStateIndicator(viewHolder.binding.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupDeliveryStateIndicator(viewHolder.binding.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupDeliveryStateIndicator(viewHolder.binding.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
     }
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupDeliveryStateIndicator(viewHolder.binding.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
     }
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
         fun hideIndicator() {
@@ -67,7 +70,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
             return
         }
 
-        if (!data.isMine) {
+        if (!data.isMine || data.message.isEphemeral()) {
             hideIndicator()
             return
         }

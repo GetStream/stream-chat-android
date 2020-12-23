@@ -3,6 +3,8 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
@@ -22,6 +24,8 @@ internal abstract class BaseDecorator : Decorator {
             is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data)
             is OnlyFileAttachmentsViewHolder -> decorateOnlyFileAttachmentsMessage(viewHolder, data)
             is PlainTextWithFileAttachmentsViewHolder -> decoratePlainTextWithFileAttachmentsMessage(viewHolder, data)
+            is GiphyViewHolder -> decorateGiphyMessage(viewHolder, data)
+            is DateDividerViewHolder -> Unit
             else -> Unit
         }.exhaustive
     }
@@ -51,8 +55,10 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem
     )
 
-    protected abstract fun decorateDeletedMessage(
+    protected open fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem
-    )
+    ) = Unit
+
+    abstract fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem)
 }

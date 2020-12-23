@@ -29,6 +29,8 @@ internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
+internal fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
+
 internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 
 internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
