@@ -18,7 +18,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemS
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
-import io.getstream.chat.android.ui.utils.extensions.fluentAdd
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
