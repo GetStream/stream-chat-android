@@ -32,7 +32,7 @@ public class MessageOptionsView : FrameLayout {
         if (isMessageTheirs) {
             configureTheirsMessage(configuration, syncStatus)
         } else {
-            configureMineMessage(configuration, syncStatus)
+            configureMineMessage(configuration, SyncStatus.FAILED_PERMANENTLY)
         }
     }
 
@@ -70,6 +70,7 @@ public class MessageOptionsView : FrameLayout {
                 )
 
                 binding.retryTV.isVisible = true
+                binding.threadReplyTV.isVisible = false
             }
             SyncStatus.COMPLETED -> {
                 binding.threadReplyTV.configureListItem(
