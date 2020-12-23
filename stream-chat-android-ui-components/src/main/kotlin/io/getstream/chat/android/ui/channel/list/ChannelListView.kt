@@ -26,10 +26,11 @@ public class ChannelListView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : RecyclerView(context, attrs, defStyle) {
 
-    private var endReachedListener: EndReachedListener? = null
     private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
+
+    private var endReachedListener: EndReachedListener? = null
 
     init {
         setHasFixedSize(true)
@@ -122,6 +123,10 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun setChannels(channels: List<Channel>) {
         requireAdapter().submitList(channels)
+    }
+
+    public fun hasChannels(): Boolean {
+        return requireAdapter().itemCount > 0
     }
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
