@@ -24,6 +24,11 @@ public fun ConstraintSet.constrainViewStartToEndOfView(startView: View, endView:
 }
 
 @InternalStreamChatApi
+public fun ConstraintSet.constrainViewStartToStartOfView(startView: View, endView: View) {
+    connect(startView.id, ConstraintSet.START, endView.id, ConstraintSet.START)
+}
+
+@InternalStreamChatApi
 public fun ConstraintSet.constrainViewEndToEndOfView(startView: View, endView: View) {
     connect(startView.id, ConstraintSet.END, endView.id, ConstraintSet.END)
 }

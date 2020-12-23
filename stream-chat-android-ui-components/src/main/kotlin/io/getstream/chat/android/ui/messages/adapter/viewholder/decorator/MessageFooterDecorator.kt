@@ -4,6 +4,8 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
@@ -20,15 +22,16 @@ import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
+        setupFooterPosition(viewHolder, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -36,7 +39,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -44,7 +47,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -52,7 +55,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -60,12 +63,23 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
         with(viewHolder.binding) {
-            setupMessageFooterLabel(footnote.messageFooter, data)
+            setupMessageEphemeralFooterLabel(footnote.messageFooter, data)
             setupMessageFooterTime(footnote.timeView, data)
         }
     }
 
-    private fun setupMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
+    private fun setupFooterPosition(vh: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        val footnote = vh.binding.footnote.root
+        val threadReplies = vh.binding.threadRepliesFootnote.root
+        vh.binding.root.updateConstraints {
+            if (data.isMine) {
+            } else if (data.isTheirs) {
+                constrainViewStartToEndOfView(footnote, threadReplies)
+            }
+        }
+    }
+
+    private fun setupMessageEphemeralFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
         when {
             data.positions.contains(MessageListItem.Position.BOTTOM).not() || !data.message.isEphemeral() -> {
                 textView.isVisible = false

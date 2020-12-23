@@ -1,9 +1,13 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.view.View
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.constrainViewStartToStartOfView
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
@@ -41,7 +45,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     }
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote, data)
+        setupThreadRepliesView(viewHolder.binding, data)
     }
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
@@ -49,28 +53,44 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     }
 
     private fun setupThreadRepliesView(
-        binding: StreamUiMessageThreadsFootnoteBinding,
+        binding: StreamUiItemMessagePlainTextBinding,
         data: MessageListItem.MessageItem
     ) {
         val replyCount = data.message.replyCount
         if (replyCount == 0) {
-            binding.container.isVisible = false
-            return
+            // binding.container.isVisible = false
+            // return
         }
 
         if (data.isTheirs) {
-            binding.threadsOrnamentLeft.isVisible = true
-            binding.threadsOrnamentRight.isVisible = false
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
         } else if (data.isMine) {
-            binding.threadsOrnamentLeft.isVisible = false
-            binding.threadsOrnamentRight.isVisible = true
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
         }
 
-        binding.container.isVisible = true
-        binding.threadRepliesButton.text = binding.threadRepliesButton.resources.getQuantityString(
-            R.plurals.stream_ui_thread_messages_indicator,
-            replyCount,
-            replyCount
-        )
+        binding.root.updateConstraints {
+            applyGravity(binding.threadRepliesFootnote.root, binding.messageText, binding.messageText, data)
+        }
+
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadRepliesButton.text =
+            binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
+                R.plurals.stream_ui_thread_messages_indicator,
+                replyCount,
+                replyCount
+            )
+    }
+
+    private fun ConstraintSet.applyGravity(
+        targetView: View,
+        startView: View,
+        endView: View,
+        data: MessageListItem.MessageItem
+    ) {
+        clear(targetView.id, ConstraintSet.START)
+        clear(targetView.id, ConstraintSet.END)
+        if (data.isTheirs) constrainViewStartToStartOfView(targetView, startView)
     }
 }
