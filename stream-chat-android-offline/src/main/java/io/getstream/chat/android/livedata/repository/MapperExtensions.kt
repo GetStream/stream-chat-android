@@ -35,7 +35,10 @@ internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) ->
     userId = userId,
 )
 
-internal suspend fun MessageEntity.toModel(getUser: suspend (userId: String) -> User): Message = Message(
+internal suspend fun MessageEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+    getMessage: suspend (messageId: String) -> Message?
+): Message = Message(
     id = id,
     cid = cid,
     user = getUser(userId),
@@ -58,6 +61,7 @@ internal suspend fun MessageEntity.toModel(getUser: suspend (userId: String) -> 
     latestReactions = (latestReactions.map { it.toModel(getUser) }).toMutableList(),
     ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
     mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
+    replyTo = replyToId?.let { getMessage(it) }
 )
 
 internal fun Message.toEntity(): MessageEntity = MessageEntity(
@@ -82,7 +86,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     shadowed = shadowed,
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
-    mentionedUsersId = mentionedUsers.map(User::id)
+    mentionedUsersId = mentionedUsers.map(User::id),
+    replyToId = replyTo?.id
 )
 
 internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity = ChannelUserReadEntity(getUserId(), lastRead)
@@ -139,7 +144,10 @@ internal fun Channel.toEntity(): ChannelEntity {
     )
 }
 
-internal suspend fun ChannelEntity.toModel(getUser: suspend (userId: String) -> User): Channel = Channel(
+internal suspend fun ChannelEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+    getMessage: suspend (messageId: String) -> Message?,
+): Channel = Channel(
     cooldown = cooldown,
     type = type,
     id = channelId,
@@ -154,7 +162,7 @@ internal suspend fun ChannelEntity.toModel(getUser: suspend (userId: String) -> 
     hidden = hidden,
     hiddenMessagesBefore = hideMessagesBefore,
     members = members.values.map { it.toModel(getUser) },
-    messages = listOfNotNull(lastMessage?.toModel(getUser)),
+    messages = listOfNotNull(lastMessage?.toModel(getUser, getMessage)),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId)
 )

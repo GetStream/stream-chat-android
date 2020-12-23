@@ -65,7 +65,7 @@ internal class RepositoryHelper(
 
         // convert the channels
         return channelEntities.map { entity ->
-            entity.toModel(::selectUser).apply {
+            entity.toModel(::selectUser) { messages.select(it, ::selectUser) }.apply {
                 config = configs.select(type) ?: defaultConfig
                 messages = messagesMap[cid] ?: messages
             }

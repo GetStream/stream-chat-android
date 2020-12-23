@@ -50,5 +50,6 @@ internal data class MessageEntity(
     /** if the message was sent by shadow banned user */
     val shadowed: Boolean = false,
     /** all the custom data provided for this message */
-    val extraData: Map<String, Any> = emptyMap()
+    val extraData: Map<String, Any> = emptyMap(),
+    val replyToId: String?,
 )

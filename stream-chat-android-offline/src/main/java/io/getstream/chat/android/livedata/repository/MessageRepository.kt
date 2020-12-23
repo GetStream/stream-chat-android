@@ -25,7 +25,7 @@ internal class MessageRepository(
         pagination: AnyChannelPaginationRequest?,
         getUser: suspend (userId: String) -> User
     ): List<Message> {
-        return selectMessagesEntitiesForChannel(cid, pagination).map { it.toModel(getUser) }
+        return selectMessagesEntitiesForChannel(cid, pagination).map { it.toModel(getUser) { select(it, getUser) } }
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
@@ -61,13 +61,13 @@ internal class MessageRepository(
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
         return messageIds.mapNotNull { messageCache[it] } +
             messageDao.select(missingMessageIds).map { messageEntity ->
-                messageEntity.toModel(getUser)
+                messageEntity.toModel(getUser) { select(it, getUser) }
                     .also { messageCache.put(it.id, it) }
             }
     }
 
     suspend fun select(messageId: String, getUser: suspend (userId: String) -> User): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser)
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser) { select(it, getUser) }
     }
 
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {
@@ -100,7 +100,7 @@ internal class MessageRepository(
     }
 
     internal suspend fun selectSyncNeeded(getUser: suspend (userId: String) -> User): List<Message> {
-        return messageDao.selectSyncNeeded().map { it.toModel(getUser) }
+        return messageDao.selectSyncNeeded().map { it.toModel(getUser) { select(it, getUser) } }
     }
 
     companion object {
