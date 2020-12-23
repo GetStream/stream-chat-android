@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white"
+    android:background="@color/stream_ui_background_light"
     android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
     >
 
