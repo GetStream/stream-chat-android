@@ -57,13 +57,13 @@ internal class RepositoryHelper(
     ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = channels.select(channelIds)
-        val messageEntitiesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
+        val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
                 scope.async {
-                    cid to messages.selectMessagesEntitiesForChannel(cid, pagination)
+                    cid to messages.selectMessagesForChannel(cid, pagination, ::selectUser)
                 }
             }.awaitAll().toMap()
         } else {
@@ -71,11 +71,7 @@ internal class RepositoryHelper(
         }
 
         // gather the user ids from channels, members and the last message
-        val userMap = getUsersForChannels(channelEntities, messageEntitiesMap)
-
-        val messagesMap = messageEntitiesMap.mapValues { entry ->
-            entry.value.map { messageEntity -> messageEntity.toModel { userMap[it]!! } }
-        }
+        val userMap = getUsersForChannels(channelEntities, emptyMap())
 
         // convert the channels
         return channelEntities.map { entity ->

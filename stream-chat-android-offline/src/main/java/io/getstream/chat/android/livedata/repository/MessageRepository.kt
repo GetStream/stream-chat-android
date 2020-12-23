@@ -22,13 +22,13 @@ internal class MessageRepository(
 
     internal suspend fun selectMessagesForChannel(
         cid: String,
-        usersMap: Map<String, User>,
-        pagination: AnyChannelPaginationRequest
+        pagination: AnyChannelPaginationRequest?,
+        getUser: suspend (userId: String) -> User
     ): List<Message> {
-        return selectMessagesEntitiesForChannel(cid, pagination).map { it.toModel { usersMap[it]!! } }
+        return selectMessagesEntitiesForChannel(cid, pagination).map { it.toModel(getUser) }
     }
 
-    internal suspend fun selectMessagesEntitiesForChannel(
+    private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?
     ): List<MessageEntity> {
