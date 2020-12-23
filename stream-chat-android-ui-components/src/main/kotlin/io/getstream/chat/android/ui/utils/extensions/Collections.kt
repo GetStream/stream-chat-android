@@ -7,6 +7,3 @@ internal fun <ElementT> Collection<ElementT>.firstOrDefault(
     element: ElementT,
     predicate: (ElementT) -> Boolean
 ): ElementT = firstOrNull(predicate) ?: element
-
-internal fun <ElementT, CollectionT : MutableCollection<ElementT>> CollectionT.fluentAdd(item: ElementT): CollectionT =
-    apply { add(item) }

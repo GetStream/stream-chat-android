@@ -17,7 +17,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemS
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
-import io.getstream.chat.android.ui.utils.extensions.fluentAdd
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
@@ -122,7 +121,7 @@ public class ChannelListView @JvmOverloads constructor(
             val hideLoadingMore = !show && loadingMore
 
             val updatedList = when {
-                showLoadingMore -> currentList.toMutableList().fluentAdd(ChannelListItem.LoadingMoreItem)
+                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
 
                 // we should never have more than one loading item, but just in case
                 hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.LoadingMoreItem::class.java)

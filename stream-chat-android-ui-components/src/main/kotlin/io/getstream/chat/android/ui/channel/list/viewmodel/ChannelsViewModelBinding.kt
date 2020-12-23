@@ -27,7 +27,7 @@ public fun ChannelsViewModel.bindView(
             is ChannelsViewModel.State.Result -> {
                 channelState
                     .channels
-                    .map { ChannelListItem.ChannelItem(it) }
+                    .map(ChannelListItem::ChannelItem)
                     .let(view::setChannels)
 
                 view.hideLoadingView()
