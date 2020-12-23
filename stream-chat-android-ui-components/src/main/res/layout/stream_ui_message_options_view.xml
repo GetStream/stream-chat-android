@@ -92,7 +92,7 @@
                 android:paddingStart="12dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:drawableStart="@drawable/stream_ui_ic_flag"
                 tools:text="Flag message"
                 tools:visibility="visible"
