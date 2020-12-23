@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -117,12 +118,32 @@ public class ChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
-    public fun reachedEndOfChannels(endReached: Boolean) {
-        requireAdapter().endReached = endReached
+    public fun setChannels(channels: List<ChannelListItem>) {
+        requireAdapter().submitList(channels)
     }
 
-    public fun setChannels(channels: List<Channel>) {
-        requireAdapter().submitList(channels)
+    public fun showLoadingMore(show: Boolean) {
+        requireAdapter().let { adapter ->
+            val currentList = adapter.currentList
+            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
+            val showLoadingMore = show && !loadingMore
+            val hideLoadingMore = !show && loadingMore
+
+            val updatedList = when {
+                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
+
+                // we should never have more than one loading item, but just in case
+                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.LoadingMoreItem::class.java)
+
+                else -> currentList
+            }
+
+            adapter.submitList(updatedList) {
+                if (showLoadingMore) {
+                    layoutManager.scrollToPosition(updatedList.size - 1)
+                }
+            }
+        }
     }
 
     public fun hasChannels(): Boolean {
@@ -139,7 +160,7 @@ public class ChannelListView @JvmOverloads constructor(
             public val DEFAULT: UserClickListener = UserClickListener {}
         }
 
-        public fun onUserClick(user: User)
+        public fun onClick(user: User)
     }
 
     public fun interface ChannelClickListener {

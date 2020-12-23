@@ -98,7 +98,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
                 swipeStateByPosition[swipeStateEntry.key] = SwipeState.Closed
                 // if the view holder currently visible, animate it closed
                 recyclerView.findViewHolderForAdapterPosition(swipeStateEntry.key)
-                    ?.safeCast<ChannelItemViewHolder>()
+                    ?.safeCast<ChannelViewHolder>()
                     ?.let { viewHolder ->
                         val viewCompletelyVisible =
                             layoutManager.isViewPartiallyVisible(viewHolder.itemView, true, false)

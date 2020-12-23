@@ -64,7 +64,7 @@
 
     <color name="stream_ui_input_message_send_button">#0076FF</color>
 
-    <color name="stream_ui_channel_item_text_color">@color/stream_ui_black</color>
+    <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_black</color>
     <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
 
     <color name="stream_ui_background_default">@color/stream_ui_white</color>

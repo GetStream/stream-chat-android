@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.channel.list.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -12,32 +11,55 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListL
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.diff
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
+import io.getstream.chat.android.ui.utils.extensions.safeCast
 
 internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
-    ListAdapter<Channel, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
+    ListAdapter<ChannelListItem, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
     var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
 
     val listenerContainer: ChannelListListenerContainer = ChannelListListenerContainer()
 
-    var endReached: Boolean = true
-        set(value) {
-            if (value) {
-                // if we've reached the end, remove the last item
-                notifyItemRemoved(itemCount)
-            }
-            field = value
-        }
-
     companion object {
-        val DIFF_CALLBACK: DiffUtil.ItemCallback<Channel> = object : DiffUtil.ItemCallback<Channel>() {
-            override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean = oldItem.cid == newItem.cid
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<ChannelListItem> =
+            object : DiffUtil.ItemCallback<ChannelListItem>() {
+                override fun areItemsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
+                    if (oldItem::class != newItem::class) {
+                        return false
+                    }
 
-            override fun areContentsTheSame(oldItem: Channel, newItem: Channel): Boolean =
-                !oldItem.diff(newItem).hasDifference()
+                    return when (oldItem) {
+                        is ChannelListItem.ChannelItem -> {
+                            oldItem.channel.cid == newItem.safeCast<ChannelListItem.ChannelItem>()?.channel?.cid
+                        }
 
-            override fun getChangePayload(oldItem: Channel, newItem: Channel): Any = oldItem.diff(newItem)
-        }
+                        else -> true
+                    }
+                }
+
+                override fun areContentsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
+                    // this is only called if areItemsTheSame returns true, so they must be the same class
+                    return when (oldItem) {
+                        is ChannelListItem.ChannelItem -> {
+                            oldItem
+                                .channel
+                                .diff(newItem.cast<ChannelListItem.ChannelItem>().channel)
+                                .hasDifference()
+                                .not()
+                        }
+
+                        else -> true
+                    }
+                }
+
+                override fun getChangePayload(oldItem: ChannelListItem, newItem: ChannelListItem): Any {
+                    // only called if their contents aren't the same, so they must be channel items and not loading items
+                    return oldItem
+                        .cast<ChannelListItem.ChannelItem>()
+                        .channel
+                        .diff(newItem.cast<ChannelListItem.ChannelItem>().channel)
+                }
+            }
 
         val EVERYTHING_CHANGED: ChannelDiff = ChannelDiff()
         val NOTHING_CHANGED: ChannelDiff = ChannelDiff(
@@ -48,31 +70,10 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
         )
     }
 
-    // If we haven't reached the end of the channels, and we're in the last position, we're loading more
-    private fun isLoadingMore(position: Int) = !endReached && position == itemCount - 1
-
     override fun getItemViewType(position: Int): Int {
-        return when {
-            isLoadingMore(position) -> ChannelItemType.LOADING_MORE.ordinal
-            else -> ChannelItemType.DEFAULT.ordinal
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return super.getItemCount().let { realCount ->
-            when {
-                // if the list isn't empty, and we haven't reached the end, always offset +1 for the loading more view
-                !endReached && realCount > 0 -> realCount + 1
-                else -> realCount
-            }
-        }
-    }
-
-    override fun getItem(position: Int): Channel? {
-        return when {
-            // don't try to fetch an item that isn't in the data set
-            isLoadingMore(position) -> null
-            else -> super.getItem(position)
+        return when (getItem(position)) {
+            is ChannelListItem.LoadingMoreItem -> ChannelItemType.LOADING_MORE.ordinal
+            is ChannelListItem.ChannelItem -> ChannelItemType.DEFAULT.ordinal
         }
     }
 
@@ -92,12 +93,23 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
         }
     }
 
-    /* Loading view doesn't require any binding. Only bind if a channel item is retrieved */
+    private fun bind(
+        position: Int,
+        holder: BaseChannelListItemViewHolder,
+        payload: ChannelDiff
+    ) {
+        when (val channelItem = getItem(position)) {
+            is ChannelListItem.LoadingMoreItem -> Unit
+
+            is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
+        }
+    }
+
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
-        getItem(position)?.let { holder.bind(it, payloads.firstOrDefault(EVERYTHING_CHANGED).cast()) }
+        bind(position, holder, payloads.firstOrDefault(EVERYTHING_CHANGED).cast())
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, NOTHING_CHANGED) }
+        bind(position, holder, NOTHING_CHANGED)
     }
 }

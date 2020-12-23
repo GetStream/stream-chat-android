@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
@@ -55,7 +55,10 @@ public class ChannelsView @JvmOverloads constructor(
                 }
             }
 
-            it.getResourceId(R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable, R.drawable.stream_ui_divider)
+            it.getResourceId(
+                R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable,
+                R.drawable.stream_ui_divider
+            )
                 .let { separator ->
                     channelListView.setItemSeparator(separator)
                 }
@@ -149,7 +152,7 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setOnEndReachedListener(listener)
     }
 
-    public fun setChannels(channels: List<Channel>) {
+    public fun setChannels(channels: List<ChannelListItem>) {
         channelListView.setChannels(channels)
     }
 
@@ -159,6 +162,14 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun showLoadingView() {
         this.loadingView.isVisible = true
+    }
+
+    public fun showLoadingMore() {
+        this.channelListView.showLoadingMore(true)
+    }
+
+    public fun hideLoadingMore() {
+        this.channelListView.showLoadingMore(false)
     }
 
     public fun showEmptyStateView() {
@@ -171,10 +182,6 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun setPaginationEnabled(enabled: Boolean) {
         channelListView.setPaginationEnabled(enabled)
-    }
-
-    public fun reachedEndOfChannels(endReached: Boolean) {
-        channelListView.reachedEndOfChannels(endReached)
     }
 
     public fun hasChannels(): Boolean {
