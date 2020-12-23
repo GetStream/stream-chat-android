@@ -1,10 +1,17 @@
 package io.getstream.chat.android.livedata.repository
 
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
+import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import java.util.Date
 
 internal fun Reaction.toEntity(): ReactionEntity {
     val reactionEntity = ReactionEntity(messageId, fetchUserId(), type)
@@ -76,4 +83,78 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
     mentionedUsersId = mentionedUsers.map(User::id)
+)
+
+internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity = ChannelUserReadEntity(getUserId(), lastRead)
+
+internal suspend fun ChannelUserReadEntity.toModel(getUser: suspend (userId: String) -> User): ChannelUserRead =
+    ChannelUserRead(getUser(userId), lastRead)
+
+internal fun Member.toEntity(): MemberEntity = MemberEntity(
+    userId = getUserId(),
+    role = role ?: user.role,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isInvited = isInvited ?: false,
+    inviteAcceptedAt = inviteAcceptedAt,
+    inviteRejectedAt = inviteRejectedAt,
+    shadowBanned = shadowBanned,
+)
+
+internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> User): Member = Member(
+    getUser(userId),
+    role,
+    createdAt,
+    updatedAt,
+    isInvited,
+    inviteAcceptedAt,
+    inviteRejectedAt,
+    shadowBanned,
+)
+
+internal fun Channel.toEntity(): ChannelEntity {
+    var lastMessage: MessageEntity? = null
+    var lastMessageAt: Date? = null
+    messages.lastOrNull()?.let { message ->
+        lastMessage = message.toEntity()
+        lastMessageAt = message.createdAt
+    }
+    return ChannelEntity(
+        type = type,
+        channelId = id,
+        cooldown = cooldown,
+        frozen = frozen,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+        extraData = extraData,
+        syncStatus = syncStatus,
+        hidden = hidden,
+        hideMessagesBefore = hiddenMessagesBefore,
+        members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
+        reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
+        lastMessage = lastMessage,
+        lastMessageAt = lastMessageAt,
+        createdByUserId = createdBy.id,
+    )
+}
+
+internal suspend fun ChannelEntity.toModel(getUser: suspend (userId: String) -> User): Channel = Channel(
+    cooldown = cooldown,
+    type = type,
+    id = channelId,
+    cid = cid,
+    frozen = frozen,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    extraData = extraData,
+    lastMessageAt = lastMessageAt,
+    syncStatus = syncStatus,
+    hidden = hidden,
+    hiddenMessagesBefore = hideMessagesBefore,
+    members = members.values.map { it.toModel(getUser) },
+    messages = listOfNotNull(lastMessage?.toModel(getUser)),
+    read = reads.values.map { it.toModel(getUser) },
+    createdBy = getUser(createdByUserId)
 )

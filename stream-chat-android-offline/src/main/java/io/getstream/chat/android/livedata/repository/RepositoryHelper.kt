@@ -27,13 +27,6 @@ internal class RepositoryHelper(
     val reactions = factory.createReactionRepository()
     val syncState = factory.createSyncStateRepository()
 
-    private suspend fun getUsersForChannels(
-        channelEntities: Collection<ChannelEntity>,
-        channelMessagesMap: Map<String, Collection<MessageEntity>>
-    ): Map<String, User> {
-        return users.selectUserMap(calculateUserIds(channelEntities, channelMessagesMap).toList())
-    }
-
     @VisibleForTesting
     internal fun calculateUserIds(
         channelEntities: Collection<ChannelEntity>,
@@ -70,12 +63,9 @@ internal class RepositoryHelper(
             emptyMap()
         }
 
-        // gather the user ids from channels, members and the last message
-        val userMap = getUsersForChannels(channelEntities, emptyMap())
-
         // convert the channels
         return channelEntities.map { entity ->
-            entity.toChannel(userMap).apply {
+            entity.toModel(::selectUser).apply {
                 config = configs.select(type) ?: defaultConfig
                 messages = messagesMap[cid] ?: messages
             }

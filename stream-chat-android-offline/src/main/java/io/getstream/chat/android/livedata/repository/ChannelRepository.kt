@@ -29,7 +29,7 @@ internal class ChannelRepository(
     }
 
     suspend fun insertChannels(channels: Collection<Channel>) {
-        insert(channels.map(::ChannelEntity))
+        insert(channels.map(Channel::toEntity))
     }
 
     private suspend fun insert(channelEntities: List<ChannelEntity>) {
