@@ -57,17 +57,13 @@ internal class MessageRepository(
         return messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
     }
 
-    suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
-        val cachedMessages: MutableList<Message> = mutableListOf()
-        for (messageId in messageIds) {
-            val cachedMessage = messageCache.get(messageId)
-            cachedMessage?.let { cachedMessages.add(it) }
-        }
+    suspend fun select(messageIds: List<String>, getUser: suspend (userId: String) -> User): List<Message> {
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        val dbMessages = messageDao.select(missingMessageIds).map { it.toModel { usersMap[it]!! } }.toMutableList()
-
-        dbMessages.addAll(cachedMessages)
-        return dbMessages
+        return messageIds.mapNotNull { messageCache[it] } +
+            messageDao.select(missingMessageIds).map { messageEntity ->
+                messageEntity.toModel(getUser)
+                    .also { messageCache.put(it.id, it) }
+            }
     }
 
     /**
@@ -86,8 +82,8 @@ internal class MessageRepository(
         return messageDao.select(missingIds) + cachedEntities
     }
 
-    suspend fun select(messageId: String, usersMap: Map<String, User>): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel { usersMap[it]!! }
+    suspend fun select(messageId: String, getUser: suspend (userId: String) -> User): Message? {
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser)
     }
 
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {

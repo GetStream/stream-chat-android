@@ -24,7 +24,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     @Test
     fun testInsertAndRead() = runBlocking {
         repo.insert(data.message1)
-        val message = repo.select(data.message1.id, data.userMap)
+        val message = repo.select(data.message1.id) { data.userMap[it]!! }
         // ignore the channel field, we don't have that information at the message repository level
         Truth.assertThat(message).isEqualTo(data.message1)
     }
@@ -45,7 +45,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         val extra = mutableMapOf("int" to 10, "string" to "green", "list" to listOf("a", "b"))
         val messageIn = data.createMessage().apply { extraData = extra; id = "testMessageObjectWithExtraData" }
         repo.insert(messageIn, true)
-        val messageOut = repo.select(messageIn.id, data.userMap)
+        val messageOut = repo.select(messageIn.id) { data.userMap[it]!! }
         Truth.assertThat(messageOut!!.extraData).isEqualTo(extra)
     }
 
@@ -54,7 +54,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         repo.insert(data.message1, true)
         repo.insert(data.message1Updated, true)
 
-        val message = repo.select(data.message1Updated.id, data.userMap)
+        val message = repo.select(data.message1Updated.id) { data.userMap[it]!! }
 
         Truth.assertThat(message).isEqualTo(data.message1Updated)
         Truth.assertThat(repo.messageCache.size()).isEqualTo(1)
