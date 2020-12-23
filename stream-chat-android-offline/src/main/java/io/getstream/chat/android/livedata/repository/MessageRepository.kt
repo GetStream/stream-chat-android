@@ -109,4 +109,4 @@ internal class MessageRepository(
     }
 }
 
-private fun Message.allMessages(): List<Message> = listOf(this) + (replyTo?.allMessages() ?: emptyList())
+private fun Message.allMessages(): List<Message> = listOf(this) + (replyTo?.allMessages().orEmpty())
