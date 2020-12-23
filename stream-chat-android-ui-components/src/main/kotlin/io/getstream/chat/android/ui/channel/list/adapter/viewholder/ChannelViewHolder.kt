@@ -149,7 +149,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
             setChannelData(channel)
             setOnClickListener {
                 when {
-                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
                     else -> channelClickListener.onClick(channel)
                 }
             }
