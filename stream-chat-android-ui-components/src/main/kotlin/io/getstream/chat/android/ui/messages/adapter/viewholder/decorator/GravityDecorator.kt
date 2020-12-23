@@ -16,52 +16,58 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
 internal class GravityDecorator : BaseDecorator() {
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+    override fun decoratePlainTextMessage(
+        viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem
+    ) = with(viewHolder.binding) {
+        messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
-        viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.footnote.messageFooterContainer, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+        root.updateConstraints {
+            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
         }
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.footnote.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+    ) = with(viewHolder.binding) {
+        root.updateConstraints {
+            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
         }
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.footnote.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+    ) = with(viewHolder.binding) {
+        root.updateConstraints {
+            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
         }
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.footnote.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+    ) = with(viewHolder.binding) {
+        root.updateConstraints {
+            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
         }
     }
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        viewHolder.binding.root.updateConstraints {
-            applyGravity(viewHolder.binding.footnote.messageFooter, viewHolder.binding.avatarView, viewHolder.binding.marginEnd, data)
+    ) = with(viewHolder.binding) {
+        root.updateConstraints {
+            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
         }
     }
 
-    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateDeletedMessage(
+        viewHolder: MessageDeletedViewHolder,
+        data: MessageListItem.MessageItem
+    ) = Unit
 
     private fun ConstraintSet.applyGravity(
         targetView: View,
