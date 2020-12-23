@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
@@ -93,7 +94,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
         setupEditReactionsView()
         setupMessageView()
-        configureMessageOptions(configuration, messageItem.isTheirs)
+        configureMessageOptions(configuration, messageItem.isTheirs, messageItem.message.syncStatus)
         handlers?.let(::setupMessageOptionClickListeners)
     }
 
@@ -120,8 +121,12 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         binding.messageOptionsView.setOnClickListener {}
     }
 
-    private fun configureMessageOptions(configuration: MessageOptionsView.Configuration, isTheirs: Boolean) {
-        binding.messageOptionsView.configure(configuration, isTheirs)
+    private fun configureMessageOptions(
+        configuration: MessageOptionsView.Configuration,
+        isTheirs: Boolean,
+        syncStatus: SyncStatus
+    ) {
+        binding.messageOptionsView.configure(configuration, isTheirs, syncStatus)
     }
 
     private fun setupMessageOptionClickListeners(handlers: Handlers) {

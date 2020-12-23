@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import java.io.Serializable
@@ -27,34 +28,78 @@ public class MessageOptionsView : FrameLayout {
         defStyleAttr
     )
 
-    internal fun configure(configuration: Configuration, isMessageTheirs: Boolean) {
+    internal fun configure(configuration: Configuration, isMessageTheirs: Boolean, syncStatus: SyncStatus) {
+        if (isMessageTheirs) {
+            configureTheirsMessage(configuration, syncStatus)
+        } else {
+            configureMineMessage(configuration, syncStatus)
+        }
+    }
+
+    private fun configureTheirsMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
-        binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
+        if (syncStatus == SyncStatus.COMPLETED) {
+            binding.threadReplyTV.configureListItem(
+                configuration.threadReplyText,
+                configuration.threadReplyIcon,
+                iconsTint
+            )
+        }
 
+        configureCopyMessage(iconsTint, configuration)
+
+        binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
+        binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
+        binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
+        binding.deleteTV.isVisible = false
+    }
+
+    private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
+        val iconsTint = configuration.iconsTint
+
+        // Todo: Uncomment once reply is done.
+        // binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
+
+        when (syncStatus) {
+            SyncStatus.FAILED_PERMANENTLY -> {
+                binding.retryTV.configureListItem(
+                    configuration.retryText,
+                    configuration.retryIcon,
+                    ContextCompat.getColor(context, R.color.stream_ui_blue)
+                )
+
+                binding.retryTV.isVisible = true
+            }
+            SyncStatus.COMPLETED -> {
+                binding.threadReplyTV.configureListItem(
+                    configuration.threadReplyText,
+                    configuration.threadReplyIcon,
+                    iconsTint
+                )
+            }
+            SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS -> {
+            }
+        }
+
+        configureCopyMessage(iconsTint, configuration)
+
+        binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
+        binding.flagTV.isVisible = false
+        binding.muteTV.isVisible = false
+        binding.blockTV.isVisible = false
+        binding.deleteTV.run {
+            configureListItem(configuration.deleteText, configuration.deleteIcon, iconsTint)
+            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
+        }
+    }
+
+    private fun configureCopyMessage(iconsTint: Int, configuration: Configuration) {
         if (configuration.copyTextEnabled) {
             binding.copyTV.isVisible = true
             binding.copyTV.configureListItem(configuration.copyText, configuration.copyIcon, iconsTint)
         } else {
             binding.copyTV.isVisible = false
-        }
-
-        binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
-
-        if (isMessageTheirs) {
-            binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
-            binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
-            binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
-            binding.deleteTV.isVisible = false
-        } else {
-            binding.flagTV.isVisible = false
-            binding.muteTV.isVisible = false
-            binding.blockTV.isVisible = false
-            binding.deleteTV.run {
-                configureListItem(configuration.deleteText, configuration.deleteIcon, iconsTint)
-                setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
-            }
         }
     }
 
@@ -64,6 +109,8 @@ public class MessageOptionsView : FrameLayout {
         val replyIcon: Int,
         val threadReplyText: String,
         val threadReplyIcon: Int,
+        val retryText: String,
+        val retryIcon: Int,
         val copyText: String,
         val copyIcon: Int,
         val editText: String,
