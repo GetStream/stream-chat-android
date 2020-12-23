@@ -87,11 +87,11 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
-        return messages.selectSyncNeeded { users.select(it) ?: error("User with the userId: `$it` has not been found") }
+        return messages.selectSyncNeeded(::selectUser)
     }
 
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
-        messages.select(messageIds) { users.select(it) ?: error("User with the userId: `$it` has not been found") }
+        messages.select(messageIds, ::selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -101,4 +101,7 @@ internal class RepositoryHelper(
         this.channels.insertChannels(channels)
         users.insert(channels.flatMap(Channel::users))
     }
+
+    private suspend fun selectUser(userId: String): User =
+        users.select(userId) ?: error("User with the userId: `$userId` has not been found")
 }
