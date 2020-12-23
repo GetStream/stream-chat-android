@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.hasFilter
 import java.util.Date
@@ -150,8 +149,8 @@ internal class MessageRepository(
             message.syncStatus = syncStatus
             message.shadowed = shadowed
 
-            message.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
-            message.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
+            message.latestReactions = (latestReactions.map { it.toModel { userMap[it]!! } }).toMutableList()
+            message.ownReactions = (ownReactions.map { it.toModel { userMap[it]!! } }).toMutableList()
             message.mentionedUsers = mentionedUsersId.mapNotNull { userMap[it] }.toMutableList()
 
             message

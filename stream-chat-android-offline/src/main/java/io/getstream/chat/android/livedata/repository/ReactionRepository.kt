@@ -14,11 +14,11 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, var client: ChatClient) {
 
     suspend fun insertReaction(reaction: Reaction) {
-        insert(listOf(ReactionEntity(reaction)))
+        insert(listOf(reaction.toEntity()))
     }
 
     suspend fun insertManyReactions(reactions: List<Reaction>) {
-        val entities = reactions.map { ReactionEntity(it) }
+        val entities = reactions.map(Reaction::toEntity)
         insert(entities)
     }
 
@@ -44,11 +44,9 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
     }
 
     suspend fun retryReactions(): List<ReactionEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-
         val reactionEntities = selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
-            val reaction = reactionEntity.toReaction(userMap)
+            val reaction = reactionEntity.toModel { currentUser }
             reaction.user = null
             val result = if (reactionEntity.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).execute()
