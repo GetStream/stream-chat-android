@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
@@ -28,11 +30,14 @@
         android:id="@+id/fileAttachmentsView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsView"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
@@ -65,7 +70,6 @@
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         style="@style/StreamUiMessageListAvatarStyle"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -79,7 +83,9 @@
         layout="@layout/stream_ui_item_message_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="@+id/marginEnd"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@+id/messageText"
         />
 
@@ -99,7 +105,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp"
+        tools:layout_constraintGuide_begin="20dp"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -107,7 +113,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="20dp"
+        tools:layout_constraintGuide_end="20dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
