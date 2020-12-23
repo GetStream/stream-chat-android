@@ -98,13 +98,9 @@ public class AttachmentDestination(
         message: Message,
         attachment: Attachment
     ) {
-        val imageUrls: List<String?> = message.attachments
-            .filter {
-                attachment.type == ModelType.attach_image && !attachment.imageUrl.isNullOrEmpty()
-            }
-            .map {
-                it.imageUrl
-            }
+        val imageUrls: List<String> = message.attachments
+            .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+            .mapNotNull(Attachment::imageUrl)
 
         if (imageUrls.isEmpty()) {
             Toast.makeText(context, "Invalid image(s)!", Toast.LENGTH_SHORT).show()
@@ -112,9 +108,13 @@ public class AttachmentDestination(
         }
 
         val attachmentIndex = message.attachments.indexOf(attachment)
-        ImageViewer.Builder(context, imageUrls)
+        showImagesWithCurrentIndex(attachmentIndex, imageUrls)
+    }
+
+    private fun showImagesWithCurrentIndex(currentIndex: Int, attachmentUrls: List<String>) {
+        ImageViewer.Builder(context, attachmentUrls)
             .setStartPosition(
-                if (attachmentIndex in imageUrls.indices) attachmentIndex else 0
+                if (currentIndex in attachmentUrls.indices) currentIndex else 0
             )
             .show()
     }

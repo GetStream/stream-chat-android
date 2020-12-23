@@ -22,7 +22,7 @@ public class OnlyMediaAttachmentsViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (data.message.attachments.isMedia()) {
-            showAttachments(data.message.attachments, data.isMine)
+            showAttachments(data.message.attachments)
         }
 
         binding.mediaAttachmentsGroupView.setOnLongClickListener {
@@ -34,7 +34,7 @@ public class OnlyMediaAttachmentsViewHolder(
         }
     }
 
-    private fun showAttachments(imageAttachments: Collection<Attachment>, isMine: Boolean) {
+    private fun showAttachments(imageAttachments: Collection<Attachment>) {
         binding.mediaAttachmentsGroupView.showAttachments(*imageAttachments.toTypedArray())
     }
 }
