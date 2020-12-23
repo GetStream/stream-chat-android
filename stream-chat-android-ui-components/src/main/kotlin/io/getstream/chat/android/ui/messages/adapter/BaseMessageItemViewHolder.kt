@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Avatar
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FailedIndicatorDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
@@ -24,8 +25,9 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         AvatarDecorator(),
         GravityDecorator(),
         DeliveryStatusDecorator(),
+        FailedIndicatorDecorator(),
         MessageFooterDecorator(DateFormatter.from(itemView.context)),
-        ReactionsDecorator()
+        ReactionsDecorator(),
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
