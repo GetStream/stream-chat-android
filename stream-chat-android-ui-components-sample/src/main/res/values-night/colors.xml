@@ -6,4 +6,6 @@
 
     <color name="component_browser_background">#000</color>
     <color name="component_browser_background_light">#000</color>
+
+    <color name="rounded_button_background">@color/stream_ui_black</color>
 </resources>
