@@ -37,13 +37,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         fun newInstance(
             messageItem: MessageListItem.MessageItem,
             configuration: MessageOptionsView.Configuration,
-            handlers: Handlers
         ): MessageOptionsOverlayDialogFragment {
             return MessageOptionsOverlayDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_MESSAGE to MessageItemWrapper(messageItem),
-                    ARG_OPTIONS_CONFIG to configuration,
-                    ARG_HANDLERS to handlers
+                    ARG_OPTIONS_CONFIG to configuration
                 )
             }
         }
@@ -61,6 +59,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     private lateinit var messageView: View
 
     private var reactionClickListener: ReactionClickListener? = null
+    private var handlers: Handlers? = null
+
+    private val configuration by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,12 +92,10 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
             dismiss()
         }
 
-        val configuration = requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
-
         setupEditReactionsView()
         setupMessageView()
         configureMessageOptions(configuration, messageItem.isTheirs)
-        setupClickListeners(configuration)
+        handlers?.let(::setupMessageOptionClickListeners)
     }
 
     override fun onDestroy() {
@@ -104,6 +105,10 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
     fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
         this.reactionClickListener = reactionClickListener
+    }
+
+    fun setMessageOptionsHandlers(handlers: Handlers) {
+        this.handlers = handlers
     }
 
     private fun setupEditReactionsView() {
@@ -120,9 +125,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         binding.messageOptionsView.configure(configuration, isTheirs)
     }
 
-    private fun setupClickListeners(configuration: MessageOptionsView.Configuration) {
-        val handlers = requireArguments().getSerializable(ARG_HANDLERS) as Handlers
-
+    private fun setupMessageOptionClickListeners(handlers: Handlers) {
         binding.messageOptionsView.run {
             setThreadListener {
                 handlers.threadReplyHandler(messageItem.message)

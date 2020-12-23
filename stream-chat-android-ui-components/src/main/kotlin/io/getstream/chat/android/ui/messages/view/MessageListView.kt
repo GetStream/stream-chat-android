@@ -169,11 +169,11 @@ public class MessageListView : ConstraintLayout {
                 )
 
                 MessageOptionsOverlayDialogFragment
-                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration, handlers)
+                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
                     .apply {
-                        setReactionClickListener { message, reactionType ->
-                            onMessageReactionHandler(message, reactionType)
-                        }
+                        setReactionClickListener(onMessageReactionHandler)
+
+                        setMessageOptionsHandlers(handlers)
                     }
                     .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
