@@ -72,7 +72,7 @@ internal class ReactionsDecorator : BaseDecorator() {
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,
         reactionsView: ViewReactionsView,
-        achorView: View,
+        anchorView: View,
         reactionsOffsetSpace: View,
         data: MessageListItem.MessageItem
     ) {
@@ -93,10 +93,10 @@ internal class ReactionsDecorator : BaseDecorator() {
                     MULTIPLE_REACTIONS_OFFSET
                 }
                 if (data.isTheirs) {
-                    endToEnd = achorView.id
+                    endToEnd = anchorView.id
                     marginEnd = offset
                 } else {
-                    startToStart = achorView.id
+                    startToStart = anchorView.id
                     marginStart = offset
                 }
             }
@@ -107,12 +107,12 @@ internal class ReactionsDecorator : BaseDecorator() {
                     endToStart = reactionsOffsetSpace.id
                 }
             }
-            achorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            anchorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topMargin = REACTIONS_SPACING
             }
         } else {
             reactionsView.isVisible = false
-            achorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            anchorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topMargin = 0
             }
         }
