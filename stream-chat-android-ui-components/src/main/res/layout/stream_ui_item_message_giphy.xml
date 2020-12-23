@@ -152,7 +152,6 @@
                 app:layout_constraintTop_toTopOf="@id/cancel_button"
                 />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
