@@ -86,12 +86,14 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <ImageView
+    <View
         android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_ui_channel_header_separator_height"
-        android:background="@color/stream_ui_divider_tint_light"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_ui_divider_height"
+        android:background="@color/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

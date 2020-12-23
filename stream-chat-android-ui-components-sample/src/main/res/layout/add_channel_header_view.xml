@@ -41,12 +41,12 @@
         android:layout_marginBottom="16dp"
         android:background="@color/stream_ui_transparent"
         android:drawableEnd="@drawable/ic_member"
-        app:drawableTint="@color/stream_ui_icon_light_tint"
         android:hint="@string/add_member_hint"
         android:inputType="text"
         android:padding="0dp"
         android:singleLine="true"
         android:textSize="@dimen/stream_ui_text_medium"
+        app:drawableTint="@color/stream_ui_icon_light_tint"
         app:layout_constraintBottom_toBottomOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addMemberTextView"
@@ -78,10 +78,12 @@
 
     <View
         android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_ui_channel_header_separator_height"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_ui_divider_height"
         android:background="@drawable/stream_ui_divider"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
