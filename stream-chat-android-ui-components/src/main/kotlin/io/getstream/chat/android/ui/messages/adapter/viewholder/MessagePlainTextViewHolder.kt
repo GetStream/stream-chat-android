@@ -1,8 +1,8 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
@@ -13,9 +13,7 @@ public class MessagePlainTextViewHolder(
     private val listenerContainer: ListenerContainer?,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
-            LayoutInflater.from(
-                parent.context
-            ),
+            parent.inflater,
             parent,
             false
         )
