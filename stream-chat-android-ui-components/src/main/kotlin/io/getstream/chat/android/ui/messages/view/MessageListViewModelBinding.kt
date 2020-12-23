@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Flag
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
@@ -34,6 +35,8 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType))
     }
+    view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
+    view.setOnBlockUserHandler { user, channel -> onEvent(MessageListViewModel.Event.BlockUser(user, channel)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {
