@@ -40,11 +40,19 @@
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
+    <Space
+        android:id="@+id/reactionsOffsetSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/mediaAttachmentsGroupView"
+        app:layout_constraintTop_toTopOf="@id/mediaAttachmentsGroupView"
+        />
+
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/mediaAttachmentsGroupView"
+        app:layout_constraintStart_toEndOf="@id/reactionsOffsetSpace"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 

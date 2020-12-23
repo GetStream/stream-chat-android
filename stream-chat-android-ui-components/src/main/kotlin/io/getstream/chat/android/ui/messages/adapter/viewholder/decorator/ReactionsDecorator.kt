@@ -25,7 +25,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, messageText, data)
+            setupReactionsView(root, reactionsView, messageText, reactionsOffsetSpace, data)
         }
     }
 
@@ -34,7 +34,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, mediaAttachmentsGroupView, data)
+            setupReactionsView(root, reactionsView, mediaAttachmentsGroupView, reactionsOffsetSpace, data)
         }
     }
 
@@ -43,7 +43,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, mediaAttachmentsGroupView, data)
+            setupReactionsView(root, reactionsView, mediaAttachmentsGroupView, reactionsOffsetSpace, data)
         }
     }
 
@@ -52,7 +52,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, fileAttachmentsView, data)
+            setupReactionsView(root, reactionsView, fileAttachmentsView, reactionsOffsetSpace, data)
         }
     }
 
@@ -61,7 +61,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, fileAttachmentsView, data)
+            setupReactionsView(root, reactionsView, fileAttachmentsView, reactionsOffsetSpace, data)
         }
     }
 
@@ -72,41 +72,50 @@ internal class ReactionsDecorator : BaseDecorator() {
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,
         reactionsView: ViewReactionsView,
-        anchor: View,
+        achorView: View,
+        reactionsOffsetSpace: View,
         data: MessageListItem.MessageItem
     ) {
-        val hasReactions = data.message.latestReactions.isNotEmpty()
-        reactionsView.isVisible = hasReactions
+        if (data.message.latestReactions.isNotEmpty()) {
+            reactionsView.isVisible = true
+            reactionsView.setMessage(data.message, data.isMine)
 
-        if (!hasReactions) {
-            anchor.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            rootConstraintLayout.updateConstraints {
+                clear(reactionsView.id, ConstraintSet.START)
+                clear(reactionsView.id, ConstraintSet.END)
+                clear(reactionsOffsetSpace.id, ConstraintSet.START)
+                clear(reactionsOffsetSpace.id, ConstraintSet.END)
+            }
+            reactionsOffsetSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                val offset = if (data.message.isSingleReaction()) {
+                    SINGLE_REACTION_OFFSET
+                } else {
+                    MULTIPLE_REACTIONS_OFFSET
+                }
+                if (data.isTheirs) {
+                    endToEnd = achorView.id
+                    marginEnd = offset
+                } else {
+                    startToStart = achorView.id
+                    marginStart = offset
+                }
+            }
+            reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                if (data.isTheirs) {
+                    startToEnd = reactionsOffsetSpace.id
+                } else {
+                    endToStart = reactionsOffsetSpace.id
+                }
+            }
+            achorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topMargin = REACTIONS_SPACING
+            }
+        } else {
+            reactionsView.isVisible = false
+            achorView.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topMargin = 0
             }
-            return
         }
-
-        rootConstraintLayout.updateConstraints {
-            clear(reactionsView.id, ConstraintSet.START)
-            clear(reactionsView.id, ConstraintSet.END)
-        }
-        reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            val offset = if (data.message.isSingleReaction()) {
-                SINGLE_REACTION_OFFSET
-            } else {
-                MULTIPLE_REACTIONS_OFFSET
-            }
-            if (data.isTheirs) {
-                startToEnd = anchor.id
-                marginStart = -offset
-            } else {
-                endToStart = anchor.id
-                marginEnd = -offset
-            }
-        }
-        anchor.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            topMargin = if (hasReactions) REACTIONS_SPACING else 0
-        }
-        reactionsView.setMessage(data.message, data.isMine)
     }
 
     private companion object {
