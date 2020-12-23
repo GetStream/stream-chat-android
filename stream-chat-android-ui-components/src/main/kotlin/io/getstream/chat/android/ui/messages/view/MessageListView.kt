@@ -161,6 +161,7 @@ public class MessageListView : ConstraintLayout {
             context.getFragmentManager()?.let { framentManager ->
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
                     threadReplyHandler = onStartThreadHandler,
+                    retryHandler = onMessageRetryHandler,
                     editClickHandler = onMessageEditHandler,
                     flagClickHandler = onMessageFlagHandler,
                     muteClickHandler = onMuteUserHandler,

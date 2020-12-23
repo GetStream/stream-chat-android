@@ -32,12 +32,15 @@ public class MessageOptionsView : FrameLayout {
         if (isMessageTheirs) {
             configureTheirsMessage(configuration, syncStatus)
         } else {
-            configureMineMessage(configuration, SyncStatus.FAILED_PERMANENTLY)
+            configureMineMessage(configuration, syncStatus)
         }
     }
 
     private fun configureTheirsMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
+
+        // Todo: Uncomment once reply is done.
+        // binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
         if (syncStatus == SyncStatus.COMPLETED) {
             binding.threadReplyTV.configureListItem(
@@ -135,6 +138,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setThreadListener(onThreadReply: () -> Unit) {
         binding.threadReplyTV.setOnClickListener {
             onThreadReply()
+        }
+    }
+
+    public fun setRetryListener(onRetry: () -> Unit) {
+        binding.retryTV.setOnClickListener {
+            onRetry()
         }
     }
 

@@ -136,6 +136,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
                 dismiss()
             }
 
+            setRetryListener {
+                handlers.retryHandler(messageItem.message)
+                dismiss()
+            }
+
             setCopyListener {
                 copyText(messageItem.message)
                 dismiss()
@@ -240,6 +245,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
     internal class Handlers(
         val threadReplyHandler: (Message) -> Unit,
+        val retryHandler: (Message) -> Unit,
         val editClickHandler: (Message) -> Unit,
         val flagClickHandler: (Message) -> Unit,
         val muteClickHandler: (User) -> Unit,
