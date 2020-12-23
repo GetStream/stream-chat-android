@@ -4,7 +4,7 @@
     android:id="@+id/reactionIcon"
     android:layout_width="24dp"
     android:layout_height="24dp"
-    android:layout_margin="8dp"
+    android:padding="4dp"
     android:scaleType="centerInside"
     tools:src="@drawable/stream_ui_ic_reaction_love"
     />

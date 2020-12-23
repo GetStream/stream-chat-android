@@ -7,10 +7,13 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FailedIndicatorDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.TimeDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MessageFooterDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View
@@ -21,7 +24,10 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         GravityDecorator(),
-        TimeDecorator(DateFormatter.from(itemView.context)),
+        DeliveryStatusDecorator(),
+        FailedIndicatorDecorator(),
+        MessageFooterDecorator(DateFormatter.from(itemView.context)),
+        ReactionsDecorator(),
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {

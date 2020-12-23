@@ -184,6 +184,10 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setPaginationEnabled(enabled)
     }
 
+    public fun hasChannels(): Boolean {
+        return channelListView.hasChannels()
+    }
+
     private companion object {
         private val defaultChildLayoutParams: LayoutParams by lazy {
             LayoutParams(

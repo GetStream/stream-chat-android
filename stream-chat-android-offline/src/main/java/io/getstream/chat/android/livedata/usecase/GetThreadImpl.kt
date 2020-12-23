@@ -28,7 +28,7 @@ internal class GetThreadImpl(private val domainImpl: ChatDomainImpl) : GetThread
         val threadController: ThreadController = threadControllerImpl
 
         return CoroutineCall(domainImpl.scope) {
-            Result(threadController, null)
+            Result(threadController)
         }
     }
 }

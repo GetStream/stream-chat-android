@@ -117,13 +117,10 @@ internal open class BaseDomainTest {
         val connectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()).apply {
         }
 
-        val result = Result(listOf(data.channel1), null)
+        val result = Result(listOf(data.channel1))
         channelClientMock = mock {
             on { sendMessage(any()) } doReturn TestCall(
-                Result(
-                    data.message1,
-                    null
-                )
+                Result(data.message1)
             )
         }
         val events = listOf<ChatEvent>()
@@ -149,12 +146,9 @@ internal open class BaseDomainTest {
                     any<String>(),
                     any<Map<String, Any>>()
                 )
-            } doReturn TestCall(Result(data.channel1, null))
+            } doReturn TestCall(Result(data.channel1))
             on { sendReaction(any()) } doReturn TestCall(
-                Result(
-                    data.reaction1,
-                    null
-                )
+                Result(data.reaction1)
             )
         }
         return client
@@ -164,19 +158,13 @@ internal open class BaseDomainTest {
 
         val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
 
-        val result = Result(listOf(data.channel1), null)
+        val result = Result(listOf(data.channel1))
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
-                Result(
-                    data.channel1,
-                    null
-                )
+                Result(data.channel1)
             )
             on { watch(any<WatchChannelRequest>()) } doReturn TestCall(
-                Result(
-                    data.channel1,
-                    null
-                )
+                Result(data.channel1)
             )
         }
         val events = listOf<ChatEvent>()
@@ -195,10 +183,7 @@ internal open class BaseDomainTest {
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any()) } doReturn TestCall(
-                Result(
-                    data.reaction1,
-                    null
-                )
+                Result(data.reaction1)
             )
         }
         When calling client.setUser(any(), any<String>(), any()) doAnswer {

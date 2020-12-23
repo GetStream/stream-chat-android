@@ -17,7 +17,6 @@ internal abstract class ReactionsViewStyle(
     @DimenRes defaultTotalHeight: Int,
     @DimenRes defaultHorizontalPadding: Int,
     @DimenRes defaultItemSize: Int,
-    @DimenRes defaultItemMargin: Int,
     @DimenRes defaultBubbleHeight: Int,
     @DimenRes defaultBubbleRadius: Int,
     @DimenRes defaultLargeTailBubbleCy: Int,
@@ -33,7 +32,6 @@ internal abstract class ReactionsViewStyle(
     val totalHeight: Int
     val horizontalPadding: Int
     val itemSize: Int
-    val itemMargin: Int
     val bubbleHeight: Int
     val bubbleRadius: Int
     val largeTailBubbleCy: Int
@@ -69,10 +67,6 @@ internal abstract class ReactionsViewStyle(
             itemSize = a.getDimensionPixelSize(
                 R.styleable.ReactionsView_streamUiReactionsItemSize,
                 context.getDimension(defaultItemSize),
-            )
-            itemMargin = a.getDimensionPixelSize(
-                R.styleable.ReactionsView_streamUiReactionsItemMargin,
-                context.getDimension(defaultItemMargin),
             )
             bubbleHeight = a.getDimensionPixelSize(
                 R.styleable.ReactionsView_streamUiReactionsBubbleHeight,

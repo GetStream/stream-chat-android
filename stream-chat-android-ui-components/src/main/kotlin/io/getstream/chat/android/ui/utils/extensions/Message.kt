@@ -29,8 +29,16 @@ internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
+internal fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
+
 internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 
 internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
+}
+
+internal fun Message.isSingleReaction(): Boolean {
+    return latestReactions.map { it.type }
+        .toSet()
+        .size == 1
 }

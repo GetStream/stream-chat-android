@@ -59,15 +59,9 @@ internal class ChatParserImpl : ChatParser {
 
     override fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
-            Result(
-                fromJson(raw, clazz),
-                null
-            )
+            Result(fromJson(raw, clazz))
         } catch (t: Throwable) {
-            Result(
-                null,
-                ChatError("fromJsonOrError error parsing of $clazz into $raw", t)
-            )
+            Result(ChatError("fromJsonOrError error parsing of $clazz into $raw", t))
         }
     }
 

@@ -37,13 +37,13 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/colorBackground"
             app:itemIconSize="20dp"
             app:itemIconTint="@color/bottom_nav_item_color"
             app:itemTextColor="@color/bottom_nav_item_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:elevation="0dp"
             app:menu="@menu/menu_bottom_navigation"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -74,5 +74,7 @@
             android:text="@string/home_drawer_sign_out"
             app:drawableTint="@color/stream_ui_grey_dark"
             />
+
     </com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

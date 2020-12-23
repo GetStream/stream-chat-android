@@ -4,11 +4,12 @@ apply plugin: 'com.pascalwelsch.gitversioner'
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: 'io.codearte.nexus-staging'
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
+        mavenCentral()
         jcenter()
     }
 
@@ -32,6 +33,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
         mavenLocal()
         maven {

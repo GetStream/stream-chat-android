@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
@@ -16,9 +18,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        android:layout_width="@dimen/stream_ui_avatar_size_medium"
-        android:layout_height="@dimen/stream_ui_avatar_size_medium"
-        android:layout_marginStart="8dp"
+        style="@style/StreamUiMessageListAvatarStyle"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -31,6 +31,8 @@
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:hyphenationFrequency="normal"
         android:lineHeight="16sp"
         android:paddingLeft="@dimen/stream_ui_spacing_medium"
@@ -40,19 +42,50 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/stream_ui_black"
         app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         tools:text="@tools:sample/lorem"
         />
 
-    <TextView
-        android:id="@+id/tvTime"
+    <Space
+        android:id="@+id/reactionsOffsetSpace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintEnd_toEndOf="@id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@id/messageText"
+        app:layout_constraintStart_toStartOf="@id/messageText"
+        app:layout_constraintTop_toTopOf="@id/messageText"
+        />
+
+    <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/reactionsOffsetSpace"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
+    <include
+        android:id="@+id/footnote"
+        layout="@layout/stream_ui_item_message_footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@+id/messageText"
+        />
+
+    <ImageView
+        android:id="@+id/deliveryFailedIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/stream_ui_ic_warning"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        tools:visibility="visible"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -60,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp"
+        tools:layout_constraintGuide_begin="20dp"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -68,6 +101,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="20dp"
+        tools:layout_constraintGuide_end="20dp"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,6 @@ internal class EditReactionsViewStyle(
     defaultTotalHeight = R.dimen.stream_ui_edit_reactions_total_height,
     defaultHorizontalPadding = R.dimen.stream_ui_edit_reactions_horizontal_padding,
     defaultItemSize = R.dimen.stream_ui_edit_reactions_item_size,
-    defaultItemMargin = R.dimen.stream_ui_edit_reactions_item_margin,
     defaultBubbleHeight = R.dimen.stream_ui_edit_reactions_bubble_height,
     defaultBubbleRadius = R.dimen.stream_ui_edit_reactions_bubble_radius,
     defaultLargeTailBubbleCy = R.dimen.stream_ui_edit_reactions_large_tail_bubble_cy,

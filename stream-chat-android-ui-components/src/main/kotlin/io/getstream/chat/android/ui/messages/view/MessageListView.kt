@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
-import com.getstream.sdk.chat.view.IMessageListView
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -48,10 +47,8 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClick
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
-import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlin.math.max
-import kotlin.math.min
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -61,7 +58,7 @@ import kotlin.math.min
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView : ConstraintLayout, IMessageListView {
+public class MessageListView : ConstraintLayout {
 
     private companion object {
         const val LOAD_MORE_TRESHOLD = 10
@@ -128,6 +125,15 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private var onMessageRetryHandler: (Message) -> Unit = {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
+    private var onMessageReactionHandler: (Message, String) -> Unit = { _, _ ->
+        throw IllegalStateException("onMessageReactionHandler must be set.")
+    }
+    private var onMuteUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onMuteUserHandler must be set.")
+    }
+    private var onBlockUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onBlockUserHandler must be set.")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -153,16 +159,23 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { framentManager ->
-                // TODO: pass a real MessageItem instead of mock
-                val mockMessageItem = MessageItem(
-                    message,
-                    positions = listOf(MessageListItem.Position.BOTTOM),
-                    isMine = false
+                val handlers = MessageOptionsOverlayDialogFragment.Handlers(
+                    threadReplyHandler = onStartThreadHandler,
+                    editClickHandler = onMessageEditHandler,
+                    flagClickHandler = onMessageFlagHandler,
+                    muteClickHandler = onMuteUserHandler,
+                    blockClickHandler = onBlockUserHandler,
+                    deleteClickHandler = onMessageDeleteHandler,
                 )
 
                 MessageOptionsOverlayDialogFragment
-                    .newInstance(mockMessageItem, messageOptionsConfiguration)
-                    .show(framentManager, ReactionsOverlayDialogFragment.TAG)
+                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
+                    .apply {
+                        setReactionClickListener(onMessageReactionHandler)
+
+                        setMessageOptionsHandlers(handlers)
+                    }
+                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 
@@ -179,18 +192,12 @@ public class MessageListView : ConstraintLayout, IMessageListView {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                // TODO: pass a real MessageItem instead of mock
-                val mockMessageItem = MessageItem(
-                    message.copy(text = "MOCKED TEXT: ${message.text}").apply {
-                        latestReactions.forEach { it.type = ReactionType.LOVE.type }
-                        ownReactions.forEach { it.type = ReactionType.LOVE.type }
-                    },
-                    positions = listOf(MessageListItem.Position.BOTTOM),
-                    isMine = false
-                )
-
-                ReactionsOverlayDialogFragment.newInstance(mockMessageItem)
-                    .apply { setReactionClickListener {} }
+                ReactionsOverlayDialogFragment.newInstance(message.toMessageItemForOverlay())
+                    .apply {
+                        setReactionClickListener {
+                            onMessageReactionHandler(message, it.type)
+                        }
+                    }
                     .show(it, ReactionsOverlayDialogFragment.TAG)
             }
         }
@@ -360,6 +367,20 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             R.drawable.stream_ui_ic_copy
         )
 
+        val editText = tArray.getString(R.styleable.MessageListView_streamUiEditOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_edit)
+        val editIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiEditOptionIcon,
+            R.drawable.stream_ui_ic_edit
+        )
+
+        val flagText = tArray.getString(R.styleable.MessageListView_streamUiFlagOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_flag)
+        val flagIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiFlagOptionIcon,
+            R.drawable.stream_ui_ic_flag
+        )
+
         val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
             ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
@@ -381,6 +402,27 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             R.drawable.stream_ui_ic_delete
         )
 
+        val copyTextEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+
+        val deleteConfirmationEnabled =
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
+
+        val deleteDialogTitle =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
+
+        val deleteDialogMessage =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
+
+        val deleteDialogPositiveButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
+
+        val deleteDialogNegativeButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyText = replyText,
@@ -389,16 +431,26 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             threadReplyIcon = threadReplyIcon,
             copyText = copyText,
             copyIcon = copyIcon,
+            editText = editText,
+            editIcon = editIcon,
+            flagText = flagText,
+            flagIcon = flagIcon,
             muteText = muteText,
             muteIcon = muteIcon,
             blockText = blockText,
             blockIcon = blockIcon,
             deleteText = deleteText,
-            deleteIcon = deleteIcon
+            deleteIcon = deleteIcon,
+            copyTextEnabled = copyTextEnabled,
+            deleteConfirmationEnabled = deleteConfirmationEnabled,
+            deleteConfirmationTitle = deleteDialogTitle,
+            deleteConfirmationMessage = deleteDialogMessage,
+            deleteConfirmationPositiveButton = deleteDialogPositiveButton,
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton
         )
     }
 
-    override fun setLoadingMore(loadingMore: Boolean) {
+    public fun setLoadingMore(loadingMore: Boolean) {
         if (loadingMore) {
             loadMoreListener.disablePagination()
         } else {
@@ -406,7 +458,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }
     }
 
-    override fun scrollToMessage(message: Message) {
+    public fun scrollToMessage(message: Message) {
         val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
         targetListItem?.let {
             val position = adapter.currentList.indexOf(it)
@@ -430,7 +482,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
                     firstVisiblePosition = currentFirstVisible
 
                     val realLastVisibleMessage =
-                        min(max(currentLastVisible, getLastSeenMessagePosition()), currentList.size)
+                        max(currentLastVisible, getLastSeenMessagePosition()).coerceAtMost(currentList.lastIndex)
                     updateLastSeen(currentList[realLastVisibleMessage])
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
@@ -459,7 +511,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    override fun init(channel: Channel, currentUser: User) {
+    public fun init(channel: Channel, currentUser: User) {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
@@ -494,11 +546,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
-    override fun showLoadingView() {
+    public fun showLoadingView() {
         loadingViewContainer.isVisible = true
     }
 
-    override fun hideLoadingView() {
+    public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
     }
 
@@ -513,11 +565,11 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
-    override fun showEmptyStateView() {
+    public fun showEmptyStateView() {
         emptyStateViewContainer.isVisible = true
     }
 
-    override fun hideEmptyStateView() {
+    public fun hideEmptyStateView() {
         emptyStateViewContainer.isVisible = false
     }
 
@@ -535,7 +587,7 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         this.messageDateFormatter = messageDateFormatter
     }
 
-    override fun displayNewMessage(listItem: MessageListItemWrapper) {
+    public fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
 
@@ -658,6 +710,14 @@ public class MessageListView : ConstraintLayout, IMessageListView {
         }.exhaustive
     }
 
+    private fun Message.toMessageItemForOverlay(): MessageItem {
+        return MessageItem(
+            this,
+            positions = listOf(MessageListItem.Position.BOTTOM),
+            isMine = user.id == currentUser.id
+        )
+    }
+
     /**
      * Sets the message click listener to be used by MessageListView.
      *
@@ -717,40 +777,56 @@ public class MessageListView : ConstraintLayout, IMessageListView {
             readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
     }
 
-    override fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
+    public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
 
-    override fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
+    public fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    override fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
+    public fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
         this.onMessageEditHandler = onMessageEditHandler
     }
 
-    override fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
+    public fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
         this.onMessageDeleteHandler = onMessageDeleteHandler
     }
 
-    override fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
+    public fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
         this.onStartThreadHandler = onStartThreadHandler
     }
 
-    override fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
+    public fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
         this.onMessageFlagHandler = onMessageFlagHandler
     }
 
-    override fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
+    public fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
         this.onSendGiphyHandler = onSendGiphyHandler
     }
 
-    override fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
+    public fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
         this.onMessageRetryHandler = onMessageRetryHandler
     }
 
     public fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
         this.onStartThreadListener = onStartThreadListener
+    }
+
+    public fun setOnMessageReactionHandler(onMessageReactionHandler: (Message, String) -> Unit) {
+        this.onMessageReactionHandler = onMessageReactionHandler
+    }
+
+    public fun setOnMuteUserHandler(onUserMuteHandler: (User) -> Unit) {
+        this.onMuteUserHandler = onUserMuteHandler
+    }
+
+    public fun setOnBlockUserHandler(onUserBlockHandler: (User, Channel) -> Unit) {
+        val blockUserForThisChannel: (User) -> Unit = { user ->
+            onUserBlockHandler(user, channel)
+        }
+
+        this.onBlockUserHandler = blockUserForThisChannel
     }
 
     public fun interface MessageClickListener {
