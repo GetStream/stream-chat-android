@@ -35,6 +35,8 @@
         android:hyphenationFrequency="normal"
         android:lineHeight="16sp"
         android:paddingLeft="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_avatar_size_small"
         android:paddingTop="@dimen/stream_ui_spacing_small"
         android:paddingRight="@dimen/stream_ui_spacing_medium"
         android:paddingBottom="@dimen/stream_ui_spacing_small"

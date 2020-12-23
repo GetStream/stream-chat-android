@@ -31,6 +31,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_avatar_size_small"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"

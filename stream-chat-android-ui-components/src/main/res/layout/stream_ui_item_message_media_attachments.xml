@@ -19,6 +19,8 @@
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
         android:id="@+id/mediaAttachmentsGroupView"
         android:layout_width="0dp"
+        android:layout_marginStart="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_avatar_size_small"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:padding="1dp"
