@@ -66,22 +66,6 @@ internal class MessageRepository(
             }
     }
 
-    /**
-     * Shouldn't be exposed to business logic. It could be used only by the Repository layer (RepositoryHelper).
-     */
-    internal suspend fun selectEntities(messageIds: List<String>): List<MessageEntity> {
-        val cachedEntities = messageIds.fold(emptyList<MessageEntity>()) { acc, id ->
-            val cachedMessage = messageCache[id]
-            if (cachedMessage != null) {
-                acc + cachedMessage.toEntity()
-            } else {
-                acc
-            }
-        }
-        val missingIds: List<String> = messageIds - cachedEntities.map(MessageEntity::id)
-        return messageDao.select(missingIds) + cachedEntities
-    }
-
     suspend fun select(messageId: String, getUser: suspend (userId: String) -> User): Message? {
         return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser)
     }

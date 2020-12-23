@@ -192,28 +192,9 @@ internal class RepositoryHelperTests {
 
     @Test
     fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
-        val reaction1 = randomReactionEntity(userId = "reactionUserId1")
-        val reaction2 = randomReactionEntity(userId = "reactionUserId2")
-        val message1 = randomMessageEntity(
-            id = "messageId1",
-            userId = "messageUserId1",
-            latestReactions = listOf(reaction1, reaction2)
-        )
-        val message2 = randomMessageEntity(id = "messageId2", userId = "messageUserId2")
-        When calling messages.selectEntities(listOf("messageId1", "messageId2")) doReturn listOf(message1, message2)
-        When calling users.selectUserMap(
-            listOf(
-                "reactionUserId1",
-                "reactionUserId2",
-                "messageUserId1",
-                "messageUserId2"
-            )
-        ) doReturn listOf(
-            randomUser(id = "reactionUserId1"),
-            randomUser(id = "reactionUserId2"),
-            randomUser(id = "messageUserId1"),
-            randomUser(id = "messageUserId2")
-        ).associateBy(User::id)
+        val message1 = randomMessage()
+        val message2 = randomMessage()
+        When calling messages.select(eq(listOf("messageId1", "messageId2")), any()) doReturn listOf(message1, message2)
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
