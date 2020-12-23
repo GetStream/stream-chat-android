@@ -165,7 +165,7 @@ public class MessageListView : ConstraintLayout {
                     flagClickHandler = onMessageFlagHandler,
                     muteClickHandler = onMuteUserHandler,
                     blockClickHandler = onBlockUserHandler,
-                    deleteClickHandler = onMessageDeleteHandler
+                    deleteClickHandler = onMessageDeleteHandler,
                 )
 
                 MessageOptionsOverlayDialogFragment

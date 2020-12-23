@@ -32,7 +32,6 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
         private const val ARG_MESSAGE = "message"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-        private const val ARG_HANDLERS = "handlers"
 
         fun newInstance(
             messageItem: MessageListItem.MessageItem,
@@ -240,6 +239,6 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         val flagClickHandler: (Message) -> Unit,
         val muteClickHandler: (User) -> Unit,
         val blockClickHandler: (User) -> Unit,
-        val deleteClickHandler: (Message) -> Unit
+        val deleteClickHandler: (Message) -> Unit,
     ) : Serializable
 }

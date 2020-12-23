@@ -46,21 +46,15 @@ public class MessageOptionsView : FrameLayout {
             binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
             binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
             binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
+            binding.deleteTV.isVisible = false
         } else {
             binding.flagTV.isVisible = false
             binding.muteTV.isVisible = false
             binding.blockTV.isVisible = false
-        }
-
-        binding.deleteTV.run {
-            text = configuration.deleteText
-            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
-            setCompoundDrawablesWithIntrinsicBounds(
-                ResourcesCompat.getDrawable(resources, configuration.deleteIcon, null),
-                null,
-                null,
-                null
-            )
+            binding.deleteTV.run {
+                configureListItem(configuration.deleteText, configuration.deleteIcon, iconsTint)
+                setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
+            }
         }
     }
 
@@ -87,7 +81,7 @@ public class MessageOptionsView : FrameLayout {
         val deleteConfirmationTitle: String,
         val deleteConfirmationMessage: String,
         val deleteConfirmationPositiveButton: String,
-        val deleteConfirmationNegativeButton: String
+        val deleteConfirmationNegativeButton: String,
     ) : Serializable
 
     public fun setThreadListener(onThreadReply: () -> Unit) {
