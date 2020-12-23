@@ -35,7 +35,8 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType))
     }
-    view.setOnUserMutedHandler { onEvent(MuteUser(it)) }
+    view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
+    view.setOnBlockUserHandler { user, channel -> onEvent(MessageListViewModel.Event.BlockUser(user, channel)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {

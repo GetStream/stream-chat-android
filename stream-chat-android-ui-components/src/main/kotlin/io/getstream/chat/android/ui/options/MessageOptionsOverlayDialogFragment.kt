@@ -93,7 +93,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
         setupEditReactionsView()
         setupMessageView()
-        configureMessageOptions(configuration)
+        configureMessageOptions(configuration, messageItem.isTheirs)
         setupClickListeners(configuration)
     }
 
@@ -116,8 +116,8 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         binding.messageOptionsView.setOnClickListener {}
     }
 
-    private fun configureMessageOptions(configuration: MessageOptionsView.Configuration) {
-        binding.messageOptionsView.configure(configuration)
+    private fun configureMessageOptions(configuration: MessageOptionsView.Configuration, isTheirs: Boolean) {
+        binding.messageOptionsView.configure(configuration, isTheirs)
     }
 
     private fun setupClickListeners(configuration: MessageOptionsView.Configuration) {
@@ -146,6 +146,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
             setMuteUserListener {
                 handlers.muteClickHandler(messageItem.message.user)
+                dismiss()
+            }
+
+            setBlockUserListener {
+                handlers.blockClickHandler(messageItem.message.user)
                 dismiss()
             }
 
@@ -231,6 +236,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         val editClickHandler: (Message) -> Unit,
         val flagClickHandler: (Message) -> Unit,
         val muteClickHandler: (User) -> Unit,
+        val blockClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit
     ) : Serializable
 }

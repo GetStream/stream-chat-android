@@ -27,8 +27,41 @@ public class MessageOptionsView : FrameLayout {
         defStyleAttr
     )
 
-    internal fun configure(configuration: Configuration) {
-        configureMessageOptions(configuration)
+    internal fun configure(configuration: Configuration, isMessageTheirs: Boolean) {
+        val iconsTint = configuration.iconsTint
+
+        binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
+        binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
+
+        if (configuration.copyTextEnabled) {
+            binding.copyTV.isVisible = true
+            binding.copyTV.configureListItem(configuration.copyText, configuration.copyIcon, iconsTint)
+        } else {
+            binding.copyTV.isVisible = false
+        }
+
+        binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
+
+        if (isMessageTheirs) {
+            binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
+            binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
+            binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
+        } else {
+            binding.flagTV.isVisible = false
+            binding.muteTV.isVisible = false
+            binding.blockTV.isVisible = false
+        }
+
+        binding.deleteTV.run {
+            text = configuration.deleteText
+            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
+            setCompoundDrawablesWithIntrinsicBounds(
+                ResourcesCompat.getDrawable(resources, configuration.deleteIcon, null),
+                null,
+                null,
+                null
+            )
+        }
     }
 
     internal data class Configuration(
@@ -56,36 +89,6 @@ public class MessageOptionsView : FrameLayout {
         val deleteConfirmationPositiveButton: String,
         val deleteConfirmationNegativeButton: String
     ) : Serializable
-
-    private fun configureMessageOptions(configuration: Configuration) {
-        val iconsTint = configuration.iconsTint
-
-        binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
-        binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
-
-        if (configuration.copyTextEnabled) {
-            binding.copyTV.isVisible = true
-            binding.copyTV.configureListItem(configuration.copyText, configuration.copyIcon, iconsTint)
-        } else {
-            binding.copyTV.isVisible = false
-        }
-
-        binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
-        binding.flagTV.configureListItem(configuration.flagText, configuration.flagIcon, iconsTint)
-        binding.muteTV.configureListItem(configuration.muteText, configuration.muteIcon, iconsTint)
-        binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
-
-        binding.deleteTV.run {
-            text = configuration.deleteText
-            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
-            setCompoundDrawablesWithIntrinsicBounds(
-                ResourcesCompat.getDrawable(resources, configuration.deleteIcon, null),
-                null,
-                null,
-                null
-            )
-        }
-    }
 
     public fun setThreadListener(onThreadReply: () -> Unit) {
         binding.threadReplyTV.setOnClickListener {
@@ -120,6 +123,12 @@ public class MessageOptionsView : FrameLayout {
     public fun setMuteUserListener(onMute: () -> Unit) {
         binding.muteTV.setOnClickListener {
             onMute()
+        }
+    }
+
+    public fun setBlockUserListener(onBlock: () -> Unit) {
+        binding.blockTV.setOnClickListener {
+            onBlock()
         }
     }
 

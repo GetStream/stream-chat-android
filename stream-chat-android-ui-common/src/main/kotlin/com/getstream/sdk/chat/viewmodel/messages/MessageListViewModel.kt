@@ -187,6 +187,15 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.MuteUser -> {
                 client.muteUser(event.user.id).enqueue()
             }
+            is Event.BlockUser -> {
+                client.shadowBanUser(
+                    targetId = event.user.id,
+                    channelType = event.channel.type ,
+                    channelId = event.channel.id,
+                    reason = null,
+                    timeout = null
+                ).enqueue()
+            }
         }.exhaustive
     }
 
@@ -283,6 +292,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(val message: Message, val reactionType: String) : Event()
         public data class MuteUser(val user: User) : Event()
+        public data class BlockUser(val user: User, val channel: Channel) : Event()
     }
 
     public sealed class Mode {

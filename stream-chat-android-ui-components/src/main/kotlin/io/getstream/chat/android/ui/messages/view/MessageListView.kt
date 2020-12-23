@@ -128,8 +128,11 @@ public class MessageListView : ConstraintLayout {
     private var onMessageReactionHandler: (Message, String) -> Unit = { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
     }
-    private var onUserMutedHandler: (User) -> Unit = {
-        throw IllegalStateException("onUserMutedHandler must be set.")
+    private var onMuteUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onMuteUserHandler must be set.")
+    }
+    private var onBlockUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onBlockUserHandler must be set.")
     }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
@@ -160,7 +163,8 @@ public class MessageListView : ConstraintLayout {
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
                     flagClickHandler = onMessageFlagHandler,
-                    muteClickHandler = onUserMutedHandler,
+                    muteClickHandler = onMuteUserHandler,
+                    blockClickHandler = onBlockUserHandler,
                     deleteClickHandler = onMessageDeleteHandler
                 )
 
@@ -813,9 +817,19 @@ public class MessageListView : ConstraintLayout {
         this.onMessageReactionHandler = onMessageReactionHandler
     }
 
-    public fun setOnUserMutedHandler(onUserMutedHandler: (User) -> Unit) {
-        this.onUserMutedHandler = onUserMutedHandler
+    public fun setOnMuteUserHandler(onUserMuteHandler: (User) -> Unit) {
+        this.onMuteUserHandler = onUserMuteHandler
     }
+
+    public fun setOnBlockUserHandler(onUserBlockHandler: (User, Channel) -> Unit) {
+        val blockUserForThisChannel : (User) -> Unit = { user ->
+            onUserBlockHandler(user, channel)
+        }
+
+        this.onBlockUserHandler = blockUserForThisChannel
+
+    }
+
 
     public fun interface MessageClickListener {
         public fun onMessageClick(message: Message)
