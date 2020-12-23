@@ -158,7 +158,12 @@ internal class MessageListItemLiveData(
 
             // thread separator
             if (i == 1 && isThread) {
-                items.add(MessageListItem.ThreadSeparatorItem(message.getCreatedAtOrThrow()))
+                items.add(
+                    MessageListItem.ThreadSeparatorItem(
+                        date = message.getCreatedAtOrThrow(),
+                        messageCount = messages.size - 1,
+                    )
+                )
             }
 
             // determine the position (top, middle, bottom)

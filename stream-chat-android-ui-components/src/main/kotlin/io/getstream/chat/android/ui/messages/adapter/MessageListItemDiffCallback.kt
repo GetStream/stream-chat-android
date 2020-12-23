@@ -32,7 +32,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 } else oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
-            is MessageListItem.ThreadSeparatorItem -> oldItem.date == (newItem as? MessageListItem.ThreadSeparatorItem)?.date
+            is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
             is MessageListItem.LoadingMoreIndicatorItem -> true
             is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(User::id)
             is MessageListItem.ReadStateItem -> oldItem.reads.map { it.getUserId() } == ((newItem) as? MessageListItem.ReadStateItem)?.reads?.map { it.getUserId() }

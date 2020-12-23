@@ -110,6 +110,12 @@
     <string name="stream_ui_messages_empty_state_label">No messages</string>
     <string name="stream_ui_channels_empty_state_label">No channels available</string>
 
+    <!-- Thread separator -->
+    <plurals name="stream_ui_thread_separator_replies_label">
+        <item quantity="one">%d Reply</item>
+        <item quantity="other">%d Replies</item>
+    </plurals>
+
     <!-- Message Footer -->
     <string name="stream_ui_ephemeral_msg_footer">Only visible to you</string>
 </resources>
