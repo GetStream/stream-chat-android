@@ -30,14 +30,14 @@
         android:id="@+id/mediaAttachmentsGroupView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:padding="1dp"
         app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         app:layout_goneMarginEnd="0dp"
-        app:layout_goneMarginStart="@dimen/stream_ui_avatar_size_small"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
