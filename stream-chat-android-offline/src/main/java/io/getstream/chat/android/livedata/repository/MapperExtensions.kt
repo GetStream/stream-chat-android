@@ -107,14 +107,14 @@ internal fun Member.toEntity(): MemberEntity = MemberEntity(
 )
 
 internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> User): Member = Member(
-    getUser(userId),
-    role,
-    createdAt,
-    updatedAt,
-    isInvited,
-    inviteAcceptedAt,
-    inviteRejectedAt,
-    shadowBanned,
+    user = getUser(userId),
+    role = role,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isInvited = isInvited,
+    inviteAcceptedAt = inviteAcceptedAt,
+    inviteRejectedAt = inviteRejectedAt,
+    shadowBanned = shadowBanned,
 )
 
 internal fun Channel.toEntity(): ChannelEntity {
