@@ -4,6 +4,7 @@
     <dimen name="spacing_medium">16dp</dimen>
     <dimen name="spacing_large">24dp</dimen>
     <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="spacing_xxl">40dp</dimen>
 
     <dimen name="login_input_field_corner_radius">12dp</dimen>
 

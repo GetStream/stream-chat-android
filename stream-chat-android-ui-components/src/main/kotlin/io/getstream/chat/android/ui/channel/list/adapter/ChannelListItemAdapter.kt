@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -111,5 +112,14 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
         bind(position, holder, NOTHING_CHANGED)
+    }
+
+    internal fun getChannel(cid: String): Channel {
+        return currentList
+            .asSequence()
+            .filter { it is ChannelListItem.ChannelItem }
+            .map { it as ChannelListItem.ChannelItem }
+            .first { it.channel.cid == cid }
+            .channel
     }
 }

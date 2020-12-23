@@ -5,18 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.ChatInfoDeleteChannelDialogFragmentBinding
 
 internal class ChatInfoDeleteChannelDialogFragment : BottomSheetDialogFragment() {
 
-    private var listener: ChatInfoDeleteChannelListener? = null
+    var deleteChannelListener: ChatInfoDeleteChannelListener? = null
 
     private var _binding: ChatInfoDeleteChannelDialogFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        deleteChannelListener = null
     }
 
     override fun onCreateView(
@@ -28,11 +29,13 @@ internal class ChatInfoDeleteChannelDialogFragment : BottomSheetDialogFragment()
         return binding.root
     }
 
+    override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cancelButton.setOnClickListener { dismiss() }
         binding.confirmButton.setOnClickListener {
-            listener?.onDeleteChannel()
+            deleteChannelListener?.onDeleteChannel()
             dismiss()
         }
     }
@@ -40,10 +43,6 @@ internal class ChatInfoDeleteChannelDialogFragment : BottomSheetDialogFragment()
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun setDeleteChannelListener(listener: ChatInfoDeleteChannelListener) {
-        this.listener = listener
     }
 
     fun interface ChatInfoDeleteChannelListener {

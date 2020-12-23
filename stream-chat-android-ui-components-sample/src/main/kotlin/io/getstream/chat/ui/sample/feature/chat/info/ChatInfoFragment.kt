@@ -18,7 +18,6 @@ import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
-import java.lang.IllegalStateException
 
 class ChatInfoFragment : Fragment() {
 
@@ -113,7 +112,7 @@ class ChatInfoFragment : Fragment() {
                     context.getFragmentManager()?.let {
                         ChatInfoDeleteChannelDialogFragment.newInstance()
                             .apply {
-                                setDeleteChannelListener {
+                                deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
                                     viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
                                 }
                             }

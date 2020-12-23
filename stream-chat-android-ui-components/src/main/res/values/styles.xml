@@ -51,15 +51,15 @@
         <item name="streamUiAvatarOnlineIndicatorPosition">bottom</item>
     </style>
 
-    <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
+    <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/StreamUiBottomSheetStyle</item>
     </style>
 
-    <style name="StreamUiChannelActionsBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
-        <item name="shapeAppearanceOverlay">@style/StreamUiRoundedBottomSheetDialog</item>
+    <style name="StreamUiBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/StreamUiBottomSheetShapeAppearanceOverlay</item>
     </style>
 
-    <style name="StreamUiRoundedBottomSheetDialog">
+    <style name="StreamUiBottomSheetShapeAppearanceOverlay">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">16dp</item>
         <item name="cornerSizeTopLeft">16dp</item>
@@ -68,6 +68,8 @@
     </style>
 
     <style name="StreamUiChannelActionsButtonStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
         <item name="android:paddingStart">@dimen/stream_ui_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_ui_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_ui_spacing_medium</item>
@@ -137,7 +139,7 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
-    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2"/>
+    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/stream_ui_blue</item>

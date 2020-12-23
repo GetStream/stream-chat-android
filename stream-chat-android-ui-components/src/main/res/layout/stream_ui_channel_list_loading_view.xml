@@ -13,7 +13,7 @@
         android:layout_height="@dimen/stream_ui_channel_item_progress_bar_size"
         android:layout_marginTop="8dp"
         android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/stream_rotating_indeterminate_progress_gradient"
+        android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
         android:indeterminateDuration="1000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/stream_ui_round_bottom_sheet"
     android:divider="@drawable/stream_ui_divider"
     android:orientation="vertical"
     android:showDividers="middle"
@@ -58,27 +59,36 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/leaveGroupButton"
+        android:id="@+id/view_info_button"
         style="@style/StreamUiChannelActionsButtonStyle"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/stream_ui_ic_single_user"
+        android:text="@string/stream_ui_view_info"
+        />
+
+    <TextView
+        android:id="@+id/leave_group_button"
+        style="@style/StreamUiChannelActionsButtonStyle"
+        android:layout_width="match_parent"
         android:drawableStart="@drawable/stream_ui_ic_leave_group"
         android:text="@string/stream_ui_channel_actions_leave_group"
-        android:textColor="@color/stream_ui_text_color_strong"
         />
 
     <TextView
-        android:id="@+id/deleteChannelButton"
+        android:id="@+id/delete_button"
         style="@style/StreamUiChannelActionsButtonStyle"
+        android:layout_width="match_parent"
         android:drawableStart="@drawable/stream_ui_ic_delete"
-        android:text="@string/stream_ui_channel_actions_leave_group"
+        android:text="@string/stream_ui_delete_conversation"
         android:textColor="@color/stream_ui_text_red"
         />
 
     <TextView
-        android:id="@+id/deleteContactButton"
+        android:id="@+id/cancel_button"
         style="@style/StreamUiChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ui_ic_delete"
-        android:text="@string/stream_ui_channel_actions_delete_contact"
-        android:textColor="@color/stream_ui_text_red"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/stream_ui_ic_clear_gray"
+        android:text="@string/stream_ui_cancel"
         />
 
 </LinearLayout>

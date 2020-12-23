@@ -14,14 +14,13 @@ import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.search.SearchViewModel
 import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
+import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoDeleteChannelDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
@@ -63,8 +62,27 @@ class ChannelListFragment : Fragment() {
                     .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, null))
             }
 
-            setDeleteListener {
-                ChatLogger.instance.logD(it.name, "delete me!")
+            setChannelDeleteClickListener { channel ->
+                ChatInfoDeleteChannelDialogFragment
+                    .newInstance()
+                    .apply {
+                        deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
+                            viewModel.hideChannel(channel)
+                        }
+                    }
+                    .show(parentFragmentManager, null)
+            }
+
+            setChannelInfoClickListener { channel ->
+                val direction = when {
+                    channel.members.size > 2 -> HomeFragmentDirections.actionHomeFragmentToGroupChatInfoFragment(channel.cid)
+
+                    else -> HomeFragmentDirections.actionHomeFragmentToChatInfoFragment(channel.cid)
+                }
+
+                requireActivity()
+                    .findNavController(R.id.hostFragmentContainer)
+                    .navigateSafely(direction)
             }
 
             viewModel.bindView(this, viewLifecycleOwner)
