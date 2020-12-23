@@ -84,7 +84,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        ) { data.userMap[it]!! }
+        ) { data.userMap.getValue(it) }
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -107,7 +107,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        ) { data.userMap[it]!! }
+        ) { data.userMap.getValue(it) }
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
@@ -146,7 +146,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
         // verify conversion logic is ok
         val userMap = mutableMapOf(data.user1.id to data.user1)
-        val reactionConverted = reactionEntity2.toModel { userMap[it]!! }
+        val reactionConverted = reactionEntity2.toModel { userMap.getValue(it) }
         Truth.assertThat(reactionConverted).isEqualTo(data.reaction1)
     }
 

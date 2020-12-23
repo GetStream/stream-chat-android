@@ -17,7 +17,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         repo.insertReaction(data.reaction1)
         val entity =
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
-        val reaction = entity!!.toModel { data.userMap[it]!! }
+        val reaction = entity!!.toModel { data.userMap.getValue(it) }
         Truth.assertThat(reaction).isEqualTo(data.reaction1)
     }
 
@@ -48,7 +48,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
 
         val entity =
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
-        val reaction = entity!!.toModel { data.userMap[it]!! }
+        val reaction = entity!!.toModel { data.userMap.getValue(it) }
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
     }
 }
