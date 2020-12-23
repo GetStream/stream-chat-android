@@ -10,6 +10,8 @@
 
     <dimen name="stream_ui_divider_height">1dp</dimen>
 
+    <dimen name="stream_ui_elevation_big">8dp</dimen>
+
     <!--AvatarView-->
     <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
     <dimen name="stream_ui_avatar_size_small">32dp</dimen>
