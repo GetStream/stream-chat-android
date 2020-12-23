@@ -51,7 +51,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/mediaAttachmentsGroupView"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:visibility="visible"
