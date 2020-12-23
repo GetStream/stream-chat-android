@@ -25,7 +25,7 @@ internal class MessageRepository(
         usersMap: Map<String, User>,
         pagination: AnyChannelPaginationRequest
     ): List<Message> {
-        return selectMessagesEntitiesForChannel(cid, pagination).map { toModel(it, usersMap) }
+        return selectMessagesEntitiesForChannel(cid, pagination).map { it.toModel { usersMap[it]!! } }
     }
 
     internal suspend fun selectMessagesEntitiesForChannel(
@@ -64,7 +64,7 @@ internal class MessageRepository(
             cachedMessage?.let { cachedMessages.add(it) }
         }
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        val dbMessages = messageDao.select(missingMessageIds).map { toModel(it, usersMap) }.toMutableList()
+        val dbMessages = messageDao.select(missingMessageIds).map { it.toModel { usersMap[it]!! } }.toMutableList()
 
         dbMessages.addAll(cachedMessages)
         return dbMessages
@@ -77,7 +77,7 @@ internal class MessageRepository(
         val cachedEntities = messageIds.fold(emptyList<MessageEntity>()) { acc, id ->
             val cachedMessage = messageCache[id]
             if (cachedMessage != null) {
-                acc + toEntity(cachedMessage)
+                acc + cachedMessage.toEntity()
             } else {
                 acc
             }
@@ -87,7 +87,7 @@ internal class MessageRepository(
     }
 
     suspend fun select(messageId: String, usersMap: Map<String, User>): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.let { toModel(it, usersMap) }
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel { usersMap[it]!! }
     }
 
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {
@@ -100,7 +100,7 @@ internal class MessageRepository(
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messages.map { toEntity(it) })
+        messageDao.insertMany(messages.map { it.toEntity() })
     }
 
     suspend fun insert(message: Message, cache: Boolean = false) {
@@ -120,64 +120,10 @@ internal class MessageRepository(
     }
 
     internal suspend fun selectSyncNeeded(userMap: Map<String, User>): List<Message> {
-        return messageDao.selectSyncNeeded().map { toModel(it, userMap) }
+        return messageDao.selectSyncNeeded().map { it.toModel { userMap[it]!! } }
     }
 
     companion object {
         private const val DEFAULT_MESSAGE_LIMIT = 100
-
-        internal fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
-            val message = Message()
-            message.id = id
-            message.cid = cid
-            message.user = userMap[userId]
-                ?: error("userMap doesnt contain user id $userId for message id ${message.id}")
-            message.text = text
-            message.attachments = attachments.toMutableList()
-            message.type = type
-            message.replyCount = replyCount
-            message.createdAt = createdAt
-            message.createdLocallyAt = createdLocallyAt
-            message.updatedAt = updatedAt
-            message.updatedLocallyAt = updatedLocallyAt
-            message.deletedAt = deletedAt
-            message.parentId = parentId
-            message.command = command
-            message.extraData = extraData.toMutableMap()
-            message.reactionCounts = reactionCounts.toMutableMap()
-            message.reactionScores = reactionScores.toMutableMap()
-            message.syncStatus = syncStatus
-            message.shadowed = shadowed
-
-            message.latestReactions = (latestReactions.map { it.toModel { userMap[it]!! } }).toMutableList()
-            message.ownReactions = (ownReactions.map { it.toModel { userMap[it]!! } }).toMutableList()
-            message.mentionedUsers = mentionedUsersId.mapNotNull { userMap[it] }.toMutableList()
-
-            message
-        }
-
-        internal fun toEntity(model: Message) = MessageEntity(
-            id = model.id, cid = model.cid, userId = model.user.id,
-            text = model.text,
-            attachments = model.attachments,
-            syncStatus = model.syncStatus,
-            type = model.type,
-            replyCount = model.replyCount,
-            createdAt = model.createdAt,
-            createdLocallyAt = model.createdLocallyAt,
-            updatedAt = model.updatedAt,
-            updatedLocallyAt = model.updatedLocallyAt,
-            deletedAt = model.deletedAt,
-            parentId = model.parentId,
-            command = model.command,
-            extraData = model.extraData,
-            reactionCounts = model.reactionCounts,
-            reactionScores = model.reactionScores,
-            shadowed = model.shadowed,
-            // for these we need a little map,
-            latestReactions = model.latestReactions.map(::ReactionEntity),
-            ownReactions = model.ownReactions.map(::ReactionEntity),
-            mentionedUsersId = model.mentionedUsers.map(User::id)
-        )
     }
 }

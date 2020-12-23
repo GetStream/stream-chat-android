@@ -74,7 +74,7 @@ internal class RepositoryHelper(
         val userMap = getUsersForChannels(channelEntities, messageEntitiesMap)
 
         val messagesMap = messageEntitiesMap.mapValues { entry ->
-            entry.value.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
+            entry.value.map { messageEntity -> messageEntity.toModel { userMap[it]!! } }
         }
 
         // convert the channels
@@ -89,7 +89,7 @@ internal class RepositoryHelper(
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> {
         val entities = messages.selectEntities(messageIds)
         val userMap = users.selectUserMap(entities.flatMap(::userIdsFor))
-        return entities.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
+        return entities.map { messageEntity -> messageEntity.toModel { userMap[it]!! } }
     }
 
     suspend fun insertChannel(channel: Channel) {

@@ -8,7 +8,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.repository.MessageRepository
+import io.getstream.chat.android.livedata.repository.toEntity
+import io.getstream.chat.android.livedata.repository.toModel
 import java.util.Date
 
 /**
@@ -94,7 +95,7 @@ internal data class ChannelEntity(
         }
         c.messages.lastOrNull()?.let { message ->
             // TODO Reconsider not to use MessageEntity (maybe just id)
-            lastMessage = MessageRepository.toEntity(message)
+            lastMessage = message.toEntity()
             lastMessageAt = message.createdAt
         }
         createdByUserId = c.createdBy.id
@@ -120,7 +121,7 @@ internal data class ChannelEntity(
 
         lastMessage?.let {
             // TODO Reconsider how not to use MessageRepository.toModel
-            c.messages = listOf(MessageRepository.toModel(it, userMap))
+            c.messages = listOf(it.toModel { userMap[it]!! })
         }
 
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
