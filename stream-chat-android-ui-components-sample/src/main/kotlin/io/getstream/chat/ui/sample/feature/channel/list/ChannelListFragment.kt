@@ -57,7 +57,7 @@ class ChannelListFragment : Fragment() {
 
             setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
-            setChannelClickListener {
+            setChannelItemClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, null))
             }
@@ -67,6 +67,7 @@ class ChannelListFragment : Fragment() {
                     .newInstance()
                     .apply {
                         deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
+                            // should clear history, leave & hide?
                             viewModel.hideChannel(channel)
                         }
                     }
@@ -83,6 +84,11 @@ class ChannelListFragment : Fragment() {
                 requireActivity()
                     .findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(direction)
+            }
+
+            setChannelLeaveClickListener { channel ->
+                // leave functionality pending on backend; hide for now
+                viewModel.hideChannel(channel)
             }
 
             viewModel.bindView(this, viewLifecycleOwner)

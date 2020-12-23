@@ -130,7 +130,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the callback to be invoked on channel item click
      */
-    public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener?) {
+    public fun setChannelItemClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setChannelClickListener(listener)
     }
 
