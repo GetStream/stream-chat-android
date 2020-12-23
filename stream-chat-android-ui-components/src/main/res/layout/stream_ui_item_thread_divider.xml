@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/threadSeparatorLabel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:paddingVertical="2dp"
+    android:textAlignment="center"
+    android:textColor="@color/stream_ui_text_color_light"
+    android:textSize="@dimen/stream_ui_avatar_text_size_tiny"
+    tools:text="1 Reply"
+    />

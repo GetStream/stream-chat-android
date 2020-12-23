@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainText
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.ThreadSeparatorViewHolder
 
 public open class MessageListItemViewHolderFactory {
 
@@ -70,7 +71,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     public open fun createThreadSeparatorViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
-        return createEmptyMessageItemViewHolder(parentView)
+        return ThreadSeparatorViewHolder(parentView)
     }
 
     private fun createGiphyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<*> {
