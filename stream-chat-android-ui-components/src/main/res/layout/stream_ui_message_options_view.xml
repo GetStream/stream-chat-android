@@ -24,7 +24,7 @@
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:divider="@color/stream_ui_divider"
-            android:background="@color/stream_ui_background"
+            android:background="@color/stream_ui_background_light"
             android:showDividers="middle"
             >
 
