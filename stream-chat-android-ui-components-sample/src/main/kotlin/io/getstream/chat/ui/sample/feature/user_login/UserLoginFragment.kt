@@ -51,7 +51,9 @@ class UserLoginFragment : Fragment() {
             DividerItemDecoration(
                 requireContext(),
                 LinearLayoutManager.VERTICAL
-            )
+            ).apply {
+                setDrawable(requireContext().getDrawable(R.drawable.stream_ui_divider)!!)
+            }
         )
         binding.sdkVersion.text = getString(R.string.sdk_version_template, STREAM_CHAT_VERSION)
 
