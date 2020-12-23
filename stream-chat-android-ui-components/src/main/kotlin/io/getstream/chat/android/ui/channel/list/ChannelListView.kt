@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemS
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.utils.extensions.fluentAdd
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
@@ -24,11 +25,11 @@ public class ChannelListView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : RecyclerView(context, attrs, defStyle) {
 
-    private var endReachedListener: EndReachedListener? = null
     private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
-    private var loadingMore = false
+
+    private var endReachedListener: EndReachedListener? = null
 
     init {
         setHasFixedSize(true)
@@ -116,29 +117,29 @@ public class ChannelListView @JvmOverloads constructor(
     public fun showLoadingMore(show: Boolean) {
         requireAdapter().let { adapter ->
             val currentList = adapter.currentList
-            val mutableCopy = currentList.toMutableList()
-
+            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
             val showLoadingMore = show && !loadingMore
             val hideLoadingMore = !show && loadingMore
 
-            when {
-                showLoadingMore -> {
-                    loadingMore = true
-                    mutableCopy.add(ChannelListItem.LoadingMoreItem)
-                }
+            val updatedList = when {
+                showLoadingMore -> currentList.toMutableList().fluentAdd(ChannelListItem.LoadingMoreItem)
 
-                hideLoadingMore -> {
-                    loadingMore = false
-                    mutableCopy.remove(ChannelListItem.LoadingMoreItem)
-                }
+                // we should never have more than one loading item, but just in case
+                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.LoadingMoreItem::class.java)
+
+                else -> currentList
             }
 
-            adapter.submitList(mutableCopy) {
+            adapter.submitList(updatedList) {
                 if (showLoadingMore) {
-                    layoutManager.scrollToPosition(mutableCopy.size - 1)
+                    layoutManager.scrollToPosition(updatedList.size - 1)
                 }
             }
         }
+    }
+
+    public fun hasChannels(): Boolean {
+        return requireAdapter().itemCount > 0
     }
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
@@ -151,7 +152,7 @@ public class ChannelListView @JvmOverloads constructor(
             public val DEFAULT: UserClickListener = UserClickListener {}
         }
 
-        public fun onUserClick(user: User)
+        public fun onClick(user: User)
     }
 
     public fun interface ChannelClickListener {

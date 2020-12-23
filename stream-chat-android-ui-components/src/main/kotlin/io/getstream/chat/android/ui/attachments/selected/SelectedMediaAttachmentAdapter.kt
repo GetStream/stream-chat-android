@@ -1,15 +1,15 @@
 package io.getstream.chat.android.ui.attachments.selected
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
-import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class SelectedMediaAttachmentAdapter(
     var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {}
@@ -32,17 +32,12 @@ internal class SelectedMediaAttachmentAdapter(
         }
 
         private fun bindAttachmentImage(attachment: AttachmentMetaData) {
-            val cornerRadius = context.resources.getDimensionPixelSize(R.dimen.stream_ui_selected_attachment_corner_radius)
-            binding.ivMedia.setShape(
-                context,
-                DrawableBuilder()
-                    .rectangle()
-                    .solidColor(Color.BLACK)
-                    .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-                    .build()
-            )
+            val cornerRadius =
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_selected_attachment_corner_radius).toFloat()
+            binding.ivMedia.shapeAppearanceModel =
+                ShapeAppearanceModel.builder().setAllCornerSizes(cornerRadius).build()
             if (attachment.type == ModelType.attach_video) {
-                binding.ivMedia.load(R.drawable.stream_placeholder)
+                binding.ivMedia.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
             } else {
                 binding.ivMedia.load(attachment.uri)
             }

@@ -63,7 +63,8 @@ public sealed class MessageListItem {
     ) : MessageListItem()
 
     public data class ThreadSeparatorItem(
-        val date: Date = Date(),
+        val date: Date,
+        val messageCount: Int,
     ) : MessageListItem()
 
     public object LoadingMoreIndicatorItem : MessageListItem()

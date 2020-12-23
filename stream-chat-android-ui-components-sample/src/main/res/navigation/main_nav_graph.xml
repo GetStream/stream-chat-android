@@ -485,6 +485,11 @@
             app:destination="@id/componentBrowserPlainTextWithFileAttachmentsMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserGiphyMessages"
+            app:destination="@id/componentBrowserGiphyMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -557,6 +562,12 @@
         android:id="@+id/componentBrowserPlainTextWithFileAttachmentsMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserPlainTextWithFileAttachmentsFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserGiphyMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.GiphyMessageComponentBrowserFragment"
+        android:label="ComponentBrowserGiphyFragment"
         />
 
 </navigation>

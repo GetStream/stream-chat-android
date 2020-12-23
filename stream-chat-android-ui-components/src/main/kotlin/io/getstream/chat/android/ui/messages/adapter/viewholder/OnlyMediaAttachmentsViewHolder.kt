@@ -1,8 +1,8 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
@@ -14,9 +14,7 @@ public class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
     private val listenerContainer: ListenerContainer?,
     internal val binding: StreamUiItemMessageMediaAttachmentsBinding = StreamUiItemMessageMediaAttachmentsBinding.inflate(
-        LayoutInflater.from(
-            parent.context
-        ),
+        parent.inflater,
         parent,
         false
     )
@@ -30,6 +28,9 @@ public class OnlyMediaAttachmentsViewHolder(
         binding.mediaAttachmentsGroupView.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
+        }
+        binding.reactionsView.setReactionClickListener {
+            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
         }
     }
 

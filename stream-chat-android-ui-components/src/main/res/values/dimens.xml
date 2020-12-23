@@ -8,6 +8,10 @@
     <dimen name="stream_ui_text_medium">14sp</dimen>
     <dimen name="stream_ui_text_large">16sp</dimen>
 
+    <dimen name="stream_ui_divider_height">1dp</dimen>
+
+    <dimen name="stream_ui_elevation_big">8dp</dimen>
+
     <!--AvatarView-->
     <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
     <dimen name="stream_ui_avatar_size_small">32dp</dimen>
@@ -47,7 +51,6 @@
     <dimen name="stream_ui_channel_list_item_option_icon_width">50dp</dimen>
     <dimen name="stream_ui_channel_item_progress_bar_size">16dp</dimen>
     <dimen name="stream_ui_channel_list_item_loading_height">90dp</dimen>
-    <dimen name="stream_ui_channel_header_separator_height">1dp</dimen>
 
     <!--Attachment Dialog-->
     <dimen name="stream_ui_attachment_dialog_page_height">320dp</dimen>
@@ -67,10 +70,9 @@
     <dimen name="stream_ui_message_preview_item_height">64dp</dimen>
 
     <!--ViewReactionsView-->
-    <dimen name="stream_ui_view_reactions_total_height">36dp</dimen>
+    <dimen name="stream_ui_view_reactions_total_height">32dp</dimen>
     <dimen name="stream_ui_view_reactions_horizontal_padding">2dp</dimen>
-    <dimen name="stream_ui_view_reactions_item_margin">4dp</dimen>
-    <dimen name="stream_ui_view_reactions_item_size">16dp</dimen>
+    <dimen name="stream_ui_view_reactions_item_size">24dp</dimen>
     <dimen name="stream_ui_view_reactions_bubble_height">24dp</dimen>
     <dimen name="stream_ui_view_reactions_bubble_radius">12dp</dimen>
     <dimen name="stream_ui_view_reactions_large_tail_bubble_cy">22dp</dimen>
@@ -85,8 +87,7 @@
     <dimen name="stream_ui_edit_reactions_total_width">216dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_offset">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
-    <dimen name="stream_ui_edit_reactions_item_margin">8dp</dimen>
-    <dimen name="stream_ui_edit_reactions_item_size">24dp</dimen>
+    <dimen name="stream_ui_edit_reactions_item_size">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_height">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_radius">20dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy">36dp</dimen>
@@ -113,4 +114,7 @@
     <dimen name="stream_ui_channel_item_title">15sp</dimen>
     <dimen name="stream_ui_channel_item_message">13sp</dimen>
     <dimen name="stream_ui_channel_item_message_date">11sp</dimen>
+
+    <!-- Message ViewHolders -->
+    <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
 </resources>

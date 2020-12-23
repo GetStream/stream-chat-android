@@ -149,7 +149,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
             setChannelData(channel)
             setOnClickListener {
                 when {
-                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
                     else -> channelClickListener.onClick(channel)
                 }
             }
@@ -197,11 +197,9 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
         lastMessage ?: return
 
-        /**
-         * read - if the last message doesn't belong to current user, or if channel reads indicates it
-         * delivered - if the last message belongs to the current user and reads indicate it wasn't read
-         * pending - if the sync status says it's pending
-         */
+        // read - if the last message doesn't belong to current user, or if channel reads indicates it
+        // delivered - if the last message belongs to the current user and reads indicate it wasn't read
+        // pending - if the sync status says it's pending
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)

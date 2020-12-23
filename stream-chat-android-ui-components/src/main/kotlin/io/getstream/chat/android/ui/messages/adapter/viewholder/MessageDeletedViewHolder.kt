@@ -1,9 +1,9 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageDeletedBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -11,9 +11,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 public class MessageDeletedViewHolder(
     parent: ViewGroup,
     internal val binding: StreamUiItemMessageDeletedBinding = StreamUiItemMessageDeletedBinding.inflate(
-        LayoutInflater.from(
-            parent.context
-        ),
+        parent.inflater,
         parent,
         false
     )

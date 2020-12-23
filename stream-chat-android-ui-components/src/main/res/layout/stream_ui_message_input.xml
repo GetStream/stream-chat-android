@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/stream_ui_background"
     android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
-    android:background="@color/stream_ui_background_alabaster"
     >
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -77,11 +77,21 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageInputFieldView"
         tools:text="Send also to channel"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_ui_divider_height"
+        android:background="@drawable/stream_ui_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

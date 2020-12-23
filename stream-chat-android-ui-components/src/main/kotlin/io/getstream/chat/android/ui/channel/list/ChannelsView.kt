@@ -234,6 +234,10 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setPaginationEnabled(enabled)
     }
 
+    public fun hasChannels(): Boolean {
+        return channelListView.hasChannels()
+    }
+
     private companion object {
         private val defaultChildLayoutParams: LayoutParams by lazy {
             LayoutParams(
@@ -274,7 +278,7 @@ public class ChannelsView @JvmOverloads constructor(
                             }
 
                             override fun onMemberSelected(member: Member) {
-                                adapter.listenerContainer.userClickListener.onUserClick(member.user)
+                                adapter.listenerContainer.userClickListener.onClick(member.user)
                             }
 
                             override fun onChannelInfoSelected(cid: String) {

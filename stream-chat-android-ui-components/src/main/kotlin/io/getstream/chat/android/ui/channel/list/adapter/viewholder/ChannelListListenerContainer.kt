@@ -41,7 +41,7 @@ public class ChannelListListenerContainer(
 
     public var userClickListener: ChannelListView.UserClickListener by ListenerDelegate(userClickListener) { getListener ->
         ChannelListView.UserClickListener { user ->
-            getListener().onUserClick(user)
+            getListener().onClick(user)
         }
     }
 

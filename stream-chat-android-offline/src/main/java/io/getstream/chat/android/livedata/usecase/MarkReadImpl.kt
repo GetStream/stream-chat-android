@@ -30,7 +30,7 @@ internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
                         .execute()
                 }
 
-                Result(markedRead, null)
+                Result(markedRead)
             }
         }
     }

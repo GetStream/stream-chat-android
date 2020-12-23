@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
@@ -91,6 +92,19 @@ internal class BackgroundDecorator : BaseDecorator() {
         setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
     }
 
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
+            .build()
+        viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
+            IMAGE_VIEW_CORNER_RADIUS,
+            IMAGE_VIEW_CORNER_RADIUS,
+            0f,
+            0f
+        )
+    }
+
     companion object {
         private val MESSAGE_DELETED_BACKGROUND = R.color.stream_ui_grey_light_opacity_50
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_border_stroke
@@ -98,5 +112,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_90
         private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
+        private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
+        private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()
     }
 }

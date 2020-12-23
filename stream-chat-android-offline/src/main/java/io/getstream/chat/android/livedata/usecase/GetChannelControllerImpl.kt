@@ -24,7 +24,7 @@ internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) 
 
         val channelControllerImpl = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            Result(channelControllerImpl, null)
+            Result(channelControllerImpl)
         }
     }
 }

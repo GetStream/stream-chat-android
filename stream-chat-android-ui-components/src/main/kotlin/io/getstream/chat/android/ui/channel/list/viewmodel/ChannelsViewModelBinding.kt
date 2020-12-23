@@ -20,7 +20,9 @@ public fun ChannelsViewModel.bindView(
             }
             is ChannelsViewModel.State.Loading -> {
                 view.hideEmptyStateView()
-                view.showLoadingView()
+                if (!view.hasChannels()) {
+                    view.showLoadingView()
+                }
             }
             is ChannelsViewModel.State.Result -> {
                 channelState

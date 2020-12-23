@@ -25,8 +25,7 @@
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
 
-    <color name="stream_ui_divider_tint">@color/stream_ui_black</color>
-    <color name="stream_ui_divider_tint_light">@color/stream_ui_mirage</color>
+    <color name="stream_ui_divider">@color/stream_ui_mirage</color>
 
     <color name="stream_ui_section_item_color">@color/stream_ui_woodsmoke</color>
     <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background</color>

@@ -23,6 +23,6 @@ internal data class MarkAllReadImpl(private val domain: ChatDomainImpl) : MarkAl
 
         // then update via remote API
         domain.client.markAllRead().execute()
-        Result(true, null)
+        Result(true)
     }
 }
