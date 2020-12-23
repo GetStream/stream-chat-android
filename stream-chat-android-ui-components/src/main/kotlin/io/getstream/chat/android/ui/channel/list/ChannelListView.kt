@@ -26,7 +26,6 @@ public class ChannelListView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : RecyclerView(context, attrs, defStyle) {
 
-    private val channelListItemAdapter: ChannelListItemAdapter
     private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
     private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
@@ -37,8 +36,7 @@ public class ChannelListView @JvmOverloads constructor(
         setHasFixedSize(true)
         layoutManager = ScrollPauseLinearLayoutManager(context)
         setLayoutManager(layoutManager)
-        channelListItemAdapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
-        adapter = channelListItemAdapter
+        adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
         setMoreOptionsClickListener { channel ->
             context.getFragmentManager()?.let { fragmentManager ->
@@ -128,7 +126,7 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun hasChannels(): Boolean {
-        return channelListItemAdapter.itemCount > 0
+        return requireAdapter().itemCount > 0
     }
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
