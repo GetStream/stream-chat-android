@@ -10,9 +10,9 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Flag
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 
 /**
  * Binds [MessageListView] with [MessageListViewModel].

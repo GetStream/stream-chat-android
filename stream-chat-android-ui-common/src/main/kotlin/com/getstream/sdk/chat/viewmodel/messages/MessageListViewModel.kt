@@ -190,7 +190,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.BlockUser -> {
                 client.shadowBanUser(
                     targetId = event.user.id,
-                    channelType = event.channel.type ,
+                    channelType = event.channel.type,
                     channelId = event.channel.id,
                     reason = null,
                     timeout = null

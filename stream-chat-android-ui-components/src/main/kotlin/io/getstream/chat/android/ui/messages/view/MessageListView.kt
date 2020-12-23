@@ -822,14 +822,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setOnBlockUserHandler(onUserBlockHandler: (User, Channel) -> Unit) {
-        val blockUserForThisChannel : (User) -> Unit = { user ->
+        val blockUserForThisChannel: (User) -> Unit = { user ->
             onUserBlockHandler(user, channel)
         }
 
         this.onBlockUserHandler = blockUserForThisChannel
-
     }
-
 
     public fun interface MessageClickListener {
         public fun onMessageClick(message: Message)
