@@ -102,7 +102,7 @@ internal data class ChannelEntity(
     }
 
     /** convert a channelEntity into a channel object */
-    fun toChannel(userMap: Map<String, User>): Channel {
+    suspend fun toChannel(userMap: Map<String, User>): Channel {
         val c = Channel(cooldown = cooldown)
         c.type = type
         c.id = channelId

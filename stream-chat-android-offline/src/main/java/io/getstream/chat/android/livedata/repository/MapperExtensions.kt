@@ -16,7 +16,7 @@ internal fun Reaction.toEntity(): ReactionEntity {
     return reactionEntity
 }
 
-internal fun ReactionEntity.toModel(getUser: (userId: String) -> User): Reaction = Reaction(
+internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) -> User): Reaction = Reaction(
     messageId = messageId,
     type = type,
     score = score,
@@ -28,7 +28,7 @@ internal fun ReactionEntity.toModel(getUser: (userId: String) -> User): Reaction
     userId = userId,
 )
 
-internal fun MessageEntity.toModel(getUser: (userId: String) -> User): Message = Message(
+internal suspend fun MessageEntity.toModel(getUser: suspend (userId: String) -> User): Message = Message(
     id = id,
     cid = cid,
     user = getUser(userId),
@@ -50,7 +50,7 @@ internal fun MessageEntity.toModel(getUser: (userId: String) -> User): Message =
     shadowed = shadowed,
     latestReactions = (latestReactions.map { it.toModel(getUser) }).toMutableList(),
     ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
-    mentionedUsers = mentionedUsersId.map(getUser).toMutableList(),
+    mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
 )
 
 internal fun Message.toEntity(): MessageEntity = MessageEntity(
