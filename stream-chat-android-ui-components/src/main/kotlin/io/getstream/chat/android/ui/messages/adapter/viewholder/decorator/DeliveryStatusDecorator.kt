@@ -52,7 +52,10 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
     }
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+        viewHolder.binding.footnote.deliveryStatusIcon.isVisible = false
+    }
 
     private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
         fun hideIndicator() {
