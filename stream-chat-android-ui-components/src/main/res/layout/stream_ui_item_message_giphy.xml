@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
@@ -18,12 +18,13 @@
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        android:background="@color/stream_ui_background_default_selector"
+        android:clipToPadding="false"
         app:cardElevation="@dimen/stream_ui_elevation_big"
         app:layout_constraintEnd_toStartOf="@id/marginEnd"
         app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/gapView"
-        android:background="@color/stream_ui_background_default_selector"
-        android:clipToPadding="false"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,21 +45,21 @@
                 android:id="@+id/previousButton"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="5dp"
-                android:elevation="@dimen/stream_ui_elevation_big"
-                android:src="@drawable/stream_ui_arrow_left_rounded"
                 android:background="@drawable/stream_ui_circle_white"
-                app:tint="@color/stream_ui_send_button_disabled"
                 android:clickable="false"
+                android:elevation="@dimen/stream_ui_elevation_big"
+                android:paddingStart="3dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="4dp"
+                android:src="@drawable/stream_ui_arrow_left_rounded"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/giphyTextLabel"
                 app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
+                app:tint="@color/stream_ui_send_button_disabled"
                 />
 
             <TextView
@@ -66,13 +67,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:textColor="@color/stream_ui_black"
+                android:textSize="14sp"
+                android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="@id/previousButton"
                 app:layout_constraintLeft_toRightOf="@id/previousButton"
                 app:layout_constraintRight_toLeftOf="@id/nextButton"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
-                android:textStyle="italic"
-                android:textColor="@color/stream_ui_black"
-                android:textSize="14sp"
                 tools:text="Some giphy label"
                 />
 
@@ -81,19 +82,19 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginEnd="8dp"
-                android:elevation="@dimen/stream_ui_elevation_big"
-                android:src="@drawable/stream_ui_arrow_right"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="3dp"
                 android:background="@drawable/stream_ui_circle_white"
                 android:duplicateParentState="false"
+                android:elevation="@dimen/stream_ui_elevation_big"
+                android:paddingStart="5dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="4dp"
+                android:src="@drawable/stream_ui_arrow_right"
+                app:layout_constraintBottom_toBottomOf="@id/previousButton"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
-                app:layout_constraintBottom_toBottomOf="@id/previousButton"
                 />
 
             <View
@@ -110,44 +111,46 @@
                 android:id="@+id/cancel_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/horizontalDivider"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/verticalDivider"
+                android:background="?selectableItemBackground"
+                android:gravity="center"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:gravity="center"
+                android:text="@string/stream_ui_cancel_label"
                 android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="@string/stream_ui_cancel_label"
-                android:background="?selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/verticalDivider"
+                app:layout_constraintTop_toBottomOf="@id/horizontalDivider"
                 />
 
             <View
                 android:id="@+id/verticalDivider"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                app:layout_constraintTop_toTopOf="@id/cancel_button"
+                android:background="@color/stream_ui_black_10"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/cancel_button"
                 app:layout_constraintRight_toLeftOf="@id/sendButton"
-                android:background="@color/stream_ui_black_10"/>
+                app:layout_constraintTop_toTopOf="@id/cancel_button"
+                />
 
             <TextView
                 android:id="@+id/sendButton"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintTop_toTopOf="@id/cancel_button"
-                app:layout_constraintBottom_toBottomOf="@id/cancel_button"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/verticalDivider"
+                android:background="?selectableItemBackground"
                 android:gravity="center"
+                android:text="@string/stream_ui_send_label"
                 android:textColor="@color/stream_ui_blue"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="@string/stream_ui_send_label"
-                android:background="?selectableItemBackground"/>
+                app:layout_constraintBottom_toBottomOf="@id/cancel_button"
+                app:layout_constraintLeft_toRightOf="@id/verticalDivider"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cancel_button"
+                />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -159,7 +162,8 @@
         layout="@layout/stream_ui_item_message_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintRight_toRightOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
