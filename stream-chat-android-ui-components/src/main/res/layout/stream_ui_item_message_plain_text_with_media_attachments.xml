@@ -72,26 +72,13 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <ImageView
-        android:id="@+id/deliveryStatusIcon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvTime"
-        app:layout_constraintEnd_toStartOf="@+id/tvTime"
-        app:layout_constraintTop_toTopOf="@+id/tvTime"
-        tools:src="@drawable/stream_ui_ic_check_all"
-        />
-
-    <TextView
-        android:id="@+id/tvTime"
+    <include
+        android:id="@+id/footnote"
+        layout="@layout/stream_ui_item_message_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@+id/backgroundView"
-        tools:text="16:25"
+        app:layout_constraintRight_toRightOf="@+id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@+id/messageText"
         />
 
     <androidx.constraintlayout.widget.Guideline

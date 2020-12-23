@@ -154,13 +154,13 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/tv_time"
+    <include
+        android:id="@+id/footnote"
+        layout="@layout/stream_ui_item_message_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintRight_toRightOf="@+id/marginEnd"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
 

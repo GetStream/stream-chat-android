@@ -84,6 +84,7 @@ class HomeFragment : Fragment() {
         binding.bottomNavigationView.setupWithNavController(navHostFragment.navController)
         // disable reloading fragment when clicking again on the same tab
         binding.bottomNavigationView.setOnNavigationItemReselectedListener {}
+        binding.bottomNavigationView.setBackgroundResource(R.drawable.shape_bottom_navigation_background)
     }
 
     private fun setupNavigationDrawer() {

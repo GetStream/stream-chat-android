@@ -73,6 +73,8 @@
     <!-- Message list -->
     <string name="stream_ui_message_deleted_label">Message deleted</string>
     <string name="stream_ui_attachments_more_count_prefix">+%d</string>
+    <string name="stream_ui_send_label">Send</string>
+    <string name="stream_ui_cancel_label">Cancel</string>
 
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>
@@ -100,6 +102,7 @@
     <string name="stream_ui_no_media_error">There is no photo or video.</string>
     <string name="stream_ui_messages_empty_state_label">No messages</string>
     <string name="stream_ui_channels_empty_state_label">No channels available</string>
-    <string name="stream_ui_send_label">Send</string>
-    <string name="stream_ui_cancel_label">Cancel</string>
+
+    <!-- Message Footer -->
+    <string name="stream_ui_ephemeral_msg_footer">Only visible to you</string>
 </resources>
