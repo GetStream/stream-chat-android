@@ -169,7 +169,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp"
+        tools:layout_constraintGuide_begin="20dp"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -177,7 +177,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="20dp"
+        tools:layout_constraintGuide_end="20dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
