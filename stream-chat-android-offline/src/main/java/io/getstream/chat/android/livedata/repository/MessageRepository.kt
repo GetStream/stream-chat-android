@@ -119,8 +119,8 @@ internal class MessageRepository(
         messageCache.remove(message.id)
     }
 
-    internal suspend fun selectSyncNeeded(userMap: Map<String, User>): List<Message> {
-        return messageDao.selectSyncNeeded().map { it.toModel { userMap[it]!! } }
+    internal suspend fun selectSyncNeeded(getUser: suspend (userId: String) -> User): List<Message> {
+        return messageDao.selectSyncNeeded().map { it.toModel(getUser) }
     }
 
     companion object {

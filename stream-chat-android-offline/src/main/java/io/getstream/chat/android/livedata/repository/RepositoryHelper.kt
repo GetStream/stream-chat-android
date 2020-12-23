@@ -86,6 +86,10 @@ internal class RepositoryHelper(
         }
     }
 
+    internal suspend fun selectMessageSyncNeeded(): List<Message> {
+        return messages.selectSyncNeeded { users.select(it) ?: error("User with the userId: `$it` has not been found") }
+    }
+
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> {
         val entities = messages.selectEntities(messageIds)
         val userMap = users.selectUserMap(entities.flatMap(::userIdsFor))
