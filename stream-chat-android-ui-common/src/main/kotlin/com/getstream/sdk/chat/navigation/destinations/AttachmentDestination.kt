@@ -94,7 +94,7 @@ public open class AttachmentDestination(
         }
     }
 
-    private fun showImageViewer(
+    protected open fun showImageViewer(
         message: Message,
         attachment: Attachment
     ) {
@@ -108,13 +108,10 @@ public open class AttachmentDestination(
         }
 
         val attachmentIndex = message.attachments.indexOf(attachment)
-        showImagesWithCurrentIndex(attachmentIndex, imageUrls)
-    }
 
-    protected open fun showImagesWithCurrentIndex(currentIndex: Int, attachmentUrls: List<String>) {
-        ImageViewer.Builder(context, attachmentUrls)
+        ImageViewer.Builder(context, imageUrls)
             .setStartPosition(
-                if (currentIndex in attachmentUrls.indices) currentIndex else 0
+                if (attachmentIndex in imageUrls.indices) attachmentIndex else 0
             )
             .show()
     }
