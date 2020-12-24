@@ -17,12 +17,12 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -187,7 +187,7 @@ public class MessageListView : ConstraintLayout {
         AttachmentClickListener { message, attachment ->
             ChatUI.instance()
                 .navigator
-                .navigate(AttachmentDestination(message, attachment, context))
+                .navigate(GalleryImageAttachmentDestination(message, attachment, context))
         }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
