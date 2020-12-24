@@ -46,7 +46,7 @@ internal class BackgroundDecorator : BaseDecorator() {
             ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
                 .setBottomRightCornerSize(bottomRightCorner).build()
         view.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            val hasLink = data.message.attachments.any { it.hasLink() }
+            val hasLink = data.message.attachments.any(::hasLink)
             if (data.isMine) {
                 paintStyle = Paint.Style.FILL
                 setTint(
