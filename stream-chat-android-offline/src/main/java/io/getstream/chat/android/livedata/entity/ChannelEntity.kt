@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.repository.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import java.util.Date
 
 /**

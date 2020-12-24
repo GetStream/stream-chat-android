@@ -7,6 +7,8 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 /**
  * We don't do any caching on reactions since usage is infrequent

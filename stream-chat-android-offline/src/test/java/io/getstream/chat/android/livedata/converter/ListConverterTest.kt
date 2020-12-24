@@ -5,7 +5,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.repository.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import org.junit.Test
 import org.junit.runner.RunWith
 
