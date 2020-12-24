@@ -2,8 +2,12 @@ package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholde
 
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 import java.util.Date
 
 class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
@@ -17,6 +21,12 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
 
     private fun getDummyMessageList(): List<MessageListItem.MessageItem> {
         val date = Date()
+        val attachmentLink = Attachment(
+            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            title = "Title",
+            text = "Some description",
+            authorName = "Stream",
+        )
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor"),
@@ -47,6 +57,29 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                 message = Message(text = "Ephemeral", createdAt = date, type = "ephemeral"),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true,
+            ),
+            MessageListItem.MessageItem(
+                message = Message(text = "Ephemeral", createdAt = date, syncStatus = SyncStatus.FAILED_PERMANENTLY),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                isMine = true,
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    text = "https://www.google.com/",
+                    createdAt = date,
+                    attachments = mutableListOf(attachmentLink, attachmentLink)
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    text = "https://www.google.com/",
+                    createdAt = date,
+                    attachments = mutableListOf(attachmentLink)
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
             ),
         )
     }

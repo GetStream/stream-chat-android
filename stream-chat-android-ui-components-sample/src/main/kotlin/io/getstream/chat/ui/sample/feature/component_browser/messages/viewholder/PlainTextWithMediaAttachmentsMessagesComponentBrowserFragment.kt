@@ -1,14 +1,14 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.content.ContentResolver
 import android.content.Context
-import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
@@ -24,6 +24,12 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
         val uri1 = drawableResToUri(context, R.drawable.stream_ui_sample_image_1)
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)
+        val attachmentLink = Attachment(
+            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            title = "Title",
+            text = "Some description",
+            authorName = "Stream",
+        )
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(
@@ -106,15 +112,46 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                 ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
-            )
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3)
+                    ),
+                    text = "Hi!",
+                    syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3),
+                        attachmentLink,
+                    ),
+                    text = "Hi! https://www.google.com/"
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "image", imageUrl = uri1),
+                        Attachment(type = "image", imageUrl = uri2),
+                        Attachment(type = "image", imageUrl = uri3),
+                        attachmentLink,
+                    ),
+                    text = "Hi! https://www.google.com/"
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
         )
-    }
-
-    private fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
-        val res = context.resources
-        return ContentResolver.SCHEME_ANDROID_RESOURCE +
-            "://" + res.getResourcePackageName(drawableResId) +
-            '/' + res.getResourceTypeName(drawableResId) +
-            '/' + res.getResourceEntryName(drawableResId)
     }
 }
