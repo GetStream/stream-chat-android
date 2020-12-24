@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
 
-public class AttachmentDestination(
+public open class AttachmentDestination(
     public val message: Message,
     public val attachment: Attachment,
     context: Context
@@ -111,7 +111,7 @@ public class AttachmentDestination(
         showImagesWithCurrentIndex(attachmentIndex, imageUrls)
     }
 
-    private fun showImagesWithCurrentIndex(currentIndex: Int, attachmentUrls: List<String>) {
+    protected open fun showImagesWithCurrentIndex(currentIndex: Int, attachmentUrls: List<String>) {
         ImageViewer.Builder(context, attachmentUrls)
             .setStartPosition(
                 if (currentIndex in attachmentUrls.indices) currentIndex else 0
