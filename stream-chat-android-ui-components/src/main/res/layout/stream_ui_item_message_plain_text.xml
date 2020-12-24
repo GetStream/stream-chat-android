@@ -8,16 +8,6 @@
     android:layout_marginEnd="8dp"
     >
 
-    <View
-        android:id="@+id/backgroundView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
-        app:layout_constraintEnd_toEndOf="@id/messageContainer"
-        app:layout_constraintStart_toStartOf="@id/messageContainer"
-        app:layout_constraintTop_toTopOf="@id/messageContainer"
-        />
-
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"

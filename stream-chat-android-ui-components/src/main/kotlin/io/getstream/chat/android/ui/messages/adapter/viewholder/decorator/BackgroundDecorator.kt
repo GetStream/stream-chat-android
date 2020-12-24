@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
@@ -33,7 +34,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
+        setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
 
     private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
@@ -46,7 +47,7 @@ internal class BackgroundDecorator : BaseDecorator() {
             ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
                 .setBottomRightCornerSize(bottomRightCorner).build()
         view.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            val hasLink = data.message.attachments.any(::hasLink)
+            val hasLink = data.message.attachments.any(Attachment::hasLink)
             if (data.isMine) {
                 paintStyle = Paint.Style.FILL
                 setTint(
