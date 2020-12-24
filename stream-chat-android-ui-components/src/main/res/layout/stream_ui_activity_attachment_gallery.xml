@@ -5,6 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
+
+
     <io.getstream.chat.android.ui.images.AttachmentGallery
         android:id="@+id/attachmentGallery"
         android:layout_width="0dp"
