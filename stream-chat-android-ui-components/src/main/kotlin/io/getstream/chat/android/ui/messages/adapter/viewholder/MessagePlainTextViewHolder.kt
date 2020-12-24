@@ -21,7 +21,7 @@ public class MessagePlainTextViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
-        binding.messageText.setOnLongClickListener {
+        binding.messageContainer.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true
         }

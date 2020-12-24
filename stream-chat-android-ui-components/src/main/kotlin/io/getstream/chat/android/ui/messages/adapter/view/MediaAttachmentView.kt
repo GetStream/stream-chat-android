@@ -42,7 +42,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.thumbUrl ?: attachment.imageUrl ?: return
+        val url = attachment.thumbUrl ?: attachment.imageUrl ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
