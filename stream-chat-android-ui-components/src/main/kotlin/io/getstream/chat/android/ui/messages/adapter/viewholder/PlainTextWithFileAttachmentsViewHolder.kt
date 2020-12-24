@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWith
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
+import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 public class PlainTextWithFileAttachmentsViewHolder(
     parent: ViewGroup,
@@ -21,7 +22,7 @@ public class PlainTextWithFileAttachmentsViewHolder(
     public override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
         binding.fileAttachmentsView.setAttachments(
-            data.message.attachments
+            data.message.attachments.filter { attachment -> attachment.hasLink().not() }
         ) { attachment -> listenerContainer?.attachmentClickListener?.onAttachmentClick(data.message, attachment) }
         binding.fileAttachmentsView.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)

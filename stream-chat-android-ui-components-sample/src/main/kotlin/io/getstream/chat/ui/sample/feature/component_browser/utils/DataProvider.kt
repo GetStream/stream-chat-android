@@ -1,6 +1,9 @@
 package io.getstream.chat.ui.sample.feature.component_browser.utils
 
+import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
+import androidx.annotation.DrawableRes
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
@@ -13,6 +16,14 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.ReactionType
 import java.util.Random
+
+internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
+    val res = context.resources
+    return ContentResolver.SCHEME_ANDROID_RESOURCE +
+        "://" + res.getResourcePackageName(drawableResId) +
+        '/' + res.getResourceTypeName(drawableResId) +
+        '/' + res.getResourceEntryName(drawableResId)
+}
 
 internal fun randomUser(withImage: Boolean = true, isOnline: Boolean = true): User {
     return User().apply {

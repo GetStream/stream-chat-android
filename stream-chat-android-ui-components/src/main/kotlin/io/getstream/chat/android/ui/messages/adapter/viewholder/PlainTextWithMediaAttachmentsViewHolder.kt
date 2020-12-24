@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWith
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper.isMedia
+import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 public class PlainTextWithMediaAttachmentsViewHolder(
     parent: ViewGroup,
@@ -20,9 +20,8 @@ public class PlainTextWithMediaAttachmentsViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
-        if (data.message.attachments.isMedia()) {
-            binding.mediaAttachmentsGroupView.showAttachments(*data.message.attachments.toTypedArray())
-        }
+        val mediaAttachments = data.message.attachments.filter { attachment -> attachment.hasLink().not() }
+        binding.mediaAttachmentsGroupView.showAttachments(*mediaAttachments.toTypedArray())
         binding.backgroundView.setOnLongClickListener {
             listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
             true

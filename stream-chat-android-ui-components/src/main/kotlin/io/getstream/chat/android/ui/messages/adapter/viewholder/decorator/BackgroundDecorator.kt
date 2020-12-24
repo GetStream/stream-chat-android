@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 internal class BackgroundDecorator : BaseDecorator() {
 
@@ -32,7 +33,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.messageText, data)
+        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
     }
 
     private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
@@ -45,14 +46,25 @@ internal class BackgroundDecorator : BaseDecorator() {
             ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
                 .setBottomRightCornerSize(bottomRightCorner).build()
         view.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            val hasLink = data.message.attachments.any { it.hasLink() }
             if (data.isMine) {
                 paintStyle = Paint.Style.FILL
-                setTint(ContextCompat.getColor(view.context, MESSAGE_CURRENT_USER_BACKGROUND))
+                setTint(
+                    ContextCompat.getColor(
+                        view.context,
+                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_CURRENT_USER_BACKGROUND
+                    )
+                )
             } else {
                 paintStyle = Paint.Style.FILL_AND_STROKE
                 setStrokeTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_STROKE_COLOR))
                 strokeWidth = DEFAULT_STROKE_WIDTH
-                setTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_USER_BACKGROUND))
+                setTint(
+                    ContextCompat.getColor(
+                        view.context,
+                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_OTHER_USER_BACKGROUND
+                    )
+                )
             }
         }
     }
@@ -110,6 +122,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_border_stroke
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_90
+        private val MESSAGE_LINK_BACKGROUND = R.color.stream_ui_blue_alice
         private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()

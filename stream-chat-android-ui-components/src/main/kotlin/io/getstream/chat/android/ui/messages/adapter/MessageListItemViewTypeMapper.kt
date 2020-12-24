@@ -1,12 +1,12 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
+import io.getstream.chat.android.ui.utils.extensions.isMedia
 
 internal object MessageListItemViewTypeMapper {
-    private val MEDIA_ATTACHMENT_TYPES: Collection<String> = listOf(ModelType.attach_image, ModelType.attach_giphy)
 
     fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
 
@@ -30,14 +30,22 @@ internal object MessageListItemViewTypeMapper {
         return when {
             messageItem.message.deletedAt != null -> MessageListItemViewType.MESSAGE_DELETED
             messageItem.message.isGiphyEphemeral() -> MessageListItemViewType.GIPHY
-            messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isMedia() -> MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
-            messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isNotEmpty() -> MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
+            messageItem.message.text.isNotEmpty() && messageItem.message.attachments.isMediaOrLink() -> MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
+            messageItem.message.text.isNotEmpty() && messageItem.message.attachments.atLeastNotOneLink() -> MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
             messageItem.message.attachments.isMedia() -> MessageListItemViewType.MEDIA_ATTACHMENTS
-            messageItem.message.attachments.isNotEmpty() -> MessageListItemViewType.ATTACHMENTS
+            messageItem.message.attachments.containsLinkNot() -> MessageListItemViewType.ATTACHMENTS
             /** Here will be additional clause for replay type */
             else -> MessageListItemViewType.PLAIN_TEXT
         }
     }
 
-    internal fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.type in MEDIA_ATTACHMENT_TYPES }
+    internal fun Collection<Attachment>.isMedia(): Boolean =
+        isNotEmpty() && all { it.isMedia() && it.hasLink().not() }
+
+    private fun Collection<Attachment>.isMediaOrLink(): Boolean =
+        isNotEmpty() && all { it.isMedia() || it.hasLink() } && atLeastNotOneLink()
+
+    private fun Collection<Attachment>.atLeastNotOneLink(): Boolean = any { it.hasLink().not() }
+
+    private fun Collection<Attachment>.containsLinkNot(): Boolean = isNotEmpty() && all { it.hasLink().not() }
 }

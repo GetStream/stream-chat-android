@@ -8,6 +8,16 @@
     android:layout_marginEnd="8dp"
     >
 
+    <View
+        android:id="@+id/backgroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
+        app:layout_constraintEnd_toEndOf="@id/messageContainer"
+        app:layout_constraintStart_toStartOf="@id/messageContainer"
+        app:layout_constraintTop_toTopOf="@id/messageContainer"
+        />
+
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"
@@ -27,35 +37,55 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <TextView
-        android:id="@+id/messageText"
+    <LinearLayout
+        android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:hyphenationFrequency="normal"
-        android:lineHeight="16sp"
-        android:paddingLeft="@dimen/stream_ui_spacing_medium"
-        android:paddingTop="@dimen/stream_ui_spacing_small"
-        android:paddingRight="@dimen/stream_ui_spacing_medium"
-        android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="@color/stream_ui_black"
+        android:orientation="vertical"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
-        tools:text="@tools:sample/lorem"
-        />
+        >
+
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:hyphenationFrequency="normal"
+            android:lineHeight="16sp"
+            android:paddingLeft="@dimen/stream_ui_spacing_medium"
+            android:paddingTop="@dimen/stream_ui_spacing_small"
+            android:paddingRight="@dimen/stream_ui_spacing_medium"
+            android:paddingBottom="@dimen/stream_ui_spacing_small"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/stream_ui_black"
+            android:textColorLink="@color/stream_ui_blue"
+            tools:text="@tools:sample/lorem"
+            />
+
+        <io.getstream.chat.android.ui.messages.adapter.view.LinkAttachmentView
+            android:id="@+id/linkAttachmentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/stream_ui_spacing_small"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+    </LinearLayout>
 
     <Space
         android:id="@+id/reactionsOffsetSpace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/messageText"
-        app:layout_constraintTop_toTopOf="@id/messageText"
+        app:layout_constraintStart_toStartOf="@id/messageContainer"
+        app:layout_constraintTop_toTopOf="@id/messageContainer"
         />
 
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
@@ -74,7 +104,7 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@+id/messageText"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
         />
 
     <ImageView
@@ -83,7 +113,7 @@
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:visibility="visible"
         />
