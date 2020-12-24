@@ -117,8 +117,7 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
     internal fun getChannel(cid: String): Channel {
         return currentList
             .asSequence()
-            .filter { it is ChannelListItem.ChannelItem }
-            .map { it as ChannelListItem.ChannelItem }
+            .filterIsInstance<ChannelListItem.ChannelItem>()
             .first { it.channel.cid == cid }
             .channel
     }
