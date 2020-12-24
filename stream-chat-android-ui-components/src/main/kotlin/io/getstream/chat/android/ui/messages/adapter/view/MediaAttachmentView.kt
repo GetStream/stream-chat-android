@@ -61,7 +61,9 @@ internal class MediaAttachmentView : ConstraintLayout {
             showGiphyLabel()
         }
 
-        setOnClickListener { clickListener(attachment) }
+        if (attachment.type != ModelType.attach_giphy) {
+            setOnClickListener { clickListener(attachment) }
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
