@@ -5,8 +5,11 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
@@ -56,6 +59,12 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
             fileSize = 5234.kiloBytes(),
             title = "Sample xls file"
         )
+        val attachmentLink = Attachment(
+            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            title = "Title",
+            text = "Some description",
+            authorName = "Stream",
+        )
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
@@ -79,12 +88,18 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                 isMine = true
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls), text = "Lorem ipsum dolor sit amet"),
+                message = Message(
+                    attachments = mutableListOf(attachmentDoc, attachmentXls),
+                    text = "Lorem ipsum dolor sit amet"
+                ),
                 positions = listOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z), text = "Another message"),
+                message = Message(
+                    attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z),
+                    text = "Another message"
+                ),
                 positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = false
             ),
@@ -115,7 +130,40 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                 ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
-            )
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachmentDoc, attachmentXls),
+                    text = "Lorem ipsum dolor sit amet",
+                    syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentDoc,
+                        attachmentXls,
+                        attachmentLink,
+                    ),
+                    text = "Lorem ipsum dolor sit amet https://www.google.com/",
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentDoc,
+                        attachmentXls,
+                        attachmentLink,
+                    ),
+                    text = "Lorem ipsum dolor sit amet https://www.google.com/",
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
         )
     }
 
