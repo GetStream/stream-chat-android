@@ -4,17 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fileItemContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:background="?selectableItemBackground"
     >
 
     <ImageView
         android:id="@+id/fileTypeImageView"
-        android:layout_width="40dp"
+        android:layout_width="34dp"
         android:layout_height="40dp"
-        android:layout_marginVertical="16dp"
-        android:layout_marginStart="16dp"
-        android:scaleType="centerCrop"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,11 +26,12 @@
         style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/fileSizeTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fileTypeImageView"
@@ -45,15 +45,14 @@
         style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:textColor="@color/boulder"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
+        android:textColor="@color/stream_ui_boulder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fileTypeImageView"
         app:layout_constraintTop_toBottomOf="@id/fileNameTextView"
         tools:text="123 KB"
         />
-
 
     <View
         android:id="@+id/separator"
