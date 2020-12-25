@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAt
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MessageFooterDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View
@@ -30,6 +31,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         MessageFooterDecorator(DateFormatter.from(itemView.context)),
         ReactionsDecorator(),
         LinkAttachmentDecorator(),
+        ReplyDecorator(),
     )
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
