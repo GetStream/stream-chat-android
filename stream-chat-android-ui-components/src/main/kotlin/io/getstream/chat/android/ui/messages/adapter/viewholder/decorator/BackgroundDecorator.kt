@@ -98,9 +98,9 @@ internal class BackgroundDecorator : BaseDecorator() {
         val topLeftCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
         val topRightCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
         val bottomRightCorner =
-            if (data.message.withText().not() && data.isMine && data.isBottom()) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.withText() || (data.isMine && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
         val bottomLeftCorner =
-            if (data.message.withText().not() && data.isTheirs && data.isBottom()) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.withText() || (data.isTheirs && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
 
         attachmentView.background = ShapeAppearanceModel.builder()
             .setTopLeftCornerSize(topLeftCorner)
