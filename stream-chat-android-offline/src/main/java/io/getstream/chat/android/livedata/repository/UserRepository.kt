@@ -39,7 +39,7 @@ internal class UserRepository(
     }
 
     suspend fun select(userId: String): User? {
-        return userDao.select(userId)?.let(::toModel)
+        return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
     }
 
     suspend fun select(userIds: List<String>): List<User> {
