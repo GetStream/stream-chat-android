@@ -24,7 +24,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     fun `verify that a new message event is stored in room`() = runBlocking {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNotNull()
     }
 
@@ -49,7 +49,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
+            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNotNull()
     }
 
@@ -65,7 +65,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
+            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -77,7 +77,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
+            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -90,7 +90,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =
-                chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
+                chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
             val channel = chatDomainImpl.repos.channels.select(data.channel1.cid)
             Truth.assertThat(message).isNull()
             Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
@@ -147,7 +147,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         Truth.assertThat(secondId).isEqualTo(messageId)
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent)
         // fetch the message
-        var message = chatDomainImpl.repos.messages.select(messageId, data.userMap)!!
+        var message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
 
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(1)
@@ -160,7 +160,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
         // add a reaction from a different user, it should not go into own reaction
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent2)
-        message = chatDomainImpl.repos.messages.select(messageId, data.userMap)!!
+        message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
         Truth.assertThat(message.ownReactions.size).isEqualTo(1)

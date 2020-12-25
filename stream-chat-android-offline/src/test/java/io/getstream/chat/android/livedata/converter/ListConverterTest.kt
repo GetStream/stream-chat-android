@@ -5,6 +5,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -51,7 +52,7 @@ internal class ListConverterTest : BaseTest() {
 
     @Test
     fun reactionList() {
-        val input = listOf(ReactionEntity(data.reaction1))
+        val input = listOf(data.reaction1.toEntity())
         val output = converter.reactionListToString(input)
         val converted = converter.stringToReactionList(output)
         Truth.assertThat(converted!!).isEqualTo(input)

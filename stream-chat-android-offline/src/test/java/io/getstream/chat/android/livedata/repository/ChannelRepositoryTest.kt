@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
@@ -22,7 +23,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `inserting a channel and reading it should be equal`() = runBlocking {
         repo.insertChannels(listOf(data.channel1))
         val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
+        val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
         channel.config = data.channel1.config
         channel.watchers = data.channel1.watchers
         channel.watcherCount = data.channel1.watcherCount
@@ -43,7 +44,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `updating a channel should work as intended`() = runBlocking {
         repo.insertChannels(listOf(data.channel1, data.channel1Updated))
         val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
+        val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
 
         // ignore these 4 fields
         channel.config = data.channel1.config
