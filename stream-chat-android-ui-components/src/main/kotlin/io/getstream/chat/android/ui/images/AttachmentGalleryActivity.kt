@@ -29,10 +29,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val urls = intent.getStringArrayExtra(EXTRA_KEY_URLS)?.toList().orEmpty()
         val currentIndex = intent.getIntExtra(EXTRA_KEY_CURRENT_INDEX, 0)
         binding.attachmentGallery.provideImageList(this, urls, currentIndex)
-        binding.toolbar.run {
-            setNavigationOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
-            title = intent.getStringExtra(EXTRA_KEY_USER_NAME)
-            subtitle = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
+        binding.run {
+            closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
+            title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
+            subtitle.text = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
         }
     }
 
