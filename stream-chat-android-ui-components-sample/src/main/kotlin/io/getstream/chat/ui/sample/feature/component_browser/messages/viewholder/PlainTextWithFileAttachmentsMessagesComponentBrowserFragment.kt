@@ -23,42 +23,6 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
 
     @OptIn(InternalStreamChatApi::class)
     private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
-        val attachmentPdf = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_pdf,
-            fileSize = 120.kiloBytes(),
-            title = "Sample pdf file"
-        )
-        val attachmentPpt = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_ppt,
-            fileSize = 567.kiloBytes(),
-            title = "Sample ppt file"
-        )
-        val attachment7z = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_7z,
-            fileSize = 1920.kiloBytes(),
-            title = "Sample archive file"
-        )
-        val attachmentTxt = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_txt,
-            fileSize = 18.kiloBytes(),
-            title = "Sample text file"
-        )
-        val attachmentDoc = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_doc,
-            fileSize = 89.kiloBytes(),
-            title = "Sample doc file"
-        )
-        val attachmentXls = Attachment(
-            type = "file",
-            mimeType = ModelType.attach_mime_xls,
-            fileSize = 5234.kiloBytes(),
-            title = "Sample xls file"
-        )
         val attachmentLink = Attachment(
             ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
             title = "Title",
@@ -167,8 +131,46 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
         )
     }
 
+    @InternalStreamChatApi
     companion object {
         private const val KILOBYTE = 1024
-        private fun Int.kiloBytes() = this * KILOBYTE
+        fun Int.kiloBytes() = this * KILOBYTE
+
+        val attachmentPdf = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_pdf,
+            fileSize = 120.kiloBytes(),
+            title = "Sample pdf file"
+        )
+        val attachmentPpt = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_ppt,
+            fileSize = 567.kiloBytes(),
+            title = "Sample ppt file"
+        )
+        val attachment7z = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_7z,
+            fileSize = 1920.kiloBytes(),
+            title = "Sample archive file"
+        )
+        val attachmentTxt = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_txt,
+            fileSize = 18.kiloBytes(),
+            title = "Sample text file"
+        )
+        val attachmentDoc = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_doc,
+            fileSize = 89.kiloBytes(),
+            title = "Sample doc file"
+        )
+        val attachmentXls = Attachment(
+            type = "file",
+            mimeType = ModelType.attach_mime_xls,
+            fileSize = 5234.kiloBytes(),
+            title = "Sample xls file"
+        )
     }
 }

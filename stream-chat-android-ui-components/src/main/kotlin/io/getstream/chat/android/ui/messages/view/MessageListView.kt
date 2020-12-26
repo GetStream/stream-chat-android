@@ -161,7 +161,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
-            context.getFragmentManager()?.let { framentManager ->
+            context.getFragmentManager()?.let { fragmentManager ->
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
@@ -179,7 +179,7 @@ public class MessageListView : ConstraintLayout {
 
                         setMessageOptionsHandlers(handlers)
                     }
-                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
+                    .show(fragmentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 

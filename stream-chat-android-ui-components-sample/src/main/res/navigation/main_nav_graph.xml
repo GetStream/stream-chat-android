@@ -470,6 +470,11 @@
             app:destination="@id/componentBrowserGiphyMessagesFragment"
             />
 
+        <action
+            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserRepliedMessages"
+            app:destination="@id/componentBrowserRepliedMessagesFragment"
+            />
+
     </fragment>
 
     <fragment
@@ -548,6 +553,12 @@
         android:id="@+id/componentBrowserGiphyMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.GiphyMessageComponentBrowserFragment"
         android:label="ComponentBrowserGiphyFragment"
+        />
+
+    <fragment
+        android:id="@+id/componentBrowserRepliedMessagesFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.RepliedMessagesComponentBrowserFragment"
+        android:label="ComponentBrowserRepliedMessagesFragment"
         />
 
 </navigation>
