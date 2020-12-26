@@ -61,6 +61,7 @@ public class MessageReplyView : FrameLayout {
 
     private fun setUserAvatar(message: Message) {
         binding.avatarView.setUserData(message.user)
+        binding.avatarView.isVisible = true
     }
 
     private fun setAvatarPosition(isMine: Boolean) {
@@ -189,6 +190,6 @@ public class MessageReplyView : FrameLayout {
         private val REPLY_CORNER_RADIUS = 12.dpToPxPrecise()
         private val REPLY_IMAGE_CORNER_RADIUS = 7.dpToPxPrecise()
         private val CONTENT_MARGIN = 4.dpToPx()
-        private val MAX_ELLIPSIZE_CHAR_COUNT = 170
+        private const val MAX_ELLIPSIZE_CHAR_COUNT = 170
     }
 }
