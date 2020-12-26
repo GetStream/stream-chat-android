@@ -39,6 +39,7 @@
     <color name="stream_ui_concrete">#F2F2F2</color>
     <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>
+    <color name="stream_ui_boulder">#7A7A7A</color>
     <color name="stream_ui_border_stroke">#14000000</color>
 
     <array name="stream_ui_avatar_gradient_colors">
@@ -71,7 +72,7 @@
     <color name="stream_ui_background_light">@color/stream_ui_white</color>
     <color name="stream_ui_background_alabaster">@color/stream_ui_alabaster</color>
     <color name="stream_ui_background_alabaster_black">@color/stream_ui_alabaster</color>
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_black</color>
+    <color name="stream_ui_icon_default_tint">@color/stream_ui_boulder</color>
     <color name="stream_ui_icon_light_tint">@color/stream_ui_grey_dark</color>
 
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>

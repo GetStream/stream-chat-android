@@ -49,7 +49,7 @@
         app:layout_constraintTop_toTopOf="@id/bottomBarGuideline"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/stream_ui_icon_default_tint"
+        app:tint="@color/stream_ui_black"
         />
 
     <ImageView
@@ -62,7 +62,7 @@
         app:layout_constraintTop_toTopOf="@id/bottomBarGuideline"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/stream_ui_icon_default_tint"
+        app:tint="@color/stream_ui_black"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
