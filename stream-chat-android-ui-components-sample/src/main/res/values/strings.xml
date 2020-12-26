@@ -54,7 +54,7 @@
     <string name="add_group_channel_select_name_create_button_title">Create</string>
 
     <!-- Chat Info Screens -->
-    <string name="chat_info_user_mention_symbol">\@user</string>
+    <string name="chat_info_user_name">Username</string>
     <string name="chat_info_option_notifications">Notifications</string>
     <string name="chat_info_option_mute_user">Mute User</string>
     <string name="chat_info_option_block_user">Block User</string>

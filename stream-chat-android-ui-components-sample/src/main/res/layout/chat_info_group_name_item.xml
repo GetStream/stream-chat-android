@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:background="@color/stream_ui_background_default"
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
     >
 
     <io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatEditNameView
@@ -19,7 +18,8 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_ui_divider_height"
+        android:layout_gravity="bottom"
         android:background="@drawable/stream_ui_divider"
         />
 
-</LinearLayout>
+</FrameLayout>
