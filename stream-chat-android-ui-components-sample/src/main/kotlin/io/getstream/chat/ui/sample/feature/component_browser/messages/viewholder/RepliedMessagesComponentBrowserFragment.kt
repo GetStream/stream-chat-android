@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -24,7 +25,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
 
     @OptIn(InternalStreamChatApi::class)
     override fun createAdapter(): RecyclerView.Adapter<*> {
-        return SampleAdapter(getDummyDeletedMessagesList(requireContext()))
+        return SampleAdapter(getDummyDeletedMessagesList(requireContext()), currentUser)
     }
 
     @InternalStreamChatApi
@@ -33,7 +34,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)
 
-        val me = randomUser()
+        val me = currentUser
         val other = randomUser()
 
         val theirMessage = Message(
@@ -134,7 +135,8 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
     @InternalStreamChatApi
     private class SampleAdapter(
         private val items: List<MessageListItem.MessageItem>,
-        private val vhFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+        private val me: User,
+        private val vhFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory(me)
     ) : RecyclerView.Adapter<BaseMessageItemViewHolder<MessageListItem.MessageItem>>() {
 
         @Suppress("UNCHECKED_CAST")

@@ -16,7 +16,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(),
-            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, null) },
+            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, currentUser, null) },
             PlainTextWithFileAttachmentsViewHolder::bind
         )
     }

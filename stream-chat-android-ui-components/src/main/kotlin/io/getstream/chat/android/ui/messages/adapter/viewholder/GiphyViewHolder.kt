@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
@@ -11,13 +12,14 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 
 public class GiphyViewHolder(
     parent: ViewGroup,
+    currentUser: User,
     private val listenerContainer: ListenerContainer? = null,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.inflater,
         parent,
         false
     )
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
 

@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -10,7 +11,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 
-internal class ReplyDecorator : BaseDecorator() {
+internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
@@ -45,7 +46,7 @@ internal class ReplyDecorator : BaseDecorator() {
         val replyToMessage = data.message.replyTo
         if (replyToMessage != null) {
             replyView.isVisible = true
-            replyView.setMessage(replyToMessage, data.message.user == replyToMessage.user)
+            replyView.setMessage(replyToMessage, currentUser == replyToMessage.user)
         } else {
             replyView.isVisible = false
         }

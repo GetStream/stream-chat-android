@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
@@ -49,7 +50,7 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val messageViewHolderFactory = MessageListItemViewHolderFactory()
+    private val messageViewHolderFactory = MessageListItemViewHolderFactory(ChatDomain.instance().currentUser)
     private val messageItem: MessageListItem.MessageItem by lazy {
         val wrapper = requireArguments().getSerializable(ARG_MESSAGE)
         wrapper as MessageItemWrapper
