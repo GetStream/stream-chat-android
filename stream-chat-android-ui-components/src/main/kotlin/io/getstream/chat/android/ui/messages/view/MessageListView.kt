@@ -134,6 +134,9 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
+    private var onReplyMessageHandler: (Message) -> Unit = {
+        throw IllegalStateException("onReplyMessageHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -166,6 +169,7 @@ public class MessageListView : ConstraintLayout {
                     muteClickHandler = onMuteUserHandler,
                     blockClickHandler = onBlockUserHandler,
                     deleteClickHandler = onMessageDeleteHandler,
+                    replyClickHandler = onReplyMessageHandler,
                 )
 
                 MessageOptionsOverlayDialogFragment
@@ -827,6 +831,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         this.onBlockUserHandler = blockUserForThisChannel
+    }
+
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+        this.onReplyMessageHandler = onReplyMessageHandler
     }
 
     public fun interface MessageClickListener {

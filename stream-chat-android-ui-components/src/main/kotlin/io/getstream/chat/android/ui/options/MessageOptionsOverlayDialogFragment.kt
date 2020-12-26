@@ -175,6 +175,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
                     dismiss()
                 }
             }
+
+            setReplyListener {
+                handlers.replyClickHandler(messageItem.message)
+                dismiss()
+            }
         }
     }
 
@@ -240,5 +245,6 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         val muteClickHandler: (User) -> Unit,
         val blockClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit,
+        val replyClickHandler: (Message) -> Unit,
     ) : Serializable
 }
