@@ -3,23 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:background="@color/stream_ui_background_default"
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:paddingTop="8dp"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamUiAvatarBorderWidth="0dp"
         />
 
     <TextView
@@ -29,7 +26,8 @@
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
         android:textColor="@color/stream_ui_text_color_strong"
-        android:textSize="@dimen/stream_ui_text_large"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
@@ -44,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_boulder"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
@@ -60,23 +58,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/chat_group_info_owner"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_boulder"
         android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Some owner here"
-        />
-
-    <Space
-        android:id="@+id/space"
-        android:layout_width="0dp"
-        android:layout_height="16dp"
-        app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userAvatar"
         />
 
     <View

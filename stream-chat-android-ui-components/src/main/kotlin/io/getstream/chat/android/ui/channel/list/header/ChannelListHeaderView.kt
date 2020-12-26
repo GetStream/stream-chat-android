@@ -16,7 +16,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
-import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class ChannelListHeaderView : ConstraintLayout {
 
@@ -56,14 +55,9 @@ public class ChannelListHeaderView : ConstraintLayout {
     }
 
     private fun configOnlineTitle(typedArray: TypedArray) {
-        val textStyle = getOnlineTitleTextStyle(typedArray)
-        binding.onlineTextView.apply {
-            text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOnlineTitleText)
-                ?: context.getString(R.string.stream_ui_channels_header_view_online_title)
-            setTextSizePx(textStyle.size.toFloat())
-            setTextColor(textStyle.color)
-            typeface = textStyle.font
-        }
+        getOnlineTitleTextStyle(typedArray).apply(binding.onlineTextView)
+        binding.onlineTextView.text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOnlineTitleText)
+            ?: context.getString(R.string.stream_ui_channels_header_view_online_title)
     }
 
     private fun configOfflineTitleContainer(typedArray: TypedArray) {
