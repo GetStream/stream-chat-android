@@ -18,6 +18,7 @@ import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentTxt
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentXls
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
 class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
@@ -32,6 +33,9 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)
 
+        val me = randomUser()
+        val other = randomUser()
+
         val theirMessage = Message(
             attachments = mutableListOf(
                 Attachment(type = "image", imageUrl = uri1),
@@ -41,7 +45,8 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                 Attachment(type = "image", imageUrl = uri2),
                 Attachment(type = "image", imageUrl = uri3),
             ),
-            text = "Bye!!!"
+            text = "Bye!!!",
+            user = other
         )
 
         return listOf(
@@ -49,7 +54,8 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                 message = Message(
                     attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1)),
                     text = "Some text",
-                    replyTo = Message(text = "Text from reply message")
+                    user = me,
+                    replyTo = Message(text = "Text from reply message", user = other)
                 ),
                 positions = listOf(MessageListItem.Position.TOP),
                 isMine = true,
@@ -57,12 +63,14 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
             MessageListItem.MessageItem(
                 message = Message(
                     text = "Hey! Nice thing!!!",
+                    user = me,
                     replyTo = Message(
                         attachments = mutableListOf(
                             Attachment(type = "image", imageUrl = uri1),
                             Attachment(type = "image", imageUrl = uri2)
                         ),
-                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                        user = other
                     )
                 ),
                 positions = listOf(MessageListItem.Position.MIDDLE),
@@ -72,13 +80,15 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                 message = Message(
                     attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
                     text = "Hi!",
+                    user = me,
                     replyTo = Message(
                         attachments = mutableListOf(
                             Attachment(type = "image", imageUrl = uri1),
                             Attachment(type = "image", imageUrl = uri2),
                             Attachment(type = "image", imageUrl = uri3)
                         ),
-                        text = "Hi!"
+                        text = "Hi!",
+                        user = other
                     )
                 ),
                 positions = listOf(MessageListItem.Position.BOTTOM),
@@ -90,7 +100,8 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         Attachment(type = "image", imageUrl = uri1),
                         Attachment(type = "image", imageUrl = uri2)
                     ),
-                    replyTo = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+                    user = other,
+                    replyTo = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", user = me)
                 ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
@@ -98,10 +109,11 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
             MessageListItem.MessageItem(
                 message = theirMessage,
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
-                isMine = true
+                isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(
+                    user = me,
                     attachments = mutableListOf(
                         attachmentPdf,
                         attachmentPpt,
