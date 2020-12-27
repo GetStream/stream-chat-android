@@ -144,12 +144,23 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
-    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2"/>
+    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/stream_ui_blue</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>>
         <item name="background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="StreamUiMessageOptionItem">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:textColor">@color/stream_ui_black</item>
     </style>
 
 </resources>

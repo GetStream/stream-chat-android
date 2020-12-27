@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.io.Serializable
 import java.util.Date
 
 public data class Message(
@@ -93,4 +94,4 @@ public data class Message(
     @SerializedName("reply_to_message")
     var replyTo: Message? = null
 
-) : CustomObject
+) : CustomObject, Serializable

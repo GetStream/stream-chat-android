@@ -9,14 +9,16 @@
         android:id="@+id/containerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="vertical"
+        android:paddingVertical="@dimen/stream_ui_spacing_medium"
         >
 
         <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
             android:id="@+id/editReactionsView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
             />
 
@@ -25,15 +27,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
-            android:layout_marginBottom="4dp"
             />
 
         <io.getstream.chat.android.ui.options.MessageOptionsView
             android:id="@+id/messageOptionsView"
+            android:layout_width="264dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+            android:visibility="gone"
+            />
+
+        <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+            android:id="@+id/userReactionsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
+            android:layout_marginTop="@dimen/stream_ui_spacing_small"
+            android:visibility="gone"
             />
 
     </LinearLayout>
