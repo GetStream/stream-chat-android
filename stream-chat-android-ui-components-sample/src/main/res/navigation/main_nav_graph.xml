@@ -104,6 +104,26 @@
             android:id="@+id/action_homeFragment_to_addGroupChannelFragment"
             app:destination="@+id/addGroupChannelFragment"
             />
+
+        <action
+            android:id="@+id/action_homeFragment_to_chatInfoFragment"
+            app:destination="@id/chatInfoFragment"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+
+        <action android:id="@+id/action_homeFragment_to_groupChatInfoFragment"
+            app:destination="@id/groupChatInfoFragment">
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
     </fragment>
 
     <fragment
