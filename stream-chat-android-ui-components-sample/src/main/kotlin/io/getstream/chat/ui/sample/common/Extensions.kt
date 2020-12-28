@@ -68,6 +68,10 @@ fun Fragment.navigateSafely(@IdRes resId: Int) {
     findNavController().navigateSafely(resId)
 }
 
+fun Fragment.navigateSafely(directions: NavDirections) {
+    findNavController().navigateSafely(directions)
+}
+
 fun Fragment.initToolbar(toolbar: Toolbar) {
     (requireActivity() as AppCompatActivity).run {
         setSupportActionBar(toolbar)

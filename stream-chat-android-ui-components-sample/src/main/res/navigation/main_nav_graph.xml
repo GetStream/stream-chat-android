@@ -42,6 +42,20 @@
             android:id="@+id/action_userLoginFragment_to_componentBrowserHomeFragment"
             app:destination="@id/componentBrowserHomeFragment"
             />
+
+        <action
+            android:id="@+id/action_userLoginFragment_to_channelFragment"
+            app:destination="@id/chatFragment"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+
     </fragment>
 
     <fragment
@@ -181,6 +195,7 @@
             />
         <argument
             android:name="messageId"
+            android:defaultValue="@null"
             app:argType="string"
             app:nullable="true"
             />

@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
-import io.getstream.chat.ui.sample.data.user.SampleUser
 
 class HomeFragmentViewModel : ViewModel() {
 
@@ -44,7 +43,7 @@ class HomeFragmentViewModel : ViewModel() {
         when (action) {
             is UiAction.LogoutClicked -> {
                 ChatClient.instance().disconnect()
-                App.instance.userRepository.user = SampleUser.None
+                App.instance.userRepository.clearUser()
                 _events.value = Event(UiEvent.NavigateToLoginScreen)
             }
         }
