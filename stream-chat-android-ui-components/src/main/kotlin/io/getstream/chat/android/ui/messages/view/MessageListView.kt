@@ -129,7 +129,7 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
-    private var onReplyMessageHandler: (Message) -> Unit = {
+    private var onReplyMessageHandler: (cid: String, Message) -> Unit = { _, _ ->
         throw IllegalStateException("onReplyMessageHandler must be set")
     }
 
@@ -830,7 +830,7 @@ public class MessageListView : ConstraintLayout {
         this.onBlockUserHandler = blockUserForThisChannel
     }
 
-    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (cid: String, Message) -> Unit) {
         this.onReplyMessageHandler = onReplyMessageHandler
     }
 

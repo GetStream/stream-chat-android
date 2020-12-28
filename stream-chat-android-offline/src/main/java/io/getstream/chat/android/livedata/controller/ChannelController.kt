@@ -68,6 +68,8 @@ public interface ChannelController {
     public val cid: String
     /** LiveData object with the channel data */
     public val channelData: LiveData<ChannelData>
+    /** Contains message if reply happens or null if no reply */
+    public val repliedMessage: LiveData<Message?>
 
     public fun clean()
     public fun toChannel(): Channel

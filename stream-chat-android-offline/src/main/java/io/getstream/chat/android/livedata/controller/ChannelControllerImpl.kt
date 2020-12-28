@@ -110,6 +110,9 @@ internal class ChannelControllerImpl(
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
+    private val _repliedMessage = MutableStateFlow<Message?>(null)
+
+    override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
@@ -1370,7 +1373,8 @@ internal class ChannelControllerImpl(
         return Result(message)
     }
 
-    internal suspend fun replyMessage(repliedMessage: Message): Result<Unit> {
+    internal suspend fun replyMessage(repliedMessage: Message?): Result<Unit> {
+        _repliedMessage.value = repliedMessage
         return Result(Unit)
     }
 
