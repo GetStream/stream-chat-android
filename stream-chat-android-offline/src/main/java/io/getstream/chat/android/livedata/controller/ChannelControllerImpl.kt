@@ -1370,6 +1370,10 @@ internal class ChannelControllerImpl(
         return Result(message)
     }
 
+    internal suspend fun replyMessage(repliedMessage: Message): Result<Unit> {
+        return Result(Unit)
+    }
+
     companion object {
         private const val TYPE_IMAGE = "image"
         private const val TYPE_FILE = "file"

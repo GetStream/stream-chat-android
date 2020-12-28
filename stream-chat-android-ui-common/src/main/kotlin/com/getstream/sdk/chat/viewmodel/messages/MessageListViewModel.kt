@@ -196,6 +196,9 @@ public class MessageListViewModel @JvmOverloads constructor(
                     timeout = null
                 ).enqueue()
             }
+            is Event.ReplyMessage -> {
+                domain.useCases.replyMessage(event.repliedMessage).enqueue()
+            }
         }.exhaustive
     }
 
@@ -294,6 +297,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class MessageReaction(val message: Message, val reactionType: String) : Event()
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val channel: Channel) : Event()
+        public data class ReplyMessage(val repliedMessage: Message) : Event()
     }
 
     public sealed class Mode {

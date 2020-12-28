@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.messages.view
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.FlagMessage
@@ -11,6 +12,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Giph
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
@@ -36,7 +38,8 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         onEvent(MessageReaction(message, reactionType))
     }
     view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
-    view.setOnBlockUserHandler { user, channel -> onEvent(MessageListViewModel.Event.BlockUser(user, channel)) }
+    view.setOnBlockUserHandler { user, channel -> onEvent(BlockUser(user, channel)) }
+    view.setOnReplyMessageHandler { message -> onEvent(ReplyMessage(message)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {
