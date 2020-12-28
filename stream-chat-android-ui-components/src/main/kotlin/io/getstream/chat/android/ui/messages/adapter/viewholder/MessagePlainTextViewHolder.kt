@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
@@ -10,6 +11,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 
 public class MessagePlainTextViewHolder(
     parent: ViewGroup,
+    currentUser: User,
     private val listenerContainer: ListenerContainer?,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
@@ -17,7 +19,7 @@ public class MessagePlainTextViewHolder(
             parent,
             false
         )
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text

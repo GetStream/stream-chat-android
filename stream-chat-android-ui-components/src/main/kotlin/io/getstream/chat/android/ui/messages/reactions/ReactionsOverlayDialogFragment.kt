@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogReactionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -25,7 +26,7 @@ internal class ReactionsOverlayDialogFragment : DialogFragment() {
     private var _binding: StreamUiDialogReactionsBinding? = null
     private val binding get() = _binding!!
 
-    private val messageViewHolderFactory = MessageListItemViewHolderFactory()
+    private val messageViewHolderFactory = MessageListItemViewHolderFactory(ChatDomain.instance().currentUser)
     private val messageItem: MessageListItem.MessageItem by lazy {
         requireArguments().getSerializable(ARG_MESSAGE) as MessageListItem.MessageItem
     }

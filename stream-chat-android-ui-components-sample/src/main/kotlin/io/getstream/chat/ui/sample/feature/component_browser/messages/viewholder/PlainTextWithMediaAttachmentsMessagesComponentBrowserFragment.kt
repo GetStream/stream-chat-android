@@ -15,7 +15,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(requireContext()),
-            { viewGroup -> PlainTextWithMediaAttachmentsViewHolder(viewGroup, null) },
+            { viewGroup -> PlainTextWithMediaAttachmentsViewHolder(viewGroup, currentUser, null) },
             PlainTextWithMediaAttachmentsViewHolder::bind
         )
     }

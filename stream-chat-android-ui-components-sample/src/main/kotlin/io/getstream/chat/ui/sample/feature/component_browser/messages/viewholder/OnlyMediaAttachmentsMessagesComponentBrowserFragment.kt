@@ -14,7 +14,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(requireContext()),
-            { viewGroup -> OnlyMediaAttachmentsViewHolder(viewGroup, null) },
+            { viewGroup -> OnlyMediaAttachmentsViewHolder(viewGroup, currentUser, null) },
             OnlyMediaAttachmentsViewHolder::bind
         )
     }
