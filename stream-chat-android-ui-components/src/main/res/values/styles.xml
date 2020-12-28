@@ -62,10 +62,6 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
-    <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
-    </style>
-
     <style name="StreamUiBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
         <item name="shapeAppearanceOverlay">@style/StreamUiBottomSheetShapeAppearanceOverlay</item>
     </style>
