@@ -17,28 +17,24 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        // setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        // setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        // setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        // setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote)
     }
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
@@ -46,7 +42,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     }
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        // setupThreadRepliesView(viewHolder.binding.threadRepliesFootnote)
     }
 
     private fun setupThreadRepliesView(

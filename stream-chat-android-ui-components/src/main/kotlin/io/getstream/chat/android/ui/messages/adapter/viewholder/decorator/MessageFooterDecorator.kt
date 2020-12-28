@@ -4,8 +4,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
@@ -24,7 +22,6 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
-        setupFooterPosition(viewHolder, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
@@ -65,17 +62,6 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         with(viewHolder.binding) {
             setupMessageEphemeralFooterLabel(footnote.messageFooter, data)
             setupMessageFooterTime(footnote.timeView, data)
-        }
-    }
-
-    private fun setupFooterPosition(vh: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        val footnote = vh.binding.footnote.root
-        val threadReplies = vh.binding.threadRepliesFootnote.root
-        vh.binding.root.updateConstraints {
-            if (data.isMine) {
-            } else if (data.isTheirs) {
-                constrainViewStartToEndOfView(footnote, threadReplies)
-            }
         }
     }
 
