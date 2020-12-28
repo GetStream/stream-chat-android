@@ -55,8 +55,8 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     ) {
         val replyCount = data.message.replyCount
         if (replyCount == 0) {
-            // binding.container.isVisible = false
-            // return
+            binding.threadRepliesFootnote.root.isVisible = false
+            return
         }
 
         if (data.isTheirs) {
