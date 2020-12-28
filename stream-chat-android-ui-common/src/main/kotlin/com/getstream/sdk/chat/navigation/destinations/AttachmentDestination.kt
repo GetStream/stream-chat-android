@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
 
-public class AttachmentDestination(
+public open class AttachmentDestination(
     public val message: Message,
     public val attachment: Attachment,
     context: Context
@@ -94,17 +94,13 @@ public class AttachmentDestination(
         }
     }
 
-    private fun showImageViewer(
+    protected open fun showImageViewer(
         message: Message,
         attachment: Attachment
     ) {
-        val imageUrls: List<String?> = message.attachments
-            .filter {
-                attachment.type == ModelType.attach_image && !attachment.imageUrl.isNullOrEmpty()
-            }
-            .map {
-                it.imageUrl
-            }
+        val imageUrls: List<String> = message.attachments
+            .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+            .mapNotNull(Attachment::imageUrl)
 
         if (imageUrls.isEmpty()) {
             Toast.makeText(context, "Invalid image(s)!", Toast.LENGTH_SHORT).show()
@@ -112,6 +108,7 @@ public class AttachmentDestination(
         }
 
         val attachmentIndex = message.attachments.indexOf(attachment)
+
         ImageViewer.Builder(context, imageUrls)
             .setStartPosition(
                 if (attachmentIndex in imageUrls.indices) attachmentIndex else 0

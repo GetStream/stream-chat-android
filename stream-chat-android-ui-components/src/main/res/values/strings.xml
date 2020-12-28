@@ -121,4 +121,5 @@
 
     <!-- Message Footer -->
     <string name="stream_ui_ephemeral_msg_footer">Only visible to you</string>
+    <string name="stream_ui_date_and_time_pattern">Sent %s at %s</string>
 </resources>

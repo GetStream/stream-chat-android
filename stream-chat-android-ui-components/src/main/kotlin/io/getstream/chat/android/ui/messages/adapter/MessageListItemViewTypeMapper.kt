@@ -3,15 +3,17 @@ package io.getstream.chat.android.ui.messages.adapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
 
-internal object MessageListItemViewTypeMapper {
+@InternalStreamChatApi
+public object MessageListItemViewTypeMapper {
 
-    fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
+    public fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
 
-    fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
+    public fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
         return MessageListItemViewType.values().find { it.ordinal == viewTypeValue }
             ?: error("View type must be a value from MessageListItemViewType")
     }

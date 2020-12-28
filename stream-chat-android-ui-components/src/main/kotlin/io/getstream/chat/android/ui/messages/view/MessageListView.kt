@@ -17,12 +17,12 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -134,6 +134,9 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
+    private var onReplyMessageHandler: (Message) -> Unit = {
+        throw IllegalStateException("onReplyMessageHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -158,7 +161,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
-            context.getFragmentManager()?.let { framentManager ->
+            context.getFragmentManager()?.let { fragmentManager ->
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
@@ -166,6 +169,7 @@ public class MessageListView : ConstraintLayout {
                     muteClickHandler = onMuteUserHandler,
                     blockClickHandler = onBlockUserHandler,
                     deleteClickHandler = onMessageDeleteHandler,
+                    replyClickHandler = onReplyMessageHandler,
                 )
 
                 MessageOptionsOverlayDialogFragment
@@ -175,7 +179,7 @@ public class MessageListView : ConstraintLayout {
 
                         setMessageOptionsHandlers(handlers)
                     }
-                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
+                    .show(fragmentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 
@@ -187,7 +191,7 @@ public class MessageListView : ConstraintLayout {
         AttachmentClickListener { message, attachment ->
             ChatUI.instance()
                 .navigator
-                .navigate(AttachmentDestination(message, attachment, context))
+                .navigate(GalleryImageAttachmentDestination(message, attachment, context))
         }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
@@ -520,7 +524,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
@@ -827,6 +831,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         this.onBlockUserHandler = blockUserForThisChannel
+    }
+
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+        this.onReplyMessageHandler = onReplyMessageHandler
     }
 
     public fun interface MessageClickListener {
