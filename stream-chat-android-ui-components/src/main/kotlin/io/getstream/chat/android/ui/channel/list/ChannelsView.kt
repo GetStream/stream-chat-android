@@ -10,10 +10,15 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
@@ -29,6 +34,13 @@ public class ChannelsView @JvmOverloads constructor(
     private val channelListView: ChannelListView =
         ChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
 
+    // These listeners live here because they are only triggered via ChannelActionsDialogFragment and don't need
+    // to be passed to ViewHolders.
+    private var channelInfoListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT
+
+    private var channelLeaveListener: ChannelListView.ChannelClickListener =
+        ChannelListView.ChannelClickListener.DEFAULT
+
     init {
         addView(channelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
@@ -41,6 +53,10 @@ public class ChannelsView @JvmOverloads constructor(
             isVisible = false
             addView(loadingView, defaultChildLayoutParams)
         }
+
+        val adapter = channelListView.requireAdapter()
+
+        configureDefaultMoreOptionsListener(context, adapter)
 
         parseAttrs(attrs)
     }
@@ -114,7 +130,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the callback to be invoked on channel item click
      */
-    public fun setChannelClickListener(listener: ChannelListView.ChannelClickListener?) {
+    public fun setChannelItemClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setChannelClickListener(listener)
     }
 
@@ -136,14 +152,48 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setUserClickListener(listener)
     }
 
-    public fun setDeleteListener(listener: ChannelListView.ChannelClickListener?) {
+    /**
+     * Allows clients to set a click listener to be notified of delete clicks via channel actions
+     * or view holder swipe menu
+     *
+     * @param listener - the callback to be invoked when delete is clicked
+     */
+    public fun setChannelDeleteClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setChannelDeleteClickListener(listener)
     }
 
+    /**
+     * Allows clients to set a click listener to be notified of "more options" clicks in ViewHolder items
+     *
+     * @param listener - the callback to be invoked when "more options" is clicked
+     */
     public fun setMoreOptionsClickListener(listener: ChannelListView.ChannelClickListener?) {
         channelListView.setMoreOptionsClickListener(listener)
     }
 
+    /**
+     * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu
+     *
+     * @param listener - the callback to be invoked when "channel info" is clicked
+     */
+    public fun setChannelInfoClickListener(listener: ChannelListView.ChannelClickListener?) {
+        channelInfoListener = listener ?: ChannelListView.ChannelClickListener.DEFAULT
+    }
+
+    /**
+     * Allows a client to set a click listener to be notified of "leave channel" clicks in the "more options" menu
+     *
+     * @param listener - the callback to be invoked when "leave channel" is clicked
+     */
+    public fun setChannelLeaveClickListener(listener: ChannelListView.ChannelClickListener?) {
+        channelLeaveListener = listener ?: ChannelListView.ChannelClickListener.DEFAULT
+    }
+
+    /**
+     * Allows a client to set a swipe listener to be notified of swipe details in order to take action
+     *
+     * @param listener - the set of functions to be invoked during a swipe's lifecycle
+     */
     public fun setSwipeListener(listener: ChannelListView.SwipeListener?) {
         channelListView.setSwipeListener(listener)
     }
@@ -202,5 +252,42 @@ public class ChannelsView @JvmOverloads constructor(
 
     private fun defaultEmptyStateView(): View = TextView(context).apply {
         setText(R.string.stream_ui_channels_empty_state_label)
+    }
+
+    private fun configureDefaultMoreOptionsListener(
+        context: Context,
+        adapter: ChannelListItemAdapter
+    ) {
+        setMoreOptionsClickListener { channel ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                ChannelActionsDialogFragment
+                    .newInstance(channel.cid, !channel.isDirectMessaging())
+                    .apply {
+                        channelActionListener = object : ChannelActionsDialogFragment.ChannelActionListener {
+
+                            override fun onDeleteConversationClicked(cid: String) {
+                                with(adapter) {
+                                    listenerContainer.deleteClickListener.onClick(getChannel(cid))
+                                }
+                            }
+
+                            override fun onLeaveChannelClicked(cid: String) {
+                                with(adapter) {
+                                    channelLeaveListener.onClick(getChannel(cid))
+                                }
+                            }
+
+                            override fun onMemberSelected(member: Member) {
+                                adapter.listenerContainer.userClickListener.onClick(member.user)
+                            }
+
+                            override fun onChannelInfoSelected(cid: String) {
+                                channelInfoListener.onClick(adapter.getChannel(cid))
+                            }
+                        }
+                    }
+                    .show(fragmentManager, null)
+            }
+        }
     }
 }

@@ -48,6 +48,7 @@ public class MessageOptionsView : FrameLayout {
             binding.blockTV.configureListItem(configuration.blockText, configuration.blockIcon, iconsTint)
             binding.deleteTV.isVisible = false
         } else {
+            binding.replyTV.isVisible = false
             binding.flagTV.isVisible = false
             binding.muteTV.isVisible = false
             binding.blockTV.isVisible = false
@@ -83,6 +84,12 @@ public class MessageOptionsView : FrameLayout {
         val deleteConfirmationPositiveButton: String,
         val deleteConfirmationNegativeButton: String,
     ) : Serializable
+
+    public fun setReplyListener(onReplyListener: () -> Unit) {
+        binding.replyTV.setOnClickListener {
+            onReplyListener()
+        }
+    }
 
     public fun setThreadListener(onThreadReply: () -> Unit) {
         binding.threadReplyTV.setOnClickListener {

@@ -14,6 +14,7 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
@@ -133,7 +134,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory()
+        viewHolder = MessageListItemViewHolderFactory(ChatDomain.instance().currentUser)
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
@@ -194,6 +195,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageOptionsHandlers.blockClickHandler(message.user)
                 dismiss()
             }
+            setReplyListener {
+                messageOptionsHandlers.replyClickHandler(messageItem.message)
+                dismiss()
+            }
             setDeleteMessageListener {
                 if (configuration.deleteConfirmationEnabled) {
                     AlertDialog.Builder(requireContext())
@@ -250,6 +255,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         val muteClickHandler: (User) -> Unit,
         val blockClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit,
+        val replyClickHandler: (Message) -> Unit,
     ) : Serializable
 
     internal enum class OptionsMode {

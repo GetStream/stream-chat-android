@@ -20,5 +20,6 @@
                 android:value="androidx.startup"
                 />
         </provider>
+        <activity android:name=".images.AttachmentGalleryActivity"/>
     </application>
 </manifest>

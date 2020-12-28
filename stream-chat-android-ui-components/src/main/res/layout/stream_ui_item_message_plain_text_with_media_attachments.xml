@@ -23,7 +23,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@id/mediaAttachmentsGroupView"
         app:layout_constraintStart_toStartOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintTop_toTopOf="@id/mediaAttachmentsGroupView"
+        app:layout_constraintTop_toTopOf="@id/replyView"
+        />
+
+    <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+        android:id="@+id/replyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        app:layout_constraintLeft_toLeftOf="@id/backgroundView"
+        app:layout_constraintRight_toRightOf="@id/backgroundView"
+        app:layout_constraintTop_toBottomOf="@id/reactionsView"
+        android:visibility="gone"
+        tools:visibility="visible"
         />
 
     <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentsGroupView
@@ -35,7 +47,7 @@
         android:padding="1dp"
         app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintTop_toBottomOf="@id/replyView"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
