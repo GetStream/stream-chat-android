@@ -41,14 +41,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
+    private val currentUser = ChatDomain.instance().currentUser
+
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
-    }
-    private val currentUserId by lazy {
-        requireArguments().getString(ARG_CURRENT_USER_ID)
-    }
-    private val message: Message by lazy {
-        requireArguments().getSerializable(ARG_MESSAGE) as Message
     }
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -57,7 +53,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessageListItem.Position.BOTTOM),
-            isMine = message.user.id == currentUserId
+            isMine = message.user.id == currentUser.id
         )
     }
     private val decorators = listOf<Decorator>(
@@ -68,6 +64,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         LinkAttachmentDecorator()
     )
 
+    private lateinit var message: Message
     private lateinit var viewHolder: BaseMessageItemViewHolder<*>
 
     private var reactionClickHandler: ReactionClickHandler? = null
@@ -85,6 +82,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        consumeMessageArg()
         setupDismissibleArea()
         setupEditReactionsView()
         setupMessageView()
@@ -114,6 +112,13 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         this.messageOptionsHandlers = messageOptionsHandlers
     }
 
+    private fun consumeMessageArg() {
+        messageArg?.let {
+            message = it
+            messageArg = null
+        } ?: dismiss()
+    }
+
     private fun setupDismissibleArea() {
         binding.containerView.setOnClickListener {
             dismiss()
@@ -134,7 +139,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory(ChatDomain.instance().currentUser)
+        viewHolder = MessageListItemViewHolderFactory(currentUser)
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
@@ -267,38 +272,35 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         const val TAG = "MessageOptionsDialogFragment"
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
-        private const val ARG_CURRENT_USER_ID = "currentUserId"
-        private const val ARG_MESSAGE = "message"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
 
+        var messageArg: Message? = null
+
         fun newReactionOptionsInstance(
-            currentUserId: String,
             message: Message
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, currentUserId, message, null)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, null)
         }
 
         fun newMessageOptionsInstance(
-            currentUserId: String,
             message: Message,
             configuration: MessageOptionsView.Configuration
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, currentUserId, message, configuration)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
-            currentUserId: String,
             message: Message,
             configuration: MessageOptionsView.Configuration?,
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_CURRENT_USER_ID to currentUserId,
-                    ARG_MESSAGE to message,
                     ARG_OPTIONS_CONFIG to configuration
                 )
+                // pass message via static field
+                messageArg = message
             }
         }
     }
