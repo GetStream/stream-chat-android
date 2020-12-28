@@ -1,11 +1,8 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.constrainViewStartToStartOfView
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
@@ -65,13 +62,35 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         if (data.isTheirs) {
             binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
             binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else if (data.isMine) {
+        } else {
             binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
             binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
         }
 
-        binding.root.updateConstraints {
-            applyGravity(binding.threadRepliesFootnote.root, binding.messageText, binding.messageText, data)
+        ConstraintSet().apply {
+            clone(binding.root)
+
+            val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
+            val footnoteId = binding.footnote.root.id
+
+            clear(threadRepliesFootnoteId, ConstraintSet.START)
+            clear(threadRepliesFootnoteId, ConstraintSet.LEFT)
+            clear(threadRepliesFootnoteId, ConstraintSet.END)
+            clear(threadRepliesFootnoteId, ConstraintSet.RIGHT)
+            clear(footnoteId, ConstraintSet.END)
+            clear(footnoteId, ConstraintSet.LEFT)
+            clear(footnoteId, ConstraintSet.START)
+            clear(footnoteId, ConstraintSet.RIGHT)
+
+            if (data.isTheirs) {
+                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.messageContainer.id, ConstraintSet.LEFT)
+                connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
+            } else {
+                connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.messageContainer.id, ConstraintSet.RIGHT)
+                connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
+            }
+
+            applyTo(binding.root)
         }
 
         binding.root.isVisible = true
@@ -81,16 +100,5 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 replyCount,
                 replyCount
             )
-    }
-
-    private fun ConstraintSet.applyGravity(
-        targetView: View,
-        startView: View,
-        endView: View,
-        data: MessageListItem.MessageItem
-    ) {
-        clear(targetView.id, ConstraintSet.START)
-        clear(targetView.id, ConstraintSet.END)
-        if (data.isTheirs) constrainViewStartToStartOfView(targetView, startView)
     }
 }
