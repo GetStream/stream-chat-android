@@ -119,4 +119,7 @@
 
     <!-- Message ViewHolders -->
     <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
+
+    <!-- Attachment Gallery -->
+    <dimen name="stream_ui_gallery_default_bar_height">56dp</dimen>
 </resources>

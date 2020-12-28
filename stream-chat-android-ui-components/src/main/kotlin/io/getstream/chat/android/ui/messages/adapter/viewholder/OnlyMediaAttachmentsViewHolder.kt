@@ -23,20 +23,28 @@ public class OnlyMediaAttachmentsViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        if (data.message.attachments.isMedia()) {
-            showAttachments(data.message.attachments, data.isMine)
+        listenerContainer?.let { listeners ->
+            binding.run {
+                mediaAttachmentsGroupView.listener =
+                    { attachment -> listeners.attachmentClickListener.onAttachmentClick(data.message, attachment) }
+
+                mediaAttachmentsGroupView.setOnLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+
+                reactionsView.setReactionClickListener {
+                    listeners.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+            }
         }
 
-        binding.mediaAttachmentsGroupView.setOnLongClickListener {
-            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
-            true
-        }
-        binding.reactionsView.setReactionClickListener {
-            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
+        if (data.message.attachments.isMedia()) {
+            showAttachments(data.message.attachments)
         }
     }
 
-    private fun showAttachments(imageAttachments: Collection<Attachment>, isMine: Boolean) {
+    private fun showAttachments(imageAttachments: Collection<Attachment>) {
         binding.mediaAttachmentsGroupView.showAttachments(*imageAttachments.toTypedArray())
     }
 }

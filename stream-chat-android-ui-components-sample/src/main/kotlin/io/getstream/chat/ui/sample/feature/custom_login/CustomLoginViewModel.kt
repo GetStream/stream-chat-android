@@ -43,11 +43,13 @@ class CustomLoginViewModel : ViewModel() {
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        App.instance.userRepository.user = SampleUser(
-            id = loginCredentials.userId,
-            name = loginCredentials.userName,
-            token = loginCredentials.userToken,
-            image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+        App.instance.userRepository.setUser(
+            SampleUser(
+                id = loginCredentials.userId,
+                name = loginCredentials.userName,
+                token = loginCredentials.userToken,
+                image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+            )
         )
         ChatClient.instance()
             .setUser(

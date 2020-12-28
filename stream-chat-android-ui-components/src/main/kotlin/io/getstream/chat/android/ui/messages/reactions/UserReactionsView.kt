@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
+import io.getstream.chat.android.ui.utils.extensions.isMine
 
 public class UserReactionsView : FrameLayout {
 
@@ -65,7 +66,7 @@ public class UserReactionsView : FrameLayout {
 
         val reactionItems = message.latestReactions
             .filter { it.user != null }
-            .map { ReactionItem(it, message.ownReactions.contains(it)) }
+            .map { ReactionItem(it, it.isMine()) }
         userReactionsAdapter.submitList(reactionItems)
     }
 

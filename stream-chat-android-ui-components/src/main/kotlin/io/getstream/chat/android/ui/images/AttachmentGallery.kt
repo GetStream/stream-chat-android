@@ -36,9 +36,10 @@ public class AttachmentGallery : ConstraintLayout {
         attr?.let(::configureAttributes)
     }
 
-    public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>) {
+    public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>, currentIndex: Int = 0) {
         binding.attachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
         configPositionCount(imageList.size)
+        binding.attachmentGallery.setCurrentItem(currentIndex, false)
     }
 
     public fun setShareButtonClickListener(listener: OnClickListener) {

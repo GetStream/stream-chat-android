@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.ui.utils.UiUtils
+import io.getstream.chat.android.ui.utils.extensions.isMineReactionOfType
 
 public class EditReactionsView : ReactionsView {
     private val bubblePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -42,8 +43,8 @@ public class EditReactionsView : ReactionsView {
 
     override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionItem> {
         return UiUtils.getReactionTypes().keys.map { reactionType ->
-            message.ownReactions
-                .any { it.type == reactionType }
+            message.latestReactions
+                .any { it.isMineReactionOfType(reactionType) }
                 .let { isMine -> ReactionItem(Reaction(type = reactionType), isMine) }
         }
     }

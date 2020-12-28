@@ -21,15 +21,23 @@ public class PlainTextWithMediaAttachmentsViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        listenerContainer?.let { listeners ->
+            binding.run {
+                mediaAttachmentsGroupView.listener = { attachment ->
+                    listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
+                }
+                backgroundView.setOnLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                reactionsView.setReactionClickListener {
+                    listeners.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+            }
+        }
+
         binding.messageText.text = data.message.text
         val mediaAttachments = data.message.attachments.filter { attachment -> attachment.hasLink().not() }
         binding.mediaAttachmentsGroupView.showAttachments(*mediaAttachments.toTypedArray())
-        binding.backgroundView.setOnLongClickListener {
-            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
-            true
-        }
-        binding.reactionsView.setReactionClickListener {
-            listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
-        }
     }
 }
