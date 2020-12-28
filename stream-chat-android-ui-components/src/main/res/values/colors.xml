@@ -15,7 +15,6 @@
     <color name="stream_ui_grey_light_opacity_50">#80E6E6E6</color>
     <color name="stream_ui_light_red">#FF3742</color>
     <color name="stream_ui_blue_alice">#E9F2FF</color>
-    <color name="stream_ui_boulder">#7a7a7a</color>
     <color name="stream_ui_bunker">#101418</color>
 
     <color name="stream_ui_text_black">@color/stream_ui_black</color>
