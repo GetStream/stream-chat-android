@@ -54,6 +54,17 @@
     <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/StreamUiBottomSheetStyle</item>
     </style>
+  
+    <style name="StreamUiChatInfoAvatarStyle" parent="StreamUiBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_extra_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_extra_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_extra_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
+    </style>
 
     <style name="StreamUiBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
         <item name="shapeAppearanceOverlay">@style/StreamUiBottomSheetShapeAppearanceOverlay</item>

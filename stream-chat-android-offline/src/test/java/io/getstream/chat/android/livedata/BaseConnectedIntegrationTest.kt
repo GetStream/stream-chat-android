@@ -33,7 +33,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         }
     }
 
-    fun setupChatDomain(client: ChatClient): ChatDomainImpl {
+    suspend fun setupChatDomain(client: ChatClient): ChatDomainImpl {
         db = createRoomDb()
 
         val context = ApplicationProvider.getApplicationContext() as Context
@@ -64,7 +64,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 return 1000
             }
         }
-
+        chatDomainImpl.repos.users.insert(data.userMap.values.toList())
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
                 println("error event$it")

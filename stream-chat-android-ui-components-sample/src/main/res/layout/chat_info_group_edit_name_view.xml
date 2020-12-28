@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingVertical="16dp"
-    android:paddingStart="8dp"
-    android:paddingEnd="16dp"
+    android:layout_height="56dp"
+    android:paddingStart="@dimen/spacing_small"
+    android:paddingEnd="@dimen/spacing_medium"
     >
 
     <TextView
@@ -14,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chat_group_info_edit_name_label"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_boulder"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,20 +24,20 @@
         android:id="@+id/nameEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_tiny"
         android:background="@color/stream_ui_transparent"
         android:hint="@string/chat_group_info_edit_name_hint"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:padding="8dp"
+        android:paddingHorizontal="@dimen/spacing_small"
         android:singleLine="true"
         android:textColor="@color/stream_ui_text_color_strong"
         android:textColorHint="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/labelTextView"
         app:layout_constraintEnd_toStartOf="@id/cancelButton"
         app:layout_constraintStart_toEndOf="@id/labelTextView"
-        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="Autofill"
         />
 
@@ -53,7 +52,7 @@
         app:layout_constraintEnd_toStartOf="@id/checkButton"
         app:layout_constraintStart_toEndOf="@id/nameEditText"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/boulder"
+        app:tint="@color/stream_ui_icon_default_tint"
         tools:ignore="ContentDescription"
         />
 

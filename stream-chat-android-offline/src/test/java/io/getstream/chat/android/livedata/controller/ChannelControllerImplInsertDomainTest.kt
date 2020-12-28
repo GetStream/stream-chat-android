@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -81,9 +83,8 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
-            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        )
+        ) { data.userMap.getValue(it) }
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -105,9 +106,8 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
-            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        )
+        ) { data.userMap.getValue(it) }
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
@@ -135,7 +135,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     @Test
     fun insertReaction() = runBlocking {
         // check DAO layer and converters
-        val reactionEntity = ReactionEntity(data.reaction1)
+        val reactionEntity = data.reaction1.toEntity()
         chatDomainImpl.repos.reactions.insert(reactionEntity)
         val reactionEntity2 = chatDomainImpl.repos.reactions.select(
             reactionEntity.messageId,
@@ -146,7 +146,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
         // verify conversion logic is ok
         val userMap = mutableMapOf(data.user1.id to data.user1)
-        val reactionConverted = reactionEntity2.toReaction(userMap)
+        val reactionConverted = reactionEntity2.toModel { userMap.getValue(it) }
         Truth.assertThat(reactionConverted).isEqualTo(data.reaction1)
     }
 

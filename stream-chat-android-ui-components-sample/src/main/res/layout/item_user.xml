@@ -37,7 +37,7 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_user_subtitle"
-        android:textColor="@color/boulder"
+        android:textColor="@color/stream_ui_boulder"
         android:textSize="12sp"
         />
 
@@ -68,4 +68,5 @@
         app:layout_constraintStart_toEndOf="@+id/flow"
         app:layout_constraintTop_toTopOf="parent"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

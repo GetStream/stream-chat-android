@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
 
 internal class ChannelRepository(
     var channelDao: ChannelDao,
@@ -29,7 +30,7 @@ internal class ChannelRepository(
     }
 
     suspend fun insertChannels(channels: Collection<Channel>) {
-        insert(channels.map(::ChannelEntity))
+        insert(channels.map(Channel::toEntity))
     }
 
     private suspend fun insert(channelEntities: List<ChannelEntity>) {

@@ -41,6 +41,7 @@ class ChatInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initToolbar(binding.toolbar)
+        binding.optionsRecyclerView.itemAnimator = null
         binding.optionsRecyclerView.adapter = adapter
         bindChatInfoViewModel()
     }

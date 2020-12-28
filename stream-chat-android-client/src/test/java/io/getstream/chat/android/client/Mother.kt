@@ -5,6 +5,7 @@ import com.flextrade.kfixture.KFixture
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 
@@ -20,6 +21,7 @@ internal object Mother {
     fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
         return KFixture(fixture) {
             sameInstance(Mute::class.java, mock())
+            sameInstance(Message::class.java, mock())
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
         } <Channel>().apply(channelBuilder)
     }
