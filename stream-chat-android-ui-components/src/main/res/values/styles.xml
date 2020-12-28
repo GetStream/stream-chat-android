@@ -154,4 +154,18 @@
         <item name="background">?android:attr/colorBackground</item>
     </style>
 
+    <style name="StreamUIAttachmentGalleryToolbarTitleTextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">19sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StreamUIAttachmentGalleryToolbarSubtitleTextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/stream_ui_text_color_subtitle</item>
+    </style>
+
 </resources>

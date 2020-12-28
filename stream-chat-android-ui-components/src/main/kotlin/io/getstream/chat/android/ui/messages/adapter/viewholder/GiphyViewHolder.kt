@@ -21,28 +21,30 @@ public class GiphyViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
+        if (data.isMine) {
+            data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
 
-        binding.giphyTextLabel.text = trimText(data.message.text)
+            binding.giphyTextLabel.text = trimText(data.message.text)
 
-        listenerContainer?.also { listeners ->
-            binding.cancelButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(
-                    data.message,
-                    GiphyAction.CANCEL
-                )
-            }
-            binding.sendButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(
-                    data.message,
-                    GiphyAction.SEND
-                )
-            }
-            binding.nextButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(
-                    data.message,
-                    GiphyAction.SHUFFLE
-                )
+            listenerContainer?.also { listeners ->
+                binding.cancelButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(
+                        data.message,
+                        GiphyAction.CANCEL
+                    )
+                }
+                binding.sendButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(
+                        data.message,
+                        GiphyAction.SEND
+                    )
+                }
+                binding.nextButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(
+                        data.message,
+                        GiphyAction.SHUFFLE
+                    )
+                }
             }
         }
     }
