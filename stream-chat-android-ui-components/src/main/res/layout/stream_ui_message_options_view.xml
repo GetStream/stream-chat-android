@@ -19,12 +19,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/stream_ui_background_light"
-            android:divider="@color/stream_ui_divider"
             android:minWidth="200dp"
             android:orientation="vertical"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
+            android:divider="@color/stream_ui_divider"
+            android:background="@color/stream_ui_background_light"
             android:showDividers="middle"
             >
 

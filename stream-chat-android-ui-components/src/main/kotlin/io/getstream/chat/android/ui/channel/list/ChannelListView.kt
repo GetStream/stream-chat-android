@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
@@ -18,8 +17,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemS
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
-import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
@@ -39,13 +36,7 @@ public class ChannelListView @JvmOverloads constructor(
         setLayoutManager(layoutManager)
         adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
-        setMoreOptionsClickListener { channel ->
-            context.getFragmentManager()?.let { fragmentManager ->
-                ChannelActionsDialogFragment
-                    .newInstance(channel.cid, !channel.isDirectMessaging())
-                    .show(fragmentManager, null)
-            }
-        }
+
         addItemDecoration(dividerDecoration)
     }
 
@@ -54,7 +45,7 @@ public class ChannelListView @JvmOverloads constructor(
         return ChannelListViewStyle(context, attrs)
     }
 
-    private fun requireAdapter(): ChannelListItemAdapter {
+    internal fun requireAdapter(): ChannelListItemAdapter {
         val logger = ChatLogger.get("ChannelListView::requireAdapter")
         val channelAdapter = adapter
 
@@ -262,40 +253,30 @@ public class ChannelListView @JvmOverloads constructor(
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeChanged(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     dX: Float,
                     totalDeltaX: Float
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeCompleted(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeCanceled(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
-                override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) {
-                    // no-op
-                }
+                override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) = Unit
             }
         }
     }
