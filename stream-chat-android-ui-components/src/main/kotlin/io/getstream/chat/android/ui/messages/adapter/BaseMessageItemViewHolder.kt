@@ -22,7 +22,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     currentUser: User,
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
-    private val decorators = listOf<Decorator>(
+    private var decorators = listOf<Decorator>(
         BackgroundDecorator(),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
@@ -36,6 +36,10 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         ReplyDecorator(currentUser),
     )
 
+    internal fun setDecorators(decorators: List<Decorator>) {
+        this.decorators = decorators
+    }
+
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
         decorators.forEach { it.decorate(this, data) }
         bindData(data, diff)
@@ -45,8 +49,9 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     @Suppress("UNCHECKED_CAST")
-    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff) =
+    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) {
         bind(messageListItem as T, diff)
+    }
 
     public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
 }
