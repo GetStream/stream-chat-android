@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.channel.actions
 
-import android.content.Context
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -16,13 +15,13 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBi
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
-        listener?.onMemberSelected(it)
+        channelActionListener?.onMemberSelected(it)
     }
 
     private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
     private val isGroup: Boolean by lazy { requireArguments().getBoolean(ARG_IS_GROUP, false) }
 
-    private var listener: OnChannelActionSelectedListener? = null
+    var channelActionListener: ChannelActionListener? = null
 
     private val channelActionsViewModel: ChannelActionsViewModel by viewModels {
         ChannelActionsViewModelFactory(cid, isGroup)
@@ -31,32 +30,25 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private var _binding: StreamUiFragmentChannelActionsBinding? = null
     private val binding get() = _binding!!
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = (parentFragment ?: requireActivity()) as? OnChannelActionSelectedListener
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = StreamUiFragmentChannelActionsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        channelActionsViewModel.members.observe(viewLifecycleOwner) {
-            membersAdapter.submitList(it)
-            bindMemberNames(it)
-            bindMembersInfo(it)
+        bindViews()
+        // render
+        channelActionsViewModel.state.observe(viewLifecycleOwner) { state ->
+            with(state) {
+                membersAdapter.submitList(members)
+                bindMemberNames(members)
+                bindMembersInfo(members)
+            }
         }
     }
 
@@ -65,29 +57,33 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    override fun getTheme(): Int = R.style.StreamUiChannelActionsBottomSheetDialog
+    override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    private fun setupViews() {
+    private fun bindViews() {
         with(binding) {
-            if (isGroup) {
-                leaveGroupButton.isVisible = true
-                deleteChannelButton.isVisible = true
-                deleteContactButton.isVisible = false
-                leaveGroupButton.setOnClickListener {
-                    listener?.onLeaveGroupClicked(cid)
-                }
-                deleteChannelButton.setOnClickListener {
-                    listener?.onDeleteChannelClicked(cid)
-                }
-            } else {
-                leaveGroupButton.isVisible = false
-                deleteChannelButton.isVisible = false
-                deleteContactButton.isVisible = true
-                deleteContactButton.setOnClickListener {
-                    listener?.onDeleteContactClicked(cid)
-                }
-            }
             recyclerView.adapter = membersAdapter
+
+            binding.leaveGroupButton.isVisible = isGroup
+
+            // these buttons all trigger side effects and don't alter state
+            leaveGroupButton.setOnClickListener {
+                channelActionListener?.onLeaveChannelClicked(cid)
+                dismiss()
+            }
+
+            deleteButton.setOnClickListener {
+                channelActionListener?.onDeleteConversationClicked(cid)
+                dismiss()
+            }
+
+            viewInfoButton.setOnClickListener {
+                channelActionListener?.onChannelInfoSelected(cid)
+                dismiss()
+            }
+
+            cancelButton.setOnClickListener {
+                dismiss()
+            }
         }
     }
 
@@ -119,14 +115,14 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    interface OnChannelActionSelectedListener {
-        fun onDeleteChannelClicked(cid: String)
+    interface ChannelActionListener {
+        fun onDeleteConversationClicked(cid: String)
 
-        fun onDeleteContactClicked(cid: String)
-
-        fun onLeaveGroupClicked(cid: String)
+        fun onLeaveChannelClicked(cid: String)
 
         fun onMemberSelected(member: Member)
+
+        fun onChannelInfoSelected(cid: String)
     }
 
     companion object {

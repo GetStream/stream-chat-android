@@ -4,11 +4,11 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
-import io.getstream.chat.android.ui.databinding.StreamChannelListLoadingViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiChannelListLoadingViewBinding
 
 public class ChannelListLoadingMoreViewHolder(
     parent: ViewGroup,
-    binding: StreamChannelListLoadingViewBinding = StreamChannelListLoadingViewBinding.inflate(
+    binding: StreamUiChannelListLoadingViewBinding = StreamUiChannelListLoadingViewBinding.inflate(
         parent.inflater,
         parent,
         false

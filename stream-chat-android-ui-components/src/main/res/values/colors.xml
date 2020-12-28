@@ -2,7 +2,12 @@
 <resources>
     <!-- Official Stream Color -->
     <color name="stream_ui_blue">#005FFF</color>
-
+    <color name="stream_ui_white">#FFFFFF</color>
+    <color name="stream_ui_alabaster">#FCFCFC</color>
+    <color name="stream_ui_concrete">#F2F2F2</color>
+    <color name="stream_ui_woodsmoke">#13151B</color>
+    <color name="stream_ui_mirage">#141924</color>
+    <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey">#808080</color>
     <color name="stream_ui_grey_medium_light">#CCCCCC</color>
     <color name="stream_ui_grey_light">#F5F5F5</color>
@@ -10,6 +15,7 @@
     <color name="stream_ui_grey_light_opacity_50">#80E6E6E6</color>
     <color name="stream_ui_light_red">#FF3742</color>
     <color name="stream_ui_blue_alice">#E9F2FF</color>
+    <color name="stream_ui_bunker">#101418</color>
 
     <color name="stream_ui_text_black">@color/stream_ui_black</color>
     <color name="stream_ui_text_grey">@color/stream_ui_grey</color>
@@ -34,10 +40,6 @@
     <color name="stream_ui_black_30">#4D000000</color>
     <color name="stream_ui_black_50">#80000000</color>
     <color name="stream_ui_black_60">#99000000</color>
-    <color name="stream_ui_white">#FFFFFF</color>
-    <color name="stream_ui_alabaster">#FCFCFC</color>
-    <color name="stream_ui_concrete">#F2F2F2</color>
-    <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>
     <color name="stream_ui_boulder">#7A7A7A</color>
     <color name="stream_ui_border_stroke">#14000000</color>
@@ -60,12 +62,13 @@
     <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_white</color>
 
     <color name="stream_ui_attachment_dialog_header_color">#F5F5F5</color>
-    <color name="stream_ui_attachment_dialog_button_enabled">#7A7A7A</color>
+    <color name="stream_ui_attachment_dialog_button_enabled">@color/stream_ui_boulder</color>
     <color name="stream_ui_attachment_dialog_button_disabled">#E6E6E6</color>
 
     <color name="stream_ui_input_message_send_button">#0076FF</color>
 
     <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_black</color>
+    <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_concrete</color>
     <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
 
     <color name="stream_ui_background_default">@color/stream_ui_white</color>
@@ -79,7 +82,7 @@
     <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>
     <color name="stream_ui_text_color_subtitle">#7A7A7A</color>
 
-    <color name="stream_ui_divider">@color/stream_ui_black_8</color>
+    <color name="stream_ui_divider">@color/stream_ui_gray_light</color>
 
     <color name="stream_ui_section_item_color">@color/stream_ui_gray_light</color>
 
