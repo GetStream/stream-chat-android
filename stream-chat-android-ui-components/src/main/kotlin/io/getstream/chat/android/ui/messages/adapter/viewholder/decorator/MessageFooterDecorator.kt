@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -28,7 +28,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -36,7 +36,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -44,7 +44,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -52,7 +52,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupMessageEphemeralFooterLabel(viewHolder.binding.footnote.messageFooter, data)
+        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
         setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
     }
 
@@ -60,12 +60,12 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
         with(viewHolder.binding) {
-            setupMessageEphemeralFooterLabel(footnote.messageFooter, data)
+            setupEphemeralMessageFooterLabel(footnote.messageFooter, data)
             setupMessageFooterTime(footnote.timeView, data)
         }
     }
 
-    private fun setupMessageEphemeralFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
+    private fun setupEphemeralMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
         when {
             data.positions.contains(MessageListItem.Position.BOTTOM).not() || !data.message.isEphemeral() -> {
                 textView.isVisible = false
