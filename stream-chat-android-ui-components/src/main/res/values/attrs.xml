@@ -213,6 +213,10 @@
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiCopyOptionMessage" format="string" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
+        <attr name="streamUiEditOptionMessage" format="string" />
+        <attr name="streamUiEditOptionIcon" format="reference" />
+        <attr name="streamUiFlagOptionMessage" format="string" />
+        <attr name="streamUiFlagOptionIcon" format="reference" />
         <attr name="streamUiMuteOptionMessage" format="string" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
         <attr name="streamUiBlockOptionMessage" format="string" />
@@ -220,10 +224,18 @@
         <attr name="streamUiDeleteOptionMessage" format="string" />
         <attr name="streamUiDeleteOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionIconColor" format="color" />
+        <attr name="streamUiCopyMessageActionEnabled" format="color" />
+        <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
+        <attr name="streamUiDeleteConfirmationTitle" format="string" />
+        <attr name="streamUiDeleteConfirmationMessage" format="string" />
     </declare-styleable>
 
     <declare-styleable name="ChannelsView">
         <attr name="streamUiChannelsEmptyStateLabelText" format="string" />
         <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MessageReplyView">
+        <attr name="streamUiEllipsize" format="boolean" />
     </declare-styleable>
 </resources>

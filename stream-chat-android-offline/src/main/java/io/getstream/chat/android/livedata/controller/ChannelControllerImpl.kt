@@ -53,12 +53,11 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
-import io.getstream.chat.android.livedata.repository.MessageRepository
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
@@ -533,7 +532,7 @@ internal class ChannelControllerImpl(
         }
 
         // TODO remove usage of MessageEntity
-        val messageEntity = MessageRepository.toEntity(newMessage)
+        val messageEntity = newMessage.toEntity()
 
         // Update livedata in channel controller
         upsertMessage(newMessage)
@@ -771,7 +770,7 @@ internal class ChannelControllerImpl(
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val reactionEntity = ReactionEntity(reaction)
+        val reactionEntity = reaction.toEntity()
         reactionEntity.deletedAt = Date()
         domainImpl.repos.reactions.insert(reactionEntity)
 

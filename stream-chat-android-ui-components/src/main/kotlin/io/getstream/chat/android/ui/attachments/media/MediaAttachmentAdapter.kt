@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -68,7 +69,7 @@ internal class MediaAttachmentAdapter(
 
         private fun bindMediaImage(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
-                binding.mediaThumbnailImageView.load(R.drawable.stream_placeholder)
+                binding.mediaThumbnailImageView.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
                 val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_light)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {

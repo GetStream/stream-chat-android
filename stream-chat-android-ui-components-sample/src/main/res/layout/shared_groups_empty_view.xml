@@ -8,7 +8,7 @@
     android:layout_marginHorizontal="24dp"
     android:layout_marginTop="16dp"
     android:drawablePadding="48dp"
-    android:textColor="@color/boulder"
+    android:textColor="@color/stream_ui_boulder"
     android:textSize="@dimen/stream_ui_text_medium"
     app:drawableTopCompat="@drawable/empty_shared_groups"
     tools:text="@string/chat_info_option_shared_groups_empty_title"

@@ -62,7 +62,7 @@
         android:id="@+id/progressBar"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:indeterminateDrawable="@drawable/stream_rotating_indeterminate_progress_gradient"
+        android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
         app:layout_constraintTop_toBottomOf="@id/fileTitle"
         app:layout_constraintStart_toStartOf="@id/fileTitle"
         android:visibility="gone"/>

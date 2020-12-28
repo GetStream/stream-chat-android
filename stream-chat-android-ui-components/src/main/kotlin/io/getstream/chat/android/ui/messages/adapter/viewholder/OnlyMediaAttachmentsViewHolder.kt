@@ -1,9 +1,10 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
@@ -12,15 +13,14 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapp
 
 public class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
+    currentUser: User,
     private val listenerContainer: ListenerContainer?,
     internal val binding: StreamUiItemMessageMediaAttachmentsBinding = StreamUiItemMessageMediaAttachmentsBinding.inflate(
-        LayoutInflater.from(
-            parent.context
-        ),
+        parent.inflater,
         parent,
         false
     )
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(currentUser, binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (data.message.attachments.isMedia()) {

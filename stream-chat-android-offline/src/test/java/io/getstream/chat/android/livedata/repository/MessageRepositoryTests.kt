@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageEntity
+import io.getstream.chat.android.livedata.randomUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
@@ -35,12 +36,12 @@ internal class MessageRepositoryTests {
         val messageEntityFromDb2 = randomMessageEntity(id = "id4")
         When calling messageDao.select(listOf("id3", "id4")) doReturn listOf(messageEntityFromDb1, messageEntityFromDb2)
 
-        val result = sut.selectEntities(listOf("id1", "id2", "id3", "id4"))
+        val result = sut.select(listOf("id1", "id2", "id3", "id4"), ::randomUser)
 
         result.size shouldBeEqualTo 4
         result.any { it.id == "id1" } shouldBeEqualTo true
         result.any { it.id == "id2" } shouldBeEqualTo true
-        result.contains(messageEntityFromDb1) shouldBeEqualTo true
-        result.contains(messageEntityFromDb2) shouldBeEqualTo true
+        result.any { it.id == "id3" } shouldBeEqualTo true
+        result.any { it.id == "id4" } shouldBeEqualTo true
     }
 }

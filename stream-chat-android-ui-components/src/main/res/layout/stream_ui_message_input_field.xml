@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
-        android:src="@drawable/stream_ui_ic_clear"
+        android:src="@drawable/stream_ui_ic_clear_black"
         android:tint="@color/stream_ui_icon_default_tint"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Channel
@@ -21,6 +22,12 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class MessagesHeaderView : ConstraintLayout {
+
+    private val binding: StreamUiMessagesHeaderViewBinding =
+        StreamUiMessagesHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
+
+    private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
+
     public constructor(context: Context) : super(context) {
         init(null)
     }
@@ -45,9 +52,6 @@ public class MessagesHeaderView : ConstraintLayout {
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         init(attrs)
     }
-
-    private val binding: StreamUiMessagesHeaderViewBinding =
-        StreamUiMessagesHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
@@ -111,31 +115,23 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     public fun hideSubtitle() {
-        binding.onlineContainer.isVisible = false
-        binding.offlineContainer.isVisible = false
-        binding.searchingForNetworkContainer.isVisible = false
-        binding.typingContainer.isVisible = false
+        reduceSubtitleState(typingUsers = emptyList(), onlineState = OnlineState.NONE)
     }
 
     public fun showOnlineStateSubtitle() {
-        hideSubtitle()
-        binding.onlineContainer.isVisible = true
+        reduceSubtitleState(onlineState = OnlineState.ONLINE)
     }
 
     public fun showSearchingForNetworkLabel() {
-        hideSubtitle()
-        binding.searchingForNetworkContainer.isVisible = true
+        reduceSubtitleState(onlineState = OnlineState.SEARCHING_FOR_NETWORK)
     }
 
     public fun showOfflineStateLabel() {
-        hideSubtitle()
-        binding.offlineContainer.isVisible = true
+        reduceSubtitleState(onlineState = OnlineState.OFFLINE)
     }
 
     public fun showTypingStateLabel(typingUsers: List<User>) {
-        hideSubtitle()
-        binding.typingContainer.isVisible = true
-        binding.typingView.setTypingUsers(typingUsers)
+        reduceSubtitleState(typingUsers = typingUsers)
     }
 
     public fun hideTitle() {
@@ -163,6 +159,33 @@ public class MessagesHeaderView : ConstraintLayout {
                     true
                 )
             indeterminateTintList = getProgressbarTintList(attrs)
+        }
+    }
+
+    private fun reduceSubtitleState(
+        typingUsers: List<User> = subtitleState.typingUsers,
+        onlineState: OnlineState = subtitleState.onlineState
+    ) {
+        subtitleState = subtitleState.copy(
+            typingUsers = typingUsers,
+            onlineState = onlineState
+        )
+        renderSubtitleState()
+    }
+
+    private fun renderSubtitleState() {
+        with(binding) {
+            subtitleContainer.forEach { it.isVisible = false }
+            if (subtitleState.typingUsers.isNotEmpty()) {
+                typingContainer.isVisible = true
+                typingView.setTypingUsers(subtitleState.typingUsers)
+            } else {
+                when (subtitleState.onlineState) {
+                    OnlineState.ONLINE -> onlineContainer.isVisible = true
+                    OnlineState.SEARCHING_FOR_NETWORK -> searchingForNetworkContainer.isVisible = true
+                    OnlineState.OFFLINE -> offlineContainer.isVisible = true
+                }
+            }
         }
     }
 
@@ -262,7 +285,8 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private fun configBackButton(attrs: TypedArray) {
         binding.backButtonContainer.apply {
-            val showBackButton = attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowBackButton, true)
+            val showBackButton =
+                attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowBackButton, true)
             isVisible = showBackButton
             isClickable = showBackButton
         }
@@ -282,12 +306,7 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     private fun configTitle(attrs: TypedArray) {
-        val textStyle = getTitleTextStyle(attrs)
-        binding.title.apply {
-            setTextSizePx(textStyle.size.toFloat())
-            setTextColor(textStyle.color)
-            typeface = textStyle.font
-        }
+        getTitleTextStyle(attrs).apply(binding.title)
     }
 
     private fun getTitleTextStyle(typedArray: TypedArray): TextStyle {
@@ -316,6 +335,18 @@ public class MessagesHeaderView : ConstraintLayout {
             isVisible = showAvatar
             isClickable = showAvatar
         }
+    }
+
+    private data class SubtitleState(
+        val typingUsers: List<User>,
+        val onlineState: OnlineState
+    )
+
+    private enum class OnlineState {
+        NONE,
+        ONLINE,
+        SEARCHING_FOR_NETWORK,
+        OFFLINE
     }
 
     public fun interface OnClickListener {

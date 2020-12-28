@@ -90,4 +90,7 @@ public data class Message(
     @InternalStreamChatApi
     var channelInfo: ChannelInfo? = null,
 
+    @SerializedName("reply_to_message")
+    var replyTo: Message? = null
+
 ) : CustomObject

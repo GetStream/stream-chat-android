@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_icon_default_tint"
+        app:tint="@color/stream_ui_black"
         />
 
     <EditText
@@ -45,7 +45,7 @@
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/stream_ui_search_input_view_clear_input_description"
-        android:src="@drawable/stream_ui_ic_clear"
+        android:src="@drawable/stream_ui_ic_clear_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

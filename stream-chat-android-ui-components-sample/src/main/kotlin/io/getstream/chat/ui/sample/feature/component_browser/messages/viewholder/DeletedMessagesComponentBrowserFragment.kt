@@ -11,7 +11,7 @@ class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(),
-            ::MessageDeletedViewHolder,
+            { parent -> MessageDeletedViewHolder(parent, currentUser) },
             MessageDeletedViewHolder::bind
         )
     }

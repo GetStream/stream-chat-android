@@ -1,21 +1,20 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.content.ContentResolver
 import android.content.Context
-import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(requireContext()),
-            { viewGroup -> OnlyMediaAttachmentsViewHolder(viewGroup, null) },
+            { viewGroup -> OnlyMediaAttachmentsViewHolder(viewGroup, currentUser, null) },
             OnlyMediaAttachmentsViewHolder::bind
         )
     }
@@ -99,13 +98,5 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                 isMine = true
             )
         )
-    }
-
-    private fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
-        val res = context.resources
-        return ContentResolver.SCHEME_ANDROID_RESOURCE +
-            "://" + res.getResourcePackageName(drawableResId) +
-            '/' + res.getResourceTypeName(drawableResId) +
-            '/' + res.getResourceEntryName(drawableResId)
     }
 }

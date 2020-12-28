@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-medium"
+        android:textColor="@color/stream_ui_channel_item_title_text_color"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
         app:layout_constraintTop_toTopOf="parent"

@@ -128,6 +128,15 @@ public class MessageListView : ConstraintLayout {
     private var onMessageReactionHandler: (Message, String) -> Unit = { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
     }
+    private var onMuteUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onMuteUserHandler must be set.")
+    }
+    private var onBlockUserHandler: (User) -> Unit = {
+        throw IllegalStateException("onBlockUserHandler must be set.")
+    }
+    private var onReplyMessageHandler: (Message) -> Unit = {
+        throw IllegalStateException("onReplyMessageHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -152,15 +161,25 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
-            context.getFragmentManager()?.let { framentManager ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                val handlers = MessageOptionsOverlayDialogFragment.Handlers(
+                    threadReplyHandler = onStartThreadHandler,
+                    editClickHandler = onMessageEditHandler,
+                    flagClickHandler = onMessageFlagHandler,
+                    muteClickHandler = onMuteUserHandler,
+                    blockClickHandler = onBlockUserHandler,
+                    deleteClickHandler = onMessageDeleteHandler,
+                    replyClickHandler = onReplyMessageHandler,
+                )
+
                 MessageOptionsOverlayDialogFragment
                     .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
                     .apply {
-                        setReactionClickListener { message, reactionType ->
-                            onMessageReactionHandler(message, reactionType)
-                        }
+                        setReactionClickListener(onMessageReactionHandler)
+
+                        setMessageOptionsHandlers(handlers)
                     }
-                    .show(framentManager, ReactionsOverlayDialogFragment.TAG)
+                    .show(fragmentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 
@@ -352,6 +371,20 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_copy
         )
 
+        val editText = tArray.getString(R.styleable.MessageListView_streamUiEditOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_edit)
+        val editIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiEditOptionIcon,
+            R.drawable.stream_ui_ic_edit
+        )
+
+        val flagText = tArray.getString(R.styleable.MessageListView_streamUiFlagOptionMessage)
+            ?: context.getString(R.string.stream_ui_message_option_flag)
+        val flagIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiFlagOptionIcon,
+            R.drawable.stream_ui_ic_flag
+        )
+
         val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
             ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
@@ -373,6 +406,27 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_delete
         )
 
+        val copyTextEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+
+        val deleteConfirmationEnabled =
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
+
+        val deleteDialogTitle =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
+
+        val deleteDialogMessage =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
+
+        val deleteDialogPositiveButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
+
+        val deleteDialogNegativeButton =
+            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
+                ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyText = replyText,
@@ -381,12 +435,22 @@ public class MessageListView : ConstraintLayout {
             threadReplyIcon = threadReplyIcon,
             copyText = copyText,
             copyIcon = copyIcon,
+            editText = editText,
+            editIcon = editIcon,
+            flagText = flagText,
+            flagIcon = flagIcon,
             muteText = muteText,
             muteIcon = muteIcon,
             blockText = blockText,
             blockIcon = blockIcon,
             deleteText = deleteText,
-            deleteIcon = deleteIcon
+            deleteIcon = deleteIcon,
+            copyTextEnabled = copyTextEnabled,
+            deleteConfirmationEnabled = deleteConfirmationEnabled,
+            deleteConfirmationTitle = deleteDialogTitle,
+            deleteConfirmationMessage = deleteDialogMessage,
+            deleteConfirmationPositiveButton = deleteDialogPositiveButton,
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton
         )
     }
 
@@ -460,7 +524,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
@@ -755,6 +819,22 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnMessageReactionHandler(onMessageReactionHandler: (Message, String) -> Unit) {
         this.onMessageReactionHandler = onMessageReactionHandler
+    }
+
+    public fun setOnMuteUserHandler(onUserMuteHandler: (User) -> Unit) {
+        this.onMuteUserHandler = onUserMuteHandler
+    }
+
+    public fun setOnBlockUserHandler(onUserBlockHandler: (User, Channel) -> Unit) {
+        val blockUserForThisChannel: (User) -> Unit = { user ->
+            onUserBlockHandler(user, channel)
+        }
+
+        this.onBlockUserHandler = blockUserForThisChannel
+    }
+
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+        this.onReplyMessageHandler = onReplyMessageHandler
     }
 
     public fun interface MessageClickListener {

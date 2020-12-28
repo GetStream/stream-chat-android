@@ -1,6 +1,9 @@
 package io.getstream.chat.android.ui.options
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,10 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
@@ -22,10 +28,29 @@ import java.io.Serializable
 
 internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
+    companion object {
+        const val TAG = "messageOptions"
+
+        private const val ARG_MESSAGE = "message"
+        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
+
+        fun newInstance(
+            messageItem: MessageListItem.MessageItem,
+            configuration: MessageOptionsView.Configuration,
+        ): MessageOptionsOverlayDialogFragment {
+            return MessageOptionsOverlayDialogFragment().apply {
+                arguments = bundleOf(
+                    ARG_MESSAGE to MessageItemWrapper(messageItem),
+                    ARG_OPTIONS_CONFIG to configuration
+                )
+            }
+        }
+    }
+
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val messageViewHolderFactory = MessageListItemViewHolderFactory()
+    private val messageViewHolderFactory = MessageListItemViewHolderFactory(ChatDomain.instance().currentUser)
     private val messageItem: MessageListItem.MessageItem by lazy {
         val wrapper = requireArguments().getSerializable(ARG_MESSAGE)
         wrapper as MessageItemWrapper
@@ -34,6 +59,11 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
     private lateinit var messageView: View
 
     private var reactionClickListener: ReactionClickListener? = null
+    private var handlers: Handlers? = null
+
+    private val configuration by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +94,8 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
         setupEditReactionsView()
         setupMessageView()
-        configureMessageOptions(
-            requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
-        )
+        configureMessageOptions(configuration, messageItem.isTheirs)
+        handlers?.let(::setupMessageOptionClickListeners)
     }
 
     override fun onDestroy() {
@@ -76,6 +105,10 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
 
     fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
         this.reactionClickListener = reactionClickListener
+    }
+
+    fun setMessageOptionsHandlers(handlers: Handlers) {
+        this.handlers = handlers
     }
 
     private fun setupEditReactionsView() {
@@ -88,8 +121,74 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         binding.messageOptionsView.setOnClickListener {}
     }
 
-    private fun configureMessageOptions(configuration: MessageOptionsView.Configuration) {
-        binding.messageOptionsView.configure(configuration)
+    private fun configureMessageOptions(configuration: MessageOptionsView.Configuration, isTheirs: Boolean) {
+        binding.messageOptionsView.configure(configuration, isTheirs)
+    }
+
+    private fun setupMessageOptionClickListeners(handlers: Handlers) {
+        binding.messageOptionsView.run {
+            setThreadListener {
+                handlers.threadReplyHandler(messageItem.message)
+                dismiss()
+            }
+
+            setCopyListener {
+                copyText(messageItem.message)
+                dismiss()
+            }
+
+            setEditMessageListener {
+                handlers.editClickHandler(messageItem.message)
+                dismiss()
+            }
+
+            setFlagMessageListener {
+                handlers.flagClickHandler(messageItem.message)
+                dismiss()
+            }
+
+            setMuteUserListener {
+                handlers.muteClickHandler(messageItem.message.user)
+                dismiss()
+            }
+
+            setBlockUserListener {
+                handlers.blockClickHandler(messageItem.message.user)
+                dismiss()
+            }
+
+            setDeleteMessageListener {
+                if (configuration.deleteConfirmationEnabled) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(configuration.deleteConfirmationTitle)
+                        .setMessage(configuration.deleteConfirmationMessage)
+                        .setPositiveButton(configuration.deleteConfirmationPositiveButton) { dialog, _ ->
+                            handlers.deleteClickHandler(messageItem.message)
+                            dialog.dismiss()
+                            dismiss()
+                        }
+                        .setNegativeButton(configuration.deleteConfirmationNegativeButton) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                } else {
+                    handlers.deleteClickHandler(messageItem.message)
+                    dismiss()
+                }
+            }
+
+            setReplyListener {
+                handlers.replyClickHandler(messageItem.message)
+                dismiss()
+            }
+        }
+    }
+
+    private fun copyText(message: Message) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", message.text)
+        clipboard.setPrimaryClip(clip)
+        dismiss()
     }
 
     override fun onStart() {
@@ -140,22 +239,13 @@ internal class MessageOptionsOverlayDialogFragment : DialogFragment() {
         fun onReactionClick(message: Message, reactionType: String)
     }
 
-    companion object {
-        const val TAG = "messageOptions"
-
-        private const val ARG_MESSAGE = "message"
-        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-
-        fun newInstance(
-            messageItem: MessageListItem.MessageItem,
-            configuration: MessageOptionsView.Configuration
-        ): MessageOptionsOverlayDialogFragment {
-            return MessageOptionsOverlayDialogFragment().apply {
-                arguments = bundleOf(
-                    ARG_MESSAGE to MessageItemWrapper(messageItem),
-                    ARG_OPTIONS_CONFIG to configuration
-                )
-            }
-        }
-    }
+    internal class Handlers(
+        val threadReplyHandler: (Message) -> Unit,
+        val editClickHandler: (Message) -> Unit,
+        val flagClickHandler: (Message) -> Unit,
+        val muteClickHandler: (User) -> Unit,
+        val blockClickHandler: (User) -> Unit,
+        val deleteClickHandler: (Message) -> Unit,
+        val replyClickHandler: (Message) -> Unit,
+    ) : Serializable
 }

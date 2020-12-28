@@ -691,9 +691,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-
-        val messages = repos.messages.selectSyncNeeded(userMap)
+        val messages = repos.selectMessageSyncNeeded()
         for (message in messages) {
             val channelClient = client.channel(message.cid)
             // support sending, deleting and editing messages here

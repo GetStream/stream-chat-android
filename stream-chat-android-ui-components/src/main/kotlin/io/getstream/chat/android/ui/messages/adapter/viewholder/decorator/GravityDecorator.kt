@@ -5,8 +5,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.constrainViewEndToEndOfView
-import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
@@ -21,11 +19,11 @@ internal class GravityDecorator : BaseDecorator() {
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
-        messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+        messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
         root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
+            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
@@ -34,7 +32,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
         root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
+            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
@@ -43,7 +41,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
         root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
+            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
@@ -52,7 +50,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
         root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
+            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
@@ -61,7 +59,7 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
         root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, avatarView, marginEnd, data)
+            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
@@ -75,18 +73,11 @@ internal class GravityDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) = Unit
 
-    private fun ConstraintSet.applyGravity(
-        targetView: View,
-        startView: View,
-        endView: View,
-        data: MessageListItem.MessageItem
-    ) {
-        clear(targetView.id, ConstraintSet.START)
-        clear(targetView.id, ConstraintSet.END)
+    private fun ConstraintSet.applyGravity(targetView: View, data: MessageListItem.MessageItem) {
         if (data.isTheirs) {
-            constrainViewStartToEndOfView(targetView, startView)
+            setHorizontalBias(targetView.id, 0f)
         } else {
-            constrainViewEndToEndOfView(targetView, endView)
+            setHorizontalBias(targetView.id, 1f)
         }
     }
 }
