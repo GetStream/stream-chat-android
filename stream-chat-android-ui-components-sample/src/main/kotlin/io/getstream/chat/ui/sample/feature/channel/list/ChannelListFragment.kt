@@ -60,7 +60,7 @@ class ChannelListFragment : Fragment() {
 
             setChannelClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
-                    .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, null))
+                    .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid))
             }
 
             setDeleteListener {
