@@ -64,7 +64,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
 
             setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
-            setChannelClickListener {
+            setChannelItemClickListener {
                 findNavController().navigateSafely(ChatInfoSharedGroupsFragmentDirections.actionOpenChat(it.cid, null))
             }
 

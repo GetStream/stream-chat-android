@@ -109,6 +109,9 @@
     <string name="stream_ui_no_media_error">There is no photo or video.</string>
     <string name="stream_ui_messages_empty_state_label">No messages</string>
     <string name="stream_ui_channels_empty_state_label">No channels available</string>
+    <string name="stream_ui_view_info">View info</string>
+    <string name="stream_ui_delete_conversation">Delete conversation</string>
+    <string name="stream_ui_cancel">Cancel</string>
 
     <!-- Thread separator -->
     <plurals name="stream_ui_thread_separator_replies_label">

@@ -3,6 +3,5 @@
     android:shape="rectangle"
     >
     <solid android:color="@color/channels_shimmer_color" />
-    <solid android:color="@color/channels_shimmer_color" />
     <corners android:radius="20dp" />
 </shape>
