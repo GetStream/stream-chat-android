@@ -17,6 +17,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
+import io.getstream.chat.android.ui.utils.extensions.withReply
+import io.getstream.chat.android.ui.utils.extensions.withText
 
 internal class BackgroundDecorator : BaseDecorator() {
 
@@ -37,12 +39,83 @@ internal class BackgroundDecorator : BaseDecorator() {
         setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
 
+    override fun decorateOnlyMediaAttachmentsMessage(
+        viewHolder: OnlyMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = decorateAttachmentsAndBackground(
+        viewHolder.binding.backgroundView,
+        viewHolder.binding.mediaAttachmentsGroupView,
+        data
+    )
+
+    override fun decoratePlainTextWithMediaAttachmentsMessage(
+        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = decorateAttachmentsAndBackground(
+        viewHolder.binding.backgroundView,
+        viewHolder.binding.mediaAttachmentsGroupView,
+        data
+    )
+
+    override fun decorateOnlyFileAttachmentsMessage(
+        viewHolder: OnlyFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = decorateAttachmentsAndBackground(
+        viewHolder.binding.backgroundView,
+        viewHolder.binding.fileAttachmentsView,
+        data
+    )
+
+    override fun decoratePlainTextWithFileAttachmentsMessage(
+        viewHolder: PlainTextWithFileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem
+    ) = decorateAttachmentsAndBackground(
+        viewHolder.binding.backgroundView,
+        viewHolder.binding.fileAttachmentsView,
+        data
+    )
+
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
+            .build()
+        viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
+            IMAGE_VIEW_CORNER_RADIUS,
+            IMAGE_VIEW_CORNER_RADIUS,
+            0f,
+            0f
+        )
+    }
+
+    private fun decorateAttachmentsAndBackground(
+        background: View,
+        attachmentView: View,
+        data: MessageListItem.MessageItem
+    ) {
+        setDefaultBackgroundDrawable(background, data)
+
+        val topLeftCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
+        val topRightCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
+        val bottomRightCorner =
+            if (data.message.withText() || (data.isMine && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
+        val bottomLeftCorner =
+            if (data.message.withText() || (data.isTheirs && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
+
+        attachmentView.background = ShapeAppearanceModel.builder()
+            .setTopLeftCornerSize(topLeftCorner)
+            .setTopRightCornerSize(topRightCorner)
+            .setBottomRightCornerSize(bottomRightCorner)
+            .setBottomLeftCornerSize(bottomLeftCorner)
+            .build()
+            .let(::MaterialShapeDrawable)
+            .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_transparent)) }
+    }
+
     private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
         val radius = DEFAULT_CORNER_RADIUS
-        val bottomRightCorner =
-            if (data.isMine && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
-        val bottomLeftCorner =
-            if (data.isMine.not() && data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else radius
+        val bottomRightCorner = if (data.isMine && data.isBottom()) 0f else radius
+        val bottomLeftCorner = if (data.isMine.not() && data.isBottom()) 0f else radius
         val shapeAppearanceModel =
             ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
                 .setBottomRightCornerSize(bottomRightCorner).build()
@@ -70,54 +143,6 @@ internal class BackgroundDecorator : BaseDecorator() {
         }
     }
 
-    override fun decorateOnlyMediaAttachmentsMessage(
-        viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
-    ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.mediaAttachmentsGroupView, data)
-    }
-
-    override fun decoratePlainTextWithMediaAttachmentsMessage(
-        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
-    ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
-        val shapeAppearanceModel = ShapeAppearanceModel.builder()
-            .setTopLeftCornerSize(DEFAULT_CORNER_RADIUS)
-            .setTopRightCornerSize(DEFAULT_CORNER_RADIUS)
-            .build()
-        viewHolder.binding.mediaAttachmentsGroupView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(viewHolder.itemView.context, R.color.stream_ui_transparent))
-        }
-    }
-
-    override fun decorateOnlyFileAttachmentsMessage(
-        viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
-    ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.fileAttachmentsView, data)
-    }
-
-    override fun decoratePlainTextWithFileAttachmentsMessage(
-        viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
-    ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
-    }
-
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
-            .build()
-        viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
-            IMAGE_VIEW_CORNER_RADIUS,
-            IMAGE_VIEW_CORNER_RADIUS,
-            0f,
-            0f
-        )
-    }
-
     companion object {
         private val MESSAGE_DELETED_BACKGROUND = R.color.stream_ui_grey_light_opacity_50
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_border_stroke
@@ -128,5 +153,7 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
         private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()
+
+        private fun MessageListItem.MessageItem.isBottom() = positions.contains(MessageListItem.Position.BOTTOM)
     }
 }

@@ -134,6 +134,9 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
+    private var onReplyMessageHandler: (Message) -> Unit = {
+        throw IllegalStateException("onReplyMessageHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -158,7 +161,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
-            context.getFragmentManager()?.let { framentManager ->
+            context.getFragmentManager()?.let { fragmentManager ->
                 val handlers = MessageOptionsOverlayDialogFragment.Handlers(
                     threadReplyHandler = onStartThreadHandler,
                     editClickHandler = onMessageEditHandler,
@@ -166,6 +169,7 @@ public class MessageListView : ConstraintLayout {
                     muteClickHandler = onMuteUserHandler,
                     blockClickHandler = onBlockUserHandler,
                     deleteClickHandler = onMessageDeleteHandler,
+                    replyClickHandler = onReplyMessageHandler,
                 )
 
                 MessageOptionsOverlayDialogFragment
@@ -175,7 +179,7 @@ public class MessageListView : ConstraintLayout {
 
                         setMessageOptionsHandlers(handlers)
                     }
-                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
+                    .show(fragmentManager, MessageOptionsOverlayDialogFragment.TAG)
             }
         }
 
@@ -520,7 +524,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
@@ -827,6 +831,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         this.onBlockUserHandler = blockUserForThisChannel
+    }
+
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+        this.onReplyMessageHandler = onReplyMessageHandler
     }
 
     public fun interface MessageClickListener {
