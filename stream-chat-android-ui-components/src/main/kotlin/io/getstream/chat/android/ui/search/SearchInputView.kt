@@ -51,9 +51,10 @@ public class SearchInputView : FrameLayout {
         parseAttrs(attrs)
 
         binding.inputField.doAfterTextChanged { newText ->
+            updateClearButtonVisibility(newText)
+
             if (disableListeners) return@doAfterTextChanged
 
-            updateClearButtonVisibility(newText)
             val newQuery = query
             continuousInputChangedListener?.onInputChanged(newQuery)
             inputDebouncer.submit {
