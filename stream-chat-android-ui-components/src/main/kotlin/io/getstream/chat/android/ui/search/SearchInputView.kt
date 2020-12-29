@@ -8,6 +8,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.Debouncer
 
@@ -15,6 +17,7 @@ public class SearchInputView : FrameLayout {
 
     private companion object {
         const val TYPING_DEBOUNCE_MS = 300L
+        const val FADE_DURATION = 300L
     }
 
     private val binding: StreamUiSearchViewBinding =
@@ -80,7 +83,11 @@ public class SearchInputView : FrameLayout {
     }
 
     private fun updateClearButtonVisibility(text: CharSequence?) {
-        binding.clearInputButton.isVisible = !text.isNullOrEmpty()
+        val isClearButtonVisible = !text.isNullOrEmpty()
+        if (isClearButtonVisible && !binding.clearInputButton.isVisible) {
+            TransitionManager.beginDelayedTransition(binding.root, Fade().setDuration(FADE_DURATION))
+        }
+        binding.clearInputButton.isVisible = isClearButtonVisible
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
