@@ -69,6 +69,7 @@
     <!--MessageInputFiledView-->
     <string name="stream_ui_message_input_field_message_hint">Send a message</string>
     <string name="stream_ui_message_input_field_attachment_hint">Add a comment or send</string>
+    <string name="stream_Ui_message_input_field_max_length_error">"Max message length (%d) exceeded."</string>
 
     <!-- Message list -->
     <string name="stream_ui_message_deleted_label">Message deleted</string>
