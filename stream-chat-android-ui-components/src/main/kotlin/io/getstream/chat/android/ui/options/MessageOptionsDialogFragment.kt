@@ -205,7 +205,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setReplyListener {
-                messageOptionsHandlers.replyClickHandler(messageItem.message)
+                messageOptionsHandlers.replyClickHandler(messageItem.message.cid, messageItem.message)
                 dismiss()
             }
             setDeleteMessageListener {
@@ -265,7 +265,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         val muteClickHandler: (User) -> Unit,
         val blockClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit,
-        val replyClickHandler: (Message) -> Unit,
+        val replyClickHandler: (String, Message) -> Unit,
     ) : Serializable
 
     internal enum class OptionsMode {

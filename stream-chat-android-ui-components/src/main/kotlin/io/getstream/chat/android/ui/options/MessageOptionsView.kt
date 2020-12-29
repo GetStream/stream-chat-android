@@ -39,8 +39,8 @@ public class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        // Todo: Uncomment once reply is done.
-        // binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
+        binding.replyTV.isVisible = true
+        binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
         binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
 
