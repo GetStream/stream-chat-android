@@ -80,6 +80,7 @@
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>
     <string name="stream_ui_message_option_thread_reply">Thread reply</string>
+    <string name="stream_ui_message_option_retry">Resend</string>
     <string name="stream_ui_message_option_copy">Copy Message</string>
     <string name="stream_ui_message_option_edit">Edit Message</string>
     <string name="stream_ui_message_option_flag">Flag Message</string>

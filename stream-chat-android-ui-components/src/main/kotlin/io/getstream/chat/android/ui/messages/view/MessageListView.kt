@@ -164,6 +164,7 @@ public class MessageListView : ConstraintLayout {
                         setMessageOptionsHandlers(
                             MessageOptionsDialogFragment.MessageOptionsHandlers(
                                 threadReplyHandler = onStartThreadHandler,
+                                retryHandler = onMessageRetryHandler,
                                 editClickHandler = onMessageEditHandler,
                                 flagClickHandler = onMessageFlagHandler,
                                 muteClickHandler = onMuteUserHandler,
@@ -358,6 +359,14 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_thread_reply
         )
 
+        val retryText =
+            tArray.getString(R.styleable.MessageListView_streamUiRetryOptionMessage)
+                ?: context.getString(R.string.stream_ui_message_option_retry)
+        val retryIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiRetryOptionIcon,
+            R.drawable.stream_ui_ic_send
+        )
+
         val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage)
             ?: context.getString(R.string.stream_ui_message_option_copy)
         val copyIcon = tArray.getResourceId(
@@ -427,6 +436,8 @@ public class MessageListView : ConstraintLayout {
             replyIcon = replyIcon,
             threadReplyText = threadReplyText,
             threadReplyIcon = threadReplyIcon,
+            retryText = retryText,
+            retryIcon = retryIcon,
             copyText = copyText,
             copyIcon = copyIcon,
             editText = editText,
@@ -444,7 +455,7 @@ public class MessageListView : ConstraintLayout {
             deleteConfirmationTitle = deleteDialogTitle,
             deleteConfirmationMessage = deleteDialogMessage,
             deleteConfirmationPositiveButton = deleteDialogPositiveButton,
-            deleteConfirmationNegativeButton = deleteDialogNegativeButton
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
     }
 
