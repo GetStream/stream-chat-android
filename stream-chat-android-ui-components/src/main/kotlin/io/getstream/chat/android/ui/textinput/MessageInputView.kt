@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
+import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -63,8 +64,21 @@ public class MessageInputView : ConstraintLayout {
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
     private var isSendButtonEnabled: Boolean = true
 
-    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, newValue ->
         configSendAlsoToChannelCheckbox()
+        if (newValue is InputMode.Reply) {
+            configReplyMode(newValue)
+        }
+    }
+
+    private fun configReplyMode(newValue: InputMode.Reply) {
+        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.ReplyMessageMode(newValue.repliedMessage)
+        binding.messageInputFieldView.post {
+            binding.messageInputFieldView.binding.messageEditText.run {
+                requestFocus()
+                Utils.showSoftKeyboard(this)
+            }
+        }
     }
 
     public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
@@ -529,6 +543,7 @@ public class MessageInputView : ConstraintLayout {
         public object Normal : InputMode()
         public data class Thread(val parentMessage: Message) : InputMode()
         public data class Edit(val oldMessage: Message) : InputMode()
+        public data class Reply(val repliedMessage: Message) : InputMode()
     }
 
     public enum class ChatMode {

@@ -70,4 +70,12 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             override fun onStopTyping() = stopTyping()
         }
     )
+
+    repliedMessage.observe(lifecycleOwner) {
+        if (it != null) {
+            view.inputMode = MessageInputView.InputMode.Reply(it)
+        } else {
+            view.inputMode = MessageInputView.InputMode.Normal
+        }
+    }
 }

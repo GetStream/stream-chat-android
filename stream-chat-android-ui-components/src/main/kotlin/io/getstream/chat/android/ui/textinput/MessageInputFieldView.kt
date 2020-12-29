@@ -177,8 +177,15 @@ public class MessageInputFieldView : FrameLayout {
             is Mode.MessageMode -> switchToMessageMode()
             is Mode.EditMessageMode -> switchToEditMode(currentMode)
             is Mode.CommandMode -> switchToCommandMode(currentMode)
+            is Mode.ReplyMessageMode -> switchToReplyMessageMode(currentMode)
         }
         contentChangeListener?.onModeChanged(currentMode)
+    }
+
+    private fun switchToReplyMessageMode(currentMode: Mode.ReplyMessageMode) {
+        switchToMessageMode()
+        binding.messageReplyView.setMessage(currentMode.repliedMessage, false)
+        binding.messageReplyView.isVisible = true
     }
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
@@ -209,6 +216,7 @@ public class MessageInputFieldView : FrameLayout {
         binding.commandBadge.isVisible = false
         binding.clearCommandButton.isVisible = false
         binding.messageEditText.hint = normalModeHint
+        binding.messageReplyView.isVisible = false
     }
 
     private fun switchToEditMode(mode: Mode.EditMessageMode) {
@@ -278,5 +286,6 @@ public class MessageInputFieldView : FrameLayout {
         public data class CommandMode(val command: Command) : Mode()
         public data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         public data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+        public data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
 }

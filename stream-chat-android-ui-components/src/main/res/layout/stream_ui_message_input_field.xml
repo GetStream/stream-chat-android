@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,10 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toTopOf="@id/messageEditText"
+        app:layout_constraintBottom_toTopOf="@id/messageReplyView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
         >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -44,6 +46,22 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
     </FrameLayout>
+
+    <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+        android:id="@+id/messageReplyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/selectedAttachmentsContainer"
+        app:layout_constraintBottom_toTopOf="@id/messageEditText"
+        app:streamUiEllipsize="true"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
     <TextView
         android:id="@+id/commandBadge"
@@ -86,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearCommandButton"
         app:layout_constraintStart_toEndOf="@id/commandBadge"
-        app:layout_constraintTop_toBottomOf="@id/selectedAttachmentsContainer"
+        app:layout_constraintTop_toBottomOf="@id/messageReplyView"
         tools:text="Hi. I am a text, did you notice?"
         />
 
