@@ -77,6 +77,7 @@ public class MessageOptionsView : FrameLayout {
                 )
             }
             SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS -> {
+                binding.threadReplyTV.isVisible = false
             }
         }
 
