@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPos
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MessageFooterDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ThreadRepliesDecorator
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     currentUser: User,
@@ -34,6 +35,8 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         ReactionsDecorator(),
         LinkAttachmentDecorator(),
         ReplyDecorator(currentUser),
+        ReactionsDecorator(),
+        ThreadRepliesDecorator(),
     )
 
     internal fun setDecorators(decorators: List<Decorator>) {
