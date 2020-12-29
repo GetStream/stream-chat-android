@@ -42,13 +42,7 @@ public class MessageOptionsView : FrameLayout {
         // Todo: Uncomment once reply is done.
         // binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
-        if (syncStatus == SyncStatus.COMPLETED) {
-            binding.threadReplyTV.configureListItem(
-                configuration.threadReplyText,
-                configuration.threadReplyIcon,
-                iconsTint
-            )
-        }
+        binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
 
         configureCopyMessage(iconsTint, configuration)
 
