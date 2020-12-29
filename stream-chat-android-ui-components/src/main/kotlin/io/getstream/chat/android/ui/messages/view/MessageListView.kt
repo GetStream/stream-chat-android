@@ -70,9 +70,6 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
-    private var newMessagesTextSingle: String? = null
-    private var newMessagesTextPlural: String? = null
-
     private lateinit var newMessagesBehaviour: NewMessagesBehaviour
 
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()

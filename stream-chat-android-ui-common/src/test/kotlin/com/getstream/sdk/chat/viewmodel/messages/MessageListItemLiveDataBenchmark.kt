@@ -83,7 +83,7 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(40)
+        Truth.assertThat(duration).isLessThan(50)
     }
 
     @Test
@@ -100,6 +100,6 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing messages 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(200)
+        Truth.assertThat(duration).isLessThan(250)
     }
 }
