@@ -32,12 +32,12 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
     view.setSendMessageHandler(
         object : MessageInputView.MessageSendHandler {
             val viewModel = this@bindView
-            override fun sendMessage(messageText: String) {
-                viewModel.sendMessage(messageText)
+            override fun sendMessage(messageText: String, messageReplyTo: Message?) {
+                viewModel.sendMessage(messageText) { replyTo = messageReplyTo }
             }
 
-            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-                viewModel.sendMessageWithAttachments(message, attachmentsFiles)
+            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>, messageReplyTo: Message?) {
+                viewModel.sendMessageWithAttachments(message, attachmentsFiles) { replyTo = messageReplyTo }
             }
 
             override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
