@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
@@ -16,33 +17,28 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-    }
+    ) = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-    }
+    ) = Unit
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-    }
+    ) = Unit
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-    }
+    ) = Unit
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         setupThreadRepliesView(viewHolder.binding, data)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-    }
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupThreadRepliesView(
         binding: StreamUiItemMessagePlainTextBinding,
@@ -62,9 +58,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
         }
 
-        ConstraintSet().apply {
-            clone(binding.root)
-
+        binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
             val footnoteId = binding.footnote.root.id
 
@@ -84,8 +78,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.messageContainer.id, ConstraintSet.RIGHT)
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
-
-            applyTo(binding.root)
         }
 
         binding.root.isVisible = true
