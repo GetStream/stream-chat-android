@@ -152,6 +152,10 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    public fun setMaxMessageLength(maxMessageLength: Int) {
+        binding.messageInputFieldView.setMaxMessageLength(maxMessageLength)
+    }
+
     @SuppressLint("CustomViewStyleable")
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamUiMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
@@ -447,11 +451,12 @@ public class MessageInputView : ConstraintLayout {
     private fun refreshControlsState() {
         val isCommandMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
         val hasContent = binding.messageInputFieldView.hasContent()
+        val maxLMessageLengthExceeded = binding.messageInputFieldView.isMaxMessageLengthExceeded()
 
         binding.attachmentsButton.isVisible = !isCommandMode
         binding.commandsButton.isVisible = !isCommandMode
         binding.commandsButton.isEnabled = !hasContent
-        setSendMessageButtonEnabled(hasContent)
+        setSendMessageButtonEnabled(hasContent && !maxLMessageLengthExceeded)
     }
 
     private fun sendMessage() {

@@ -13,66 +13,61 @@ import java.io.File
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
-    members.observe(lifecycleOwner) { view.configureMembers(it) }
-    commands.observe(lifecycleOwner) { view.configureCommands(it) }
-
-    val sendMessageHandler = object : MessageInputView.MessageSendHandler {
-        val viewModel = this@bindView
-        override fun sendMessage(messageText: String) {
-            viewModel.sendMessage(messageText)
-        }
-
-        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            viewModel.sendMessageWithAttachments(message, attachmentsFiles)
-        }
-
-        override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
-            viewModel.sendMessage(messageText) {
-                this.parentId = parentMessage.id
-                this.showInChannel = alsoSendToChannel
-            }
-        }
-
-        override fun sendToThreadWithAttachments(
-            parentMessage: Message,
-            message: String,
-            alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
-        ) {
-            viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
-                this.parentId = parentMessage.id
-                this.showInChannel = alsoSendToChannel
-            }
-        }
-
-        override fun editMessage(oldMessage: Message, newMessageText: String) {
-            viewModel.editMessage(oldMessage.copy(text = newMessageText))
-        }
-    }
-    view.setSendMessageHandler(sendMessageHandler)
-
+    members.observe(lifecycleOwner, view::configureMembers)
+    commands.observe(lifecycleOwner, view::configureCommands)
+    maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
     getActiveThread().observe(lifecycleOwner) {
-        if (it != null) {
-            view.inputMode = MessageInputView.InputMode.Thread(it)
+        view.inputMode = if (it != null) {
+            MessageInputView.InputMode.Thread(it)
         } else {
-            view.inputMode = MessageInputView.InputMode.Normal
+            MessageInputView.InputMode.Normal
         }
     }
-
     editMessage.observe(lifecycleOwner) { message ->
         message?.let {
             view.inputMode = MessageInputView.InputMode.Edit(it)
         }
     }
 
-    val typingListener = object : MessageInputView.TypingListener {
-        override fun onKeystroke() {
-            keystroke()
-        }
+    view.setSendMessageHandler(
+        object : MessageInputView.MessageSendHandler {
+            val viewModel = this@bindView
+            override fun sendMessage(messageText: String) {
+                viewModel.sendMessage(messageText)
+            }
 
-        override fun onStopTyping() {
-            stopTyping()
+            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+                viewModel.sendMessageWithAttachments(message, attachmentsFiles)
+            }
+
+            override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+                viewModel.sendMessage(messageText) {
+                    this.parentId = parentMessage.id
+                    this.showInChannel = alsoSendToChannel
+                }
+            }
+
+            override fun sendToThreadWithAttachments(
+                parentMessage: Message,
+                message: String,
+                alsoSendToChannel: Boolean,
+                attachmentsFiles: List<File>
+            ) {
+                viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
+                    this.parentId = parentMessage.id
+                    this.showInChannel = alsoSendToChannel
+                }
+            }
+
+            override fun editMessage(oldMessage: Message, newMessageText: String) {
+                viewModel.editMessage(oldMessage.copy(text = newMessageText))
+            }
         }
-    }
-    view.setTypingListener(typingListener)
+    )
+    view.setTypingListener(
+        object : MessageInputView.TypingListener {
+            override fun onKeystroke() = keystroke()
+            override fun onStopTyping() = stopTyping()
+        }
+    )
 }
