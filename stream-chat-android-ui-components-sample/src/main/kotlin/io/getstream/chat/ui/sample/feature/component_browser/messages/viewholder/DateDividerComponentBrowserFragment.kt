@@ -11,7 +11,7 @@ class DateDividerComponentBrowserFragment : BaseMessagesComponentBrowserFragment
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDateDividerList(),
-            { parent -> DateDividerViewHolder(parent, currentUser) },
+            { parent -> DateDividerViewHolder(parent, decorators) },
             DateDividerViewHolder::bind
         )
     }

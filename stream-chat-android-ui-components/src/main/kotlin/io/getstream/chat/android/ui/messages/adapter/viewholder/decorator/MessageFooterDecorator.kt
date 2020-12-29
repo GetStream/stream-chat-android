@@ -4,7 +4,10 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
+import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.formatTime
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
@@ -17,7 +20,10 @@ import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 
-internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) : BaseDecorator() {
+internal class MessageFooterDecorator(
+    private val dateFormatter: DateFormatter,
+    private val directMessage: Boolean
+) : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
@@ -67,7 +73,11 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
 
     private fun setupEphemeralMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
         when {
-            data.positions.contains(MessageListItem.Position.BOTTOM).not() || !data.message.isEphemeral() -> {
+            data.isBottomPosition() && !directMessage && data.isTheirs -> {
+                textView.text = data.message.user.name
+                textView.isVisible = true
+            }
+            data.isNotBottomPosition() || !data.message.isEphemeral() -> {
                 textView.isVisible = false
             }
             else -> {
@@ -84,7 +94,7 @@ internal class MessageFooterDecorator(private val dateFormatter: DateFormatter) 
     private fun setupMessageFooterTime(textView: TextView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
         when {
-            data.positions.contains(MessageListItem.Position.BOTTOM).not() || createdAt == null -> textView.isVisible = false
+            data.isNotBottomPosition() || createdAt == null -> textView.isVisible = false
             else -> {
                 textView.apply {
                     isVisible = true

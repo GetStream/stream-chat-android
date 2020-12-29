@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -51,7 +52,7 @@ internal class AvatarDecorator : BaseDecorator() {
         }
 
         avatarView.isVisible = when {
-            data.isTheirs && data.positions.contains(MessageListItem.Position.BOTTOM) -> true
+            data.isTheirs && data.isBottomPosition() -> true
             else -> false
         }
     }

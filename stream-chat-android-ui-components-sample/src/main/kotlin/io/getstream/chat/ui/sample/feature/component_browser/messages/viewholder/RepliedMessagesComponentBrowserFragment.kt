@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorsProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
 import io.getstream.chat.ui.sample.R
@@ -25,7 +25,8 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
 
     @OptIn(InternalStreamChatApi::class)
     override fun createAdapter(): RecyclerView.Adapter<*> {
-        return SampleAdapter(getDummyDeletedMessagesList(requireContext()), currentUser)
+        val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorsProvider(requireContext(), currentUser))
+        return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }
 
     @InternalStreamChatApi
@@ -102,7 +103,10 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         Attachment(type = "image", imageUrl = uri2)
                     ),
                     user = other,
-                    replyTo = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", user = me)
+                    replyTo = Message(
+                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                        user = me
+                    )
                 ),
                 positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
@@ -135,8 +139,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
     @InternalStreamChatApi
     private class SampleAdapter(
         private val items: List<MessageListItem.MessageItem>,
-        private val me: User,
-        private val vhFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory(me)
+        private val vhFactory: MessageListItemViewHolderFactory
     ) : RecyclerView.Adapter<BaseMessageItemViewHolder<MessageListItem.MessageItem>>() {
 
         @Suppress("UNCHECKED_CAST")

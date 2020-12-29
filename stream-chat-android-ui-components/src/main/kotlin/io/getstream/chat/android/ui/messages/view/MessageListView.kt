@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorsProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
@@ -47,6 +48,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListe
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import kotlin.math.max
 
 /**
@@ -519,7 +521,9 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
+                MessageListItemDecoratorsProvider(context, currentUser, channel.isDirectMessaging())
+            )
         }
 
         if (::messageDateFormatter.isInitialized.not()) {

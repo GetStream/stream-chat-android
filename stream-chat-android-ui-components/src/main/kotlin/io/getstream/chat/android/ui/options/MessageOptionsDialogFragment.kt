@@ -25,12 +25,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAttachmentDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.view.FullScreenDialogFragment
@@ -56,13 +50,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             isMine = message.user.id == currentUser.id
         )
     }
-    private val decorators = listOf<Decorator>(
-        BackgroundDecorator(),
-        MaxPossibleWidthDecorator(),
-        AvatarDecorator(),
-        GravityDecorator(),
-        LinkAttachmentDecorator()
-    )
 
     private lateinit var message: Message
     private lateinit var viewHolder: BaseMessageItemViewHolder<*>
@@ -139,7 +126,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory(currentUser)
+        viewHolder = MessageListItemViewHolderFactory(MessageOptionsDecoratorsProvider())
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
@@ -151,7 +138,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         FrameLayout.LayoutParams.WRAP_CONTENT
                     )
                 )
-                viewHolder.setDecorators(decorators)
                 viewHolder.bindListItem(messageItem)
             }
     }
