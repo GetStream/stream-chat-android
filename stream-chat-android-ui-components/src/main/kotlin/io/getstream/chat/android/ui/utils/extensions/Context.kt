@@ -1,5 +1,7 @@
 package io.getstream.chat.android.ui.utils.extensions
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ContextThemeWrapper
@@ -33,4 +35,9 @@ internal fun Context?.getFragmentManager(): FragmentManager? {
         is ContextThemeWrapper -> baseContext.getFragmentManager()
         else -> null
     }
+}
+
+internal fun Context.copyToClipboard(text: String) {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
 }
