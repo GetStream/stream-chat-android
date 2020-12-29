@@ -69,6 +69,7 @@
     <!--MessageInputFiledView-->
     <string name="stream_ui_message_input_field_message_hint">Send a message</string>
     <string name="stream_ui_message_input_field_attachment_hint">Add a comment or send</string>
+    <string name="stream_Ui_message_input_field_max_length_error">"Max message length (%d) exceeded."</string>
 
     <!-- Message list -->
     <string name="stream_ui_message_deleted_label">Message deleted</string>
@@ -110,6 +111,9 @@
     <string name="stream_ui_no_media_error">There is no photo or video.</string>
     <string name="stream_ui_messages_empty_state_label">No messages</string>
     <string name="stream_ui_channels_empty_state_label">No channels available</string>
+    <string name="stream_ui_view_info">View info</string>
+    <string name="stream_ui_delete_conversation">Delete conversation</string>
+    <string name="stream_ui_cancel">Cancel</string>
 
     <!-- Thread separator -->
     <plurals name="stream_ui_thread_separator_replies_label">
@@ -119,4 +123,11 @@
 
     <!-- Message Footer -->
     <string name="stream_ui_ephemeral_msg_footer">Only visible to you</string>
+    <string name="stream_ui_date_and_time_pattern">Sent %s at %s</string>
+
+    <!-- Thread Messages -->
+    <plurals name="stream_ui_thread_messages_indicator">
+        <item quantity="one">%d Thread Reply</item>
+        <item quantity="other">%d Thread Replies</item>
+    </plurals>
 </resources>

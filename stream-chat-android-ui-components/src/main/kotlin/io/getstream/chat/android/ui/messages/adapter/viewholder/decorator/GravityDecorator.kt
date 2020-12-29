@@ -19,7 +19,7 @@ internal class GravityDecorator : BaseDecorator() {
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem
     ) = with(viewHolder.binding) {
-        messageText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+        messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
         root.updateConstraints {

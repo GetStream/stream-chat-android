@@ -11,7 +11,6 @@
     <color name="white">#FFFFFF</color>
     <color name="green">#00FF00</color>
     <color name="red">#FF0000</color>
-    <color name="boulder">#7A7A7A</color>
 
     <color name="login_text">@color/black</color>
 
@@ -24,4 +23,6 @@
     <color name="component_browser_sub_card">@color/stream_ui_gray_light</color>
     <color name="component_browser_background">@color/stream_ui_gray_light</color>
     <color name="component_browser_background_light">@color/stream_ui_white</color>
+
+    <color name="rounded_button_background">@color/grey_light</color>
 </resources>

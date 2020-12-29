@@ -42,3 +42,7 @@ internal fun Message.isSingleReaction(): Boolean {
         .toSet()
         .size == 1
 }
+
+internal fun Message.withReply(): Boolean = replyTo != null
+
+internal fun Message.withText(): Boolean = text.isNotEmpty()

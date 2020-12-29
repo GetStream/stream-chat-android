@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="stream_ui_background_light">#101418</color>
+    <color name="stream_ui_background_light">@color/stream_ui_bunker</color>
 
-    <color name="stream_ui_channel_item_text_color">@color/stream_ui_white</color>
+    <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_white</color>
+    <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_woodsmoke</color>
 
     <color name="stream_ui_attachment_dialog_button_disabled">#2D2E2E</color>
 
@@ -20,16 +21,18 @@
 
     <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
     <color name="stream_ui_icon_light_tint">@color/stream_ui_white</color>
-    <color name="stream_ui_concrete">@color/stream_ui_background_light</color>
+    <color name="stream_ui_icon_strong_tint">@color/stream_ui_white</color>
 
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
 
-    <color name="stream_ui_divider">#141924</color>
+    <color name="stream_ui_divider">@color/stream_ui_mirage</color>
 
-    <color name="stream_ui_section_item_color">#13151B</color>
+    <color name="stream_ui_section_item_color">@color/stream_ui_woodsmoke</color>
     <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
 
     <color name="stream_ui_send_button">@color/stream_ui_disabled_send_message_dark_theme</color>
     <color name="stream_ui_send_button_disabled">@color/stream_ui_disabled_send_message_dark_theme</color>
+
+    <color name="stream_ui_search_input_border">#1C1E22</color>
 </resources>

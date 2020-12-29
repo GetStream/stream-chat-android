@@ -9,16 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
-import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
@@ -38,13 +36,7 @@ public class ChannelListView @JvmOverloads constructor(
         setLayoutManager(layoutManager)
         adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
-        setMoreOptionsClickListener { channel ->
-            context.getFragmentManager()?.let { fragmentManager ->
-                ChannelActionsDialogFragment
-                    .newInstance(channel.cid, !channel.isDirectMessaging())
-                    .show(fragmentManager, null)
-            }
-        }
+
         addItemDecoration(dividerDecoration)
     }
 
@@ -53,7 +45,7 @@ public class ChannelListView @JvmOverloads constructor(
         return ChannelListViewStyle(context, attrs)
     }
 
-    private fun requireAdapter(): ChannelListItemAdapter {
+    internal fun requireAdapter(): ChannelListItemAdapter {
         val logger = ChatLogger.get("ChannelListView::requireAdapter")
         val channelAdapter = adapter
 
@@ -65,7 +57,7 @@ public class ChannelListView @JvmOverloads constructor(
             logger.logE("Adapter must be an instance of ChannelListItemAdapter")
         }
 
-        return channelAdapter.cast()
+        return channelAdapter
     }
 
     public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
@@ -117,12 +109,32 @@ public class ChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
-    public fun reachedEndOfChannels(endReached: Boolean) {
-        requireAdapter().endReached = endReached
+    public fun setChannels(channels: List<ChannelListItem>) {
+        requireAdapter().submitList(channels)
     }
 
-    public fun setChannels(channels: List<Channel>) {
-        requireAdapter().submitList(channels)
+    public fun showLoadingMore(show: Boolean) {
+        requireAdapter().let { adapter ->
+            val currentList = adapter.currentList
+            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
+            val showLoadingMore = show && !loadingMore
+            val hideLoadingMore = !show && loadingMore
+
+            val updatedList = when {
+                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
+
+                // we should never have more than one loading item, but just in case
+                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.LoadingMoreItem::class.java)
+
+                else -> currentList
+            }
+
+            adapter.submitList(updatedList) {
+                if (showLoadingMore) {
+                    layoutManager.scrollToPosition(updatedList.size - 1)
+                }
+            }
+        }
     }
 
     public fun hasChannels(): Boolean {
@@ -139,7 +151,7 @@ public class ChannelListView @JvmOverloads constructor(
             public val DEFAULT: UserClickListener = UserClickListener {}
         }
 
-        public fun onUserClick(user: User)
+        public fun onClick(user: User)
     }
 
     public fun interface ChannelClickListener {
@@ -241,40 +253,30 @@ public class ChannelListView @JvmOverloads constructor(
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeChanged(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     dX: Float,
                     totalDeltaX: Float
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeCompleted(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
                 override fun onSwipeCanceled(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
                     y: Float?
-                ) {
-                    // no-op
-                }
+                ) = Unit
 
-                override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) {
-                    // no-op
-                }
+                override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) = Unit
             }
         }
     }

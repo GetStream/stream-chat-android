@@ -51,15 +51,22 @@
         <item name="streamUiAvatarOnlineIndicatorPosition">bottom</item>
     </style>
 
-    <style name="StreamUiChannelActionsBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/StreamUiChannelActionsBottomSheet</item>
+    <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/StreamUiBottomSheetStyle</item>
     </style>
 
-    <style name="StreamUiChannelActionsBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
-        <item name="shapeAppearanceOverlay">@style/StreamUiRoundedBottomSheetDialog</item>
+    <style name="StreamUiChatInfoAvatarStyle" parent="StreamUiBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_extra_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_extra_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_extra_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
-    <style name="StreamUiRoundedBottomSheetDialog">
+    <style name="StreamUiBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/StreamUiBottomSheetShapeAppearanceOverlay</item>
+    </style>
+
+    <style name="StreamUiBottomSheetShapeAppearanceOverlay">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">16dp</item>
         <item name="cornerSizeTopLeft">16dp</item>
@@ -68,6 +75,8 @@
     </style>
 
     <style name="StreamUiChannelActionsButtonStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
         <item name="android:paddingStart">@dimen/stream_ui_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_ui_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_ui_spacing_medium</item>
@@ -137,12 +146,37 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
-    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2"/>
+    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/stream_ui_blue</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>>
         <item name="background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="StreamUIAttachmentGalleryToolbarTitleTextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">19sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StreamUIAttachmentGalleryToolbarSubtitleTextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/stream_ui_text_color_subtitle</item>
+    </style>
+
+    <style name="StreamUiMessageOptionItem">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:textColor">@color/stream_ui_black</item>
     </style>
 
 </resources>

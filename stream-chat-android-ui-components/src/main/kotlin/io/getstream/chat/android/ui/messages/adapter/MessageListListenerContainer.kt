@@ -9,13 +9,13 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewCl
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 
-public interface ListenerContainer {
-    public var messageClickListener: MessageClickListener
-    public var messageLongClickListener: MessageLongClickListener
-    public var messageRetryListener: MessageRetryListener
-    public var attachmentClickListener: AttachmentClickListener
-    public var reactionViewClickListener: ReactionViewClickListener
-    public var userClickListener: UserClickListener
-    public var readStateClickListener: ReadStateClickListener
-    public var giphySendListener: GiphySendListener
+public interface MessageListListenerContainer {
+    public val messageClickListener: MessageClickListener
+    public val messageLongClickListener: MessageLongClickListener
+    public val messageRetryListener: MessageRetryListener
+    public val attachmentClickListener: AttachmentClickListener
+    public val reactionViewClickListener: ReactionViewClickListener
+    public val userClickListener: UserClickListener
+    public val readStateClickListener: ReadStateClickListener
+    public val giphySendListener: GiphySendListener
 }

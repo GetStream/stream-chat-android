@@ -1,56 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/stream_ui_shape_message_options_background"
+    android:orientation="vertical"
+    android:padding="@dimen/stream_ui_spacing_medium"
     >
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/messageMembersTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/stream_ui_spacing_small"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        >
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"
+        android:textColor="@color/stream_ui_text_color_strong"
+        android:textSize="@dimen/stream_ui_text_large"
+        android:textStyle="bold"
+        tools:text="12 Message reactions"
+        />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/stream_ui_spacing_medium"
-            >
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingStart="@dimen/stream_ui_spacing_small"
+        android:paddingEnd="@dimen/stream_ui_spacing_small"
+        android:scrollbars="none"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/stream_ui_item_user_reaction"
+        tools:spanCount="4"
+        />
 
-            <TextView
-                android:id="@+id/messageMembersTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:singleLine="true"
-                android:textColor="@color/stream_ui_text_color_strong"
-                android:textSize="@dimen/stream_ui_text_large"
-                android:textStyle="bold"
-                tools:text="12 Message reactions"
-                />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/stream_ui_spacing_small"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingStart="@dimen/stream_ui_spacing_small"
-                android:paddingEnd="@dimen/stream_ui_spacing_small"
-                android:scrollbars="none"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/stream_ui_item_user_reaction"
-                tools:spanCount="4"
-                />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-</FrameLayout>
+</LinearLayout>

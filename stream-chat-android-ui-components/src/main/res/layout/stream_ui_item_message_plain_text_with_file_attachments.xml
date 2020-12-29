@@ -20,10 +20,22 @@
         android:id="@+id/backgroundView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@id/fileAttachmentsView"
         app:layout_constraintStart_toStartOf="@id/fileAttachmentsView"
-        app:layout_constraintTop_toTopOf="@id/fileAttachmentsView"
+        app:layout_constraintTop_toTopOf="@id/replyView"
+        />
+
+    <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+        android:id="@+id/replyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
+        app:layout_constraintRight_toRightOf="@id/fileAttachmentsView"
+        app:layout_constraintTop_toBottomOf="@id/reactionsView"
+        android:visibility="gone"
+        tools:visibility="visible"
         />
 
     <io.getstream.chat.android.ui.messages.adapter.view.FileAttachmentsView
@@ -35,7 +47,7 @@
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/reactionsView"
+        app:layout_constraintTop_toBottomOf="@id/replyView"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
@@ -52,27 +64,48 @@
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/reactionsOffsetSpace"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 
-    <TextView
-        android:id="@+id/messageText"
+    <LinearLayout
+        android:id="@+id/messageContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:hyphenationFrequency="normal"
-        android:lineHeight="16sp"
-        android:paddingLeft="@dimen/stream_ui_spacing_medium"
-        android:paddingTop="@dimen/stream_ui_spacing_small"
-        android:paddingRight="@dimen/stream_ui_spacing_medium"
-        android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="@color/stream_ui_black"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@id/fileAttachmentsView"
         app:layout_constraintStart_toStartOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@id/fileAttachmentsView"
-        />
+        >
+
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:gravity="start"
+            android:hyphenationFrequency="normal"
+            android:lineHeight="16sp"
+            android:paddingLeft="@dimen/stream_ui_spacing_medium"
+            android:paddingTop="@dimen/stream_ui_spacing_small"
+            android:paddingRight="@dimen/stream_ui_spacing_medium"
+            android:paddingBottom="@dimen/stream_ui_spacing_small"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/stream_ui_black"
+            android:textColorLink="@color/stream_ui_blue"
+            />
+
+        <io.getstream.chat.android.ui.messages.adapter.view.LinkAttachmentView
+            android:id="@+id/linkAttachmentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/stream_ui_spacing_small"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+    </LinearLayout>
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
@@ -93,7 +126,7 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@+id/messageText"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
         />
 
     <ImageView
@@ -102,7 +135,7 @@
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:visibility="visible"
         />

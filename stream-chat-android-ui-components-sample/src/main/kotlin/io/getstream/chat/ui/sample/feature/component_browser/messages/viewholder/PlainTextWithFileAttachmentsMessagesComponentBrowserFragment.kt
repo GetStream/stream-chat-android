@@ -5,21 +5,137 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyDeletedMessagesList(),
-            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, null) },
+            { viewGroup -> PlainTextWithFileAttachmentsViewHolder(viewGroup, currentUser, null) },
             PlainTextWithFileAttachmentsViewHolder::bind
         )
     }
 
     @OptIn(InternalStreamChatApi::class)
     private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
+        val attachmentLink = Attachment(
+            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            title = "Title",
+            text = "Some description",
+            authorName = "Stream",
+        )
+        return listOf(
+            MessageListItem.MessageItem(
+                message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
+                positions = listOf(MessageListItem.Position.TOP),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachment7z, attachmentPdf),
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                ),
+                positions = listOf(MessageListItem.Position.MIDDLE),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
+                    text = "Hi!"
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachmentDoc, attachmentXls),
+                    text = "Lorem ipsum dolor sit amet"
+                ),
+                positions = listOf(MessageListItem.Position.TOP),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z),
+                    text = "Another message"
+                ),
+                positions = listOf(MessageListItem.Position.MIDDLE),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentPpt,
+                        attachment7z,
+                        attachmentTxt,
+                        attachmentDoc
+                    ),
+                    text = "Bye!!!"
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentPdf,
+                        attachmentPpt,
+                        attachment7z,
+                        attachmentTxt,
+                        attachmentDoc,
+                        attachmentXls,
+                    ),
+                    text = "Bye!!!"
+                ),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(attachmentDoc, attachmentXls),
+                    text = "Lorem ipsum dolor sit amet",
+                    syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentDoc,
+                        attachmentXls,
+                        attachmentLink,
+                    ),
+                    text = "Lorem ipsum dolor sit amet https://www.google.com/",
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = true
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
+                    attachments = mutableListOf(
+                        attachmentDoc,
+                        attachmentXls,
+                        attachmentLink,
+                    ),
+                    text = "Lorem ipsum dolor sit amet https://www.google.com/",
+                ),
+                positions = listOf(MessageListItem.Position.BOTTOM),
+                isMine = false
+            ),
+        )
+    }
+
+    @InternalStreamChatApi
+    companion object {
+        private const val KILOBYTE = 1024
+        fun Int.kiloBytes() = this * KILOBYTE
+
         val attachmentPdf = Attachment(
             type = "file",
             mimeType = ModelType.attach_mime_pdf,
@@ -56,71 +172,5 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
             fileSize = 5234.kiloBytes(),
             title = "Sample xls file"
         )
-        return listOf(
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
-                positions = listOf(MessageListItem.Position.TOP),
-                isMine = true
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(attachment7z, attachmentPdf),
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
-                isMine = true
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
-                    text = "Hi!"
-                ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
-                isMine = true
-            ),
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls), text = "Lorem ipsum dolor sit amet"),
-                positions = listOf(MessageListItem.Position.TOP),
-                isMine = false
-            ),
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z), text = "Another message"),
-                positions = listOf(MessageListItem.Position.MIDDLE),
-                isMine = false
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(
-                        attachmentPpt,
-                        attachment7z,
-                        attachmentTxt,
-                        attachmentDoc
-                    ),
-                    text = "Bye!!!"
-                ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
-                isMine = false
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(
-                        attachmentPdf,
-                        attachmentPpt,
-                        attachment7z,
-                        attachmentTxt,
-                        attachmentDoc,
-                        attachmentXls,
-                    ),
-                    text = "Bye!!!"
-                ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
-                isMine = true
-            )
-        )
-    }
-
-    companion object {
-        private const val KILOBYTE = 1024
-        private fun Int.kiloBytes() = this * KILOBYTE
     }
 }

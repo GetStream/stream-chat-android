@@ -236,4 +236,8 @@
         <attr name="streamUiChannelsEmptyStateLabelText" format="string" />
         <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="MessageReplyView">
+        <attr name="streamUiEllipsize" format="boolean" />
+    </declare-styleable>
 </resources>

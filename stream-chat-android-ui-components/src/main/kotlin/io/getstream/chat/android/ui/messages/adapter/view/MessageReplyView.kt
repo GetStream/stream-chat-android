@@ -22,14 +22,34 @@ import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.use
 
 public class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
         StreamUiMessageReplyViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private var ellipsize = false
 
-    public constructor(context: Context) : super(context)
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    public constructor(context: Context) : super(context) {
+        init(context, null)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(context, attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init(context, attrs)
+    }
+
+    private fun init(context: Context, attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.MessageReplyView).use {
+            ellipsize = it.getBoolean(R.styleable.MessageReplyView_streamUiEllipsize, false)
+        }
+    }
 
     public fun setMessage(message: Message, isMine: Boolean) {
         setUserAvatar(message)
@@ -41,6 +61,7 @@ public class MessageReplyView : FrameLayout {
 
     private fun setUserAvatar(message: Message) {
         binding.avatarView.setUserData(message.user)
+        binding.avatarView.isVisible = true
     }
 
     private fun setAvatarPosition(isMine: Boolean) {
@@ -121,7 +142,11 @@ public class MessageReplyView : FrameLayout {
     private fun setReplyText(message: Message) {
         val attachment = message.attachments.lastOrNull()
         binding.replyText.text = if (attachment == null) {
-            message.text
+            if (ellipsize) {
+                ellipsize(message.text)
+            } else {
+                message.text
+            }
         } else {
             val type = attachment.type
             if (type == ModelType.attach_link) {
@@ -130,6 +155,12 @@ public class MessageReplyView : FrameLayout {
                 attachment.title ?: attachment.name
             }
         }
+    }
+
+    private fun ellipsize(text: String): String {
+        if (text.length <= MAX_ELLIPSIZE_CHAR_COUNT) return text
+
+        return text.substring(0, MAX_ELLIPSIZE_CHAR_COUNT) + "..."
     }
 
     private fun showAttachmentThumb(url: String?) {
@@ -159,5 +190,6 @@ public class MessageReplyView : FrameLayout {
         private val REPLY_CORNER_RADIUS = 12.dpToPxPrecise()
         private val REPLY_IMAGE_CORNER_RADIUS = 7.dpToPxPrecise()
         private val CONTENT_MARGIN = 4.dpToPx()
+        private const val MAX_ELLIPSIZE_CHAR_COUNT = 170
     }
 }

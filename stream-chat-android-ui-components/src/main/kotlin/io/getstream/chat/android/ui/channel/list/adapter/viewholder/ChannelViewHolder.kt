@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
-public class ChannelItemViewHolder @JvmOverloads constructor(
+public class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
     private val channelLongClickListener: ChannelListView.ChannelClickListener,
@@ -80,7 +80,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
         binding.itemBackgroundView.apply {
             moreOptionsImageView.setOnClickListener {
                 channelMoreOptionsListener.onClick(channel)
-                swipeListener.onSwipeCanceled(this@ChannelItemViewHolder, absoluteAdapterPosition)
+                swipeListener.onSwipeCanceled(this@ChannelViewHolder, absoluteAdapterPosition)
             }
 
             deleteImageView.setOnClickListener {
@@ -149,7 +149,7 @@ public class ChannelItemViewHolder @JvmOverloads constructor(
             setChannelData(channel)
             setOnClickListener {
                 when {
-                    channel.isDirectMessaging() -> userClickListener.onUserClick(currentUser)
+                    channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
                     else -> channelClickListener.onClick(channel)
                 }
             }

@@ -306,12 +306,7 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     private fun configTitle(attrs: TypedArray) {
-        val textStyle = getTitleTextStyle(attrs)
-        binding.title.apply {
-            setTextSizePx(textStyle.size.toFloat())
-            setTextColor(textStyle.color)
-            typeface = textStyle.font
-        }
+        getTitleTextStyle(attrs).apply(binding.title)
     }
 
     private fun getTitleTextStyle(typedArray: TypedArray): TextStyle {

@@ -25,7 +25,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         with(viewHolder.binding) {
-            setupReactionsView(root, reactionsView, messageText, reactionsOffsetSpace, data)
+            setupReactionsView(root, reactionsView, messageContainer, reactionsOffsetSpace, data)
         }
     }
 

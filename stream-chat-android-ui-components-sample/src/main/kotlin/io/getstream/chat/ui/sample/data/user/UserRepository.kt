@@ -1,6 +1,46 @@
 package io.getstream.chat.ui.sample.data.user
 
-/**
- * In-memory storage for currently logged-in User
- */
-class UserRepository(var user: SampleUser = SampleUser.None)
+import android.content.Context
+import android.content.SharedPreferences
+
+class UserRepository(context: Context) {
+
+    private val prefs: SharedPreferences by lazy {
+        context.getSharedPreferences(USER_PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    fun getUser(): SampleUser {
+        val id = prefs.getString(KEY_ID, null)
+        val name = prefs.getString(KEY_NAME, null)
+        val token = prefs.getString(KEY_TOKEN, null)
+        val image = prefs.getString(KEY_IMAGE, null)
+        return if (id != null && name != null && token != null && image != null) {
+            SampleUser(id, name, token, image)
+        } else {
+            SampleUser.None
+        }
+    }
+
+    fun setUser(user: SampleUser) {
+        prefs.edit()
+            .putString(KEY_ID, user.id)
+            .putString(KEY_NAME, user.name)
+            .putString(KEY_TOKEN, user.token)
+            .putString(KEY_IMAGE, user.image)
+            .commit()
+    }
+
+    fun clearUser() {
+        prefs.edit()
+            .clear()
+            .commit()
+    }
+
+    private companion object {
+        private const val USER_PREFS_NAME = "logged_in_user"
+        private const val KEY_ID = "id"
+        private const val KEY_NAME = "name"
+        private const val KEY_TOKEN = "token"
+        private const val KEY_IMAGE = "image"
+    }
+}

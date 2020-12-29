@@ -17,12 +17,12 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -32,11 +32,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.messages.reactions.ReactionsOverlayDialogFragment
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
@@ -45,7 +43,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryLi
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
-import io.getstream.chat.android.ui.options.MessageOptionsOverlayDialogFragment
+import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlin.math.max
@@ -69,9 +67,6 @@ public class MessageListView : ConstraintLayout {
     private lateinit var style: MessageListViewStyle
 
     private lateinit var binding: StreamUiMessageListViewBinding
-
-    private var newMessagesTextSingle: String? = null
-    private var newMessagesTextPlural: String? = null
 
     private lateinit var newMessagesBehaviour: NewMessagesBehaviour
 
@@ -134,6 +129,9 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
+    private var onReplyMessageHandler: (Message) -> Unit = {
+        throw IllegalStateException("onReplyMessageHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -158,25 +156,25 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
-            context.getFragmentManager()?.let { framentManager ->
-                val handlers = MessageOptionsOverlayDialogFragment.Handlers(
-                    threadReplyHandler = onStartThreadHandler,
-                    retryHandler = onMessageRetryHandler,
-                    editClickHandler = onMessageEditHandler,
-                    flagClickHandler = onMessageFlagHandler,
-                    muteClickHandler = onMuteUserHandler,
-                    blockClickHandler = onBlockUserHandler,
-                    deleteClickHandler = onMessageDeleteHandler,
-                )
-
-                MessageOptionsOverlayDialogFragment
-                    .newInstance(message.toMessageItemForOverlay(), messageOptionsConfiguration)
+            context.getFragmentManager()?.let { fragmentManager ->
+                MessageOptionsDialogFragment
+                    .newMessageOptionsInstance(message, messageOptionsConfiguration)
                     .apply {
-                        setReactionClickListener(onMessageReactionHandler)
-
-                        setMessageOptionsHandlers(handlers)
+                        setReactionClickHandler(onMessageReactionHandler)
+                        setMessageOptionsHandlers(
+                            MessageOptionsDialogFragment.MessageOptionsHandlers(
+                                threadReplyHandler = onStartThreadHandler,
+                                retryHandler = onMessageRetryHandler,
+                                editClickHandler = onMessageEditHandler,
+                                flagClickHandler = onMessageFlagHandler,
+                                muteClickHandler = onMuteUserHandler,
+                                blockClickHandler = onBlockUserHandler,
+                                deleteClickHandler = onMessageDeleteHandler,
+                                replyClickHandler = onReplyMessageHandler,
+                            )
+                        )
                     }
-                    .show(framentManager, MessageOptionsOverlayDialogFragment.TAG)
+                    .show(fragmentManager, MessageOptionsDialogFragment.TAG)
             }
         }
 
@@ -188,18 +186,18 @@ public class MessageListView : ConstraintLayout {
         AttachmentClickListener { message, attachment ->
             ChatUI.instance()
                 .navigator
-                .navigate(AttachmentDestination(message, attachment, context))
+                .navigate(GalleryImageAttachmentDestination(message, attachment, context))
         }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                ReactionsOverlayDialogFragment.newInstance(message.toMessageItemForOverlay())
+                MessageOptionsDialogFragment.newReactionOptionsInstance(message)
                     .apply {
-                        setReactionClickListener {
-                            onMessageReactionHandler(message, it.type)
+                        setReactionClickHandler { message, reactionType ->
+                            onMessageReactionHandler(message, reactionType)
                         }
                     }
-                    .show(it, ReactionsOverlayDialogFragment.TAG)
+                    .show(it, MessageOptionsDialogFragment.TAG)
             }
         }
     private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
@@ -212,7 +210,7 @@ public class MessageListView : ConstraintLayout {
             onSendGiphyHandler.invoke(message, action)
         }
 
-    private val listenerContainer: ListenerContainer = ListenerContainerImpl(
+    private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
         messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
@@ -220,7 +218,7 @@ public class MessageListView : ConstraintLayout {
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
         readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
-        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER
+        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
     )
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
@@ -343,7 +341,7 @@ public class MessageListView : ConstraintLayout {
     private fun configureMessageOptions(tArray: TypedArray) {
         val iconsTint = tArray.getColor(
             R.styleable.MessageListView_streamUiMessageOptionIconColor,
-            ContextCompat.getColor(context, R.color.stream_ui_grey)
+            ContextCompat.getColor(context, R.color.stream_ui_boulder)
         )
 
         val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
@@ -457,7 +455,7 @@ public class MessageListView : ConstraintLayout {
             deleteConfirmationTitle = deleteDialogTitle,
             deleteConfirmationMessage = deleteDialogMessage,
             deleteConfirmationPositiveButton = deleteDialogPositiveButton,
-            deleteConfirmationNegativeButton = deleteDialogNegativeButton
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
     }
 
@@ -531,7 +529,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
@@ -721,14 +719,6 @@ public class MessageListView : ConstraintLayout {
         }.exhaustive
     }
 
-    private fun Message.toMessageItemForOverlay(): MessageItem {
-        return MessageItem(
-            this,
-            positions = listOf(MessageListItem.Position.BOTTOM),
-            isMine = user.id == currentUser.id
-        )
-    }
-
     /**
      * Sets the message click listener to be used by MessageListView.
      *
@@ -838,6 +828,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         this.onBlockUserHandler = blockUserForThisChannel
+    }
+
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+        this.onReplyMessageHandler = onReplyMessageHandler
     }
 
     public fun interface MessageClickListener {
