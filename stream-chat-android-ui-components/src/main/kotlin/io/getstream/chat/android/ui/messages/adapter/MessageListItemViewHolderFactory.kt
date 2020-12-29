@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.ThreadSeparatorV
 
 public open class MessageListItemViewHolderFactory(private val currentUser: User) {
 
-    public var listenerContainer: ListenerContainer? = null
+    public var listenerContainer: MessageListListenerContainer? = null
 
     public fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {

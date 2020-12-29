@@ -7,14 +7,14 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper.isMedia
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 
 public class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
     currentUser: User,
-    private val listenerContainer: ListenerContainer?,
+    private val listenerContainer: MessageListListenerContainer?,
     internal val binding: StreamUiItemMessageMediaAttachmentsBinding = StreamUiItemMessageMediaAttachmentsBinding.inflate(
         parent.inflater,
         parent,

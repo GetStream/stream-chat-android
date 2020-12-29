@@ -32,10 +32,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
@@ -210,7 +209,7 @@ public class MessageListView : ConstraintLayout {
             onSendGiphyHandler.invoke(message, action)
         }
 
-    private val listenerContainer: ListenerContainer = ListenerContainerImpl(
+    private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
         messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
@@ -218,7 +217,7 @@ public class MessageListView : ConstraintLayout {
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
         readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
-        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER
+        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
     )
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory

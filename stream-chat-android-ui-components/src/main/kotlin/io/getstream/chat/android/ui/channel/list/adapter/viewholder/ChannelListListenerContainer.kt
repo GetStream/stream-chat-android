@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 
-public class ChannelListListenerContainer(
+internal class ChannelListListenerContainer(
     channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
@@ -11,44 +11,44 @@ public class ChannelListListenerContainer(
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
     swipeListener: ChannelListView.SwipeListener = ChannelListView.SwipeListener.DEFAULT,
 ) {
-    public var channelClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(channelClickListener) { getListener ->
+    var channelClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(channelClickListener) { realListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getListener().onClick(channel)
+            realListener().onClick(channel)
         }
     }
 
-    public var channelLongClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(
+    var channelLongClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(
         channelLongClickListener
-    ) { getListener ->
+    ) { realListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getListener().onClick(channel)
+            realListener().onClick(channel)
         }
     }
 
-    public var deleteClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(deleteClickListener) { getListener ->
+    var deleteClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(deleteClickListener) { realListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getListener().onClick(channel)
+            realListener().onClick(channel)
         }
     }
 
-    public var moreOptionsClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(
+    var moreOptionsClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(
         moreOptionsClickListener
-    ) { getListener ->
+    ) { realListener ->
         ChannelListView.ChannelClickListener { channel ->
-            getListener().onClick(channel)
+            realListener().onClick(channel)
         }
     }
 
-    public var userClickListener: ChannelListView.UserClickListener by ListenerDelegate(userClickListener) { getListener ->
+    var userClickListener: ChannelListView.UserClickListener by ListenerDelegate(userClickListener) { realListener ->
         ChannelListView.UserClickListener { user ->
-            getListener().onClick(user)
+            realListener().onClick(user)
         }
     }
 
-    public var swipeListener: ChannelListView.SwipeListener by ListenerDelegate(swipeListener) { getDelegate ->
+    var swipeListener: ChannelListView.SwipeListener by ListenerDelegate(swipeListener) { realListener ->
         object : ChannelListView.SwipeListener {
             override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
-                getDelegate().onSwipeStarted(viewHolder, adapterPosition, x, y)
+                realListener().onSwipeStarted(viewHolder, adapterPosition, x, y)
             }
 
             override fun onSwipeChanged(
@@ -57,7 +57,7 @@ public class ChannelListListenerContainer(
                 dX: Float,
                 totalDeltaX: Float
             ) {
-                getDelegate().onSwipeChanged(viewHolder, adapterPosition, dX, totalDeltaX)
+                realListener().onSwipeChanged(viewHolder, adapterPosition, dX, totalDeltaX)
             }
 
             override fun onSwipeCompleted(
@@ -66,7 +66,7 @@ public class ChannelListListenerContainer(
                 x: Float?,
                 y: Float?
             ) {
-                getDelegate().onSwipeCompleted(viewHolder, adapterPosition, x, y)
+                realListener().onSwipeCompleted(viewHolder, adapterPosition, x, y)
             }
 
             override fun onSwipeCanceled(
@@ -75,11 +75,11 @@ public class ChannelListListenerContainer(
                 x: Float?,
                 y: Float?
             ) {
-                getDelegate().onSwipeCanceled(viewHolder, adapterPosition, x, y)
+                realListener().onSwipeCanceled(viewHolder, adapterPosition, x, y)
             }
 
             override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) {
-                getDelegate().onRestoreSwipePosition(viewHolder, adapterPosition)
+                realListener().onRestoreSwipePosition(viewHolder, adapterPosition)
             }
         }
     }
