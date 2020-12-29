@@ -17,9 +17,9 @@ import io.getstream.chat.android.ui.utils.extensions.safeCast
 internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
     ListAdapter<ChannelListItem, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
-    var viewHolderFactory: ChannelListItemViewHolderFactory = ChannelListItemViewHolderFactory()
+    var viewHolderFactory = ChannelListItemViewHolderFactory()
 
-    val listenerContainer: ChannelListListenerContainer = ChannelListListenerContainer()
+    val listenerContainer = ChannelListListenerContainer()
 
     companion object {
         val DIFF_CALLBACK: DiffUtil.ItemCallback<ChannelListItem> =

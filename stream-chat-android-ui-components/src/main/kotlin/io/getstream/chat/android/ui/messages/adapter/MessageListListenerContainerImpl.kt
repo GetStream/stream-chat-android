@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewCl
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 
-internal class ListenerContainerImpl(
+internal class MessageListListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
@@ -19,7 +19,7 @@ internal class ListenerContainerImpl(
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
     readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM)
-) : ListenerContainer {
+) : MessageListListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
         val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
