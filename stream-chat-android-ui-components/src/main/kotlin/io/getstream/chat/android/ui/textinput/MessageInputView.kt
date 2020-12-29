@@ -66,18 +66,21 @@ public class MessageInputView : ConstraintLayout {
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, newValue ->
         configSendAlsoToChannelCheckbox()
-        if (newValue is InputMode.Reply) {
-            configReplyMode(newValue)
-        }
+        configReplyMode(newValue)
     }
 
-    private fun configReplyMode(newValue: InputMode.Reply) {
-        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.ReplyMessageMode(newValue.repliedMessage)
-        binding.messageInputFieldView.post {
-            binding.messageInputFieldView.binding.messageEditText.run {
-                requestFocus()
-                Utils.showSoftKeyboard(this)
+    private fun configReplyMode(newValue: InputMode) {
+        if (newValue is InputMode.Reply) {
+            binding.replyHeader.isVisible = true
+            binding.messageInputFieldView.mode = MessageInputFieldView.Mode.ReplyMessageMode(newValue.repliedMessage)
+            binding.messageInputFieldView.post {
+                binding.messageInputFieldView.binding.messageEditText.run {
+                    requestFocus()
+                    Utils.showSoftKeyboard(this)
+                }
             }
+        } else {
+            binding.replyHeader.isVisible = false
         }
     }
 
@@ -536,6 +539,10 @@ public class MessageInputView : ConstraintLayout {
             override fun editMessage(oldMessage: Message, newMessageText: String) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
+
+            override fun dismissReplay() {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
         }
     }
 
@@ -563,6 +570,7 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
+        public fun dismissReplay()
     }
 
     public fun interface OnMessageSendButtonClickListener {

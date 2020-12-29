@@ -130,4 +130,6 @@
         <item quantity="one">%d Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
     </plurals>
+
+    <string name="stream_ui_reply_to_message">Reply to message</string>
 </resources>
