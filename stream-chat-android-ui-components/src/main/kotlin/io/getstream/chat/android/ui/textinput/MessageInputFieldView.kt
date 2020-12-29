@@ -36,6 +36,7 @@ public class MessageInputFieldView : FrameLayout {
 
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
+    private var maxMessageLength: Int = Integer.MAX_VALUE
 
     public var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
@@ -141,6 +142,14 @@ public class MessageInputFieldView : FrameLayout {
         }
     }
 
+    public fun setMaxMessageLength(maxMessageLength: Int) {
+        this.maxMessageLength = maxMessageLength
+    }
+
+    public fun isMaxMessageLengthExceeded(): Boolean {
+        return messageText.length > maxMessageLength
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeItem(attachment)
@@ -229,6 +238,7 @@ public class MessageInputFieldView : FrameLayout {
     public fun hasContent(): Boolean = hasText() || hasAttachments()
 
     private fun onMessageTextChanged() {
+        configInputEditTextError()
         resetModeIfNecessary()
         contentChangeListener?.onMessageTextChanged(messageText)
     }
@@ -241,6 +251,14 @@ public class MessageInputFieldView : FrameLayout {
     private fun resetModeIfNecessary() {
         if (!hasContent() && (mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
             resetMode()
+        }
+    }
+
+    private fun configInputEditTextError() {
+        binding.messageEditText.error = if (isMaxMessageLengthExceeded()) {
+            context.getString(R.string.stream_Ui_message_input_field_max_length_error, maxMessageLength)
+        } else {
+            null
         }
     }
 

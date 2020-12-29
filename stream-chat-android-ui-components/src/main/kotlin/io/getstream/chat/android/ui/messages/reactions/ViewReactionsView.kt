@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.util.AttributeSet
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.isMine
 import io.getstream.chat.android.ui.utils.extensions.isSingleReaction
 
 public class ViewReactionsView : ReactionsView {
@@ -55,10 +56,9 @@ public class ViewReactionsView : ReactionsView {
     override fun createReactionItems(message: Message, isMyMessage: Boolean): List<ReactionItem> {
         val reactionsMap = mutableMapOf<String, ReactionItem>()
         message.latestReactions.forEach { reaction ->
-            val ownReaction = message.ownReactions.any { it.type == reaction.type }
-            val alreadyPresent = reactionsMap.containsKey(reaction.type)
-            if (!alreadyPresent || ownReaction) {
-                reactionsMap[reaction.type] = ReactionItem(reaction, ownReaction)
+            val isMine = reaction.isMine()
+            if (!reactionsMap.containsKey(reaction.type) || isMine) {
+                reactionsMap[reaction.type] = ReactionItem(reaction, isMine)
             }
         }
         return reactionsMap.values
