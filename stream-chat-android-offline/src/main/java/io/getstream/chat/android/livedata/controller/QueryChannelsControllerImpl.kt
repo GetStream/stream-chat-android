@@ -304,9 +304,7 @@ internal class QueryChannelsControllerImpl(
             // Remove from channel repository
             domainImpl.repos.removeChannel(cid)
 
-            _channels.value = _channels.value.toMutableMap().apply {
-                remove(cid)
-            }
+            _channels.value = _channels.value.minus(cid)
         }
     }
 
