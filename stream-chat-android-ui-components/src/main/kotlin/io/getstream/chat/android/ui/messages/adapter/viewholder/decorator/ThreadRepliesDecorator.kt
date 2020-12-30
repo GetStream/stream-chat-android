@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFileAttachmen
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWithFileAttachmentsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWithMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -23,7 +24,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-
+        setupThreadRepliesView(viewHolder.binding, data)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
@@ -53,6 +54,49 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
         setupThreadRepliesView(viewHolder.binding, data)
+    }
+
+    private fun setupThreadRepliesView(
+        binding: StreamUiItemMessagePlainTextWithFileAttachmentsBinding,
+        data: MessageListItem.MessageItem
+    ) {
+        val replyCount = data.message.replyCount
+        if (replyCount == 0) {
+            binding.threadRepliesFootnote.root.isVisible = false
+            return
+        }
+
+        if (data.isTheirs) {
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
+        } else {
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
+        }
+
+        binding.root.updateConstraints {
+            val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
+            val footnoteId = binding.footnote.root.id
+
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
+
+            if (data.isTheirs) {
+                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.fileAttachmentsView.id, ConstraintSet.LEFT)
+                connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
+            } else {
+                connect(
+                    threadRepliesFootnoteId,
+                    ConstraintSet.RIGHT,
+                    binding.fileAttachmentsView.id,
+                    ConstraintSet.RIGHT
+                )
+                connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
+            }
+        }
+
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadRepliesButton.text =
+            getRepliesQuantityString(binding.root.resources, replyCount)
     }
 
     private fun setupThreadRepliesView(
