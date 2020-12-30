@@ -64,15 +64,15 @@ public class MessageInputView : ConstraintLayout {
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
     private var isSendButtonEnabled: Boolean = true
 
-    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, newValue ->
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
-        configReplyMode(newValue)
+        configReplyMode(previousValue, newValue)
     }
 
-    private fun configReplyMode(newValue: InputMode) {
+    private fun configReplyMode(previousValue: InputMode, newValue: InputMode) {
         if (newValue is InputMode.Reply) {
             binding.replyHeader.isVisible = true
-            binding.messageInputFieldView.mode = MessageInputFieldView.Mode.ReplyMessageMode(newValue.repliedMessage)
+            binding.messageInputFieldView.onReply(newValue.repliedMessage)
             binding.messageInputFieldView.post {
                 binding.messageInputFieldView.binding.messageEditText.run {
                     requestFocus()
@@ -81,6 +81,9 @@ public class MessageInputView : ConstraintLayout {
             }
         } else {
             binding.replyHeader.isVisible = false
+            if (previousValue is InputMode.Reply) {
+                binding.messageInputFieldView.onReplyDismissed()
+            }
         }
     }
 

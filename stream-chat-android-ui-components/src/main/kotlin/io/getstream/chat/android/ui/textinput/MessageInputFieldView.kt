@@ -150,6 +150,17 @@ public class MessageInputFieldView : FrameLayout {
         return messageText.length > maxMessageLength
     }
 
+    public fun onReply(replyMessage: Message) {
+        mode = Mode.ReplyMessageMode(replyMessage, mode)
+    }
+
+    public fun onReplyDismissed() {
+        val currentMode = mode
+        if (currentMode is Mode.ReplyMessageMode) {
+            mode = currentMode.previousMode
+        }
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeItem(attachment)
@@ -286,6 +297,6 @@ public class MessageInputFieldView : FrameLayout {
         public data class CommandMode(val command: Command) : Mode()
         public data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         public data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
-        public data class ReplyMessageMode(val repliedMessage: Message) : Mode()
+        public data class ReplyMessageMode(val repliedMessage: Message, val previousMode: Mode) : Mode()
     }
 }
