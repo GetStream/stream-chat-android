@@ -55,8 +55,8 @@ public class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        // Todo: Uncomment once reply is done.
-        // binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
+        binding.replyTV.isVisible = true
+        binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
         when (syncStatus) {
             SyncStatus.FAILED_PERMANENTLY -> {
@@ -84,7 +84,6 @@ public class MessageOptionsView : FrameLayout {
         configureCopyMessage(iconsTint, configuration)
 
         binding.editTV.configureListItem(configuration.editText, configuration.editIcon, iconsTint)
-        binding.replyTV.isVisible = false
         binding.flagTV.isVisible = false
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false

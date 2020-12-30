@@ -57,7 +57,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     user = me,
                     replyTo = Message(
                         text = "Some long-long, super long text which is much longer that original post",
-                        user = other
+                        user = me
                     )
                 ),
                 isMine = true,

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mediaAttachmentContent"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="@dimen/stream_ui_spacing_tiny"
     >
@@ -19,10 +19,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/replyContainer"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
         android:padding="@dimen/stream_ui_spacing_tiny"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
@@ -58,7 +59,7 @@
 
         <TextView
             android:id="@+id/replyText"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:lineHeight="14sp"

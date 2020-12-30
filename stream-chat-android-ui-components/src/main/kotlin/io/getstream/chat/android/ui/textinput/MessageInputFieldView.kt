@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.selected.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.attachments.selected.SelectedMediaAttachmentAdapter
@@ -195,7 +196,10 @@ public class MessageInputFieldView : FrameLayout {
 
     private fun switchToReplyMessageMode(currentMode: Mode.ReplyMessageMode) {
         switchToMessageMode()
-        binding.messageReplyView.setMessage(currentMode.repliedMessage, false)
+        binding.messageReplyView.setMessage(
+            currentMode.repliedMessage,
+            ChatDomain.instance().currentUser.id == currentMode.repliedMessage.user.id
+        )
         binding.messageReplyView.isVisible = true
     }
 
