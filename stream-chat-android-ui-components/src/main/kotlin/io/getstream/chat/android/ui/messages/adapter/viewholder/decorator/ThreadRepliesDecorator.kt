@@ -66,13 +66,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -94,7 +90,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
     }
@@ -109,13 +104,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -137,7 +128,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
     }
@@ -152,13 +142,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -185,7 +171,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
     }
@@ -197,13 +182,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -220,7 +201,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
     }
@@ -269,13 +249,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -292,7 +268,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
     }
