@@ -27,6 +27,18 @@
         tools:src="@tools:sample/avatars"
         />
 
+    <Space
+        android:id="@+id/reactionsSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/messageContainer"
+        app:layout_constraintStart_toStartOf="@id/messageContainer"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
     <LinearLayout
         android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
@@ -37,7 +49,7 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
@@ -78,21 +90,13 @@
 
     </LinearLayout>
 
-    <Space
-        android:id="@+id/reactionsOffsetSpace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/messageContainer"
-        app:layout_constraintTop_toTopOf="@id/messageContainer"
-        />
-
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/reactionsOffsetSpace"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
         />
 
     <include

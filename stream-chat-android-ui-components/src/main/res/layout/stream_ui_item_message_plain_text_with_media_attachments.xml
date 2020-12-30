@@ -16,6 +16,18 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <Space
+        android:id="@+id/reactionsSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/backgroundView"
+        app:layout_constraintStart_toStartOf="@id/backgroundView"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
     <View
         android:id="@+id/backgroundView"
         android:layout_width="0dp"
@@ -33,7 +45,7 @@
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
         app:layout_constraintLeft_toLeftOf="@id/backgroundView"
         app:layout_constraintRight_toRightOf="@id/backgroundView"
-        app:layout_constraintTop_toBottomOf="@id/reactionsView"
+        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         android:visibility="gone"
         tools:visibility="visible"
         />
@@ -52,21 +64,13 @@
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
-    <Space
-        android:id="@+id/reactionsOffsetSpace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/mediaAttachmentsGroupView"
-        app:layout_constraintTop_toTopOf="@id/mediaAttachmentsGroupView"
-        />
-
     <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/reactionsOffsetSpace"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
         />
 
     <LinearLayout
