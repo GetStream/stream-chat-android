@@ -67,7 +67,7 @@ class GroupChatInfoViewModel(
 
     private fun leaveChannel() {
         viewModelScope.launch {
-            val result = chatDomain.useCases.hideChannel(cid, keepHistory = true).await()
+            val result = chatDomain.useCases.leaveChannel(cid).await()
             if (result.isSuccess) {
                 _channelLeftState.value = true
             } else {
