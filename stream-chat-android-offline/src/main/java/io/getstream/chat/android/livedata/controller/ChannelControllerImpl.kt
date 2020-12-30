@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -532,7 +533,7 @@ internal class ChannelControllerImpl(
             newMessage.id = domainImpl.generateMessageId()
         }
         if (newMessage.cid.isEmpty()) {
-            newMessage.cid = cid
+            newMessage.enrichWithCid(cid)
         }
 
         newMessage.user = domainImpl.currentUser

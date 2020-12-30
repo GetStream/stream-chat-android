@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
@@ -207,20 +208,20 @@ internal class EventHandlerImpl(
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
-                    event.message.cid = event.cid
+                    event.message.enrichWithCid(event.cid)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageDeletedEvent -> {
-                    event.message.cid = event.cid
+                    event.message.enrichWithCid(event.cid)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
-                    event.message.cid = event.cid
+                    event.message.enrichWithCid(event.cid)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
-                    event.message.cid = event.cid
+                    event.message.enrichWithCid(event.cid)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }

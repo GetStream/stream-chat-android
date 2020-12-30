@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -728,8 +729,8 @@ internal class ChatDomainImpl internal constructor(
             users.putAll(channel.users().associateBy { it.id })
             configs[channel.type] = channel.config
 
-            for (message in channel.messages) {
-                message.cid = channel.cid
+            channel.messages.forEach { message ->
+                message.enrichWithCid(channel.cid)
                 users.putAll(message.users().associateBy { it.id })
             }
 

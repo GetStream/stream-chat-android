@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -36,7 +37,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        message.cid = cid
+        message.enrichWithCid(cid)
         return CoroutineCall(domainImpl.scope) {
             val attachments = uploadFiles(channelController, files, attachmentTransformer)
             if (attachments.isError) {
