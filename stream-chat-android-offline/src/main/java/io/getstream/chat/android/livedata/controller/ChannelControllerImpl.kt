@@ -357,6 +357,20 @@ internal class ChannelControllerImpl(
         return result
     }
 
+    suspend fun leave(): Result<Unit> {
+        val result = channelClient.removeMembers(domainImpl.currentUser.id).execute()
+
+        return if (result.isSuccess) {
+            // Remove from query controllers
+            for (activeQuery in domainImpl.getActiveQueries()) {
+                activeQuery.removeChannel(cid)
+            }
+            Result(Unit)
+        } else {
+            Result(result.error())
+        }
+    }
+
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value) {

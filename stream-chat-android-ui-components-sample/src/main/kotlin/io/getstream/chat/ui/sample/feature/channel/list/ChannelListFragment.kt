@@ -87,8 +87,7 @@ class ChannelListFragment : Fragment() {
             }
 
             setChannelLeaveClickListener { channel ->
-                // leave functionality pending on backend; hide for now
-                viewModel.hideChannel(channel)
+                viewModel.leaveChannel(channel)
             }
 
             viewModel.bindView(this, viewLifecycleOwner)

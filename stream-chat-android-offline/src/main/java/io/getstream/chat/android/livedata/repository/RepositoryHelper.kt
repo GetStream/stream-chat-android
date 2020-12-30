@@ -69,6 +69,10 @@ internal class RepositoryHelper(
         users.insert(channels.flatMap(Channel::users))
     }
 
+    suspend fun removeChannel(cid: String) {
+        channels.delete(cid)
+    }
+
     private suspend fun selectUser(userId: String): User =
         users.select(userId) ?: error("User with the userId: `$userId` has not been found")
 }

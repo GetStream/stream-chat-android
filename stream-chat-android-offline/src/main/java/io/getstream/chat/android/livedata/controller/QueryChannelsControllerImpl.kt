@@ -296,6 +296,18 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
+    internal suspend fun removeChannel(cid: String) {
+        // Remove from queryChannelsSpec
+        if (queryChannelsSpec.cids.contains(cid)) {
+            queryChannelsSpec.cids = queryChannelsSpec.cids - cid
+            domainImpl.repos.queryChannels.insert(queryChannelsSpec)
+            // Remove from channel repository
+            domainImpl.repos.removeChannel(cid)
+
+            _channels.value = _channels.value.minus(cid)
+        }
+    }
+
     /**
      * refreshes a single channel
      * Note that this only refreshes channels that are already matching with the query
