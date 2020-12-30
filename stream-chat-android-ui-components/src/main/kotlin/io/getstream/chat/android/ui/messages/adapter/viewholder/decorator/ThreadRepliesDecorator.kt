@@ -1,10 +1,12 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.content.res.Resources
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFileAttachmentsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
@@ -20,12 +22,16 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    ) {
+
+    }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) = Unit
+    ) {
+        setupThreadRepliesView(viewHolder.binding, data)
+    }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
@@ -50,6 +56,49 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     }
 
     private fun setupThreadRepliesView(
+        binding: StreamUiItemMessageFileAttachmentsBinding,
+        data: MessageListItem.MessageItem
+    ) {
+        val replyCount = data.message.replyCount
+        if (replyCount == 0) {
+            binding.threadRepliesFootnote.root.isVisible = false
+            return
+        }
+
+        if (data.isTheirs) {
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
+        } else {
+            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
+            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
+        }
+
+        binding.root.updateConstraints {
+            val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
+            val footnoteId = binding.footnote.root.id
+
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
+
+            if (data.isTheirs) {
+                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.fileAttachmentsView.id, ConstraintSet.LEFT)
+                connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
+            } else {
+                connect(
+                    threadRepliesFootnoteId,
+                    ConstraintSet.RIGHT,
+                    binding.fileAttachmentsView.id,
+                    ConstraintSet.RIGHT
+                )
+                connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
+            }
+        }
+
+        binding.root.isVisible = true
+        binding.threadRepliesFootnote.threadRepliesButton.text =
+            getRepliesQuantityString(binding.root.resources, replyCount)
+    }
+
+    private fun setupThreadRepliesView(
         binding: StreamUiItemMessageMediaAttachmentsBinding,
         data: MessageListItem.MessageItem
     ) {
@@ -71,31 +120,30 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
             val footnoteId = binding.footnote.root.id
 
-            clear(threadRepliesFootnoteId, ConstraintSet.START)
-            clear(threadRepliesFootnoteId, ConstraintSet.LEFT)
-            clear(threadRepliesFootnoteId, ConstraintSet.END)
-            clear(threadRepliesFootnoteId, ConstraintSet.RIGHT)
-            clear(footnoteId, ConstraintSet.END)
-            clear(footnoteId, ConstraintSet.LEFT)
-            clear(footnoteId, ConstraintSet.START)
-            clear(footnoteId, ConstraintSet.RIGHT)
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
 
             if (data.isTheirs) {
-                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.mediaAttachmentsGroupView.id, ConstraintSet.LEFT)
+                connect(
+                    threadRepliesFootnoteId,
+                    ConstraintSet.LEFT,
+                    binding.mediaAttachmentsGroupView.id,
+                    ConstraintSet.LEFT
+                )
                 connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
             } else {
-                connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.mediaAttachmentsGroupView.id, ConstraintSet.RIGHT)
+                connect(
+                    threadRepliesFootnoteId,
+                    ConstraintSet.RIGHT,
+                    binding.mediaAttachmentsGroupView.id,
+                    ConstraintSet.RIGHT
+                )
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
         }
 
         binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
-            binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
-                R.plurals.stream_ui_thread_messages_indicator,
-                replyCount,
-                replyCount
-            )
+            getRepliesQuantityString(binding.root.resources, replyCount)
     }
 
     private fun setupThreadRepliesView(binding: StreamUiItemMessageGiphyBinding, data: MessageListItem.MessageItem) {
@@ -117,14 +165,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
             val footnoteId = binding.footnote.root.id
 
-            clear(threadRepliesFootnoteId, ConstraintSet.START)
-            clear(threadRepliesFootnoteId, ConstraintSet.LEFT)
-            clear(threadRepliesFootnoteId, ConstraintSet.END)
-            clear(threadRepliesFootnoteId, ConstraintSet.RIGHT)
-            clear(footnoteId, ConstraintSet.END)
-            clear(footnoteId, ConstraintSet.LEFT)
-            clear(footnoteId, ConstraintSet.START)
-            clear(footnoteId, ConstraintSet.RIGHT)
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
 
             if (data.isTheirs) {
                 connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.cardView.id, ConstraintSet.LEFT)
@@ -137,11 +178,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
         binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
-            binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
-                R.plurals.stream_ui_thread_messages_indicator,
-                replyCount,
-                replyCount
-            )
+            getRepliesQuantityString(binding.root.resources, replyCount)
     }
 
     private fun setupThreadRepliesView(
@@ -163,14 +200,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
             val footnoteId = binding.footnote.root.id
 
-            clear(threadRepliesFootnoteId, ConstraintSet.START)
-            clear(threadRepliesFootnoteId, ConstraintSet.LEFT)
-            clear(threadRepliesFootnoteId, ConstraintSet.END)
-            clear(threadRepliesFootnoteId, ConstraintSet.RIGHT)
-            clear(footnoteId, ConstraintSet.END)
-            clear(footnoteId, ConstraintSet.LEFT)
-            clear(footnoteId, ConstraintSet.START)
-            clear(footnoteId, ConstraintSet.RIGHT)
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
 
             if (data.isTheirs) {
                 connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.messageContainer.id, ConstraintSet.LEFT)
@@ -182,13 +212,8 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         }
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
-            binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
-                R.plurals.stream_ui_thread_messages_indicator,
-                replyCount,
-                replyCount
-            )
+            getRepliesQuantityString(binding.root.resources, replyCount)
     }
-
 
     private fun setupThreadRepliesView(
         binding: StreamUiItemMessagePlainTextWithMediaAttachmentsBinding,
@@ -212,14 +237,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
             val footnoteId = binding.footnote.root.id
 
-            clear(threadRepliesFootnoteId, ConstraintSet.START)
-            clear(threadRepliesFootnoteId, ConstraintSet.LEFT)
-            clear(threadRepliesFootnoteId, ConstraintSet.END)
-            clear(threadRepliesFootnoteId, ConstraintSet.RIGHT)
-            clear(footnoteId, ConstraintSet.END)
-            clear(footnoteId, ConstraintSet.LEFT)
-            clear(footnoteId, ConstraintSet.START)
-            clear(footnoteId, ConstraintSet.RIGHT)
+            clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
 
             if (data.isTheirs) {
                 connect(threadRepliesFootnoteId, ConstraintSet.LEFT, binding.messageContainer.id, ConstraintSet.LEFT)
@@ -232,10 +250,24 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
         binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
-            binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
-                R.plurals.stream_ui_thread_messages_indicator,
-                replyCount,
-                replyCount
-            )
+            getRepliesQuantityString(binding.root.resources, replyCount)
     }
+
+    private fun ConstraintSet.clearHorizontalConstraints(vararg viewIds: Int) {
+        viewIds.forEach {
+            clear(it, ConstraintSet.START)
+            clear(it, ConstraintSet.LEFT)
+            clear(it, ConstraintSet.END)
+            clear(it, ConstraintSet.RIGHT)
+        }
+    }
+
+    private fun getRepliesQuantityString(
+        res: Resources,
+        replyCount: Int
+    ) = res.getQuantityString(
+        R.plurals.stream_ui_thread_messages_indicator,
+        replyCount,
+        replyCount
+    )
 }
