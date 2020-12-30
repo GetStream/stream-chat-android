@@ -18,6 +18,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator.Companion.DEFAULT_CORNER_RADIUS
 
 internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
@@ -88,7 +89,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 )
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -126,7 +133,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 )
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -169,7 +182,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 )
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -199,7 +218,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.cardView.id, ConstraintSet.RIGHT)
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -233,7 +258,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.messageContainer.id, ConstraintSet.RIGHT)
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+        
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -266,7 +297,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, binding.messageContainer.id, ConstraintSet.RIGHT)
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
+
+            clearVerticalConstraints(footnoteId)
+            connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
+
+        binding.threadRepliesFootnote.root.translationY = - DEFAULT_CORNER_RADIUS
+        binding.footnote.root.translationY = - DEFAULT_CORNER_RADIUS
 
         binding.threadRepliesFootnote.threadRepliesButton.text =
             getRepliesQuantityString(binding.root.resources, replyCount)
@@ -278,6 +315,13 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             clear(it, ConstraintSet.LEFT)
             clear(it, ConstraintSet.END)
             clear(it, ConstraintSet.RIGHT)
+        }
+    }
+
+    private fun ConstraintSet.clearVerticalConstraints(vararg viewIds: Int) {
+        viewIds.forEach {
+            clear(it, ConstraintSet.BOTTOM)
+            clear(it, ConstraintSet.TOP)
         }
     }
 

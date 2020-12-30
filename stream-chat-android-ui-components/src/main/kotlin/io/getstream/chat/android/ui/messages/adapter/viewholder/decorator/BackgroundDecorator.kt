@@ -149,9 +149,10 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_90
         private val MESSAGE_LINK_BACKGROUND = R.color.stream_ui_blue_alice
-        private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
         private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()
+
+        internal val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
     }
 }
