@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8">
-      <module name="stream-chat-android.buildSrc" target="11" />
-      <module name="stream-chat-android.stream-chat-android" target="11" />
-      <module name="stream-chat-android.stream-chat-android-client" target="11" />
-      <module name="stream-chat-android.stream-chat-android-docs" target="11" />
-      <module name="stream-chat-android.stream-chat-android-offline" target="11" />
-      <module name="stream-chat-android.stream-chat-android-sample" target="11" />
-      <module name="stream-chat-android.stream-chat-android-test" target="11" />
-      <module name="stream-chat-android.stream-chat-android-ui-common" target="11" />
-      <module name="stream-chat-android.stream-chat-android-ui-components" target="11" />
-      <module name="stream-chat-android.stream-chat-android-ui-components-sample" target="11" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8" />
   </component>
 </project>

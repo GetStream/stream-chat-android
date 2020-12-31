@@ -1,13 +1,13 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import android.content.res.Resources
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -24,7 +24,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     ) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.fileAttachmentsView.id,
             data
@@ -37,7 +37,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     ) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.fileAttachmentsView.id,
             data
@@ -50,7 +50,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     ) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.mediaAttachmentsGroupView.id,
             data
@@ -63,7 +63,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     ) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.mediaAttachmentsGroupView.id,
             data
@@ -73,7 +73,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.messageContainer.id,
             data
@@ -83,7 +83,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
         setupThreadRepliesView(
             viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote,
+            viewHolder.binding.footnote.root,
             viewHolder.binding.root,
             viewHolder.binding.cardView.id,
             data
@@ -92,9 +92,9 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
     private fun setupThreadRepliesView(
         threadRepliesFootNote: StreamUiMessageThreadsFootnoteBinding,
-        footNoteBinding: StreamUiItemMessageFootnoteBinding,
+        messageFootnote: View,
         rootView: ConstraintLayout,
-        anchorViewId: Int,
+        footnoteAnchorViewId: Int,
         data: MessageListItem.MessageItem
     ) {
         val replyCount = data.message.replyCount
@@ -109,18 +109,18 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
         rootView.updateConstraints {
             val threadRepliesFootnoteId = threadRepliesFootNote.root.id
-            val footnoteId = footNoteBinding.root.id
+            val footnoteId = messageFootnote.id
 
             clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
 
             if (data.isTheirs) {
-                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, anchorViewId, ConstraintSet.LEFT)
+                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, footnoteAnchorViewId, ConstraintSet.LEFT)
                 connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
             } else {
                 connect(
                     threadRepliesFootnoteId,
                     ConstraintSet.RIGHT,
-                    anchorViewId,
+                    footnoteAnchorViewId,
                     ConstraintSet.RIGHT
                 )
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
@@ -131,7 +131,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         }
 
         threadRepliesFootNote.root.translationY = -DEFAULT_CORNER_RADIUS
-        footNoteBinding.root.translationY = -DEFAULT_CORNER_RADIUS
+        messageFootnote.translationY = -DEFAULT_CORNER_RADIUS
 
         threadRepliesFootNote.threadRepliesButton.text =
             getRepliesQuantityString(rootView.resources, replyCount)
