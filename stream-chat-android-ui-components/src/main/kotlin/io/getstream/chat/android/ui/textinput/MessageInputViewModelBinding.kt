@@ -32,12 +32,12 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
     view.setSendMessageHandler(
         object : MessageInputView.MessageSendHandler {
             val viewModel = this@bindView
-            override fun sendMessage(messageText: String) {
-                viewModel.sendMessage(messageText)
+            override fun sendMessage(messageText: String, messageReplyTo: Message?) {
+                viewModel.sendMessage(messageText) { replyMessageId = messageReplyTo?.id }
             }
 
-            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-                viewModel.sendMessageWithAttachments(message, attachmentsFiles)
+            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>, messageReplyTo: Message?) {
+                viewModel.sendMessageWithAttachments(message, attachmentsFiles) { replyMessageId = messageReplyTo?.id }
             }
 
             override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
@@ -62,6 +62,10 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             override fun editMessage(oldMessage: Message, newMessageText: String) {
                 viewModel.editMessage(oldMessage.copy(text = newMessageText))
             }
+
+            override fun dismissReplay() {
+                viewModel.dismissReplay()
+            }
         }
     )
     view.setTypingListener(
@@ -70,4 +74,12 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             override fun onStopTyping() = stopTyping()
         }
     )
+
+    repliedMessage.observe(lifecycleOwner) {
+        if (it != null) {
+            view.inputMode = MessageInputView.InputMode.Reply(it)
+        } else {
+            view.inputMode = MessageInputView.InputMode.Normal
+        }
+    }
 }

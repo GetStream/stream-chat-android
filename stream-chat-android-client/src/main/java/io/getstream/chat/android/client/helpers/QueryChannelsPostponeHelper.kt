@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -28,7 +29,7 @@ internal class QueryChannelsPostponeHelper(
         doJob {
             api.queryChannel(channelType, channelId, request)
                 .map { channel ->
-                    channel.messages.forEach { message -> message.cid = channel.cid }
+                    channel.messages.forEach { it.enrichWithCid(channel.cid) }
                     channel
                 }
         }
@@ -39,9 +40,7 @@ internal class QueryChannelsPostponeHelper(
             // for convenience we add the message.cid field
             api.queryChannels(request).map { channels ->
                 channels.map { channel ->
-                    channel.messages.forEach { message ->
-                        message.cid = channel.cid
-                    }
+                    channel.messages.forEach { it.enrichWithCid(channel.cid) }
                 }
                 channels
             }

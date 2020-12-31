@@ -40,10 +40,12 @@
 
     <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
         android:id="@+id/replyView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
         android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
         app:layout_constraintRight_toRightOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"

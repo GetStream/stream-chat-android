@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.selected.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.attachments.selected.SelectedMediaAttachmentAdapter
@@ -150,6 +151,17 @@ public class MessageInputFieldView : FrameLayout {
         return messageText.length > maxMessageLength
     }
 
+    public fun onReply(replyMessage: Message) {
+        mode = Mode.ReplyMessageMode(replyMessage, mode)
+    }
+
+    public fun onReplyDismissed() {
+        val currentMode = mode
+        if (currentMode is Mode.ReplyMessageMode) {
+            mode = currentMode.previousMode
+        }
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeItem(attachment)
@@ -177,8 +189,18 @@ public class MessageInputFieldView : FrameLayout {
             is Mode.MessageMode -> switchToMessageMode()
             is Mode.EditMessageMode -> switchToEditMode(currentMode)
             is Mode.CommandMode -> switchToCommandMode(currentMode)
+            is Mode.ReplyMessageMode -> switchToReplyMessageMode(currentMode)
         }
         contentChangeListener?.onModeChanged(currentMode)
+    }
+
+    private fun switchToReplyMessageMode(currentMode: Mode.ReplyMessageMode) {
+        switchToMessageMode()
+        binding.messageReplyView.setMessage(
+            currentMode.repliedMessage,
+            ChatDomain.instance().currentUser.id == currentMode.repliedMessage.user.id
+        )
+        binding.messageReplyView.isVisible = true
     }
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
@@ -209,6 +231,7 @@ public class MessageInputFieldView : FrameLayout {
         binding.commandBadge.isVisible = false
         binding.clearCommandButton.isVisible = false
         binding.messageEditText.hint = normalModeHint
+        binding.messageReplyView.isVisible = false
     }
 
     private fun switchToEditMode(mode: Mode.EditMessageMode) {
@@ -278,5 +301,6 @@ public class MessageInputFieldView : FrameLayout {
         public data class CommandMode(val command: Command) : Mode()
         public data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         public data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+        public data class ReplyMessageMode(val repliedMessage: Message, val previousMode: Mode) : Mode()
     }
 }

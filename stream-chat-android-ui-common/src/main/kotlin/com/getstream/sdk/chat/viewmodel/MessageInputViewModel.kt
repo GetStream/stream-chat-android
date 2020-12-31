@@ -31,6 +31,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val commands: LiveData<List<Command>> = _commands
     public val members: LiveData<List<Member>> = _members
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
+    public val repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
 
     init {
         chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
@@ -40,6 +41,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
                 _maxMessageLength.value = channel.config.maxMessageLength
                 _commands.value = channel.config.commands
                 _members.addSource(channelController.members) { _members.value = it }
+                repliedMessage.addSource(channelController.repliedMessage) { repliedMessage.value = it }
             }
         }
     }
@@ -110,5 +112,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun stopTyping() {
         if (isThread) return
         chatDomain.useCases.stopTyping(cid).enqueue()
+    }
+
+    public fun dismissReplay() {
+        if (repliedMessage.value != null) {
+            chatDomain.useCases.setMessageForReply(cid, null).enqueue()
+        }
     }
 }
