@@ -590,6 +590,7 @@ internal class ChannelControllerImpl(
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
+                    enrichWithCid(cid)
                     syncStatus = SyncStatus.COMPLETED
                     domainImpl.repos.messages.insert(this)
                 }

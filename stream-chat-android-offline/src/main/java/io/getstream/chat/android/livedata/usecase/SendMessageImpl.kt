@@ -25,7 +25,7 @@ internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMes
 
         val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            if (message.replyTo != null) {
+            if (message.replyMessageId != null) {
                 channelController.replyMessage(null)
             }
             channelController.sendMessage(message, attachmentTransformer)
