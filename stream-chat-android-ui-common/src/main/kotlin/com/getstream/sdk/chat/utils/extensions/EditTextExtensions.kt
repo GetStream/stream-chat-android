@@ -23,13 +23,15 @@ public fun EditText.focusAndShowKeyboard() {
     if (hasWindowFocus()) {
         showKeyboardIfFocused()
     } else {
-        viewTreeObserver.addOnWindowFocusChangeListener(object : ViewTreeObserver.OnWindowFocusChangeListener {
-            override fun onWindowFocusChanged(hasFocus: Boolean) {
-                if (hasFocus) {
-                    this@focusAndShowKeyboard.showKeyboardIfFocused()
-                    viewTreeObserver.removeOnWindowFocusChangeListener(this)
+        viewTreeObserver.addOnWindowFocusChangeListener(
+            object : ViewTreeObserver.OnWindowFocusChangeListener {
+                override fun onWindowFocusChanged(hasFocus: Boolean) {
+                    if (hasFocus) {
+                        this@focusAndShowKeyboard.showKeyboardIfFocused()
+                        viewTreeObserver.removeOnWindowFocusChangeListener(this)
+                    }
                 }
             }
-        })
+        )
     }
 }

@@ -411,11 +411,11 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendButton(typedArray: TypedArray) {
         iconDisabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.MessageInputView_streamUiSendButtonDisabledIcon)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_right_arrow)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_right_arrow)
 
         iconEnabledSendButtonDrawable =
             typedArray.getDrawable(R.styleable.MessageInputView_streamUiSendButtonEnabledIcon)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_up_arrow)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_up_arrow)
 
         isSendButtonEnabled = typedArray.getBoolean(R.styleable.MessageInputView_streamUiSendButtonEnabled, true)
 

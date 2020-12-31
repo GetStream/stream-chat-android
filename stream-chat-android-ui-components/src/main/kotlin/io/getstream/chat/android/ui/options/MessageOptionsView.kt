@@ -39,7 +39,8 @@ public class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.isVisible = true
+        // Uncomment when the feature will be deployed to our backend
+        // binding.replyTV.isVisible = true
         binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
         binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
@@ -55,7 +56,8 @@ public class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.isVisible = true
+        // Uncomment when the feature will be deployed to our backend
+        // binding.replyTV.isVisible = true
         binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
         when (syncStatus) {
