@@ -1375,9 +1375,8 @@ internal class ChannelControllerImpl(
         return Result(message)
     }
 
-    internal suspend fun replyMessage(repliedMessage: Message?): Result<Unit> {
+    internal fun replyMessage(repliedMessage: Message?) {
         _repliedMessage.value = repliedMessage
-        return Result(Unit)
     }
 
     companion object {
