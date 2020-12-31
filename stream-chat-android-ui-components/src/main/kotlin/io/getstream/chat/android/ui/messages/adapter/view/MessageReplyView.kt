@@ -133,7 +133,7 @@ public class MessageReplyView : FrameLayout {
         } else {
             when (attachment.type) {
                 ModelType.attach_file -> showFileTypeLogo(attachment.mimeType)
-                ModelType.attach_image -> showAttachmentThumb(attachment.imageUrl)
+                ModelType.attach_image -> showAttachmentThumb(attachment.thumbUrl ?: attachment.imageUrl)
                 ModelType.attach_giphy,
                 ModelType.attach_video -> showAttachmentThumb(attachment.thumbUrl)
                 else -> showAttachmentThumb(attachment.image)
@@ -143,7 +143,7 @@ public class MessageReplyView : FrameLayout {
 
     private fun setReplyText(message: Message) {
         val attachment = message.attachments.lastOrNull()
-        binding.replyText.text = if (attachment == null) {
+        binding.replyText.text = if (attachment == null || message.text.isNotBlank()) {
             if (ellipsize) {
                 ellipsize(message.text)
             } else {

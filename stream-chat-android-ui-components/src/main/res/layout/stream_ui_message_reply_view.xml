@@ -67,6 +67,7 @@
             android:textColor="@color/stream_ui_black"
             android:textColorLink="@color/stream_ui_blue"
             android:textSize="12sp"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/logoContainer"
             app:layout_constraintTop_toTopOf="parent"
