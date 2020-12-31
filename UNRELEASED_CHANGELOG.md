@@ -7,5 +7,6 @@
 
 ## stream-chat-android-offline
 - Add LeaveChannel use case
+- Add ChannelData::memberCount
 
 ## stream-chat-android-ui-common

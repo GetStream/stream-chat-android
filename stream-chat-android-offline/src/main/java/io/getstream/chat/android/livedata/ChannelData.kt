@@ -30,6 +30,8 @@ public data class ChannelData(
     var updatedAt: Date? = null,
     /** when the channel was deleted */
     var deletedAt: Date? = null,
+    /** channel member count */
+    var memberCount: Int = 0,
     /** all the custom data provided for this channel */
     var extraData: MutableMap<String, Any> = mutableMapOf()
 ) {
@@ -41,6 +43,7 @@ public data class ChannelData(
         createdAt = c.createdAt
         updatedAt = c.updatedAt
         deletedAt = c.deletedAt
+        memberCount = c.memberCount
         extraData = c.extraData
 
         createdBy = c.createdBy
