@@ -46,7 +46,7 @@ internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
         val replyToMessage = data.message.replyTo
         if (replyToMessage != null) {
             replyView.isVisible = true
-            replyView.setMessage(replyToMessage, currentUser == replyToMessage.user)
+            replyView.setMessage(replyToMessage, if (data.isMine) false else currentUser == replyToMessage.user)
         } else {
             replyView.isVisible = false
         }
