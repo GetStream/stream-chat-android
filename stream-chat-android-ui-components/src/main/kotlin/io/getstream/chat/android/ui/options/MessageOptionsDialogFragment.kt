@@ -126,7 +126,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory(MessageOptionsDecoratorsProvider())
+        viewHolder = MessageListItemViewHolderFactory(MessageOptionsDecoratorProvider())
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)

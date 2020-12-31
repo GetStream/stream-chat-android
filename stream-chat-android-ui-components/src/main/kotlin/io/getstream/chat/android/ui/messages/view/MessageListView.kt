@@ -33,7 +33,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorsProvider
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
@@ -532,7 +532,7 @@ public class MessageListView : ConstraintLayout {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
             messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
-                MessageListItemDecoratorsProvider(context, currentUser, channel.isDirectMessaging())
+                MessageListItemDecoratorProvider(context, currentUser, channel.isDirectMessaging())
             )
         }
 

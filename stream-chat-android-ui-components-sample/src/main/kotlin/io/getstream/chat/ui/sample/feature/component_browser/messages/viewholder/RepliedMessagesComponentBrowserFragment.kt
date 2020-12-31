@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorsProvider
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
 import io.getstream.chat.ui.sample.R
@@ -25,7 +25,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
 
     @OptIn(InternalStreamChatApi::class)
     override fun createAdapter(): RecyclerView.Adapter<*> {
-        val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorsProvider(requireContext(), currentUser))
+        val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorProvider(requireContext(), currentUser))
         return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }
 

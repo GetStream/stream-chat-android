@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorsProvider
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FailedIndicatorDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
@@ -18,11 +18,11 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Reacti
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ThreadRepliesDecorator
 
-public class MessageListItemDecoratorsProvider(
+public class MessageListItemDecoratorProvider(
     context: Context,
     currentUser: User,
     directMessage: Boolean = false
-) : DecoratorsProvider {
+) : DecoratorProvider {
 
     private val messageListDecorators = listOf<Decorator>(
         BackgroundDecorator(),
@@ -40,7 +40,5 @@ public class MessageListItemDecoratorsProvider(
         ThreadRepliesDecorator(),
     )
 
-    override fun getDecorators(): List<Decorator> {
-        return messageListDecorators
-    }
+    override val decorators: List<Decorator> = messageListDecorators
 }
