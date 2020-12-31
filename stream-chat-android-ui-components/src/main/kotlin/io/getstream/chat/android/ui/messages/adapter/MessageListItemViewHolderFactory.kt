@@ -18,7 +18,7 @@ public open class MessageListItemViewHolderFactory(
     private val decoratorsProvider: DecoratorsProvider
 ) {
 
-    public var listenerContainer: ListenerContainer? = null
+    public var listenerContainer: MessageListListenerContainer? = null
 
     public fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {

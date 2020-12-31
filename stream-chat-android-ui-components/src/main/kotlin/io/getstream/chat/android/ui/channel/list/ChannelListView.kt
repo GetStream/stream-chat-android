@@ -57,7 +57,7 @@ public class ChannelListView @JvmOverloads constructor(
             logger.logE("Adapter must be an instance of ChannelListItemAdapter")
         }
 
-        return channelAdapter.cast()
+        return channelAdapter
     }
 
     public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {

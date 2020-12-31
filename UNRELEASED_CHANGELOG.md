@@ -6,5 +6,6 @@
 - Add filtering non image attachments in ChatClient::getImageAttachments
 
 ## stream-chat-android-offline
+- Add LeaveChannel use case
 
 ## stream-chat-android-ui-common

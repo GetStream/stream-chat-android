@@ -57,5 +57,5 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
     mentionedUsersId = mentionedUsers.map(User::id),
-    replyToId = replyTo?.id
+    replyToId = replyTo?.id ?: replyMessageId
 )

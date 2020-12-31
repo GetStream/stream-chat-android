@@ -54,6 +54,18 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(
+                    text = "Wow",
+                    user = me,
+                    replyTo = Message(
+                        text = "Some long-long, super long text which is much longer that original post",
+                        user = me
+                    )
+                ),
+                isMine = true,
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM)
+            ),
+            MessageListItem.MessageItem(
+                message = Message(
                     attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1)),
                     text = "Some text",
                     user = me,

@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -110,6 +111,9 @@ internal class ChannelControllerImpl(
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
+    private val _repliedMessage = MutableStateFlow<Message?>(null)
+
+    override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
@@ -357,6 +361,20 @@ internal class ChannelControllerImpl(
         return result
     }
 
+    suspend fun leave(): Result<Unit> {
+        val result = channelClient.removeMembers(domainImpl.currentUser.id).execute()
+
+        return if (result.isSuccess) {
+            // Remove from query controllers
+            for (activeQuery in domainImpl.getActiveQueries()) {
+                activeQuery.removeChannel(cid)
+            }
+            Result(Unit)
+        } else {
+            Result(result.error())
+        }
+    }
+
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value) {
@@ -515,7 +533,7 @@ internal class ChannelControllerImpl(
             newMessage.id = domainImpl.generateMessageId()
         }
         if (newMessage.cid.isEmpty()) {
-            newMessage.cid = cid
+            newMessage.enrichWithCid(cid)
         }
 
         newMessage.user = domainImpl.currentUser
@@ -572,6 +590,7 @@ internal class ChannelControllerImpl(
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
+                    enrichWithCid(cid)
                     syncStatus = SyncStatus.COMPLETED
                     domainImpl.repos.messages.insert(this)
                 }
@@ -1354,6 +1373,10 @@ internal class ChannelControllerImpl(
         loadNewerMessages(newerMessagesOffset)
         loadOlderMessages(olderMessagesOffset)
         return Result(message)
+    }
+
+    internal fun replyMessage(repliedMessage: Message?) {
+        _repliedMessage.value = repliedMessage
     }
 
     companion object {

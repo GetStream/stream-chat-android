@@ -144,4 +144,10 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      * showChannels shows a channel which was previously hidden
      */
     public val showChannel: ShowChannel = ShowChannelImpl(chatDomainImpl)
+    /**
+     * Leaves a channel and retry using the retry policy if the request fails
+     */
+    public val leaveChannel: LeaveChannel = LeaveChannelImpl(chatDomainImpl)
+
+    public val setMessageForReply: SetMessageForReply = SetMessageForReplyImpl(chatDomainImpl)
 }

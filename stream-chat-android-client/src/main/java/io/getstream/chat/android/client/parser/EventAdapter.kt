@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.EventType
 
 internal class EventAdapter(
@@ -104,13 +105,13 @@ internal class EventAdapter(
             //region Messages
 
             EventType.MESSAGE_NEW -> {
-                gson.fromJson(data, NewMessageEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, NewMessageEvent::class.java).apply { message.enrichWithCid(cid) }
             }
             EventType.MESSAGE_DELETED -> {
-                gson.fromJson(data, MessageDeletedEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, MessageDeletedEvent::class.java).apply { message.enrichWithCid(cid) }
             }
             EventType.MESSAGE_UPDATED -> {
-                gson.fromJson(data, MessageUpdatedEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, MessageUpdatedEvent::class.java).apply { message.enrichWithCid(cid) }
             }
             EventType.MESSAGE_READ -> when {
                 mapData.containsKey("cid") -> gson.fromJson(data, MessageReadEvent::class.java)
@@ -129,13 +130,13 @@ internal class EventAdapter(
             //region Reactions
 
             EventType.REACTION_NEW -> {
-                gson.fromJson(data, ReactionNewEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, ReactionNewEvent::class.java).apply { message.enrichWithCid(cid) }
             }
             EventType.REACTION_UPDATED -> {
-                gson.fromJson(data, ReactionUpdateEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, ReactionUpdateEvent::class.java).apply { message.enrichWithCid(cid) }
             }
             EventType.REACTION_DELETED -> {
-                gson.fromJson(data, ReactionDeletedEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, ReactionDeletedEvent::class.java).apply { message.enrichWithCid(cid) }
             }
 
             //region Members
@@ -153,13 +154,13 @@ internal class EventAdapter(
             //region Channels
 
             EventType.CHANNEL_CREATED -> {
-                gson.fromJson(data, ChannelCreatedEvent::class.java).apply { message?.cid = cid }
+                gson.fromJson(data, ChannelCreatedEvent::class.java).apply { message?.enrichWithCid(cid) }
             }
             EventType.CHANNEL_UPDATED -> {
                 if (mapData.containsKey("user")) {
-                    gson.fromJson(data, ChannelUpdatedByUserEvent::class.java).apply { message?.cid = cid }
+                    gson.fromJson(data, ChannelUpdatedByUserEvent::class.java).apply { message?.enrichWithCid(cid) }
                 } else {
-                    gson.fromJson(data, ChannelUpdatedEvent::class.java).apply { message?.cid = cid }
+                    gson.fromJson(data, ChannelUpdatedEvent::class.java).apply { message?.enrichWithCid(cid) }
                 }
             }
             EventType.CHANNEL_HIDDEN -> {
@@ -212,7 +213,7 @@ internal class EventAdapter(
             }
 
             EventType.NOTIFICATION_MESSAGE_NEW -> {
-                gson.fromJson(data, NotificationMessageNewEvent::class.java).apply { message.cid = cid }
+                gson.fromJson(data, NotificationMessageNewEvent::class.java).apply { message.enrichWithCid(cid) }
             }
 
             EventType.NOTIFICATION_INVITED -> {

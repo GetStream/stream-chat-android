@@ -21,6 +21,7 @@
 
     <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
     <color name="stream_ui_icon_light_tint">@color/stream_ui_white</color>
+    <color name="stream_ui_icon_strong_tint">@color/stream_ui_white</color>
 
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
@@ -32,4 +33,6 @@
 
     <color name="stream_ui_send_button">@color/stream_ui_disabled_send_message_dark_theme</color>
     <color name="stream_ui_send_button_disabled">@color/stream_ui_disabled_send_message_dark_theme</color>
+
+    <color name="stream_ui_search_input_border">#1C1E22</color>
 </resources>

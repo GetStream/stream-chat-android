@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
+import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -63,8 +64,22 @@ public class MessageInputView : ConstraintLayout {
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
     private var isSendButtonEnabled: Boolean = true
 
-    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, _, _ ->
+    public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
+        configReplyMode(previousValue, newValue)
+    }
+
+    private fun configReplyMode(previousValue: InputMode, newValue: InputMode) {
+        if (newValue is InputMode.Reply) {
+            binding.replyHeader.isVisible = true
+            binding.messageInputFieldView.onReply(newValue.repliedMessage)
+            binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
+        } else {
+            binding.replyHeader.isVisible = false
+            if (previousValue is InputMode.Reply) {
+                binding.messageInputFieldView.onReplyDismissed()
+            }
+        }
     }
 
     public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
@@ -169,6 +184,7 @@ public class MessageInputView : ConstraintLayout {
         }
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
+        binding.dismissReply.setOnClickListener { sendMessageHandler.dismissReplay() }
     }
 
     private fun configSendButtonListener() {
@@ -179,6 +195,7 @@ public class MessageInputView : ConstraintLayout {
                     is InputMode.Normal -> sendMessage()
                     is InputMode.Thread -> sendThreadMessage(it.parentMessage)
                     is InputMode.Edit -> editMessage(it.oldMessage)
+                    is InputMode.Reply -> sendMessage(it.repliedMessage)
                 }
             }
             binding.messageInputFieldView.clearContent()
@@ -459,14 +476,15 @@ public class MessageInputView : ConstraintLayout {
         setSendMessageButtonEnabled(hasContent && !maxLMessageLengthExceeded)
     }
 
-    private fun sendMessage() {
+    private fun sendMessage(messageReplyTo: Message? = null) {
         if (binding.messageInputFieldView.hasAttachments()) {
             sendMessageHandler.sendMessageWithAttachments(
                 binding.messageInputFieldView.messageText,
-                binding.messageInputFieldView.getAttachedFiles()
+                binding.messageInputFieldView.getAttachedFiles(),
+                messageReplyTo
             )
         } else {
-            sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText)
+            sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo)
         }
     }
 
@@ -494,11 +512,15 @@ public class MessageInputView : ConstraintLayout {
 
     private companion object {
         val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
-            override fun sendMessage(messageText: String) {
+            override fun sendMessage(messageText: String, messageReplyTo: Message?) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
 
-            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+            override fun sendMessageWithAttachments(
+                message: String,
+                attachmentsFiles: List<File>,
+                messageReplyTo: Message?
+            ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
 
@@ -522,6 +544,10 @@ public class MessageInputView : ConstraintLayout {
             override fun editMessage(oldMessage: Message, newMessageText: String) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
+
+            override fun dismissReplay() {
+                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
         }
     }
 
@@ -529,6 +555,7 @@ public class MessageInputView : ConstraintLayout {
         public object Normal : InputMode()
         public data class Thread(val parentMessage: Message) : InputMode()
         public data class Edit(val oldMessage: Message) : InputMode()
+        public data class Reply(val repliedMessage: Message) : InputMode()
     }
 
     public enum class ChatMode {
@@ -537,8 +564,13 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public interface MessageSendHandler {
-        public fun sendMessage(messageText: String)
-        public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        public fun sendMessage(messageText: String, messageReplyTo: Message? = null)
+        public fun sendMessageWithAttachments(
+            message: String,
+            attachmentsFiles: List<File>,
+            messageReplyTo: Message? = null
+        )
+
         public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
         public fun sendToThreadWithAttachments(
             parentMessage: Message,
@@ -548,6 +580,7 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
+        public fun dismissReplay()
     }
 
     public fun interface OnMessageSendButtonClickListener {

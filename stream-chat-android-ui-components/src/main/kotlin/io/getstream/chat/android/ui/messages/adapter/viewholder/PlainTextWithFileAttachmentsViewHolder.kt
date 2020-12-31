@@ -5,15 +5,15 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWithFileAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 public class PlainTextWithFileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listenerContainer: ListenerContainer?,
+    private val listenerContainer: MessageListListenerContainer?,
     internal val binding: StreamUiItemMessagePlainTextWithFileAttachmentsBinding = StreamUiItemMessagePlainTextWithFileAttachmentsBinding.inflate(
         parent.inflater,
         parent,

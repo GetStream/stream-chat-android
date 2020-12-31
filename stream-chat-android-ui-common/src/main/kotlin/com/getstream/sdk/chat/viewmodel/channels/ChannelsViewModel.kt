@@ -82,6 +82,10 @@ public class ChannelsViewModel(
         }.exhaustive
     }
 
+    public fun leaveChannel(channel: Channel) {
+        chatDomain.useCases.leaveChannel(channel.cid).enqueue()
+    }
+
     public fun hideChannel(channel: Channel) {
         chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
     }

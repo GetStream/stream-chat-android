@@ -50,13 +50,10 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             return
         }
 
-        if (data.isTheirs) {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = true
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = false
-        } else {
-            binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = false
-            binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = true
-        }
+        binding.threadRepliesFootnote.root.isVisible = true
+
+        binding.threadRepliesFootnote.threadsOrnamentLeft.isVisible = data.isTheirs
+        binding.threadRepliesFootnote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         binding.root.updateConstraints {
             val threadRepliesFootnoteId = binding.threadRepliesFootnote.root.id
@@ -80,7 +77,6 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             }
         }
 
-        binding.root.isVisible = true
         binding.threadRepliesFootnote.threadRepliesButton.text =
             binding.threadRepliesFootnote.threadRepliesButton.resources.getQuantityString(
                 R.plurals.stream_ui_thread_messages_indicator,

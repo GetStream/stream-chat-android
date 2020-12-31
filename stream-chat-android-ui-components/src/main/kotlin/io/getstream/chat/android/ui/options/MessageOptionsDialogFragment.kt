@@ -152,7 +152,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageOptions() {
         with(binding.messageOptionsView) {
             isVisible = true
-            configure(configuration, messageItem.isTheirs)
+            configure(configuration, messageItem.isTheirs, messageItem.message.syncStatus)
             updateLayoutParams<LinearLayout.LayoutParams> {
                 gravity = if (messageItem.isMine) Gravity.END else Gravity.START
             }
@@ -164,6 +164,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         binding.messageOptionsView.run {
             setThreadListener {
                 messageOptionsHandlers.threadReplyHandler(message)
+                dismiss()
+            }
+            setRetryListener {
+                messageOptionsHandlers.retryHandler(message)
                 dismiss()
             }
             setCopyListener {
@@ -187,7 +191,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setReplyListener {
-                messageOptionsHandlers.replyClickHandler(messageItem.message)
+                messageOptionsHandlers.replyClickHandler(messageItem.message.cid, messageItem.message)
                 dismiss()
             }
             setDeleteMessageListener {
@@ -241,12 +245,13 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     internal class MessageOptionsHandlers(
         val threadReplyHandler: (Message) -> Unit,
+        val retryHandler: (Message) -> Unit,
         val editClickHandler: (Message) -> Unit,
         val flagClickHandler: (Message) -> Unit,
         val muteClickHandler: (User) -> Unit,
         val blockClickHandler: (User) -> Unit,
         val deleteClickHandler: (Message) -> Unit,
-        val replyClickHandler: (Message) -> Unit,
+        val replyClickHandler: (String, Message) -> Unit,
     ) : Serializable
 
     internal enum class OptionsMode {

@@ -211,6 +211,8 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiThreadReplyOptionMessage" format="string" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
+        <attr name="streamUiRetryOptionMessage" format="string" />
+        <attr name="streamUiRetryOptionIcon" format="reference" />
         <attr name="streamUiCopyOptionMessage" format="string" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
         <attr name="streamUiEditOptionMessage" format="string" />

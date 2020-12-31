@@ -32,11 +32,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainer
-import io.getstream.chat.android.ui.messages.adapter.ListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorsProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
@@ -132,7 +131,7 @@ public class MessageListView : ConstraintLayout {
     private var onBlockUserHandler: (User) -> Unit = {
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
-    private var onReplyMessageHandler: (Message) -> Unit = {
+    private var onReplyMessageHandler: (cid: String, Message) -> Unit = { _, _ ->
         throw IllegalStateException("onReplyMessageHandler must be set")
     }
 
@@ -167,6 +166,7 @@ public class MessageListView : ConstraintLayout {
                         setMessageOptionsHandlers(
                             MessageOptionsDialogFragment.MessageOptionsHandlers(
                                 threadReplyHandler = onStartThreadHandler,
+                                retryHandler = onMessageRetryHandler,
                                 editClickHandler = onMessageEditHandler,
                                 flagClickHandler = onMessageFlagHandler,
                                 muteClickHandler = onMuteUserHandler,
@@ -212,7 +212,7 @@ public class MessageListView : ConstraintLayout {
             onSendGiphyHandler.invoke(message, action)
         }
 
-    private val listenerContainer: ListenerContainer = ListenerContainerImpl(
+    private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
         messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
@@ -220,7 +220,7 @@ public class MessageListView : ConstraintLayout {
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
         readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
-        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER
+        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
     )
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
@@ -361,6 +361,14 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_thread_reply
         )
 
+        val retryText =
+            tArray.getString(R.styleable.MessageListView_streamUiRetryOptionMessage)
+                ?: context.getString(R.string.stream_ui_message_option_retry)
+        val retryIcon = tArray.getResourceId(
+            R.styleable.MessageListView_streamUiRetryOptionIcon,
+            R.drawable.stream_ui_ic_send
+        )
+
         val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage)
             ?: context.getString(R.string.stream_ui_message_option_copy)
         val copyIcon = tArray.getResourceId(
@@ -430,6 +438,8 @@ public class MessageListView : ConstraintLayout {
             replyIcon = replyIcon,
             threadReplyText = threadReplyText,
             threadReplyIcon = threadReplyIcon,
+            retryText = retryText,
+            retryIcon = retryIcon,
             copyText = copyText,
             copyIcon = copyIcon,
             editText = editText,
@@ -447,7 +457,7 @@ public class MessageListView : ConstraintLayout {
             deleteConfirmationTitle = deleteDialogTitle,
             deleteConfirmationMessage = deleteDialogMessage,
             deleteConfirmationPositiveButton = deleteDialogPositiveButton,
-            deleteConfirmationNegativeButton = deleteDialogNegativeButton
+            deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
     }
 
@@ -824,7 +834,7 @@ public class MessageListView : ConstraintLayout {
         this.onBlockUserHandler = blockUserForThisChannel
     }
 
-    public fun setOnReplyMessageHandler(onReplyMessageHandler: (Message) -> Unit) {
+    public fun setOnReplyMessageHandler(onReplyMessageHandler: (cid: String, Message) -> Unit) {
         this.onReplyMessageHandler = onReplyMessageHandler
     }
 
