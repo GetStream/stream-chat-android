@@ -149,5 +149,5 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      */
     public val leaveChannel: LeaveChannel = LeaveChannelImpl(chatDomainImpl)
 
-    public val replyMessage: ReplyMessage = ReplyMessageImpl(chatDomainImpl)
+    public val setMessageForReply: SetMessageForReply = SetMessageForReplyImpl(chatDomainImpl)
 }

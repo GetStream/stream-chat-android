@@ -197,7 +197,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 ).enqueue()
             }
             is Event.ReplyMessage -> {
-                domain.useCases.replyMessage(event.cid, event.repliedMessage).enqueue()
+                domain.useCases.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
         }.exhaustive
     }

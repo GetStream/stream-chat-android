@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.validateCid
 
-public interface ReplyMessage {
+public interface SetMessageForReply {
     /**
      * Set the reply state for the channel.
      *
@@ -17,7 +17,7 @@ public interface ReplyMessage {
     public operator fun invoke(cid: String, message: Message?): Call<Unit>
 }
 
-internal class ReplyMessageImpl(private val chatDomain: ChatDomainImpl) : ReplyMessage {
+internal class SetMessageForReplyImpl(private val chatDomain: ChatDomainImpl) : SetMessageForReply {
     override fun invoke(cid: String, message: Message?): Call<Unit> {
         validateCid(cid)
 
