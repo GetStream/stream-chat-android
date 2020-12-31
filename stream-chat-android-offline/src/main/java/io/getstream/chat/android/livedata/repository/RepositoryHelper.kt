@@ -74,5 +74,5 @@ internal class RepositoryHelper(
     }
 
     private suspend fun selectUser(userId: String): User =
-        users.select(userId) ?: User() //error("User with the userId: `$userId` has not been found")
+        users.select(userId) ?: error("User with the userId: `$userId` has not been found")
 }

@@ -14,7 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -73,12 +73,7 @@ public class MessageInputView : ConstraintLayout {
         if (newValue is InputMode.Reply) {
             binding.replyHeader.isVisible = true
             binding.messageInputFieldView.onReply(newValue.repliedMessage)
-            binding.messageInputFieldView.post {
-                binding.messageInputFieldView.binding.messageEditText.run {
-                    requestFocus()
-                    Utils.showSoftKeyboard(this)
-                }
-            }
+            binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
         } else {
             binding.replyHeader.isVisible = false
             if (previousValue is InputMode.Reply) {
