@@ -15,9 +15,8 @@ import com.getstream.sdk.chat.ImageLoader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 public class AttachmentGallery : ConstraintLayout {
 
@@ -62,11 +61,9 @@ public class AttachmentGallery : ConstraintLayout {
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)
         binding.shareButton.setOnClickListener {
-            CoroutineScope(DispatcherProvider.IO).launch {
+            GlobalScope.launch(DispatcherProvider.Main) {
                 ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
-                    ?.let { pictureUri ->
-                        withContext(DispatcherProvider.Main) { onSharePictureListener(pictureUri) }
-                    }
+                    ?.let { pictureUri -> onSharePictureListener(pictureUri) }
             }
         }
     }
