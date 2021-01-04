@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/stream_ui_concrete"
+    android:background="@color/stream_ui_background_default"
     >
 
     <io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
