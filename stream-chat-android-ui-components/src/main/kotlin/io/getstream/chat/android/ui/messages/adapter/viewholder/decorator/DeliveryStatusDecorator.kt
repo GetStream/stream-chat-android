@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
+import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
@@ -68,7 +68,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
         }
 
         // TODO review this logic for the BOTTOM check
-        if (BOTTOM !in data.positions) {
+        if (data.isNotBottomPosition()) {
             hideIndicator()
             return
         }
