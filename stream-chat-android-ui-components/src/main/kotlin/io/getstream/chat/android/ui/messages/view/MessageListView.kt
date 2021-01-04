@@ -161,7 +161,12 @@ public class MessageListView : ConstraintLayout {
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
                 MessageOptionsDialogFragment
-                    .newMessageOptionsInstance(message, messageOptionsConfiguration)
+                    .newMessageOptionsInstance(
+                        message,
+                        messageOptionsConfiguration.copy(
+                            threadEnabled = !adapter.isThread,
+                        )
+                    )
                     .apply {
                         setReactionClickHandler(onMessageReactionHandler)
                         setMessageOptionsHandlers(
