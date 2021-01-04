@@ -8,17 +8,19 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongCli
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 
 internal class MessageListListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
+    threadClickListener: ThreadClickListener = ThreadClickListener(EmptyFunctions.ONE_PARAM),
     attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
     readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
-    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM)
+    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM),
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
@@ -46,6 +48,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         MessageRetryListener { message ->
             realListener().onRetryMessage(message)
+        }
+    }
+
+    override var threadClickListener: ThreadClickListener by ListenerDelegate(
+        threadClickListener
+    ) { realListener ->
+        ThreadClickListener { message ->
+            realListener().onThreadClick(message)
         }
     }
 
