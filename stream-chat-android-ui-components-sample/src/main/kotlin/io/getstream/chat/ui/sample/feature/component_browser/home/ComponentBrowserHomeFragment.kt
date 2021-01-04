@@ -147,21 +147,21 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupViewReactionsView() {
-        binding.viewReactionsView.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 1))
+        binding.viewReactionsView.setMessage(randomMessageWithReactions(count = 30), true)
         binding.viewReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)
         }
     }
 
     private fun setupEditReactionsView() {
-        binding.editReactionsView.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 2))
+        binding.editReactionsView.setMessage(randomMessageWithReactions(count = 30), true)
         binding.editReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
         }
     }
 
     private fun setupUserReactionsView() {
-        binding.userReactionsView.setMessage(randomMessageWithReactions(reactionsSize = 2, ownReactionsSize = 1))
+        binding.userReactionsView.setMessage(randomMessageWithReactions(count = 2))
         binding.userReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
         }

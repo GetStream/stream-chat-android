@@ -55,15 +55,12 @@ internal fun randomMember(withImage: Boolean = true): Member {
     return Member(user = randomUser(withImage))
 }
 
-internal fun randomMessageWithReactions(reactionsSize: Int, ownReactionsSize: Int): Message {
-    if (ownReactionsSize > reactionsSize) {
-        throw IllegalArgumentException("Own reactions count must not exceed the total count")
-    }
+internal fun randomMessageWithReactions(count: Int): Message {
     return randomMessage().apply {
-        latestReactions = randomReactions(size = reactionsSize).toMutableList()
-        ownReactions = latestReactions.shuffled()
-            .take(ownReactionsSize)
-            .toMutableList()
+        latestReactions = List(count) {
+            val randomReactionType = ReactionType.values()[Random().nextInt(ReactionType.values().size)]
+            Reaction(user = randomUser(), type = randomReactionType.type)
+        }.toMutableList()
     }
 }
 
@@ -106,11 +103,4 @@ internal fun randomImageUrl(): String {
     val category = listOf("men", "women").random()
     val index = (0..99).random()
     return "https://randomuser.me/api/portraits/$category/$index.jpg"
-}
-
-private fun randomReactions(size: Int): List<Reaction> {
-    return List(size) {
-        val randomReactionType = ReactionType.values()[Random().nextInt(ReactionType.values().size)]
-        Reaction(user = randomUser(), type = randomReactionType.type)
-    }
 }

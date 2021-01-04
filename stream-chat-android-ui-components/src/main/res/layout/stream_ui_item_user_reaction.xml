@@ -19,8 +19,8 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
-        android:id="@+id/reactionsView"
+    <io.getstream.chat.android.ui.messages.reactions.user.SingleReactionView
+        android:id="@+id/userReactionView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"

@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+import io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.isSingleReaction
 
@@ -80,33 +80,33 @@ internal class ReactionsDecorator : BaseDecorator() {
             reactionsView.isVisible = true
             reactionsSpace.isVisible = true
 
-            reactionsView.setMessage(data.message, data.isMine)
-
-            rootConstraintLayout.updateConstraints {
-                clear(reactionsView.id, ConstraintSet.START)
-                clear(reactionsView.id, ConstraintSet.END)
-                clear(reactionsSpace.id, ConstraintSet.START)
-                clear(reactionsSpace.id, ConstraintSet.END)
-            }
-            reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                val offset = if (data.message.isSingleReaction()) {
-                    SINGLE_REACTION_OFFSET
-                } else {
-                    MULTIPLE_REACTIONS_OFFSET
+            reactionsView.setMessage(data.message, data.isMine) {
+                rootConstraintLayout.updateConstraints {
+                    clear(reactionsView.id, ConstraintSet.START)
+                    clear(reactionsView.id, ConstraintSet.END)
+                    clear(reactionsSpace.id, ConstraintSet.START)
+                    clear(reactionsSpace.id, ConstraintSet.END)
                 }
-                if (data.isTheirs) {
-                    endToEnd = contentView.id
-                    marginEnd = offset
-                } else {
-                    startToStart = contentView.id
-                    marginStart = offset
+                reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    val offset = if (data.message.isSingleReaction()) {
+                        SINGLE_REACTION_OFFSET
+                    } else {
+                        MULTIPLE_REACTIONS_OFFSET
+                    }
+                    if (data.isTheirs) {
+                        endToEnd = contentView.id
+                        marginEnd = offset
+                    } else {
+                        startToStart = contentView.id
+                        marginStart = offset
+                    }
                 }
-            }
-            reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                if (data.isTheirs) {
-                    startToEnd = reactionsSpace.id
-                } else {
-                    endToStart = reactionsSpace.id
+                reactionsView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    if (data.isTheirs) {
+                        startToEnd = reactionsSpace.id
+                    } else {
+                        endToStart = reactionsSpace.id
+                    }
                 }
             }
         } else {

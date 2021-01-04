@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.messages.reactions
+package io.getstream.chat.android.ui.messages.reactions.user
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,12 +8,13 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
+import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
+import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.utils.extensions.isMine
 
 public class UserReactionsView : FrameLayout {
 
-    private val binding: StreamUiUserReactionsViewBinding =
-        StreamUiUserReactionsViewBinding.inflate(context.inflater, this, true)
+    private val binding = StreamUiUserReactionsViewBinding.inflate(context.inflater, this, true)
 
     private var reactionClickListener: ReactionClickListener? = null
     private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter {

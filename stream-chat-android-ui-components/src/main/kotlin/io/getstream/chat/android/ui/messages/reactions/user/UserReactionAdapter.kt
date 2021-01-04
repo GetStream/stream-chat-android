@@ -1,8 +1,9 @@
-package io.getstream.chat.android.ui.messages.reactions
+package io.getstream.chat.android.ui.messages.reactions.user
 
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -10,6 +11,9 @@ import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding
+import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
+import io.getstream.chat.android.ui.messages.reactions.ReactionItem
+import io.getstream.chat.android.ui.messages.reactions.ReactionItemDiffCallback
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
@@ -59,22 +63,19 @@ internal class UserReactionAdapter(
         private fun bindUserReaction() {
             binding.apply {
                 reactionContainer.updateConstraints {
-                    clear(R.id.reactionsView, ConstraintSet.START)
-                    clear(R.id.reactionsView, ConstraintSet.END)
+                    clear(R.id.userReactionView, ConstraintSet.START)
+                    clear(R.id.userReactionView, ConstraintSet.END)
                 }
-
-                val params = reactionsView.layoutParams as ConstraintLayout.LayoutParams
-                if (reactionItem.isMine) {
-                    reactionsView.setOrientation(ReactionsView.Orientation.LEFT)
-                    params.endToEnd = ConstraintSet.PARENT_ID
-                    params.marginEnd = context.getDimension(R.dimen.stream_ui_spacing_small)
-                } else {
-                    reactionsView.setOrientation(ReactionsView.Orientation.RIGHT)
-                    params.startToStart = ConstraintSet.PARENT_ID
-                    params.marginStart = context.getDimension(R.dimen.stream_ui_spacing_small)
+                userReactionView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    if (reactionItem.isMine) {
+                        endToEnd = ConstraintSet.PARENT_ID
+                        marginEnd = context.getDimension(R.dimen.stream_ui_spacing_small)
+                    } else {
+                        startToStart = ConstraintSet.PARENT_ID
+                        marginStart = context.getDimension(R.dimen.stream_ui_spacing_small)
+                    }
                 }
-
-                reactionsView.setReaction(reactionItem.reaction, reactionItem.isMine)
+                userReactionView.setReaction(reactionItem.reaction, reactionItem.isMine)
             }
         }
     }

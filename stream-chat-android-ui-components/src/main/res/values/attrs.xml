@@ -161,12 +161,6 @@
 
     <!--ReactionsView-->
     <declare-styleable name="ReactionsView">
-        <attr name="streamUiReactionsViewOrientation" format="enum">
-            <enum name="left" value="0" />
-            <enum name="right" value="1" />
-            <enum name="undefined" value="2" />
-        </attr>
-
         <attr name="streamUiReactionsBubbleColorMine" format="color|reference" />
         <attr name="streamUiReactionsBubbleColorTheirs" format="color|reference" />
         <attr name="streamUiReactionsTotalHeight" format="dimension" />

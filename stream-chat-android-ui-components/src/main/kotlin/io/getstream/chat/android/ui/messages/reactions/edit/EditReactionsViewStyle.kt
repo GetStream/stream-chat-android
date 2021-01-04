@@ -1,8 +1,9 @@
-package io.getstream.chat.android.ui.messages.reactions
+package io.getstream.chat.android.ui.messages.reactions.edit
 
 import android.content.Context
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.messages.reactions.ReactionsViewStyle
 
 internal class EditReactionsViewStyle(
     context: Context,

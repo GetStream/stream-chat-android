@@ -1,8 +1,9 @@
-package io.getstream.chat.android.ui.messages.reactions
+package io.getstream.chat.android.ui.messages.reactions.view
 
 import android.content.Context
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.messages.reactions.ReactionsViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
