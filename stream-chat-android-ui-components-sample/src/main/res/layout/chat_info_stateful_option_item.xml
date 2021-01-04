@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_medium"
         android:textSize="@dimen/stream_ui_text_medium"
-        android:textColor="@color/stream_ui_black"
+        android:textColor="@color/stream_ui_text_color_strong"
         app:layout_constraintBottom_toBottomOf="@id/optionImageView"
         app:layout_constraintEnd_toStartOf="@id/optionSwitch"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
