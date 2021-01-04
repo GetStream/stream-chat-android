@@ -75,10 +75,6 @@ public class AttachmentGallery : ConstraintLayout {
         onSharePictureListener = listener
     }
 
-    public fun setShareButtonClickListener(listener: OnClickListener) {
-        binding.shareButton.setOnClickListener(listener)
-    }
-
     public fun setMenuButtonClickListener(listener: OnClickListener) {
         binding.menuButton.setOnClickListener(listener)
     }
