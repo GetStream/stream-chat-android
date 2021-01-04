@@ -52,13 +52,13 @@ public object ImageLoader {
         var bmpUri: Uri? = null
         try {
             val file = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
                 "share_image_" + System.currentTimeMillis() + ".png"
             )
             val out = FileOutputStream(file)
             compress(Bitmap.CompressFormat.PNG, 90, out)
             out.close()
-            bmpUri = Uri.fromFile(file)
+            bmpUri = StreamFileProvider.getUriForFile(context, file)
         } catch (e: IOException) {
             e.printStackTrace()
         }
