@@ -24,16 +24,15 @@ public class MessagePlainTextViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
 
-        binding.messageContainer.setOnClickListener {
+        binding.root.setOnClickListener {
             listenerContainer?.messageClickListener?.onMessageClick(data.message)
+        }
+        binding.root.setOnLongClickListener {
+            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
+            true
         }
         binding.threadRepliesFootnote.root.setOnClickListener {
             listenerContainer?.threadClickListener?.onThreadClick(data.message)
-        }
-
-        binding.messageContainer.setOnLongClickListener {
-            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
-            true
         }
         binding.reactionsView.setReactionClickListener {
             listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
