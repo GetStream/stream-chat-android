@@ -15,8 +15,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
 public class AttachmentGallery : ConstraintLayout {
 
     private val binding = StreamUiAttachmentGalleryBinding.inflate(LayoutInflater.from(context), this, true)
-
     private var countText: String = "%s - %s"
+    private lateinit var adapter: AttachmentSlidePagerAdapter
 
     public constructor(context: Context) : super(context)
 
@@ -37,7 +37,8 @@ public class AttachmentGallery : ConstraintLayout {
     }
 
     public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>, currentIndex: Int = 0) {
-        binding.attachmentGallery.adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
+        adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
+        binding.attachmentGallery.adapter = adapter
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)
     }
