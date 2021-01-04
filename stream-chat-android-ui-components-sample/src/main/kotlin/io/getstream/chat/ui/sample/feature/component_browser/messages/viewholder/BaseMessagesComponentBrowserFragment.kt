@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessageListViewHolderBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
@@ -14,6 +16,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
     protected val binding get() = _binding!!
 
     protected val currentUser = randomUser()
+    protected lateinit var decorators: List<Decorator>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentComponentBrowserMessageListViewHolderBinding.inflate(inflater, container, false)
@@ -27,6 +30,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = createAdapter()
+        decorators = MessageListItemDecoratorProvider(requireContext(), currentUser).decorators
     }
 
     protected abstract fun createAdapter(): RecyclerView.Adapter<*>

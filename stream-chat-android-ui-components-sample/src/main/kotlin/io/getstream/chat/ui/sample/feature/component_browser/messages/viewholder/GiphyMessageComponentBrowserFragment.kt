@@ -13,7 +13,7 @@ class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragmen
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyMessageList(),
-            { viewGroup -> GiphyViewHolder(viewGroup, currentUser) },
+            { viewGroup -> GiphyViewHolder(viewGroup, decorators) },
             GiphyViewHolder::bind
         )
     }

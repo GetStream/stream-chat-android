@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
@@ -23,8 +24,7 @@ import io.getstream.chat.android.ui.utils.extensions.withText
 internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        val bottomRightCorner =
-            if (data.positions.contains(MessageListItem.Position.BOTTOM)) 0f else DEFAULT_CORNER_RADIUS
+        val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
         val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(bottomRightCorner).build()
         viewHolder.binding.deleteLabel.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
@@ -98,9 +98,9 @@ internal class BackgroundDecorator : BaseDecorator() {
         val topLeftCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
         val topRightCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
         val bottomRightCorner =
-            if (data.message.withText() || (data.isMine && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.withText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
         val bottomLeftCorner =
-            if (data.message.withText() || (data.isTheirs && data.isBottom())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.withText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
 
         attachmentView.background = ShapeAppearanceModel.builder()
             .setTopLeftCornerSize(topLeftCorner)
@@ -114,8 +114,8 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
         val radius = DEFAULT_CORNER_RADIUS
-        val bottomRightCorner = if (data.isMine && data.isBottom()) 0f else radius
-        val bottomLeftCorner = if (data.isMine.not() && data.isBottom()) 0f else radius
+        val bottomRightCorner = if (data.isMine && data.isBottomPosition()) 0f else radius
+        val bottomLeftCorner = if (data.isMine.not() && data.isBottomPosition()) 0f else radius
         val shapeAppearanceModel =
             ShapeAppearanceModel.builder().setAllCornerSizes(radius).setBottomLeftCornerSize(bottomLeftCorner)
                 .setBottomRightCornerSize(bottomRightCorner).build()
@@ -153,7 +153,5 @@ internal class BackgroundDecorator : BaseDecorator() {
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
         private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()
-
-        private fun MessageListItem.MessageItem.isBottom() = positions.contains(MessageListItem.Position.BOTTOM)
     }
 }
