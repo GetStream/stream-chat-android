@@ -22,7 +22,7 @@ internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
     private val title: String by lazy { requireArguments().getString(ARG_TITLE)!! }
     private val images: List<String> by lazy { requireArguments().getStringArray(ARG_IMAGES)!!.toList() }
 
-    private var imageClickListener: (String, Int) -> Unit = { _, _ -> }
+    private var imageClickListener: (Int) -> Unit = {}
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
@@ -47,7 +47,7 @@ internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun setImageClickListener(listener: (String, Int) -> Unit) {
+    fun setImageClickListener(listener: (Int) -> Unit) {
         imageClickListener = listener
     }
 

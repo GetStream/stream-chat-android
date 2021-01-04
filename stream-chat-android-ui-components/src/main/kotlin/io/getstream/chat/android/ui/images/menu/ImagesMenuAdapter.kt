@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentImageBindi
 
 internal class ImagesMenuAdapter(
     private val imageList: List<String>,
-    private val clickListener: (String, Int) -> Unit
+    private val clickListener: (Int) -> Unit
 ) : ListAdapter<String, ImagesMenuAdapter.ImageViewHolder>(diffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -25,7 +25,7 @@ internal class ImagesMenuAdapter(
 
         holder.bind(image)
         holder.itemView.setOnClickListener {
-            clickListener(image, position)
+            clickListener(position)
         }
     }
 

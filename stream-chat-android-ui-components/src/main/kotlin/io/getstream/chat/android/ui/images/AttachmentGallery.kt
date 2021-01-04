@@ -124,7 +124,7 @@ public class AttachmentGallery : ConstraintLayout {
             context.getFragmentManager()?.let { fragmentManager ->
                 ImagesMenuDialogFragment.newInstance(imagesMenuTitle, imageList)
                     .apply {
-                        setImageClickListener { _, position ->
+                        setImageClickListener { position ->
                             binding.attachmentGallery.setCurrentItem(position, true)
                         }
                     }
