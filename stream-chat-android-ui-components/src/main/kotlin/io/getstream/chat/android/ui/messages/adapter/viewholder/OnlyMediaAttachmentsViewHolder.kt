@@ -36,6 +36,10 @@ public class OnlyMediaAttachmentsViewHolder(
                 reactionsView.setReactionClickListener {
                     listeners.reactionViewClickListener.onReactionViewClick(data.message)
                 }
+
+                threadRepliesFootnote.root.setOnClickListener {
+                    listeners.threadClickListener.onThreadClick(data.message)
+                }
             }
         }
 

@@ -31,5 +31,8 @@ public class OnlyFileAttachmentsViewHolder(
         binding.reactionsView.setReactionClickListener {
             listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
         }
+        binding.threadRepliesFootnote.root.setOnClickListener {
+            listenerContainer?.threadClickListener?.onThreadClick(data.message)
+        }
     }
 }

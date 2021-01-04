@@ -21,6 +21,13 @@ public class PlainTextWithMediaAttachmentsViewHolder(
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        binding.messageContainer.setOnClickListener {
+            listenerContainer?.messageClickListener?.onMessageClick(data.message)
+        }
+        binding.threadRepliesFootnote.root.setOnClickListener {
+            listenerContainer?.threadClickListener?.onThreadClick(data.message)
+        }
+
         listenerContainer?.let { listeners ->
             binding.run {
                 mediaAttachmentsGroupView.listener = { attachment ->

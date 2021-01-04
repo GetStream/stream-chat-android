@@ -23,6 +23,14 @@ public class PlainTextWithFileAttachmentsViewHolder(
 
     public override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
+
+        binding.messageContainer.setOnClickListener {
+            listenerContainer?.messageClickListener?.onMessageClick(data.message)
+        }
+        binding.threadRepliesFootnote.root.setOnClickListener {
+            listenerContainer?.threadClickListener?.onThreadClick(data.message)
+        }
+
         binding.fileAttachmentsView.setAttachments(
             data.message.attachments.filter { attachment -> attachment.hasLink().not() }
         ) { attachment -> listenerContainer?.attachmentClickListener?.onAttachmentClick(data.message, attachment) }
