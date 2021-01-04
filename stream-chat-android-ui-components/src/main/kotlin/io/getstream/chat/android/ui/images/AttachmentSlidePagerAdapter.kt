@@ -8,8 +8,7 @@ internal class AttachmentSlidePagerAdapter(
     fa: FragmentActivity,
     private val imageList: List<String>
 ) : FragmentStateAdapter(fa) {
-
     override fun getItemCount(): Int = imageList.size
-
-    override fun createFragment(position: Int): Fragment = ImageSlidePageFragment.create(imageList[position])
+    override fun createFragment(position: Int): Fragment = ImageSlidePageFragment.create(getItem(position))
+    fun getItem(position: Int): String = imageList[position]
 }
