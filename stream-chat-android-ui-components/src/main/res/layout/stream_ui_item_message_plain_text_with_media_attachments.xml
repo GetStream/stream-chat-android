@@ -125,6 +125,15 @@
         />
 
     <include
+        android:id="@+id/threadRepliesFootnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/stream_ui_message_threads_footnote"
+        app:layout_constraintLeft_toLeftOf="@id/messageContainer"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
+        />
+
+    <include
         android:id="@+id/footnote"
         layout="@layout/stream_ui_item_message_footnote"
         android:layout_width="wrap_content"
