@@ -33,6 +33,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
@@ -46,6 +47,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListe
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import kotlin.math.max
 
 /**
@@ -529,7 +531,9 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(currentUser)
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
+                MessageListItemDecoratorProvider(context, currentUser, channel.isDirectMessaging())
+            )
         }
 
         if (::messageDateFormatter.isInitialized.not()) {
