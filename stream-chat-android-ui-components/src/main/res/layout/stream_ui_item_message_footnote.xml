@@ -15,6 +15,7 @@
         android:layout_marginRight="@dimen/stream_ui_spacing_small"
         android:gravity="start"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
         tools:ignore="RtlHardcoded"
         tools:text="Visible only for you"
@@ -35,6 +36,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
         tools:text="16:25"
         />
