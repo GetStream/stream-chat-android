@@ -12,5 +12,6 @@
 ## stream-chat-android-offline
 - Add LeaveChannel use case
 - Add ChannelData::memberCount
+- Improve loading state querying channels
 
 ## stream-chat-android-ui-common
