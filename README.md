@@ -38,7 +38,10 @@ This repo includes a fully functional example app featuring threads, reactions, 
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Next, download Android Studio and open up the `stream-chat-android` folder. You'll want to run the `stream-chat-android-sample` app.
+Next, download Android Studio and open up the `stream-chat-android-ui-components-sample` folder. You'll want to run the `stream-chat-android-ui-components-sample` app.
+
+**Note:** The sample app **stream-chat-android-sample** is deprecated
+
 The Gradle sync process can take some time when you first open the project. 
 
 ## Docs
@@ -90,6 +93,7 @@ The [Offline support and `LiveData` APIs](stream-chat-android-offline) docs are 
 - Threads
 - Slash commands
 - Markdown message formatting
+- Count for unread messages
 
 ## Installing the Kotlin/Java Chat SDK
 
@@ -168,10 +172,10 @@ class MainActivity: AppCompatActivity() {
 
 ## Online status
 
-Connection status to Chat is available via `ChatDomain.instance().online` which returns a LiveData object you can attach observers to.
+Connection status to Chat is available via `ChatDomain.instance().isOnline()` which returns a Boolean. 
 
 ```kotlin
-ChatDomain.instance().online.observe(...)
+ChatDomain.instance().isOnline() // true when online, false when offline
 ```
 
 ## Markdown support
