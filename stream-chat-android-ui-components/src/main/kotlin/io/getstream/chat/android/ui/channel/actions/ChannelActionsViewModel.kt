@@ -8,12 +8,14 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
+import io.getstream.chat.android.ui.utils.extensions.isOwnerOrAdmin
 import kotlinx.coroutines.launch
 
 internal class ChannelActionsViewModel(
     cid: String,
-    isGroup: Boolean,
-    chatDomain: ChatDomain = ChatDomain.instance()
+    private val isGroup: Boolean,
+    chatDomain: ChatDomain = ChatDomain.instance(),
 ) : ViewModel() {
 
     private val initialState = State()
@@ -31,15 +33,7 @@ internal class ChannelActionsViewModel(
                 .await()
                 .data()
                 .let { channelController ->
-                    val membersSource = if (isGroup) {
-                        channelController.members
-                    } else {
-                        Transformations.map(channelController.members) { members ->
-                            members.filter { it.user.id != chatDomain.currentUser.id }
-                        }
-                    }
-
-                    membersSource.observeForever { members ->
+                    channelController.members.observeForever { members ->
                         onAction(Action.UpdateMembers(members))
                     }
                 }
@@ -48,6 +42,7 @@ internal class ChannelActionsViewModel(
 
     data class State(
         val members: List<Member> = listOf(),
+        val canDeleteChannel: Boolean = false,
     )
 
     sealed class Action {
@@ -65,7 +60,11 @@ internal class ChannelActionsViewModel(
         }
     }
 
-    private fun updateMembers(it: List<Member>): State {
-        return currentState.copy(members = it)
+    private fun updateMembers(members: List<Member>): State {
+        val canDeleteChannel = members.firstOrNull { it.user.isCurrentUser() }?.isOwnerOrAdmin ?: false
+        return currentState.copy(
+            members = members.filter { isGroup || !it.user.isCurrentUser() },
+            canDeleteChannel = canDeleteChannel,
+        )
     }
 }

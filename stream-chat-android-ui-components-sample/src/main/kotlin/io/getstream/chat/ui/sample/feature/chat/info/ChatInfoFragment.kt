@@ -72,9 +72,10 @@ class ChatInfoFragment : Fragment() {
                     ChatInfoItem.Option.SharedMedia,
                     ChatInfoItem.Option.SharedFiles,
                     ChatInfoItem.Option.SharedGroups,
+                ) + if (state.canDeleteChannel) listOf(
                     ChatInfoItem.Separator,
                     ChatInfoItem.Option.DeleteConversation,
-                )
+                ) else emptyList()
             )
         }
     }
@@ -113,9 +114,10 @@ class ChatInfoFragment : Fragment() {
                     context.getFragmentManager()?.let {
                         ChatInfoDeleteChannelDialogFragment.newInstance()
                             .apply {
-                                deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
-                                    viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
-                                }
+                                deleteChannelListener =
+                                    ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
+                                        viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
+                                    }
                             }
                             .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
                     }

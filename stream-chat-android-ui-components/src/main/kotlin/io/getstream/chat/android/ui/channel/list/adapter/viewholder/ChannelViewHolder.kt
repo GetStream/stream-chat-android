@@ -22,9 +22,11 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
+import io.getstream.chat.android.ui.utils.extensions.isOwnerOrAdmin
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class ChannelViewHolder @JvmOverloads constructor(
@@ -46,12 +48,11 @@ public class ChannelViewHolder @JvmOverloads constructor(
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
-    public companion object {
-        public const val OPTIONS_COUNT: Int = 2
-    }
+    private var optionsCount = 1
 
     private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
+    private val optionsMenuWidth
+        get() = menuItemWidth * optionsCount
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
         configureForeground(diff, channel)
@@ -82,9 +83,22 @@ public class ChannelViewHolder @JvmOverloads constructor(
                 channelMoreOptionsListener.onClick(channel)
                 swipeListener.onSwipeCanceled(this@ChannelViewHolder, absoluteAdapterPosition)
             }
+        }
+        configureDeleteButton(channel)
+    }
 
-            deleteImageView.setOnClickListener {
-                channelDeleteListener.onClick(channel)
+    private fun configureDeleteButton(channel: Channel) {
+        val canDeleteChannel = channel.members.firstOrNull { it.user.isCurrentUser() }?.isOwnerOrAdmin ?: false
+        binding.itemBackgroundView.deleteImageView.apply {
+            if (canDeleteChannel) {
+                optionsCount = 2
+                isVisible = true
+                setOnClickListener {
+                    channelDeleteListener.onClick(channel)
+                }
+            } else {
+                optionsCount = 1
+                isVisible = false
             }
         }
     }

@@ -48,6 +48,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 membersAdapter.submitList(members)
                 bindMemberNames(members)
                 bindMembersInfo(members)
+                bindDeleteButton(canDeleteChannel)
             }
         }
     }
@@ -71,11 +72,6 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
 
-            deleteButton.setOnClickListener {
-                channelActionListener?.onDeleteConversationClicked(cid)
-                dismiss()
-            }
-
             viewInfoButton.setOnClickListener {
                 channelActionListener?.onChannelInfoSelected(cid)
                 dismiss()
@@ -84,6 +80,18 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             cancelButton.setOnClickListener {
                 dismiss()
             }
+        }
+    }
+
+    private fun bindDeleteButton(canDeleteChannel: Boolean) {
+        if (canDeleteChannel) {
+            binding.deleteButton.isVisible = true
+            binding.deleteButton.setOnClickListener {
+                channelActionListener?.onDeleteConversationClicked(cid)
+                dismiss()
+            }
+        } else {
+            binding.deleteButton.isVisible = false
         }
     }
 
