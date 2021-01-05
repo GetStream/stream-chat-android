@@ -436,11 +436,11 @@ internal class ChannelControllerImpl(
 
         // start the online query before queryOfflineJob.await
         val queryOnlineJob = domainImpl.scope.async { runChannelQueryOnline(pagination) }
-        val localChannel = queryOfflineJob.await()?.also {
+        val localChannel = queryOfflineJob.await()?.also { channel ->
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
-                updateOldMessagesFromLocalChannel(it)
+                updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateLiveDataFromLocalChannel(it)
+                updateLiveDataFromLocalChannel(channel)
             }
             loader.value = false
         }
