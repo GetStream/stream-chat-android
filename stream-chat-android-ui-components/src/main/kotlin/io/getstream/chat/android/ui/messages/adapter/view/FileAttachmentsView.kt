@@ -15,22 +15,32 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
+import io.getstream.chat.android.ui.utils.SimpleListAdapter
 import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class FileAttachmentsView : RecyclerView {
+    var attachmentClickListener: AttachmentClickListener? = null
+    var attachmentLongClickListener: AttachmentLongClickListener? = null
+
+    private val fileAttachmentsAdapter = FileAttachmentsAdapter(
+        attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
+        attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() }
+    )
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
         layoutManager = LinearLayoutManager(context)
+        adapter = fileAttachmentsAdapter
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
     }
 
-    fun setAttachments(attachments: List<Attachment>, listener: (Attachment) -> Unit) {
-        adapter = FileAttachmentsAdapter(attachments, listener)
+    fun setAttachments(attachments: List<Attachment>) {
+        fileAttachmentsAdapter.setItems(attachments)
     }
 }
 
@@ -45,28 +55,31 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
 }
 
 private class FileAttachmentsAdapter(
-    private val attachments: List<Attachment>,
-    private val listener: (Attachment) -> Unit = {}
-) : RecyclerView.Adapter<FileAttachmentViewHolder>() {
+    private val attachmentClickListener: AttachmentClickListener,
+    private val attachmentLongClickListener: AttachmentLongClickListener
+) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
-        return FileAttachmentViewHolder(
-            StreamUiItemFileAttachmentBinding.inflate(parent.inflater, parent, false),
-            listener
-        )
+        return StreamUiItemFileAttachmentBinding
+            .inflate(parent.inflater, parent, false)
+            .let { FileAttachmentViewHolder(it, attachmentClickListener, attachmentLongClickListener) }
     }
-
-    override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int) {
-        holder.bind(attachments[position])
-    }
-
-    override fun getItemCount(): Int = attachments.size
 }
 
 private class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
-    private val listener: (Attachment) -> Unit
-) :
-    RecyclerView.ViewHolder(binding.root) {
+    private val attachmentClickListener: AttachmentClickListener,
+    private val attachmentLongClickListener: AttachmentLongClickListener
+) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
+    private lateinit var attachment: Attachment
+
+    init {
+        binding.root.setOnClickListener { attachmentClickListener.onAttachmentClick(attachment) }
+        binding.root.setOnLongClickListener {
+            attachmentLongClickListener.onAttachmentLongClick()
+            true
+        }
+    }
 
     init {
         binding.root.background =
@@ -80,11 +93,11 @@ private class FileAttachmentViewHolder(
                 }
     }
 
-    fun bind(attachment: Attachment) {
+    override fun bind(attachment: Attachment) {
+        this.attachment = attachment
         binding.fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
         binding.fileTitle.text = attachment.title ?: attachment.name
         binding.fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-        binding.root.setOnClickListener { listener(attachment) }
     }
 
     companion object {

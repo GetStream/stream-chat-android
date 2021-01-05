@@ -98,7 +98,7 @@
             android:paddingRight="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/stream_ui_black"
+            android:textColor="@color/stream_ui_text_color_strong"
             android:textColorLink="@color/stream_ui_blue"
             />
 
@@ -122,6 +122,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
+        />
+
+    <include
+        android:id="@+id/threadRepliesFootnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/stream_ui_message_threads_footnote"
+        app:layout_constraintLeft_toLeftOf="@id/messageContainer"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
         />
 
     <include

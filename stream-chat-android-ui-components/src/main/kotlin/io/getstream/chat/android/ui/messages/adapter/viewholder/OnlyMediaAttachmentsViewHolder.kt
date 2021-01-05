@@ -3,48 +3,57 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper.isMedia
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
 public class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listenerContainer: MessageListListenerContainer?,
-    internal val binding: StreamUiItemMessageMediaAttachmentsBinding = StreamUiItemMessageMediaAttachmentsBinding.inflate(
-        parent.inflater,
-        parent,
-        false
-    )
+    listenerContainer: MessageListListenerContainer?,
+    internal val binding: StreamUiItemMessageMediaAttachmentsBinding =
+        StreamUiItemMessageMediaAttachmentsBinding.inflate(
+            parent.inflater,
+            parent,
+            false
+        )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    init {
         listenerContainer?.let { listeners ->
             binding.run {
-                mediaAttachmentsGroupView.listener =
-                    { attachment -> listeners.attachmentClickListener.onAttachmentClick(data.message, attachment) }
-
-                mediaAttachmentsGroupView.setOnLongClickListener {
-                    listeners.messageLongClickListener.onMessageLongClick(data.message)
-                    true
+                root.setOnClickListener {
+                    listeners.messageClickListener.onMessageClick(data.message)
                 }
-
+                mediaAttachmentsGroupView.attachmentClickListener = AttachmentClickListener {
+                    listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+                }
                 reactionsView.setReactionClickListener {
                     listeners.reactionViewClickListener.onReactionViewClick(data.message)
                 }
-            }
-        }
+                threadRepliesFootnote.root.setOnClickListener {
+                    listeners.threadClickListener.onThreadClick(data.message)
+                }
 
-        if (data.message.attachments.isMedia()) {
-            showAttachments(data.message.attachments)
+                root.setOnLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                }
+            }
         }
     }
 
-    private fun showAttachments(imageAttachments: Collection<Attachment>) {
-        binding.mediaAttachmentsGroupView.showAttachments(*imageAttachments.toTypedArray())
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        if (data.message.attachments.isMedia()) {
+            binding.mediaAttachmentsGroupView.showAttachments(data.message.attachments)
+        }
     }
 }

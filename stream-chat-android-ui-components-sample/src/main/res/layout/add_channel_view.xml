@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/stream_ui_concrete"
+    android:background="@color/stream_ui_background_default"
     >
 
     <io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="8dp"
         android:text="@string/add_channel_empty_users_title"
-        android:textColor="@color/stream_ui_black_50"
+        android:textColor="@color/stream_ui_text_color_light"
         android:textSize="@dimen/stream_ui_text_medium"
         android:visibility="visible"
         app:drawableTopCompat="@drawable/empty_user_search"

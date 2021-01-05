@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:gravity="bottom"
+    android:orientation="horizontal"
     tools:showIn="@layout/stream_ui_item_message_plain_text"
-    android:translationY="-20dp"
     >
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/threadsOrnamentLeft"
         android:layout_width="13dp"
-        android:layout_height="38dp"
+        android:layout_height="33dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
         />
 
@@ -24,7 +22,8 @@
         android:layout_marginLeft="@dimen/stream_ui_spacing_tiny"
         android:layout_marginRight="@dimen/stream_ui_spacing_tiny"
         android:textColor="@color/stream_ui_blue"
-        android:textFontWeight="600"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:textStyle="bold"
         tools:text="100 Thread Replies"
         />
 

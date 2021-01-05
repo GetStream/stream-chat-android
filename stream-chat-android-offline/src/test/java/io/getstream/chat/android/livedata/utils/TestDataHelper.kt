@@ -218,7 +218,7 @@ internal class TestDataHelper {
     val newMessageEvent2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message2Older, null, null, null)
     val newMessageFromUser2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, messageFromUser2, null, null, null)
 
-    val newMessageEventNotification = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message1WithoutChannelAndCid, null, null, null)
+    val newMessageEventNotification = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, channel1, message1WithoutChannelAndCid, null, null, null)
 
     val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, Date(), user1, channel1.cid, channel1.type, channel1.id, message1Updated, null)
     val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, Date(), channel1.cid, 1, channel1.type, channel1.id, user1)
