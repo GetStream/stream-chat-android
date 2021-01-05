@@ -273,6 +273,7 @@ internal fun createNotificationMessageNewEventStringJson() =
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
+            "channel": ${createChannelJsonString()},
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "total_unread_count": 4,
