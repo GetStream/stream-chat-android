@@ -19,6 +19,10 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
+    var attachmentClickListener: AttachmentClickListener? = null
+    var attachmentLongClickListener: AttachmentLongClickListener? = null
+
+    private var state: State = State.Empty
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -30,11 +34,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         defStyleRes
     )
 
-    private var state: State = State.Empty
-
-    var listener: (Attachment) -> Unit = {}
-
-    fun showAttachments(vararg attachments: Attachment) {
+    fun showAttachments(attachments: List<Attachment>) {
         when (attachments.size) {
             0 -> Unit
             1 -> showOne(attachments.first())
@@ -53,7 +53,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     private fun showOne(first: Attachment) {
         removeAllViews()
-        val mediaAttachmentView = createMediaAttachmentView(context, listener)
+        val mediaAttachmentView = createMediaAttachmentView()
         addView(mediaAttachmentView)
         state = State.OneView(mediaAttachmentView)
         ConstraintSet().apply {
@@ -68,8 +68,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     private fun showTwo(first: Attachment, second: Attachment) {
         removeAllViews()
-        val viewOne = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewTwo = createMediaAttachmentView(context, listener).also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
         state = State.TwoViews(viewOne, viewTwo)
         ConstraintSet().apply {
             setupMinHeight(viewOne, false)
@@ -87,9 +87,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     private fun showThree(first: Attachment, second: Attachment, third: Attachment) {
         removeAllViews()
-        val viewOne = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewTwo = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewThree = createMediaAttachmentView(context, listener).also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
+        val viewThree = createMediaAttachmentView().also { addView(it) }
         state = State.ThreeViews(viewOne, viewTwo, viewThree)
         ConstraintSet().apply {
             setupMinHeight(viewTwo, true)
@@ -114,10 +114,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         andMoreCount: Int = 0
     ) {
         removeAllViews()
-        val viewOne = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewTwo = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewThree = createMediaAttachmentView(context, listener).also { addView(it) }
-        val viewFour = createMediaAttachmentView(context, listener).also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
+        val viewThree = createMediaAttachmentView().also { addView(it) }
+        val viewFour = createMediaAttachmentView().also { addView(it) }
         state = State.FourViews(viewOne, viewTwo, viewThree, viewFour)
         ConstraintSet().apply {
             setupMinHeight(viewOne, true)
@@ -178,6 +178,14 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             .getOrDefault(0f)
     }
 
+    private fun createMediaAttachmentView(): MediaAttachmentView {
+        return MediaAttachmentView(context).also {
+            it.id = generateViewId()
+            it.attachmentClickListener = attachmentClickListener
+            it.attachmentLongClickListener = attachmentLongClickListener
+        }
+    }
+
     private sealed class State {
         object Empty : State()
         data class OneView(val view: MediaAttachmentView) : State()
@@ -200,12 +208,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         private const val MAX_PREVIEW_COUNT = 4
         private val MIN_HEIGHT_PX = 95.dpToPx()
         private val STROKE_WIDTH = 2.dpToPxPrecise()
-
-        private fun createMediaAttachmentView(context: Context, listener: (Attachment) -> Unit): MediaAttachmentView =
-            MediaAttachmentView(context).apply {
-                id = generateViewId()
-                clickListener = listener
-            }
 
         private fun ConstraintSet.setupMinHeight(view: View, isQuarter: Boolean) {
             this.constrainMinHeight(view.id, if (isQuarter) MIN_HEIGHT_PX else 2 * MIN_HEIGHT_PX)

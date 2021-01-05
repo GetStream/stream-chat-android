@@ -19,15 +19,8 @@ import io.getstream.chat.android.ui.utils.ModelType
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 internal class MediaAttachmentView : ConstraintLayout {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    )
+    var attachmentClickListener: AttachmentClickListener? = null
+    var attachmentLongClickListener: AttachmentLongClickListener? = null
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(LayoutInflater.from(context)).also {
@@ -41,7 +34,15 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
-    var clickListener: (Attachment) -> Unit = {}
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+        context,
+        attrs,
+        defStyleAttr,
+        defStyleRes
+    )
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.thumbUrl ?: attachment.imageUrl ?: attachment.ogUrl ?: return
@@ -62,7 +63,11 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
         if (attachment.type != ModelType.attach_giphy) {
-            setOnClickListener { clickListener(attachment) }
+            setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
+            setOnLongClickListener {
+                attachmentLongClickListener?.onAttachmentLongClick()
+                true
+            }
         }
     }
 
