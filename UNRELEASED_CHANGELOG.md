@@ -6,6 +6,7 @@
 
 ## stream-chat-android-client
 - Add filtering non image attachments in ChatClient::getImageAttachments
+- Add a `channel` property to `notification.message_new` events
 
 ## stream-chat-android-offline
 - Add LeaveChannel use case
