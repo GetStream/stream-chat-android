@@ -68,7 +68,6 @@
 
     <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_black</color>
     <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_concrete</color>
-    <color name="stream_ui_disabled_send_message_dark_theme">#2D2E2E</color>
 
     <color name="stream_ui_background_default">@color/stream_ui_white</color>
     <color name="stream_ui_background_light">@color/stream_ui_white</color>
@@ -93,4 +92,8 @@
     <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
 
     <color name="stream_ui_search_input_border">#EBEBEB</color>
+
+    <color name="stream_ui_current_user_background">#E6E6E6</color>
+    <color name="stream_ui_deleted_message_background">@color/stream_ui_grey_light_opacity_50</color>
+    <color name="stream_ui_link_attachment_background">#E9F2FF</color>
 </resources>

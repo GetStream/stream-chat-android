@@ -74,7 +74,7 @@
             android:paddingRight="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/stream_ui_black"
+            android:textColor="@color/stream_ui_text_color_strong"
             android:textColorLink="@color/stream_ui_blue"
             tools:text="@tools:sample/lorem"
             />
