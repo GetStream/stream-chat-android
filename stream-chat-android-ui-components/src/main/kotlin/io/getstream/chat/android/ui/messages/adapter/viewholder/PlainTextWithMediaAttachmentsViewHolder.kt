@@ -7,37 +7,51 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWith
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 public class PlainTextWithMediaAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listenerContainer: MessageListListenerContainer?,
-    internal val binding: StreamUiItemMessagePlainTextWithMediaAttachmentsBinding = StreamUiItemMessagePlainTextWithMediaAttachmentsBinding.inflate(
-        parent.inflater,
-        parent,
-        false
-    )
+    listenerContainer: MessageListListenerContainer?,
+    internal val binding: StreamUiItemMessagePlainTextWithMediaAttachmentsBinding =
+        StreamUiItemMessagePlainTextWithMediaAttachmentsBinding.inflate(
+            parent.inflater,
+            parent,
+            false
+        )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+
+    init {
         listenerContainer?.let { listeners ->
             binding.run {
-                mediaAttachmentsGroupView.listener = { attachment ->
-                    listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
-                }
-                backgroundView.setOnLongClickListener {
-                    listeners.messageLongClickListener.onMessageLongClick(data.message)
-                    true
+                mediaAttachmentsGroupView.attachmentClickListener = AttachmentClickListener {
+                    listeners.attachmentClickListener.onAttachmentClick(data.message, it)
                 }
                 reactionsView.setReactionClickListener {
                     listeners.reactionViewClickListener.onReactionViewClick(data.message)
                 }
+
+                backgroundView.setOnLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                }
             }
         }
+    }
 
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
-        val mediaAttachments = data.message.attachments.filter { attachment -> attachment.hasLink().not() }
-        binding.mediaAttachmentsGroupView.showAttachments(*mediaAttachments.toTypedArray())
+        binding.mediaAttachmentsGroupView.showAttachments(
+            *data.message
+                .attachments
+                .filter { attachment -> attachment.hasLink().not() }
+                .toTypedArray()
+        )
     }
 }
