@@ -43,7 +43,15 @@ public class MessageOptionsView : FrameLayout {
         // binding.replyTV.isVisible = true
         binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
-        binding.threadReplyTV.configureListItem(configuration.threadReplyText, configuration.threadReplyIcon, iconsTint)
+        if (configuration.threadEnabled) {
+            binding.threadReplyTV.configureListItem(
+                configuration.threadReplyText,
+                configuration.threadReplyIcon,
+                iconsTint
+            )
+        } else {
+            binding.threadReplyTV.isVisible = false
+        }
 
         configureCopyMessage(iconsTint, configuration)
 
@@ -60,6 +68,16 @@ public class MessageOptionsView : FrameLayout {
         // binding.replyTV.isVisible = true
         binding.replyTV.configureListItem(configuration.replyText, configuration.replyIcon, iconsTint)
 
+        if (configuration.threadEnabled) {
+            binding.threadReplyTV.configureListItem(
+                configuration.threadReplyText,
+                configuration.threadReplyIcon,
+                iconsTint
+            )
+        } else {
+            binding.threadReplyTV.isVisible = false
+        }
+
         when (syncStatus) {
             SyncStatus.FAILED_PERMANENTLY -> {
                 binding.retryTV.configureListItem(
@@ -72,11 +90,7 @@ public class MessageOptionsView : FrameLayout {
                 binding.threadReplyTV.isVisible = false
             }
             SyncStatus.COMPLETED -> {
-                binding.threadReplyTV.configureListItem(
-                    configuration.threadReplyText,
-                    configuration.threadReplyIcon,
-                    iconsTint
-                )
+                // Empty
             }
             SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS -> {
                 binding.threadReplyTV.isVisible = false
@@ -110,6 +124,7 @@ public class MessageOptionsView : FrameLayout {
         val replyIcon: Int,
         val threadReplyText: String,
         val threadReplyIcon: Int,
+        val threadEnabled: Boolean = true,
         val retryText: String,
         val retryIcon: Int,
         val copyText: String,

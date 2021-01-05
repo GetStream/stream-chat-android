@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongCli
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
@@ -160,7 +161,12 @@ public class MessageListView : ConstraintLayout {
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
                 MessageOptionsDialogFragment
-                    .newMessageOptionsInstance(message, messageOptionsConfiguration)
+                    .newMessageOptionsInstance(
+                        message,
+                        messageOptionsConfiguration.copy(
+                            threadEnabled = !adapter.isThread,
+                        )
+                    )
                     .apply {
                         setReactionClickHandler(onMessageReactionHandler)
                         setMessageOptionsHandlers(
@@ -179,10 +185,16 @@ public class MessageListView : ConstraintLayout {
                     .show(fragmentManager, MessageOptionsDialogFragment.TAG)
             }
         }
-
     private val DEFAULT_MESSAGE_RETRY_LISTENER =
         MessageRetryListener { message ->
             onMessageRetryHandler.invoke(message)
+        }
+    private val DEFAULT_THREAD_CLICK_LISTENER =
+        ThreadClickListener { message ->
+            if (message.replyCount > 0) {
+                onStartThreadHandler.invoke(message)
+                onStartThreadListener.invoke(message)
+            }
         }
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
@@ -216,6 +228,7 @@ public class MessageListView : ConstraintLayout {
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
         messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
+        threadClickListener = DEFAULT_THREAD_CLICK_LISTENER,
         attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
@@ -744,6 +757,16 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the thread click listener to be used by MessageListView.
+     *
+     * @param threadClickListener The listener to use. If null, the default will be used instead.
+     */
+    public fun setThreadClickListener(threadClickListener: ThreadClickListener?) {
+        listenerContainer.threadClickListener =
+            threadClickListener ?: DEFAULT_THREAD_CLICK_LISTENER
+    }
+
+    /**
      * Sets the attachment click listener to be used by MessageListView.
      *
      * @param attachmentClickListener The listener to use. If null, the default will be used instead.
@@ -848,6 +871,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageLongClickListener {
         public fun onMessageLongClick(message: Message)
+    }
+
+    public fun interface ThreadClickListener {
+        public fun onThreadClick(message: Message)
     }
 
     public fun interface AttachmentClickListener {

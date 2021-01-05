@@ -21,6 +21,13 @@ public class OnlyFileAttachmentsViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     public override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        binding.root.setOnClickListener {
+            listenerContainer?.messageClickListener?.onMessageClick(data.message)
+        }
+        binding.root.setOnLongClickListener {
+            listenerContainer?.messageLongClickListener?.onMessageLongClick(data.message)
+            true
+        }
         binding.fileAttachmentsView.setAttachments(
             data.message.attachments
         ) { attachment -> listenerContainer?.attachmentClickListener?.onAttachmentClick(data.message, attachment) }
@@ -30,6 +37,9 @@ public class OnlyFileAttachmentsViewHolder(
         }
         binding.reactionsView.setReactionClickListener {
             listenerContainer?.reactionViewClickListener?.onReactionViewClick(data.message)
+        }
+        binding.threadRepliesFootnote.root.setOnClickListener {
+            listenerContainer?.threadClickListener?.onThreadClick(data.message)
         }
     }
 }
