@@ -100,6 +100,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    @Ignore("mock me")
     fun onlineRunQuery() = runBlocking {
         // insert the query result into offline storage
         val query = QueryChannelsSpec(query.filter, query.sort)
