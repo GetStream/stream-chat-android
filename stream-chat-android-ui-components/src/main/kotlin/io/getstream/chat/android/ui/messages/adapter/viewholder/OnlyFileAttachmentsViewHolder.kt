@@ -26,6 +26,12 @@ public class OnlyFileAttachmentsViewHolder(
     init {
         listenerContainer?.let { listeners ->
             binding.run {
+                root.setOnClickListener {
+                    listeners.messageClickListener.onMessageClick(data.message)
+                }
+                threadRepliesFootnote.root.setOnClickListener {
+                    listeners.threadClickListener.onThreadClick(data.message)
+                }
                 reactionsView.setReactionClickListener {
                     listeners.reactionViewClickListener.onReactionViewClick(data.message)
                 }
@@ -33,7 +39,7 @@ public class OnlyFileAttachmentsViewHolder(
                     listeners.attachmentClickListener.onAttachmentClick(data.message, it)
                 }
 
-                fileAttachmentsView.setOnLongClickListener {
+                root.setOnLongClickListener {
                     listeners.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }

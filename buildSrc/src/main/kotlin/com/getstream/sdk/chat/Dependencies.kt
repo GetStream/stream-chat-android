@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat
 
-private const val ACTIVITY_KTX_VERSION = "1.2.0-beta01"
+private const val ACTIVITY_KTX_VERSION = "1.2.0-rc01"
 private const val ANDROID_GRADLE_PLUGIN_VERSION = "4.1.0"
 private const val ANDROID_JUNIT5_GRADLE_PLUGIN_VERSION = "1.6.2.0"
 private const val ANDROID_MAVEN_GRADLE_PLUGIN_VERSION = "2.1"
@@ -38,7 +38,7 @@ private const val FIREBASE_MESSAGING_VERSION = "20.3.0"
 private const val FIREBASE_PLUGIN_VERSION = "2.3.0"
 private const val FLIPPER_VERSION = "0.63.0"
 private const val FLIPPER_SO_LOADER_VERSION = "0.9.0"
-private const val FRAGMENT_KTX_VERSION = "1.3.0-beta01"
+private const val FRAGMENT_KTX_VERSION = "1.3.0-rc01"
 private const val FRESCO_VERSION = "2.3.0"
 private const val GRADLE_NEXUS_STAGING_PLUGIN_VERSION = "0.22.0"
 private const val GITVERSIONER_VERSION = "0.5.0"

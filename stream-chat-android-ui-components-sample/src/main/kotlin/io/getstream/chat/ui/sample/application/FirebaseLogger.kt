@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 
 object FirebaseLogger : ChatLoggerHandler {
+    private const val INTERNAL_LOG_PREFIX = "Chat"
     private val logger = ChatLogger.get("FirebaseLogger")
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
@@ -15,6 +16,10 @@ object FirebaseLogger : ChatLoggerHandler {
         }
 
     private fun log(tag: Any? = null, message: String? = null, error: Throwable? = null) {
+        if (tag is String && tag.startsWith(INTERNAL_LOG_PREFIX)) {
+            return
+        }
+
         if (tag == null && message == null && error == null) {
             logger.logD("No data provided; skipping Crashlytics logging")
             return

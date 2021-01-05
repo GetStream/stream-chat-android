@@ -27,14 +27,20 @@ public class PlainTextWithFileAttachmentsViewHolder(
     init {
         listenerContainer?.let { listeners ->
             binding.run {
+                root.setOnClickListener {
+                    listeners.messageClickListener.onMessageClick(data.message)
+                }
                 reactionsView.setReactionClickListener {
                     listeners.reactionViewClickListener.onReactionViewClick(data.message)
                 }
                 fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
                     listeners.attachmentClickListener.onAttachmentClick(data.message, it)
                 }
+                threadRepliesFootnote.root.setOnClickListener {
+                    listeners.threadClickListener.onThreadClick(data.message)
+                }
 
-                backgroundView.setOnLongClickListener {
+                root.setOnLongClickListener {
                     listeners.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
