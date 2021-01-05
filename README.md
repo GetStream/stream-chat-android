@@ -58,10 +58,11 @@ The SDK provides:
 - Offline support and LiveData APIs module
 - Ready to use ViewModels for displaying a list of channels and a conversation 
 - Four reusable chat views:
-    - [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
+    - [Channel List](https://getstream.io/chat/docs/channels_view/?language=kotlin)
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
     - [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
     - [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
+    - [Message Input View](https://getstream.io/chat/docs/message_input_view/?language=kotlin49)
 
 The documentation for LiveData and the custom views is available here:
 [https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
