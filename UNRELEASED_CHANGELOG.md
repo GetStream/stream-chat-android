@@ -13,5 +13,6 @@
 - Add LeaveChannel use case
 - Add ChannelData::memberCount
 - Improve loading state querying channels
+- Improve loading state querying messages
 
 ## stream-chat-android-ui-common
