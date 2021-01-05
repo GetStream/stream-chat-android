@@ -72,7 +72,7 @@ public class EditReactionsView : RecyclerView {
             setPadding(it, 0, it, 0)
         }
 
-        adapter = ReactionsAdapter(reactionsViewStyle) {
+        adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
             reactionClickListener?.onReactionClick(it)
         }.also { reactionsAdapter = it }
     }

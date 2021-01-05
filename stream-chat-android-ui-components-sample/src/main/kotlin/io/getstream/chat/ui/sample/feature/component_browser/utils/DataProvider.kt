@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.ReactionType
-import java.util.Random
 
 internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
     val res = context.resources
@@ -57,10 +56,9 @@ internal fun randomMember(withImage: Boolean = true): Member {
 
 internal fun randomMessageWithReactions(count: Int): Message {
     return randomMessage().apply {
-        latestReactions = List(count) {
-            val randomReactionType = ReactionType.values()[Random().nextInt(ReactionType.values().size)]
-            Reaction(user = randomUser(), type = randomReactionType.type)
-        }.toMutableList()
+        latestReactions = MutableList(count) {
+            Reaction(user = randomUser(), type = ReactionType.values().random().type)
+        }
     }
 }
 

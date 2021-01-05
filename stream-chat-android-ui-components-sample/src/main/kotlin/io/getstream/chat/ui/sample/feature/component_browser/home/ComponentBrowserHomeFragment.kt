@@ -147,14 +147,14 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupViewReactionsView() {
-        binding.viewReactionsView.setMessage(randomMessageWithReactions(count = 30), true)
+        binding.viewReactionsView.setMessage(randomMessageWithReactions(count = 30), isMyMessage = true)
         binding.viewReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)
         }
     }
 
     private fun setupEditReactionsView() {
-        binding.editReactionsView.setMessage(randomMessageWithReactions(count = 30), true)
+        binding.editReactionsView.setMessage(randomMessageWithReactions(count = 30), isMyMessage = true)
         binding.editReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
         }
