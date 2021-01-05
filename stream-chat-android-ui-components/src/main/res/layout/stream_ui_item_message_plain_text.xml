@@ -33,7 +33,7 @@
         android:layout_height="@dimen/stream_ui_spacing_medium"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/messageContainer"
         app:layout_constraintStart_toStartOf="@id/messageContainer"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -90,7 +90,7 @@
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.messages.reactions.ViewReactionsView
+    <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -30,11 +30,11 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            userReactionsView1.setMessage(randomMessageWithReactions(reactionsSize = 1, ownReactionsSize = 0))
+            userReactionsView1.setMessage(randomMessageWithReactions(count = 1))
             userReactionsView1.setReactionClickListener { showToast(it.type) }
-            userReactionsView2.setMessage(randomMessageWithReactions(reactionsSize = 2, ownReactionsSize = 1))
-            userReactionsView3.setMessage(randomMessageWithReactions(reactionsSize = 5, ownReactionsSize = 2))
-            userReactionsView4.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 5))
+            userReactionsView2.setMessage(randomMessageWithReactions(count = 2))
+            userReactionsView3.setMessage(randomMessageWithReactions(count = 5))
+            userReactionsView4.setMessage(randomMessageWithReactions(count = 30))
         }
     }
 }
