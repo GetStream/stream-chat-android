@@ -10,6 +10,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     private val decorators: List<Decorator>
 ) : RecyclerView.ViewHolder(itemView) {
     protected lateinit var data: T
+        private set
 
     public fun bind(data: T, diff: MessageListItemPayloadDiff? = null) {
         this.data = data

@@ -53,11 +53,7 @@ public class OnlyMediaAttachmentsViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (data.message.attachments.isMedia()) {
-            binding.mediaAttachmentsGroupView.showAttachments(
-                *data.message
-                    .attachments
-                    .toTypedArray()
-            )
+            binding.mediaAttachmentsGroupView.showAttachments(data.message.attachments)
         }
     }
 }

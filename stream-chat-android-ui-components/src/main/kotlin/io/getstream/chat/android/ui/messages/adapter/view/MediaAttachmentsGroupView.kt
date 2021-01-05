@@ -34,7 +34,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         defStyleRes
     )
 
-    fun showAttachments(vararg attachments: Attachment) {
+    fun showAttachments(attachments: List<Attachment>) {
         when (attachments.size) {
             0 -> Unit
             1 -> showOne(attachments.first())

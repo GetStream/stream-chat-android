@@ -54,10 +54,9 @@ public class PlainTextWithMediaAttachmentsViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         binding.messageText.text = data.message.text
         binding.mediaAttachmentsGroupView.showAttachments(
-            *data.message
+            data.message
                 .attachments
                 .filter { attachment -> attachment.hasLink().not() }
-                .toTypedArray()
         )
     }
 }
