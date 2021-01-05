@@ -97,7 +97,7 @@ public class AttachmentGallery : ConstraintLayout {
             ).let(binding.photoCount::setTextColor)
 
             imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle)
-            ?: context.getString(R.string.stream_ui_images_menu_default_title)
+                ?: context.getString(R.string.stream_ui_images_menu_default_title)
         }
     }
 

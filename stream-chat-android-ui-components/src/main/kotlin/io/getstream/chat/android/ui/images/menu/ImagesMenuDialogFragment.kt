@@ -20,6 +20,7 @@ internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
     private val images: List<String> by lazy { requireArguments().getStringArray(ARG_IMAGES)!!.toList() }
 
     private var imageClickListener: (Int) -> Unit = {}
+    private val adapter by lazy { ImagesMenuAdapter(imageClickListener) }
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
@@ -39,7 +40,10 @@ internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
             title.text = this@ImagesMenuDialogFragment.title
 
             imagesMenu.layoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
-            imagesMenu.adapter = ImagesMenuAdapter(images, imageClickListener)
+
+            imagesMenu.adapter = adapter
+            adapter.submitList(images)
+
             imagesMenu.addItemDecoration(GridSpacingItemDecoration(SPAN_COUNT, SPACING, false))
         }
     }

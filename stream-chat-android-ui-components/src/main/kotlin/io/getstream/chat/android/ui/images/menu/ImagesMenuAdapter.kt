@@ -10,7 +10,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentImageBinding
 
 internal class ImagesMenuAdapter(
-    private val imageList: List<String>,
     private val clickListener: (Int) -> Unit
 ) : ListAdapter<String, ImagesMenuAdapter.ImageViewHolder>(diffUtil()) {
 
@@ -21,15 +20,11 @@ internal class ImagesMenuAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val image = imageList[position]
-
-        holder.bind(image)
+        holder.bind(getItem(position))
         holder.itemView.setOnClickListener {
             clickListener(position)
         }
     }
-
-    override fun getItemCount(): Int = imageList.size
 
     internal class ImageViewHolder(
         private val binding: StreamUiItemAttachmentImageBinding
