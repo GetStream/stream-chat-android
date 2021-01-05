@@ -11,9 +11,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiImageMenuDialogBinding
 
-private const val SPAN_COUNT = 3
-private const val SPACING: Int = 2
-
 internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: StreamUiImageMenuDialogBinding? = null
@@ -47,11 +44,20 @@ internal class ImagesMenuDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        _binding = null
+
+        super.onDestroyView()
+    }
+
     fun setImageClickListener(listener: (Int) -> Unit) {
         imageClickListener = listener
     }
 
     internal companion object {
+        private const val SPAN_COUNT = 3
+        private const val SPACING: Int = 2
+
         private const val ARG_TITLE = "title"
         private const val ARG_IMAGES = "images"
 

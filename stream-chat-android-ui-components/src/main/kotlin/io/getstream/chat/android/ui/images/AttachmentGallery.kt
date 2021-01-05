@@ -42,7 +42,7 @@ public class AttachmentGallery : ConstraintLayout {
 
     private var imagesMenuTitle: String = ""
 
-    private val imageList: MutableList<String> = mutableListOf()
+    private var imageList: List<String> = mutableListOf()
 
     public constructor(context: Context) : super(context)
 
@@ -69,8 +69,7 @@ public class AttachmentGallery : ConstraintLayout {
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)
 
-        this.imageList.clear()
-        this.imageList.addAll(imageList)
+        this.imageList = imageList
 
         binding.shareButton.setOnClickListener {
             GlobalScope.launch(DispatcherProvider.Main) {
@@ -97,7 +96,8 @@ public class AttachmentGallery : ConstraintLayout {
                 ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
             ).let(binding.photoCount::setTextColor)
 
-            imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle) ?: "Photos"
+            imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle)
+            ?: context.getString(R.string.stream_ui_images_menu_default_title)
         }
     }
 
@@ -126,6 +126,7 @@ public class AttachmentGallery : ConstraintLayout {
                     .apply {
                         setImageClickListener { position ->
                             binding.attachmentGallery.setCurrentItem(position, true)
+                            dismiss()
                         }
                     }
                     .show(fragmentManager, null)

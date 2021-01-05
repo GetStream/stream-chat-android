@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.getstream.sdk.chat.ImageLoader.load
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentImageBinding
 
@@ -36,8 +36,7 @@ internal class ImagesMenuAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(imageUrl: String) {
-            binding.image.load(imageUrl) {
-                placeholder(R.drawable.stream_placeholder)
+            binding.image.load(imageUrl, R.drawable.stream_placeholder) {
                 error(R.drawable.stream_placeholder)
             }
         }
