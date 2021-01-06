@@ -13,39 +13,34 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 public class GiphyViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listenerContainer: MessageListListenerContainer? = null,
+    listenerContainer: MessageListListenerContainer?,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.inflater,
         parent,
         false
     )
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    init {
+        listenerContainer?.also { listeners ->
+            binding.run {
+                cancelButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
+                }
+                sendButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
+                }
+                nextButton.setOnClickListener {
+                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
+                }
+            }
+        }
+    }
+
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (data.isMine) {
             data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
-
             binding.giphyTextLabel.text = trimText(data.message.text)
-
-            listenerContainer?.also { listeners ->
-                binding.cancelButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(
-                        data.message,
-                        GiphyAction.CANCEL
-                    )
-                }
-                binding.sendButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(
-                        data.message,
-                        GiphyAction.SEND
-                    )
-                }
-                binding.nextButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(
-                        data.message,
-                        GiphyAction.SHUFFLE
-                    )
-                }
-            }
         }
     }
 

@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.attachments.file
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 import io.getstream.chat.android.ui.utils.UiUtils
 
@@ -30,7 +30,7 @@ internal class FileAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return StreamUiItemAttachmentFileBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { FileAttachmentViewHolder(it, onAttachmentSelected) }
     }
 
@@ -59,15 +59,24 @@ internal class FileAttachmentAdapter(
         private val onAttachmentClick: (AttachmentMetaData) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(attachment: AttachmentMetaData) {
-            binding.fileTypeImageView.setImageResource(UiUtils.getIcon(attachment.mimeType))
-            binding.fileNameTextView.text = attachment.title
-            binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
+        lateinit var attachment: AttachmentMetaData
+
+        init {
             binding.root.setOnClickListener {
                 onAttachmentClick(attachment)
             }
-            binding.selectionIndicator.isChecked = attachment.isSelected
-            binding.selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
+        }
+
+        fun bind(attachment: AttachmentMetaData) {
+            this.attachment = attachment
+
+            binding.apply {
+                fileTypeImageView.setImageResource(UiUtils.getIcon(attachment.mimeType))
+                fileNameTextView.text = attachment.title
+                fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
+                selectionIndicator.isChecked = attachment.isSelected
+                selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
+            }
         }
     }
 }
