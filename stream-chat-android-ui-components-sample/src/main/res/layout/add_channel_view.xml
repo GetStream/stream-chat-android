@@ -75,7 +75,7 @@
         android:id="@+id/usersTitle"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="@drawable/add_channel_users_title_background"
+        android:background="@drawable/stream_ui_search_info_bar_gradient"
         android:gravity="start|center_vertical"
         android:paddingHorizontal="8dp"
         android:text="@string/add_channel_user_list_title"

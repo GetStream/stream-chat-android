@@ -25,6 +25,4 @@
     <color name="component_browser_background_light">@color/stream_ui_white</color>
 
     <color name="rounded_button_background">@color/grey_light</color>
-    <color name="add_channel_users_title_start_background">#F7F7F7</color>
-    <color name="add_channel_users_title_end_background">@color/stream_ui_alabaster</color>
 </resources>
