@@ -4,10 +4,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 
 public class StreamFileProvider : FileProvider() {
 
+    @InternalStreamChatApi
     public companion object {
 
         private fun getFileProviderAuthority(context: Context): String {
