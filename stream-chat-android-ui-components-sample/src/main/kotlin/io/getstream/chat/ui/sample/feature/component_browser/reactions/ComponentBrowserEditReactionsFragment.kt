@@ -30,12 +30,12 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            reactionsView1.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 0), isMyMessage = true)
-            reactionsView2.setMessage(randomMessageWithReactions(reactionsSize = 30, ownReactionsSize = 0), isMyMessage = false)
-            reactionsView3.setMessage(randomMessageWithReactions(reactionsSize = 0, ownReactionsSize = 0), isMyMessage = true)
-            reactionsView4.setMessage(randomMessageWithReactions(reactionsSize = 0, ownReactionsSize = 0), isMyMessage = false)
-            reactionsView5.setMessage(randomMessageWithReactions(reactionsSize = 1, ownReactionsSize = 1), isMyMessage = true)
-            reactionsView6.setMessage(randomMessageWithReactions(reactionsSize = 1, ownReactionsSize = 1), isMyMessage = false)
+            reactionsView1.setMessage(randomMessageWithReactions(count = 30), isMyMessage = true)
+            reactionsView2.setMessage(randomMessageWithReactions(count = 30), isMyMessage = false)
+            reactionsView3.setMessage(randomMessageWithReactions(count = 0), isMyMessage = true)
+            reactionsView4.setMessage(randomMessageWithReactions(count = 0), isMyMessage = false)
+            reactionsView5.setMessage(randomMessageWithReactions(count = 1), isMyMessage = true)
+            reactionsView6.setMessage(randomMessageWithReactions(count = 1), isMyMessage = false)
             reactionsView6.setReactionClickListener { Toast.makeText(context, it.type, Toast.LENGTH_SHORT).show() }
         }
     }

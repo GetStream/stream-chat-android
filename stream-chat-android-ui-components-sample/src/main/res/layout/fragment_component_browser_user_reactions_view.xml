@@ -33,32 +33,31 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingTop="@dimen/stream_ui_spacing_medium"
-            android:paddingBottom="@dimen/stream_ui_spacing_medium"
+            android:padding="@dimen/stream_ui_spacing_medium"
             >
 
-            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
                 android:id="@+id/userReactionsView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
                 android:id="@+id/userReactionsView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
                 android:id="@+id/userReactionsView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.UserReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
                 android:id="@+id/userReactionsView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

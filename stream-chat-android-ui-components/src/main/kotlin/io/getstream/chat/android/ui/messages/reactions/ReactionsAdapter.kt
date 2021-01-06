@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.reactions
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.Px
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,14 +13,14 @@ import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 internal class ReactionsAdapter(
-    private val reactionsViewStyle: ReactionsViewStyle,
+    @Px private val itemSize: Int,
     private val reactionClickListener: ReactionClickListener
 ) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
         return StreamUiItemMessageReactionBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { ReactionViewHolder(it, reactionsViewStyle, reactionClickListener) }
+            .let { ReactionViewHolder(it, itemSize, reactionClickListener) }
     }
 
     override fun onBindViewHolder(holder: ReactionViewHolder, position: Int) {
@@ -28,14 +29,13 @@ internal class ReactionsAdapter(
 
     class ReactionViewHolder(
         private val binding: StreamUiItemMessageReactionBinding,
-        reactionsViewStyle: ReactionsViewStyle,
+        @Px private val itemSize: Int,
         private val reactionClickListener: ReactionClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var reactionItem: ReactionItem
 
         init {
-            val itemSize: Int = reactionsViewStyle.itemSize
             binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 width = itemSize
                 height = itemSize

@@ -49,6 +49,7 @@ import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
+import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlin.math.max
 
 /**
@@ -164,7 +165,7 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         messageOptionsConfiguration.copy(
-                            threadEnabled = !adapter.isThread,
+                            threadEnabled = !adapter.isThread && !message.isInThread(),
                         )
                     )
                     .apply {
