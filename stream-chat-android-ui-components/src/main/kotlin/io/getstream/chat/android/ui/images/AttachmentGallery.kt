@@ -28,7 +28,6 @@ public class AttachmentGallery : ConstraintLayout {
                     type = "image/*"
                     putExtra(Intent.EXTRA_STREAM, pictureUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    data = pictureUri
                 },
                 "Share Image"
             ),
