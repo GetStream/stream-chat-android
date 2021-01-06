@@ -46,7 +46,6 @@
     <color name="stream_ui_sdk_version_color">@color/stream_ui_outer_space</color>
 
     <color name="stream_ui_current_user_background">#2D2E2E</color>
-    <color name="stream_ui_other_user_background">#2D2E2E</color>
 
     <color name="stream_ui_other_message_stroke">#1C1E22</color>
 
