@@ -28,7 +28,9 @@ sealed class ChatInfoItem {
         abstract val textResId: Int
 
         @get:ColorRes
-        abstract val tintResId: Int
+        open val tintResId: Int = R.color.stream_ui_icon_default_tint
+        @get:ColorRes
+        open val textColorResId: Int = R.color.stream_ui_text_color_strong
 
         open val showRightArrow: Boolean = true
 
@@ -37,8 +39,6 @@ sealed class ChatInfoItem {
                 get() = R.drawable.ic_media
             override val textResId: Int
                 get() = R.string.chat_info_option_media
-            override val tintResId: Int
-                get() = R.color.stream_ui_icon_default_tint
         }
 
         object SharedFiles : Option() {
@@ -46,8 +46,6 @@ sealed class ChatInfoItem {
                 get() = R.drawable.ic_files
             override val textResId: Int
                 get() = R.string.chat_info_option_files
-            override val tintResId: Int
-                get() = R.color.stream_ui_icon_default_tint
         }
 
         object SharedGroups : Option() {
@@ -55,8 +53,6 @@ sealed class ChatInfoItem {
                 get() = R.drawable.ic_new_group
             override val textResId: Int
                 get() = R.string.chat_info_option_shared_groups
-            override val tintResId: Int
-                get() = R.color.stream_ui_icon_default_tint
         }
 
         object DeleteConversation : Option() {
@@ -66,6 +62,8 @@ sealed class ChatInfoItem {
                 get() = R.string.chat_info_option_delete_conversation
             override val tintResId: Int
                 get() = R.color.red
+            override val textColorResId: Int
+                get() = R.color.red
             override val showRightArrow: Boolean = false
         }
 
@@ -74,8 +72,6 @@ sealed class ChatInfoItem {
                 get() = R.drawable.ic_leave_group
             override val textResId: Int
                 get() = R.string.chat_group_info_option_leave
-            override val tintResId: Int
-                get() = R.color.stream_ui_icon_default_tint
             override val showRightArrow: Boolean = false
         }
 
@@ -87,8 +83,6 @@ sealed class ChatInfoItem {
                     get() = R.drawable.ic_notifications
                 override val textResId: Int
                     get() = R.string.chat_info_option_notifications
-                override val tintResId: Int
-                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class MuteUser(override val isChecked: Boolean) : Stateful() {
@@ -96,8 +90,6 @@ sealed class ChatInfoItem {
                     get() = R.drawable.ic_mute
                 override val textResId: Int
                     get() = R.string.chat_info_option_mute_user
-                override val tintResId: Int
-                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class MuteChannel(override val isChecked: Boolean) : Stateful() {
@@ -105,8 +97,6 @@ sealed class ChatInfoItem {
                     get() = R.drawable.ic_mute
                 override val textResId: Int
                     get() = R.string.chat_group_info_option_mute
-                override val tintResId: Int
-                    get() = R.color.stream_ui_icon_default_tint
             }
 
             data class Block(override val isChecked: Boolean) : Stateful() {
@@ -114,8 +104,6 @@ sealed class ChatInfoItem {
                     get() = R.drawable.ic_block
                 override val textResId: Int
                     get() = R.string.chat_info_option_block_user
-                override val tintResId: Int
-                    get() = R.color.stream_ui_icon_default_tint
             }
         }
     }

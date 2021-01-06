@@ -1,11 +1,11 @@
 package io.getstream.chat.android.ui.messages.reactions
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.Px
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.utils.UiUtils
@@ -19,7 +19,7 @@ internal class ReactionsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
         return StreamUiItemMessageReactionBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { ReactionViewHolder(it, itemSize, reactionClickListener) }
     }
 
