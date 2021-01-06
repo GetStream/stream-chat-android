@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -97,6 +98,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showLoading() {
+        setActionBarElevation(ACTION_BAR_ELEVATION)
         binding.progressBar.isVisible = true
         binding.mediaRecyclerView.isVisible = false
         binding.dateView.isVisible = false
@@ -105,6 +107,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showResults(attachments: List<SharedAttachment.AttachmentItem>) {
+        setActionBarElevation(0f)
         binding.progressBar.isVisible = false
         binding.mediaRecyclerView.isVisible = true
         binding.dateView.isVisible = true
@@ -119,11 +122,18 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showEmptyState() {
+        setActionBarElevation(ACTION_BAR_ELEVATION)
         binding.progressBar.isVisible = false
         binding.mediaRecyclerView.isVisible = false
         binding.dateView.isVisible = false
         binding.emptyStateView.isVisible = true
         scrollListener.disablePagination()
+    }
+
+    private fun setActionBarElevation(elevation: Float) {
+        (requireActivity() as AppCompatActivity).run {
+            supportActionBar?.elevation = elevation
+        }
     }
 
     private class MediaDateScrollListener(
@@ -198,5 +208,6 @@ class ChatInfoSharedMediaFragment : Fragment() {
         private const val LOAD_MORE_THRESHOLD = 10
         private const val SPAN_COUNT = 3
         private val MEDIA_ITEM_SPACE = Utils.dpToPx(2)
+        private val ACTION_BAR_ELEVATION = Utils.dpToPx(4).toFloat()
     }
 }
