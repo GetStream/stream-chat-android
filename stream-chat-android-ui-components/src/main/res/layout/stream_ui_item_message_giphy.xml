@@ -95,7 +95,8 @@
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
-                app:tint="@color/stream_ui_icon_strong_tint"/>
+                app:tint="@color/stream_ui_icon_strong_tint"
+                />
 
             <View
                 android:id="@+id/horizontalDivider"
@@ -169,9 +170,10 @@
 
     <include
         android:id="@+id/threadRepliesFootnote"
+        layout="@layout/stream_ui_message_threads_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/stream_ui_message_threads_footnote"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="@id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
