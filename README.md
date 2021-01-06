@@ -59,7 +59,7 @@ The SDK provides:
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
     - [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
     - [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
-    - [Message Input View](https://getstream.io/chat/docs/message_input_view/?language=kotlin49)
+    - [Message Input View](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
 
 The documentation for LiveData and the custom views is available here:
 [https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
