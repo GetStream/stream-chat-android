@@ -97,6 +97,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showLoading() {
+        binding.toolbar.elevation = ACTION_BAR_ELEVATION
         binding.progressBar.isVisible = true
         binding.mediaRecyclerView.isVisible = false
         binding.dateView.isVisible = false
@@ -105,6 +106,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showResults(attachments: List<SharedAttachment.AttachmentItem>) {
+        binding.toolbar.elevation = 0f
         binding.progressBar.isVisible = false
         binding.mediaRecyclerView.isVisible = true
         binding.dateView.isVisible = true
@@ -119,6 +121,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun showEmptyState() {
+        binding.toolbar.elevation = ACTION_BAR_ELEVATION
         binding.progressBar.isVisible = false
         binding.mediaRecyclerView.isVisible = false
         binding.dateView.isVisible = false
@@ -198,5 +201,6 @@ class ChatInfoSharedMediaFragment : Fragment() {
         private const val LOAD_MORE_THRESHOLD = 10
         private const val SPAN_COUNT = 3
         private val MEDIA_ITEM_SPACE = Utils.dpToPx(2)
+        private val ACTION_BAR_ELEVATION = Utils.dpToPx(4).toFloat()
     }
 }

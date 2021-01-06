@@ -43,12 +43,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
-        app:layout_constraintHorizontal_bias="0"
+        android:visibility="gone"
         app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
         app:layout_constraintRight_toRightOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
-        android:visibility="gone"
         tools:visibility="visible"
         />
 
@@ -137,9 +137,10 @@
 
     <include
         android:id="@+id/threadRepliesFootnote"
+        layout="@layout/stream_ui_message_threads_footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/stream_ui_message_threads_footnote"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
         />

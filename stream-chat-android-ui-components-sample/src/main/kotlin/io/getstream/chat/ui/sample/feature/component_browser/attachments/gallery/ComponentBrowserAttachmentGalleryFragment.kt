@@ -22,7 +22,6 @@ class ComponentBrowserAttachmentGalleryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentComponentBrowserAttachmentGalleryBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -37,10 +36,6 @@ class ComponentBrowserAttachmentGalleryFragment : Fragment() {
 
             setMenuButtonClickListener {
                 Toast.makeText(requireContext(), "Menu click!", Toast.LENGTH_SHORT).show()
-            }
-
-            setShareButtonClickListener {
-                Toast.makeText(requireContext(), "Share click!", Toast.LENGTH_SHORT).show()
             }
         }
     }
