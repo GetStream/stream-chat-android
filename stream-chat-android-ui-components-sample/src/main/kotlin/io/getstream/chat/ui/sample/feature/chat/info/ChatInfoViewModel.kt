@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.ui.utils.extensions.isOwnerOrAdmin
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
 class ChatInfoViewModel(
@@ -33,9 +33,7 @@ class ChatInfoViewModel(
         viewModelScope.launch {
             val channelControllerResult = chatDomain.useCases.getChannelController(cid).await()
             if (channelControllerResult.isSuccess) {
-                val canDeleteChannel =
-                    channelControllerResult.data().members.value?.firstOrNull { it.getUserId() == chatDomain.currentUser.id }?.isOwnerOrAdmin
-                        ?: false
+                val canDeleteChannel = channelControllerResult.data().members.value.isCurrentUserOwnerOrAdmin()
                 _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
             }
             // Currently, we don't receive any event when channel member is banned/shadow banned, so

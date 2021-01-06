@@ -22,11 +22,10 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
-import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
-import io.getstream.chat.android.ui.utils.extensions.isOwnerOrAdmin
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
 public class ChannelViewHolder @JvmOverloads constructor(
@@ -88,7 +87,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun configureDeleteButton(channel: Channel) {
-        val canDeleteChannel = channel.members.firstOrNull { it.user.isCurrentUser() }?.isOwnerOrAdmin ?: false
+        val canDeleteChannel = channel.members.isCurrentUserOwnerOrAdmin()
         binding.itemBackgroundView.deleteImageView.apply {
             if (canDeleteChannel) {
                 optionsCount = 2

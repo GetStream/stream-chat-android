@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
-import io.getstream.chat.android.ui.utils.extensions.isOwnerOrAdmin
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
 internal class ChannelActionsViewModel(
@@ -61,7 +61,7 @@ internal class ChannelActionsViewModel(
     }
 
     private fun updateMembers(members: List<Member>): State {
-        val canDeleteChannel = members.firstOrNull { it.user.isCurrentUser() }?.isOwnerOrAdmin ?: false
+        val canDeleteChannel = members.isCurrentUserOwnerOrAdmin()
         return currentState.copy(
             members = members.filter { isGroup || !it.user.isCurrentUser() },
             canDeleteChannel = canDeleteChannel,
