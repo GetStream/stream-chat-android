@@ -28,7 +28,7 @@ class CustomLoginFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCustomLoginBinding.inflate(inflater, container, false)
         return binding.root
     }

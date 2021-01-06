@@ -14,10 +14,10 @@
 
     <!--Custom Login Screen-->
     <string name="custom_login_button_text">Login</string>
-    <string name="custom_login_field_api_key_hint">Client API key</string>
+    <string name="custom_login_field_api_key_hint">Chat API Key</string>
     <string name="custom_login_field_user_id_hint">User ID</string>
-    <string name="custom_login_field_user_token">User token</string>
-    <string name="custom_login_field_user_name_hint">User name (optional)</string>
+    <string name="custom_login_field_user_token">User Token</string>
+    <string name="custom_login_field_user_name_hint">Username (optional)</string>
     <string name="custom_login_validation_error">This field is required</string>
 
     <!--Home screen-->
