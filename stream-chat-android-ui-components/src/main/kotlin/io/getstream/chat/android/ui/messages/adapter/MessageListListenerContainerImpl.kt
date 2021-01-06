@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter
 
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
@@ -17,6 +18,7 @@ internal class MessageListListenerContainerImpl(
     messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
     threadClickListener: ThreadClickListener = ThreadClickListener(EmptyFunctions.ONE_PARAM),
     attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
+    attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
     readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
@@ -64,6 +66,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         AttachmentClickListener { message, attachment ->
             realListener().onAttachmentClick(message, attachment)
+        }
+    }
+
+    override var attachmentDownloadClickListener: AttachmentDownloadClickListener by ListenerDelegate(
+        attachmentDownloadClickListener
+    ) { realListener ->
+        AttachmentDownloadClickListener { attachment ->
+            realListener().onAttachmentDownloadClick(attachment)
         }
     }
 

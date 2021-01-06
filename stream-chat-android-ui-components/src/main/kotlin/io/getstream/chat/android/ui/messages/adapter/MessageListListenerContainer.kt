@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter
 
 import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
@@ -16,6 +17,7 @@ public interface MessageListListenerContainer {
     public val messageRetryListener: MessageRetryListener
     public val threadClickListener: MessageListView.ThreadClickListener
     public val attachmentClickListener: AttachmentClickListener
+    public val attachmentDownloadClickListener: AttachmentDownloadClickListener
     public val reactionViewClickListener: ReactionViewClickListener
     public val userClickListener: UserClickListener
     public val readStateClickListener: ReadStateClickListener

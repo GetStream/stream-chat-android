@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -199,6 +200,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyMessage -> {
                 domain.useCases.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
+            is Event.AttachmentDownload -> {
+                domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
+            }
         }.exhaustive
     }
 
@@ -298,6 +302,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val channel: Channel) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
+        public data class AttachmentDownload(val attachment: Attachment) : Event()
     }
 
     public sealed class Mode {

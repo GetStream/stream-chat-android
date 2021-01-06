@@ -23,10 +23,12 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
+    var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
 
     private val fileAttachmentsAdapter = FileAttachmentsAdapter(
         attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
-        attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() }
+        attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
+        attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) }
     )
 
     constructor(context: Context) : super(context)
@@ -56,28 +58,42 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
 
 private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
-    private val attachmentLongClickListener: AttachmentLongClickListener
+    private val attachmentLongClickListener: AttachmentLongClickListener,
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return StreamUiItemFileAttachmentBinding
             .inflate(parent.inflater, parent, false)
-            .let { FileAttachmentViewHolder(it, attachmentClickListener, attachmentLongClickListener) }
+            .let {
+                FileAttachmentViewHolder(
+                    it,
+                    attachmentClickListener,
+                    attachmentLongClickListener,
+                    attachmentDownloadClickListener
+                )
+            }
     }
 }
 
 private class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
     private val attachmentClickListener: AttachmentClickListener,
-    private val attachmentLongClickListener: AttachmentLongClickListener
+    private val attachmentLongClickListener: AttachmentLongClickListener,
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
     init {
-        binding.root.setOnClickListener { attachmentClickListener.onAttachmentClick(attachment) }
+        binding.root.setOnClickListener {
+            attachmentClickListener.onAttachmentClick(attachment)
+        }
         binding.root.setOnLongClickListener {
             attachmentLongClickListener.onAttachmentLongClick()
             true
+        }
+        binding.actionButton.setOnClickListener {
+            attachmentDownloadClickListener.onAttachmentDownloadClick(attachment)
         }
     }
 
