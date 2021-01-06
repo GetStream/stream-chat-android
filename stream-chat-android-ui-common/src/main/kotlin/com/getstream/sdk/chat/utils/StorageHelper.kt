@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @InternalStreamChatApi
@@ -135,6 +134,7 @@ public class StorageHelper {
     }
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String = attachmentMetaData.getTitleWithExtension()
+}
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
     val extension = MimeTypeMap.getFileExtensionFromUrl(title)
