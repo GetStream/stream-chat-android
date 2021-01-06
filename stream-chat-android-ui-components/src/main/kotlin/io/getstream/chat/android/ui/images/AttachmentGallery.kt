@@ -65,7 +65,7 @@ public class AttachmentGallery : ConstraintLayout {
         binding.shareButton.setOnClickListener {
             GlobalScope.launch(DispatcherProvider.Main) {
                 ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
-                    ?.let { pictureUri -> onSharePictureListener(pictureUri) }
+                    ?.let(onSharePictureListener)
             }
         }
     }
