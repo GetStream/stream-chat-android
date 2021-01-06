@@ -15,6 +15,8 @@ import com.getstream.sdk.chat.ImageLoader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
+import io.getstream.chat.android.ui.images.menu.ImagesMenuDialogFragment
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -38,6 +40,10 @@ public class AttachmentGallery : ConstraintLayout {
     private var countText: String = "%s - %s"
     private lateinit var adapter: AttachmentSlidePagerAdapter
 
+    private var imagesMenuTitle: String = ""
+
+    private var imageList: List<String> = mutableListOf()
+
     public constructor(context: Context) : super(context)
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
@@ -54,6 +60,7 @@ public class AttachmentGallery : ConstraintLayout {
 
     public fun init(attr: AttributeSet?) {
         attr?.let(::configureAttributes)
+        configureImagesMenu()
     }
 
     public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>, currentIndex: Int = 0) {
@@ -61,6 +68,9 @@ public class AttachmentGallery : ConstraintLayout {
         binding.attachmentGallery.adapter = adapter
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)
+
+        this.imageList = imageList
+
         binding.shareButton.setOnClickListener {
             GlobalScope.launch(DispatcherProvider.Main) {
                 ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
@@ -85,6 +95,9 @@ public class AttachmentGallery : ConstraintLayout {
                 R.styleable.AttachmentGallery_streamUiCountTextColor,
                 ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
             ).let(binding.photoCount::setTextColor)
+
+            imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle)
+                ?: context.getString(R.string.stream_ui_images_menu_default_title)
         }
     }
 
@@ -104,5 +117,20 @@ public class AttachmentGallery : ConstraintLayout {
                 }
             }
         )
+    }
+
+    private fun configureImagesMenu() {
+        binding.menuButton.setOnClickListener {
+            context.getFragmentManager()?.let { fragmentManager ->
+                ImagesMenuDialogFragment.newInstance(imagesMenuTitle, imageList)
+                    .apply {
+                        setImageClickListener { position ->
+                            binding.attachmentGallery.setCurrentItem(position, true)
+                            dismiss()
+                        }
+                    }
+                    .show(fragmentManager, null)
+            }
+        }
     }
 }
