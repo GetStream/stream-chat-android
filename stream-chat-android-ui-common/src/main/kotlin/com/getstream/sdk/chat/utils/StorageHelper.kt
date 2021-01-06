@@ -134,9 +134,7 @@ public class StorageHelper {
         return attachments
     }
 
-    private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
-        "${attachmentMetaData.getTitleWithExtension()}_STREAM_${dateFormat.format(Date().time)}"
-}
+    private fun getFileName(attachmentMetaData: AttachmentMetaData): String = attachmentMetaData.getTitleWithExtension()
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
     val extension = MimeTypeMap.getFileExtensionFromUrl(title)
