@@ -792,7 +792,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the attachment download click listener to be used by MessageListView.
      *
+     * @param attachmentDownloadClickListener The listener to use. If null, the default will be used instead.
      */
     public fun setAttachmentDownloadClickListener(attachmentDownloadClickListener: AttachmentDownloadClickListener?) {
         listenerContainer.attachmentDownloadClickListener =
