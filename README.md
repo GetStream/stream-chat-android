@@ -38,7 +38,7 @@ This repo includes a fully functional example app featuring threads, reactions, 
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Next, download Android Studio and open up the `stream-chat-android-sample` folder. You'll want to run the `stream-chat-android-sample` app.
+Next, download Android Studio and open up the `stream-chat-android` folder. You'll want to run the `stream-chat-android-sample` app.
 The Gradle sync process can take some time when you first open the project. 
 
 ## Docs
