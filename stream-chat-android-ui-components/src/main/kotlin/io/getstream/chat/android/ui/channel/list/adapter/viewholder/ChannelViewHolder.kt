@@ -58,14 +58,6 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
     init {
         binding.apply {
-            root.setOnClickListener {
-                channelClickListener.onClick(channel)
-            }
-            root.setOnLongClickListener {
-                channelLongClickListener.onClick(channel)
-                true
-            }
-
             itemBackgroundView.apply {
                 moreOptionsImageView.setOnClickListener {
                     channelMoreOptionsListener.onClick(channel)
@@ -82,6 +74,13 @@ public class ChannelViewHolder @JvmOverloads constructor(
                         channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
                         else -> channelClickListener.onClick(channel)
                     }
+                }
+                root.setOnClickListener {
+                    channelClickListener.onClick(channel)
+                }
+                root.setOnLongClickListener {
+                    channelLongClickListener.onClick(channel)
+                    true
                 }
 
                 applyStyle(style)
