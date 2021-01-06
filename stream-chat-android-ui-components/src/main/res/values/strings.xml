@@ -132,4 +132,7 @@
     </plurals>
 
     <string name="stream_ui_reply_to_message">Reply to message</string>
+
+    <!-- Gallery -->
+    <string name="stream_ui_gallery_share_sheet_title">Share Image</string>
 </resources>

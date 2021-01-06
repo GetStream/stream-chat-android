@@ -29,7 +29,7 @@ public class AttachmentGallery : ConstraintLayout {
                     putExtra(Intent.EXTRA_STREAM, pictureUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
-                "Share Image"
+                context.getString(R.string.stream_ui_gallery_share_sheet_title),
             ),
             null
         )
