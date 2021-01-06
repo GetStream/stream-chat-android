@@ -71,6 +71,7 @@ class ChatInfoOptionViewHolder(
     override fun bind(item: ChatInfoItem.Option) {
         option = item
         binding.optionTextView.setText(item.textResId)
+        binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.textColorResId))
         binding.optionImageView.setImageResource(item.iconResId)
         binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
         binding.optionArrowRight.isInvisible = !item.showRightArrow
