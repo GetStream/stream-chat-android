@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.channel.actions
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.databinding.StreamUiItemChannelMemberBinding
@@ -15,7 +15,7 @@ internal class ChannelMembersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
         return StreamUiItemChannelMemberBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { ChannelMemberViewHolder(it, onMemberClicked) }
     }
 
@@ -37,13 +37,19 @@ internal class ChannelMembersAdapter(
         private val binding: StreamUiItemChannelMemberBinding,
         private val onMemberClicked: (Member) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+        lateinit var member: Member
+
+        init {
+            binding.root.setOnClickListener { onMemberClicked(member) }
+        }
 
         fun bind(member: Member) {
+            this.member = member
+            val user = member.user
+
             binding.apply {
-                val user = member.user
                 avatarView.setUserData(user)
                 userNameTextView.text = user.name
-                root.setOnClickListener { onMemberClicked(member) }
             }
         }
     }

@@ -82,38 +82,43 @@ private class FileAttachmentViewHolder(
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
-    private lateinit var item: Attachment
+    private lateinit var attachment: Attachment
 
     init {
         binding.root.setOnClickListener {
-            attachmentClickListener.onAttachmentClick(item)
+            attachmentClickListener.onAttachmentClick(attachment)
         }
         binding.root.setOnLongClickListener {
             attachmentLongClickListener.onAttachmentLongClick()
             true
         }
         binding.actionButton.setOnClickListener {
-            attachmentDownloadClickListener.onAttachmentDownloadClick(item)
+            attachmentDownloadClickListener.onAttachmentDownloadClick(attachment)
         }
     }
 
     init {
-        binding.root.background =
-            ShapeAppearanceModel.builder().setAllCornerSizes(CORNER_SIZE_PX).build().let(::MaterialShapeDrawable)
-                .apply {
-                    setStroke(
-                        STROKE_WIDTH_PX,
-                        ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
-                    )
-                    setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
-                }
+        binding.root.background = ShapeAppearanceModel.builder()
+            .setAllCornerSizes(CORNER_SIZE_PX)
+            .build()
+            .let(::MaterialShapeDrawable)
+            .apply {
+                setStroke(
+                    STROKE_WIDTH_PX,
+                    ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
+                )
+                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
+            }
     }
 
     override fun bind(item: Attachment) {
-        this.item = item
-        binding.fileTypeIcon.setImageResource(UiUtils.getIcon(item.mimeType))
-        binding.fileTitle.text = item.title ?: item.name
-        binding.fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
+        this.attachment = item
+
+        binding.apply {
+            fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
+            fileTitle.text = attachment.title ?: attachment.name
+            fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+        }
     }
 
     companion object {

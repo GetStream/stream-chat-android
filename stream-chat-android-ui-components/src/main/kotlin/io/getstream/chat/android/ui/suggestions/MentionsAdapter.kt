@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.suggestions
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
@@ -25,7 +25,7 @@ internal class MentionsAdapter(
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionViewHolder {
         return StreamUiItemMentionBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { MentionViewHolder(it, onMentionSelected) }
     }
 
@@ -38,14 +38,23 @@ internal class MentionsAdapter(
         private val onUserClicked: (User) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(user: User) {
-            binding.avatarView.setUserData(user)
-            binding.usernameTextView.text = user.name
-            binding.mentionNameTextView.text = itemView.context.getString(
-                R.string.stream_ui_mention_user_name_template,
-                user.name.toLowerCase()
-            )
+        lateinit var user: User
+
+        init {
             binding.root.setOnClickListener { onUserClicked(user) }
+        }
+
+        fun bind(user: User) {
+            this.user = user
+
+            binding.apply {
+                avatarView.setUserData(user)
+                usernameTextView.text = user.name
+                mentionNameTextView.text = itemView.context.getString(
+                    R.string.stream_ui_mention_user_name_template,
+                    user.name.toLowerCase()
+                )
+            }
         }
     }
 }
