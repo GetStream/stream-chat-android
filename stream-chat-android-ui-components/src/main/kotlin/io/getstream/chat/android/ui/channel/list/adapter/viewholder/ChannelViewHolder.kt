@@ -82,12 +82,11 @@ public class ChannelViewHolder @JvmOverloads constructor(
                     channelLongClickListener.onClick(channel)
                     true
                 }
+                root.doOnNextLayout {
+                    setSwipeListener(root, swipeListener)
+                }
 
                 applyStyle(style)
-            }
-
-            root.doOnNextLayout {
-                setSwipeListener(root, swipeListener)
             }
         }
     }
