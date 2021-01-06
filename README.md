@@ -38,10 +38,7 @@ This repo includes a fully functional example app featuring threads, reactions, 
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Next, download Android Studio and open up the `stream-chat-android-ui-components-sample` folder. You'll want to run the `stream-chat-android-ui-components-sample` app.
-
-**Note:** The sample app **stream-chat-android-sample** is deprecated
-
+Next, download Android Studio and open up the `stream-chat-android-sample` folder. You'll want to run the `stream-chat-android-sample` app.
 The Gradle sync process can take some time when you first open the project. 
 
 ## Docs
@@ -173,10 +170,10 @@ class MainActivity: AppCompatActivity() {
 
 ## Online status
 
-Connection status to Chat is available via `ChatDomain.instance().isOnline()` which returns a Boolean. 
+Connection status to Chat is available via `ChatDomain.instance().online` which returns a LiveData object you can attach observers to.
 
 ```kotlin
-ChatDomain.instance().isOnline() // true when online, false when offline
+ChatDomain.instance().online.observe(...)
 ```
 
 ## Markdown support
