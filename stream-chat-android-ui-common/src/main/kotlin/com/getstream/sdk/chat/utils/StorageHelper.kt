@@ -135,7 +135,7 @@ public class StorageHelper {
     }
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
-        "STREAM_${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
+        "${attachmentMetaData.getTitleWithExtension()}_STREAM_${dateFormat.format(Date().time)}"
 }
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
