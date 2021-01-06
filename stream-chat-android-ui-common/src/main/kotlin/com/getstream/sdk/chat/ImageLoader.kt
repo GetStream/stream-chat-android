@@ -19,7 +19,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import coil.loadAny as coilLoadAny
 
@@ -49,20 +48,20 @@ public object ImageLoader {
     ): Uri? = getBitmap(context, url, transformation)?.getLocalBitmapUri(context)
 
     private fun Bitmap.getLocalBitmapUri(context: Context): Uri? {
-        var bmpUri: Uri? = null
-        try {
+        return try {
             val file = File(
                 context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                "share_image_" + System.currentTimeMillis() + ".png"
+                "share_image_${System.currentTimeMillis()}.png"
             )
-            val out = FileOutputStream(file)
-            compress(Bitmap.CompressFormat.PNG, 90, out)
-            out.close()
-            bmpUri = StreamFileProvider.getUriForFile(context, file)
+            file.outputStream().use { out ->
+                compress(Bitmap.CompressFormat.PNG, 90, out)
+                out.flush()
+            }
+            StreamFileProvider.getUriForFile(context, file)
         } catch (e: IOException) {
             e.printStackTrace()
+            null
         }
-        return bmpUri
     }
 
     public fun ImageView.load(
@@ -74,7 +73,11 @@ public object ImageLoader {
         }
     }
 
-    public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int, onStart: () -> Unit = {}, onComplete: () -> Unit = {}) {
+    public fun ImageView.load(
+        @RawRes @DrawableRes drawableResId: Int,
+        onStart: () -> Unit = {},
+        onComplete: () -> Unit = {}
+    ) {
         loadAny(data = drawableResId, onStart = onStart, onComplete = onComplete)
     }
 
