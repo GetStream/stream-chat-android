@@ -76,6 +76,7 @@
     <string name="stream_ui_attachments_more_count_prefix">+%d</string>
     <string name="stream_ui_send_label">Send</string>
     <string name="stream_ui_cancel_label">Cancel</string>
+    <string name="stream_ui_attachment_downloading_started">Downloading started</string>
 
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>

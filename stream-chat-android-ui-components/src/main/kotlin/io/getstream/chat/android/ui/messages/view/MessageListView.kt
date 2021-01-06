@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -136,6 +137,9 @@ public class MessageListView : ConstraintLayout {
     private var onReplyMessageHandler: (cid: String, Message) -> Unit = { _, _ ->
         throw IllegalStateException("onReplyMessageHandler must be set")
     }
+    private var onAttachmentDownloadHandler: (Attachment) -> Unit = {
+        throw IllegalStateException("onAttachmentDownloadHandler must be set")
+    }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -203,6 +207,15 @@ public class MessageListView : ConstraintLayout {
                 .navigator
                 .navigate(GalleryImageAttachmentDestination(message, attachment, context))
         }
+    private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
+        AttachmentDownloadClickListener { attachment ->
+            onAttachmentDownloadHandler.invoke(attachment)
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_ui_attachment_downloading_started),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
@@ -231,6 +244,7 @@ public class MessageListView : ConstraintLayout {
         messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
         threadClickListener = DEFAULT_THREAD_CLICK_LISTENER,
         attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
+        attachmentDownloadClickListener = DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER,
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
         readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
@@ -778,6 +792,14 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     *
+     */
+    public fun setAttachmentDownloadClickListener(attachmentDownloadClickListener: AttachmentDownloadClickListener?) {
+        listenerContainer.attachmentDownloadClickListener =
+            attachmentDownloadClickListener ?: DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER
+    }
+
+    /**
      * Sets the reaction view click listener to be used by MessageListView.
      *
      * @param reactionViewClickListener The listener to use. If null, the default will be used instead.
@@ -862,6 +884,10 @@ public class MessageListView : ConstraintLayout {
         this.onReplyMessageHandler = onReplyMessageHandler
     }
 
+    public fun setOnAttachmentDownloadHandler(onAttachmentDownloadHandler: (Attachment) -> Unit) {
+        this.onAttachmentDownloadHandler = onAttachmentDownloadHandler
+    }
+
     public fun interface MessageClickListener {
         public fun onMessageClick(message: Message)
     }
@@ -880,6 +906,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface AttachmentClickListener {
         public fun onAttachmentClick(message: Message, attachment: Attachment)
+    }
+
+    public fun interface AttachmentDownloadClickListener {
+        public fun onAttachmentDownloadClick(attachment: Attachment)
     }
 
     public fun interface GiphySendListener {

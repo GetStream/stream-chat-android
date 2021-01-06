@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.adapter.view.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
@@ -37,6 +38,9 @@ public class OnlyFileAttachmentsViewHolder(
                 }
                 fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
                     listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+                }
+                fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
+                    listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
                 }
 
                 root.setOnLongClickListener {
