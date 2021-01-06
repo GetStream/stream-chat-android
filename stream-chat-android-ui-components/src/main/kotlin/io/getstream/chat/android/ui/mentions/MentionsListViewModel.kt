@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
 import kotlinx.coroutines.CoroutineScope
@@ -85,10 +84,10 @@ public class MentionsListViewModel : ViewModel() {
         val currentState = _state.value!!
         val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
-        // val messageFilter = Filters.eq(
-        //     "mentioned_users", Filters.contains(listOf(currentUser.id))
-        // )
-        val messageFilter = Filters.autocomplete("text", "@${currentUser.name}")
+        val messageFilter = Filters.eq(
+            "mentioned_users.id",
+            Filters.contains(currentUser.id)
+        )
 
         val request = SearchMessagesRequest(
             offset = currentState.results.size,
