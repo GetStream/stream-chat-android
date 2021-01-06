@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 public class GiphyViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listenerContainer: MessageListListenerContainer? = null,
+    listenerContainer: MessageListListenerContainer?,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.inflater,
         parent,
