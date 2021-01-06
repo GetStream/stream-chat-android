@@ -14,9 +14,9 @@
         android:background="@drawable/stream_ui_date_divider_background"
         android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
         android:paddingVertical="2dp"
-        android:text="@string/stream_ui_message_deleted_label"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="@color/stream_ui_white"
         tools:text="Today"
         />
+
 </FrameLayout>
