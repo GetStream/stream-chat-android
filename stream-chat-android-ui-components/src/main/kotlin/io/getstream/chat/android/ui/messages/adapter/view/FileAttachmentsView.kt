@@ -82,22 +82,27 @@ private class FileAttachmentViewHolder(
     }
 
     init {
-        binding.root.background =
-            ShapeAppearanceModel.builder().setAllCornerSizes(CORNER_SIZE_PX).build().let(::MaterialShapeDrawable)
-                .apply {
-                    setStroke(
-                        STROKE_WIDTH_PX,
-                        ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
-                    )
-                    setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
-                }
+        binding.root.background = ShapeAppearanceModel.builder()
+            .setAllCornerSizes(CORNER_SIZE_PX)
+            .build()
+            .let(::MaterialShapeDrawable)
+            .apply {
+                setStroke(
+                    STROKE_WIDTH_PX,
+                    ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
+                )
+                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
+            }
     }
 
-    override fun bind(attachment: Attachment) {
-        this.attachment = attachment
-        binding.fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
-        binding.fileTitle.text = attachment.title ?: attachment.name
-        binding.fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+    override fun bind(item: Attachment) {
+        this.attachment = item
+
+        binding.apply {
+            fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
+            fileTitle.text = attachment.title ?: attachment.name
+            fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+        }
     }
 
     companion object {

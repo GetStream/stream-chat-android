@@ -1,12 +1,12 @@
 package io.getstream.chat.android.ui.mentions
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
@@ -26,7 +26,7 @@ public class MentionsListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { binding ->
                 binding.root.dateFormatter = dateFormatter
                 MessagePreviewViewHolder(binding.root)
