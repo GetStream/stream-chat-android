@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Environment
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
@@ -17,6 +18,8 @@ import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.IOException
 import coil.loadAny as coilLoadAny
 
 @InternalStreamChatApi
@@ -38,6 +41,29 @@ public object ImageLoader {
             }
     }
 
+    public suspend fun getBitmapUri(
+        context: Context,
+        url: String,
+        transformation: ImageTransformation = ImageTransformation.None
+    ): Uri? = getBitmap(context, url, transformation)?.getLocalBitmapUri(context)
+
+    private fun Bitmap.getLocalBitmapUri(context: Context): Uri? {
+        return try {
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
+                "share_image_${System.currentTimeMillis()}.png"
+            )
+            file.outputStream().use { out ->
+                compress(Bitmap.CompressFormat.PNG, 90, out)
+                out.flush()
+            }
+            StreamFileProvider.getUriForFile(context, file)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     public fun ImageView.load(
         data: Any?,
         transformation: ImageTransformation = ImageTransformation.None
@@ -47,7 +73,11 @@ public object ImageLoader {
         }
     }
 
-    public fun ImageView.load(@RawRes @DrawableRes drawableResId: Int, onStart: () -> Unit = {}, onComplete: () -> Unit = {}) {
+    public fun ImageView.load(
+        @RawRes @DrawableRes drawableResId: Int,
+        onStart: () -> Unit = {},
+        onComplete: () -> Unit = {}
+    ) {
         loadAny(data = drawableResId, onStart = onStart, onComplete = onComplete)
     }
 
