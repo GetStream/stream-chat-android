@@ -31,9 +31,7 @@ internal class ImagesMenuAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(imageUrl: String) {
-            binding.image.load(imageUrl, R.drawable.stream_placeholder) {
-                error(R.drawable.stream_placeholder)
-            }
+            binding.image.load(imageUrl, R.drawable.stream_placeholder)
         }
     }
 }
