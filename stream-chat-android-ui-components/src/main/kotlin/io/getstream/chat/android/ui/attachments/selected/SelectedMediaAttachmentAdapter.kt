@@ -1,11 +1,11 @@
 package io.getstream.chat.android.ui.attachments.selected
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMediaBinding
@@ -17,7 +17,7 @@ internal class SelectedMediaAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedMediaAttachmentViewHolder {
         return StreamUiItemSelectedAttachmentMediaBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { SelectedMediaAttachmentViewHolder(it, onAttachmentCancelled) }
     }
 
@@ -26,9 +26,16 @@ internal class SelectedMediaAttachmentAdapter(
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
 
+        lateinit var item: AttachmentMetaData
+
+        init {
+            binding.btnClose.setOnClickListener { onAttachmentCancelled(item) }
+        }
+
         override fun bind(item: AttachmentMetaData) {
+            this.item = item
+
             bindAttachmentImage(item)
-            bindClickListener(item)
         }
 
         private fun bindAttachmentImage(attachment: AttachmentMetaData) {
@@ -41,10 +48,6 @@ internal class SelectedMediaAttachmentAdapter(
             } else {
                 binding.ivMedia.load(attachment.uri)
             }
-        }
-
-        private fun bindClickListener(attachment: AttachmentMetaData) {
-            binding.btnClose.setOnClickListener { onAttachmentCancelled(attachment) }
         }
     }
 }
