@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.attachments.media
 
 import android.graphics.Color
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -11,6 +10,7 @@ import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 
@@ -22,7 +22,7 @@ internal class MediaAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
         return StreamUiItemAttachmentMediaBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { MediaAttachmentViewHolder(it, onAttachmentSelected) }
     }
 
@@ -59,8 +59,16 @@ internal class MediaAttachmentAdapter(
         private val binding: StreamUiItemAttachmentMediaBinding,
         private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        lateinit var attachment: AttachmentMetaData
+
+        init {
+            binding.root.setOnClickListener { onAttachmentSelected(attachment) }
+        }
+
         fun bind(attachment: AttachmentMetaData) {
-            bindClickListener(attachment)
+            this.attachment = attachment
+
             bindMediaImage(attachment)
             bindSelectionMark(attachment)
             bindSelectionOverlay(attachment)
@@ -76,10 +84,6 @@ internal class MediaAttachmentAdapter(
                 binding.mediaThumbnailImageView.load(attachment.uri)
                 binding.mediaThumbnailImageView.setBackgroundColor(Color.TRANSPARENT)
             }
-        }
-
-        private fun bindClickListener(attachment: AttachmentMetaData) {
-            itemView.setOnClickListener { onAttachmentSelected(attachment) }
         }
 
         private fun bindSelectionMark(attachment: AttachmentMetaData) {

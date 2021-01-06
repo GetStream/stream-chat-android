@@ -209,6 +209,7 @@
     <declare-styleable name="AttachmentGallery">
         <attr name="streamUiCountText" format="string" />
         <attr name="streamUiCountTextColor" format="color|reference" />
+        <attr name="streamUiImagesMenuTitle" format="string" />
     </declare-styleable>
 
     <declare-styleable name="MessageListView">

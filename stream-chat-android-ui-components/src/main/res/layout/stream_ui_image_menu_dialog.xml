@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/stream_ui_ic_close"
+        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_ui_icon_strong_tint"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/StreamUIAttachmentGalleryToolbarTitleTextAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
+        tools:text="Photos"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/toolbarGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/stream_ui_gallery_default_bar_height"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/imagesMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbarGuideline"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
