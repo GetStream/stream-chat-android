@@ -53,7 +53,7 @@ class HomeFragmentViewModel : ViewModel() {
         val user: User = User(),
         val totalUnreadCount: Int = 0,
         // TODO: implement unread mentions count
-        val mentionsUnreadCount: Int = 5
+        val mentionsUnreadCount: Int = 0,
     )
 
     sealed class UiAction {

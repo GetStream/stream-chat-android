@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.core.content.FileProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
 import java.io.File
@@ -47,20 +46,13 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
     private fun createFileName(prefix: String, extension: String) =
         "${prefix}_${dateFormat.format(Date().time)}.$extension"
 
-    private fun getFileProviderAuthority(context: Context): String {
-        val compName = ComponentName(context, StreamFileProvider::class.java.name)
-        val providerInfo = context.packageManager.getProviderInfo(compName, 0)
-        return providerInfo.authority
-    }
-
     private fun createIntentList(
         context: Context,
         action: String,
         destinationFile: File
     ): List<Intent> {
-        val destinationUri = FileProvider.getUriForFile(
+        val destinationUri = StreamFileProvider.getUriForFile(
             context,
-            getFileProviderAuthority(context),
             destinationFile
         )
         val actionIntent = Intent(action)

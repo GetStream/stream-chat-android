@@ -136,7 +136,6 @@
             app:destination="@id/chatFragment"
             app:launchSingleTop="true"
             app:popUpTo="@+id/homeFragment"
-            app:popUpToInclusive="true"
             >
             <argument
                 android:name="cid"
@@ -172,7 +171,6 @@
             app:destination="@id/chatFragment"
             app:launchSingleTop="true"
             app:popUpTo="@+id/homeFragment"
-            app:popUpToInclusive="true"
             >
             <argument
                 android:name="cid"

@@ -37,42 +37,42 @@
             >
 
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.EditReactionsView
+            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
                 android:id="@+id/reactionsView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
