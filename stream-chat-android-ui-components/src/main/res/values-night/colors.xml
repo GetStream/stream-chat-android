@@ -31,8 +31,18 @@
     <color name="stream_ui_section_item_color">@color/stream_ui_woodsmoke</color>
     <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
 
-    <color name="stream_ui_send_button">@color/stream_ui_disabled_send_message_dark_theme</color>
-    <color name="stream_ui_send_button_disabled">@color/stream_ui_disabled_send_message_dark_theme</color>
+    <color name="stream_ui_send_button">#2D2E2E</color>
+    <color name="stream_ui_send_button_disabled">#2D2E2E</color>
 
     <color name="stream_ui_search_input_border">#1C1E22</color>
+
+    <color name="stream_ui_current_user_background">#2D2E2E</color>
+    <color name="stream_ui_other_user_background">#2D2E2E</color>
+
+    <color name="stream_ui_other_message_stroke">#1C1E22</color>
+
+    <color name="stream_ui_thread_reply_stroke">#2D2E2E</color>
+
+    <color name="stream_ui_deleted_message_background">#802D2E2E</color>
+    <color name="stream_ui_link_attachment_background">#001A3D</color>
 </resources>
