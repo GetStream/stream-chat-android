@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.messages.view
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.AttachmentDownload
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -40,6 +41,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
     view.setOnBlockUserHandler { user, channel -> onEvent(BlockUser(user, channel)) }
     view.setOnReplyMessageHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
+    view.setOnAttachmentDownloadHandler { attachment -> onEvent(AttachmentDownload(attachment)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {

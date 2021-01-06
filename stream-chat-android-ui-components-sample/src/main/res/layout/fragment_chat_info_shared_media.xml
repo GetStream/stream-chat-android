@@ -44,13 +44,13 @@
         android:id="@+id/dateView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/stream_ui_date_divider_background"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mediaRecyclerView"
-        android:background="@drawable/stream_ui_date_divider_background"
         >
 
         <TextView
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_text_color_date_divider"
             />
     </FrameLayout>
 

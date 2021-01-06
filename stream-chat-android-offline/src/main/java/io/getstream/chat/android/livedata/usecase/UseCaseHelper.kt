@@ -148,6 +148,15 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      * Leaves a channel and retry using the retry policy if the request fails
      */
     public val leaveChannel: LeaveChannel = LeaveChannelImpl(chatDomainImpl)
+    /**
+     * Deletes a channel
+     */
+    public val deleteChannel: DeleteChannel = DeleteChannelImpl(chatDomainImpl)
 
     public val setMessageForReply: SetMessageForReply = SetMessageForReplyImpl(chatDomainImpl)
+
+    /**
+     * Downloads selected attachment
+     */
+    public val downloadAttachment: DownloadAttachment = DownloadAttachmentImpl(chatDomainImpl)
 }

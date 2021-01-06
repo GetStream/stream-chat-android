@@ -76,6 +76,7 @@
     <string name="stream_ui_attachments_more_count_prefix">+%d</string>
     <string name="stream_ui_send_label">Send</string>
     <string name="stream_ui_cancel_label">Cancel</string>
+    <string name="stream_ui_attachment_downloading_started">Downloading started</string>
 
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>
@@ -91,7 +92,6 @@
     <string name="stream_ui_message_option_delete_confirmation_message">Are you sure you want to permanently delete this message?</string>
     <string name="stream_ui_message_option_delete_positive_button">Delete</string>
     <string name="stream_ui_message_option_delete_negative_button">Cancel</string>
-
 
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">
@@ -132,4 +132,10 @@
     </plurals>
 
     <string name="stream_ui_reply_to_message">Reply to message</string>
+
+    <!-- AttachmentGallery -->
+    <string name="stream_ui_images_menu_default_title">Photos</string>
+
+    <!-- Gallery -->
+    <string name="stream_ui_gallery_share_sheet_title">Share Image</string>
 </resources>

@@ -17,8 +17,9 @@
             android:layout_height="24dp"
             android:background="@drawable/stream_ui_search_info_bar_gradient"
             android:paddingStart="8dp"
-            android:paddingTop="10dp"
+            android:paddingTop="5dp"
             android:paddingEnd="8dp"
+            android:paddingBottom="5dp"
             android:textSize="@dimen/stream_ui_text_small"
             tools:text="5 results"
             />

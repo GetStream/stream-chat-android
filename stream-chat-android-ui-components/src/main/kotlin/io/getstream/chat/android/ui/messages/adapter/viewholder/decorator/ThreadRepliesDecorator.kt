@@ -16,6 +16,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator.Companion.DEFAULT_CORNER_RADIUS
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.extensions.isInThread
 
 internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
@@ -97,9 +99,14 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         footnoteAnchorViewId: Int,
         data: MessageListItem.MessageItem
     ) {
+        val threadRepliesFootnoteId = threadRepliesFootNote.root.id
+        val footnoteId = messageFootnote.id
+
         val replyCount = data.message.replyCount
-        if (replyCount == 0) {
+        if (replyCount == 0 || data.message.isInThread()) {
             threadRepliesFootNote.root.isVisible = false
+            revertFootnoteTranslation(threadRepliesFootNote.root, messageFootnote)
+            revertDefaultFootnoteConstraints(rootView, footnoteId, threadRepliesFootnoteId, footnoteAnchorViewId, data)
             return
         }
 
@@ -108,11 +115,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         threadRepliesFootNote.threadsOrnamentRight.isVisible = !data.isTheirs
 
         rootView.updateConstraints {
-            val threadRepliesFootnoteId = threadRepliesFootNote.root.id
-            val footnoteId = messageFootnote.id
-
             clearHorizontalConstraints(threadRepliesFootnoteId, footnoteId)
-
             if (data.isTheirs) {
                 connect(threadRepliesFootnoteId, ConstraintSet.LEFT, footnoteAnchorViewId, ConstraintSet.LEFT)
                 connect(footnoteId, ConstraintSet.LEFT, threadRepliesFootnoteId, ConstraintSet.RIGHT)
@@ -126,7 +129,8 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
                 connect(footnoteId, ConstraintSet.RIGHT, threadRepliesFootnoteId, ConstraintSet.LEFT)
             }
 
-            clearVerticalConstraints(footnoteId)
+            clearVerticalConstraints(footnoteId, threadRepliesFootnoteId)
+            connect(threadRepliesFootnoteId, ConstraintSet.TOP, footnoteAnchorViewId, ConstraintSet.BOTTOM)
             connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
 
@@ -135,6 +139,37 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
 
         threadRepliesFootNote.threadRepliesButton.text =
             getRepliesQuantityString(rootView.resources, replyCount)
+    }
+
+    private fun revertDefaultFootnoteConstraints(
+        rootView: ConstraintLayout,
+        footnoteId: Int,
+        threadRepliesFootnoteId: Int,
+        footnoteAnchorViewId: Int,
+        data: MessageListItem.MessageItem
+    ) {
+        rootView.updateConstraints {
+            clearVerticalConstraints(footnoteId, threadRepliesFootnoteId)
+            connect(footnoteId, ConstraintSet.TOP, footnoteAnchorViewId, ConstraintSet.BOTTOM)
+            clearHorizontalConstraints(footnoteId, threadRepliesFootnoteId)
+            if (data.isTheirs) {
+                connect(footnoteId, ConstraintSet.LEFT, footnoteAnchorViewId, ConstraintSet.LEFT)
+                connect(threadRepliesFootnoteId, ConstraintSet.LEFT, footnoteId, ConstraintSet.RIGHT)
+            } else {
+                connect(
+                    footnoteId,
+                    ConstraintSet.RIGHT,
+                    footnoteAnchorViewId,
+                    ConstraintSet.RIGHT
+                )
+                connect(threadRepliesFootnoteId, ConstraintSet.RIGHT, footnoteId, ConstraintSet.LEFT)
+            }
+        }
+    }
+
+    private fun revertFootnoteTranslation(threadRepliesFootNote: View, messageFootnote: View) {
+        threadRepliesFootNote.translationY = 0.dpToPxPrecise()
+        messageFootnote.translationY = 0.dpToPxPrecise()
     }
 
     private fun ConstraintSet.clearHorizontalConstraints(vararg viewIds: Int) {

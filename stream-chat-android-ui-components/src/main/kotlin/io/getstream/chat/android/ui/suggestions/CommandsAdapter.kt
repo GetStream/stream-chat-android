@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.suggestions
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
@@ -24,7 +24,7 @@ internal class CommandsAdapter(
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         return StreamUiItemCommandBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(parent.inflater, parent, false)
             .let { CommandViewHolder(it, onCommandSelected) }
     }
 
@@ -37,14 +37,22 @@ internal class CommandsAdapter(
         private val onCommandClicked: (Command) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(command: Command) {
-            binding.commandNameTextView.text = command.name.capitalize()
-            binding.commandQueryTextView.text = itemView.context.getString(
-                R.string.stream_ui_command_command_template,
-                command.name,
-                command.args
-            )
+        lateinit var command: Command
+
+        init {
             binding.root.setOnClickListener { onCommandClicked(command) }
+        }
+
+        fun bind(command: Command) {
+            this.command = command
+            binding.apply {
+                commandNameTextView.text = command.name.capitalize()
+                commandQueryTextView.text = itemView.context.getString(
+                    R.string.stream_ui_command_command_template,
+                    command.name,
+                    command.args
+                )
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -22,6 +23,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
@@ -46,16 +48,54 @@ public class ChannelViewHolder @JvmOverloads constructor(
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
-    public companion object {
-        public const val OPTIONS_COUNT: Int = 2
-    }
+    private var optionsCount = 1
 
     private val menuItemWidth = context.getDimension(R.dimen.stream_ui_channel_list_item_option_icon_width).toFloat()
-    private val optionsMenuWidth = menuItemWidth * OPTIONS_COUNT
+    private val optionsMenuWidth
+        get() = menuItemWidth * optionsCount
+
+    private lateinit var channel: Channel
+
+    init {
+        binding.apply {
+            itemBackgroundView.apply {
+                moreOptionsImageView.setOnClickListener {
+                    channelMoreOptionsListener.onClick(channel)
+                    swipeListener.onSwipeCanceled(this@ChannelViewHolder, absoluteAdapterPosition)
+                }
+                deleteImageView.setOnClickListener {
+                    channelDeleteListener.onClick(channel)
+                }
+            }
+
+            itemForegroundView.apply {
+                avatarView.setOnClickListener {
+                    when {
+                        channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
+                        else -> channelClickListener.onClick(channel)
+                    }
+                }
+                root.setOnClickListener {
+                    channelClickListener.onClick(channel)
+                }
+                root.setOnLongClickListener {
+                    channelLongClickListener.onClick(channel)
+                    true
+                }
+                root.doOnNextLayout {
+                    setSwipeListener(root, swipeListener)
+                }
+
+                applyStyle(style)
+            }
+        }
+    }
 
     public override fun bind(channel: Channel, diff: ChannelDiff) {
-        configureForeground(diff, channel)
-        configureBackground(channel)
+        this.channel = channel
+
+        configureForeground(diff)
+        configureBackground()
     }
 
     override fun getSwipeView(): View {
@@ -76,87 +116,68 @@ public class ChannelViewHolder @JvmOverloads constructor(
         return openedX.coerceAtMost(closedX)..openedX.coerceAtLeast(closedX)
     }
 
-    private fun configureBackground(channel: Channel) {
-        binding.itemBackgroundView.apply {
-            moreOptionsImageView.setOnClickListener {
-                channelMoreOptionsListener.onClick(channel)
-                swipeListener.onSwipeCanceled(this@ChannelViewHolder, absoluteAdapterPosition)
-            }
+    private fun configureBackground() {
+        configureDeleteButton()
+    }
 
-            deleteImageView.setOnClickListener {
-                channelDeleteListener.onClick(channel)
+    private fun configureDeleteButton() {
+        val canDeleteChannel = channel.members.isCurrentUserOwnerOrAdmin()
+        binding.itemBackgroundView.deleteImageView.apply {
+            if (canDeleteChannel) {
+                optionsCount = 2
+                isVisible = true
+            } else {
+                optionsCount = 1
+                isVisible = false
             }
         }
     }
 
-    private fun configureForeground(diff: ChannelDiff, channel: Channel) {
+    private fun configureForeground(diff: ChannelDiff) {
         binding.itemForegroundView.apply {
-
-            setSwipeListener(root, swipeListener)
-
             diff.run {
                 if (nameChanged) {
-                    configureChannelNameLabel(channel)
+                    configureChannelNameLabel()
                 }
 
                 if (avatarViewChanged) {
-                    configureAvatarView(channel, userClickListener, channelClickListener)
+                    configureAvatarView()
                 }
 
                 val lastMessage = channel.getLastMessage()
                 if (lastMessageChanged) {
-                    configureLastMessageLabel(channel, lastMessage)
-                    configureLastMessageTimestamp(lastMessage)
-                    configureUnreadCountBadge(channel)
+                    configureLastMessageLabelAndTimestamp(lastMessage)
+                    configureUnreadCountBadge()
                 }
 
                 if (readStateChanged) {
-                    configureCurrentUserLastMessageStatus(channel, lastMessage)
+                    configureCurrentUserLastMessageStatus(lastMessage)
                 }
             }
-
-            configureClickListeners(channel, channelClickListener, channelLongClickListener)
-
-            applyStyle(style)
         }
     }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.configureClickListeners(
-        channel: Channel,
-        channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener
-    ) {
-        root.setOnClickListener {
-            channelClickListener.onClick(channel)
-        }
-
-        root.setOnLongClickListener {
-            channelLongClickListener.onClick(channel)
-            true
-        }
-    }
-
-    private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
         channelNameLabel.text = channel.getDisplayName(context)
     }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView(
-        channel: Channel,
-        userClickListener: ChannelListView.UserClickListener,
-        channelClickListener: ChannelListView.ChannelClickListener
-    ) {
-        avatarView.apply {
-            setChannelData(channel)
-            setOnClickListener {
-                when {
-                    channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
-                    else -> channelClickListener.onClick(channel)
-                }
-            }
-        }
+    private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
+        avatarView.setChannelData(channel)
     }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge(channel: Channel) {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(
+        lastMessage: Message?
+    ) {
+        lastMessageLabel.isVisible = lastMessage.isNotNull()
+        lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
+
+        lastMessage ?: return
+
+        lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
+        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
+    }
+
+    private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
         val haveUnreadMessages = channel.unreadCount ?: 0 > 0
         unreadCountBadge.isVisible = haveUnreadMessages
 
@@ -164,35 +185,12 @@ public class ChannelViewHolder @JvmOverloads constructor(
             return
         }
 
-        unreadCountBadge.apply {
-            text = channel.unreadCount.toString()
-        }
-    }
-
-    private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageTimestamp(lastMessage: Message?) {
-        lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
-
-        lastMessage ?: return
-
-        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
-    }
-
-    private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabel(
-        channel: Channel,
-        lastMessage: Message?
-    ) {
-        lastMessageLabel.isVisible = lastMessage.isNotNull()
-
-        lastMessage ?: return
-
-        lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
+        unreadCountBadge.text = channel.unreadCount.toString()
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(
-        channel: Channel,
         lastMessage: Message?
     ) {
-
         messageStatusImageView.isVisible = lastMessage != null
 
         lastMessage ?: return
@@ -232,13 +230,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    private var styleApplied = false
-
     private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
-        if (styleApplied) {
-            return
-        }
-
         binding.apply {
             channelNameLabel.setTextSizePx(style.channelTitleTextSize)
             lastMessageLabel.setTextSizePx(style.lastMessageSize)

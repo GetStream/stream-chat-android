@@ -375,6 +375,23 @@ internal class ChannelControllerImpl(
         }
     }
 
+    suspend fun delete(): Result<Unit> {
+        val result = channelClient.delete().execute()
+
+        return if (result.isSuccess) {
+            // Remove from query controllers
+            for (activeQuery in domainImpl.getActiveQueries()) {
+                activeQuery.removeChannel(cid)
+            }
+            // Remove messages from repository
+            val now = Date()
+            domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
+            Result(Unit)
+        } else {
+            Result(result.error())
+        }
+    }
+
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value) {
@@ -435,58 +452,37 @@ internal class ChannelControllerImpl(
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
-        val queryOnlineJob = if (domainImpl.isOnline()) {
-            domainImpl.scope.async { runChannelQueryOnline(pagination) }
-        } else {
-            // if we are not offline we mark it as needing recovery
-            recoveryNeeded = true
-            logger.logI("Skipping channel.watch for channel $cid since we are offline. Marking it as needing recovery.")
-            null
-        }
-        val localChannel = queryOfflineJob.await()
-        if (localChannel != null) {
+        val queryOnlineJob = domainImpl.scope.async { runChannelQueryOnline(pagination) }
+        val localChannel = queryOfflineJob.await()?.also { channel ->
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
-                updateOldMessagesFromLocalChannel(localChannel)
+                updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateLiveDataFromLocalChannel(localChannel)
+                updateLiveDataFromLocalChannel(channel)
             }
+            loader.value = false
         }
 
-        // if we are online we we run the actual API call
-        val result = if (queryOnlineJob != null) {
-            val response = queryOnlineJob.await()
-            if (response.isSuccess) {
-                updateLiveDataFromChannel(response.data())
+        val result: Result<Channel> = queryOnlineJob.await().let { onlineResult ->
+            if (onlineResult.isSuccess) {
+                onlineResult.also { updateLiveDataFromChannel(onlineResult.data()) }
             } else {
-                if (response.error().isPermanent()) {
-                    logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${response.error()}")
+                if (onlineResult.error().isPermanent()) {
+                    logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${onlineResult.error()}")
                 } else {
-                    logger.logW("Temporary failure calling channel.watch for channel $cid. Marking the channel as needing recovery. Error was ${response.error()}")
+                    logger.logW("Temporary failure calling channel.watch for channel $cid. Marking the channel as needing recovery. Error was ${onlineResult.error()}")
                     recoveryNeeded = true
                 }
-            }
-            response
-        } else {
-            if (localChannel != null) {
-                Result(localChannel)
-            } else {
-                Result(ChatError("Local channel was not found"))
+                localChannel?.let { Result(it) } ?: onlineResult
             }
         }
         loader.value = false
         return result
     }
 
-    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
-        val selectedChannel = domainImpl.selectAndEnrichChannel(cid, pagination)
-
-        selectedChannel?.also { channel ->
-            channel.config = domainImpl.getChannelConfig(channel.type)
+    private suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? =
+        domainImpl.selectAndEnrichChannel(cid, pagination)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
-
-        return selectedChannel
-    }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
