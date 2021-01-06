@@ -1,7 +1,7 @@
 package io.getstream.chat.android.ui.channel.actions
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +20,7 @@ internal class ChannelActionsViewModel(
 
     private val initialState = State()
     private var currentState = initialState
-    private val _state = MutableLiveData<State>()
+    private val _state = MediatorLiveData<State>()
     val state: LiveData<State> = Transformations.distinctUntilChanged(_state)
 
     init {
@@ -33,7 +33,7 @@ internal class ChannelActionsViewModel(
                 .await()
                 .data()
                 .let { channelController ->
-                    channelController.members.observeForever { members ->
+                    _state.addSource(channelController.members) { members ->
                         onAction(Action.UpdateMembers(members))
                     }
                 }

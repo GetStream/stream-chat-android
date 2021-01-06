@@ -93,7 +93,6 @@
     <string name="stream_ui_message_option_delete_positive_button">Delete</string>
     <string name="stream_ui_message_option_delete_negative_button">Cancel</string>
 
-
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">
         <item quantity="one">%s is typing</item>
@@ -133,6 +132,9 @@
     </plurals>
 
     <string name="stream_ui_reply_to_message">Reply to message</string>
+
+    <!-- AttachmentGallery -->
+    <string name="stream_ui_images_menu_default_title">Photos</string>
 
     <!-- Gallery -->
     <string name="stream_ui_gallery_share_sheet_title">Share Image</string>

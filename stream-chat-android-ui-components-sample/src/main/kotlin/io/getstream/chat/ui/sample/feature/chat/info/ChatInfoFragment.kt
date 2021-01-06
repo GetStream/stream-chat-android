@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -62,21 +63,42 @@ class ChatInfoFragment : Fragment() {
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(
-                listOf(
-                    ChatInfoItem.MemberItem(state.member),
-                    ChatInfoItem.Separator,
-                    ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled),
-                    ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted),
-                    ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked),
-                    ChatInfoItem.Option.SharedMedia,
-                    ChatInfoItem.Option.SharedFiles,
-                    ChatInfoItem.Option.SharedGroups,
-                ) + if (state.canDeleteChannel) listOf(
-                    ChatInfoItem.Separator,
-                    ChatInfoItem.Option.DeleteConversation,
-                ) else emptyList()
-            )
+            if (state.loading) {
+                binding.optionsRecyclerView.isVisible = false
+                binding.progressBar.isVisible = true
+                return@observe
+            }
+            adapter.submitList(buildChatInfoItems(state))
+            binding.optionsRecyclerView.isVisible = true
+            binding.progressBar.isVisible = false
+        }
+    }
+
+    private fun buildChatInfoItems(state: ChatInfoViewModel.State): List<ChatInfoItem> {
+        return mutableListOf<ChatInfoItem>().apply {
+            if (state.member != null) {
+                add(ChatInfoItem.MemberItem(state.member))
+                add(ChatInfoItem.Separator)
+            }
+
+            add(ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled))
+
+            if (state.member != null) {
+                add(ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted))
+                add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
+            }
+
+            add(ChatInfoItem.Option.SharedMedia)
+            add(ChatInfoItem.Option.SharedFiles)
+
+            if (state.member != null) {
+                add(ChatInfoItem.Option.SharedGroups)
+            }
+
+            if (state.canDeleteChannel) {
+                add(ChatInfoItem.Separator)
+                add(ChatInfoItem.Option.DeleteConversation)
+            }
         }
     }
 
@@ -102,7 +124,8 @@ class ChatInfoFragment : Fragment() {
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
                 )
                 ChatInfoItem.Option.SharedGroups -> {
-                    val member = viewModel.state.value!!.member
+                    // Option shouldn't be visible when member is not set
+                    val member = viewModel.state.value!!.member ?: return@setChatInfoOptionClickListener
                     findNavController().navigateSafely(
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
                             member.getUserId(),
