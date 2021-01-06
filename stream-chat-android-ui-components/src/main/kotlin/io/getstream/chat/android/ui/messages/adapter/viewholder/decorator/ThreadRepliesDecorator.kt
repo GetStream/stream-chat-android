@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator.Companion.DEFAULT_CORNER_RADIUS
+import io.getstream.chat.android.ui.utils.extensions.isInThread
 
 internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
@@ -98,7 +99,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem
     ) {
         val replyCount = data.message.replyCount
-        if (replyCount == 0) {
+        if (replyCount == 0 || data.message.isInThread()) {
             threadRepliesFootNote.root.isVisible = false
             return
         }

@@ -375,6 +375,23 @@ internal class ChannelControllerImpl(
         }
     }
 
+    suspend fun delete(): Result<Unit> {
+        val result = channelClient.delete().execute()
+
+        return if (result.isSuccess) {
+            // Remove from query controllers
+            for (activeQuery in domainImpl.getActiveQueries()) {
+                activeQuery.removeChannel(cid)
+            }
+            // Remove messages from repository
+            val now = Date()
+            domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
+            Result(Unit)
+        } else {
+            Result(result.error())
+        }
+    }
+
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value) {
