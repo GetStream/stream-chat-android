@@ -9,9 +9,11 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.lang.Exception
 
+@InternalStreamChatApi
 public interface DownloadAttachment {
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
