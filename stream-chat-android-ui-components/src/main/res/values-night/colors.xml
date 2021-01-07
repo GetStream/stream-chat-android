@@ -4,10 +4,11 @@
 
     <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_white</color>
     <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_woodsmoke</color>
+    <color name="stream_ui_edit_text_background_color">@color/stream_ui_woodsmoke</color>
 
-    <color name="stream_ui_attachment_dialog_button_disabled">#2D2E2E</color>
+    <color name="stream_ui_attachment_dialog_button_disabled">@color/stream_ui_outer_space</color>
 
-    <color name="stream_ui_border_stroke">#2D2E2E</color>
+    <color name="stream_ui_border_stroke">@color/stream_ui_outer_space</color>
 
     <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_background_light</color>
     <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_background_light</color>
@@ -40,8 +41,11 @@
 
     <color name="stream_ui_search_input_border">#1C1E22</color>
 
+    <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
+    <color name="stream_ui_material_button_text_color">@color/stream_ui_blue</color>
+    <color name="stream_ui_sdk_version_color">@color/stream_ui_outer_space</color>
+
     <color name="stream_ui_current_user_background">#2D2E2E</color>
-    <color name="stream_ui_other_user_background">#2D2E2E</color>
 
     <color name="stream_ui_other_message_stroke">#1C1E22</color>
 

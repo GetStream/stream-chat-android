@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client.api
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import okhttp3.Headers
@@ -8,6 +10,7 @@ import okhttp3.Response
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import okio.GzipSource
+import org.json.JSONException
 import java.io.EOFException
 import java.io.IOException
 import java.nio.charset.Charset
@@ -23,6 +26,8 @@ internal class HttpLoggingInterceptor : Interceptor {
     @Volatile
     private var headersToRedact = emptySet<String>()
     private val logger = ChatLogger.get("Http")
+
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     fun redactHeader(name: String) {
         val newHeadersToRedact = TreeSet(String.CASE_INSENSITIVE_ORDER)
@@ -152,7 +157,15 @@ internal class HttpLoggingInterceptor : Interceptor {
 
                 if (contentLength != 0L) {
                     logger.logI("")
-                    logger.logI(buffer.clone().readString(charset))
+
+                    val logString = buffer.clone().readString(charset)
+                    try {
+                        val json = JsonParser.parseString(logString)
+
+                        logger.logI(gson.toJson(json))
+                    } catch (e: JSONException) {
+                        logger.logI(logString)
+                    }
                 }
 
                 if (gzippedLength != null) {

@@ -395,11 +395,11 @@ public class ChannelClient internal constructor(
         return client.muteUser(userId)
     }
 
-    override fun unmuteUser(userId: String): Call<Mute> {
+    override fun unmuteUser(userId: String): Call<Unit> {
         return client.unmuteUser(userId)
     }
 
-    override fun unmuteCurrentUser(): Call<Mute> {
+    override fun unmuteCurrentUser(): Call<Unit> {
         return client.unmuteCurrentUser()
     }
 
