@@ -14,7 +14,7 @@
         android:layout_width="13dp"
         android:layout_height="33dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
-        app:tint="@color/stream_ui_thread_reply_stroke"
+        app:tint="@color/stream_ui_other_message_stroke"
         />
 
     <TextView
@@ -34,6 +34,6 @@
         android:layout_width="13dp"
         android:layout_height="38dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_right"
-        app:tint="@color/stream_ui_thread_reply_stroke"
+        app:tint="@color/stream_ui_current_user_background"
         />
 </androidx.appcompat.widget.LinearLayoutCompat>
