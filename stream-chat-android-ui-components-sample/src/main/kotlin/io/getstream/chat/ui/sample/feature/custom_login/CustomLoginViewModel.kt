@@ -64,6 +64,8 @@ class CustomLoginViewModel : ViewModel() {
 
                     override fun onError(error: ChatError) {
                         _state.postValue(State.Error(error.message))
+                        ChatClient.instance().disconnect()
+                        App.instance.userRepository.clearUser()
                         logger.logD("Failed to set user $error")
                     }
                 }
