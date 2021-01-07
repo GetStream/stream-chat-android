@@ -8,6 +8,8 @@
 - Add filtering non image attachments in ChatClient::getImageAttachments
 - Add a `channel` property to `notification.message_new` events
 - Fix deleting channel error
+- 🚨 Breaking change: ChatClient::unmuteUser, ChatClient::unmuteCurrentUser,
+ChannelClient::unmuteUser, and ChannelClient::unmuteCurrentUser now return Unit instead of Mute
 
 ## stream-chat-android-offline
 - Add LeaveChannel use case
