@@ -124,7 +124,7 @@ public class ChannelListView @JvmOverloads constructor(
                 showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
 
                 // we should never have more than one loading item, but just in case
-                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.LoadingMoreItem::class.java)
+                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.ChannelItem::class.java)
 
                 else -> currentList
             }

@@ -12,18 +12,16 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
     public abstract fun getOpenedX(): Float
     public abstract fun getClosedX(): Float
     public abstract fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float>
+    protected var listener: ChannelListView.SwipeListener? = null
 
     @SuppressLint("ClickableViewAccessibility")
-    public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener) {
+    public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?) {
         var startX = 0f
         var startY = 0f
         var prevX = 0f
         var swiping = false
         var wasSwiping = false
-        val position = absoluteAdapterPosition
-
-        // restore the view's last state
-        swipeListener.onRestoreSwipePosition(this, absoluteAdapterPosition)
+        listener = swipeListener
 
         view.setOnTouchListener { _, event ->
             val rawX = event.rawX
@@ -59,15 +57,15 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                     when {
                         // we've started swiping
                         !wasSwiping && swiping -> {
-                            swipeListener.onSwipeStarted(this, position, rawX, rawY)
+                            swipeListener?.onSwipeStarted(this, absoluteAdapterPosition, rawX, rawY)
                         }
                         // signal swipe movement
                         swiping -> {
-                            swipeListener.onSwipeChanged(this, position, lastMoveDeltaX, totalDeltaX)
+                            swipeListener?.onSwipeChanged(this, absoluteAdapterPosition, lastMoveDeltaX, totalDeltaX)
                         }
                         // axis magnitude measurement has dictated we are no longer swiping
                         wasSwiping && !swiping -> {
-                            swipeListener.onSwipeCanceled(this, position, rawX, rawY)
+                            swipeListener?.onSwipeCanceled(this, absoluteAdapterPosition, rawX, rawY)
                         }
                     }
                     // consume if we are swiping
@@ -76,7 +74,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
 
                 MotionEvent.ACTION_UP -> {
                     // signal end of swipe
-                    swipeListener.onSwipeCompleted(this, position, rawX, rawY)
+                    swipeListener?.onSwipeCompleted(this, absoluteAdapterPosition, rawX, rawY)
                     wasSwiping = false
                     // consume if we were swiping
                     swiping
@@ -89,7 +87,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                         swiping = false
                         wasSwiping = false
                         // signal cancellation
-                        swipeListener.onSwipeCanceled(this, position, rawX, rawY)
+                        swipeListener?.onSwipeCanceled(this, absoluteAdapterPosition, rawX, rawY)
                     }
 
                     wasSwiping

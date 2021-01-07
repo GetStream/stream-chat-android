@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.isDraft
@@ -41,7 +42,7 @@ public class ChannelsViewModel(
         get() = chatDomain.typingUpdates
 
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
-    public val paginationState: LiveData<PaginationState> = paginationStateMerger
+    public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
     init {
         stateMerger.value = State.Loading
