@@ -16,9 +16,9 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
-import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -115,7 +115,7 @@ private class FileAttachmentViewHolder(
         this.attachment = item
 
         binding.apply {
-            fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
+            fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.title ?: attachment.name
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
         }

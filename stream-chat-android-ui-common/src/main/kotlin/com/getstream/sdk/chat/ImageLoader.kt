@@ -91,6 +91,16 @@ public object ImageLoader {
         @DrawableRes placeholderResId: Int? = null
     ): Unit = loadAny(uri, placeholderResId, true)
 
+    public fun ImageView.loadVideoThumbnail(
+        uri: Uri?,
+        transformation: ImageTransformation
+    ) {
+        coilLoadAny(uri, context.streamImageLoader) {
+            fetcher(VideoFrameUriFetcher(context))
+            applyTransformation(transformation, context)
+        }
+    }
+
     @JvmStatic
     @JvmOverloads
     public fun ImageView.load(
