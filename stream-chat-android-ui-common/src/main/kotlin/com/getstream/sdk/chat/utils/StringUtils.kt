@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.utils
 
-public object StringUtils {
+internal object StringUtils {
 
-    public fun removeTimePrefix(attachmentName: String?, usedDateFormat: String): String? {
+    fun removeTimePrefix(attachmentName: String?, usedDateFormat: String): String? {
         val regex = "^prefix_\\S+_stm_".toRegex()
 
         return if (attachmentName?.contains(regex) == true) {
