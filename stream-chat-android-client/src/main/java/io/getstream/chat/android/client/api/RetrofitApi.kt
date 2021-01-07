@@ -256,7 +256,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body body: MuteUserRequest
-    ): RetrofitCall<MuteUserResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/flag")
     fun flag(
