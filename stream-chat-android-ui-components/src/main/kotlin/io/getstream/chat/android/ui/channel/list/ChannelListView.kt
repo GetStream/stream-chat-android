@@ -129,7 +129,6 @@ public class ChannelListView @JvmOverloads constructor(
                 else -> currentList
             }
 
-            ChatLogger.get("LOADINGMORE").logD("list size: ${updatedList.size}")
             adapter.submitList(updatedList) {
                 if (showLoadingMore) {
                     layoutManager.scrollToPosition(updatedList.size - 1)

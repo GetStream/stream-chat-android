@@ -4,7 +4,6 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.channel.list.ChannelsView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 
@@ -40,12 +39,9 @@ public fun ChannelsViewModel.bindView(
     paginationState.observe(lifecycle) {
         view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
 
-        val logger = ChatLogger.get("LOADINGMORE")
         if (it.loadingMore) {
-            logger.logD("Show Loading More")
             view.showLoadingMore()
         } else {
-            logger.logD("Hide Loading More")
             view.hideLoadingMore()
         }
     }
