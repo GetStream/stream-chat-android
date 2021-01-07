@@ -9,8 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.StringUtils
+import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -118,8 +117,7 @@ private class FileAttachmentViewHolder(
 
         binding.apply {
             fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
-            fileTitle.text =
-                StringUtils.removeTimePrefix(attachment.title ?: attachment.name, StorageHelper.TIME_FORMAT)
+            fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
         }
     }
