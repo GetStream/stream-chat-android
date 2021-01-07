@@ -18,7 +18,7 @@ import java.util.Locale
 
 @InternalStreamChatApi
 public class StorageHelper {
-    private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US)
+    private val dateFormat = SimpleDateFormat("HHmmssSSS", Locale.US)
 
     public fun getCachedFileFromUri(
         context: Context,
@@ -134,11 +134,9 @@ public class StorageHelper {
         return attachments
     }
 
-    private fun getFileName(attachmentMetaData: AttachmentMetaData): String {
-        return attachmentMetaData.run {
-            "${title}_STREAM_${dateFormat.format(Date().time)}.${getExtension()}"
-        }
-    }
+    private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
+        "${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
+
 }
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
