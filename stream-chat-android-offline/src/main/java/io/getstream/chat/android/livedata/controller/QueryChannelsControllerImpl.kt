@@ -234,35 +234,18 @@ internal class QueryChannelsControllerImpl(
 
         val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
-        val queryOnlineJob = if (domainImpl.isOnline()) {
-            domainImpl.scope.async { runQueryOnline(pagination) }
-        } else {
-            logger.logI("Query with filter $filter can't run since we are offline, marking it as recovery needed")
-            recoveryNeeded = true
-            null
-        }
-        val channels = queryOfflineJob.await().also { offlineChannels ->
-            updateChannelsAndQueryResults(
-                offlineChannels,
-                pagination.isFirstPage
-            )
+        val queryOnlineJob = domainImpl.scope.async { runQueryOnline(pagination) }
+        val channels = queryOfflineJob.await()?.also { offlineChannels ->
+            updateChannelsAndQueryResults(offlineChannels, pagination.isFirstPage)
+            loader.value = false
         }
 
-        // we could either wait till we are online
-        // or mark ourselves as needing recovery and trigger recovery
-        val output: Result<List<Channel>> = if (queryOnlineJob != null) {
-            queryOnlineJob.await().also { result ->
-                if (result.isSuccess) {
-                    val onlineChannels: List<Channel> = result.data()
-                    updateChannelsAndQueryResults(
-                        onlineChannels,
-                        pagination.isFirstPage
-                    )
-                }
+        val output: Result<List<Channel>> = queryOnlineJob.await().let { onlineResult ->
+            if (onlineResult.isSuccess) {
+                onlineResult.also { updateChannelsAndQueryResults(it.data(), pagination.isFirstPage) }
+            } else {
+                channels?.let { Result(it) } ?: onlineResult
             }
-        } else {
-            channels?.let { Result(it) }
-                ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.value = false
         return output

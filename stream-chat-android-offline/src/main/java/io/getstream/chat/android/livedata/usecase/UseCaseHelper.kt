@@ -154,4 +154,9 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
     public val deleteChannel: DeleteChannel = DeleteChannelImpl(chatDomainImpl)
 
     public val setMessageForReply: SetMessageForReply = SetMessageForReplyImpl(chatDomainImpl)
+
+    /**
+     * Downloads selected attachment
+     */
+    public val downloadAttachment: DownloadAttachment = DownloadAttachmentImpl(chatDomainImpl)
 }

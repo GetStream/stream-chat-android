@@ -9,3 +9,7 @@ internal fun interface AttachmentClickListener {
 internal fun interface AttachmentLongClickListener {
     fun onAttachmentLongClick()
 }
+
+internal fun interface AttachmentDownloadClickListener {
+    fun onAttachmentDownloadClick(attachment: Attachment)
+}
