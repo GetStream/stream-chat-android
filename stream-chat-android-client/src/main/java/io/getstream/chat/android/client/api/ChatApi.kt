@@ -480,7 +480,7 @@ internal class ChatApi(
         return muteUser(userId)
     }
 
-    fun unmuteCurrentUser(): Call<Mute> {
+    fun unmuteCurrentUser(): Call<Unit> {
         return unmuteUser(userId)
     }
 
@@ -594,13 +594,13 @@ internal class ChatApi(
 
     fun unmuteUser(
         userId: String
-    ): Call<Mute> {
+    ): Call<Unit> {
         return retrofitApi.unMuteUser(
             apiKey,
             this.userId,
             connectionId,
             MuteUserRequest(userId, this.userId)
-        ).map { it.mute }
+        ).map { Unit }
     }
 
     @Deprecated(

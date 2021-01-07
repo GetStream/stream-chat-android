@@ -263,12 +263,6 @@ internal class UsersApiCallsTests {
     fun unMuteUserSuccess() {
 
         val targetUser = User().apply { id = "target-id" }
-        val mute = Mute(
-            mock.user,
-            targetUser,
-            Date(1),
-            Date(2)
-        )
 
         Mockito.`when`(
             mock.retrofitApi.unMuteUser(
@@ -277,10 +271,10 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
-        ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)).toRetrofitCall())
+        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
         val result = client.unmuteUser(targetUser.id).execute()
 
-        verifySuccess(result, mute)
+        verifySuccess(result, Unit)
     }
 }
