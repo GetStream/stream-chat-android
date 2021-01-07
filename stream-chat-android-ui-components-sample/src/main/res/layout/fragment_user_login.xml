@@ -69,7 +69,7 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:padding="@dimen/spacing_medium"
-        android:textColor="@color/grey"
+        android:textColor="@color/stream_ui_sdk_version_color"
         android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
