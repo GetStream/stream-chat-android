@@ -27,6 +27,8 @@
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
     <color name="stream_ui_text_color_date_divider">@color/stream_ui_bunker</color>
+    <color name="stream_ui_search_info_bar_start_background">#101214</color>
+    <color name="stream_ui_search_info_bar_end_background">#070A0D</color>
 
     <color name="stream_ui_divider">@color/stream_ui_mirage</color>
 
