@@ -35,6 +35,16 @@ internal class ClientStateServiceTests {
     }
 
     @Test
+    fun `Given Idle state When connected Should stay in Idle state`() {
+        val sut = Fixture().please()
+        val user = Mother.randomUser()
+
+        sut.onConnected(user, randomString())
+
+        sut.state shouldBeEqualTo ClientState.Idle
+    }
+
+    @Test
     fun `Given Idle state When set user Should move to state user pending without token`() {
         val sut = Fixture().please()
         val user = Mother.randomUser()

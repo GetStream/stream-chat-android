@@ -39,6 +39,7 @@ internal class ClientStateService {
                 onEvent<ClientStateEvent.SetAnonymousUserEvent> { _, _ -> ClientState.Anonymous.Pending.WithoutToken }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
             state<ClientState.User.Pending.WithoutToken> {
