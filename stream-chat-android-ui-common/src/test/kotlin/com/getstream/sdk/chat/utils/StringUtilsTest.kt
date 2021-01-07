@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.utils
 
 import io.getstream.chat.android.test.randomString
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 public class StringUtilsTest {
@@ -24,5 +24,4 @@ public class StringUtilsTest {
 
         assertEquals(randomString, result)
     }
-
 }
