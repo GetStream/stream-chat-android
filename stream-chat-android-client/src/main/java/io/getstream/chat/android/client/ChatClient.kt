@@ -666,9 +666,9 @@ public class ChatClient internal constructor(
         return api.unMuteChannel(channelType, channelId)
     }
 
-    public fun unmuteUser(userId: String): Call<Mute> = api.unmuteUser(userId)
+    public fun unmuteUser(userId: String): Call<Unit> = api.unmuteUser(userId)
 
-    public fun unmuteCurrentUser(): Call<Mute> = api.unmuteCurrentUser()
+    public fun unmuteCurrentUser(): Call<Unit> = api.unmuteCurrentUser()
 
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 

@@ -12,10 +12,12 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import kotlin.system.measureTimeMillis
 
+@Ignore("Flaky on CI")
 internal class MessageListItemLiveDataBenchmark {
 
     @get:Rule

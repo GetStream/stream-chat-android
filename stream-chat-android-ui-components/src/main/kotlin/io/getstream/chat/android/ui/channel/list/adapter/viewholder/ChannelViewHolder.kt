@@ -75,15 +75,17 @@ public class ChannelViewHolder @JvmOverloads constructor(
                         else -> channelClickListener.onClick(channel)
                     }
                 }
-                root.setOnClickListener {
-                    channelClickListener.onClick(channel)
-                }
-                root.setOnLongClickListener {
-                    channelLongClickListener.onClick(channel)
-                    true
-                }
-                root.doOnNextLayout {
-                    setSwipeListener(root, swipeListener)
+                root.apply {
+                    setOnClickListener {
+                        channelClickListener.onClick(channel)
+                    }
+                    setOnLongClickListener {
+                        channelLongClickListener.onClick(channel)
+                        true
+                    }
+                    doOnNextLayout {
+                        setSwipeListener(root, swipeListener)
+                    }
                 }
 
                 applyStyle(style)
@@ -96,6 +98,8 @@ public class ChannelViewHolder @JvmOverloads constructor(
 
         configureForeground(diff)
         configureBackground()
+
+        listener?.onRestoreSwipePosition(this, absoluteAdapterPosition)
     }
 
     override fun getSwipeView(): View {
