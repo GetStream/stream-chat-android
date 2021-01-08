@@ -27,6 +27,11 @@
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
 
+    <!-- Channel list -->
+    <string name="channel_list_empty_title">Let\'s start chatting!</string>
+    <string name="channel_list_empty_description">How about sending your first message to a friend?</string>
+    <string name="channel_list_start_chat">Start a chat</string>
+
     <!--Add Channel Screen-->
     <string name="add_channel_title">New Chat</string>
     <string name="add_member_title">TO:</string>
