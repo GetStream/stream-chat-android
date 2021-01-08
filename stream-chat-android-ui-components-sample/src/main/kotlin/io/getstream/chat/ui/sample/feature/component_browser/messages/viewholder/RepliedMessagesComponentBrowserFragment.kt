@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.messages.adapter.initEmptyListeners
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentDoc
@@ -31,6 +32,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
             dateFormatter = DateFormatter.from(requireContext()),
             isDirectMessage = false,
         ))
+        factory.initEmptyListeners()
         return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }
 
