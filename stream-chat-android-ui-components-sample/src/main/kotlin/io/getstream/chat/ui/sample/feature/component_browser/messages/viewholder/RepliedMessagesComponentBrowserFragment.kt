@@ -27,11 +27,13 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
 
     @OptIn(InternalStreamChatApi::class)
     override fun createAdapter(): RecyclerView.Adapter<*> {
-        val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorProvider(
-            currentUser = currentUser,
-            dateFormatter = DateFormatter.from(requireContext()),
-            isDirectMessage = false,
-        ))
+        val factory = MessageListItemViewHolderFactory(
+            MessageListItemDecoratorProvider(
+                currentUser = currentUser,
+                dateFormatter = DateFormatter.from(requireContext()),
+                isDirectMessage = false,
+            )
+        )
         factory.initEmptyListeners()
         return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }

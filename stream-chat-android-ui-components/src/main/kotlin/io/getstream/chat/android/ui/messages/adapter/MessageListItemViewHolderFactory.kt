@@ -28,9 +28,11 @@ public open class MessageListItemViewHolderFactory(
             MessageListItemViewType.MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT -> createPlainTextViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(
-                parentView)
+                parentView
+            )
             MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(
-                parentView)
+                parentView
+            )
             MessageListItemViewType.MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
             MessageListItemViewType.ATTACHMENTS -> createAttachmentsViewHolder(parentView)
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
