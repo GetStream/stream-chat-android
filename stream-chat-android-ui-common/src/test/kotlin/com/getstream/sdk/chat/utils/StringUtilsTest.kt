@@ -9,10 +9,11 @@ public class StringUtilsTest {
     @Test
     public fun shouldRemoveAttachmentPrefixFromString() {
         val dateFormat = "HHmmssSSS"
+        val fileName = randomString(5)
 
-        val result = StringUtils.removeTimePrefix("prefix_${dateFormat}_stm_file_name", dateFormat)
+        val result = StringUtils.removeTimePrefix("prefix_${dateFormat}_$fileName", dateFormat)
 
-        assertEquals("file_name", result)
+        assertEquals(fileName, result)
     }
 
     @Test
@@ -23,5 +24,15 @@ public class StringUtilsTest {
         val result = StringUtils.removeTimePrefix(randomString, dateFormat)
 
         assertEquals(randomString, result)
+    }
+
+    @Test
+    public fun shouldBeAbleNamesWithOurPrefixMark() {
+        val dateFormat = "HHmmssSSS"
+        val fileName = randomString(5)
+
+        val result = StringUtils.removeTimePrefix("prefix_${dateFormat}_$fileName", dateFormat)
+
+        assertEquals(fileName, result)
     }
 }
