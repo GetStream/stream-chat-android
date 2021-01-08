@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.LoadingMoreIndicatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageListItem.ReadStateItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -20,7 +19,6 @@ import java.util.zip.Checksum
  * - [MessageItem]
  * - [TypingItem]
  * - [ThreadSeparatorItem]
- * - [ReadStateItem]
  * - [LoadingMoreIndicatorItem]
  */
 public sealed class MessageListItem {
@@ -32,7 +30,6 @@ public sealed class MessageListItem {
             is ThreadSeparatorItem -> "id_thread_separator"
             is MessageItem -> message.id
             is DateSeparatorItem -> date.toString()
-            is ReadStateItem -> "read_" + reads.map { it.user.id }.joinToString { "," }
             is LoadingMoreIndicatorItem -> "id_loading_more_indicator"
         }
         checksum.update(plaintext.toByteArray(), 0, plaintext.toByteArray().size)
@@ -55,10 +52,6 @@ public sealed class MessageListItem {
 
     public data class TypingItem(
         val users: List<User>,
-    ) : MessageListItem()
-
-    public data class ReadStateItem(
-        val reads: List<ChannelUserRead>,
     ) : MessageListItem()
 
     public data class ThreadSeparatorItem(

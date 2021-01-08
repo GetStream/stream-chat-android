@@ -32,7 +32,6 @@ public open class MessageListItemViewHolderFactory(
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
             MessageListItemViewType.THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             MessageListItemViewType.TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
-            MessageListItemViewType.READ_STATE -> createEmptyMessageItemViewHolder(parentView)
             MessageListItemViewType.GIPHY -> createGiphyMessageItemViewHolder(parentView)
         }
     }
