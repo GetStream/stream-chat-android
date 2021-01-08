@@ -139,7 +139,7 @@ public class ChannelsView @JvmOverloads constructor(
      *
      * @param listener the callback to be invoked on channel long click
      */
-    public fun setChannelLongClickListener(listener: ChannelListView.ChannelClickListener?) {
+    public fun setChannelLongClickListener(listener: ChannelListView.ChannelLongClickListener?) {
         channelListView.setChannelLongClickListener(listener)
     }
 
