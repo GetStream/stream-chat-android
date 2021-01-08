@@ -149,4 +149,6 @@ dependencies {
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.shimmer
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 }

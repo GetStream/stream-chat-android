@@ -21,7 +21,7 @@ import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
-import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoDeleteChannelDialogFragment
+import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
@@ -35,7 +35,7 @@ class ChannelListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
@@ -75,12 +75,10 @@ class ChannelListFragment : Fragment() {
             }
 
             setChannelDeleteClickListener { channel ->
-                ChatInfoDeleteChannelDialogFragment
-                    .newInstance()
+                ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
-                        deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
-                            // should clear history, leave & hide?
-                            viewModel.hideChannel(channel)
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                            viewModel.deleteChannel(channel)
                         }
                     }
                     .show(parentFragmentManager, null)

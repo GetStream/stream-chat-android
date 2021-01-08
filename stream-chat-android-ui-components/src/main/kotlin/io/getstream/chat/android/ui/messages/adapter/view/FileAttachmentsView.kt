@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -116,7 +117,7 @@ private class FileAttachmentViewHolder(
 
         binding.apply {
             fileTypeIcon.loadAttachmentThumb(attachment)
-            fileTitle.text = attachment.title ?: attachment.name
+            fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
         }
     }

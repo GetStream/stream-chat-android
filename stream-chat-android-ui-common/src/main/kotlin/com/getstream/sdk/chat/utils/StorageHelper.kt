@@ -17,7 +17,7 @@ import java.util.Locale
 
 @InternalStreamChatApi
 public class StorageHelper {
-    private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US)
+    private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
     private val projection = arrayOf(
         MediaStore.Files.FileColumns._ID,
         MediaStore.Files.FileColumns.DISPLAY_NAME,
@@ -138,6 +138,10 @@ public class StorageHelper {
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
         "STREAM_${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
+
+    public companion object {
+        public const val TIME_FORMAT: String = "HHmmssSSS"
+    }
 }
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
