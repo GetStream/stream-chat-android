@@ -11,7 +11,7 @@ public open class ChannelListItemViewHolderFactory {
         parentView: ViewGroup,
         channelItemType: ChannelItemType,
         channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
+        channelLongClickListener: ChannelListView.ChannelLongClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,
@@ -37,7 +37,7 @@ public open class ChannelListItemViewHolderFactory {
     public open fun createChannelViewHolder(
         parentView: ViewGroup,
         channelClickListener: ChannelListView.ChannelClickListener,
-        channelLongClickListener: ChannelListView.ChannelClickListener,
+        channelLongClickListener: ChannelListView.ChannelLongClickListener,
         deleteClickListener: ChannelListView.ChannelClickListener,
         moreOptionsClickListener: ChannelListView.ChannelClickListener,
         userClickListener: ChannelListView.UserClickListener,

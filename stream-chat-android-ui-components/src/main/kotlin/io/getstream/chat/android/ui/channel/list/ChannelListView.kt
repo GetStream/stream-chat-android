@@ -68,8 +68,8 @@ public class ChannelListView @JvmOverloads constructor(
         requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
-    public fun setChannelLongClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelClickListener.DEFAULT
+    public fun setChannelLongClickListener(listener: ChannelLongClickListener?) {
+        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelLongClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
@@ -162,6 +162,19 @@ public class ChannelListView @JvmOverloads constructor(
         public fun onClick(channel: Channel)
     }
 
+    public fun interface ChannelLongClickListener {
+        public companion object {
+            public val DEFAULT: ChannelLongClickListener = ChannelLongClickListener { false }
+        }
+
+        /**
+         * Called when a channel has been clicked and held.
+         *
+         * @return true if the callback consumed the long click, false otherwise.
+         */
+        public fun onLongClick(channel: Channel): Boolean
+    }
+
     public fun interface EndReachedListener {
         public fun onEndReached()
     }
@@ -217,7 +230,7 @@ public class ChannelListView @JvmOverloads constructor(
             viewHolder: SwipeViewHolder,
             adapterPosition: Int,
             x: Float? = null,
-            y: Float? = null
+            y: Float? = null,
         )
 
         /**
@@ -231,7 +244,7 @@ public class ChannelListView @JvmOverloads constructor(
             viewHolder: SwipeViewHolder,
             adapterPosition: Int,
             x: Float? = null,
-            y: Float? = null
+            y: Float? = null,
         )
 
         /**
@@ -252,28 +265,28 @@ public class ChannelListView @JvmOverloads constructor(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
-                    y: Float?
+                    y: Float?,
                 ) = Unit
 
                 override fun onSwipeChanged(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     dX: Float,
-                    totalDeltaX: Float
+                    totalDeltaX: Float,
                 ) = Unit
 
                 override fun onSwipeCompleted(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
-                    y: Float?
+                    y: Float?,
                 ) = Unit
 
                 override fun onSwipeCanceled(
                     viewHolder: SwipeViewHolder,
                     adapterPosition: Int,
                     x: Float?,
-                    y: Float?
+                    y: Float?,
                 ) = Unit
 
                 override fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int) = Unit

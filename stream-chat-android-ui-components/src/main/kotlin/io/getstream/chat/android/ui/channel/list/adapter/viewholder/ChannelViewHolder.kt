@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 public class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
-    private val channelLongClickListener: ChannelListView.ChannelClickListener,
+    private val channelLongClickListener: ChannelListView.ChannelLongClickListener,
     private val channelDeleteListener: ChannelListView.ChannelClickListener,
     private val channelMoreOptionsListener: ChannelListView.ChannelClickListener,
     private val userClickListener: ChannelListView.UserClickListener,
@@ -42,7 +42,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         parent.inflater,
         parent,
         false
-    )
+    ),
 ) : SwipeViewHolder(binding.root) {
 
     private val dateFormatter = DateFormatter.from(context)
@@ -80,8 +80,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
                         channelClickListener.onClick(channel)
                     }
                     setOnLongClickListener {
-                        channelLongClickListener.onClick(channel)
-                        true
+                        channelLongClickListener.onLongClick(channel)
                     }
                     doOnNextLayout {
                         setSwipeListener(root, swipeListener)
@@ -170,7 +169,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(
-        lastMessage: Message?
+        lastMessage: Message?,
     ) {
         lastMessageLabel.isVisible = lastMessage.isNotNull()
         lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
@@ -193,7 +192,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(
-        lastMessage: Message?
+        lastMessage: Message?,
     ) {
         messageStatusImageView.isVisible = lastMessage != null
 
