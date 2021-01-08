@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,7 +21,7 @@ import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
-import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoDeleteChannelDialogFragment
+import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
@@ -34,7 +35,7 @@ class ChannelListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
@@ -48,14 +49,25 @@ class ChannelListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupOnClickListeners()
         binding.channelsView.apply {
+            view as ViewGroup // for use as a parent in inflation
 
             val loadingView = layoutInflater.inflate(
                 R.layout.channels_loading_view,
-                view as ViewGroup,
+                view,
                 false
             )
-
             setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+
+            val emptyView = layoutInflater.inflate(
+                R.layout.channels_empty_view,
+                view,
+                false,
+            )
+            emptyView.findViewById<TextView>(R.id.startChatButton).setOnClickListener {
+                requireActivity().findNavController(R.id.hostFragmentContainer)
+                    .navigateSafely(HomeFragmentDirections.actionHomeFragmentToAddChannelFragment())
+            }
+            setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             setChannelItemClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
@@ -63,12 +75,10 @@ class ChannelListFragment : Fragment() {
             }
 
             setChannelDeleteClickListener { channel ->
-                ChatInfoDeleteChannelDialogFragment
-                    .newInstance()
+                ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
-                        deleteChannelListener = ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
-                            // should clear history, leave & hide?
-                            viewModel.hideChannel(channel)
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                            viewModel.deleteChannel(channel)
                         }
                     }
                     .show(parentFragmentManager, null)

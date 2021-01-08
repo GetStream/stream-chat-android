@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -107,7 +108,7 @@ private class FileAttachmentViewHolder(
                     STROKE_WIDTH_PX,
                     ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
                 )
-                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
+                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_background_light))
             }
     }
 
@@ -116,7 +117,7 @@ private class FileAttachmentViewHolder(
 
         binding.apply {
             fileTypeIcon.setImageResource(UiUtils.getIcon(attachment.mimeType))
-            fileTitle.text = attachment.title ?: attachment.name
+            fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
         }
     }

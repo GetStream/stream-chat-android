@@ -125,8 +125,8 @@ public interface ChannelController {
     public fun unmute(): Call<Unit>
     public fun muteCurrentUser(): Call<Mute>
     public fun muteUser(userId: String): Call<Mute>
-    public fun unmuteUser(userId: String): Call<Mute>
-    public fun unmuteCurrentUser(): Call<Mute>
+    public fun unmuteUser(userId: String): Call<Unit>
+    public fun unmuteCurrentUser(): Call<Unit>
     public fun watch(data: Map<String, Any>): Call<Channel>
     public fun stopTyping(): Call<ChatEvent>
     public fun keystroke(): Call<ChatEvent>

@@ -4,6 +4,7 @@
     <string name="sdk_version_template">Stream SDK v %s</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="leave">Leave</string>
 
     <!--User Login Screen-->
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
@@ -26,6 +27,11 @@
     <string name="home_drawer_sign_out">Sign Out</string>
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
+
+    <!-- Channel list -->
+    <string name="channel_list_empty_title">Let\'s start chatting!</string>
+    <string name="channel_list_empty_description">How about sending your first message to a friend?</string>
+    <string name="channel_list_start_chat">Start a chat</string>
 
     <!--Add Channel Screen-->
     <string name="add_channel_title">New Chat</string>
@@ -75,4 +81,5 @@
     <string name="chat_group_info_option_members_separator_title">%d more</string>
     <string name="chat_group_info_edit_name_label">NAME</string>
     <string name="chat_group_info_edit_name_hint">Add a group name</string>
+    <string name="chat_group_info_leave_confirm">Are you sure you want to leave the group %s?</string>
 </resources>
