@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import io.getstream.chat.android.ui.channel.list.ChannelListView
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
@@ -76,8 +78,8 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                     // signal end of swipe
                     swipeListener?.onSwipeCompleted(this, absoluteAdapterPosition, rawX, rawY)
                     wasSwiping = false
-                    // consume if we were swiping
-                    swiping
+                    // consume if swipe distance is bigger than threshold
+                    swiping && abs(rawX - startX) > SWIPE_THRESHOLD
                 }
 
                 MotionEvent.ACTION_CANCEL -> {
@@ -96,5 +98,9 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                 else -> false
             }
         }
+    }
+
+    private companion object {
+        private val SWIPE_THRESHOLD = 16.dpToPxPrecise()
     }
 }
