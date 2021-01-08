@@ -37,7 +37,7 @@ class GroupChatInfoFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentGroupChatInfoBinding.inflate(inflater, container, false)
         return binding.root
@@ -128,7 +128,19 @@ class GroupChatInfoFragment : Fragment() {
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
                 )
-                ChatInfoItem.Option.LeaveGroup -> viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
+                ChatInfoItem.Option.LeaveGroup -> {
+                    context.getFragmentManager()?.let {
+                        val channelName = viewModel.state.value!!.channelName
+                        GroupChatInfoLeaveDialogFragment.newInstance(channelName)
+                            .apply {
+                                leaveChannelListener =
+                                    GroupChatInfoLeaveDialogFragment.LeaveChannelListener {
+                                        viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
+                                    }
+                            }
+                            .show(it, GroupChatInfoLeaveDialogFragment.TAG)
+                    }
+                }
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }
         }
