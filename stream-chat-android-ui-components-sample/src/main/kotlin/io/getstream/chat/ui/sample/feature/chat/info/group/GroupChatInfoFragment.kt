@@ -22,6 +22,7 @@ import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
+import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class GroupChatInfoFragment : Fragment() {
@@ -131,14 +132,13 @@ class GroupChatInfoFragment : Fragment() {
                 ChatInfoItem.Option.LeaveGroup -> {
                     context.getFragmentManager()?.let {
                         val channelName = viewModel.state.value!!.channelName
-                        GroupChatInfoLeaveDialogFragment.newInstance(channelName)
+                        ConfirmationDialogFragment.newLeaveChannelInstance(requireContext(), channelName)
                             .apply {
-                                leaveChannelListener =
-                                    GroupChatInfoLeaveDialogFragment.LeaveChannelListener {
-                                        viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
-                                    }
+                                confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                                    viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
+                                }
                             }
-                            .show(it, GroupChatInfoLeaveDialogFragment.TAG)
+                            .show(it, ConfirmationDialogFragment.TAG)
                     }
                 }
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")

@@ -19,6 +19,7 @@ import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
+import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 
 class ChatInfoFragment : Fragment() {
 
@@ -33,7 +34,7 @@ class ChatInfoFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatInfoBinding.inflate(inflater, container, false)
         return binding.root
@@ -135,14 +136,12 @@ class ChatInfoFragment : Fragment() {
                 }
                 ChatInfoItem.Option.DeleteConversation -> {
                     context.getFragmentManager()?.let {
-                        ChatInfoDeleteChannelDialogFragment.newInstance()
-                            .apply {
-                                deleteChannelListener =
-                                    ChatInfoDeleteChannelDialogFragment.ChatInfoDeleteChannelListener {
-                                        viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
-                                    }
-                            }
-                            .show(it, ChatInfoDeleteChannelDialogFragment.TAG)
+                        ConfirmationDialogFragment.newDeleteChannelInstance(requireContext()).apply {
+                            confirmClickListener =
+                                ConfirmationDialogFragment.ConfirmClickListener {
+                                    viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
+                                }
+                        }.show(it, ConfirmationDialogFragment.TAG)
                     }
                 }
                 else -> throw IllegalStateException("Chat info option $option is not supported!")

@@ -8,54 +8,52 @@
     >
 
     <ImageView
-        android:id="@+id/leaveImageView"
+        android:id="@+id/iconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="42dp"
-        android:src="@drawable/ic_leave_group"
         app:layout_constraintBottom_toTopOf="@+id/titleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:tint="@color/stream_ui_boulder"
         tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_delete_contact"
         />
 
     <TextView
         android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/chat_group_info_option_leave"
+        android:gravity="center"
         android:textColor="@color/stream_ui_text_color_strong"
         android:textSize="@dimen/stream_ui_text_large"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/descriptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/leaveImageView"
+        app:layout_constraintTop_toBottomOf="@+id/iconImageView"
+        tools:text="@string/chat_info_option_delete_conversation"
         />
 
     <TextView
         android:id="@+id/descriptionTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:text="@string/chat_group_info_leave_confirm"
         android:textColor="@color/stream_ui_text_color_strong"
         android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toTopOf="@+id/separator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        tools:text="very very lonasdf kajsdnfkjasndf asdfjn asdfkjn asdf aa asdf asdf"
         />
 
     <View
@@ -89,12 +87,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="@string/leave"
         android:textColor="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cancelButton"
         app:layout_constraintTop_toTopOf="@+id/cancelButton"
+        tools:text="@string/delete"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
