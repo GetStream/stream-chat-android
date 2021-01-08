@@ -109,7 +109,7 @@
 
     <color name="stream_ui_thread_reply_stroke">#DBDBDB</color>
 
-    <color name="stream_ui_current_user_background">#E6E6E6</color>
-    <color name="stream_ui_deleted_message_background">@color/stream_ui_grey_light_opacity_50</color>
+    <color name="stream_ui_current_user_background">@color/stream_ui_grey_gainsboro</color>
+    <color name="stream_ui_deleted_message_background">@color/stream_ui_grey_gainsboro</color>
     <color name="stream_ui_link_attachment_background">#E9F2FF</color>
 </resources>
