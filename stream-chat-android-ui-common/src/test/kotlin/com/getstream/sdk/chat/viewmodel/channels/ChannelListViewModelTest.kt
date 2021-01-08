@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.channels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createUser
-import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -20,6 +19,7 @@ import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestObserver
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
