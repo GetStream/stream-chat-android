@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.channels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createUser
-import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -26,6 +25,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import io.getstream.chat.android.test.TestObserver
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
