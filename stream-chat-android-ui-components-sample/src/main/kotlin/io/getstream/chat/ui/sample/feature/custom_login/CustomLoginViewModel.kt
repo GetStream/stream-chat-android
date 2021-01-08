@@ -43,14 +43,7 @@ class CustomLoginViewModel : ViewModel() {
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        App.instance.userRepository.setUser(
-            SampleUser(
-                id = loginCredentials.userId,
-                name = loginCredentials.userName,
-                token = loginCredentials.userToken,
-                image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
-            )
-        )
+
         ChatClient.instance()
             .setUser(
                 chatUser,
@@ -60,6 +53,15 @@ class CustomLoginViewModel : ViewModel() {
                         _state.postValue(State.RedirectToChannels)
                         logger.logD("User set successfully")
                         FirebaseLogger.userId = data.user.id
+
+                        App.instance.userRepository.setUser(
+                            SampleUser(
+                                id = loginCredentials.userId,
+                                name = loginCredentials.userName,
+                                token = loginCredentials.userToken,
+                                image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+                            )
+                        )
                     }
 
                     override fun onError(error: ChatError) {
@@ -96,7 +98,7 @@ data class LoginCredentials(
     val apiKey: String,
     val userId: String,
     val userToken: String,
-    val userName: String
+    val userName: String,
 )
 
 enum class ValidatedField {
