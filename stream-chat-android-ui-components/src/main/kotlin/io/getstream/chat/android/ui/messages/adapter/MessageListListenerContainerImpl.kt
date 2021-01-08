@@ -8,7 +8,6 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickLi
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
-import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 
@@ -21,7 +20,6 @@ internal class MessageListListenerContainerImpl(
     attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
-    readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM),
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
@@ -90,14 +88,6 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         UserClickListener { user ->
             realListener().onUserClick(user)
-        }
-    }
-
-    override var readStateClickListener: ReadStateClickListener by ListenerDelegate(
-        readStateClickListener
-    ) { realListener ->
-        ReadStateClickListener { reads ->
-            realListener().onReadStateClick(reads)
         }
     }
 

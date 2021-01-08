@@ -27,7 +27,6 @@ import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestinati
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
@@ -43,7 +42,6 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickLi
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
-import io.getstream.chat.android.ui.messages.view.MessageListView.ReadStateClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
@@ -64,7 +62,7 @@ import kotlin.math.max
 public class MessageListView : ConstraintLayout {
 
     private companion object {
-        const val LOAD_MORE_TRESHOLD = 10
+        const val LOAD_MORE_THRESHOLD = 10
     }
 
     private var firstVisiblePosition = 0
@@ -229,10 +227,6 @@ public class MessageListView : ConstraintLayout {
             }
         }
     private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
-    private val DEFAULT_READ_STATE_CLICK_LISTENER =
-        ReadStateClickListener { reads: List<ChannelUserRead> ->
-            // TODO implement
-        }
     private val DEFAULT_GIPHY_SEND_LISTENER =
         GiphySendListener { message, action ->
             onSendGiphyHandler.invoke(message, action)
@@ -247,7 +241,6 @@ public class MessageListView : ConstraintLayout {
         attachmentDownloadClickListener = DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER,
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
-        readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER,
         giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
     )
 
@@ -328,7 +321,7 @@ public class MessageListView : ConstraintLayout {
 
         tArray.getInteger(
             R.styleable.MessageListView_streamUiLoadMoreThreshold,
-            LOAD_MORE_TRESHOLD,
+            LOAD_MORE_THRESHOLD,
         ).also { loadMoreThreshold ->
             loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
                 endRegionReachedHandler()
@@ -820,16 +813,6 @@ public class MessageListView : ConstraintLayout {
         listenerContainer.userClickListener = userClickListener ?: DEFAULT_USER_CLICK_LISTENER
     }
 
-    /**
-     * Sets the read state click listener to be used by MessageListView.
-     *
-     * @param readStateClickListener The listener to use. If null, the default will be used instead.
-     */
-    public fun setReadStateClickListener(readStateClickListener: ReadStateClickListener?) {
-        listenerContainer.readStateClickListener =
-            readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
-    }
-
     public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
@@ -920,10 +903,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface UserClickListener {
         public fun onUserClick(user: User)
-    }
-
-    public fun interface ReadStateClickListener {
-        public fun onReadStateClick(reads: List<ChannelUserRead>)
     }
 
     public fun interface ReactionViewClickListener {
