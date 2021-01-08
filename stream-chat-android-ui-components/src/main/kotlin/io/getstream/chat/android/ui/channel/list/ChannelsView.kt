@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
@@ -54,9 +53,7 @@ public class ChannelsView @JvmOverloads constructor(
             addView(loadingView, defaultChildLayoutParams)
         }
 
-        val adapter = channelListView.requireAdapter()
-
-        configureDefaultMoreOptionsListener(context, adapter)
+        configureDefaultMoreOptionsListener(context)
 
         parseAttrs(attrs)
     }
@@ -256,7 +253,6 @@ public class ChannelsView @JvmOverloads constructor(
 
     private fun configureDefaultMoreOptionsListener(
         context: Context,
-        adapter: ChannelListItemAdapter
     ) {
         setMoreOptionsClickListener { channel ->
             context.getFragmentManager()?.let { fragmentManager ->
@@ -264,25 +260,26 @@ public class ChannelsView @JvmOverloads constructor(
                     .newInstance(channel.cid, !channel.isDirectMessaging())
                     .apply {
                         channelActionListener = object : ChannelActionsDialogFragment.ChannelActionListener {
-
                             override fun onDeleteConversationClicked(cid: String) {
-                                with(adapter) {
-                                    listenerContainer.deleteClickListener.onClick(getChannel(cid))
-                                }
+                                channelListView.listenerContainer.deleteClickListener.onClick(
+                                    channelListView.getChannel(cid)
+                                )
                             }
 
                             override fun onLeaveChannelClicked(cid: String) {
-                                with(adapter) {
-                                    channelLeaveListener.onClick(getChannel(cid))
-                                }
+                                channelLeaveListener.onClick(
+                                    channelListView.getChannel(cid)
+                                )
                             }
 
                             override fun onMemberSelected(member: Member) {
-                                adapter.listenerContainer.userClickListener.onClick(member.user)
+                                channelListView.listenerContainer.userClickListener.onClick(member.user)
                             }
 
                             override fun onChannelInfoSelected(cid: String) {
-                                channelInfoListener.onClick(adapter.getChannel(cid))
+                                channelInfoListener.onClick(
+                                    channelListView.getChannel(cid)
+                                )
                             }
                         }
                     }

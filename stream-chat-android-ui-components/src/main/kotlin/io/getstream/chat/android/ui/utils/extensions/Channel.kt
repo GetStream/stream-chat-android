@@ -106,7 +106,7 @@ internal fun Channel.getLastMessagePreviewText(
 
         // bold mentions of the current user
         val currentUserMention = ChatDomain.instance().currentUser.asMention(context)
-        val previewText: SpannableString = message.text.trim().bold(currentUserMention.singletonList())
+        val previewText: SpannableString = message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
 
         val attachments: SpannableString? = message.attachments
             .takeIf { it.isNotEmpty() }
