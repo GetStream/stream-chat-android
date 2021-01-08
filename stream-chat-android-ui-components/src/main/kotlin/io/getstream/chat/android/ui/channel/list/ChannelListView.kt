@@ -6,15 +6,16 @@ import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelLongClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainerImpl
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.utils.extensions.cast
 
@@ -30,62 +31,74 @@ public class ChannelListView @JvmOverloads constructor(
 
     private var endReachedListener: EndReachedListener? = null
 
+    private lateinit var viewHolderFactory: ChannelListItemViewHolderFactory
+
+    private lateinit var adapter: ChannelListItemAdapter
+
+    internal val listenerContainer = ChannelListListenerContainerImpl()
+
+    private val style: ChannelListViewStyle
+
     init {
         setHasFixedSize(true)
         layoutManager = ScrollPauseLinearLayoutManager(context)
         setLayoutManager(layoutManager)
-        adapter = ChannelListItemAdapter(parseStyleAttributes(context, attrs))
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
+
+        style = ChannelListViewStyle(context, attrs)
 
         addItemDecoration(dividerDecoration)
     }
 
-    private fun parseStyleAttributes(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
-        // parse the attributes
-        return ChannelListViewStyle(context, attrs)
+    private fun requireAdapter(): ChannelListItemAdapter {
+        if (::adapter.isInitialized.not()) {
+            initAdapter()
+        }
+        return adapter
     }
 
-    internal fun requireAdapter(): ChannelListItemAdapter {
-        val logger = ChatLogger.get("ChannelListView::requireAdapter")
-        val channelAdapter = adapter
-
-        require(channelAdapter != null) {
-            logger.logE("Required adapter was null")
+    private fun initAdapter() {
+        // Create default ViewHolderFactory if needed
+        if (::viewHolderFactory.isInitialized.not()) {
+            viewHolderFactory = ChannelListItemViewHolderFactory()
         }
 
-        require(channelAdapter is ChannelListItemAdapter) {
-            logger.logE("Adapter must be an instance of ChannelListItemAdapter")
-        }
+        viewHolderFactory.listenerContainer = this.listenerContainer
+        viewHolderFactory.style = style
 
-        return channelAdapter
+        adapter = ChannelListItemAdapter(viewHolderFactory)
+
+        this.setAdapter(adapter)
     }
 
-    public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
-        requireAdapter().viewHolderFactory = factory
+    public fun setViewHolderFactory(viewHolderFactory: ChannelListItemViewHolderFactory) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set ChannelListItemViewHolderFactory first" }
+
+        this.viewHolderFactory = viewHolderFactory
     }
 
     public fun setChannelClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+        listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setChannelLongClickListener(listener: ChannelLongClickListener?) {
-        requireAdapter().listenerContainer.channelLongClickListener = listener ?: ChannelLongClickListener.DEFAULT
+        listenerContainer.channelLongClickListener = listener ?: ChannelLongClickListener.DEFAULT
     }
 
     public fun setUserClickListener(listener: UserClickListener?) {
-        requireAdapter().listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
+        listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
     }
 
     public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
+        listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
-        requireAdapter().listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
+        listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     public fun setSwipeListener(listener: SwipeListener?) {
-        requireAdapter().listenerContainer.swipeListener = listener ?: SwipeListener.DEFAULT
+        listenerContainer.swipeListener = listener ?: SwipeListener.DEFAULT
     }
 
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
@@ -141,9 +154,13 @@ public class ChannelListView @JvmOverloads constructor(
         return requireAdapter().itemCount > 0
     }
 
+    internal fun getChannel(cid: String): Channel = adapter.getChannel(cid)
+
     public override fun onVisibilityChanged(view: View, visibility: Int) {
         super.onVisibilityChanged(view, visibility)
-        if (visibility == 0 && adapter != null) requireAdapter().notifyDataSetChanged()
+        if (visibility == View.VISIBLE) {
+            requireAdapter().notifyDataSetChanged()
+        }
     }
 
     public fun interface UserClickListener {

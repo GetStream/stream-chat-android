@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -11,6 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.messages.adapter.initEmptyListeners
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentDoc
@@ -25,7 +27,14 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
 
     @OptIn(InternalStreamChatApi::class)
     override fun createAdapter(): RecyclerView.Adapter<*> {
-        val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorProvider(requireContext(), currentUser))
+        val factory = MessageListItemViewHolderFactory(
+            MessageListItemDecoratorProvider(
+                currentUser = currentUser,
+                dateFormatter = DateFormatter.from(requireContext()),
+                isDirectMessage = false,
+            )
+        )
+        factory.initEmptyListeners()
         return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }
 
@@ -151,13 +160,13 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
     @InternalStreamChatApi
     private class SampleAdapter(
         private val items: List<MessageListItem.MessageItem>,
-        private val vhFactory: MessageListItemViewHolderFactory
+        private val vhFactory: MessageListItemViewHolderFactory,
     ) : RecyclerView.Adapter<BaseMessageItemViewHolder<MessageListItem.MessageItem>>() {
 
         @Suppress("UNCHECKED_CAST")
         override fun onCreateViewHolder(
             parent: ViewGroup,
-            viewType: Int
+            viewType: Int,
         ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
             return vhFactory.createViewHolder(
                 parent,

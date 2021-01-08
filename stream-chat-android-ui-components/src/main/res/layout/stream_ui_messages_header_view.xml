@@ -21,8 +21,8 @@
 
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginLeft="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stream_ui_content_description_back_button"
@@ -36,8 +36,8 @@
         <TextView
             android:id="@+id/back_button_badge"
             style="@style/StreamUiBadgeStyle"
-            android:layout_marginStart="18dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginBottom="20dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/back_button"
             app:layout_constraintStart_toStartOf="@+id/back_button"
