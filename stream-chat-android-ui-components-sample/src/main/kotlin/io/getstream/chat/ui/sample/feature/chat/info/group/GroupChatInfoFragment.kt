@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.common.getFragmentManager
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
@@ -55,10 +54,8 @@ class GroupChatInfoFragment : Fragment() {
             binding.addChannelButton.apply {
                 isVisible = true
                 setOnClickListener {
-                    context.getFragmentManager()?.let {
-                        GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
-                            .show(it, GroupChatInfoAddUsersDialogFragment.TAG)
-                    }
+                    GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
+                        .show(parentFragmentManager, GroupChatInfoAddUsersDialogFragment.TAG)
                 }
             }
         }
@@ -130,16 +127,14 @@ class GroupChatInfoFragment : Fragment() {
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
                 )
                 ChatInfoItem.Option.LeaveGroup -> {
-                    context.getFragmentManager()?.let {
-                        val channelName = viewModel.state.value!!.channelName
-                        ConfirmationDialogFragment.newLeaveChannelInstance(requireContext(), channelName)
-                            .apply {
-                                confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                                    viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
-                                }
+                    val channelName = viewModel.state.value!!.channelName
+                    ConfirmationDialogFragment.newLeaveChannelInstance(requireContext(), channelName)
+                        .apply {
+                            confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                                viewModel.onAction(GroupChatInfoViewModel.Action.LeaveChannelClicked)
                             }
-                            .show(it, ConfirmationDialogFragment.TAG)
-                    }
+                        }
+                        .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
                 }
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }

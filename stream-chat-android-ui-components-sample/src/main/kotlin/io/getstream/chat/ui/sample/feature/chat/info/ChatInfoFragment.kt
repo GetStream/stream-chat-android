@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.common.getFragmentManager
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
@@ -135,14 +134,12 @@ class ChatInfoFragment : Fragment() {
                     )
                 }
                 ChatInfoItem.Option.DeleteConversation -> {
-                    context.getFragmentManager()?.let {
-                        ConfirmationDialogFragment.newDeleteChannelInstance(requireContext()).apply {
-                            confirmClickListener =
-                                ConfirmationDialogFragment.ConfirmClickListener {
-                                    viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
-                                }
-                        }.show(it, ConfirmationDialogFragment.TAG)
-                    }
+                    ConfirmationDialogFragment.newDeleteChannelInstance(requireContext()).apply {
+                        confirmClickListener =
+                            ConfirmationDialogFragment.ConfirmClickListener {
+                                viewModel.onAction(ChatInfoViewModel.Action.ChannelDeleted)
+                            }
+                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
                 }
                 else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
