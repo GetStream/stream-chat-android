@@ -158,7 +158,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
         super.onVisibilityChanged(view, visibility)
-        if (visibility == View.GONE) {
+        if (visibility == View.VISIBLE) {
             requireAdapter().notifyDataSetChanged()
         }
     }
