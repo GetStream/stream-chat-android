@@ -78,7 +78,7 @@ public class MessagePreviewView : FrameLayout {
                 )
             )
         } else {
-            message.user.name.bold(ignoreCase = true)
+            message.user.name.bold()
         }
     }
 
