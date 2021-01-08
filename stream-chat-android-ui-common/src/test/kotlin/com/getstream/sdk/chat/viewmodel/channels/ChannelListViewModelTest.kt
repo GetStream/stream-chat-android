@@ -19,13 +19,13 @@ import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestObserver
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import io.getstream.chat.android.test.TestObserver
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
