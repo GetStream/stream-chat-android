@@ -29,12 +29,16 @@ public open class MessageViewHolderFactory {
     }
 
     public lateinit var listenerContainer: ListenerContainer
+        internal set
 
     public lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+        internal set
 
     public lateinit var bubbleHelper: MessageListView.BubbleHelper
+        internal set
 
     public lateinit var messageDateFormatter: DateFormatter
+        internal set
 
     public open fun getMessageViewType(messageListItem: MessageListItem): Int {
         return when (messageListItem) {
@@ -78,9 +82,5 @@ public open class MessageViewHolderFactory {
             MESSAGEITEM_LOADING_MORE -> LoadingMoreViewHolder(parent)
             else -> throw IllegalArgumentException("Unhandled message view type ($viewType)")
         }
-    }
-
-    public enum class Position {
-        TOP, MIDDLE, BOTTOM
     }
 }

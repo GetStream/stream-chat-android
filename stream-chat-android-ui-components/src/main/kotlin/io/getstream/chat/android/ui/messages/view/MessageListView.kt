@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorPro
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
@@ -550,15 +551,16 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initAdapter() {
+        // Create default DateFormatter if needed
+        if (::messageDateFormatter.isInitialized.not()) {
+            messageDateFormatter = DateFormatter.from(context)
+        }
+
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
             messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
-                MessageListItemDecoratorProvider(context, currentUser, channel.isDirectMessaging())
+                MessageListItemDecoratorProvider(currentUser, messageDateFormatter, channel.isDirectMessaging())
             )
-        }
-
-        if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.from(context)
         }
 
         messageListItemViewHolderFactory.listenerContainer = this.listenerContainer

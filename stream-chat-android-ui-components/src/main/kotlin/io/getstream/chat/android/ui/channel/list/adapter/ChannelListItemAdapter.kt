@@ -4,22 +4,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainer
 import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.diff
 import io.getstream.chat.android.ui.utils.extensions.firstOrDefault
 import io.getstream.chat.android.ui.utils.extensions.safeCast
 
-internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
-    ListAdapter<ChannelListItem, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
-
-    var viewHolderFactory = ChannelListItemViewHolderFactory()
-
-    val listenerContainer = ChannelListListenerContainer()
+internal class ChannelListItemAdapter(
+    private val viewHolderFactory: ChannelListItemViewHolderFactory,
+) : ListAdapter<ChannelListItem, BaseChannelListItemViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         val DIFF_CALLBACK: DiffUtil.ItemCallback<ChannelListItem> =
@@ -79,19 +74,10 @@ internal class ChannelListItemAdapter(var style: ChannelListViewStyle) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return with(listenerContainer) {
-            viewHolderFactory.createViewHolder(
-                parent,
-                ChannelItemType.values()[viewType],
-                channelClickListener,
-                channelLongClickListener,
-                deleteClickListener,
-                moreOptionsClickListener,
-                userClickListener,
-                swipeListener,
-                style
-            )
-        }
+        return viewHolderFactory.createViewHolder(
+            parent,
+            ChannelItemType.values()[viewType],
+        )
     }
 
     private fun bind(

@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 
 internal class MessageFooterDecorator(
     private val dateFormatter: DateFormatter,
-    private val directMessage: Boolean
+    private val isDirectMessage: Boolean,
 ) : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
@@ -73,7 +73,7 @@ internal class MessageFooterDecorator(
 
     private fun setupEphemeralMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
         when {
-            data.isBottomPosition() && !directMessage && data.isTheirs -> {
+            data.isBottomPosition() && !isDirectMessage && data.isTheirs -> {
                 textView.text = data.message.user.name
                 textView.isVisible = true
             }

@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter
 import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
@@ -18,15 +19,20 @@ public open class MessageListItemViewHolderFactory(
     private val decoratorProvider: DecoratorProvider
 ) {
 
-    public var listenerContainer: MessageListListenerContainer? = null
+    public lateinit var listenerContainer: MessageListListenerContainer
+        internal set
 
     public fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseMessageItemViewHolder<*> {
         return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {
             MessageListItemViewType.DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MessageListItemViewType.MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             MessageListItemViewType.PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(parentView)
-            MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(parentView)
+            MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(
+                parentView
+            )
+            MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(
+                parentView
+            )
             MessageListItemViewType.MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
             MessageListItemViewType.ATTACHMENTS -> createAttachmentsViewHolder(parentView)
             MessageListItemViewType.LOADING_INDICATOR -> createLoadingIndicatorViewHolder(parentView)
@@ -77,8 +83,19 @@ public open class MessageListItemViewHolderFactory(
     }
 
     private fun createEmptyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<MessageListItem> {
-        return object : BaseMessageItemViewHolder<MessageListItem>(View(parentView.context), decoratorProvider.decorators) {
+        return object :
+            BaseMessageItemViewHolder<MessageListItem>(View(parentView.context), decoratorProvider.decorators) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
     }
+}
+
+/**
+ * Internal API for setting a blank [MessageListListenerContainer] when the
+ * factory is being used in the Component Browser (in this case, no listener
+ * container would be injected, because MessageListView is not used).
+ */
+@InternalStreamChatApi
+public fun MessageListItemViewHolderFactory.initEmptyListeners() {
+    listenerContainer = MessageListListenerContainerImpl()
 }
