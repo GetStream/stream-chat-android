@@ -97,8 +97,7 @@
             android:paddingTop="@dimen/stream_ui_spacing_small"
             android:paddingRight="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="@dimen/stream_ui_spacing_small"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/stream_ui_black"
+            android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_blue"
             />
 

@@ -64,7 +64,7 @@
             android:autoLink="web"
             android:lineHeight="14sp"
             android:padding="@dimen/stream_ui_spacing_tiny"
-            android:textColor="@color/stream_ui_black"
+            android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_blue"
             android:textSize="12sp"
             app:layout_constrainedWidth="true"

@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="5sp"
-        android:textSize="16sp"
+        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
         app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent"
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_searching_for_network"
-                android:textColor="@color/stream_ui_text_grey"
+                android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 />
         </LinearLayout>
 
@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_offline"
-                android:textColor="@color/stream_ui_text_grey"
+                android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 />
 
             <TextView
@@ -152,7 +152,7 @@
                 android:id="@+id/online_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/stream_ui_text_grey"
+                android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 tools:text="Online for 10 mins"
                 />
         </LinearLayout>

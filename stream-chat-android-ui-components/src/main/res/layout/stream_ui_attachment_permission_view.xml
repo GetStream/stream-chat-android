@@ -32,8 +32,7 @@
         android:background="?selectableItemBackground"
         android:padding="@dimen/stream_ui_spacing_medium"
         android:textColor="@color/stream_ui_blue"
-        android:textSize="@dimen/stream_ui_text_medium"
-        android:textStyle="bold"
+        android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         tools:text="@string/stream_ui_attachment_dialog_permission_camera"
         />
 
