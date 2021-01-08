@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -48,14 +49,25 @@ class ChannelListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupOnClickListeners()
         binding.channelsView.apply {
+            view as ViewGroup // for use as a parent in inflation
 
             val loadingView = layoutInflater.inflate(
                 R.layout.channels_loading_view,
-                view as ViewGroup,
+                view,
                 false
             )
-
             setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+
+            val emptyView = layoutInflater.inflate(
+                R.layout.channels_empty_view,
+                view,
+                false,
+            )
+            emptyView.findViewById<TextView>(R.id.startChatButton).setOnClickListener {
+                requireActivity().findNavController(R.id.hostFragmentContainer)
+                    .navigateSafely(HomeFragmentDirections.actionHomeFragmentToAddChannelFragment())
+            }
+            setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             setChannelItemClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
