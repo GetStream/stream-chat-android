@@ -135,7 +135,7 @@ public class StorageHelper {
     }
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
-        "STREAM_${dateFormat.format(Date().time)}_prefix_${attachmentMetaData.getTitleWithExtension()}"
+        "STREAM_${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
 
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"
@@ -150,10 +150,6 @@ private fun AttachmentMetaData.getTitleWithExtension(): String {
         // TODO: Attachment's title should never be null. Review AttachmentMetaData class
         title ?: ""
     }
-}
-
-private fun AttachmentMetaData.getExtension(): String? {
-    return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
 }
 
 internal sealed class MediaType(val contentUri: Uri, val modelType: String)
