@@ -78,7 +78,7 @@ public class MessagePreviewView : FrameLayout {
                 )
             )
         } else {
-            message.user.name.bold()
+            message.user.name.bold(ignoreCase = true)
         }
     }
 
@@ -95,7 +95,7 @@ public class MessagePreviewView : FrameLayout {
 
         if (currentUserMention != null) {
             // bold mentions of the current user
-            return message.text.trim().bold(currentUserMention.singletonList())
+            return message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
         }
 
         return message.text.trim()
