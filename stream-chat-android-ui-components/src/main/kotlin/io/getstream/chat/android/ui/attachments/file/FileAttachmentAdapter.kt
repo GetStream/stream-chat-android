@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
-import io.getstream.chat.android.ui.utils.UiUtils
+import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 internal class FileAttachmentAdapter(
     private val onAttachmentSelected: (AttachmentMetaData) -> Unit,
@@ -71,7 +71,7 @@ internal class FileAttachmentAdapter(
             this.attachment = attachment
 
             binding.apply {
-                fileTypeImageView.setImageResource(UiUtils.getIcon(attachment.mimeType))
+                fileTypeImageView.loadAttachmentThumb(attachment)
                 fileNameTextView.text = attachment.title
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 selectionIndicator.isChecked = attachment.isSelected
