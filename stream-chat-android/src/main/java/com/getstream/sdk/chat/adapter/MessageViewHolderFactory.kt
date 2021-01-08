@@ -84,8 +84,4 @@ public open class MessageViewHolderFactory {
             else -> throw IllegalArgumentException("Unhandled message view type ($viewType)")
         }
     }
-
-    public enum class Position {
-        TOP, MIDDLE, BOTTOM
-    }
 }
