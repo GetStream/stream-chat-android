@@ -135,7 +135,7 @@ public class StorageHelper {
     }
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
-        "prefix_${dateFormat.format(Date().time)}_stm_${attachmentMetaData.getTitleWithExtension()}"
+        "STREAM_${dateFormat.format(Date().time)}_prefix_${attachmentMetaData.getTitleWithExtension()}"
 
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"
