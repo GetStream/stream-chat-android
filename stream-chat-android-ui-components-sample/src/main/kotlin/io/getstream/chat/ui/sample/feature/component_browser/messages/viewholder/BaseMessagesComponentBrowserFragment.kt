@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessageListViewHolderBinding
@@ -30,7 +31,11 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = createAdapter()
-        decorators = MessageListItemDecoratorProvider(requireContext(), currentUser).decorators
+        decorators = MessageListItemDecoratorProvider(
+            currentUser = currentUser,
+            dateFormatter = DateFormatter.from(view.context),
+            directMessage = false
+        ).decorators
     }
 
     protected abstract fun createAdapter(): RecyclerView.Adapter<*>

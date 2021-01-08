@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.messages.adapter
 
-import android.content.Context
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
@@ -19,9 +18,9 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyD
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ThreadRepliesDecorator
 
 public class MessageListItemDecoratorProvider(
-    context: Context,
     currentUser: User,
-    directMessage: Boolean = false
+    dateFormatter: DateFormatter,
+    directMessage: Boolean,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOf<Decorator>(
@@ -32,7 +31,7 @@ public class MessageListItemDecoratorProvider(
         GravityDecorator(),
         DeliveryStatusDecorator(),
         FailedIndicatorDecorator(),
-        MessageFooterDecorator(DateFormatter.from(context), directMessage),
+        MessageFooterDecorator(dateFormatter, directMessage),
         ReactionsDecorator(),
         LinkAttachmentDecorator(),
         ReplyDecorator(currentUser),
