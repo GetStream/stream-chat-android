@@ -16,10 +16,12 @@ internal val String.Companion.EMPTY: String
  * @param items the occurrences of items for which ranges should be derived
  * @return the ranges of every occurrence of every item
  */
-internal fun String.getOccurrenceRanges(items: List<String>? = null): List<IntRange> =
-    items?.flatMap { item ->
-        Regex(item).findAll(this).map { it.range }
+internal fun String.getOccurrenceRanges(items: List<String>? = null, ignoreCase: Boolean = false): List<IntRange> {
+    val regexOptions: Set<RegexOption> = setOfNotNull(RegexOption.IGNORE_CASE.takeIf { ignoreCase })
+    return items?.flatMap { item ->
+        Regex(item, regexOptions).findAll(this).map { it.range }
     } ?: listOf(0 until length)
+}
 
 internal fun String.applyTypeface(typeface: Int, ranges: List<IntRange>): SpannableString =
     SpannableString(this).apply {
@@ -28,7 +30,8 @@ internal fun String.applyTypeface(typeface: Int, ranges: List<IntRange>): Spanna
         }
     }
 
-internal fun String.bold(items: List<String>? = null): SpannableString = applyTypeface(BOLD, getOccurrenceRanges(items))
+internal fun String.bold(items: List<String>? = null, ignoreCase: Boolean = false): SpannableString =
+    applyTypeface(BOLD, getOccurrenceRanges(items, ignoreCase))
 
-internal fun String.italicize(items: List<String>? = null): SpannableString =
-    applyTypeface(ITALIC, getOccurrenceRanges(items))
+internal fun String.italicize(items: List<String>? = null, ignoreCase: Boolean = false): SpannableString =
+    applyTypeface(ITALIC, getOccurrenceRanges(items, ignoreCase))
