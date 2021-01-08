@@ -27,7 +27,7 @@ public object ImageLoader {
     public suspend fun getBitmap(
         context: Context,
         url: String,
-        transformation: ImageTransformation = ImageTransformation.None
+        transformation: ImageTransformation = ImageTransformation.None,
     ): Bitmap? = withContext(DispatcherProvider.IO) {
         url.takeUnless { it.isBlank() }
             ?.let {
@@ -44,7 +44,7 @@ public object ImageLoader {
     public suspend fun getBitmapUri(
         context: Context,
         url: String,
-        transformation: ImageTransformation = ImageTransformation.None
+        transformation: ImageTransformation = ImageTransformation.None,
     ): Uri? = getBitmap(context, url, transformation)?.getLocalBitmapUri(context)
 
     private fun Bitmap.getLocalBitmapUri(context: Context): Uri? {
@@ -66,7 +66,7 @@ public object ImageLoader {
 
     public fun ImageView.load(
         data: Any?,
-        transformation: ImageTransformation = ImageTransformation.None
+        transformation: ImageTransformation = ImageTransformation.None,
     ) {
         coilLoadAny(data, context.streamImageLoader) {
             applyTransformation(transformation, context)
@@ -76,20 +76,26 @@ public object ImageLoader {
     public fun ImageView.load(
         @RawRes @DrawableRes drawableResId: Int,
         onStart: () -> Unit = {},
-        onComplete: () -> Unit = {}
+        onComplete: () -> Unit = {},
     ) {
         loadAny(data = drawableResId, onStart = onStart, onComplete = onComplete)
     }
 
     public fun ImageView.load(
         uri: Uri?,
-        @DrawableRes placeholderResId: Int? = null
+        @DrawableRes placeholderResId: Int? = null,
     ): Unit = loadAny(uri, placeholderResId)
 
     public fun ImageView.loadVideoThumbnail(
         uri: Uri?,
-        @DrawableRes placeholderResId: Int? = null
-    ): Unit = loadAny(uri, placeholderResId, true)
+        @DrawableRes placeholderResId: Int? = null,
+        transformation: ImageTransformation = ImageTransformation.None,
+    ): Unit = loadAny(
+        data = uri,
+        placeholderResId = placeholderResId,
+        videoContentUri = true,
+        transformation = transformation
+    )
 
     @JvmStatic
     @JvmOverloads
@@ -98,12 +104,20 @@ public object ImageLoader {
         @DrawableRes placeholderResId: Int? = null,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    ): Unit = loadAny(uri, placeholderResId, false, onStart, onComplete)
+    ): Unit = loadAny(
+        data = uri,
+        placeholderResId = placeholderResId,
+        videoContentUri = false,
+        transformation = ImageTransformation.None,
+        onStart = onStart,
+        onComplete = onComplete
+    )
 
     private fun ImageView.loadAny(
         data: Any?,
         @DrawableRes placeholderResId: Int? = null,
         videoContentUri: Boolean = false,
+        transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
     ) {
@@ -118,12 +132,13 @@ public object ImageLoader {
             if (videoContentUri) {
                 fetcher(VideoFrameUriFetcher(context))
             }
+            applyTransformation(transformation, context)
         }
     }
 
     private fun ImageRequest.Builder.applyTransformation(
         transformation: ImageTransformation,
-        context: Context
+        context: Context,
     ): ImageRequest.Builder =
         when (transformation) {
             is ImageTransformation.None -> this
@@ -149,7 +164,7 @@ public object ImageLoader {
         public object Grayscale : ImageTransformation()
         public class Blur(
             public val radius: Float = 10f,
-            public val sampling: Float = 1f
+            public val sampling: Float = 1f,
         ) : ImageTransformation()
 
         public class RoundedCorners(public val radius: Float) : ImageTransformation()

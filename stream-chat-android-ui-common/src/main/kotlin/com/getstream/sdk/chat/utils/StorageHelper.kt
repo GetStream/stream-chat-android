@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -19,6 +18,13 @@ import java.util.Locale
 @InternalStreamChatApi
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
+    private val projection = arrayOf(
+        MediaStore.Files.FileColumns._ID,
+        MediaStore.Files.FileColumns.DISPLAY_NAME,
+        MediaStore.Files.FileColumns.MIME_TYPE,
+        MediaStore.Files.FileColumns.SIZE,
+        MediaStore.Video.Media.DURATION
+    )
 
     public fun getCachedFileFromUri(
         context: Context,
@@ -56,82 +62,78 @@ public class StorageHelper {
     }
 
     private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
-        val columns = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            MediaStore.Files.FileColumns.DISPLAY_NAME,
-            MediaStore.Files.FileColumns.MIME_TYPE,
-            MediaStore.Files.FileColumns.MEDIA_TYPE,
-            MediaStore.Files.FileColumns.SIZE,
-            MediaStore.Files.FileColumns.DURATION
-        )
         context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
-            columns,
+            projection,
             selection,
             null,
             "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
-        )?.use {
-            return getAttachmentsFromCursor(context, it)
+        )?.use { cursor ->
+            return mutableListOf<AttachmentMetaData>().apply {
+                while (cursor.moveToNext()) {
+                    add(getAttachmentFromCursor(cursor))
+                }
+            }
         }
         return emptyList()
     }
 
-    public fun getAttachmentsFromUriList(
-        context: Context,
-        uriList: List<Uri>
-    ): List<AttachmentMetaData> {
+    public fun getAttachmentsFromUriList(context: Context, uriList: List<Uri>): List<AttachmentMetaData> {
         return uriList.mapNotNull { uri ->
-            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            context.contentResolver.query(
+                uri,
+                projection,
+                null,
+                null,
+                null
+            )?.use { cursor ->
                 cursor.moveToFirst()
-                AttachmentMetaData(
-                    uri = uri,
-                    type = ModelType.attach_file,
-                    mimeType = context.contentResolver.getType(uri),
-                    title = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                ).apply {
-                    this.size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
-                }
+                getAttachmentFromCursor(cursor, uri)
             }
         }
     }
 
-    private fun getAttachmentsFromCursor(
-        context: Context,
-        cursor: Cursor
-    ): List<AttachmentMetaData> {
-        val attachments = mutableListOf<AttachmentMetaData>()
+    private fun getAttachmentFromCursor(cursor: Cursor, contentUri: Uri? = null): AttachmentMetaData {
         with(cursor) {
-            for (i in 0 until count) {
-                moveToPosition(i)
-                val type = getInt(getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE))
-                val mediaType = if (type == AttachmentConstants.MEDIA_TYPE_IMAGE) {
-                    ImageMediaType
-                } else if (type == AttachmentConstants.MEDIA_TYPE_VIDEO) {
-                    VideoMediaType
-                } else {
-                    continue
-                }
+            val id = getLong(getColumnIndex(MediaStore.Files.FileColumns._ID))
+            val mimeType = getString(getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE))
+            val title = getString(getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
+            val size = getLong(getColumnIndex(MediaStore.Files.FileColumns.SIZE))
+            val videoLength = getLongOrNull(getColumnIndex(MediaStore.Video.Media.DURATION)) ?: 0
 
-                val uri = ContentUris.withAppendedId(
-                    mediaType.contentUri,
-                    getLong(getColumnIndex(MediaStore.Files.FileColumns._ID))
-                )
-                val displayName =
-                    getString(getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
-                val videoLength =
-                    getLongOrNull(getColumnIndex(MediaStore.Files.FileColumns.DURATION)) ?: 0
-                val mimeType = context.contentResolver.getType(uri)
-
-                attachments += AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
-                    this.type = mediaType.modelType
-                    this.size = getLong(getColumnIndex(MediaStore.Files.FileColumns.SIZE))
-                    this.title = displayName
-                    this.videoLength = (videoLength / 1000)
-                }
+            val uri = contentUri ?: getContentUri(mimeType, id)
+            return AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
+                this.type = getModelType(mimeType)
+                this.size = size
+                this.title = title
+                this.videoLength = videoLength / 1000
             }
         }
+    }
 
-        return attachments
+    private fun getContentUri(mimeType: String?, id: Long): Uri {
+        val contentUri: Uri = when {
+            isImage(mimeType) -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            isVideo(mimeType) -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            else -> MediaStore.Files.getContentUri("external")
+        }
+        return ContentUris.withAppendedId(contentUri, id)
+    }
+
+    private fun getModelType(mimeType: String?): String {
+        return when {
+            isImage(mimeType) -> ModelType.attach_image
+            isVideo(mimeType) -> ModelType.attach_video
+            else -> ModelType.attach_file
+        }
+    }
+
+    private fun isImage(mimeType: String?): Boolean {
+        return mimeType?.startsWith("image") ?: false
+    }
+
+    private fun isVideo(mimeType: String?): Boolean {
+        return mimeType?.startsWith("video") ?: false
     }
 
     private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
@@ -151,11 +153,3 @@ private fun AttachmentMetaData.getTitleWithExtension(): String {
         title ?: ""
     }
 }
-
-internal sealed class MediaType(val contentUri: Uri, val modelType: String)
-
-internal object ImageMediaType :
-    MediaType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ModelType.attach_image)
-
-internal object VideoMediaType :
-    MediaType(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, ModelType.attach_video)

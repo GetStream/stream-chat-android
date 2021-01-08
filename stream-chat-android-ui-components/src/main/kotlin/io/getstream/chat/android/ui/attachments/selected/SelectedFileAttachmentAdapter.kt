@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
-import io.getstream.chat.android.ui.utils.UiUtils
+import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 internal class SelectedFileAttachmentAdapter(
     var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {}
@@ -22,20 +22,19 @@ internal class SelectedFileAttachmentAdapter(
         private val binding: StreamUiItemSelectedAttachmentFileBinding,
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit,
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
-
-        lateinit var item: AttachmentMetaData
+        lateinit var attachment: AttachmentMetaData
 
         init {
-            binding.tvClose.setOnClickListener { onAttachmentCancelled(item) }
+            binding.tvClose.setOnClickListener { onAttachmentCancelled(attachment) }
         }
 
         override fun bind(item: AttachmentMetaData) {
-            this.item = item
+            this.attachment = item
 
             binding.apply {
-                ivFileThumb.setImageResource(UiUtils.getIcon(item.mimeType))
-                tvFileTitle.text = item.title
-                tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(item.size)
+                ivFileThumb.loadAttachmentThumb(attachment)
+                tvFileTitle.text = attachment.title
+                tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
             }
         }
     }
