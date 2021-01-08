@@ -40,14 +40,13 @@ public open class MessageViewHolderFactory {
     public lateinit var messageDateFormatter: DateFormatter
         internal set
 
-    public open fun getMessageViewType(messageListItem: MessageListItem?): Int {
+    public open fun getMessageViewType(messageListItem: MessageListItem): Int {
         return when (messageListItem) {
             is DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
             is TypingItem -> MESSAGEITEM_TYPING
             is MessageItem -> MESSAGEITEM_MESSAGE
             is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
             is MessageListItem.LoadingMoreIndicatorItem -> MESSAGEITEM_LOADING_MORE
-            else -> throw IllegalArgumentException("MessageListItem type could not be determined")
         }
     }
 

@@ -13,13 +13,11 @@ import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.StorageHelper
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.attachments.AttachmentDialogFragment
 import io.getstream.chat.android.ui.attachments.AttachmentSelectionListener
@@ -31,9 +29,6 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.getColorList
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -101,15 +96,8 @@ public class MessageInputView : ConstraintLayout {
                             MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                     }
                     AttachmentSource.FILE -> {
-                        GlobalScope.launch(DispatcherProvider.Main) {
-                            val attachments = withContext(DispatcherProvider.IO) {
-                                val uris = attachments.mapNotNull(AttachmentMetaData::uri)
-                                StorageHelper().getAttachmentsFromUriList(context, uris).toMutableList()
-                            }
-
-                            binding.messageInputFieldView.mode =
-                                MessageInputFieldView.Mode.FileAttachmentMode(attachments)
-                        }
+                        binding.messageInputFieldView.mode =
+                            MessageInputFieldView.Mode.FileAttachmentMode(attachments.toList())
                     }
                 }
             }
