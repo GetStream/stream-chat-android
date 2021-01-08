@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Thread
 public class MessageListItemDecoratorProvider(
     currentUser: User,
     dateFormatter: DateFormatter,
-    directMessage: Boolean,
+    isDirectMessage: Boolean,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOf<Decorator>(
@@ -31,7 +31,7 @@ public class MessageListItemDecoratorProvider(
         GravityDecorator(),
         DeliveryStatusDecorator(),
         FailedIndicatorDecorator(),
-        MessageFooterDecorator(dateFormatter, directMessage),
+        MessageFooterDecorator(dateFormatter, isDirectMessage),
         ReactionsDecorator(),
         LinkAttachmentDecorator(),
         ReplyDecorator(currentUser),

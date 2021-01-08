@@ -34,7 +34,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
         decorators = MessageListItemDecoratorProvider(
             currentUser = currentUser,
             dateFormatter = DateFormatter.from(view.context),
-            directMessage = false
+            isDirectMessage = false
         ).decorators
     }
 

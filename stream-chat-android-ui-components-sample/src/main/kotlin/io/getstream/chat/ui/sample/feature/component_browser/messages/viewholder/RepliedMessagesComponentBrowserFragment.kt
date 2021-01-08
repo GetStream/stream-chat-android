@@ -29,7 +29,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         val factory = MessageListItemViewHolderFactory(MessageListItemDecoratorProvider(
             currentUser = currentUser,
             dateFormatter = DateFormatter.from(requireContext()),
-            directMessage = false,
+            isDirectMessage = false,
         ))
         return SampleAdapter(getDummyDeletedMessagesList(requireContext()), factory)
     }
