@@ -5,7 +5,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView
 
 internal class ChannelListListenerContainer(
     channelClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
-    channelLongClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
+    channelLongClickListener: ChannelListView.ChannelLongClickListener = ChannelListView.ChannelLongClickListener.DEFAULT,
     deleteClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     moreOptionsClickListener: ChannelListView.ChannelClickListener = ChannelListView.ChannelClickListener.DEFAULT,
     userClickListener: ChannelListView.UserClickListener = ChannelListView.UserClickListener.DEFAULT,
@@ -17,11 +17,11 @@ internal class ChannelListListenerContainer(
         }
     }
 
-    var channelLongClickListener: ChannelListView.ChannelClickListener by ListenerDelegate(
+    var channelLongClickListener: ChannelListView.ChannelLongClickListener by ListenerDelegate(
         channelLongClickListener
     ) { realListener ->
-        ChannelListView.ChannelClickListener { channel ->
-            realListener().onClick(channel)
+        ChannelListView.ChannelLongClickListener { channel ->
+            realListener().onLongClick(channel)
         }
     }
 
