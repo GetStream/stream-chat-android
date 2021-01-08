@@ -78,8 +78,7 @@ class ChannelListFragment : Fragment() {
                 ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
                         confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            // should clear history, leave & hide?
-                            viewModel.hideChannel(channel)
+                            viewModel.deleteChannel(channel)
                         }
                     }
                     .show(parentFragmentManager, null)
