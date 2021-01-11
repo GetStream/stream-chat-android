@@ -84,18 +84,8 @@ public open class MessageListItemViewHolderFactory(
 
     private fun createEmptyMessageItemViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<MessageListItem> {
         return object :
-            BaseMessageItemViewHolder<MessageListItem>(View(parentView.context), decoratorProvider.decorators) {
+            BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
     }
-}
-
-/**
- * Internal API for setting a blank [MessageListListenerContainer] when the
- * factory is being used in the Component Browser (in this case, no listener
- * container would be injected, because MessageListView is not used).
- */
-@InternalStreamChatApi
-public fun MessageListItemViewHolderFactory.initEmptyListeners() {
-    listenerContainer = MessageListListenerContainerImpl()
 }

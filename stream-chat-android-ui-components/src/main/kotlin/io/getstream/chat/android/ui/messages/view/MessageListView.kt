@@ -558,11 +558,14 @@ public class MessageListView : ConstraintLayout {
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
-                MessageListItemDecoratorProvider(currentUser, messageDateFormatter, channel.isDirectMessaging())
-            )
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
+        messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
+            currentUser = currentUser,
+            dateFormatter = messageDateFormatter,
+            isDirectMessage = channel.isDirectMessaging()
+        )
         messageListItemViewHolderFactory.listenerContainer = this.listenerContainer
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
