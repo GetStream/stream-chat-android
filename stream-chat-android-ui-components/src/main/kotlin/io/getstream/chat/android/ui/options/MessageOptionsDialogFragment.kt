@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBind
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.messages.adapter.initEmptyListeners
+import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -53,7 +53,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private lateinit var message: Message
-    private lateinit var viewHolder: BaseMessageItemViewHolder<*>
+    private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
 
     private var reactionClickHandler: ReactionClickHandler? = null
     private var messageOptionsHandlers: MessageOptionsHandlers? = null
@@ -127,8 +127,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory(MessageOptionsDecoratorProvider())
-            .apply { initEmptyListeners() }
+        viewHolder = MessageListItemViewHolderFactory()
+            .apply {
+                decoratorProvider = MessageOptionsDecoratorProvider()
+                listenerContainer = MessageListListenerContainerImpl()
+            }
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)

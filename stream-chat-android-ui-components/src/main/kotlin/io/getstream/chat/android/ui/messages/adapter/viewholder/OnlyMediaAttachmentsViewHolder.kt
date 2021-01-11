@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentsBinding
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewTypeMapper.isMedia
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListene
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
-public class OnlyMediaAttachmentsViewHolder(
+internal class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
@@ -22,7 +22,7 @@ public class OnlyMediaAttachmentsViewHolder(
             parent,
             false
         ),
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
         binding.run {
@@ -50,6 +50,8 @@ public class OnlyMediaAttachmentsViewHolder(
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
+
         if (data.message.attachments.isMedia()) {
             binding.mediaAttachmentsGroupView.showAttachments(data.message.attachments)
         }

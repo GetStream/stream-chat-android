@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Reacti
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ThreadRepliesDecorator
 
-public class MessageListItemDecoratorProvider(
+internal class MessageListItemDecoratorProvider(
     currentUser: User,
     dateFormatter: DateFormatter,
     isDirectMessage: Boolean,

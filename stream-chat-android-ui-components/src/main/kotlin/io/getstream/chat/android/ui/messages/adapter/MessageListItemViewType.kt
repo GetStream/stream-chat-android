@@ -11,5 +11,5 @@ public enum class MessageListItemViewType {
     LOADING_INDICATOR,
     THREAD_SEPARATOR,
     TYPING_INDICATOR,
-    GIPHY
+    GIPHY,
 }
