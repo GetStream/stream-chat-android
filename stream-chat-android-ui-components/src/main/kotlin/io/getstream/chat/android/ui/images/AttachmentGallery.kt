@@ -44,6 +44,8 @@ public class AttachmentGallery : ConstraintLayout {
 
     private var imageList: List<String> = mutableListOf()
 
+    private var isFullScreen = false
+
     public constructor(context: Context) : super(context)
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
@@ -63,8 +65,19 @@ public class AttachmentGallery : ConstraintLayout {
         configureImagesMenu()
     }
 
-    public fun provideImageList(fragmentActivity: FragmentActivity, imageList: List<String>, currentIndex: Int = 0) {
-        adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList)
+    public fun provideImageList(
+        fragmentActivity: FragmentActivity,
+        imageList: List<String>,
+        currentIndex: Int = 0,
+        imageClickListener: () -> Unit = {},
+    ) {
+        adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList) {
+            binding.bottomBarGroup.isVisible = isFullScreen
+
+            isFullScreen = !isFullScreen
+
+            imageClickListener()
+        }
         binding.attachmentGallery.adapter = adapter
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)

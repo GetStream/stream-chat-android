@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
@@ -17,6 +18,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private lateinit var dateFormatter: DateFormatter
 
+    private var isFullScreen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dateFormatter = DateFormatter.from(this)
@@ -28,7 +31,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         super.onStart()
         val urls = intent.getStringArrayExtra(EXTRA_KEY_URLS)?.toList().orEmpty()
         val currentIndex = intent.getIntExtra(EXTRA_KEY_CURRENT_INDEX, 0)
-        binding.attachmentGallery.provideImageList(this, urls, currentIndex)
+        binding.attachmentGallery.provideImageList(this, urls, currentIndex) {
+            binding.toolBarGroup.isVisible = isFullScreen
+
+            isFullScreen = !isFullScreen
+        }
         binding.run {
             closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
