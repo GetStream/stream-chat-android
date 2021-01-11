@@ -86,8 +86,7 @@ public class AttachmentGallery : ConstraintLayout {
                 } else {
                     galleryNormalSize()
                     binding.root.setBackgroundColor(
-                        ContextCompat.getColor(context,
-                            R.color.stream_ui_background_default)
+                        ContextCompat.getColor(context, R.color.stream_ui_background_default)
                     )
                 }
 
