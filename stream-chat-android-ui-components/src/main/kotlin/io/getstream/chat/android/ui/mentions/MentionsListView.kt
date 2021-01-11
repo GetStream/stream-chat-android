@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMentionsListViewBinding
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 public class MentionsListView : ViewFlipper {
 
@@ -53,10 +54,13 @@ public class MentionsListView : ViewFlipper {
                 DividerItemDecoration(
                     context,
                     LinearLayoutManager.VERTICAL
-                )
+                ).apply {
+                    setDrawable(context.getDrawable(R.drawable.stream_ui_divider)!!)
+                }
             )
             addOnScrollListener(scrollListener)
         }
+        setBackgroundColor(context.getColorCompat(R.color.stream_ui_background_alabaster_black))
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
