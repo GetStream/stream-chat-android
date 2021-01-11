@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import java.util.Date
+import java.util.Locale
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
 
@@ -44,7 +45,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             DateUtils.FORMAT_ABBREV_RELATIVE
         )
             .toString()
-            .decapitalize(resources.configuration.locales.get(0))
+            .decapitalize(Locale.getDefault())
 
         return getString(
             R.string.stream_ui_date_and_time_pattern,
