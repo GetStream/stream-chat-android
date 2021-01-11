@@ -13,26 +13,24 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 public class GiphyViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listenerContainer: MessageListListenerContainer?,
+    listeners: MessageListListenerContainer,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.inflater,
         parent,
         false
-    )
+    ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
-        listenerContainer?.also { listeners ->
-            binding.run {
-                cancelButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
-                }
-                sendButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
-                }
-                nextButton.setOnClickListener {
-                    listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
-                }
+        binding.run {
+            cancelButton.setOnClickListener {
+                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
+            }
+            sendButton.setOnClickListener {
+                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
+            }
+            nextButton.setOnClickListener {
+                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
             }
         }
     }
