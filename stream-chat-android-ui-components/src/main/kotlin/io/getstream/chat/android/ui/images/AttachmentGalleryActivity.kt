@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import java.util.Date
-import java.util.Locale
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
 
