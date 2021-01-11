@@ -3,10 +3,10 @@ package io.getstream.chat.android.ui.messagepreview
 import android.content.Context
 import android.text.Html
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.utils.extensions.singletonList
 
 public class MessagePreviewView : FrameLayout {
 
-    private val binding = StreamUiMessagePreviewItemBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = StreamUiMessagePreviewItemBinding.inflate(context.inflater, this, true)
 
     private var _dateFormatter: DateFormatter? = null
 
