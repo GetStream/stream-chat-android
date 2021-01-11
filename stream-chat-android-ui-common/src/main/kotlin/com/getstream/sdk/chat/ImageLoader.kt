@@ -8,8 +8,10 @@ import android.os.Environment
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
+import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
+import coil.request.videoFrameMillis
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
@@ -122,7 +124,7 @@ public object ImageLoader {
         onComplete: () -> Unit = {},
     ) {
         coilLoadAny(data, context.streamImageLoader) {
-            placeholderResId?.let { placeholder(it) }
+            placeholderResId?.let(::placeholder)
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },
@@ -130,7 +132,7 @@ public object ImageLoader {
                 onSuccess = { _, _ -> onComplete() },
             )
             if (videoContentUri) {
-                fetcher(VideoFrameUriFetcher(context))
+                fetcher(VideoFrameFileFetcher(context))
             }
             applyTransformation(transformation, context)
         }
