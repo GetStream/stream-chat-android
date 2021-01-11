@@ -1,22 +1,12 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 import android.text.format.DateUtils
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
 import java.util.Date
 
 class DateDividerComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDateDividerList(),
-            { parent -> DateDividerViewHolder(parent, decorators) },
-            DateDividerViewHolder::bind
-        )
-    }
-
-    private fun getDummyDateDividerList(): List<MessageListItem.DateSeparatorItem> {
+    override fun getItems(): List<MessageListItem> {
         return listOf(
             MessageListItem.DateSeparatorItem(Date()),
             MessageListItem.DateSeparatorItem(Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)),
