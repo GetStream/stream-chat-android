@@ -1,32 +1,16 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDeletedMessagesList(requireContext()),
-            { viewGroup ->
-                PlainTextWithMediaAttachmentsViewHolder(
-                    viewGroup,
-                    decorators,
-                    EmptyMessageListListenerContainer
-                )
-            },
-            PlainTextWithMediaAttachmentsViewHolder::bind
-        )
-    }
-
-    private fun getDummyDeletedMessagesList(context: Context): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
+        val context = requireContext()
         val uri1 = drawableResToUri(context, R.drawable.stream_ui_sample_image_1)
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)
@@ -36,6 +20,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
             text = "Some description",
             authorName = "Stream",
         )
+
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(

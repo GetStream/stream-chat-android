@@ -1,25 +1,15 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 
 class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
-    @OptIn(InternalStreamChatApi::class)
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyMessageList(),
-            { viewGroup -> GiphyViewHolder(viewGroup, decorators, EmptyMessageListListenerContainer) },
-            GiphyViewHolder::bind
-        )
-    }
 
-    @InternalStreamChatApi
-    private fun getDummyMessageList(): List<MessageListItem.MessageItem> {
+    @OptIn(InternalStreamChatApi::class)
+    override fun getItems(): List<MessageListItem.MessageItem> {
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(

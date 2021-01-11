@@ -5,21 +5,23 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
-public class DateDividerViewHolder(
+internal class DateDividerViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     internal val binding: StreamUiItemDateDividerBinding = StreamUiItemDateDividerBinding.inflate(
         parent.inflater,
         parent,
         false
-    )
-) : BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root, decorators) {
+    ),
+) : DecoratedBaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root, decorators) {
 
     override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
+
         binding.dateLabel.text =
             DateUtils.getRelativeTimeSpanString(
                 data.date.time,

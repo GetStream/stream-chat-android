@@ -4,12 +4,12 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
-public class MessagePlainTextViewHolder(
+internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
@@ -19,7 +19,7 @@ public class MessagePlainTextViewHolder(
             parent,
             false
         ),
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
         binding.run {
@@ -41,6 +41,8 @@ public class MessagePlainTextViewHolder(
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
+
         binding.messageText.text = data.message.text
     }
 }
