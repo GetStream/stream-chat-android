@@ -93,7 +93,7 @@ public open class MessageListItemViewHolder(
         listOfNotNull(
             spaceConfigurator,
             marginConfigurator,
-            messageTextConfigurator.takeIf { diff.text || diff.positions || diff.deleted || diff.reactions },
+            messageTextConfigurator.takeIf { diff.text || diff.positions || diff.deleted || diff.reactions || diff.syncStatus },
             attachmentConfigurator.takeIf { diff.attachments },
             reactionConfigurator.takeIf { diff.reactions },
             replyConfigurator.takeIf { diff.replies },
