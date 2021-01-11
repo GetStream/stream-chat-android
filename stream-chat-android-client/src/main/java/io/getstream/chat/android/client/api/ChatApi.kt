@@ -183,8 +183,8 @@ internal class ChatApi(
             .map {
                 it.results.map { resp ->
                     resp.message.apply {
-                        (cid.takeUnless { it.isBlank() } ?: channelInfo?.cid)
-                            ?.let { cidResult -> this.enrichWithCid(cidResult) }
+                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
+                            ?.let(::enrichWithCid)
                     }
                 }
             }
