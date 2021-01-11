@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFileAttachmentsBinding
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListener
@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentDownloadClic
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 
-public class OnlyFileAttachmentsViewHolder(
+internal class OnlyFileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
@@ -22,7 +22,7 @@ public class OnlyFileAttachmentsViewHolder(
             parent,
             false
         ),
-) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
         binding.run {
@@ -52,7 +52,9 @@ public class OnlyFileAttachmentsViewHolder(
         }
     }
 
-    public override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
+
         binding.fileAttachmentsView.setAttachments(data.message.attachments)
     }
 }

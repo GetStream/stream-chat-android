@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Gravit
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAttachmentDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 
-public class MessageOptionsDecoratorProvider : DecoratorProvider {
+internal class MessageOptionsDecoratorProvider : DecoratorProvider {
 
     private val messageOptionsDecorators = listOf<Decorator>(
         BackgroundDecorator(),
