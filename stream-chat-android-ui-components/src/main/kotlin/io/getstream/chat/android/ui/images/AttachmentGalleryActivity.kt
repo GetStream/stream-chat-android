@@ -31,11 +31,16 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         super.onStart()
         val urls = intent.getStringArrayExtra(EXTRA_KEY_URLS)?.toList().orEmpty()
         val currentIndex = intent.getIntExtra(EXTRA_KEY_CURRENT_INDEX, 0)
-        binding.attachmentGallery.provideImageList(this, urls, currentIndex) {
-            binding.toolBarGroup.isVisible = isFullScreen
+        binding.attachmentGallery.provideImageList(
+            fragmentActivity = this,
+            imageList = urls,
+            currentIndex = currentIndex,
+            imageClickListener = {
+                binding.toolBarGroup.isVisible = isFullScreen
 
-            isFullScreen = !isFullScreen
-        }
+                isFullScreen = !isFullScreen
+            }
+        )
         binding.run {
             closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
@@ -71,7 +76,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             userName: String,
             time: Long,
             currentIndex: Int,
-            urls: List<String>
+            urls: List<String>,
         ): Intent {
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)

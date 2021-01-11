@@ -14,7 +14,7 @@ public class ImageSlidePageFragment : Fragment() {
 
     private lateinit var binding: StreamUiItemImageGalleryBinding
 
-    private var imageClickListener: (() -> Unit)? = {}
+    private var imageClickListener: () -> Unit = {}
 
     public companion object {
         public fun create(imageUrl: String, imageClickListener: () -> Unit = {}): Fragment {
@@ -45,13 +45,8 @@ public class ImageSlidePageFragment : Fragment() {
             load(arguments?.getString(IMAGE_ID))
 
             setOnClickListener {
-                imageClickListener?.invoke()
+                imageClickListener()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        imageClickListener = null
     }
 }

@@ -6,12 +6,14 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
@@ -71,13 +73,28 @@ public class AttachmentGallery : ConstraintLayout {
         currentIndex: Int = 0,
         imageClickListener: () -> Unit = {},
     ) {
-        adapter = AttachmentSlidePagerAdapter(fragmentActivity, imageList) {
-            binding.bottomBarGroup.isVisible = isFullScreen
+        adapter = AttachmentSlidePagerAdapter(
+            fragmentActivity = fragmentActivity,
+            imageList = imageList,
+            imageClickListener = {
+                isFullScreen = !isFullScreen
+                binding.bottomBarGroup.isVisible = !isFullScreen
 
-            isFullScreen = !isFullScreen
+                if (isFullScreen) {
+                    galleryFullScreenSize()
+                    binding.root.setBackgroundColor(ContextCompat.getColor(context, R.color.stream_ui_black))
+                } else {
+                    galleryNormalSize()
+                    binding.root.setBackgroundColor(
+                        ContextCompat.getColor(context,
+                            R.color.stream_ui_background_default)
+                    )
+                }
 
-            imageClickListener()
-        }
+                imageClickListener()
+            }
+        )
+
         binding.attachmentGallery.adapter = adapter
         configPositionCount(imageList.size)
         binding.attachmentGallery.setCurrentItem(currentIndex, false)
@@ -98,6 +115,26 @@ public class AttachmentGallery : ConstraintLayout {
 
     public fun setMenuButtonClickListener(listener: OnClickListener) {
         binding.menuButton.setOnClickListener(listener)
+    }
+
+    private fun galleryFullScreenSize() {
+        val attachmentView = binding.attachmentGallery
+        ConstraintSet().apply {
+            constrainViewToParentBySide(attachmentView, ConstraintSet.TOP)
+            constrainViewToParentBySide(attachmentView, ConstraintSet.BOTTOM)
+            constrainViewToParentBySide(attachmentView, ConstraintSet.START)
+            constrainViewToParentBySide(attachmentView, ConstraintSet.END)
+        }.applyTo(binding.root)
+    }
+
+    private fun galleryNormalSize() {
+        val attachmentView = binding.attachmentGallery
+        ConstraintSet().apply {
+            constrainViewToParentBySide(attachmentView, ConstraintSet.TOP)
+            connect(attachmentView.id, ConstraintSet.BOTTOM, binding.shareButton.id, ConstraintSet.TOP, 0)
+            constrainViewToParentBySide(attachmentView, ConstraintSet.START)
+            constrainViewToParentBySide(attachmentView, ConstraintSet.END)
+        }.applyTo(binding.root)
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
