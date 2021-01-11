@@ -53,7 +53,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private lateinit var message: Message
-    private lateinit var viewHolder: BaseMessageItemViewHolder<*>
+    private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
 
     private var reactionClickHandler: ReactionClickHandler? = null
     private var messageOptionsHandlers: MessageOptionsHandlers? = null
