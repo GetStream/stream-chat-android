@@ -12,32 +12,30 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 public class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listenerContainer: MessageListListenerContainer?,
+    listeners: MessageListListenerContainer,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.inflater,
             parent,
             false
-        )
+        ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
-        listenerContainer?.let { listeners ->
-            binding.run {
-                root.setOnClickListener {
-                    listeners.messageClickListener.onMessageClick(data.message)
-                }
-                reactionsView.setReactionClickListener {
-                    listeners.reactionViewClickListener.onReactionViewClick(data.message)
-                }
-                threadRepliesFootnote.root.setOnClickListener {
-                    listeners.threadClickListener.onThreadClick(data.message)
-                }
+        binding.run {
+            root.setOnClickListener {
+                listeners.messageClickListener.onMessageClick(data.message)
+            }
+            reactionsView.setReactionClickListener {
+                listeners.reactionViewClickListener.onReactionViewClick(data.message)
+            }
+            threadRepliesFootnote.root.setOnClickListener {
+                listeners.threadClickListener.onThreadClick(data.message)
+            }
 
-                root.setOnLongClickListener {
-                    listeners.messageLongClickListener.onMessageLongClick(data.message)
-                    true
-                }
+            root.setOnLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
+                true
             }
         }
     }
