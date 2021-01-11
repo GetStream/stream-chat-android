@@ -395,7 +395,7 @@ internal class ChatApi(
                 connectionId,
                 query
             )
-        }.map { flattenChannel(it) }
+        }.map(::flattenChannel)
     }
 
     fun updateChannel(
