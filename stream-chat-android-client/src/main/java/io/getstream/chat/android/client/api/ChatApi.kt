@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -374,24 +375,24 @@ internal class ChatApi(
             return noConnectionIdError()
         }
 
-        if (channelId.isEmpty()) {
-            return retrofitApi.queryChannel(
+        return if (channelId.isEmpty()) {
+            retrofitApi.queryChannel(
                 channelType,
                 apiKey,
                 userId,
                 connectionId,
                 query
-            ).map { flattenChannel(it) }
+            )
         } else {
-            return retrofitApi.queryChannel(
+            retrofitApi.queryChannel(
                 channelType,
                 channelId,
                 apiKey,
                 userId,
                 connectionId,
                 query
-            ).map { flattenChannel(it) }
-        }
+            )
+        }.map { flattenChannel(it) }
     }
 
     fun updateChannel(
@@ -719,7 +720,7 @@ internal class ChatApi(
         response.channel.watcherCount = response.watcher_count
         response.channel.read = response.read.orEmpty()
         response.channel.members = response.members.orEmpty()
-        response.channel.messages = response.messages.orEmpty()
+        response.channel.messages = response.messages.orEmpty().map { it.enrichWithCid(response.channel.cid) }
         response.channel.watchers = response.watchers.orEmpty()
         response.channel.hidden = response.hidden
         response.channel.hiddenMessagesBefore = response.hide_messages_before
