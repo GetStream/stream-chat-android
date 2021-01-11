@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.view
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.os.Handler
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -47,6 +48,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickLis
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
@@ -64,6 +66,7 @@ public class MessageListView : ConstraintLayout {
 
     private companion object {
         const val LOAD_MORE_THRESHOLD = 10
+        const val HIGHLIGHT_MENTION_DELAY = 100L
     }
 
     private var firstVisiblePosition = 0
@@ -492,11 +495,19 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun scrollToMessage(message: Message) {
-        val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
-        targetListItem?.let {
-            val position = adapter.currentList.indexOf(it)
-            binding.chatMessagesRV.layoutManager?.scrollToPosition(position)
-        }
+        Handler().postDelayed(
+            {
+                adapter.currentList
+                    .indexOfFirst { it is MessageItem && it.message.id == message.id }
+                    ?.let {
+                        binding.chatMessagesRV
+                            .layoutManager
+                            ?.cast<LinearLayoutManager>()
+                            ?.scrollToPositionWithOffset(it, binding.chatMessagesRV.height / 2)
+                    }
+            },
+            HIGHLIGHT_MENTION_DELAY
+        )
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
@@ -650,7 +661,7 @@ public class MessageListView : ConstraintLayout {
         startThreadMode: Boolean,
         listItem: MessageListItemWrapper,
         entities: List<MessageListItem>,
-        oldSize: Int
+        oldSize: Int,
     ) {
         val newSize = adapter.itemCount
         val sizeGrewBy = newSize - oldSize

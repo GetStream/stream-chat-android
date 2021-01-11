@@ -403,34 +403,42 @@ internal class ChannelControllerImpl(
 
     private fun loadMoreMessagesRequest(
         limit: Int = 30,
-        direction: Pagination
+        direction: Pagination,
+        messageId: String? = null,
     ): QueryChannelPaginationRequest {
+        return QueryChannelPaginationRequest(limit).apply {
+            val messageId = messageId ?: getLoadMoreBaseMessageId(direction)
+            messageId?.let {
+                messageFilterDirection = direction
+                messageFilterValue = it
+            }
+        }
+    }
+
+    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
         val messages = sortedMessages()
-        val request = QueryChannelPaginationRequest(limit)
-        if (messages.isNotEmpty()) {
-            val messageId: String = when (direction) {
-                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
+        return if (messages.isNotEmpty()) {
+            when (direction) {
+                Pagination.GREATER_THAN_OR_EQUAL,
+                Pagination.GREATER_THAN -> {
                     messages.last().id
                 }
-                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
+                Pagination.LESS_THAN,
+                Pagination.LESS_THAN_OR_EQUAL -> {
                     messages.first().id
                 }
             }
-            request.apply {
-                messageFilterDirection = direction
-                messageFilterValue = messageId
-            }
+        } else {
+            null
         }
-
-        return request
     }
 
-    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.LESS_THAN))
+    suspend fun loadOlderMessages(limit: Int = 30, messageId: String? = null): Result<Channel> {
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.LESS_THAN, messageId))
     }
 
-    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
+    suspend fun loadNewerMessages(limit: Int = 30, messageId: String? = null): Result<Channel> {
+        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN, messageId))
     }
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
@@ -1357,17 +1365,16 @@ internal class ChannelControllerImpl(
     internal suspend fun loadMessageById(
         messageId: String,
         newerMessagesOffset: Int,
-        olderMessagesOffset: Int
+        olderMessagesOffset: Int,
     ): Result<Message> {
         val result = client.getMessage(messageId).await()
         if (result.isError) {
             return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
         val message = result.data()
-        _messages.value = emptyMap()
         upsertMessage(message)
-        loadNewerMessages(newerMessagesOffset)
-        loadOlderMessages(olderMessagesOffset)
+        loadNewerMessages(newerMessagesOffset, messageId)
+        loadOlderMessages(olderMessagesOffset, messageId)
         return Result(message)
     }
 
