@@ -14,7 +14,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
     override fun createAdapter(): RecyclerView.Adapter<*> {
         return DefaultAdapter(
             getDummyMessageList(),
-            { viewGroup -> MessagePlainTextViewHolder(viewGroup, decorators, null) },
+            { viewGroup -> MessagePlainTextViewHolder(viewGroup, decorators, EmptyMessageListListenerContainer) },
             MessagePlainTextViewHolder::bind
         )
     }
