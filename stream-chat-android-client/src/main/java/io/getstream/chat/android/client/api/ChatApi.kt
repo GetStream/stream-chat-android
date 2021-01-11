@@ -182,7 +182,10 @@ internal class ChatApi(
         return retrofitApi.searchMessages(apiKey, connectionId, request)
             .map {
                 it.results.map { resp ->
-                    resp.message
+                    resp.message.apply {
+                        (cid.takeUnless { it.isBlank() } ?: channelInfo?.cid)
+                            ?.let { cidResult -> this.enrichWithCid(cidResult) }
+                    }
                 }
             }
     }
