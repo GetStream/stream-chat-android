@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import coil.fetch.VideoFrameFileFetcher
+import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
@@ -130,6 +131,7 @@ public object ImageLoader {
                 onSuccess = { _, _ -> onComplete() },
             )
             if (videoContentUri) {
+                fetcher(VideoFrameUriFetcher(context))
                 fetcher(VideoFrameFileFetcher(context))
             }
             applyTransformation(transformation, context)
