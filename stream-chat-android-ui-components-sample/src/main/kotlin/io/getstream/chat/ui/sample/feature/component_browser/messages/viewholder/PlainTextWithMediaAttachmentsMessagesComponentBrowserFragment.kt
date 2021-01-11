@@ -16,9 +16,11 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
         return DefaultAdapter(
             getDummyDeletedMessagesList(requireContext()),
             { viewGroup ->
-                PlainTextWithMediaAttachmentsViewHolder(viewGroup,
+                PlainTextWithMediaAttachmentsViewHolder(
+                    viewGroup,
                     decorators,
-                    EmptyMessageListListenerContainer)
+                    EmptyMessageListListenerContainer
+                )
             },
             PlainTextWithMediaAttachmentsViewHolder::bind
         )
