@@ -34,7 +34,7 @@
                 android:paddingBottom="4dp"
                 android:text="@string/stream_ui_commands_instant_commands"
                 android:textColor="@color/stream_ui_text_color_light"
-                android:textSize="@dimen/stream_ui_text_medium"
+                android:textAppearance="@style/StreamUiTextAppearance.Body"
                 app:drawableStartCompat="@drawable/stream_ui_ic_command"
                 app:drawableTint="@color/stream_ui_blue"
                 app:layout_constraintBottom_toTopOf="@id/suggestionsRecyclerView"

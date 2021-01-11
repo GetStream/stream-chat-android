@@ -26,11 +26,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:textSize="@dimen/stream_ui_text_medium"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/mentionNameTextView"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
+        android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         tools:text="Rebel Titan"
         />
 
@@ -39,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:textSize="@dimen/stream_ui_text_small"
+        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/usernameTextView"

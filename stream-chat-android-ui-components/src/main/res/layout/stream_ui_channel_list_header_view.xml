@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/onlineTextView"
-        style="@style/StreamUiChannelsHeaderTitleStyle"
+        style="@style/StreamUiTextAppearance.HeadlineBold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -59,7 +59,7 @@
 
         <TextView
             android:id="@+id/offlineTextView"
-            style="@style/StreamUiChannelsHeaderTitleStyle"
+            style="@style/StreamUiTextAppearance.HeadlineBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stream_ui_channels_header_view_offline_title"
