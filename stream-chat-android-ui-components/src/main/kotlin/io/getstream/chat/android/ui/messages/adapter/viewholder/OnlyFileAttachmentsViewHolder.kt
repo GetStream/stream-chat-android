@@ -15,41 +15,39 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 public class OnlyFileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listenerContainer: MessageListListenerContainer?,
+    listeners: MessageListListenerContainer,
     internal val binding: StreamUiItemMessageFileAttachmentsBinding =
         StreamUiItemMessageFileAttachmentsBinding.inflate(
             parent.inflater,
             parent,
             false
-        )
+        ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
-        listenerContainer?.let { listeners ->
-            binding.run {
-                root.setOnClickListener {
-                    listeners.messageClickListener.onMessageClick(data.message)
-                }
-                threadRepliesFootnote.root.setOnClickListener {
-                    listeners.threadClickListener.onThreadClick(data.message)
-                }
-                reactionsView.setReactionClickListener {
-                    listeners.reactionViewClickListener.onReactionViewClick(data.message)
-                }
-                fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
-                    listeners.attachmentClickListener.onAttachmentClick(data.message, it)
-                }
-                fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
-                    listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-                }
+        binding.run {
+            root.setOnClickListener {
+                listeners.messageClickListener.onMessageClick(data.message)
+            }
+            threadRepliesFootnote.root.setOnClickListener {
+                listeners.threadClickListener.onThreadClick(data.message)
+            }
+            reactionsView.setReactionClickListener {
+                listeners.reactionViewClickListener.onReactionViewClick(data.message)
+            }
+            fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
+                listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+            }
+            fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
+                listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+            }
 
-                root.setOnLongClickListener {
-                    listeners.messageLongClickListener.onMessageLongClick(data.message)
-                    true
-                }
-                fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
-                    listeners.messageLongClickListener.onMessageLongClick(data.message)
-                }
+            root.setOnLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
+                true
+            }
+            fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
             }
         }
     }

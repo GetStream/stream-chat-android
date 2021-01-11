@@ -4,10 +4,8 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -25,26 +23,11 @@ internal class QueryChannelsPostponeHelper(
         channelId: String,
         request: QueryChannelRequest
     ): Call<Channel> = runBlocking {
-        // for convenience we add the message.cid field
-        doJob {
-            api.queryChannel(channelType, channelId, request)
-                .map { channel ->
-                    channel.messages.forEach { it.enrichWithCid(channel.cid) }
-                    channel
-                }
-        }
+        doJob { api.queryChannel(channelType, channelId, request) }
     }
 
     internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = runBlocking {
-        doJob {
-            // for convenience we add the message.cid field
-            api.queryChannels(request).map { channels ->
-                channels.map { channel ->
-                    channel.messages.forEach { it.enrichWithCid(channel.cid) }
-                }
-                channels
-            }
-        }
+        doJob { api.queryChannels(request) }
     }
 
     private tailrec suspend fun <T> doJob(attemptCount: Int = attemptsCount, job: () -> T): T {
