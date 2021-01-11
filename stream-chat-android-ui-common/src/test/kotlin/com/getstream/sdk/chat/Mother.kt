@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -18,6 +19,7 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import java.io.File
 import java.time.Instant
 import java.util.Date
 
@@ -165,3 +167,44 @@ internal fun createCommand(
     args: String = randomString(),
     set: String = randomString()
 ): Command = Command(name, description, args, set)
+
+internal fun createMember(
+    user: User = createUser(),
+    role: String = randomString(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    isInvited: Boolean = randomBoolean(),
+    inviteAcceptedAt: Date? = randomDate(),
+    inviteRejectedAt: Date? = randomDate()
+): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+
+internal fun createMembers(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Member = { createMember() }
+): List<Member> = List(size, creationFunction)
+
+internal fun createAttachment(
+    authorName: String? = randomString(),
+    titleLink: String? = randomString(),
+    thumbUrl: String? = randomString(),
+    imageUrl: String? = randomString(),
+    assetUrl: String? = randomString(),
+    ogUrl: String? = randomString(),
+    mimeType: String? = randomString(),
+    fileSize: Int = randomInt(),
+    title: String? = randomString(),
+    text: String? = randomString(),
+    type: String? = randomString(),
+    image: String? = randomString(),
+    url: String? = randomString(),
+    name: String? = randomString(),
+    fallback: String? = randomString(),
+    uploadFile: File? = null,
+    uploadState: Attachment.UploadState? = null,
+    extraData: MutableMap<String, Any> = mutableMapOf()
+): Attachment = Attachment(
+    authorName, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
+    fileSize, title, text, type, image, url, name, fallback, uploadFile, uploadState, extraData
+)
+
+internal fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
