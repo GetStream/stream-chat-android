@@ -21,7 +21,7 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:background="@color/stream_ui_background_default_selector"
         android:clipToPadding="false"
-        app:cardElevation="@dimen/stream_ui_elevation_big"
+        app:cardElevation="@dimen/stream_ui_elevation_small"
         app:layout_constraintEnd_toStartOf="@id/marginEnd"
         app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -50,7 +50,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/stream_ui_circle_white"
                 android:clickable="false"
-                android:elevation="@dimen/stream_ui_elevation_big"
+                android:elevation="@dimen/stream_ui_elevation_small"
                 android:paddingStart="3dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="5dp"
@@ -84,7 +84,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/stream_ui_circle_white"
                 android:duplicateParentState="false"
-                android:elevation="@dimen/stream_ui_elevation_big"
+                android:elevation="@dimen/stream_ui_elevation_small"
                 android:paddingStart="5dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="3dp"
@@ -164,16 +164,6 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
-        />
-
-    <include
-        android:id="@+id/threadRepliesFootnote"
-        layout="@layout/stream_ui_message_threads_footnote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
 
