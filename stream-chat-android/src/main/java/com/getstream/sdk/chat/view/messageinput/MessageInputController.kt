@@ -161,7 +161,7 @@ internal class MessageInputController(
     }
 
     internal fun onFileCaptured(context: Context, file: File) {
-        attachmentsController.selectAttachmentFromCamera(AttachmentMetaData(file))
+        attachmentsController.selectAttachmentFromCamera(AttachmentMetaData(context, file))
     }
 
     internal fun onFilesSelected(uriList: List<Uri>) {
