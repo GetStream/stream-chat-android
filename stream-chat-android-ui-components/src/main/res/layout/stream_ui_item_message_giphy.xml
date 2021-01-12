@@ -19,9 +19,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
-        android:background="@color/stream_ui_background_default_selector"
         android:clipToPadding="false"
-        app:cardElevation="@dimen/stream_ui_elevation_big"
+        app:cardBackgroundColor="@color/stream_ui_background_light"
+        app:cardElevation="@dimen/stream_ui_elevation_small"
         app:layout_constraintEnd_toStartOf="@id/marginEnd"
         app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -50,7 +50,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/stream_ui_circle_white"
                 android:clickable="false"
-                android:elevation="@dimen/stream_ui_elevation_big"
+                android:elevation="@dimen/stream_ui_elevation_small"
                 android:paddingStart="3dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="5dp"
@@ -60,6 +60,7 @@
                 app:layout_constraintRight_toLeftOf="@id/giphyTextLabel"
                 app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
                 app:tint="@color/stream_ui_send_button_disabled"
+                tools:ignore="ContentDescription"
                 />
 
             <TextView
@@ -83,18 +84,19 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/stream_ui_circle_white"
                 android:duplicateParentState="false"
-                android:elevation="@dimen/stream_ui_elevation_big"
+                android:elevation="@dimen/stream_ui_elevation_small"
                 android:paddingStart="5dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="3dp"
                 android:paddingBottom="4dp"
-                android:src="@drawable/stream_ui_arrow_right"
+                android:src="@drawable/stream_ui_arrow_right_rounded"
                 app:layout_constraintBottom_toBottomOf="@id/previousButton"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
                 app:tint="@color/stream_ui_icon_strong_tint"
+                tools:ignore="ContentDescription"
                 />
 
             <View
@@ -116,8 +118,8 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="@string/stream_ui_cancel_label"
-                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/verticalDivider"
@@ -142,8 +144,8 @@
                 android:background="?selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/stream_ui_send_label"
-                android:textColor="@color/stream_ui_blue"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+                android:textColor="@color/stream_ui_blue"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/verticalDivider"
                 app:layout_constraintRight_toRightOf="parent"
@@ -162,16 +164,6 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
-        />
-
-    <include
-        android:id="@+id/threadRepliesFootnote"
-        layout="@layout/stream_ui_message_threads_footnote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
 

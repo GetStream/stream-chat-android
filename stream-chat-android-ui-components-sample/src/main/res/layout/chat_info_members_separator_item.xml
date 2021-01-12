@@ -8,7 +8,6 @@
     android:background="@drawable/stream_ui_selectable_item_background_white"
     android:clickable="true"
     android:drawablePadding="16dp"
-    android:drawableTint="@color/stream_ui_boulder"
     android:focusable="true"
     android:gravity="start|center_vertical"
     android:paddingStart="18dp"
@@ -16,5 +15,6 @@
     android:textColor="@color/stream_ui_boulder"
     android:textSize="@dimen/stream_ui_text_medium"
     app:drawableStartCompat="@drawable/ic_icon_down"
+    app:drawableTint="@color/stream_ui_boulder"
     tools:text="10 more"
     />

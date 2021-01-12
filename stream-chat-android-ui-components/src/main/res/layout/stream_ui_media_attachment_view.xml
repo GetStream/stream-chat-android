@@ -73,9 +73,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:src="@drawable/stream_ui_giphy_label"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintLeft_toLeftOf="@id/imageView"
-        android:visibility="gone"
+        tools:ignore="ContentDescription"
         tools:visibility="visible"
         />
 
