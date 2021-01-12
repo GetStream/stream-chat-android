@@ -2,6 +2,7 @@
 <resources>
     <!-- Greys -->
     <color name="stream_ui_white_smoke">#13151B</color>
+    <color name="stream_ui_white_snow">#070A0D</color>
 
     <!-- Specials -->
     <color name="stream_ui_overlay_dark">#99FFFFFF</color>
@@ -29,7 +30,6 @@
         @color/stream_ui_background_light
     </color>
 
-    <color name="stream_ui_background_default">@color/stream_ui_black</color>
     <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
     <color name="stream_ui_background_alabaster_black">@color/stream_ui_black</color>
     <color name="stream_ui_background_date_divider">@color/stream_ui_white_60</color>

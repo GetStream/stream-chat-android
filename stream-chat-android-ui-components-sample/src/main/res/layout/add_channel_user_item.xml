@@ -5,7 +5,7 @@
     android:id="@+id/userContainer"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/stream_ui_background_default"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
