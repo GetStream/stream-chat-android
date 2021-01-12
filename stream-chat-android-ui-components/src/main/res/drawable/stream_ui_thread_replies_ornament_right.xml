@@ -2,10 +2,12 @@
     android:width="17dp"
     android:height="33dp"
     android:viewportWidth="17"
-    android:viewportHeight="33">
-  <path
-      android:strokeWidth="1"
-      android:pathData="M0.5,32V32C9.3366,32 16.5,24.8366 16.5,16L16.5,0"
-      android:fillColor="#00000000"
-      android:strokeColor="#DBDBDB"/>
+    android:viewportHeight="33"
+    >
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0.5,32V32C9.3366,32 16.5,24.8366 16.5,16L16.5,0"
+        android:strokeWidth="1"
+        android:strokeColor="@color/stream_ui_grey_gainsboro"
+        />
 </vector>

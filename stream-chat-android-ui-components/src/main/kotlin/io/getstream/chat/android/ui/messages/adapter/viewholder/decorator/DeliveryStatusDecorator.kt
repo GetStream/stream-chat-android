@@ -67,7 +67,6 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
             imageView.setImageResource(drawableRes)
         }
 
-        // TODO review this logic for the BOTTOM check
         if (data.isNotBottomPosition()) {
             hideIndicator()
             return
@@ -84,9 +83,9 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
             }
             SyncStatus.COMPLETED -> {
                 if (data.messageReadBy.isNotEmpty()) {
-                    showIndicator(R.drawable.stream_ui_ic_check_all)
+                    showIndicator(R.drawable.stream_ui_ic_check_double)
                 } else {
-                    showIndicator(R.drawable.stream_ui_ic_check_gray)
+                    showIndicator(R.drawable.stream_ui_ic_check_single)
                 }
             }
             SyncStatus.FAILED_PERMANENTLY -> {

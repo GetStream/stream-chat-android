@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/stream_ui_attachment_dialog_header_color"
@@ -46,13 +47,14 @@
         android:id="@+id/attachButton"
         android:layout_width="@dimen/stream_ui_attachment_dialog_button_size"
         android:layout_height="@dimen/stream_ui_attachment_dialog_button_size"
-        android:scaleType="center"
         android:layout_margin="6dp"
-        android:tint="@color/stream_ui_attach_button"
         android:background="@null"
+        android:scaleType="center"
         android:src="@drawable/stream_ui_ic_next"
-        app:layout_constraintTop_toTopOf="parent"
+        android:tint="@color/stream_ui_attach_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
         />
 
     <com.google.android.material.card.MaterialCardView

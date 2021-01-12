@@ -60,6 +60,7 @@
                 app:layout_constraintRight_toLeftOf="@id/giphyTextLabel"
                 app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
                 app:tint="@color/stream_ui_send_button_disabled"
+                tools:ignore="ContentDescription"
                 />
 
             <TextView
@@ -88,13 +89,14 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="3dp"
                 android:paddingBottom="4dp"
-                android:src="@drawable/stream_ui_arrow_right"
+                android:src="@drawable/stream_ui_arrow_right_rounded"
                 app:layout_constraintBottom_toBottomOf="@id/previousButton"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
                 app:tint="@color/stream_ui_icon_strong_tint"
+                tools:ignore="ContentDescription"
                 />
 
             <View
@@ -116,8 +118,8 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="@string/stream_ui_cancel_label"
-                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/verticalDivider"
@@ -142,8 +144,8 @@
                 android:background="?selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/stream_ui_send_label"
-                android:textColor="@color/stream_ui_blue"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+                android:textColor="@color/stream_ui_blue"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/verticalDivider"
                 app:layout_constraintRight_toRightOf="parent"
