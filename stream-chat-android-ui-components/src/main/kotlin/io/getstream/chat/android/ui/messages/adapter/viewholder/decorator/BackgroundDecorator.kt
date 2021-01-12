@@ -34,14 +34,14 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -50,7 +50,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -59,7 +59,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -68,7 +68,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -91,7 +91,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     private fun decorateAttachmentsAndBackground(
         background: View,
         attachmentView: View,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         setDefaultBackgroundDrawable(background, data)
 

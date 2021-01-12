@@ -206,11 +206,11 @@ public class ChannelViewHolder @JvmOverloads constructor(
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
         when {
             !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_all)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_double)
             }
 
             currentUserSentLastMessage && !lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_single)
             }
 
             else -> determineLastMessageSyncStatus(lastMessage)
@@ -224,7 +224,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
             }
 
             SyncStatus.COMPLETED -> {
-                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_gray)
+                messageStatusImageView.setImageResource(R.drawable.stream_ui_ic_check_single)
             }
 
             SyncStatus.FAILED_PERMANENTLY -> {

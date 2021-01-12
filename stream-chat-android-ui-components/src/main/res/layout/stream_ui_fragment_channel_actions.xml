@@ -63,26 +63,29 @@
         android:id="@+id/view_info_button"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
-        android:drawableStart="@drawable/stream_ui_ic_single_user"
         android:text="@string/stream_ui_view_info"
+        app:drawableStartCompat="@drawable/stream_ui_ic_single_user"
+        app:drawableTint="@color/stream_ui_boulder"
         />
 
     <TextView
         android:id="@+id/leave_group_button"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
-        android:drawableStart="@drawable/stream_ui_ic_leave_group"
         android:text="@string/stream_ui_channel_actions_leave_group"
+        app:drawableStartCompat="@drawable/stream_ui_ic_leave_group"
+        app:drawableTint="@color/stream_ui_boulder"
         />
 
     <TextView
         android:id="@+id/delete_button"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
-        android:drawableStart="@drawable/stream_ui_ic_delete"
         android:text="@string/stream_ui_delete_conversation"
         android:textColor="@color/stream_ui_text_red"
         android:visibility="gone"
+        app:drawableStartCompat="@drawable/stream_ui_ic_delete"
+        app:drawableTint="@color/stream_ui_light_red"
         tools:visibility="visible"
         />
 
@@ -90,8 +93,9 @@
         android:id="@+id/cancel_button"
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
-        android:drawableStart="@drawable/stream_ui_ic_clear_gray"
         android:text="@string/stream_ui_cancel"
+        app:drawableStartCompat="@drawable/stream_ui_ic_clear"
+        app:drawableTint="@color/stream_ui_boulder"
         />
 
 </LinearLayout>

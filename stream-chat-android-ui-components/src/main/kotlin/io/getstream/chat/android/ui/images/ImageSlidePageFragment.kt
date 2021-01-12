@@ -14,12 +14,16 @@ public class ImageSlidePageFragment : Fragment() {
 
     private lateinit var binding: StreamUiItemImageGalleryBinding
 
+    private var imageClickListener: () -> Unit = {}
+
     public companion object {
-        public fun create(imageUrl: String): Fragment {
+        public fun create(imageUrl: String, imageClickListener: () -> Unit = {}): Fragment {
             return ImageSlidePageFragment().apply {
                 arguments = Bundle().apply {
                     putString(IMAGE_ID, imageUrl)
                 }
+
+                this.imageClickListener = imageClickListener
             }
         }
     }
@@ -37,6 +41,12 @@ public class ImageSlidePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.attachmentImage.load(arguments?.getString(IMAGE_ID))
+        binding.attachmentImage.run {
+            load(arguments?.getString(IMAGE_ID))
+
+            setOnClickListener {
+                imageClickListener()
+            }
+        }
     }
 }

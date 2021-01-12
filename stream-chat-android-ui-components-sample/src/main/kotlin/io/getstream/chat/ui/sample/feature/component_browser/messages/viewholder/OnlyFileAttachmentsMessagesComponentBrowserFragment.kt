@@ -1,10 +1,8 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentDoc
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentPdf
@@ -14,16 +12,8 @@ import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDeletedMessagesList(),
-            { viewGroup -> OnlyFileAttachmentsViewHolder(viewGroup, decorators, EmptyMessageListListenerContainer) },
-            OnlyFileAttachmentsViewHolder::bind
-        )
-    }
-
     @OptIn(InternalStreamChatApi::class)
-    private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf)),

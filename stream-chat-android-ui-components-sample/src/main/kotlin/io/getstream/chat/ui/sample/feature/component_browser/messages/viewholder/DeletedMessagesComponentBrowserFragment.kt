@@ -1,22 +1,12 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import java.util.Date
 
 class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDeletedMessagesList(),
-            { parent -> MessageDeletedViewHolder(parent, decorators) },
-            MessageDeletedViewHolder::bind
-        )
-    }
-
-    private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),

@@ -1,25 +1,15 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDeletedMessagesList(requireContext()),
-            { viewGroup -> OnlyMediaAttachmentsViewHolder(viewGroup, decorators, EmptyMessageListListenerContainer) },
-            OnlyMediaAttachmentsViewHolder::bind
-        )
-    }
-
-    private fun getDummyDeletedMessagesList(context: Context): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
+        val context = requireContext()
         val uri1 = drawableResToUri(context, R.drawable.stream_ui_sample_image_1)
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)

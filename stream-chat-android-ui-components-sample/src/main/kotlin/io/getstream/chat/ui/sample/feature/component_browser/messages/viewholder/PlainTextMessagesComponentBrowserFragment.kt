@@ -1,25 +1,16 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 import java.util.Date
 
 class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyMessageList(),
-            { viewGroup -> MessagePlainTextViewHolder(viewGroup, decorators, EmptyMessageListListenerContainer) },
-            MessagePlainTextViewHolder::bind
-        )
-    }
 
-    private fun getDummyMessageList(): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
         val date = Date()
         val attachmentLink = Attachment(
             ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),

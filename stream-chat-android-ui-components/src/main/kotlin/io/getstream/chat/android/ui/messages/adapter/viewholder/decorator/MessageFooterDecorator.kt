@@ -17,8 +17,11 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isEphemeral
+import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
+import java.util.Date
 
 internal class MessageFooterDecorator(
     private val dateFormatter: DateFormatter,
@@ -92,15 +95,18 @@ internal class MessageFooterDecorator(
     }
 
     private fun setupMessageFooterTime(textView: TextView, data: MessageListItem.MessageItem) {
+        fun TextView.showTime(time: Date) {
+            isVisible = true
+            text = dateFormatter.formatTime(time)
+        }
+
         val createdAt = data.message.getCreatedAtOrNull()
+        val updatedAt = data.message.getUpdatedAtOrNull()
+
         when {
             data.isNotBottomPosition() || createdAt == null -> textView.isVisible = false
-            else -> {
-                textView.apply {
-                    isVisible = true
-                    text = dateFormatter.formatTime(createdAt)
-                }
-            }
+            data.message.isGiphyNotEphemeral() && updatedAt != null -> textView.showTime(updatedAt)
+            else -> textView.showTime(createdAt)
         }
     }
 }

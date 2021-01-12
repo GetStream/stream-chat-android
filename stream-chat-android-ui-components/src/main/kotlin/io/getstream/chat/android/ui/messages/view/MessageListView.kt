@@ -569,11 +569,14 @@ public class MessageListView : ConstraintLayout {
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(
-                MessageListItemDecoratorProvider(currentUser, messageDateFormatter, channel.isDirectMessaging())
-            )
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
+        messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
+            currentUser = currentUser,
+            dateFormatter = messageDateFormatter,
+            isDirectMessage = channel.isDirectMessaging()
+        )
         messageListItemViewHolderFactory.listenerContainer = this.listenerContainer
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
@@ -765,6 +768,16 @@ public class MessageListView : ConstraintLayout {
     public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
         listenerContainer.messageClickListener =
             messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
+    }
+
+    /**
+     * Sets the message long click listener to be used by MessageListView.
+     *
+     * @param messageLongClickListener The listener to use. If null, the default will be used instead.
+     */
+    public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
+        listenerContainer.messageLongClickListener =
+            messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**

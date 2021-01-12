@@ -1,34 +1,18 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
 class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun createAdapter(): RecyclerView.Adapter<*> {
-        return DefaultAdapter(
-            getDummyDeletedMessagesList(),
-            { viewGroup ->
-                PlainTextWithFileAttachmentsViewHolder(
-                    viewGroup,
-                    decorators,
-                    EmptyMessageListListenerContainer
-                )
-            },
-            PlainTextWithFileAttachmentsViewHolder::bind
-        )
-    }
-
     @OptIn(InternalStreamChatApi::class)
-    private fun getDummyDeletedMessagesList(): List<MessageListItem.MessageItem> {
+    override fun getItems(): List<MessageListItem.MessageItem> {
         val attachmentLink = Attachment(
             ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
             title = "Title",

@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 
 public class MessageListItemAdapter(
-    private val viewHolderFactory: MessageListItemViewHolderFactory
-) : ListAdapter<MessageListItem, BaseMessageItemViewHolder<*>>(MessageListItemDiffCallback) {
+    private val viewHolderFactory: MessageListItemViewHolderFactory,
+) : ListAdapter<MessageListItem, BaseMessageItemViewHolder<out MessageListItem>>(MessageListItemDiffCallback) {
 
     public var isThread: Boolean = false
 
@@ -18,19 +18,19 @@ public class MessageListItemAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
-    ): BaseMessageItemViewHolder<*> {
+        viewType: Int,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
         return viewHolderFactory.createViewHolder(parent, viewType)
     }
 
-    override fun onBindViewHolder(holder: BaseMessageItemViewHolder<*>, position: Int) {
+    override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
         holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
     }
 
     override fun onBindViewHolder(
-        holder: BaseMessageItemViewHolder<*>,
+        holder: BaseMessageItemViewHolder<out MessageListItem>,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         val diff = (
             payloads

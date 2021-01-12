@@ -6,20 +6,20 @@
     android:background="@color/component_browser_background"
     >
 
-    <io.getstream.chat.android.ui.typing.TypingIndicator
+    <io.getstream.chat.android.ui.typing.TypingIndicatorView
         android:id="@+id/noTypingsView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 
-    <io.getstream.chat.android.ui.typing.TypingIndicator
+    <io.getstream.chat.android.ui.typing.TypingIndicatorView
         android:id="@+id/oneUserTypingView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         />
 
-    <io.getstream.chat.android.ui.typing.TypingIndicator
+    <io.getstream.chat.android.ui.typing.TypingIndicatorView
         android:id="@+id/multipleUsersTypingView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

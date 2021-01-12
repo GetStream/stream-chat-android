@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messageFooterContainer"
     android:layout_width="wrap_content"
@@ -12,11 +13,13 @@
         android:id="@+id/messageFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
         android:layout_marginRight="@dimen/stream_ui_spacing_small"
         android:gravity="start"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textColor="@color/stream_ui_text_color_strong"
         android:visibility="gone"
+        app:drawableTint="@color/stream_ui_boulder"
         tools:ignore="RtlHardcoded"
         tools:text="Visible only for you"
         />
@@ -25,15 +28,18 @@
         android:id="@+id/deliveryStatusIcon"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
         android:layout_marginEnd="4dp"
         android:visibility="gone"
-        tools:src="@drawable/stream_ui_ic_check_all"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_check_double"
         />
 
     <TextView
         android:id="@+id/timeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
         android:gravity="start"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textSize="@dimen/stream_ui_text_small"
