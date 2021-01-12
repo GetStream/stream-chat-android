@@ -12,13 +12,13 @@
         android:id="@+id/replyHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/messageInputFieldView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:paddingHorizontal="@dimen/stream_ui_spacing_small"
         android:paddingVertical="12dp"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/messageInputFieldView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible"
         >
 
@@ -26,34 +26,37 @@
             android:id="@+id/replyIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/stream_ui_ic_arrow_curve_left"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/stream_ui_ic_arrow_curve_left"
             app:tint="@color/stream_ui_grey_gainsboro"
+            tools:ignore="ContentDescription"
             />
 
         <TextView
             android:id="@+id/headerLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/replyIcon"
-            app:layout_constraintEnd_toStartOf="@id/dismissReply"
             android:gravity="center"
             android:text="@string/stream_ui_reply_to_message"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/dismissReply"
+            app:layout_constraintStart_toEndOf="@id/replyIcon"
+            app:layout_constraintTop_toTopOf="parent"
             />
 
         <ImageView
             android:id="@+id/dismissReply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/stream_ui_ic_clear"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/stream_ui_ic_clear_gray"
+            app:tint="@color/stream_ui_boulder"
+            tools:ignore="ContentDescription"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

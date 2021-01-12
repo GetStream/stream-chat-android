@@ -20,6 +20,7 @@
         app:elevation="3dp"
         app:fabCustomSize="@dimen/stream_ui_scroll_button_size"
         app:rippleColor="@color/stream_ui_grey"
+        tools:ignore="ContentDescription"
         />
 
     <TextView

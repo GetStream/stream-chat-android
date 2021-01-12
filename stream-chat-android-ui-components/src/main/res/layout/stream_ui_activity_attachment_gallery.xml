@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/stream_ui_icon_strong_tint"
+        tools:ignore="ContentDescription"
         />
 
     <TextView
@@ -59,6 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/stream_ui_icon_strong_tint"
+        tools:ignore="ContentDescription"
         />
 
     <androidx.constraintlayout.widget.Guideline
