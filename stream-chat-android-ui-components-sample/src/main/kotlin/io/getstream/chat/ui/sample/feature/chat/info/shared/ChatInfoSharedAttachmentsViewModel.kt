@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.AttachmentWithDate
+import io.getstream.chat.android.client.models.Message
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -22,6 +24,7 @@ class ChatInfoSharedAttachmentsViewModel(
     private val _state: MutableLiveData<State> = MutableLiveData(INITIAL_STATE)
     private var isLoadingMore: Boolean = false
     val state: LiveData<State> = _state
+    private var messages: List<Message> = listOf()
 
     init {
         viewModelScope.launch {
@@ -49,21 +52,18 @@ class ChatInfoSharedAttachmentsViewModel(
     }
 
     private suspend fun fetchAttachments() {
-        val currentState = state.value!!
-        val result = if (attachmentsType == AttachmentsType.FILES) {
-            channelClient.getFileAttachments(offset = currentState.results.size, limit = QUERY_LIMIT).await()
-        } else {
-            channelClient.getImageAttachments(offset = currentState.results.size, limit = QUERY_LIMIT).await()
-        }
-
+        val result = channelClient.getMessagesWithAttachments(messages.size, limit = QUERY_LIMIT, attachmentsType.requestTypeKey).await()
         if (result.isSuccess) {
-            _state.value = currentState.copy(
-                results = currentState.results + mapAttachments(result.data()),
+            val newMessages = result.data()
+            messages = messages + newMessages
+            _state.value = State(
+                results = mapAttachments(messages.toAttachmentsWithDate()),
                 isLoading = false,
-                canLoadMore = result.data().size == QUERY_LIMIT
+                canLoadMore = newMessages.size == QUERY_LIMIT
             )
         } else {
-            _state.value = currentState.copy(
+            _state.value = State(
+                results = mapAttachments(messages.toAttachmentsWithDate()),
                 isLoading = false,
                 canLoadMore = true,
             )
@@ -105,8 +105,9 @@ class ChatInfoSharedAttachmentsViewModel(
         object LoadMoreRequested : Action()
     }
 
-    enum class AttachmentsType {
-        MEDIA, FILES
+    enum class AttachmentsType(val requestTypeKey: String) {
+        MEDIA("image"),
+        FILES("file")
     }
 
     companion object {
@@ -133,3 +134,10 @@ class ChatInfoSharedAttachmentsViewModelFactory(
         return ChatInfoSharedAttachmentsViewModel(cid, type) as T
     }
 }
+
+private fun List<Message>.toAttachmentsWithDate(): List<AttachmentWithDate> =
+    flatMap { message ->
+        message.attachments.map {
+            AttachmentWithDate(it, message.getCreatedAtOrThrow())
+        }
+    }
