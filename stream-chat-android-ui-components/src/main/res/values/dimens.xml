@@ -11,6 +11,7 @@
     <dimen name="stream_ui_divider_height">1dp</dimen>
 
     <dimen name="stream_ui_elevation_big">8dp</dimen>
+    <dimen name="stream_ui_elevation_small">3dp</dimen>
 
     <!--AvatarView-->
     <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
@@ -123,6 +124,7 @@
     <!-- Message ViewHolders -->
     <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
     <dimen name="stream_ui_message_corner_radius_negative">-16dp</dimen>
+    <dimen name="stream_ui_message_footnote_spacing">6dp</dimen>
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_gallery_default_bar_height">56dp</dimen>
