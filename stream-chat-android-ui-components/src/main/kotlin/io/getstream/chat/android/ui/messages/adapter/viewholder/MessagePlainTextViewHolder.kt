@@ -38,6 +38,9 @@ internal class MessagePlainTextViewHolder(
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
             }
+            linkAttachmentView.setLinkPreviewClickListener(longClickTarget = root) { url ->
+                listeners.linkClickListener.onLinkClick(url)
+            }
 
             LongClickFriendlyLinkMovementMethod.set(
                 textView = messageText,

@@ -44,7 +44,11 @@ internal class MediaAttachmentView : ConstraintLayout {
         defStyleRes
     )
 
-    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
+    fun showAttachment(
+        attachment: Attachment,
+        andMoreCount: Int = NO_MORE_COUNT,
+        shouldSetClickListeners: Boolean = true,
+    ) {
         val url = attachment.thumbUrl ?: attachment.imageUrl ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
@@ -62,7 +66,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             showGiphyLabel()
         }
 
-        if (attachment.type != ModelType.attach_giphy) {
+        if (shouldSetClickListeners && attachment.type != ModelType.attach_giphy) {
             setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
             setOnLongClickListener {
                 attachmentLongClickListener?.onAttachmentLongClick()
@@ -97,7 +101,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
-        bottomLeft: Float
+        bottomLeft: Float,
     ) {
         ShapeAppearanceModel.Builder().setTopLeftCornerSize(topLeft).setTopRightCornerSize(topRight)
             .setBottomRightCornerSize(bottomRight).setBottomLeftCornerSize(bottomLeft).build().let(this::setImageShape)
