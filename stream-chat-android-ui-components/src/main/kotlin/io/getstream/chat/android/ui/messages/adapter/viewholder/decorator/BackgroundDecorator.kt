@@ -16,9 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
-import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.withReply
 import io.getstream.chat.android.ui.utils.extensions.withText
@@ -78,14 +76,10 @@ internal class BackgroundDecorator : BaseDecorator() {
     )
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.cardView.background = ShapeAppearanceModel.builder()
+        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
             .build()
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setTint(viewHolder.context.getColorCompat(R.color.stream_ui_background_default))
-            }
         viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
             IMAGE_VIEW_CORNER_RADIUS,
             IMAGE_VIEW_CORNER_RADIUS,
