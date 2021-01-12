@@ -114,7 +114,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
         activityResultLauncher = activityResultRegistry
             ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
-                file?.let { messageInputController.onFileCaptured(it) }
+                file?.let { messageInputController.onFileCaptured(context, it) }
             }
         selectFilesResultLauncher = activityResultRegistry
             ?.register(LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) {
