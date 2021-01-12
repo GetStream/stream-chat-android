@@ -13,8 +13,6 @@
     <color name="stream_ui_white">#FFFFFF</color>
     <color name="stream_ui_blue_alice">#E9F2FF</color>
 
-    <color name="stream_ui_woodsmoke">#13151B</color>
-    <color name="stream_ui_mirage">#141924</color>
     <color name="stream_ui_grey_medium_light">#CCCCCC</color>
     <color name="stream_ui_grey_light">#F5F5F5</color>
     <color name="stream_ui_grey_dark">#989898</color>

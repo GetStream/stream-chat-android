@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="stream_ui_white_smoke">#13151B</color>
+
     <color name="stream_ui_background_light">@color/stream_ui_bunker</color>
 
-    <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_woodsmoke</color>
-    <color name="stream_ui_edit_text_background_color">@color/stream_ui_woodsmoke</color>
+    <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_white_smoke
+    </color>
+    <color name="stream_ui_edit_text_background_color">@color/stream_ui_white_smoke</color>
 
     <color name="stream_ui_attachment_dialog_button_disabled">@color/stream_ui_outer_space</color>
 
     <color name="stream_ui_border_stroke">@color/stream_ui_outer_space</color>
 
-    <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_background_light</color>
-    <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_color_mine">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_border_color_mine">@color/stream_ui_background_light</color>
+    <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_background_light
+    </color>
+    <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_background_light
+    </color>
+    <color name="stream_ui_view_reactions_bubble_color_mine">@color/stream_ui_background_light
+    </color>
+    <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_background_light
+    </color>
+    <color name="stream_ui_view_reactions_bubble_border_color_mine">
+        @color/stream_ui_background_light
+    </color>
 
     <color name="stream_ui_background_default">@color/stream_ui_black</color>
     <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
@@ -30,9 +39,9 @@
     <color name="stream_ui_search_info_bar_start_background">#101214</color>
     <color name="stream_ui_search_info_bar_end_background">#070A0D</color>
 
-    <color name="stream_ui_divider">@color/stream_ui_mirage</color>
+    <color name="stream_ui_divider">#141924</color>
 
-    <color name="stream_ui_section_item_color">@color/stream_ui_woodsmoke</color>
+    <color name="stream_ui_section_item_color">@color/stream_ui_white_smoke</color>
     <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
 
     <color name="stream_ui_send_button">@color/stream_ui_outer_space</color>
