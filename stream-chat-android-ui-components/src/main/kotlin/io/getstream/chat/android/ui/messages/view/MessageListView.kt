@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.messages.view
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -495,10 +494,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun scrollToMessage(message: Message) {
-        Handler().postDelayed(
+        binding.chatMessagesRV.postDelayed(
             {
                 adapter.currentList
                     .indexOfFirst { it is MessageItem && it.message.id == message.id }
+                    .takeIf { it >= 0 }
                     ?.let {
                         binding.chatMessagesRV
                             .layoutManager
