@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.withReply
@@ -34,14 +35,14 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -50,7 +51,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -59,7 +60,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -68,7 +69,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -76,10 +77,14 @@ internal class BackgroundDecorator : BaseDecorator() {
     )
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
+        viewHolder.binding.cardView.background = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
             .build()
+            .let(::MaterialShapeDrawable)
+            .apply {
+                setTint(ContextCompat.getColor(viewHolder.context, R.color.stream_ui_background_default))
+            }
         viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
             IMAGE_VIEW_CORNER_RADIUS,
             IMAGE_VIEW_CORNER_RADIUS,
@@ -91,7 +96,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     private fun decorateAttachmentsAndBackground(
         background: View,
         attachmentView: View,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         setDefaultBackgroundDrawable(background, data)
 
