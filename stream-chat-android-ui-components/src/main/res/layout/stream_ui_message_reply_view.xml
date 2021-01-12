@@ -9,7 +9,7 @@
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+        android:id="@+id/replyAvatarView"
         style="@style/StreamUiReplyAvatarStyle"
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,7 +25,7 @@
         android:padding="@dimen/stream_ui_spacing_tiny"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/replyAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         >
 
