@@ -5,7 +5,7 @@
     <color name="stream_ui_accent_green">#20E070</color>
 
     <color name="stream_ui_white">#FFFFFF</color>
-    <color name="stream_ui_alabaster">#FCFCFC</color>
+    <color name="stream_ui_white_snow">#FCFCFC</color>
     <color name="stream_ui_concrete">#F2F2F2</color>
     <color name="stream_ui_woodsmoke">#13151B</color>
     <color name="stream_ui_mirage">#141924</color>
@@ -77,11 +77,11 @@
 
     <color name="stream_ui_background_default">@color/stream_ui_white</color>
     <color name="stream_ui_background_light">@color/stream_ui_white</color>
-    <color name="stream_ui_background_alabaster">@color/stream_ui_alabaster</color>
-    <color name="stream_ui_background_alabaster_black">@color/stream_ui_alabaster</color>
+    <color name="stream_ui_background_alabaster">@color/stream_ui_white_snow</color>
+    <color name="stream_ui_background_alabaster_black">@color/stream_ui_white_snow</color>
     <color name="stream_ui_background_date_divider">@color/stream_ui_black_60</color>
     <color name="stream_ui_search_info_bar_start_background">#F7F7F7</color>
-    <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_alabaster</color>
+    <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_white_snow</color>
 
     <color name="stream_ui_icon_default_tint">@color/stream_ui_boulder</color>
     <color name="stream_ui_icon_light_tint">@color/stream_ui_grey_dark</color>
