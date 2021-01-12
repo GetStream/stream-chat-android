@@ -11,7 +11,6 @@ import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.view.EndlessScrollListener
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedFilesBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel
@@ -51,7 +50,7 @@ class ChatInfoSharedFilesFragment : Fragment() {
         binding.filesRecyclerView.adapter = adapter
         binding.filesRecyclerView.addOnScrollListener(scrollListener)
         adapter.setAttachmentClickListener { attachmentItem ->
-            ChatUI.instance().navigator.navigate(AttachmentDestination(Message(), attachmentItem.attachmentWithDate.attachment, requireContext()))
+            ChatUI.instance().navigator.navigate(AttachmentDestination(attachmentItem.message, attachmentItem.attachment, requireContext()))
         }
         bindViewModel()
     }

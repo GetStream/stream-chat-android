@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.models.AttachmentWithDate
 import io.getstream.chat.android.client.models.Message
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -57,30 +56,28 @@ class ChatInfoSharedAttachmentsViewModel(
             val newMessages = result.data()
             messages = messages + newMessages
             _state.value = State(
-                results = mapAttachments(messages.toAttachmentsWithDate()),
+                results = mapAttachments(messages),
                 isLoading = false,
                 canLoadMore = newMessages.size == QUERY_LIMIT
             )
         } else {
             _state.value = State(
-                results = mapAttachments(messages.toAttachmentsWithDate()),
+                results = mapAttachments(messages),
                 isLoading = false,
                 canLoadMore = true,
             )
         }
     }
 
-    private fun mapAttachments(attachments: List<AttachmentWithDate>): List<SharedAttachment> {
+    private fun mapAttachments(messages: List<Message>): List<SharedAttachment> {
         return if (attachmentsType == AttachmentsType.FILES) {
-            attachments
-                .groupBy { mapDate(it.createdAt) }
-                .flatMap { (date, attachments) ->
-                    mutableListOf(SharedAttachment.DateDivider(date)) + attachments.map {
-                        SharedAttachment.AttachmentItem(it)
-                    }
+            messages
+                .groupBy { mapDate(it.getCreatedAtOrThrow()) }
+                .flatMap { (date, messages) ->
+                    listOf(SharedAttachment.DateDivider(date)) + messages.toAttachmentItems()
                 }
         } else {
-            attachments.map { SharedAttachment.AttachmentItem(it) }
+            messages.toAttachmentItems()
         }
     }
 
@@ -135,9 +132,9 @@ class ChatInfoSharedAttachmentsViewModelFactory(
     }
 }
 
-private fun List<Message>.toAttachmentsWithDate(): List<AttachmentWithDate> =
+private fun List<Message>.toAttachmentItems(): List<SharedAttachment.AttachmentItem> =
     flatMap { message ->
         message.attachments.map {
-            AttachmentWithDate(it, message.getCreatedAtOrThrow())
+            SharedAttachment.AttachmentItem(message, message.getCreatedAtOrThrow(), it)
         }
     }
