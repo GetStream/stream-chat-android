@@ -426,4 +426,7 @@ public class ChannelClient internal constructor(
 
     public fun getImageAttachments(offset: Int, limit: Int): Call<List<AttachmentWithDate>> =
         client.getImageAttachments(channelType, channelId, offset, limit)
+
+    public fun getMessagesWithAttachments(offset: Int, limit: Int, type: String): Call<List<Message>> =
+        client.getMessagesWithAttachments(channelType, channelId, offset, limit, type)
 }
