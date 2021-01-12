@@ -51,12 +51,15 @@ internal class LinkAttachmentView : FrameLayout {
         )
     }
 
-    fun setLinkPreviewClickListener(longClickTarget: View, linkPreviewClickListener: LinkPreviewClickListener) {
+    fun setLinkPreviewClickListener(linkPreviewClickListener: LinkPreviewClickListener) {
         setOnClickListener {
             previewUrl?.let { url ->
                 linkPreviewClickListener.onLinkPreviewClick(url)
             }
         }
+    }
+
+    fun setLongClickTarget(longClickTarget: View) {
         setOnLongClickListener {
             longClickTarget.performLongClick()
             true

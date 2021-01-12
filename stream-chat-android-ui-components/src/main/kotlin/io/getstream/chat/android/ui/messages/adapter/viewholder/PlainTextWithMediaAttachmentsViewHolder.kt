@@ -47,8 +47,11 @@ internal class PlainTextWithMediaAttachmentsViewHolder(
             mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
             }
-            linkAttachmentView.setLinkPreviewClickListener(longClickTarget = root) { url ->
-                listeners.linkClickListener.onLinkClick(url)
+            linkAttachmentView.apply {
+                setLinkPreviewClickListener { url ->
+                    listeners.linkClickListener.onLinkClick(url)
+                }
+                setLongClickTarget(root)
             }
 
             LongClickFriendlyLinkMovementMethod.set(
