@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiTypingIndicatorViewBinding
 
-public class TypingIndicator : FrameLayout {
+public class TypingIndicatorView : FrameLayout {
 
     private val binding: StreamUiTypingIndicatorViewBinding =
         StreamUiTypingIndicatorViewBinding.inflate(LayoutInflater.from(context), this, true)
