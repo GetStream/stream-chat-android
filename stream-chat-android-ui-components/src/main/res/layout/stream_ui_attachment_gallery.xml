@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -12,7 +13,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomBarGuideline"
+        app:layout_constraintBottom_toTopOf="@id/shareButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -65,6 +66,14 @@
         app:layout_constraintTop_toTopOf="@id/bottomBarGuideline"
         app:tint="@color/stream_ui_icon_strong_tint"
         tools:ignore="ContentDescription"
+        />
+    
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bottomBarGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="menuButton, shareButton, photoCount"
+        android:visibility="visible"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

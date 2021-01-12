@@ -71,6 +71,14 @@
         app:layout_constraintGuide_begin="@dimen/stream_ui_gallery_default_bar_height"
         />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/toolBarGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="closeButton, title, subtitle, menuButton"
+        android:visibility="visible"
+        />
+
     <io.getstream.chat.android.ui.images.AttachmentGallery
         android:id="@+id/attachmentGallery"
         android:layout_width="0dp"
@@ -78,7 +86,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarGuideline"
+        app:layout_constraintTop_toBottomOf="@id/subtitle"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
