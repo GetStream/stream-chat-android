@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import com.getstream.sdk.chat.utils.ListenerDelegate
-import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
