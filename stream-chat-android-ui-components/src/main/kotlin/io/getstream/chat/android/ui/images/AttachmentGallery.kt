@@ -101,9 +101,11 @@ public class AttachmentGallery : ConstraintLayout {
         this.imageList = imageList
 
         binding.shareButton.setOnClickListener {
+            it.isEnabled = false
             GlobalScope.launch(DispatcherProvider.Main) {
                 ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
                     ?.let(onSharePictureListener)
+                it.isEnabled = true
             }
         }
     }
