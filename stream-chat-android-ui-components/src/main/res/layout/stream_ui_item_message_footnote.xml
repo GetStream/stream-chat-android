@@ -19,7 +19,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textColor="@color/stream_ui_text_color_strong"
         android:visibility="gone"
-        app:drawableTint="@color/stream_ui_boulder"
+        app:drawableTint="@color/stream_ui_grey"
         tools:ignore="RtlHardcoded"
         tools:text="Visible only for you"
         />

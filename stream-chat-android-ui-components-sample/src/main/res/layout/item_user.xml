@@ -37,7 +37,7 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_user_subtitle"
-        android:textColor="@color/stream_ui_boulder"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="12sp"
         />
 

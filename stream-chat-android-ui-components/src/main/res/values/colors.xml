@@ -11,14 +11,11 @@
     <color name="stream_ui_mirage">#141924</color>
     <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_whisper">#ECEBEB</color>
-    <color name="stream_ui_grey">#808080</color>
     <color name="stream_ui_grey_medium_light">#CCCCCC</color>
     <color name="stream_ui_grey_light">#F5F5F5</color>
     <color name="stream_ui_grey_dark">#989898</color>
     <color name="stream_ui_bunker">#101418</color>
     <color name="stream_ui_outer_space">#2D2E2E</color>
-
-    <color name="stream_ui_text_grey">@color/stream_ui_grey</color>
 
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_ui_avatar_gradient_green">#81C784</color>
@@ -40,7 +37,7 @@
     <color name="stream_ui_black_60">#99000000</color>
     <color name="stream_ui_white_60">#99FFFFFF</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>
-    <color name="stream_ui_boulder">#7A7A7A</color>
+    <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_border_stroke">#14000000</color>
 
     <array name="stream_ui_avatar_gradient_colors">
@@ -61,7 +58,7 @@
     <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_white</color>
 
     <color name="stream_ui_attachment_dialog_header_color">#F5F5F5</color>
-    <color name="stream_ui_attachment_dialog_button_enabled">@color/stream_ui_boulder</color>
+    <color name="stream_ui_attachment_dialog_button_enabled">@color/stream_ui_grey</color>
     <color name="stream_ui_attachment_dialog_button_disabled">#E6E6E6</color>
 
     <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_white_smoke
@@ -76,7 +73,7 @@
     <color name="stream_ui_search_info_bar_start_background">#F7F7F7</color>
     <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_white_snow</color>
 
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_boulder</color>
+    <color name="stream_ui_icon_default_tint">@color/stream_ui_grey</color>
     <color name="stream_ui_icon_light_tint">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_icon_strong_tint">@color/stream_ui_black</color>
 

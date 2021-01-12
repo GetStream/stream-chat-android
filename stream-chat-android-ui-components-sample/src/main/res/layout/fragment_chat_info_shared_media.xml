@@ -96,7 +96,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_media_empty_description"
-            android:textColor="@color/stream_ui_boulder"
+            android:textColor="@color/stream_ui_grey"
             android:textStyle="normal"
             />
     </LinearLayout>

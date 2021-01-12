@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/cancel"
-        android:textColor="@color/stream_ui_boulder"
+        android:textColor="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/confirmButton"
         app:layout_constraintHorizontal_chainStyle="spread_inside"

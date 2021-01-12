@@ -13,7 +13,6 @@ import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message

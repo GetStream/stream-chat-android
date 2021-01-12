@@ -87,7 +87,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
 
         fun newLeaveChannelInstance(context: Context, channelName: String): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.ic_leave_group,
-            iconTintResId = R.color.stream_ui_boulder,
+            iconTintResId = R.color.stream_ui_grey,
             title = context.getString(R.string.chat_group_info_option_leave),
             description = context.getString(R.string.chat_group_info_leave_confirm, channelName),
             confirmText = context.getString(R.string.leave),

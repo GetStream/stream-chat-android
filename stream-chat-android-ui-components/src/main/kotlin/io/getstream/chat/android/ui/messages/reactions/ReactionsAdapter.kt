@@ -66,7 +66,7 @@ internal class ReactionsAdapter(
             val iconTintResId = if (reactionItem.isMine) {
                 R.color.stream_ui_accent_blue
             } else {
-                R.color.stream_ui_text_grey
+                R.color.stream_ui_grey
             }
             binding.reactionIcon.setColorFilter(context.getColorCompat(iconTintResId))
         }
