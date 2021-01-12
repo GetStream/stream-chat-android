@@ -2,6 +2,8 @@
 <resources>
     <color name="stream_ui_white_smoke">#13151B</color>
 
+    <color name="stream_ui_overlay_dark">#99FFFFFF</color>
+
     <color name="stream_ui_background_light">@color/stream_ui_bunker</color>
 
     <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_white_smoke

@@ -232,7 +232,7 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     disabledColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiAttachButtonIconDisabledColor,
-                        context.getColorCompat(R.color.stream_ui_grey_medium_light)
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
                     )
                 )
             )
@@ -278,7 +278,7 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     disabledColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiLightningButtonIconDisabledColor,
-                        context.getColorCompat(R.color.stream_ui_grey_medium_light)
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
                     )
                 )
             )
