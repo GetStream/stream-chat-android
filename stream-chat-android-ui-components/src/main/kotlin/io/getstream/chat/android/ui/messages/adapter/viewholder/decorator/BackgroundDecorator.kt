@@ -18,6 +18,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.withReply
 import io.getstream.chat.android.ui.utils.extensions.withText
@@ -83,7 +84,7 @@ internal class BackgroundDecorator : BaseDecorator() {
             .build()
             .let(::MaterialShapeDrawable)
             .apply {
-                setTint(ContextCompat.getColor(viewHolder.context, R.color.stream_ui_background_default))
+                setTint(viewHolder.context.getColorCompat(R.color.stream_ui_background_default))
             }
         viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
             IMAGE_VIEW_CORNER_RADIUS,
