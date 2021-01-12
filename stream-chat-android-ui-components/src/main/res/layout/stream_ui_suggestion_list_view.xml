@@ -36,7 +36,7 @@
                 android:textColor="@color/stream_ui_text_color_light"
                 android:textAppearance="@style/StreamUiTextAppearance.Body"
                 app:drawableStartCompat="@drawable/stream_ui_ic_command"
-                app:drawableTint="@color/stream_ui_blue"
+                app:drawableTint="@color/stream_ui_accent_blue"
                 app:layout_constraintBottom_toTopOf="@id/suggestionsRecyclerView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/stream_ui_spacing_tiny"
         android:layout_marginRight="@dimen/stream_ui_spacing_tiny"
-        android:textColor="@color/stream_ui_blue"
+        android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
         tools:text="100 Thread Replies"
         />

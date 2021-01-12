@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-            android:textColor="@color/stream_ui_blue"
+            android:textColor="@color/stream_ui_accent_blue"
             tools:text="Link"
             />
 

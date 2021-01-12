@@ -228,7 +228,7 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     selectedColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiAttachButtonIconPressedColor,
-                        context.getColorCompat(R.color.stream_ui_blue)
+                        context.getColorCompat(R.color.stream_ui_accent_blue)
                     ),
                     disabledColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiAttachButtonIconDisabledColor,
@@ -274,7 +274,7 @@ public class MessageInputView : ConstraintLayout {
                     ),
                     selectedColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiLightningButtonIconPressedColor,
-                        context.getColorCompat(R.color.stream_ui_blue)
+                        context.getColorCompat(R.color.stream_ui_accent_blue)
                     ),
                     disabledColor = typedArray.getColor(
                         R.styleable.MessageInputView_streamUiLightningButtonIconDisabledColor,
@@ -412,11 +412,11 @@ public class MessageInputView : ConstraintLayout {
             getColorList(
                 normalColor = typedArray.getColor(
                     R.styleable.MessageInputView_streamUiSendButtonEnabledIconColor,
-                    context.getColorCompat(R.color.stream_ui_blue)
+                    context.getColorCompat(R.color.stream_ui_accent_blue)
                 ),
                 selectedColor = typedArray.getColor(
                     R.styleable.MessageInputView_streamUiSendButtonPressedIconColor,
-                    context.getColorCompat(R.color.stream_ui_blue)
+                    context.getColorCompat(R.color.stream_ui_accent_blue)
                 ),
                 disabledColor = typedArray.getColor(
                     R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
@@ -434,7 +434,7 @@ public class MessageInputView : ConstraintLayout {
                 ),
                 selectedColor = typedArray.getColor(
                     R.styleable.MessageInputView_streamUiSendButtonPressedIconColor,
-                    context.getColorCompat(R.color.stream_ui_blue)
+                    context.getColorCompat(R.color.stream_ui_accent_blue)
                 ),
                 disabledColor = typedArray.getColor(
                     R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,

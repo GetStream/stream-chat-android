@@ -145,7 +145,7 @@
                 android:gravity="center"
                 android:text="@string/stream_ui_send_label"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-                android:textColor="@color/stream_ui_blue"
+                android:textColor="@color/stream_ui_accent_blue"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/verticalDivider"
                 app:layout_constraintRight_toRightOf="parent"

@@ -64,7 +64,7 @@ internal class ReactionsAdapter(
 
         private fun bindReactionAffiliation(reactionItem: ReactionItem) {
             val iconTintResId = if (reactionItem.isMine) {
-                R.color.stream_ui_blue
+                R.color.stream_ui_accent_blue
             } else {
                 R.color.stream_ui_text_grey
             }

@@ -42,7 +42,7 @@
     <color name="stream_ui_search_input_border">#1C1E22</color>
 
     <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
-    <color name="stream_ui_material_button_text_color">@color/stream_ui_blue</color>
+    <color name="stream_ui_material_button_text_color">@color/stream_ui_accent_blue</color>
     <color name="stream_ui_sdk_version_color">@color/stream_ui_outer_space</color>
 
     <color name="stream_ui_current_user_background">@color/stream_ui_outer_space</color>

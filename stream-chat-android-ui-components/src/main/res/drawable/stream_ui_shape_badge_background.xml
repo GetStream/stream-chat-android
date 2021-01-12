@@ -3,5 +3,5 @@
     android:shape="rectangle"
     >
     <corners android:radius="@dimen/stream_ui_avatar_text_size_small" />
-    <solid android:color="@color/stream_ui_text_red" />
+    <solid android:color="@color/stream_ui_accent_red" />
 </shape>

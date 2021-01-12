@@ -55,7 +55,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginEnd="8dp"
-            android:indeterminateTint="@color/stream_ui_blue"
+            android:indeterminateTint="@color/stream_ui_accent_blue"
             />
 
         <TextView
@@ -81,7 +81,7 @@
         app:icon="@drawable/stream_ui_ic_pen"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
-        app:iconTint="@color/stream_ui_blue"
+        app:iconTint="@color/stream_ui_accent_blue"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

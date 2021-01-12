@@ -126,7 +126,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">16dp</item>
         <item name="android:background">@drawable/stream_ui_badge_bg</item>
-        <item name="android:backgroundTint">@color/stream_ui_light_red</item>
+        <item name="android:backgroundTint">@color/stream_ui_accent_red</item>
         <item name="android:minWidth">16dp</item>
         <item name="android:minHeight">16dp</item>
         <item name="android:singleLine">true</item>
@@ -141,7 +141,7 @@
     <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorAccent">@color/stream_ui_blue</item>
+        <item name="colorAccent">@color/stream_ui_accent_blue</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>>
         <item name="background">?android:attr/colorBackground</item>
     </style>

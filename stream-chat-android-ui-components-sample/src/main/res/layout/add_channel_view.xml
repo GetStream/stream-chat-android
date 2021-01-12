@@ -56,7 +56,7 @@
             android:elevation="4dp"
             android:padding="8dp"
             android:src="@drawable/stream_ui_ic_create_group"
-            app:tint="@color/stream_ui_blue"
+            app:tint="@color/stream_ui_accent_blue"
             />
 
         <TextView

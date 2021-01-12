@@ -30,7 +30,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="2dp"
         android:background="@drawable/stream_ui_shape_scroll_button_badge"
-        android:backgroundTint="@color/stream_ui_blue"
+        android:backgroundTint="@color/stream_ui_accent_blue"
         android:elevation="10dp"
         android:gravity="center"
         android:minWidth="@dimen/stream_ui_scroll_button_unread_badge_size"

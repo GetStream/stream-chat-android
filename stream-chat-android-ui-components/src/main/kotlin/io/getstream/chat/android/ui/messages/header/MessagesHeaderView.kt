@@ -194,7 +194,7 @@ public class MessagesHeaderView : ConstraintLayout {
             attrs.getColorStateList(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkProgressBarTint
             )
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
+                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
             )
     }
 
@@ -293,7 +293,7 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.backButtonBadge.apply {
             isVisible =
                 attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowBackButtonBadge, false)
-            val defaultColor = ContextCompat.getColor(context, R.color.stream_ui_light_red)
+            val defaultColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
             val color = attrs.getColor(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderBackButtonBadgeBackgroundColor,
                 defaultColor

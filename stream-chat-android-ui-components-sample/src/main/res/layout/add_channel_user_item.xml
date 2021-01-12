@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_blue"
+        app:tint="@color/stream_ui_accent_blue"
         tools:ignore="ContentDescription"
         />
 

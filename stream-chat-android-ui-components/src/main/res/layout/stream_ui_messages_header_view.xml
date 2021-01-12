@@ -120,7 +120,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/stream_ui_message_list_header_try_again"
-                android:textColor="@color/stream_ui_blue"
+                android:textColor="@color/stream_ui_accent_blue"
                 />
         </LinearLayout>
 
