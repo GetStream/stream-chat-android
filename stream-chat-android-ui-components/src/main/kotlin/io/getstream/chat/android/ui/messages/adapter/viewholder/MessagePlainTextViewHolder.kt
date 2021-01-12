@@ -1,9 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
@@ -11,7 +9,6 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.utils.extensions.context
 
 internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
@@ -45,9 +42,7 @@ internal class MessagePlainTextViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = messageText,
                 longClickTarget = root,
-                onLinkClicked = { url ->
-                    ChatUI.instance().navigator.navigate(WebLinkDestination(url, context))
-                }
+                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
             )
         }
     }
