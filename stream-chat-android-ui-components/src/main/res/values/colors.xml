@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Accents -->
     <color name="stream_ui_accent_blue">#005FFF</color>
     <color name="stream_ui_accent_red">#FF3742</color>
     <color name="stream_ui_accent_green">#20E070</color>
 
+    <!-- Greys -->
     <color name="stream_ui_black">#000000</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
@@ -13,7 +15,9 @@
     <color name="stream_ui_white">#FFFFFF</color>
     <color name="stream_ui_blue_alice">#E9F2FF</color>
 
+    <!-- Specials -->
     <color name="stream_ui_overlay_dark">#99000000</color>
+
 
     <color name="stream_ui_grey_light">#F5F5F5</color>
     <color name="stream_ui_grey_dark">#989898</color>
