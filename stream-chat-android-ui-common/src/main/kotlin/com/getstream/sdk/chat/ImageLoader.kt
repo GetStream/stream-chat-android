@@ -123,7 +123,7 @@ public object ImageLoader {
         onComplete: () -> Unit = {},
     ) {
         coilLoadAny(data, context.streamImageLoader) {
-            placeholderResId?.let { placeholder(it) }
+            placeholderResId?.let(::placeholder)
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },
