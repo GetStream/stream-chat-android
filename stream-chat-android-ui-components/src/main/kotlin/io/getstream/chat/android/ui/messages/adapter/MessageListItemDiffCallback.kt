@@ -48,7 +48,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 syncStatus = oldItem.message.syncStatus != newItem.message.syncStatus,
                 deleted = oldItem.message.deletedAt != newItem.message.deletedAt,
                 positions = oldItem.positions != newItem.positions,
-                readBy = oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
+                readBy = oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() },
+                isLatestMessageInChat = oldItem.isLatestMessageInChat != newItem.isLatestMessageInChat,
             )
         } else {
             null

@@ -9,6 +9,7 @@ public data class MessageListItemPayloadDiff(
     val deleted: Boolean,
     val positions: Boolean,
     val readBy: Boolean,
+    val isLatestMessageInChat: Boolean,
 ) {
     public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff =
         copy(
@@ -20,5 +21,6 @@ public data class MessageListItemPayloadDiff(
             deleted = deleted || other.deleted,
             positions = positions || other.positions,
             readBy = readBy || other.readBy,
+            isLatestMessageInChat = isLatestMessageInChat || other.isLatestMessageInChat,
         )
 }

@@ -55,7 +55,7 @@ internal class MessageListItemLiveData(
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
-    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null
+    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean),
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -181,16 +181,22 @@ internal class MessageListItemLiveData(
                 }
             }
             // date separators
-            dateSeparator?.let {
-                if (it(previousMessage, message)) {
-                    items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
-                }
+            if (dateSeparator(previousMessage, message)) {
+                items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
             }
 
             items.add(MessageListItem.MessageItem(message, positions, isMine = message.user.id == currentUser.id))
             previousMessage = message
         }
-        return items.toList()
+
+        // Mark the last [MessageListItem.MessageItem] as being the latest one.
+        // It needs to be displayed differently on the MessageListView.
+        val lastMessage = items.filterIsInstance(MessageListItem.MessageItem::class.java).lastOrNull()
+        if (lastMessage != null) {
+            items[items.indexOf(lastMessage)] = lastMessage.copy(isLatestMessageInChat = true)
+        }
+
+        return items
     }
 
     /**

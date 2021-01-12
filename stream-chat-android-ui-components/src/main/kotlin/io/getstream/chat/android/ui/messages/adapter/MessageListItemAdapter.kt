@@ -54,7 +54,8 @@ public class MessageListItemAdapter(
             syncStatus = true,
             deleted = true,
             positions = true,
-            readBy = true
+            readBy = true,
+            isLatestMessageInChat = true,
         )
         private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = false,
@@ -64,7 +65,8 @@ public class MessageListItemAdapter(
             syncStatus = false,
             deleted = false,
             positions = false,
-            readBy = false
+            readBy = false,
+            isLatestMessageInChat = false,
         )
     }
 }
