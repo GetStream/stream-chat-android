@@ -133,7 +133,7 @@
             android:visibility="gone"
             >
 
-            <io.getstream.chat.android.ui.typing.TypingIndicator
+            <io.getstream.chat.android.ui.typing.TypingIndicatorView
                 android:id="@+id/typingView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
