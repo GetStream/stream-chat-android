@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongCli
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 
 public interface MessageListListenerContainer {
     public val messageClickListener: MessageClickListener
@@ -20,4 +21,5 @@ public interface MessageListListenerContainer {
     public val reactionViewClickListener: ReactionViewClickListener
     public val userClickListener: UserClickListener
     public val giphySendListener: GiphySendListener
+    public val linkClickListener: LinkClickListener
 }

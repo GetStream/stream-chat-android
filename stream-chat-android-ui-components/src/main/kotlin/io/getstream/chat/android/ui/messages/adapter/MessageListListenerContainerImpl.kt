@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import com.getstream.sdk.chat.utils.ListenerDelegate
+import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
@@ -21,6 +22,7 @@ internal class MessageListListenerContainerImpl(
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM),
+    linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM),
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
@@ -96,6 +98,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         GiphySendListener { message, action ->
             realListener().onGiphySend(message, action)
+        }
+    }
+
+    override var linkClickListener: LinkClickListener by ListenerDelegate(
+        linkClickListener
+    ) { realListener ->
+        LinkClickListener { url ->
+            realListener().onLinkClick(url)
         }
     }
 }
