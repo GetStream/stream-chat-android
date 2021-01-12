@@ -108,19 +108,26 @@ class ChatFragment : Fragment() {
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
             bindView(binding.messageInputView, viewLifecycleOwner)
-            messageListViewModel.mode.observe(
-                viewLifecycleOwner,
-                {
-                    when (it) {
-                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
-                        is MessageListViewModel.Mode.Normal -> resetThread()
-                    }
-                }
-            )
             binding.messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
         }
+
+        messageListViewModel.mode.observe(
+            viewLifecycleOwner,
+            {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        messageInputViewModel.setActiveThread(it.parentMessage)
+                        headerViewModel.setActiveThread(it.parentMessage)
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        messageInputViewModel.resetThread()
+                        headerViewModel.setActiveThread(null)
+                    }
+                }
+            }
+        )
 
         // set external suggestion view which is displayed over message list
         binding.messageInputView.setSuggestionListView(binding.suggestionListView)

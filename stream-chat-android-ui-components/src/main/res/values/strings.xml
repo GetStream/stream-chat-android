@@ -77,6 +77,9 @@
     <string name="stream_ui_send_label">Send</string>
     <string name="stream_ui_cancel_label">Cancel</string>
     <string name="stream_ui_attachment_downloading_started">Downloading started</string>
+    <string name="stream_ui_title_thread_reply">Thread Reply</string>
+    <string name="stream_ui_subtitle_thread_reply_single_user">with %s</string>
+    <string name="stream_ui_subtitle_thread_reply_many_users">with %d users</string>
 
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>

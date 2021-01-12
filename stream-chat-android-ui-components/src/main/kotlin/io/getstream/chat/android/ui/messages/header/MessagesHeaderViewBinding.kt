@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.messages.header
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
 import io.getstream.chat.android.ui.utils.extensions.getUsers
@@ -33,4 +34,12 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
         }
     }
     typingUsers.observe(lifecycle, view::showTypingStateLabel)
-}
+
+    getActiveThread().observe(lifecycle) { message ->
+        if (message != null) {
+            view.setThreadMode(view.context.getString(R.string.stream_ui_title_thread_reply))
+        } else {
+            view.setNormalMode()
+        }
+    }
+ }

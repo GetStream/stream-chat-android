@@ -28,6 +28,8 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
 
+    private var originalTitle: String? = null
+
     public constructor(context: Context) : super(context) {
         init(null)
     }
@@ -77,6 +79,8 @@ public class MessagesHeaderView : ConstraintLayout {
     public fun setTitle(title: String?) {
         binding.title.text = title ?: String.EMPTY
         binding.title.isVisible = true
+
+        originalTitle = title ?: String.EMPTY
     }
 
     public fun setOnlineStateSubtitle(subtitle: String) {
@@ -140,6 +144,14 @@ public class MessagesHeaderView : ConstraintLayout {
 
     public fun hideAvatar() {
         binding.avatar.isVisible = false
+    }
+
+    public fun setNormalMode() {
+        binding.title.text = originalTitle
+    }
+
+    public fun setThreadMode(headerTitle: String?) {
+        binding.title.text = headerTitle
     }
 
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {

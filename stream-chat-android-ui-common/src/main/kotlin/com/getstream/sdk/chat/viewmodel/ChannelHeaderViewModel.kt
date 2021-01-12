@@ -2,10 +2,12 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 
@@ -21,6 +23,7 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
 
+    private var activeThread = MutableLiveData<Message?>()
     private val _members = MediatorLiveData<List<Member>>()
     private val _channelState = MediatorLiveData<Channel>()
     private val _anyOtherUsersOnline = MediatorLiveData<Boolean>()
@@ -53,4 +56,16 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
             }
         }
     }
+
+    /**
+     * Sets and informs about new active thread
+     */
+    public fun setActiveThread(parentMessage: Message?) {
+        activeThread.postValue(parentMessage)
+    }
+
+    public fun getActiveThread(): LiveData<Message?> {
+        return activeThread
+    }
+
 }
