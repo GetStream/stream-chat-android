@@ -31,7 +31,11 @@ internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemera
 
 internal fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
 
+internal fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
+
 internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
+
+internal fun Message.getUpdatedAtOrNull(): Date? = updatedAt ?: updatedLocallyAt
 
 internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
     "a message needs to have a non null value for either createdAt or createdLocallyAt"

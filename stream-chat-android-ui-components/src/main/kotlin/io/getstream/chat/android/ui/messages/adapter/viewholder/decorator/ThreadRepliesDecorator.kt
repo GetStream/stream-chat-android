@@ -15,7 +15,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator.Companion.DEFAULT_CORNER_RADIUS
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 
@@ -82,15 +81,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         )
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.cardView.id,
-            data
-        )
-    }
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupThreadRepliesView(
         threadRepliesFootNote: StreamUiMessageThreadsFootnoteBinding,
@@ -134,8 +125,8 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
             connect(footnoteId, ConstraintSet.BOTTOM, threadRepliesFootnoteId, ConstraintSet.BOTTOM)
         }
 
-        threadRepliesFootNote.root.translationY = -DEFAULT_CORNER_RADIUS
-        messageFootnote.translationY = -DEFAULT_CORNER_RADIUS
+        threadRepliesFootNote.root.translationY = -DEFAULT_FOOTNOTE_TOP_MARGIN
+        messageFootnote.translationY = -DEFAULT_FOOTNOTE_TOP_MARGIN
 
         threadRepliesFootNote.threadRepliesButton.text =
             getRepliesQuantityString(rootView.resources, replyCount)
@@ -196,4 +187,8 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         replyCount,
         replyCount
     )
+
+    companion object {
+        private val DEFAULT_FOOTNOTE_TOP_MARGIN = 6.dpToPxPrecise()
+    }
 }
