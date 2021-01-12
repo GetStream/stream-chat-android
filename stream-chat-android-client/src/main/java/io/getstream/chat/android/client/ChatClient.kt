@@ -27,13 +27,12 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
-import io.getstream.chat.android.client.extensions.isImage
 import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.models.AttachmentWithDate
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Filters
@@ -450,7 +449,7 @@ public class ChatClient internal constructor(
         channelId: String,
         offset: Int,
         limit: Int
-    ): Call<List<AttachmentWithDate>> =
+    ): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
     public fun getImageAttachments(
@@ -458,7 +457,7 @@ public class ChatClient internal constructor(
         channelId: String,
         offset: Int,
         limit: Int
-    ): Call<List<AttachmentWithDate>> =
+    ): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
 
     private fun getAttachments(
@@ -467,21 +466,9 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int,
         type: String
-    ): Call<List<AttachmentWithDate>> =
+    ): Call<List<Attachment>> =
         getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
-            messages.flatMap { message ->
-                if (type == ATTACHMENT_TYPE_IMAGE) {
-                    message.attachments.filter { attachment -> attachment.isImage }
-                } else {
-                    message.attachments
-                }
-                    .map { attachment ->
-                        AttachmentWithDate(
-                            attachment = attachment,
-                            createdAt = requireNotNull(message.createdAt) { "Message needs to have a non null createdAt value" }
-                        )
-                    }
-            }
+            messages.flatMap { message -> message.attachments }
         }
 
     public fun getMessagesWithAttachments(
