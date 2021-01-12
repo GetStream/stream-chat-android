@@ -191,7 +191,7 @@ internal class MessageListItemLiveData(
 
         // Mark the last [MessageListItem.MessageItem] as being the latest one.
         // It needs to be displayed differently on the MessageListView.
-        val lastMessage = items.filterIsInstance(MessageListItem.MessageItem::class.java).lastOrNull()
+        val lastMessage = items.filterIsInstance<MessageListItem.MessageItem>().lastOrNull()
         if (lastMessage != null) {
             items[items.indexOf(lastMessage)] = lastMessage.copy(isLatestMessageInChat = true)
         }
