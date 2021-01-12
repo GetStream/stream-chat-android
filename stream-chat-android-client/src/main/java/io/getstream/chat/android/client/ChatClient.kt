@@ -467,11 +467,8 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int,
         type: String
-    ): Call<List<AttachmentWithDate>> {
-        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
-        val messageFilter = Filters.`in`("attachments.type", type)
-
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter)).map { messages ->
+    ): Call<List<AttachmentWithDate>> =
+        getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
             messages.flatMap { message ->
                 if (type == ATTACHMENT_TYPE_IMAGE) {
                     message.attachments.filter { attachment -> attachment.isImage }
@@ -486,6 +483,17 @@ public class ChatClient internal constructor(
                     }
             }
         }
+
+    public fun getMessagesWithAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        type: String
+    ): Call<List<Message>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", type)
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
