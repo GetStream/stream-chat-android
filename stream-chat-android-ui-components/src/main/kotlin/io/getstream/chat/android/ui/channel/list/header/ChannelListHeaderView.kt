@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -61,14 +60,9 @@ public class ChannelListHeaderView : ConstraintLayout {
     }
 
     private fun configOfflineTitleContainer(typedArray: TypedArray) {
-        val textStyle = getOfflineTitleTextStyle(typedArray)
-        binding.offlineTextView.apply {
-            text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOfflineTitleText)
-                ?: context.getString(R.string.stream_ui_channels_header_view_offline_title)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textStyle.size.toFloat())
-            setTextColor(textStyle.color)
-            typeface = textStyle.font
-        }
+        getOfflineTitleTextStyle(typedArray).apply(binding.offlineTextView)
+        binding.offlineTextView.text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOfflineTitleText)
+            ?: context.getString(R.string.stream_ui_channels_header_view_offline_title)
 
         binding.offlineProgressBar.apply {
             isVisible =
