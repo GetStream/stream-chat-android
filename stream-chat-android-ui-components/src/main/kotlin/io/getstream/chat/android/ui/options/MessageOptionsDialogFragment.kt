@@ -136,6 +136,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
             ).also { viewHolder ->
+                viewHolder.itemView.setOnClickListener {
+                    dismiss()
+                }
                 binding.messageContainer.addView(
                     viewHolder.itemView,
                     FrameLayout.LayoutParams(
