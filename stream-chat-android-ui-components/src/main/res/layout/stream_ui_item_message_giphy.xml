@@ -95,7 +95,7 @@
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
-                app:tint="@color/stream_ui_icon_strong_tint"
+                app:tint="@color/stream_ui_black"
                 tools:ignore="ContentDescription"
                 />
 

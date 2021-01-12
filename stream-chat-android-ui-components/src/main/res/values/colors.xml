@@ -18,6 +18,9 @@
     <!-- Specials -->
     <color name="stream_ui_overlay_dark">#99000000</color>
 
+    <!-- Other -->
+    <color name="stream_ui_icon_button_background">#FFFFFF</color>
+
 
     <color name="stream_ui_grey_light">#F5F5F5</color>
     <color name="stream_ui_grey_dark">#989898</color>
@@ -76,10 +79,6 @@
     <color name="stream_ui_background_date_divider">@color/stream_ui_black_60</color>
     <color name="stream_ui_search_info_bar_start_background">#F7F7F7</color>
     <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_white_snow</color>
-
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_grey</color>
-    <color name="stream_ui_icon_light_tint">@color/stream_ui_grey_dark</color>
-    <color name="stream_ui_icon_strong_tint">@color/stream_ui_black</color>
 
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>

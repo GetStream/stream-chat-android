@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toStartOf="@id/checkButton"
         app:layout_constraintStart_toEndOf="@id/nameEditText"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_icon_default_tint"
+        app:tint="@color/stream_ui_grey"
         tools:ignore="ContentDescription"
         />
 

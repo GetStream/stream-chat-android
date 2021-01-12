@@ -41,7 +41,7 @@
         android:background="@drawable/stream_ui_circle_white"
         android:scaleType="center"
         android:src="@drawable/stream_ui_ic_attachment_check"
-        app:tint="@color/stream_ui_icon_strong_tint"
+        app:tint="@color/stream_ui_black"
         app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
         app:layout_constraintTop_toTopOf="@id/mediaThumbnailImageView"
         tools:ignore="ContentDescription"

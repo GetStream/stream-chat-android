@@ -15,7 +15,7 @@
         android:background="@drawable/shape_circle_grey"
         android:padding="6dp"
         android:src="@drawable/ic_settings"
-        app:tint="@color/stream_ui_icon_strong_tint"
+        app:tint="@color/stream_ui_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -34,10 +34,6 @@
     <color name="stream_ui_background_alabaster_black">@color/stream_ui_black</color>
     <color name="stream_ui_background_date_divider">@color/stream_ui_white_60</color>
 
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
-    <color name="stream_ui_icon_light_tint">@color/stream_ui_white</color>
-    <color name="stream_ui_icon_strong_tint">@color/stream_ui_white</color>
-
     <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
     <color name="stream_ui_text_color_date_divider">@color/stream_ui_bunker</color>
