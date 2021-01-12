@@ -132,7 +132,6 @@ public object ImageLoader {
             )
             if (videoContentUri) {
                 fetcher(VideoFrameUriFetcher(context))
-                fetcher(VideoFrameFileFetcher(context))
             }
             applyTransformation(transformation, context)
         }

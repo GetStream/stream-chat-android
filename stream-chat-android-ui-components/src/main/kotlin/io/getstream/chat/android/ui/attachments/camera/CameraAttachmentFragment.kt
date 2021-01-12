@@ -28,7 +28,7 @@ internal class CameraAttachmentFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = StreamUiFragmentAttachmentCameraBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,7 +57,7 @@ internal class CameraAttachmentFragment : Fragment() {
                 val result: Set<AttachmentMetaData> = if (file == null) {
                     emptySet()
                 } else {
-                    setOf(AttachmentMetaData(file))
+                    setOf(AttachmentMetaData(requireContext(), file))
                 }
                 setFragmentResult(
                     AttachmentDialogFragment.REQUEST_KEY_CAMERA,

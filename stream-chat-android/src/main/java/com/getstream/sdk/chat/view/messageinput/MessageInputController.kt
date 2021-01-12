@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view.messageinput
 
+import android.content.Context
 import android.net.Uri
 import android.view.View
 import androidx.core.view.isVisible
@@ -159,7 +160,7 @@ internal class MessageInputController(
         onClickCloseAttachmentSelectionMenu()
     }
 
-    internal fun onFileCaptured(file: File) {
+    internal fun onFileCaptured(context: Context, file: File) {
         attachmentsController.selectAttachmentFromCamera(AttachmentMetaData(file))
     }
 
