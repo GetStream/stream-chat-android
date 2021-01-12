@@ -8,7 +8,6 @@ import android.os.Environment
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
-import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
