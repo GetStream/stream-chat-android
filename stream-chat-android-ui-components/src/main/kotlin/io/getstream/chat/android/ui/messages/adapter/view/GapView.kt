@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Space
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.Utils.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 internal class GapView : LinearLayout {
     constructor(context: Context?) : super(context)
@@ -25,11 +25,11 @@ internal class GapView : LinearLayout {
 
     init {
         smallGap = Space(context).apply {
-            layoutParams = createLayoutParams(dpToPx(SMALL_GAP_HEIGHT_DP))
+            layoutParams = createLayoutParams(SMALL_GAP_HEIGHT_DP.dpToPx())
             isVisible = false
         }
         bigGap = Space(context).apply {
-            layoutParams = createLayoutParams(dpToPx(BIG_GAP_HEIGHT_DP))
+            layoutParams = createLayoutParams(BIG_GAP_HEIGHT_DP.dpToPx())
             isVisible = false
         }
         addView(smallGap)
