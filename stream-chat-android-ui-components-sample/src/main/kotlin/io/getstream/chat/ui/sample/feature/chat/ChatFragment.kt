@@ -167,8 +167,7 @@ class ChatFragment : Fragment() {
     private fun initMessagesViewModel() {
         messageListViewModel
             .apply {
-                bindView(binding.messageListView,
-                    viewLifecycleOwner)
+                bindView(binding.messageListView, viewLifecycleOwner)
             } // TODO replace with new design message list
             .apply {
                 state.observe(
