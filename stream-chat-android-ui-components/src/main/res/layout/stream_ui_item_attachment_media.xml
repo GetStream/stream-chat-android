@@ -24,7 +24,7 @@
         android:id="@+id/selectionOverlayView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/stream_ui_attachment_dialog_selection_overlay"
+        android:background="@color/stream_ui_overlay"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
         app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
