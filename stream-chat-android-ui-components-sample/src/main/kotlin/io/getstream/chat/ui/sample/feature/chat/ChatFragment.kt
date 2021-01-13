@@ -78,7 +78,7 @@ class ChatFragment : Fragment() {
             chatViewModel.getChannelName()
         }
 
-        return String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), subtitleMessage)
+        return String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_with), subtitleMessage)
     }
 
     private fun threadUsers(messageWrapper: MessageListItemWrapper): Set<User> {
