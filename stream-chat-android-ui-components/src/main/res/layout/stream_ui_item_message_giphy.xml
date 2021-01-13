@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/stream_ui_divider"
+                android:background="@color/stream_ui_border"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/previousButton"
                 />
@@ -130,7 +130,7 @@
                 android:id="@+id/verticalDivider"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                android:background="@color/stream_ui_divider"
+                android:background="@color/stream_ui_border"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/cancel_button"
                 app:layout_constraintRight_toLeftOf="@id/sendButton"

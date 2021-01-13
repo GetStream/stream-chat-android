@@ -173,7 +173,7 @@
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_ui_divider_height"
-        android:background="@color/stream_ui_divider"
+        android:background="@color/stream_ui_border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

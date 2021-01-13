@@ -25,16 +25,16 @@
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
     <color name="stream_ui_button_background_color">#005AFF</color>
     <color name="stream_ui_button_text_color">#FFFFFF</color>
+    <color name="stream_ui_border">#e8e8e8</color>
 
+
+    <!-- Avatar gradient colors -->
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_ui_avatar_gradient_green">#81C784</color>
     <color name="stream_ui_avatar_gradient_blue">#4FC3F7</color>
     <color name="stream_ui_avatar_gradient_brown">#A1887F</color>
     <color name="stream_ui_avatar_gradient_yellow">#FFF176</color>
     <color name="stream_ui_avatar_gradient_red">#E57373</color>
-
-    <color name="stream_ui_transparent">#00000000</color>
-
     <array name="stream_ui_avatar_gradient_colors">
         <item>@color/stream_ui_avatar_gradient_orange</item>
         <item>@color/stream_ui_avatar_gradient_green</item>
@@ -44,5 +44,6 @@
         <item>@color/stream_ui_avatar_gradient_red</item>
     </array>
 
-    <color name="stream_ui_divider">#e8e8e8</color>
+    <!-- Platform -->
+    <color name="stream_ui_transparent">#00000000</color>
 </resources>
