@@ -51,7 +51,11 @@ class ChatInfoSharedAttachmentsViewModel(
     }
 
     private suspend fun fetchAttachments() {
-        val result = channelClient.getMessagesWithAttachments(messages.size, limit = QUERY_LIMIT, attachmentsType.requestTypeKey).await()
+        val result = channelClient.getMessagesWithAttachments(
+            offset = messages.size,
+            limit = QUERY_LIMIT,
+            type = attachmentsType.requestTypeKey,
+        ).await()
         if (result.isSuccess) {
             val newMessages = result.data()
             messages = messages + newMessages
