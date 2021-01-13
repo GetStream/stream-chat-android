@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -232,6 +233,9 @@ public class MessageListView : ConstraintLayout {
         GiphySendListener { message, action ->
             onSendGiphyHandler.invoke(message, action)
         }
+    private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
+        ChatUI.instance().navigator.navigate(WebLinkDestination(url, context))
+    }
 
     private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
@@ -243,6 +247,7 @@ public class MessageListView : ConstraintLayout {
         reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
         userClickListener = DEFAULT_USER_CLICK_LISTENER,
         giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
+        linkClickListener = DEFAULT_LINK_CLICK_LISTENER,
     )
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
@@ -828,6 +833,15 @@ public class MessageListView : ConstraintLayout {
         listenerContainer.userClickListener = userClickListener ?: DEFAULT_USER_CLICK_LISTENER
     }
 
+    /**
+     * Sets the link click listener to be used by MessageListView.
+     *
+     * @param linkClickListener The listener to use. If null, the default will be used instead.
+     */
+    public fun setLinkClickListener(linkClickListener: LinkClickListener?) {
+        listenerContainer.linkClickListener = linkClickListener ?: DEFAULT_LINK_CLICK_LISTENER
+    }
+
     public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
@@ -914,6 +928,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface GiphySendListener {
         public fun onGiphySend(message: Message, action: GiphyAction)
+    }
+
+    public fun interface LinkClickListener {
+        public fun onLinkClick(url: String)
     }
 
     public fun interface UserClickListener {

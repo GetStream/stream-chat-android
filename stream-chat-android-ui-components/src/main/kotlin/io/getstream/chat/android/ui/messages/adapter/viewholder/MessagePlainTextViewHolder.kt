@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemVie
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
 
 internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
@@ -37,6 +38,18 @@ internal class MessagePlainTextViewHolder(
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
             }
+            linkAttachmentView.apply {
+                setLinkPreviewClickListener { url ->
+                    listeners.linkClickListener.onLinkClick(url)
+                }
+                setLongClickTarget(root)
+            }
+
+            LongClickFriendlyLinkMovementMethod.set(
+                textView = messageText,
+                longClickTarget = root,
+                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
+            )
         }
     }
 
