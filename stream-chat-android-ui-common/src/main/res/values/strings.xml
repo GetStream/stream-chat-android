@@ -18,4 +18,7 @@
 
     <!--Message Date-->
     <string name="stream_date_yesterday">Yesterday</string>
+
+    <!--Attachment Display-->
+    <string name="stream_ui_attachment_display_error">Error. File can\'t be displayed</string>
 </resources>
