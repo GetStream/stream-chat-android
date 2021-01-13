@@ -618,6 +618,7 @@ internal class ChannelControllerImpl(
                     if (result.isSuccess) {
                         attachment = result.data()
                     } else {
+                        attachment.name = result.data().name
                         attachment.uploadState = Attachment.UploadState.Failed(result.error())
                         logger.logE("Failed to upload attachment for message")
                     }
