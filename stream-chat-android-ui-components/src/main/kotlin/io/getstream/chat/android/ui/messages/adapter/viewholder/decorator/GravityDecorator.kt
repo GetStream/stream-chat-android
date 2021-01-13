@@ -17,19 +17,16 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMed
 internal class GravityDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
-        }
-        root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, data)
         }
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         root.updateConstraints {
             applyGravity(footnote.messageFooterContainer, data)
@@ -38,7 +35,7 @@ internal class GravityDecorator : BaseDecorator() {
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         root.updateConstraints {
             applyGravity(footnote.messageFooterContainer, data)
@@ -47,7 +44,7 @@ internal class GravityDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         root.updateConstraints {
             applyGravity(footnote.messageFooterContainer, data)
@@ -56,7 +53,7 @@ internal class GravityDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         root.updateConstraints {
             applyGravity(footnote.messageFooterContainer, data)
@@ -65,12 +62,12 @@ internal class GravityDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = Unit
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = Unit
 
     private fun ConstraintSet.applyGravity(targetView: View, data: MessageListItem.MessageItem) {

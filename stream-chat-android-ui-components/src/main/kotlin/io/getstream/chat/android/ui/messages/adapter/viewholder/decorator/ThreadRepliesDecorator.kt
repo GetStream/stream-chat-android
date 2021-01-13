@@ -71,15 +71,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
         )
     }
 
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.messageContainer.id,
-            data
-        )
-    }
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) = Unit
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 

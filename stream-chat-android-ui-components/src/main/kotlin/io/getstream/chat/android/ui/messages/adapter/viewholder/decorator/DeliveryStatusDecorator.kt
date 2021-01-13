@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 internal class DeliveryStatusDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.footnote.deliveryStatusIcon, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(

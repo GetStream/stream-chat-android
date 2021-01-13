@@ -30,7 +30,7 @@ internal class MessagePlainTextViewHolder(
             reactionsView.setReactionClickListener {
                 listeners.reactionViewClickListener.onReactionViewClick(data.message)
             }
-            threadRepliesFootnote.root.setOnClickListener {
+            footnote.threadsFootnote.root.setOnClickListener {
                 listeners.threadClickListener.onThreadClick(data.message)
             }
 

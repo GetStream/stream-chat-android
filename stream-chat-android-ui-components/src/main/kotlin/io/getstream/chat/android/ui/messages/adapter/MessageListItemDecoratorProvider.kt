@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FailedIndicatorDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FootnoteDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAttachmentDecorator
@@ -37,6 +38,7 @@ internal class MessageListItemDecoratorProvider(
         ReplyDecorator(currentUser),
         ReactionsDecorator(),
         ThreadRepliesDecorator(),
+        FootnoteDecorator(dateFormatter, isDirectMessage),
     )
 
     override val decorators: List<Decorator> = messageListDecorators
