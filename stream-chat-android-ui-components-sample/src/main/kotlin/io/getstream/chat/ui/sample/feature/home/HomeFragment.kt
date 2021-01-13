@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -33,7 +34,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,6 +66,11 @@ class HomeFragment : Fragment() {
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
+        }
+
+        binding.bottomNavigationView.apply {
+            getBadge(R.id.channels_fragment)?.badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
+            getBadge(R.id.mentions_fragment)?.badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
         }
     }
 
@@ -120,8 +126,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun renderState(state: HomeFragmentViewModel.State) {
-        binding.bottomNavigationView.setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
-        binding.bottomNavigationView.setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+        binding.bottomNavigationView.apply {
+            setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
+            setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+        }
 
         nameTextView.text = state.user.name
         avatarView.setUserData(state.user)
