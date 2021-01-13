@@ -137,7 +137,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/spacing_medium"
-        android:textColor="@color/stream_ui_sdk_version_color"
+        android:textColor="@color/stream_ui_grey_gainsboro"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
