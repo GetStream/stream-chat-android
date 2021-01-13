@@ -4,7 +4,6 @@ package io.getstream.chat.android.ui.messages.header
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
 import io.getstream.chat.android.ui.utils.extensions.getUsers
