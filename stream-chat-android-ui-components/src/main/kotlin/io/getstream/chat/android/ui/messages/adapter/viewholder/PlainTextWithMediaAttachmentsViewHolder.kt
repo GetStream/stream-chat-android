@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 internal class PlainTextWithMediaAttachmentsViewHolder(
@@ -46,6 +47,18 @@ internal class PlainTextWithMediaAttachmentsViewHolder(
             mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
             }
+            linkAttachmentView.apply {
+                setLinkPreviewClickListener { url ->
+                    listeners.linkClickListener.onLinkClick(url)
+                }
+                setLongClickTarget(root)
+            }
+
+            LongClickFriendlyLinkMovementMethod.set(
+                textView = messageText,
+                longClickTarget = root,
+                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
+            )
         }
     }
 

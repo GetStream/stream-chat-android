@@ -60,8 +60,8 @@ public class MessageReplyView : FrameLayout {
     }
 
     private fun setUserAvatar(message: Message) {
-        binding.avatarView.setUserData(message.user)
-        binding.avatarView.isVisible = true
+        binding.replyAvatarView.setUserData(message.user)
+        binding.replyAvatarView.isVisible = true
     }
 
     private fun setAvatarPosition(isMine: Boolean) {
@@ -71,7 +71,7 @@ public class MessageReplyView : FrameLayout {
             clear(R.id.replyContainer, ConstraintSet.START)
             clear(R.id.replyContainer, ConstraintSet.END)
         }
-        binding.avatarView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+        binding.replyAvatarView.updateLayoutParams<ConstraintLayout.LayoutParams> {
             if (isMine) {
                 endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
                 startToEnd = R.id.replyContainer
