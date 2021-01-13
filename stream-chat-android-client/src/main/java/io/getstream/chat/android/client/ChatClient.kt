@@ -468,7 +468,7 @@ public class ChatClient internal constructor(
         type: String
     ): Call<List<Attachment>> =
         getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
-            messages.flatMap { message -> message.attachments }
+            messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
     public fun getMessagesWithAttachments(
