@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/optionListContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/stream_ui_shape_message_options_background"
+    android:divider="@drawable/stream_ui_divider"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    >
+
+    <TextView
+        android:id="@+id/reply"
+        style="@style/StreamUiMessageOptionItem"
+        android:visibility="gone"
+        tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
+        tools:text="Reply"
+        tools:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/showInChat"
+        style="@style/StreamUiMessageOptionItem"
+        android:visibility="gone"
+        tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
+        tools:text="Reply"
+        tools:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/saveImage"
+        style="@style/StreamUiMessageOptionItem"
+        android:visibility="gone"
+        tools:drawableStart="@drawable/stream_ui_ic_download"
+        tools:text="Reply"
+        tools:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/delete"
+        style="@style/StreamUiMessageOptionItem"
+        app:drawableTint="@color/stream_ui_light_red"
+        tools:drawableStart="@drawable/stream_ui_ic_delete"
+        tools:text="Delete Message"
+        />
+
+</LinearLayout>
