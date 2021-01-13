@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="24dp"
-    android:background="@color/stream_ui_section_item_color"
+    android:background="@color/stream_ui_white_smoke"
     android:paddingStart="@dimen/spacing_small"
     android:paddingEnd="@dimen/spacing_small"
     >

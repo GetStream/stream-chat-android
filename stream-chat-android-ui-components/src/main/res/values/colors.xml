@@ -17,6 +17,8 @@
 
     <!-- Specials -->
     <color name="stream_ui_overlay_dark">#99000000</color>
+    <color name="stream_ui_background_gradient_start">#F7F7F7</color>
+    <color name="stream_ui_background_gradient_end">#FCFCFC</color>
 
     <!-- Other -->
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
@@ -62,8 +64,6 @@
     <color name="stream_ui_background_alabaster">@color/stream_ui_white_snow</color>
     <color name="stream_ui_background_alabaster_black">@color/stream_ui_white_snow</color>
     <color name="stream_ui_background_date_divider">@color/stream_ui_black_60</color>
-    <color name="stream_ui_search_info_bar_start_background">#F7F7F7</color>
-    <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_white_snow</color>
 
     <color name="stream_ui_text_color_light">#989898</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>
@@ -72,12 +72,8 @@
 
     <color name="stream_ui_divider">@color/stream_ui_gray_light</color>
 
-    <color name="stream_ui_section_item_color">@color/stream_ui_gray_light</color>
-
     <color name="stream_ui_send_button">@color/stream_ui_accent_blue</color>
     <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
-
-    <color name="stream_ui_search_input_border">#EBEBEB</color>
 
     <color name="stream_ui_material_button_background_color">@color/stream_ui_accent_blue</color>
     <color name="stream_ui_material_button_text_color">@color/stream_ui_white</color>
