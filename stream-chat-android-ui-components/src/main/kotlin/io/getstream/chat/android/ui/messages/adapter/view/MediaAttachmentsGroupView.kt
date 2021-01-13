@@ -174,7 +174,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     private fun ShapeAppearanceModel.getCornerSize(selector: (ShapeAppearanceModel) -> CornerSize): Float {
-        return ((selector(this) as? AbsoluteCornerSize)?.cornerSize ?: 0f - STROKE_WIDTH).takeIf { it >= 0f }
+        return (((selector(this) as? AbsoluteCornerSize)?.cornerSize ?: 0f) - STROKE_WIDTH).takeIf { it >= 0f }
             .getOrDefault(0f)
     }
 
