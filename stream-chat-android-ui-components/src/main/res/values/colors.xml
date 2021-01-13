@@ -22,8 +22,6 @@
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
 
 
-    <color name="stream_ui_grey_dark">#989898</color>
-
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_ui_avatar_gradient_green">#81C784</color>
     <color name="stream_ui_avatar_gradient_blue">#4FC3F7</color>
@@ -77,7 +75,7 @@
     <color name="stream_ui_search_info_bar_start_background">#F7F7F7</color>
     <color name="stream_ui_search_info_bar_end_background">@color/stream_ui_white_snow</color>
 
-    <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
+    <color name="stream_ui_text_color_light">#989898</color>
     <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>
     <color name="stream_ui_text_color_subtitle">#7A7A7A</color>
     <color name="stream_ui_text_color_date_divider">@color/stream_ui_white</color>

@@ -55,7 +55,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:itemIconTint="@color/stream_ui_grey_dark"
+        app:itemIconTint="@color/stream_ui_grey"
         app:menu="@menu/menu_navigation_drawer"
         >
 
@@ -72,7 +72,7 @@
             android:maxLines="1"
             android:paddingStart="@dimen/spacing_large"
             android:text="@string/home_drawer_sign_out"
-            app:drawableTint="@color/stream_ui_grey_dark"
+            app:drawableTint="@color/stream_ui_grey"
             />
 
     </com.google.android.material.navigation.NavigationView>

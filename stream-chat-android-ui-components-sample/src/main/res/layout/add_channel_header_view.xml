@@ -15,7 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="@string/add_member_title"
-        android:textColor="@color/stream_ui_grey_dark"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
