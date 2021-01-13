@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
 import io.getstream.chat.android.ui.images.menu.ImagesMenuDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 public class AttachmentGallery : ConstraintLayout {
@@ -101,9 +102,12 @@ public class AttachmentGallery : ConstraintLayout {
         this.imageList = imageList
 
         binding.shareButton.setOnClickListener {
+            it.isEnabled = false
             GlobalScope.launch(DispatcherProvider.Main) {
                 ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
                     ?.let(onSharePictureListener)
+                delay(500)
+                it.isEnabled = true
             }
         }
     }
