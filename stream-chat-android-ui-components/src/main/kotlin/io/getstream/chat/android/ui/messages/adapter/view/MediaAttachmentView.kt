@@ -97,7 +97,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
-        bottomLeft: Float
+        bottomLeft: Float,
     ) {
         ShapeAppearanceModel.Builder().setTopLeftCornerSize(topLeft).setTopRightCornerSize(topRight)
             .setBottomRightCornerSize(bottomRight).setBottomLeftCornerSize(bottomLeft).build().let(this::setImageShape)

@@ -104,11 +104,12 @@ public object ImageLoader {
         @DrawableRes placeholderResId: Int? = null,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
+        transformation: ImageTransformation = ImageTransformation.None,
     ): Unit = loadAny(
         data = uri,
         placeholderResId = placeholderResId,
         videoContentUri = false,
-        transformation = ImageTransformation.None,
+        transformation = transformation,
         onStart = onStart,
         onComplete = onComplete
     )
