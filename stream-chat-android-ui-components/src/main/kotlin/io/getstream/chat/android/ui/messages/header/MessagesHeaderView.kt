@@ -28,7 +28,8 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
 
-    private var originalTitle: String? = null
+    private var normalModeTitle: String? = null
+    private var normalModeSubTitle: String? = null
 
     public constructor(context: Context) : super(context) {
         init(null)
@@ -80,10 +81,15 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.title.text = title ?: String.EMPTY
         binding.title.isVisible = true
 
-        originalTitle = title ?: String.EMPTY
+        normalModeTitle = title ?: String.EMPTY
     }
 
     public fun setOnlineStateSubtitle(subtitle: String) {
+        binding.onlineLabel.text = subtitle
+    }
+
+    public fun setThreadSubtitle(subtitle: String) {
+        normalModeSubTitle = binding.onlineLabel.text.toString()
         binding.onlineLabel.text = subtitle
     }
 
@@ -147,10 +153,11 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     public fun setNormalMode() {
-        binding.title.text = originalTitle
+        binding.title.text = normalModeTitle
+        binding.onlineLabel.text = normalModeSubTitle
     }
 
-    public fun setThreadMode(headerTitle: String?) {
+    public fun setThreadTitle(headerTitle: String?) {
         binding.title.text = headerTitle
     }
 

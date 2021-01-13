@@ -23,12 +23,13 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
 
-    private var activeThread = MutableLiveData<Message?>()
+    private var _activeThread = MutableLiveData<Message?>()
     private val _members = MediatorLiveData<List<Member>>()
     private val _channelState = MediatorLiveData<Channel>()
     private val _anyOtherUsersOnline = MediatorLiveData<Boolean>()
     private val _typingUsers = MediatorLiveData<List<User>>()
 
+    public var activeThread: LiveData<Message?> = _activeThread
     public val members: LiveData<List<Member>> = _members
     public val channelState: LiveData<Channel> = _channelState
     public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline
@@ -57,15 +58,9 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Sets and informs about new active thread
-     */
-    public fun setActiveThread(parentMessage: Message?) {
-        activeThread.postValue(parentMessage)
-    }
+    public fun isThreadMode(): Boolean = _activeThread.value != null
 
-    public fun getActiveThread(): LiveData<Message?> {
-        return activeThread
+    public fun setActiveThread(message: Message?) {
+        _activeThread.postValue(message)
     }
-
 }

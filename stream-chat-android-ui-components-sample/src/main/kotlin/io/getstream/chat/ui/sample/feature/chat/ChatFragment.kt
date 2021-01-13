@@ -1,5 +1,6 @@
 package io.getstream.chat.ui.sample.feature.chat
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +10,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.bindView
 import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
@@ -38,7 +44,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
@@ -55,6 +61,30 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+
+        messageListViewModel.state.observe(viewLifecycleOwner) { state ->
+            if (state is MessageListViewModel.State.Result && headerViewModel.isThreadMode()) {
+                binding.messagesHeaderView.setThreadSubtitle(
+                    threadSubtitle(requireContext(), state.messageListItem)
+                )
+            }
+        }
+    }
+
+    private fun threadSubtitle(context: Context, messageWrapper: MessageListItemWrapper): String {
+        val users = threadUsers(messageWrapper)
+
+        return if (users.size == 1) {
+            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), users[0].name)
+        } else {
+            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_many_users), users.size)
+        }
+    }
+
+    private fun threadUsers(messageWrapper: MessageListItemWrapper): List<User> {
+        return messageWrapper.items
+            .filterIsInstance<MessageListItem.MessageItem>()
+            .map { messageItem -> messageItem.message.user }
     }
 
     override fun onResume() {
@@ -118,12 +148,12 @@ class ChatFragment : Fragment() {
             {
                 when (it) {
                     is MessageListViewModel.Mode.Thread -> {
-                        messageInputViewModel.setActiveThread(it.parentMessage)
                         headerViewModel.setActiveThread(it.parentMessage)
+                        messageInputViewModel.setActiveThread(it.parentMessage)
                     }
                     is MessageListViewModel.Mode.Normal -> {
-                        messageInputViewModel.resetThread()
                         headerViewModel.setActiveThread(null)
+                        messageInputViewModel.resetThread()
                     }
                 }
             }
@@ -135,7 +165,10 @@ class ChatFragment : Fragment() {
 
     private fun initMessagesViewModel() {
         messageListViewModel
-            .apply { bindView(binding.messageListView, viewLifecycleOwner) } // TODO replace with new design message list
+            .apply {
+                bindView(binding.messageListView,
+                    viewLifecycleOwner)
+            } // TODO replace with new design message list
             .apply {
                 state.observe(
                     viewLifecycleOwner,
