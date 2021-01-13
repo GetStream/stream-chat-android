@@ -64,9 +64,7 @@ class ChatFragment : Fragment() {
 
         messageListViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
-                binding.messagesHeaderView.setThreadSubtitle(
-                    threadSubtitle(requireContext(), state.messageListItem)
-                )
+                binding.messagesHeaderView.setThreadSubtitle(threadSubtitle(requireContext(), state.messageListItem))
             }
         }
     }
@@ -74,11 +72,13 @@ class ChatFragment : Fragment() {
     private fun threadSubtitle(context: Context, messageWrapper: MessageListItemWrapper): String {
         val users = threadUsers(messageWrapper)
 
-        return if (users.size == 1) {
-            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), users.first().name)
+        val subtitleMessage = if (users.size == 1) {
+            users.first().name
         } else {
-            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_many_users), users.size)
+            chatViewModel.getChannelName()
         }
+
+        return String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), subtitleMessage)
     }
 
     private fun threadUsers(messageWrapper: MessageListItemWrapper): Set<User> {
