@@ -75,17 +75,18 @@ class ChatFragment : Fragment() {
         val users = threadUsers(messageWrapper)
 
         return if (users.size == 1) {
-            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), users[0].name)
+            String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_single_user), users.first().name)
         } else {
             String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_many_users), users.size)
         }
     }
 
-    private fun threadUsers(messageWrapper: MessageListItemWrapper): List<User> {
+    private fun threadUsers(messageWrapper: MessageListItemWrapper): Set<User> {
         return messageWrapper.items
             .filterIsInstance<MessageListItem.MessageItem>()
             .filter { message -> message.isTheirs }
             .map { messageItem -> messageItem.message.user }
+            .toSet()
     }
 
     override fun onResume() {
@@ -168,7 +169,7 @@ class ChatFragment : Fragment() {
         messageListViewModel
             .apply {
                 bindView(binding.messageListView, viewLifecycleOwner)
-            } // TODO replace with new design message list
+            }
             .apply {
                 state.observe(
                     viewLifecycleOwner,
