@@ -48,6 +48,7 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickLis
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
@@ -65,6 +66,7 @@ public class MessageListView : ConstraintLayout {
 
     private companion object {
         const val LOAD_MORE_THRESHOLD = 10
+        const val HIGHLIGHT_MENTION_DELAY = 100L
     }
 
     private var firstVisiblePosition = 0
@@ -497,11 +499,20 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun scrollToMessage(message: Message) {
-        val targetListItem = adapter.currentList.firstOrNull { it is MessageItem && it.message.id == message.id }
-        targetListItem?.let {
-            val position = adapter.currentList.indexOf(it)
-            binding.chatMessagesRV.layoutManager?.scrollToPosition(position)
-        }
+        binding.chatMessagesRV.postDelayed(
+            {
+                adapter.currentList
+                    .indexOfFirst { it is MessageItem && it.message.id == message.id }
+                    .takeIf { it >= 0 }
+                    ?.let {
+                        binding.chatMessagesRV
+                            .layoutManager
+                            ?.cast<LinearLayoutManager>()
+                            ?.scrollToPositionWithOffset(it, binding.chatMessagesRV.height / 2)
+                    }
+            },
+            HIGHLIGHT_MENTION_DELAY
+        )
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
