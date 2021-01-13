@@ -90,7 +90,7 @@ internal class ChannelControllerImpl(
     override val channelType: String,
     override val channelId: String,
     val client: ChatClient,
-    val domainImpl: ChatDomainImpl
+    val domainImpl: ChatDomainImpl,
 ) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
@@ -401,44 +401,86 @@ internal class ChannelControllerImpl(
         runChannelQuery(QueryChannelPaginationRequest(limit))
     }
 
-    private fun loadMoreMessagesRequest(
-        limit: Int = 30,
-        direction: Pagination
-    ): QueryChannelPaginationRequest {
+    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
         val messages = sortedMessages()
-        val request = QueryChannelPaginationRequest(limit)
-        if (messages.isNotEmpty()) {
-            val messageId: String = when (direction) {
-                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
+        return if (messages.isNotEmpty()) {
+            when (direction) {
+                Pagination.GREATER_THAN_OR_EQUAL,
+                Pagination.GREATER_THAN,
+                -> {
                     messages.last().id
                 }
-                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
+                Pagination.LESS_THAN,
+                Pagination.LESS_THAN_OR_EQUAL,
+                -> {
                     messages.first().id
                 }
             }
-            request.apply {
-                messageFilterDirection = direction
+        } else {
+            null
+        }
+    }
+
+    /**
+     *  Loads a list of messages before the oldest message in the current list.
+     */
+    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                getLoadMoreBaseMessageId(Pagination.LESS_THAN)?.let {
+                    messageFilterDirection = Pagination.LESS_THAN
+                    messageFilterValue = it
+                }
+            }
+        )
+    }
+
+    /**
+     *  Loads a list of messages after the newest message in the current list.
+     */
+    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                getLoadMoreBaseMessageId(Pagination.GREATER_THAN)?.let {
+                    messageFilterDirection = Pagination.GREATER_THAN
+                    messageFilterValue = it
+                }
+            }
+        )
+    }
+
+    /**
+     *  Loads a list of messages before the message with particular message id.
+     */
+    suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                messageFilterDirection = Pagination.LESS_THAN
                 messageFilterValue = messageId
             }
-        }
-
-        return request
+        )
     }
 
-    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.LESS_THAN))
-    }
-
-    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(loadMoreMessagesRequest(limit, Pagination.GREATER_THAN))
+    /**
+     *  Loads a list of messages after the message with particular message id.
+     */
+    suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                messageFilterDirection = Pagination.GREATER_THAN
+                messageFilterValue = messageId
+            }
+        )
     }
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val loader = when (pagination.messageFilterDirection) {
             Pagination.GREATER_THAN,
-            Pagination.GREATER_THAN_OR_EQUAL -> _loadingNewerMessages
+            Pagination.GREATER_THAN_OR_EQUAL,
+            -> _loadingNewerMessages
             Pagination.LESS_THAN,
-            Pagination.LESS_THAN_OR_EQUAL -> _loadingOlderMessages
+            Pagination.LESS_THAN_OR_EQUAL,
+            -> _loadingOlderMessages
             null -> _loading
         }
         if (loader.value) {
@@ -519,7 +561,7 @@ internal class ChannelControllerImpl(
 
     suspend fun sendMessage(
         message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
@@ -621,7 +663,7 @@ internal class ChannelControllerImpl(
      */
     internal suspend fun uploadAttachment(
         attachment: Attachment,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Attachment> {
         val file =
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
@@ -1036,7 +1078,8 @@ internal class ChannelControllerImpl(
                 }
             }
             is ChannelTruncatedEvent,
-            is NotificationChannelTruncatedEvent -> {
+            is NotificationChannelTruncatedEvent,
+            -> {
                 removeMessagesBefore(event.createdAt)
             }
             is TypingStopEvent -> {
@@ -1171,7 +1214,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun updateRead(
-        read: ChannelUserRead
+        read: ChannelUserRead,
     ) {
         updateReads(listOf(read))
     }
@@ -1339,7 +1382,7 @@ internal class ChannelControllerImpl(
     internal fun loadOlderThreadMessages(
         threadId: String,
         limit: Int,
-        firstMessage: Message? = null
+        firstMessage: Message? = null,
     ): Result<List<Message>> {
         val result = if (firstMessage != null) {
             client.getRepliesMore(threadId, firstMessage.id, limit).execute()
@@ -1357,17 +1400,16 @@ internal class ChannelControllerImpl(
     internal suspend fun loadMessageById(
         messageId: String,
         newerMessagesOffset: Int,
-        olderMessagesOffset: Int
+        olderMessagesOffset: Int,
     ): Result<Message> {
         val result = client.getMessage(messageId).await()
         if (result.isError) {
             return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         }
         val message = result.data()
-        _messages.value = emptyMap()
         upsertMessage(message)
-        loadNewerMessages(newerMessagesOffset)
-        loadOlderMessages(olderMessagesOffset)
+        loadOlderMessages(messageId, newerMessagesOffset)
+        loadNewerMessages(messageId, olderMessagesOffset)
         return Result(message)
     }
 
