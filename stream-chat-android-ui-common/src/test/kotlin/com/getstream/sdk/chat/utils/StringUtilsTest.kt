@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.utils
 
+import com.getstream.sdk.chat.utils.StorageHelper.Companion.FILE_NAME_PREFIX
 import io.getstream.chat.android.test.randomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import com.getstream.sdk.chat.utils.StorageHelper.Companion.FILE_NAME_PREFIX
 
 public class StringUtilsTest {
 
