@@ -31,7 +31,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         cancelHighlightAnimation()
     }
 
-    public fun startHighlightAnimation() {
+    internal fun startHighlightAnimation() {
         highlightAnimation = itemView.animateHighlight()
     }
 
