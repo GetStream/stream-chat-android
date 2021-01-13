@@ -1,14 +1,18 @@
 package io.getstream.chat.android.ui.messages.adapter
 
+import android.animation.ValueAnimator
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.utils.animateHighlight
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
     protected lateinit var data: T
         private set
+
+    private var highlightAnimation: ValueAnimator? = null
 
     /**
      * Workaround to allow a downcast of the MessageListItem to T
@@ -22,4 +26,17 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     }
 
     public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
+
+    internal fun unbind() {
+        cancelHighlightAnimation()
+    }
+
+    internal fun startHighlightAnimation() {
+        highlightAnimation = itemView.animateHighlight()
+    }
+
+    private fun cancelHighlightAnimation() {
+        highlightAnimation?.cancel()
+        highlightAnimation = null
+    }
 }
