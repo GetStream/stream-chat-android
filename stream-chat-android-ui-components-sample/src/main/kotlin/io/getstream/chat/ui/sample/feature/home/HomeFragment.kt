@@ -67,11 +67,6 @@ class HomeFragment : Fragment() {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
         }
-
-        binding.bottomNavigationView.apply {
-            getBadge(R.id.channels_fragment)?.badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
-            getBadge(R.id.mentions_fragment)?.badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
-        }
     }
 
     override fun onResume() {
@@ -87,10 +82,20 @@ class HomeFragment : Fragment() {
     private fun setupBottomNavigation() {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.hostFragmentContainer) as NavHostFragment
-        binding.bottomNavigationView.setupWithNavController(navHostFragment.navController)
-        // disable reloading fragment when clicking again on the same tab
-        binding.bottomNavigationView.setOnNavigationItemReselectedListener {}
-        binding.bottomNavigationView.setBackgroundResource(R.drawable.shape_bottom_navigation_background)
+        binding.bottomNavigationView.apply {
+            setupWithNavController(navHostFragment.navController)
+            // disable reloading fragment when clicking again on the same tab
+            setOnNavigationItemReselectedListener {}
+            setBackgroundResource(R.drawable.shape_bottom_navigation_background)
+            getOrCreateBadge(R.id.channels_fragment)?.apply {
+                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
+            }
+            getOrCreateBadge(R.id.mentions_fragment)?.apply {
+                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
+            }
+        }
     }
 
     private fun setupNavigationDrawer() {
