@@ -22,41 +22,17 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.fileAttachmentsView.id,
-            data
-        )
-    }
+    ) = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.fileAttachmentsView.id,
-            data
-        )
-    }
+    ) = Unit
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.mediaAttachmentsGroupView.id,
-            data
-        )
-    }
+    ) = Unit
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,

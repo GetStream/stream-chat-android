@@ -33,10 +33,7 @@ internal class MessageFooterDecorator(
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
-    }
+    ) = Unit
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
@@ -46,27 +43,16 @@ internal class MessageFooterDecorator(
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
-    }
+    ) = Unit
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
-    }
+    ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        with(viewHolder.binding) {
-            setupEphemeralMessageFooterLabel(footnote.messageFooter, data)
-            setupMessageFooterTime(footnote.timeView, data)
-        }
-    }
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupEphemeralMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
         when {

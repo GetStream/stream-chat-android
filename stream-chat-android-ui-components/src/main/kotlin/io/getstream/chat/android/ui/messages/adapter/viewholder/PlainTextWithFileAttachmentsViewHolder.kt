@@ -37,7 +37,7 @@ internal class PlainTextWithFileAttachmentsViewHolder(
             fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
                 listeners.attachmentClickListener.onAttachmentClick(data.message, it)
             }
-            threadRepliesFootnote.root.setOnClickListener {
+            footnote.threadsFootnote.root.setOnClickListener {
                 listeners.threadClickListener.onThreadClick(data.message)
             }
             fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {

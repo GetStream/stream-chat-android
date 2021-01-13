@@ -2,7 +2,9 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
 import android.content.res.Resources
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -10,6 +12,8 @@ import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
@@ -36,12 +40,12 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = Unit
+    ) = setupFootnote(viewHolder.binding.footnote, data)
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = Unit
+    ) = setupFootnote(viewHolder.binding.footnote, data)
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
@@ -57,13 +61,17 @@ internal class FootnoteDecorator(
         setupFootnote(viewHolder.binding.footnote, data)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+        setupFootnote(viewHolder.binding.footnote, data)
+        viewHolder.binding.footnote.footnote.deliveryStatusIcon.isVisible = false
+    }
 
     private fun setupFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         with(footnoteView) {
             setupEphemeralMessageFooterLabel(footnote.messageFooter, data)
             setupMessageFooterTime(footnote.timeView, data)
             setupThreadRepliesView(threadsFootnote, footnote.root, data)
+            setupDeliveryStateIndicator(footnote.deliveryStatusIcon, data)
             applyGravity(data.isMine)
         }
     }
@@ -142,6 +150,44 @@ internal class FootnoteDecorator(
         replyCount,
         replyCount
     )
+
+    private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
+        fun hideIndicator() {
+            imageView.isVisible = false
+        }
+
+        fun showIndicator(@DrawableRes drawableRes: Int) {
+            imageView.isVisible = true
+            imageView.setImageResource(drawableRes)
+        }
+
+        if (data.isNotBottomPosition()) {
+            hideIndicator()
+            return
+        }
+
+        if (!data.isMine || data.message.isEphemeral()) {
+            hideIndicator()
+            return
+        }
+
+        when (data.message.syncStatus) {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
+                showIndicator(R.drawable.stream_ui_ic_clock)
+            }
+            SyncStatus.COMPLETED -> {
+                if (data.messageReadBy.isNotEmpty()) {
+                    showIndicator(R.drawable.stream_ui_ic_check_double)
+                } else {
+                    showIndicator(R.drawable.stream_ui_ic_check_single)
+                }
+            }
+            SyncStatus.FAILED_PERMANENTLY -> {
+                // This case is covered by a separate Decorator
+                hideIndicator()
+            }
+        }.exhaustive
+    }
 
     companion object {
         private val DEFAULT_FOOTNOTE_TOP_MARGIN = 6.dpToPxPrecise()

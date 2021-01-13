@@ -5,7 +5,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
@@ -27,11 +26,7 @@ internal class GravityDecorator : BaseDecorator() {
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = with(viewHolder.binding) {
-        root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, data)
-        }
-    }
+    ) = Unit
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
@@ -41,20 +36,12 @@ internal class GravityDecorator : BaseDecorator() {
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = with(viewHolder.binding) {
-        root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, data)
-        }
-    }
+    ) = Unit
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = with(viewHolder.binding) {
-        root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, data)
-        }
-    }
+    ) = Unit
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,

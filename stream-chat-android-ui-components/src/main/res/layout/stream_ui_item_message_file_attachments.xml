@@ -87,24 +87,13 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <include
+    <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
         android:id="@+id/footnote"
-        layout="@layout/stream_ui_item_message_footnote"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
-        />
-
-    <include
-        android:id="@+id/threadRepliesFootnote"
-        layout="@layout/stream_ui_message_threads_footnote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
         app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
         />
 

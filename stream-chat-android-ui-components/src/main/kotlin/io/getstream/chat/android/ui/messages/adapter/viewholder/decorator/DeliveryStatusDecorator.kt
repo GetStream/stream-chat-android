@@ -19,43 +19,31 @@ import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 
 internal class DeliveryStatusDecorator : BaseDecorator() {
 
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.footnote.deliveryStatusIcon, data)
-    }
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) = Unit
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
-    }
+    )  = Unit
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.footnote.deliveryStatusIcon, data)
-    }
+    ) = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
-    }
+    ) = Unit
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
-    }
+    ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        viewHolder.binding.footnote.deliveryStatusIcon.isVisible = false
-    }
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun setupDeliveryStateIndicator(imageView: ImageView, data: MessageListItem.MessageItem) {
         fun hideIndicator() {
