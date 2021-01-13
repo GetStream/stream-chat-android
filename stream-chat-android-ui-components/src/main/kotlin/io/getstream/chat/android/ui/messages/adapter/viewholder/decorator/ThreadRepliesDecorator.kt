@@ -61,15 +61,7 @@ internal class ThreadRepliesDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupThreadRepliesView(
-            viewHolder.binding.threadRepliesFootnote,
-            viewHolder.binding.footnote.root,
-            viewHolder.binding.root,
-            viewHolder.binding.mediaAttachmentsGroupView.id,
-            data
-        )
-    }
+    ) = Unit
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) = Unit
 

@@ -34,7 +34,7 @@ internal class DeliveryStatusDecorator : BaseDecorator() {
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
     ) {
-        setupDeliveryStateIndicator(viewHolder.binding.footnote.deliveryStatusIcon, data)
+        setupDeliveryStateIndicator(viewHolder.binding.footnote.footnote.deliveryStatusIcon, data)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(

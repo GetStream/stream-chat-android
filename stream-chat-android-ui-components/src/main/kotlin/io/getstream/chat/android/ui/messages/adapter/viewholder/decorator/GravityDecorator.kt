@@ -36,11 +36,7 @@ internal class GravityDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = with(viewHolder.binding) {
-        root.updateConstraints {
-            applyGravity(footnote.messageFooterContainer, data)
-        }
-    }
+    ) = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,

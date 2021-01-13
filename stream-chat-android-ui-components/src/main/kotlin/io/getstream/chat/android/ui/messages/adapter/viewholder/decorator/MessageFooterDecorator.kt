@@ -41,10 +41,7 @@ internal class MessageFooterDecorator(
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem
-    ) {
-        setupEphemeralMessageFooterLabel(viewHolder.binding.footnote.messageFooter, data)
-        setupMessageFooterTime(viewHolder.binding.footnote.timeView, data)
-    }
+    )  = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,

@@ -51,7 +51,7 @@ internal class FootnoteDecorator(
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = Unit
+    ) = setupFootnote(viewHolder.binding.footnote, data)
 
     override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
         setupFootnote(viewHolder.binding.footnote, data)
