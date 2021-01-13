@@ -44,7 +44,6 @@
     <color name="stream_ui_black_60">#99000000</color>
     <color name="stream_ui_white_60">#99FFFFFF</color>
     <color name="stream_ui_grey_90">#E6E6E6</color>
-    <color name="stream_ui_border_stroke">#14000000</color>
 
     <array name="stream_ui_avatar_gradient_colors">
         <item>@color/stream_ui_avatar_gradient_orange</item>
