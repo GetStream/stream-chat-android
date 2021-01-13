@@ -25,18 +25,6 @@
 
     <color name="stream_ui_border_stroke">@color/stream_ui_grey_gainsboro</color>
 
-    <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_background_light
-    </color>
-    <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_background_light
-    </color>
-    <color name="stream_ui_view_reactions_bubble_color_mine">@color/stream_ui_background_light
-    </color>
-    <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_background_light
-    </color>
-    <color name="stream_ui_view_reactions_bubble_border_color_mine">
-        @color/stream_ui_background_light
-    </color>
-
     <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
     <color name="stream_ui_background_alabaster_black">@color/stream_ui_black</color>
     <color name="stream_ui_background_date_divider">@color/stream_ui_white_60</color>
