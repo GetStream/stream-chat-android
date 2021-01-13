@@ -352,7 +352,7 @@ public class MessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.MessageInputView_streamUiMessageInputTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_strong)
+                    context.getColorCompat(R.color.stream_ui_black)
                 )
             )
 

@@ -56,7 +56,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
                 android:text="@string/add_channel_empty_users_title"
-                android:textColor="@color/stream_ui_text_color_light"
+                android:textColor="@color/stream_ui_grey"
                 android:textSize="@dimen/stream_ui_text_medium"
                 android:visibility="gone"
                 app:drawableTopCompat="@drawable/empty_user_search"

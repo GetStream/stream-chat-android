@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/stream_ui_text_color_date_divider"
+            android:textColor="@color/stream_ui_white"
             />
     </FrameLayout>
 
@@ -83,7 +83,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_media_empty_title"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             android:textStyle="bold"
             app:drawableTopCompat="@drawable/empty_shared_files"
             />

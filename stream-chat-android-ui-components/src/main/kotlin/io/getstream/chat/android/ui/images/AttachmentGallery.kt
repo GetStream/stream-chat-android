@@ -146,7 +146,7 @@ public class AttachmentGallery : ConstraintLayout {
 
             tArray.getColor(
                 R.styleable.AttachmentGallery_streamUiCountTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             ).let(binding.photoCount::setTextColor)
 
             imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle)

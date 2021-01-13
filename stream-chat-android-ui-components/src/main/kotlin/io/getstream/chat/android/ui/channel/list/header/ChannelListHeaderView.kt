@@ -111,7 +111,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
@@ -130,7 +130,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,

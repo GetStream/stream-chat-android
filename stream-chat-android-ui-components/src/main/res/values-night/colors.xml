@@ -21,10 +21,6 @@
     <color name="stream_ui_button_text_color">#005AFF</color>
 
 
-    <color name="stream_ui_text_color_light">#989898</color>
-    <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
-    <color name="stream_ui_text_color_date_divider">@color/stream_ui_white</color>
-
     <color name="stream_ui_divider">#141924</color>
 
 </resources>

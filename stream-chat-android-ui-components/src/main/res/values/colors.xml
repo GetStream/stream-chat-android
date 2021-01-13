@@ -44,10 +44,5 @@
         <item>@color/stream_ui_avatar_gradient_red</item>
     </array>
 
-    <color name="stream_ui_text_color_light">#989898</color>
-    <color name="stream_ui_text_color_strong">@color/stream_ui_black</color>
-    <color name="stream_ui_text_color_subtitle">#7A7A7A</color>
-    <color name="stream_ui_text_color_date_divider">@color/stream_ui_white</color>
-
     <color name="stream_ui_divider">#e8e8e8</color>
 </resources>

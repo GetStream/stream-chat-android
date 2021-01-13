@@ -21,7 +21,7 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:text="Component Browser Message List"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -34,7 +34,7 @@
             android:padding="16dp"
             android:text="Deleted messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -47,7 +47,7 @@
             android:padding="16dp"
             android:text="Date divider"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -60,7 +60,7 @@
             android:padding="16dp"
             android:text="Plain text messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -73,7 +73,7 @@
             android:padding="16dp"
             android:text="Only media attachments messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -86,7 +86,7 @@
             android:padding="16dp"
             android:text="Plain text with media attachments"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
@@ -99,7 +99,7 @@
             android:padding="16dp"
             android:text="Only file attachments messages"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             />
 
         <TextView
