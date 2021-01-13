@@ -58,8 +58,6 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
         }
     }
 
-    public fun isThreadMode(): Boolean = _activeThread.value != null
-
     public fun setActiveThread(message: Message?) {
         _activeThread.postValue(message)
     }
