@@ -63,7 +63,7 @@ class ChatFragment : Fragment() {
         configureBackButtonHandling()
 
         messageListViewModel.state.observe(viewLifecycleOwner) { state ->
-            if (state is MessageListViewModel.State.Result && headerViewModel.isThreadMode()) {
+            if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
                 binding.messagesHeaderView.setThreadSubtitle(
                     threadSubtitle(requireContext(), state.messageListItem)
                 )
@@ -84,6 +84,7 @@ class ChatFragment : Fragment() {
     private fun threadUsers(messageWrapper: MessageListItemWrapper): List<User> {
         return messageWrapper.items
             .filterIsInstance<MessageListItem.MessageItem>()
+            .filter { message -> message.isTheirs }
             .map { messageItem -> messageItem.message.user }
     }
 
