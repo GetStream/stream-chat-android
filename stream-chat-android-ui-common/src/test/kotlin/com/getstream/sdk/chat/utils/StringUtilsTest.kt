@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils
 import io.getstream.chat.android.test.randomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import com.getstream.sdk.chat.utils.StorageHelper.Companion.FILE_NAME_PREFIX
 
 public class StringUtilsTest {
 
@@ -11,7 +12,7 @@ public class StringUtilsTest {
         val dateFormat = "HHmmssSSS"
         val fileName = randomString(5)
 
-        val result = StringUtils.removeTimePrefix("STREAM_${dateFormat}_$fileName", dateFormat)
+        val result = StringUtils.removeTimePrefix("${FILE_NAME_PREFIX}${dateFormat}_$fileName", dateFormat)
 
         assertEquals(fileName, result)
     }
@@ -31,7 +32,7 @@ public class StringUtilsTest {
         val dateFormat = "HHmmssSSS"
         val fileName = randomString(5)
 
-        val result = StringUtils.removeTimePrefix("STREAM_${dateFormat}_$fileName", dateFormat)
+        val result = StringUtils.removeTimePrefix("${FILE_NAME_PREFIX}${dateFormat}_$fileName", dateFormat)
 
         assertEquals(fileName, result)
     }
