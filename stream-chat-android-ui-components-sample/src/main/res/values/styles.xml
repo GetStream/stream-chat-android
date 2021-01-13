@@ -28,6 +28,7 @@
         <item name="boxBackgroundColor">@color/stream_ui_edit_text_background_color</item>
         <item name="hintTextColor">@color/grey_dark</item>
         <item name="errorIconDrawable">@null</item>
+        <item name="hintTextAppearance">@style/StreamUiTextAppearance.CaptionBold</item>
     </style>
 
     <style name="ComponentBrowserSeparator">
