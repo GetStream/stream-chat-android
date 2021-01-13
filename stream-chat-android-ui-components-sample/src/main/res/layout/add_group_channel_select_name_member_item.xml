@@ -39,7 +39,7 @@
         android:cropToPadding="true"
         android:scaleType="center"
         android:src="@drawable/ic_close"
-        android:tint="@color/black"
+        android:tint="@color/stream_ui_black"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
