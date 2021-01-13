@@ -11,7 +11,7 @@ public class StringUtilsTest {
         val dateFormat = "HHmmssSSS"
         val fileName = randomString(5)
 
-        val result = StringUtils.removeTimePrefix("prefix_${dateFormat}_$fileName", dateFormat)
+        val result = StringUtils.removeTimePrefix("STREAM_${dateFormat}_$fileName", dateFormat)
 
         assertEquals(fileName, result)
     }
@@ -31,7 +31,7 @@ public class StringUtilsTest {
         val dateFormat = "HHmmssSSS"
         val fileName = randomString(5)
 
-        val result = StringUtils.removeTimePrefix("prefix_${dateFormat}_$fileName", dateFormat)
+        val result = StringUtils.removeTimePrefix("STREAM_${dateFormat}_$fileName", dateFormat)
 
         assertEquals(fileName, result)
     }
