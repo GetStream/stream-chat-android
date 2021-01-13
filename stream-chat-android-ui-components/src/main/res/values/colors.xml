@@ -58,7 +58,6 @@
 
     <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_white_smoke
     </color>
-    <color name="stream_ui_edit_text_background_color">@color/stream_ui_white_smoke</color>
 
     <color name="stream_ui_background_light">@color/stream_ui_white</color>
     <color name="stream_ui_background_alabaster">@color/stream_ui_white_snow</color>
