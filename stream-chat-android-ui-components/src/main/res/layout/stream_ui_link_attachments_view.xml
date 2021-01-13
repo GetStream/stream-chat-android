@@ -7,14 +7,33 @@
     android:padding="1dp"
     >
 
-    <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentView
-        android:id="@+id/mediaAttachmentView"
+    <FrameLayout
+        android:id="@+id/linkPreviewContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        >
+
+        <ImageView
+            android:id="@+id/linkPreviewImageViewm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/stream_placeholder"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+            />
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/labelContainer"
@@ -23,17 +42,17 @@
         android:background="@drawable/stream_ui_attachment_link_label_background"
         android:paddingHorizontal="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/mediaAttachmentView"
-        app:layout_constraintStart_toStartOf="@id/mediaAttachmentView"
+        app:layout_constraintBottom_toBottomOf="@id/linkPreviewContainer"
+        app:layout_constraintStart_toStartOf="@id/linkPreviewContainer"
         tools:visibility="visible"
         >
 
         <TextView
             android:id="@+id/labelTextView"
             android:layout_width="wrap_content"
-            android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             android:layout_height="wrap_content"
             android:singleLine="true"
+            android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             android:textColor="@color/stream_ui_blue"
             tools:text="Link"
             />
@@ -42,31 +61,31 @@
 
     <TextView
         android:id="@+id/titleTextView"
-        android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:layout_marginTop="4dp"
         android:singleLine="true"
+        android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
+        app:layout_constraintTop_toBottomOf="@id/linkPreviewContainer"
         tools:text="Link attachment"
         tools:visibility="visible"
         />
 
     <TextView
         android:id="@+id/descriptionTextView"
-        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
+        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+        android:textColor="@color/stream_ui_text_color_light"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        android:textColor="@color/stream_ui_text_color_light"
         tools:text="Some description"
         tools:visibility="visible"
         />
