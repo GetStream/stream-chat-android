@@ -33,7 +33,7 @@ public class AttachmentActivity extends AppCompatActivity {
     ImageView iv_image;
     ProgressBar progressBar;
 
-    private TaggedLogger logger = ChatLogger.Companion.get("AttachmentActivity");
+    private final TaggedLogger logger = ChatLogger.Companion.get("AttachmentActivity");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,8 @@ public class AttachmentActivity extends AppCompatActivity {
         String type = intent.getStringExtra("type");
         String url = intent.getStringExtra("url");
         if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
-            Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT).show();
+            logger.logE("This file can't be displayed. The TYPE or the URL are null");
+            Toast.makeText(this, getString(R.string.stream_ui_attachment_display_error), Toast.LENGTH_SHORT).show();
             return;
         }
         showAttachment(type, url);
