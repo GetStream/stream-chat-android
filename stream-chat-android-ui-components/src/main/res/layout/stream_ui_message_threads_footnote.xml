@@ -14,7 +14,7 @@
         android:layout_width="13dp"
         android:layout_height="33dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
-        app:tint="@color/stream_ui_other_message_stroke"
+        app:tint="@color/stream_ui_grey_whisper"
         />
 
     <TextView

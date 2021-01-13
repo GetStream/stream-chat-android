@@ -48,11 +48,5 @@
     <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
     <color name="stream_ui_material_button_text_color">@color/stream_ui_accent_blue</color>
 
-    <color name="stream_ui_other_message_stroke">#1C1E22</color>
-
-
-    <color name="stream_ui_deleted_message_background">@color/stream_ui_grey_gainsboro</color>
-    <color name="stream_ui_link_attachment_background">#001A3D</color>
-
     <color name="stream_ui_highlight">#302D22</color>
 </resources>
