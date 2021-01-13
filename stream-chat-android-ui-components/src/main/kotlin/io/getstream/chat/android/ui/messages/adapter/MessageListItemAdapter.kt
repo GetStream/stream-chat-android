@@ -45,6 +45,11 @@ public class MessageListItemAdapter(
         holder.bindListItem(getItem(position), diff)
     }
 
+    override fun onViewRecycled(holder: BaseMessageItemViewHolder<out MessageListItem>) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
+
     public companion object {
         private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = true,
