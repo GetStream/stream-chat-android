@@ -59,7 +59,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/giphyTextLabel"
                 app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
-                app:tint="@color/stream_ui_send_button_disabled"
+                app:tint="@color/stream_ui_grey"
                 tools:ignore="ContentDescription"
                 />
 

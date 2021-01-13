@@ -22,7 +22,8 @@
 
     <!-- Other -->
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
-
+    <color name="stream_ui_button_background_color">#005AFF</color>
+    <color name="stream_ui_button_text_color">#FFFFFF</color>
 
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_ui_avatar_gradient_green">#81C784</color>
@@ -62,13 +63,4 @@
     <color name="stream_ui_text_color_date_divider">@color/stream_ui_white</color>
 
     <color name="stream_ui_divider">@color/stream_ui_gray_light</color>
-
-    <color name="stream_ui_send_button">@color/stream_ui_accent_blue</color>
-    <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
-
-    <color name="stream_ui_material_button_background_color">@color/stream_ui_accent_blue</color>
-    <color name="stream_ui_material_button_text_color">@color/stream_ui_white</color>
-    <color name="stream_ui_other_message_stroke">@color/stream_ui_grey_whisper</color>
-
-    <color name="stream_ui_highlight">#FBF4DD</color>
 </resources>

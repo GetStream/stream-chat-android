@@ -15,6 +15,9 @@
     <color name="stream_ui_background_gradient_start">#101214</color>
     <color name="stream_ui_background_gradient_end">#070A0D</color>
 
+    <!-- Other -->
+    <color name="stream_ui_button_background_color">#FFFFFF</color>
+    <color name="stream_ui_button_text_color">#005AFF</color>
 
 
     <color name="stream_ui_border_stroke">@color/stream_ui_grey_gainsboro</color>
@@ -25,11 +28,4 @@
 
     <color name="stream_ui_divider">#141924</color>
 
-    <color name="stream_ui_send_button">@color/stream_ui_grey_gainsboro</color>
-    <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
-
-    <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
-    <color name="stream_ui_material_button_text_color">@color/stream_ui_accent_blue</color>
-
-    <color name="stream_ui_highlight">#302D22</color>
 </resources>
