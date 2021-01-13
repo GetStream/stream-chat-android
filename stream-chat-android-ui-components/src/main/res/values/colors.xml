@@ -25,7 +25,8 @@
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
     <color name="stream_ui_button_background_color">#005AFF</color>
     <color name="stream_ui_button_text_color">#FFFFFF</color>
-    <color name="stream_ui_border">#e8e8e8</color>
+    <color name="stream_ui_border">#E8E8E8</color>
+    <color name="stream_ui_highlight">#FBF4DD</color>
 
 
     <!-- Avatar gradient colors -->
