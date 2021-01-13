@@ -60,7 +60,7 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
 private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -81,7 +81,7 @@ private class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
@@ -119,6 +119,18 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+
+            // Todo: Use uploadState when possible
+            // when (attachment.uploadState) {
+            //     Attachment.UploadState.InProgress -> {
+            //     }
+            //     Attachment.UploadState.Success -> {
+            //         fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+            //     }
+            //     is Attachment.UploadState.Failed -> {
+            //         actionButton.setImageResource(R.drawable.stream_ui_ic_error)
+            //     }
+            // }
         }
     }
 

@@ -617,6 +617,9 @@ internal class ChannelControllerImpl(
                     val result = uploadAttachment(it, attachmentTransformer)
                     if (result.isSuccess) {
                         attachment = result.data()
+                    } else {
+                        attachment.uploadState = Attachment.UploadState.Failed(result.error())
+                        logger.logE("Failed to upload attachment for message")
                     }
                 }
                 attachment
@@ -636,7 +639,6 @@ internal class ChannelControllerImpl(
                 upsertMessage(processedMessage)
                 Result(processedMessage)
             } else {
-
                 logger.logE(
                     "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
                     result.error()

@@ -17,7 +17,7 @@ public data class Result<T : Any> @Deprecated(
     public constructor(error: ChatError) : this(null, error)
 
     val isSuccess: Boolean
-        get() = data != null
+        get() = data != null && error == null
 
     val isError: Boolean
         get() = error != null
