@@ -119,7 +119,7 @@
                 android:paddingBottom="16dp"
                 android:text="@string/stream_ui_cancel_label"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
+                android:textColor="@color/stream_ui_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/verticalDivider"

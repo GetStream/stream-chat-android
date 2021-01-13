@@ -20,9 +20,6 @@
     </color>
     <color name="stream_ui_edit_text_background_color">@color/stream_ui_white_smoke</color>
 
-    <color name="stream_ui_attachment_dialog_button_disabled">@color/stream_ui_grey_gainsboro
-    </color>
-
     <color name="stream_ui_border_stroke">@color/stream_ui_grey_gainsboro</color>
 
     <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
@@ -37,13 +34,8 @@
 
     <color name="stream_ui_divider">#141924</color>
 
-    <color name="stream_ui_section_item_color">@color/stream_ui_white_smoke</color>
-    <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
-
     <color name="stream_ui_send_button">@color/stream_ui_grey_gainsboro</color>
     <color name="stream_ui_send_button_disabled">@color/stream_ui_grey_gainsboro</color>
-
-    <color name="stream_ui_search_input_border">#1C1E22</color>
 
     <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
     <color name="stream_ui_material_button_text_color">@color/stream_ui_accent_blue</color>

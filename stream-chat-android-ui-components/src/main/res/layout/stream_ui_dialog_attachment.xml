@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_attachment_dialog_header_color"
+    android:background="@color/stream_ui_white_smoke"
     >
 
     <RadioGroup
