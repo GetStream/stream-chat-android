@@ -108,7 +108,7 @@ public class MessageReplyView : FrameLayout {
             when {
                 isLink -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_link_attachment_background))
+                    setTint(context.getColorCompat(R.color.stream_ui_blue_alice))
                 }
                 isMine -> {
                     paintStyle = Paint.Style.FILL

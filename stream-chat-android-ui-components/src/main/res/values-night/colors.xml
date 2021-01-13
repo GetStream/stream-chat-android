@@ -60,8 +60,6 @@
     <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
     <color name="stream_ui_material_button_text_color">@color/stream_ui_accent_blue</color>
 
-    <color name="stream_ui_current_user_background">@color/stream_ui_grey_gainsboro</color>
-
     <color name="stream_ui_other_message_stroke">#1C1E22</color>
 
 
