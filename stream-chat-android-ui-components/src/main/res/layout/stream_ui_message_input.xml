@@ -80,7 +80,7 @@
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
         android:src="@drawable/stream_ui_ic_command"
-        android:tint="@color/stream_ui_black_50"
+        android:tint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
         />

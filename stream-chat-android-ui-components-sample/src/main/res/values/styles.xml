@@ -32,7 +32,7 @@
     </style>
 
     <style name="ComponentBrowserSeparator">
-        <item name="android:background">@color/stream_ui_gray_light</item>
+        <item name="android:background">@color/stream_ui_grey_whisper</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>

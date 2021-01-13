@@ -112,7 +112,7 @@ public class MessageReplyView : FrameLayout {
                 }
                 isMine -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_grey_90))
+                    setTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE

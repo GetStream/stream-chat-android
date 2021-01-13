@@ -16,6 +16,7 @@
     <color name="stream_ui_blue_alice">#E9F2FF</color>
 
     <!-- Specials -->
+    <color name="stream_ui_overlay">#33000000</color>
     <color name="stream_ui_overlay_dark">#99000000</color>
     <color name="stream_ui_background_gradient_start">#F7F7F7</color>
     <color name="stream_ui_background_gradient_end">#FCFCFC</color>
@@ -32,18 +33,7 @@
     <color name="stream_ui_avatar_gradient_yellow">#FFF176</color>
     <color name="stream_ui_avatar_gradient_red">#E57373</color>
 
-
-    <color name="stream_ui_gray_dark">#989898</color>
-    <color name="stream_ui_gray_light">#e8e8e8</color>
     <color name="stream_ui_transparent">#00000000</color>
-    <color name="stream_ui_black_8">#14000000</color>
-    <color name="stream_ui_black_10">#1A000000</color>
-    <color name="stream_ui_black_16">#29000000</color>
-    <color name="stream_ui_black_30">#4D000000</color>
-    <color name="stream_ui_black_50">#80000000</color>
-    <color name="stream_ui_black_60">#99000000</color>
-    <color name="stream_ui_white_60">#99FFFFFF</color>
-    <color name="stream_ui_grey_90">#E6E6E6</color>
 
     <array name="stream_ui_avatar_gradient_colors">
         <item>@color/stream_ui_avatar_gradient_orange</item>
@@ -61,5 +51,5 @@
     <color name="stream_ui_text_color_subtitle">#7A7A7A</color>
     <color name="stream_ui_text_color_date_divider">@color/stream_ui_white</color>
 
-    <color name="stream_ui_divider">@color/stream_ui_gray_light</color>
+    <color name="stream_ui_divider">#e8e8e8</color>
 </resources>
