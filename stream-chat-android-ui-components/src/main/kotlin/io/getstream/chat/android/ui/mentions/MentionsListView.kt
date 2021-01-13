@@ -60,7 +60,7 @@ public class MentionsListView : ViewFlipper {
             )
             addOnScrollListener(scrollListener)
         }
-        setBackgroundColor(context.getColorCompat(R.color.stream_ui_background_alabaster_black))
+        setBackgroundColor(context.getColorCompat(R.color.stream_ui_white_snow))
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {

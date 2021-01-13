@@ -146,7 +146,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     companion object {
         private val MESSAGE_DELETED_BACKGROUND = R.color.stream_ui_grey_whisper
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_grey_whisper
-        private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_background_light
+        private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_gainsboro
         private val MESSAGE_LINK_BACKGROUND = R.color.stream_ui_blue_alice
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()

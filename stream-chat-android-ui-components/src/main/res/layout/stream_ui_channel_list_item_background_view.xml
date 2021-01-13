@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_channel_item_options_background_color"
+    android:background="@color/stream_ui_white_smoke"
     >
 
     <ImageView

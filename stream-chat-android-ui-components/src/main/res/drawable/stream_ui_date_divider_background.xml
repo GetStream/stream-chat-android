@@ -3,5 +3,5 @@
     android:shape="rectangle"
     >
     <corners android:radius="16dp" />
-    <solid android:color="@color/stream_ui_background_date_divider" />
+    <solid android:color="@color/stream_ui_overlay_dark" />
 </shape>

@@ -118,7 +118,7 @@ public class MessageReplyView : FrameLayout {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(context.getColorCompat(R.color.stream_ui_border_stroke))
                     strokeWidth = DEFAULT_STROKE_WIDTH
-                    setTint(context.getColorCompat(R.color.stream_ui_background_light))
+                    setTint(context.getColorCompat(R.color.stream_ui_white))
                 }
             }
         }

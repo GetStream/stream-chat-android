@@ -108,7 +108,7 @@ private class FileAttachmentViewHolder(
                     STROKE_WIDTH_PX,
                     ContextCompat.getColor(itemView.context, R.color.stream_ui_border_stroke)
                 )
-                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_background_light))
+                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
             }
     }
 

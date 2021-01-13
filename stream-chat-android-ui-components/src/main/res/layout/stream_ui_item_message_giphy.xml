@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:clipToPadding="false"
-        app:cardBackgroundColor="@color/stream_ui_background_light"
+        app:cardBackgroundColor="@color/stream_ui_white"
         app:cardElevation="@dimen/stream_ui_elevation_small"
         app:layout_constraintEnd_toStartOf="@id/marginEnd"
         app:layout_constraintStart_toEndOf="@id/marginStart"
