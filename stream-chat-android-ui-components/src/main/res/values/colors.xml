@@ -36,7 +36,6 @@
     <color name="stream_ui_gray_dark">#989898</color>
     <color name="stream_ui_gray_light">#e8e8e8</color>
     <color name="stream_ui_transparent">#00000000</color>
-    <color name="stream_ui_transparent_white">#00FFFFFF</color>
     <color name="stream_ui_black">#000000</color>
     <color name="stream_ui_black_8">#14000000</color>
     <color name="stream_ui_black_10">#1A000000</color>
