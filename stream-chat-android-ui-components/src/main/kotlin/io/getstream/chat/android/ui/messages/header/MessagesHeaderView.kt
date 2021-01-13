@@ -29,6 +29,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
 
     private var normalModeTitle: String? = null
+    private var threadModeTitle: String? = null
     private var normalModeSubTitle: String? = null
 
     public constructor(context: Context) : super(context) {
@@ -65,6 +66,7 @@ public class MessagesHeaderView : ConstraintLayout {
             configOfflineLabel(it)
             configSearchingForNetworkLabel(it)
             configOnlineLabel(it)
+            configThreadMode(it)
         }
     }
 
@@ -157,8 +159,8 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.onlineLabel.text = normalModeSubTitle
     }
 
-    public fun setThreadTitle(headerTitle: String?) {
-        binding.title.text = headerTitle
+    public fun setThreadMode() {
+        binding.title.text = threadModeTitle ?: normalModeTitle
     }
 
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {
@@ -280,6 +282,10 @@ public class MessagesHeaderView : ConstraintLayout {
             setTextColor(textStyle.color)
             typeface = textStyle.font
         }
+    }
+
+    private fun configThreadMode(typedArray: TypedArray) {
+        threadModeTitle = typedArray.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderThreadModeTitle)
     }
 
     private fun getOnlineTextStyle(typedArray: TypedArray): TextStyle {

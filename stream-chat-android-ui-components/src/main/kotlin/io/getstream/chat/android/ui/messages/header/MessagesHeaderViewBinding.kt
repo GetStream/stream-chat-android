@@ -37,7 +37,7 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
 
     activeThread.observe(lifecycle) { message ->
         if (message != null) {
-            view.setThreadTitle(view.context.getString(R.string.stream_ui_title_thread_reply))
+            view.setThreadMode()
         } else {
             view.setNormalMode()
         }
