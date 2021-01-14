@@ -29,15 +29,9 @@ internal class FootnoteView : ConstraintLayout {
     )
 
     private val footnote: StreamUiItemMessageFootnoteBinding =
-        StreamUiItemMessageFootnoteBinding.inflate(inflater).also {
-            addView(it.root)
-            it.root.isVisible = false
-        }
+        StreamUiItemMessageFootnoteBinding.inflate(inflater).also { addView(it.root) }
     private val threadsFootnote: StreamUiMessageThreadsFootnoteBinding =
-        StreamUiMessageThreadsFootnoteBinding.inflate(inflater).also {
-            addView(it.root)
-            it.root.isVisible = false
-        }
+        StreamUiMessageThreadsFootnoteBinding.inflate(inflater).also { addView(it.root) }
 
     val footerTextLabel: TextView = footnote.messageFooterLabel
 
@@ -47,6 +41,8 @@ internal class FootnoteView : ConstraintLayout {
             constrainView(threadsFootnote.root)
             applyTo(this@FootnoteView)
         }
+        footnote.root.isVisible = false
+        threadsFootnote.root.isVisible = false
     }
 
     fun applyGravity(isMine: Boolean) {
