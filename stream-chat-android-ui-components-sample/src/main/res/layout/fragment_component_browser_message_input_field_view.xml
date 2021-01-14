@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/pageTitle"
         style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:textColor="@color/stream_ui_text_color_strong"
+        android:textColor="@color/stream_ui_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

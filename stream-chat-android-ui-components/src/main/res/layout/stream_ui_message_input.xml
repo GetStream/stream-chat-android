@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_background_light"
+    android:background="@color/stream_ui_white"
     android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
     >
 
@@ -55,7 +55,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_boulder"
+            app:tint="@color/stream_ui_grey"
             tools:ignore="ContentDescription"
             />
 
@@ -80,7 +80,7 @@
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
         android:src="@drawable/stream_ui_ic_command"
-        android:tint="@color/stream_ui_black_50"
+        android:tint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
         />
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageInputFieldView"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/stream_ui_blue" android:state_enabled="true" />
-    <item android:color="@color/stream_ui_attachment_dialog_button_enabled" android:state_enabled="false" />
+    <item android:color="@color/stream_ui_accent_blue" android:state_enabled="true" />
+    <item android:color="@color/stream_ui_grey" android:state_enabled="false" />
 </selector>
 

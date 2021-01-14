@@ -12,9 +12,9 @@
     android:gravity="start|center_vertical"
     android:paddingStart="18dp"
     android:singleLine="true"
-    android:textColor="@color/stream_ui_boulder"
+    android:textColor="@color/stream_ui_grey"
     android:textSize="@dimen/stream_ui_text_medium"
     app:drawableStartCompat="@drawable/ic_icon_down"
-    app:drawableTint="@color/stream_ui_boulder"
+    app:drawableTint="@color/stream_ui_grey"
     tools:text="10 more"
     />

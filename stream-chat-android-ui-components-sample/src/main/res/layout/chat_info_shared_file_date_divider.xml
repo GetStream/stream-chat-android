@@ -6,6 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-    android:textColor="@color/stream_ui_text_color_strong"
+    android:textColor="@color/stream_ui_black"
     tools:text="May 2020"
     />

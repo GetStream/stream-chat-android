@@ -5,7 +5,7 @@
     android:id="@+id/userContainer"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/stream_ui_background_default"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_text_color_strong"
+        android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_small"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/checkboxImageView"
@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_blue"
+        app:tint="@color/stream_ui_accent_blue"
         tools:ignore="ContentDescription"
         />
 
