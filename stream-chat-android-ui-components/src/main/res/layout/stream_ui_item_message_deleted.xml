@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/stream_ui_spacing_small"
-    android:layout_marginEnd="@dimen/stream_ui_spacing_small"
     android:orientation="vertical"
+    android:paddingStart="@dimen/stream_ui_spacing_small"
+    android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
     <io.getstream.chat.android.ui.messages.adapter.view.GapView
