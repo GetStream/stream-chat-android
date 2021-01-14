@@ -78,10 +78,10 @@ class ChatInfoSharedAttachmentsViewModel(
             messages
                 .groupBy { mapDate(it.getCreatedAtOrThrow()) }
                 .flatMap { (date, messages) ->
-                    listOf(SharedAttachment.DateDivider(date)) + messages.toAttachmentItems()
+                    listOf(SharedAttachment.DateDivider(date)) + messages.toAttachmentItems(attachmentsType)
                 }
         } else {
-            messages.toAttachmentItems()
+            messages.toAttachmentItems(attachmentsType)
         }
     }
 
@@ -136,9 +136,9 @@ class ChatInfoSharedAttachmentsViewModelFactory(
     }
 }
 
-private fun List<Message>.toAttachmentItems(): List<SharedAttachment.AttachmentItem> =
+private fun List<Message>.toAttachmentItems(attachmentType: ChatInfoSharedAttachmentsViewModel.AttachmentsType): List<SharedAttachment.AttachmentItem> =
     flatMap { message ->
-        message.attachments.map {
-            SharedAttachment.AttachmentItem(message, message.getCreatedAtOrThrow(), it)
-        }
+        message.attachments
+            .filter { it.type == attachmentType.requestTypeKey }
+            .map { SharedAttachment.AttachmentItem(message, message.getCreatedAtOrThrow(), it) }
     }
