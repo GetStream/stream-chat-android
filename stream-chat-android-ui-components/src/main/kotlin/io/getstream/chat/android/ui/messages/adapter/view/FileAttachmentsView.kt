@@ -1,11 +1,13 @@
 package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -120,17 +122,11 @@ private class FileAttachmentViewHolder(
             fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
 
-            // Todo: Use uploadState when possible
-            // when (attachment.uploadState) {
-            //     Attachment.UploadState.InProgress -> {
-            //     }
-            //     Attachment.UploadState.Success -> {
-            //         fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-            //     }
-            //     is Attachment.UploadState.Failed -> {
-            //         actionButton.setImageResource(R.drawable.stream_ui_ic_error)
-            //     }
-            // }
+            if (attachment.uploadComplete == false) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_error)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_light_red)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+            }
         }
     }
 

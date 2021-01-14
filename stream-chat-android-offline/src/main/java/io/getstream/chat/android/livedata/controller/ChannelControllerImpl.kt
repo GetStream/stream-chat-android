@@ -615,6 +615,7 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
+                    attachment.uploadComplete = result.isSuccess
                     if (result.isSuccess) {
                         attachment = result.data()
                     } else {
