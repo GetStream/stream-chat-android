@@ -23,7 +23,7 @@ internal fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
             }
         }
 
-internal fun Channel.getDisplayName(context: Context): String =
+public fun Channel.getDisplayName(context: Context): String =
     name.takeIf { it.isNotEmpty() }
         ?: getUsers()
             .joinToString { it.name }
