@@ -2,6 +2,7 @@
 
 ## stream-chat-android
 - Fix `MessageListItemViewHolder::bind` behavior
+- Improve connection/reconnection with normal/anonymous user
 
 ## stream-chat-android-client
 
