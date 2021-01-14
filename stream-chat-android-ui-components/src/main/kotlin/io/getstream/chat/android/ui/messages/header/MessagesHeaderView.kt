@@ -32,6 +32,8 @@ public class MessagesHeaderView : ConstraintLayout {
     private var threadModeTitle: String? = null
     private var normalModeSubTitle: String? = null
 
+    private var threadMode = false
+
     public constructor(context: Context) : super(context) {
         init(null)
     }
@@ -83,15 +85,20 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.title.text = title ?: String.EMPTY
         binding.title.isVisible = true
 
-        normalModeTitle = title ?: String.EMPTY
+        if (!threadMode) {
+            normalModeTitle = title
+        }
     }
 
     public fun setOnlineStateSubtitle(subtitle: String) {
         binding.onlineLabel.text = subtitle
+
+        if (!threadMode) {
+            normalModeSubTitle = subtitle
+        }
     }
 
     public fun setThreadSubtitle(subtitle: String) {
-        normalModeSubTitle = binding.onlineLabel.text.toString()
         binding.onlineLabel.text = subtitle
     }
 
