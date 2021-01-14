@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.ImageLoader.load
-import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
+import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -16,12 +16,12 @@ import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class MediaAttachmentSelectedAdapter(
     private var selectedAttachments: List<AttachmentMetaData> = emptyList(),
-    var cancelListener: (AttachmentMetaData) -> Unit = { }
+    var cancelListener: (AttachmentMetaData) -> Unit = { },
 ) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): MyViewHolder {
         // create a new view
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -78,9 +78,12 @@ internal class MediaAttachmentSelectedAdapter(
             )
 
             if (attachment.type == ModelType.attach_video) {
-                binding.ivMedia.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
+                binding.ivMedia.loadThumbnail(
+                    uri = attachment.uri,
+                    placeholderResId = R.drawable.stream_placeholder,
+                )
             } else {
-                binding.ivMedia.load(attachment.uri, R.drawable.stream_placeholder)
+                binding.ivMedia.load(data = attachment.uri, placeholderResId = R.drawable.stream_placeholder)
             }
 
             if (ModelType.attach_video == attachment.type) {

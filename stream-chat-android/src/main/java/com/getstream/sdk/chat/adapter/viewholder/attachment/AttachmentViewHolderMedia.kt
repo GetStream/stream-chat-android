@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -33,7 +33,7 @@ internal class AttachmentViewHolderMedia(
     private val longClickListener: MessageLongClickListener? = null,
     private val longClickListenerView: MessageLongClickListenerView? = null,
     private val binding: StreamItemAttachMediaBinding =
-        StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
+        StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false),
 ) : BaseAttachmentViewHolder(binding.root) {
 
     private lateinit var attachment: Attachment
@@ -69,7 +69,7 @@ internal class AttachmentViewHolderMedia(
         val imageUrl = if (thumbUrl.isNullOrEmpty()) attachment.imageUrl else thumbUrl
 
         binding.ivMediaThumb.load(
-            imageUrl,
+            data = imageUrl,
             placeholderResId = R.drawable.stream_placeholder,
             onStart = { binding.progressBar.isVisible = true },
             onComplete = { binding.progressBar.isVisible = false },
