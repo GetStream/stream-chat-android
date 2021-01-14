@@ -55,6 +55,8 @@ class ChatInfoSharedGroupsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initToolbar(binding.toolbar)
         binding.channelsView.apply {
+            setShouldDrawItemSeparatorOnLastItem(true)
+            setViewHolderFactory(ChatInfoSharedGroupsViewHolderFactory())
 
             val loadingView = layoutInflater.inflate(
                 R.layout.channels_loading_view,
