@@ -471,6 +471,16 @@ public class ChatClient internal constructor(
             messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
+    /**
+     * Returns a [Call<List<Message>>] With messages which contain at least one desired type attachment but
+     * not necessarily all of them will have a specified type
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param offset The messages offset
+     * @param limit max limit messages to be fetched
+     * @param type The desired type attachment
+     */
     public fun getMessagesWithAttachments(
         channelType: String,
         channelId: String,
