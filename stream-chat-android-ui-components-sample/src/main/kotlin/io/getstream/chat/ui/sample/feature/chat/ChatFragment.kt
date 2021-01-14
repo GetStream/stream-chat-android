@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MediatorLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -61,15 +62,30 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+        configureThreadSubtitle()
+    }
 
-        messageListViewModel.state.observe(viewLifecycleOwner) { state ->
-            val channelName = messageListViewModel.channel.value?.name
+    private fun configureThreadSubtitle() {
+        val subtitleMediator = MediatorLiveData<String?>()
 
-            if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
-                binding.messagesHeaderView.setThreadSubtitle(
-                    threadSubtitle(requireContext(), state.messageListItem, channelName)
-                )
-            }
+        subtitleMediator.addSource(messageListViewModel.state) { state ->
+            handleSubtitleChange(state, messageListViewModel.channel.value?.name).let(subtitleMediator::setValue)
+        }
+
+        subtitleMediator.addSource(messageListViewModel.channel) { channel ->
+            handleSubtitleChange(messageListViewModel.state.value, channel?.name).let(subtitleMediator::setValue)
+        }
+
+        subtitleMediator.observe(viewLifecycleOwner) { subtitle ->
+            subtitle?.let(binding.messagesHeaderView::setThreadSubtitle)
+        }
+    }
+
+    private fun handleSubtitleChange(state: MessageListViewModel.State?, channelName: String?): String? {
+        return if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
+            threadSubtitle(requireContext(), state.messageListItem, channelName)
+        } else {
+            null
         }
     }
 
