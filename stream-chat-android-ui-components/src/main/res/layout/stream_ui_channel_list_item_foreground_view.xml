@@ -26,6 +26,7 @@
         android:layout_marginHorizontal="8dp"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"

@@ -138,7 +138,7 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
-    <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
+    <style name="StreamUiTextAppearance" parent="TextAppearance.AppCompat.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/stream_ui_blue</item>

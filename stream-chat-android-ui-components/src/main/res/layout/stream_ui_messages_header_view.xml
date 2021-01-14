@@ -54,6 +54,7 @@
         android:lineSpacingExtra="5sp"
         android:gravity="center_horizontal"
         android:maxLines="1"
+        android:ellipsize="end"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
         app:layout_constraintStart_toEndOf="@+id/back_button_container"
         app:layout_constraintEnd_toStartOf="@+id/avatar"
