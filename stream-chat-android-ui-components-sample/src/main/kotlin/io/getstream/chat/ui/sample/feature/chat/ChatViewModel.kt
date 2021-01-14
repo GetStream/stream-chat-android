@@ -38,9 +38,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
             }
         }
     }
-
-    internal fun getChannelName(): String? = channelController?.toChannel()?.name
-
+    
     sealed class Action {
         object HeaderClicked : Action()
     }

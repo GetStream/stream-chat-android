@@ -63,19 +63,23 @@ class ChatFragment : Fragment() {
         configureBackButtonHandling()
 
         messageListViewModel.state.observe(viewLifecycleOwner) { state ->
+            val channelName = messageListViewModel.channel.value?.name
+
             if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
-                binding.messagesHeaderView.setThreadSubtitle(threadSubtitle(requireContext(), state.messageListItem))
+                binding.messagesHeaderView.setThreadSubtitle(
+                    threadSubtitle(requireContext(), state.messageListItem, channelName)
+                )
             }
         }
     }
 
-    private fun threadSubtitle(context: Context, messageWrapper: MessageListItemWrapper): String {
+    private fun threadSubtitle(context: Context, messageWrapper: MessageListItemWrapper, channelName: String?): String {
         val users = threadUsers(messageWrapper)
 
         val subtitleMessage = if (users.size == 1) {
             users.first().name
         } else {
-            chatViewModel.getChannelName()
+            channelName
         }
 
         return String.format(context.getString(R.string.stream_ui_subtitle_thread_reply_with), subtitleMessage)
