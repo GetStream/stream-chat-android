@@ -69,11 +69,18 @@ class ChatFragment : Fragment() {
         val subtitleMediator = MediatorLiveData<String?>()
 
         subtitleMediator.addSource(messageListViewModel.state) { state ->
-            handleSubtitleChange(state, messageListViewModel.channel.value?.name).let(subtitleMediator::setValue)
+            handleSubtitleChange(state,
+                messageListViewModel.mode.value,
+                messageListViewModel.channel.value?.name
+            ).let(subtitleMediator::setValue)
         }
 
         subtitleMediator.addSource(messageListViewModel.channel) { channel ->
-            handleSubtitleChange(messageListViewModel.state.value, channel?.name).let(subtitleMediator::setValue)
+            handleSubtitleChange(
+                messageListViewModel.state.value,
+                messageListViewModel.mode.value,
+                channel?.name
+            ).let(subtitleMediator::setValue)
         }
 
         subtitleMediator.observe(viewLifecycleOwner) { subtitle ->
@@ -81,8 +88,15 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun handleSubtitleChange(state: MessageListViewModel.State?, channelName: String?): String? {
-        return if (state is MessageListViewModel.State.Result && state.messageListItem.isThread) {
+    private fun handleSubtitleChange(
+        state: MessageListViewModel.State?,
+        mode: MessageListViewModel.Mode?,
+        channelName: String?,
+    ): String? {
+        return if (state is MessageListViewModel.State.Result &&
+            state.messageListItem.isThread &&
+            mode is MessageListViewModel.Mode.Thread
+        ) {
             threadSubtitle(requireContext(), state.messageListItem, channelName)
         } else {
             null
