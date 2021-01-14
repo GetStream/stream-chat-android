@@ -89,11 +89,11 @@ class HomeFragment : Fragment() {
             setBackgroundResource(R.drawable.shape_bottom_navigation_background)
             getOrCreateBadge(R.id.channels_fragment)?.apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
-                badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
+                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }
             getOrCreateBadge(R.id.mentions_fragment)?.apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
-                badgeTextColor = ContextCompat.getColor(requireContext(), android.R.color.white)
+                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }
         }
     }

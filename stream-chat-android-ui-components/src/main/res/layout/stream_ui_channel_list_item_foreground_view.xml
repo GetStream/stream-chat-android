@@ -80,7 +80,7 @@
         android:gravity="center"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/stream_ui_literal_white"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"

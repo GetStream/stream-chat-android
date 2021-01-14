@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_tiny"
-        android:background="@color/stream_ui_transparent"
+        android:background="@color/stream_ui_literal_transparent"
         android:hint="@string/chat_group_info_edit_name_hint"
         android:imeOptions="actionDone"
         android:inputType="text"

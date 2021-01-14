@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/stream_ui_transparent"
+        android:background="@color/stream_ui_literal_transparent"
         android:drawableEnd="@drawable/ic_member"
         android:hint="@string/add_member_hint"
         android:inputType="text"

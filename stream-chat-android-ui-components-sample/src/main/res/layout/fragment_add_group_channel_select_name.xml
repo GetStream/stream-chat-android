@@ -47,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_medium"
-        android:background="@color/stream_ui_transparent"
+        android:background="@color/stream_ui_literal_transparent"
         android:hint="@string/add_group_channel_select_name_choose_hint"
         android:inputType="text"
         android:singleLine="true"

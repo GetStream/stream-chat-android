@@ -109,7 +109,7 @@ internal class BackgroundDecorator : BaseDecorator() {
             .setBottomLeftCornerSize(bottomLeftCorner)
             .build()
             .let(::MaterialShapeDrawable)
-            .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_transparent)) }
+            .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_literal_transparent)) }
     }
 
     private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {

@@ -45,6 +45,8 @@
         <item>@color/stream_ui_avatar_gradient_red</item>
     </array>
 
-    <!-- Platform -->
-    <color name="stream_ui_transparent">#00000000</color>
+    <!-- Literals -->
+    <!-- Fixed values that do not change in dark mode -->
+    <color name="stream_ui_literal_transparent">#00000000</color>
+    <color name="stream_ui_literal_white">#FFFFFF</color>
 </resources>
