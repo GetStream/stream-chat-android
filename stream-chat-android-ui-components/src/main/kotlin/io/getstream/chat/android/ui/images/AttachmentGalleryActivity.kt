@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
+import io.getstream.chat.android.ui.options.AttachmentOptionsDialogFragment
 import java.util.Date
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
@@ -45,6 +46,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
             subtitle.text = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
+            menuButton.setOnClickListener {
+                val currentUrl = urls[currentIndex]
+                AttachmentOptionsDialogFragment.newInstance(currentUrl).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
+            }
         }
     }
 
