@@ -149,9 +149,7 @@ public class ChatClient internal constructor(
         }
         clientStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
-        for (preSetUserListener in preSetUserListeners) {
-            preSetUserListener(user)
-        }
+        notifySetUser(user)
         connectionListener = listener
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
@@ -163,9 +161,22 @@ public class ChatClient internal constructor(
         }
     }
 
+    private fun notifySetUser(user: User) {
+        preSetUserListeners.forEach { it(user) }
+    }
+
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
-        connectionListener = listener
+        connectionListener = object : InitConnectionListener() {
+            override fun onSuccess(data: ConnectionData) {
+                notifySetUser(data.user)
+                listener?.onSuccess(data)
+            }
+
+            override fun onError(error: ChatError) {
+                listener?.onError(error)
+            }
+        }
         config.isAnonymous = true
         warmUp()
         getTokenAndConnect {
