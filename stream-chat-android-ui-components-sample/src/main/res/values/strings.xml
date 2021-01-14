@@ -53,7 +53,7 @@
     <string name="add_group_channel_select_name_title">Name of Group Chat</string>
     <string name="add_group_channel_select_name_choose_title">NAME</string>
     <string name="add_group_channel_select_name_choose_hint">Choose a group chat name</string>
-    <plurals name="add_group_channel_select_name_members_title">
+    <plurals name="members_count_title">
         <item quantity="one">%1d Member</item>
         <item quantity="other">%1d Members</item>
     </plurals>

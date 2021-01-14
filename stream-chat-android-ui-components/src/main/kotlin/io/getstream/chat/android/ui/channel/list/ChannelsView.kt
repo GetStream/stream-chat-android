@@ -113,6 +113,10 @@ public class ChannelsView @JvmOverloads constructor(
         channelListView.setItemSeparatorHeight(dp.dpToPx())
     }
 
+    public fun setShouldDrawItemSeparatorOnLastItem(shouldDrawOnLastItem: Boolean) {
+        channelListView.setShouldDrawItemSeparatorOnLastItem(shouldDrawOnLastItem)
+    }
+
     /**
      * Allows clients to set a custom implementation of [BaseChannelViewHolderFactory]
      *

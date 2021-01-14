@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.utils.extensions.cast
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyle: Int = 0
+    defStyle: Int = 0,
 ) : RecyclerView(context, attrs, defStyle) {
 
     private val layoutManager: ScrollPauseLinearLayoutManager
@@ -109,6 +109,10 @@ public class ChannelListView @JvmOverloads constructor(
         dividerDecoration.drawableHeight = height
     }
 
+    public fun setShouldDrawItemSeparatorOnLastItem(shouldDrawOnLastItem: Boolean) {
+        dividerDecoration.drawOnLastItem = shouldDrawOnLastItem
+    }
+
     public fun setOnEndReachedListener(listener: EndReachedListener?) {
         endReachedListener = listener
         observeListEndRegion()
@@ -158,8 +162,8 @@ public class ChannelListView @JvmOverloads constructor(
 
     public override fun onVisibilityChanged(view: View, visibility: Int) {
         super.onVisibilityChanged(view, visibility)
-        if (visibility == View.VISIBLE) {
-            requireAdapter().notifyDataSetChanged()
+        if (visibility == View.VISIBLE && ::adapter.isInitialized) {
+            adapter.notifyDataSetChanged()
         }
     }
 
