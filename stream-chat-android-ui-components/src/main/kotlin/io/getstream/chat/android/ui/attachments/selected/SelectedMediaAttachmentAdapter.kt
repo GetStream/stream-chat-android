@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.attachments.selected
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.images.loadThumbnail
+import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -44,7 +44,7 @@ internal class SelectedMediaAttachmentAdapter(
             binding.ivMedia.shapeAppearanceModel =
                 ShapeAppearanceModel.builder().setAllCornerSizes(cornerRadius).build()
             if (attachment.type == ModelType.attach_video) {
-                binding.ivMedia.loadThumbnail(
+                binding.ivMedia.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_placeholder,
                 )

@@ -25,7 +25,7 @@ public fun ImageView.load(
 }
 
 @InternalStreamChatApi
-public fun ImageView.loadThumbnail(
+public fun ImageView.loadVideoThumbnail(
     uri: Uri?,
     @DrawableRes placeholderResId: Int? = null,
     transformation: ImageTransformation = ImageTransformation.None,

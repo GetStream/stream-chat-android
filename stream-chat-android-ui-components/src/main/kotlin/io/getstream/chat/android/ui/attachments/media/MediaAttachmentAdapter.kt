@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.images.loadThumbnail
+import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -77,7 +77,7 @@ internal class MediaAttachmentAdapter(
 
         private fun bindMediaImage(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
-                binding.mediaThumbnailImageView.loadThumbnail(
+                binding.mediaThumbnailImageView.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_placeholder
                 )

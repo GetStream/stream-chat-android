@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.utils
 import android.widget.ImageView
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.images.loadThumbnail
+import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
@@ -24,7 +24,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
 internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData) {
     with(attachment) {
         when (type) {
-            ModelType.attach_video -> loadThumbnail(
+            ModelType.attach_video -> loadVideoThumbnail(
                 uri = uri,
                 transformation = FILE_THUMB_TRANSFORMATION
             )
