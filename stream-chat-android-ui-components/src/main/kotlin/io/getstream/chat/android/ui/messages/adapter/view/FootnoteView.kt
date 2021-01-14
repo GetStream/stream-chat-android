@@ -8,14 +8,12 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 internal class FootnoteView : ConstraintLayout {
 
@@ -57,18 +55,10 @@ internal class FootnoteView : ConstraintLayout {
     fun showSimpleFootnote() {
         footnote.root.isVisible = true
         threadsFootnote.root.isVisible = false
-        updateLayoutParams<MarginLayoutParams> {
-            topMargin = 0
-        }
-        translationY = 0f
     }
 
     fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int) {
         footnote.root.isVisible = false
-        updateLayoutParams<MarginLayoutParams> {
-            topMargin = -THREAD_FOOTNOTE_TRANSLATION
-        }
-        translationY = -THREAD_FOOTNOTE_TRANSLATION.toFloat()
         with(threadsFootnote) {
             root.isVisible = true
             threadsOrnamentLeft.isVisible = !isMine
@@ -121,9 +111,5 @@ internal class FootnoteView : ConstraintLayout {
         constrainViewToParentBySide(view, ConstraintSet.RIGHT)
         constrainWidth(view.id, ConstraintSet.WRAP_CONTENT)
         constrainHeight(view.id, ConstraintSet.WRAP_CONTENT)
-    }
-
-    companion object {
-        private val THREAD_FOOTNOTE_TRANSLATION = 18.dpToPx()
     }
 }

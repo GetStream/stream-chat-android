@@ -98,6 +98,16 @@
         app:layout_constraintTop_toTopOf="@id/reactionsSpace"
         />
 
+    <Space
+        android:id="@+id/threadGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/messageContainer"/>
+
     <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"

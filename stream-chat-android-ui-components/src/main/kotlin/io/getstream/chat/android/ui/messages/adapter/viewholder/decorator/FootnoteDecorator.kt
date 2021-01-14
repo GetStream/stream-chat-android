@@ -1,11 +1,15 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -33,47 +37,112 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = setupFootnote(viewHolder.binding.footnote, data)
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data
+    )
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = setupFootnote(viewHolder.binding.footnote, data)
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.fileAttachmentsView,
+        data
+    )
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = setupFootnote(viewHolder.binding.footnote, data)
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data
+    )
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = setupFootnote(viewHolder.binding.footnote, data)
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.mediaAttachmentsGroupView,
+        data
+    )
 
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
-        setupFootnote(viewHolder.binding.footnote, data)
-    }
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) =
+        setupFootnote(
+            viewHolder.binding.footnote,
+            viewHolder.binding.root,
+            viewHolder.binding.threadGuideline,
+            viewHolder.binding.messageContainer,
+            data
+        )
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
-        setupFootnote(viewHolder.binding.footnote, data)
-        viewHolder.binding.footnote.hideStatusIndicator()
+        setupSimpleFootnote(
+            viewHolder.binding.footnote,
+            viewHolder.binding.root,
+            viewHolder.binding.cardView,
+            data
+        )
+        with(viewHolder.binding.footnote) {
+            applyGravity(data.isMine)
+            hideStatusIndicator()
+        }
     }
 
-    private fun setupFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+    private fun setupFootnote(
+        footnoteView: FootnoteView,
+        root: ConstraintLayout,
+        threadGuideline: View,
+        anchorView: View,
+        data: MessageListItem.MessageItem,
+    ) {
         val isSimpleFootnoteMode = data.message.replyCount == 0 || data.message.isInThread()
         if (isSimpleFootnoteMode) {
-            setupSimpleFootnote(footnoteView, data)
+            setupSimpleFootnote(footnoteView, root, anchorView, data)
         } else {
-            footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount)
+            setupThreadFootnote(footnoteView, root, threadGuideline, data)
         }
         footnoteView.applyGravity(data.isMine)
     }
 
-    private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+    private fun setupSimpleFootnote(
+        footnoteView: FootnoteView,
+        root: ConstraintLayout,
+        anchorView: View,
+        data: MessageListItem.MessageItem,
+    ) {
+        root.updateConstraints {
+            clear(footnoteView.id, ConstraintSet.TOP)
+            connect(footnoteView.id, ConstraintSet.TOP, anchorView.id, ConstraintSet.BOTTOM)
+        }
         footnoteView.showSimpleFootnote()
         setupMessageFooterLabel(footnoteView.footerTextLabel, data)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
+    }
+
+    private fun setupThreadFootnote(
+        footnoteView: FootnoteView,
+        root: ConstraintLayout,
+        threadGuideline: View,
+        data: MessageListItem.MessageItem,
+    ) {
+        root.updateConstraints {
+            clear(footnoteView.id, ConstraintSet.TOP)
+            connect(footnoteView.id, ConstraintSet.TOP, threadGuideline.id, ConstraintSet.BOTTOM)
+        }
+        footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount)
     }
 
     private fun setupMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
