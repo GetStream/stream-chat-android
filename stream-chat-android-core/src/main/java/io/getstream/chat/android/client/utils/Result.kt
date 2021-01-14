@@ -2,24 +2,26 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 
-public data class Result<T : Any> @Deprecated(
-    level = DeprecationLevel.WARNING,
-    message = "Use the constructors taking either the result or the error instead."
-) constructor(
-    private val data: T?,
+public class Result<T : Any> {
+    private val data: T?
     private val error: ChatError?
-) {
 
     @Suppress("DEPRECATION")
-    public constructor(data: T) : this(data, null)
+    public constructor(data: T) {
+        this.data = data
+        this.error = null
+    }
 
     @Suppress("DEPRECATION")
-    public constructor(error: ChatError) : this(null, error)
+    public constructor(error: ChatError) {
+        this.data = null
+        this.error = error
+    }
 
-    val isSuccess: Boolean
-        get() = data != null && error == null
+    public val isSuccess: Boolean
+        get() = data != null
 
-    val isError: Boolean
+    public val isError: Boolean
         get() = error != null
 
     public fun data(): T {
