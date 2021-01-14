@@ -3,7 +3,6 @@ package io.getstream.chat.ui.sample.feature.chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Event
@@ -38,7 +37,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
             }
         }
     }
-    
+
     sealed class Action {
         object HeaderClicked : Action()
     }
