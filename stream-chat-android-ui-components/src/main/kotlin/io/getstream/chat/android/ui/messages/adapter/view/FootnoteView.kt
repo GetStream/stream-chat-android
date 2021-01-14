@@ -8,13 +8,14 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
-import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 internal class FootnoteView : ConstraintLayout {
 
@@ -56,17 +57,22 @@ internal class FootnoteView : ConstraintLayout {
     fun showSimpleFootnote() {
         footnote.root.isVisible = true
         threadsFootnote.root.isVisible = false
+        updateLayoutParams<MarginLayoutParams> {
+            topMargin = 0
+        }
+        translationY = 0f
     }
 
     fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int) {
         footnote.root.isVisible = false
-
+        updateLayoutParams<MarginLayoutParams> {
+            topMargin = -THREAD_FOOTNOTE_TRANSLATION
+        }
+        translationY = -THREAD_FOOTNOTE_TRANSLATION.toFloat()
         with(threadsFootnote) {
             root.isVisible = true
             threadsOrnamentLeft.isVisible = !isMine
             threadsOrnamentRight.isVisible = isMine
-
-            root.translationY = -DEFAULT_FOOTNOTE_TOP_MARGIN
 
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_thread_messages_indicator, replyCount, replyCount)
@@ -118,6 +124,6 @@ internal class FootnoteView : ConstraintLayout {
     }
 
     companion object {
-        private val DEFAULT_FOOTNOTE_TOP_MARGIN = 6.dpToPxPrecise()
+        private val THREAD_FOOTNOTE_TRANSLATION = 18.dpToPx()
     }
 }

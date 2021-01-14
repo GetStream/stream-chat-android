@@ -12,8 +12,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/threadsOrnamentLeft"
-        android:layout_width="13dp"
-        android:layout_height="33dp"
+        android:layout_width="17dp"
+        android:layout_height="40dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
         app:tint="@color/stream_ui_grey_whisper"
         />
@@ -31,8 +31,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/threadsOrnamentRight"
-        android:layout_width="13dp"
-        android:layout_height="38dp"
+        android:layout_width="17dp"
+        android:layout_height="40dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_right"
         app:tint="@color/stream_ui_grey_gainsboro"
         />
