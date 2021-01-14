@@ -20,9 +20,14 @@ internal class SocketFactory(
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
     private val httpClient = OkHttpClient()
 
-    fun create(endpoint: String, apiKey: String, user: User?): Socket {
+    fun createAnonymousSocket(endpoint: String, apiKey: String): Socket =
+        create(endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
 
-        val url = buildUrl(endpoint, apiKey, user)
+    fun createNormalSocket(endpoint: String, apiKey: String, user: User): Socket =
+        create(endpoint, apiKey, user, false)
+
+    private fun create(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): Socket {
+        val url = buildUrl(endpoint, apiKey, user, isAnonymous)
         val request = Request.Builder().url(url).build()
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
 
@@ -31,13 +36,13 @@ internal class SocketFactory(
         return Socket(newWebSocket, parser)
     }
 
-    private fun buildUrl(endpoint: String, apiKey: String, user: User?): String {
+    private fun buildUrl(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): String {
         var json = buildUserDetailJson(user)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
             val baseWsUrl: String =
                 endpoint + "connect?json=" + json + "&api_key=" + apiKey
-            if (user == null) {
+            if (isAnonymous) {
                 "$baseWsUrl&stream-auth-type=anonymous"
             } else {
                 val token = tokenManager.getToken()
@@ -48,9 +53,7 @@ internal class SocketFactory(
         }
     }
 
-    private fun buildUserDetailJson(user: User?): String {
-        @Suppress("NAME_SHADOWING")
-        val user = user ?: User(ANONYMOUS_USER_ID)
+    private fun buildUserDetailJson(user: User): String {
         val data = mapOf(
             "user_details" to user,
             "user_id" to user.id,
