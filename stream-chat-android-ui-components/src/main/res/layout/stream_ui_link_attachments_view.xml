@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-            android:textColor="@color/stream_ui_blue"
+            android:textColor="@color/stream_ui_accent_blue"
             tools:text="Link"
             />
 
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

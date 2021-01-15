@@ -61,7 +61,7 @@
         android:layout_height="24dp"
         android:layout_margin="8dp"
         android:background="@drawable/stream_ui_circle_white"
-        android:backgroundTint="@color/stream_ui_grey_medium_light"
+        android:backgroundTint="@color/stream_ui_overlay_dark"
         android:cropToPadding="true"
         android:padding="6dp"
         android:scaleType="center"

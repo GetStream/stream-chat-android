@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_background_light"
+    android:background="@color/stream_ui_white"
     android:paddingTop="16dp"
     >
 
@@ -15,7 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="@string/add_member_title"
-        android:textColor="@color/stream_ui_grey_dark"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -39,14 +39,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/stream_ui_transparent"
+        android:background="@color/stream_ui_literal_transparent"
         android:drawableEnd="@drawable/ic_member"
         android:hint="@string/add_member_hint"
         android:inputType="text"
         android:padding="0dp"
         android:singleLine="true"
         android:textSize="@dimen/stream_ui_text_medium"
-        app:drawableTint="@color/stream_ui_icon_light_tint"
+        app:drawableTint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addMemberTextView"
@@ -64,7 +64,7 @@
         android:src="@drawable/ic_member_add"
         app:layout_constraintBottom_toBottomOf="@id/membersChipGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/stream_gray_dark"
+        app:tint="@color/stream_ui_grey"
         tools:ignore="ContentDescription"
         />
 

@@ -15,7 +15,7 @@
         android:background="@drawable/shape_circle_grey"
         android:padding="6dp"
         android:src="@drawable/ic_settings"
-        app:tint="@color/stream_ui_icon_strong_tint"
+        app:tint="@color/stream_ui_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +40,7 @@
         android:paddingLeft="@dimen/spacing_medium"
         android:paddingRight="@dimen/spacing_medium"
         android:text="@string/user_login_custom_settings"
-        android:textColor="@color/stream_ui_boulder"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="12sp"
         />
 

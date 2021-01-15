@@ -2,9 +2,9 @@ package io.getstream.chat.ui.sample.feature.chat.info.shared.media
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.models.AttachmentWithDate
+import io.getstream.chat.android.client.models.Attachment
 
 class ChatInfoSharedMediaViewModel : ViewModel() {
 
-    val attachmentWithDate: MutableLiveData<List<AttachmentWithDate>> = MutableLiveData(emptyList())
+    val attachments: MutableLiveData<List<Attachment>> = MutableLiveData(emptyList())
 }

@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle"
     >
-    <solid android:color="@color/stream_ui_background_light" />
+    <solid android:color="@color/stream_ui_white" />
     <corners
         android:topLeftRadius="@dimen/stream_ui_channel_actions_corners_radius"
         android:topRightRadius="@dimen/stream_ui_channel_actions_corners_radius"

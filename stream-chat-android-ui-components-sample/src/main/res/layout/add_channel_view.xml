@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stream_ui_background_default"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeaderView
@@ -38,7 +38,7 @@
         android:id="@+id/createGroupContainer"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="@color/stream_ui_background_alabaster_black"
+        android:background="@color/stream_ui_white_snow"
         android:clipToPadding="false"
         android:gravity="start|center_vertical"
         android:orientation="horizontal"
@@ -56,7 +56,7 @@
             android:elevation="4dp"
             android:padding="8dp"
             android:src="@drawable/stream_ui_ic_create_group"
-            app:tint="@color/stream_ui_blue"
+            app:tint="@color/stream_ui_accent_blue"
             />
 
         <TextView
@@ -75,11 +75,11 @@
         android:id="@+id/usersTitle"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="@drawable/stream_ui_search_info_bar_gradient"
+        android:background="@drawable/stream_ui_bg_gradient"
         android:gravity="start|center_vertical"
         android:paddingHorizontal="8dp"
         android:text="@string/add_channel_user_list_title"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="8dp"
         android:text="@string/add_channel_empty_users_title"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_medium"
         android:visibility="visible"
         app:drawableTopCompat="@drawable/empty_user_search"

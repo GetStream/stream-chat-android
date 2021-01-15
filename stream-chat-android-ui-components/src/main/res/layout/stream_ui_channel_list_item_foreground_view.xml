@@ -4,7 +4,7 @@
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_background_alabaster_black"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -21,11 +21,14 @@
 
     <TextView
         android:id="@+id/channel_name_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
+        app:layout_constraintEnd_toStartOf="@+id/unread_count_badge"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -53,9 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-        app:layout_constraintBottom_toBottomOf="@+id/message_status_image_view"
+        app:layout_constraintBaseline_toBaselineOf="@+id/last_message_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/message_status_image_view"
         tools:text="3:00PM"
         />
 
@@ -67,25 +69,25 @@
         app:layout_constraintBottom_toBottomOf="@+id/last_message_label"
         app:layout_constraintEnd_toStartOf="@+id/last_message_time_label"
         app:layout_constraintTop_toTopOf="@+id/last_message_label"
-        tools:src="@drawable/stream_ui_ic_check_double"
         tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_check_double"
         />
 
     <TextView
         android:id="@+id/unread_count_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/stream_ui_shape_badge_background"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="@color/stream_ui_white"
+        android:textColor="@color/stream_ui_literal_white"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
-        app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
-        app:layout_constraintTop_toTopOf="parent"
+        tools:text="99"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

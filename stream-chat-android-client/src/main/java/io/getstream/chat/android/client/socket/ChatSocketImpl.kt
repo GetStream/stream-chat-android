@@ -24,11 +24,11 @@ internal class ChatSocketImpl(
     )
 
     override fun connectAnonymously() {
-        service.connect(wssUrl, apiKey, null)
+        service.anonymousConnect(wssUrl, apiKey)
     }
 
     override fun connect(user: User) {
-        service.connect(wssUrl, apiKey, user)
+        service.userConnect(wssUrl, apiKey, user)
     }
 
     override fun events(): ChatObservable {

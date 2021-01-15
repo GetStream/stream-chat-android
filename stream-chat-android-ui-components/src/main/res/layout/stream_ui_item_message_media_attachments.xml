@@ -95,7 +95,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/mediaAttachmentsGroupView"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:tint="@color/stream_ui_light_red"
+        app:tint="@color/stream_ui_accent_red"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
         />
