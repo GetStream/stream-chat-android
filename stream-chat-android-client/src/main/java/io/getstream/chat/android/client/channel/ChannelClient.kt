@@ -74,11 +74,12 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
+import java.util.Date
 
 public class ChannelClient internal constructor(
     override val channelType: String,
     override val channelId: String,
-    private val client: ChatClient
+    private val client: ChatClient,
 ) : ChannelController {
 
     override val cid: String = "$channelType:$channelId"
@@ -101,7 +102,7 @@ public class ChannelClient internal constructor(
 
     override fun subscribeFor(
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
@@ -109,7 +110,7 @@ public class ChannelClient internal constructor(
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable {
         return client.subscribeFor(
             lifecycleOwner,
@@ -120,7 +121,7 @@ public class ChannelClient internal constructor(
 
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
@@ -128,7 +129,7 @@ public class ChannelClient internal constructor(
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable {
         return client.subscribeFor(
             lifecycleOwner,
@@ -139,20 +140,20 @@ public class ChannelClient internal constructor(
 
     override fun subscribeForSingle(
         eventType: String,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: (event: T) -> Unit
+        listener: (event: T) -> Unit,
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     private fun <T : ChatEvent> filterRelevantEvents(
-        listener: (event: T) -> Unit
+        listener: (event: T) -> Unit,
     ): (T) -> Unit {
         return { event: T ->
             if (isRelevantForChannel(event)) {
@@ -348,7 +349,7 @@ public class ChannelClient internal constructor(
     override fun getReactions(
         messageId: String,
         firstReactionId: String,
-        limit: Int
+        limit: Int,
     ): Call<List<Message>> {
         return client.getRepliesMore(messageId, firstReactionId, limit)
     }
@@ -416,7 +417,7 @@ public class ChannelClient internal constructor(
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
-        members: List<Member>
+        members: List<Member>,
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
@@ -429,4 +430,14 @@ public class ChannelClient internal constructor(
 
     public fun getMessagesWithAttachments(offset: Int, limit: Int, type: String): Call<List<Message>> =
         client.getMessagesWithAttachments(channelType, channelId, offset, limit, type)
+
+    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
+        return client.pinMessage(message, expirationDate)
+    }
+
+    public fun pinMessage(message: Message, timeout: Int): Call<Message> {
+        return client.pinMessage(message, timeout)
+    }
+
+    public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
 }
