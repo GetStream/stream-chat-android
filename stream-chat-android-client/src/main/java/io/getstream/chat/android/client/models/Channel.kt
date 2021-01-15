@@ -52,7 +52,10 @@ public data class Channel(
     @IgnoreSerialisation
     @IgnoreDeserialisation
     var hiddenMessagesBefore: Date? = null,
-    val cooldown: Int = 0
+    val cooldown: Int = 0,
+
+    @SerializedName("pinned_messages")
+    var pinnedMessages: List<Message> = mutableListOf(),
 ) : CustomObject {
 
     val lastUpdated: Date?
