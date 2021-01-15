@@ -31,7 +31,8 @@ internal suspend fun MessageEntity.toModel(
     latestReactions = (latestReactions.map { it.toModel(getUser) }).toMutableList(),
     ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
     mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
-    replyTo = replyToId?.let { getMessage(it) }
+    replyTo = replyToId?.let { getMessage(it) },
+    threadParticipants = threadParticipantsIds.map { getUser(it) }
 )
 
 internal fun Message.toEntity(): MessageEntity = MessageEntity(
@@ -57,5 +58,6 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
     mentionedUsersId = mentionedUsers.map(User::id),
-    replyToId = replyTo?.id ?: replyMessageId
+    replyToId = replyTo?.id ?: replyMessageId,
+    threadParticipantsIds = threadParticipants.map(User::id)
 )
