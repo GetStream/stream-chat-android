@@ -19,7 +19,10 @@ internal class ChannelListItemAdapter(
     companion object {
         val DIFF_CALLBACK: DiffUtil.ItemCallback<ChannelListItem> =
             object : DiffUtil.ItemCallback<ChannelListItem>() {
-                override fun areItemsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
+                override fun areItemsTheSame(
+                    oldItem: ChannelListItem,
+                    newItem: ChannelListItem
+                ): Boolean {
                     if (oldItem::class != newItem::class) {
                         return false
                     }
@@ -33,7 +36,10 @@ internal class ChannelListItemAdapter(
                     }
                 }
 
-                override fun areContentsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
+                override fun areContentsTheSame(
+                    oldItem: ChannelListItem,
+                    newItem: ChannelListItem
+                ): Boolean {
                     // this is only called if areItemsTheSame returns true, so they must be the same class
                     return when (oldItem) {
                         is ChannelListItem.ChannelItem -> {
@@ -48,7 +54,10 @@ internal class ChannelListItemAdapter(
                     }
                 }
 
-                override fun getChangePayload(oldItem: ChannelListItem, newItem: ChannelListItem): Any {
+                override fun getChangePayload(
+                    oldItem: ChannelListItem,
+                    newItem: ChannelListItem
+                ): Any {
                     // only called if their contents aren't the same, so they must be channel items and not loading items
                     return oldItem
                         .cast<ChannelListItem.ChannelItem>()
@@ -67,17 +76,14 @@ internal class ChannelListItemAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is ChannelListItem.LoadingMoreItem -> ChannelItemType.LOADING_MORE.ordinal
-            is ChannelListItem.ChannelItem -> ChannelItemType.DEFAULT.ordinal
-        }
+        return viewHolderFactory.getItemViewType(getItem(position))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return viewHolderFactory.createViewHolder(
-            parent,
-            ChannelItemType.values()[viewType],
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): BaseChannelListItemViewHolder {
+        return viewHolderFactory.createViewHolder(parent, viewType)
     }
 
     private fun bind(
@@ -87,12 +93,15 @@ internal class ChannelListItemAdapter(
     ) {
         when (val channelItem = getItem(position)) {
             is ChannelListItem.LoadingMoreItem -> Unit
-
             is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
         }
     }
 
-    override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: BaseChannelListItemViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         bind(position, holder, payloads.firstOrDefault(EVERYTHING_CHANGED).cast())
     }
 
