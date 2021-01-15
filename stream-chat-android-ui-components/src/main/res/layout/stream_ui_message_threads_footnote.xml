@@ -14,7 +14,7 @@
         android:layout_width="13dp"
         android:layout_height="33dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
-        app:tint="@color/stream_ui_other_message_stroke"
+        app:tint="@color/stream_ui_grey_whisper"
         />
 
     <TextView
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/stream_ui_spacing_tiny"
         android:layout_marginRight="@dimen/stream_ui_spacing_tiny"
-        android:textColor="@color/stream_ui_blue"
+        android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
         tools:text="100 Thread Replies"
         />
@@ -33,6 +33,6 @@
         android:layout_width="13dp"
         android:layout_height="38dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_right"
-        app:tint="@color/stream_ui_current_user_background"
+        app:tint="@color/stream_ui_grey_gainsboro"
         />
 </androidx.appcompat.widget.LinearLayoutCompat>

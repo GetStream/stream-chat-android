@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_default_header_height"
-    android:background="@color/stream_ui_background_light"
+    android:background="@color/stream_ui_white"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_icon_strong_tint"
+            app:tint="@color/stream_ui_black"
             />
 
         <TextView
@@ -120,7 +120,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/stream_ui_message_list_header_try_again"
-                android:textColor="@color/stream_ui_blue"
+                android:textColor="@color/stream_ui_accent_blue"
                 />
         </LinearLayout>
 
@@ -173,7 +173,7 @@
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_ui_divider_height"
-        android:background="@color/stream_ui_divider"
+        android:background="@color/stream_ui_border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

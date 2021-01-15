@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/stream_ui_grey_light" />
+            <solid android:color="@color/stream_ui_grey_gainsboro" />
             <size
                 android:width="120dp"
                 android:height="120dp"

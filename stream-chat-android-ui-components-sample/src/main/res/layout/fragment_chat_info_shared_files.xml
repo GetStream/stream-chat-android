@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stream_ui_background_default"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/stream_ui_background_light"
+        android:background="@color/stream_ui_white"
         android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_files_empty_title"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             android:textStyle="bold"
             app:drawableTopCompat="@drawable/empty_shared_files"
             />
@@ -74,7 +74,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_files_empty_description"
-            android:textColor="@color/stream_ui_boulder"
+            android:textColor="@color/stream_ui_grey"
             android:textStyle="normal"
             />
     </LinearLayout>

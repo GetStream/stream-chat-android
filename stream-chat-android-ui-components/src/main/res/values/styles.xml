@@ -76,7 +76,7 @@
 
     <style name="StreamUiChannelActionsButtonStyle">
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
+        <item name="android:textColor">@color/stream_ui_black</item>
         <item name="android:paddingStart">@dimen/stream_ui_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_ui_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_ui_spacing_medium</item>
@@ -90,7 +90,7 @@
     <style name="StreamUiAttachmentBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/stream_ui_literal_transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
@@ -126,7 +126,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">16dp</item>
         <item name="android:background">@drawable/stream_ui_badge_bg</item>
-        <item name="android:backgroundTint">@color/stream_ui_light_red</item>
+        <item name="android:backgroundTint">@color/stream_ui_accent_red</item>
         <item name="android:minWidth">16dp</item>
         <item name="android:minHeight">16dp</item>
         <item name="android:singleLine">true</item>
@@ -141,7 +141,7 @@
     <style name="StreamUiTextAppearance" parent="TextAppearance.MaterialComponents.Body2" />
 
     <style name="StreamUiBaseStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorAccent">@color/stream_ui_blue</item>
+        <item name="colorAccent">@color/stream_ui_accent_blue</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>>
         <item name="background">?android:attr/colorBackground</item>
     </style>
@@ -150,14 +150,14 @@
         <item name="android:textSize">16sp</item>
         <item name="lineHeight">19sp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/stream_ui_text_color_strong</item>
+        <item name="android:textColor">@color/stream_ui_black</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="StreamUIAttachmentGalleryToolbarSubtitleTextAppearance">
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/stream_ui_text_color_subtitle</item>
+        <item name="android:textColor">@color/stream_ui_grey</item>
     </style>
 
     <style name="StreamUiMessageOptionItem">
@@ -186,7 +186,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/stream_ui_text_color_light</item>
+        <item name="android:textColor">@color/stream_ui_grey</item>
     </style>
 
     <style name="StreamUiTextAppearance.FootnoteBold">

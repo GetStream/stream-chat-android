@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/stream_ui_icon_button_background" android:state_pressed="false" />
+    <!-- TODO find pressed colour to use here, or replace with ripple -->
+    <item android:color="@color/stream_ui_icon_button_background" android:state_pressed="true" />
+    <item android:color="@color/stream_ui_icon_button_background" />
+</selector>

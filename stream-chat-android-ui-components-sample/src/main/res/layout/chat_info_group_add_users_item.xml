@@ -26,7 +26,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:singleLine="true"
-        android:textColor="@color/stream_ui_text_color_strong"
+        android:textColor="@color/stream_ui_black"
         android:textSize="@dimen/stream_ui_text_small"
         android:textStyle="bold"
         tools:text="User"
