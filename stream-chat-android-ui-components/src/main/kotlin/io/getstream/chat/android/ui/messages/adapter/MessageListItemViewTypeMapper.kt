@@ -3,41 +3,44 @@ package io.getstream.chat.android.ui.messages.adapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.DATE_DIVIDER
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.GIPHY
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.LOADING_INDICATOR
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.MEDIA_ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.MESSAGE_DELETED
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.THREAD_SEPARATOR
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
 
-@InternalStreamChatApi
-public object MessageListItemViewTypeMapper {
+internal object MessageListItemViewTypeMapper {
 
-    public fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
+    fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem)
 
-    public fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
-        return MessageListItemViewType.values().find { it.ordinal == viewTypeValue }
-            ?: error("View type must be a value from MessageListItemViewType")
-    }
-
-    private fun listItemToViewType(messageListItem: MessageListItem): MessageListItemViewType {
+    private fun listItemToViewType(messageListItem: MessageListItem): Int {
         return when (messageListItem) {
-            is MessageListItem.DateSeparatorItem -> MessageListItemViewType.DATE_DIVIDER
-            is MessageListItem.LoadingMoreIndicatorItem -> MessageListItemViewType.LOADING_INDICATOR
-            is MessageListItem.ThreadSeparatorItem -> MessageListItemViewType.THREAD_SEPARATOR
+            is MessageListItem.DateSeparatorItem -> DATE_DIVIDER
+            is MessageListItem.LoadingMoreIndicatorItem -> LOADING_INDICATOR
+            is MessageListItem.ThreadSeparatorItem -> THREAD_SEPARATOR
             is MessageListItem.MessageItem -> messageItemToViewType(messageListItem)
-            is MessageListItem.TypingItem -> MessageListItemViewType.TYPING_INDICATOR
+            is MessageListItem.TypingItem -> TYPING_INDICATOR
         }
     }
 
-    private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): MessageListItemViewType {
+    private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
         return when {
-            messageItem.message.deletedAt != null -> MessageListItemViewType.MESSAGE_DELETED
-            messageItem.message.isGiphyEphemeral() -> MessageListItemViewType.GIPHY
-            messageItem.message.isMediaWithText() -> MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
-            messageItem.message.isFileWithText() -> MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
-            messageItem.message.attachments.isMedia() -> MessageListItemViewType.MEDIA_ATTACHMENTS
-            messageItem.message.attachments.isAttachmentWithoutLinks() -> MessageListItemViewType.ATTACHMENTS
-            /** Here will be additional clause for replay type */
-            else -> MessageListItemViewType.PLAIN_TEXT
+            messageItem.message.deletedAt != null -> MESSAGE_DELETED
+            messageItem.message.isGiphyEphemeral() -> GIPHY
+            messageItem.message.isMediaWithText() -> PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
+            messageItem.message.isFileWithText() -> PLAIN_TEXT_WITH_FILE_ATTACHMENTS
+            messageItem.message.attachments.isMedia() -> MEDIA_ATTACHMENTS
+            messageItem.message.attachments.isAttachmentWithoutLinks() -> ATTACHMENTS
+            else -> PLAIN_TEXT
         }
     }
 

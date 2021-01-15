@@ -1,6 +1,8 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
@@ -30,7 +32,7 @@ internal class MessagePlainTextViewHolder(
             reactionsView.setReactionClickListener {
                 listeners.reactionViewClickListener.onReactionViewClick(data.message)
             }
-            threadRepliesFootnote.root.setOnClickListener {
+            footnote.setOnThreadClickListener {
                 listeners.threadClickListener.onThreadClick(data.message)
             }
 
@@ -56,6 +58,11 @@ internal class MessagePlainTextViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        binding.messageText.text = data.message.text
+        with(binding) {
+            messageText.text = data.message.text
+            messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                horizontalBias = if (data.isTheirs) 0f else 1f
+            }
+        }
     }
 }
