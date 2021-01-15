@@ -181,14 +181,20 @@ public class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
-        val haveUnreadMessages = channel.unreadCount ?: 0 > 0
+        val count = channel.unreadCount ?: 0
+
+        val haveUnreadMessages = count > 0
         unreadCountBadge.isVisible = haveUnreadMessages
 
         if (!haveUnreadMessages) {
             return
         }
 
-        unreadCountBadge.text = channel.unreadCount.toString()
+        unreadCountBadge.text = if (count > 99) {
+            "99+"
+        } else {
+            count.toString()
+        }
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(
