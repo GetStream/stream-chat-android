@@ -122,8 +122,12 @@ private class FileAttachmentViewHolder(
             fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
 
-            if (attachment.uploadComplete == false) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_error)
+            if (attachment.uploadComplete == true) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+            } else {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
                 val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
             }

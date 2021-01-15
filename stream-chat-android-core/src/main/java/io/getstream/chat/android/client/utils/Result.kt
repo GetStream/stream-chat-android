@@ -35,8 +35,6 @@ public class Result<T : Any> private constructor(
 
         if (data != other.data) return false
         if (error != other.error) return false
-        if (isSuccess != other.isSuccess) return false
-        if (isError != other.isError) return false
 
         return true
     }
@@ -44,8 +42,6 @@ public class Result<T : Any> private constructor(
     override fun hashCode(): Int {
         var result = data?.hashCode() ?: 0
         result = 31 * result + (error?.hashCode() ?: 0)
-        result = 31 * result + isSuccess.hashCode()
-        result = 31 * result + isError.hashCode()
         return result
     }
 }
