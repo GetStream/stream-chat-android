@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin
 
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -14,12 +15,13 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.docs.StaticInstances.TAG
 import java.io.File
+import java.util.Calendar
 
 class Messages(
     val client: ChatClient,
     val channelClient: ChannelClient,
     val message: Message,
-    val parentMessage: Message
+    val parentMessage: Message,
 ) {
 
     /**
@@ -307,6 +309,88 @@ class Messages(
                     val messages: List<Message> = it.data()
                 } else {
                     Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a https://getstream.io/chat/docs/pinned_messages/?language=java">Pinned Messages</a>
+     */
+    inner class PinnedMessages {
+
+        fun pinAndUnpinAMessage() {
+            // Create pinned message
+            val pinExpirationDate = Calendar.getInstance().apply {
+                set(2077, 1, 1)
+            }.time
+            val message = Message("my message", pinned = true, pinExpires = pinExpirationDate)
+            channelClient.sendMessage(message).enqueue { result ->
+                if (result.isSuccess) {
+                    val sentMessage = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+
+            // Unpin message
+            channelClient.unpinMessage(message).enqueue { result ->
+                if (result.isSuccess) {
+                    val unpinnedMessage = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+
+            // Pin message for 120 seconds
+            channelClient.pinMessage(message, 120).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessage = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+
+            // Change message expiration to 2077
+            channelClient.pinMessage(message, pinExpirationDate).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessage = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+
+            // Remove expiration date from pinned message
+            channelClient.pinMessage(message, null).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessage = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+        }
+
+        fun retrievePinnedMessages() {
+            val request = QueryChannelRequest().withMessages(limit = 10)
+            channelClient.query(request).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessages = result.data().pinnedMessages
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
+                }
+            }
+        }
+
+        fun searchForAllPinnedMessages() {
+            val channelFilter = Filters.`in`("cid", "channelType:channelId")
+            val messageFilter = Filters.eq("pinned", true)
+            val request = SearchMessagesRequest(offset = 0, limit = 30, channelFilter, messageFilter)
+
+            client.searchMessages(request).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessages = result.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()))
                 }
             }
         }
