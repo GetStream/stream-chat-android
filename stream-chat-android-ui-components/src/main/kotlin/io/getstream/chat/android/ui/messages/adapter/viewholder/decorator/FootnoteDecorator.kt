@@ -154,13 +154,11 @@ internal class FootnoteDecorator(
             data.isNotBottomPosition() || !data.message.isEphemeral() -> {
                 textView.isVisible = false
             }
-            else -> {
-                textView.apply {
-                    isVisible = true
-                    text = context.getString(R.string.stream_ui_ephemeral_msg_footer)
-                    leftDrawable(R.drawable.stream_ui_ic_icon_eye_off)
-                    compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
-                }
+            else -> textView.apply {
+                isVisible = true
+                text = context.getString(R.string.stream_ui_ephemeral_msg_footer)
+                leftDrawable(R.drawable.stream_ui_ic_icon_eye_off)
+                compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
             }
         }
     }
