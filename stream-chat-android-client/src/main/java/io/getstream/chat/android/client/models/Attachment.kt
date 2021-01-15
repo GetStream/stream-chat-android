@@ -47,12 +47,8 @@ public data class Attachment(
     @IgnoreDeserialisation
     var uploadState: UploadState? = null,
 
-    @IgnoreSerialisation
-    @IgnoreDeserialisation
+    @SerializedName("extra_data")
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
-
-    @SerializedName("upload_complete")
-    var uploadComplete: Boolean? = null
 
 ) : CustomObject {
 
@@ -60,5 +56,9 @@ public data class Attachment(
         public object InProgress : UploadState()
         public object Success : UploadState()
         public data class Failed(val error: ChatError) : UploadState()
+    }
+
+    public companion object {
+        public const val EXTRA_UPLOAD_COMPLETE: String = "uploadComplete"
     }
 }

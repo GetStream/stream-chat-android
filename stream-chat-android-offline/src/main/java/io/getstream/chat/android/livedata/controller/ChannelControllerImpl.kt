@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Attachment.Companion.EXTRA_UPLOAD_COMPLETE
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -615,7 +616,7 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
-                    attachment.uploadComplete = result.isSuccess
+                    attachment.extraData[EXTRA_UPLOAD_COMPLETE] = result.isSuccess
                     if (result.isSuccess) {
                         attachment = result.data()
                     } else {
