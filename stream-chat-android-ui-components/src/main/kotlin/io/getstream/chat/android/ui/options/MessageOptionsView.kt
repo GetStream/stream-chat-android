@@ -83,7 +83,7 @@ public class MessageOptionsView : FrameLayout {
                 binding.retryTV.configureListItem(
                     configuration.retryText,
                     configuration.retryIcon,
-                    ContextCompat.getColor(context, R.color.stream_ui_blue)
+                    ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
                 )
 
                 binding.retryTV.isVisible = true
@@ -105,7 +105,7 @@ public class MessageOptionsView : FrameLayout {
         binding.blockTV.isVisible = false
         binding.deleteTV.run {
             configureListItem(configuration.deleteText, configuration.deleteIcon, iconsTint)
-            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_light_red))
+            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
         }
     }
 

@@ -81,7 +81,7 @@ fun Fragment.initToolbar(toolbar: Toolbar) {
             setDisplayHomeAsUpEnabled(true)
 
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_icon_left)?.apply {
-                setTint(ContextCompat.getColor(requireContext(), R.color.stream_ui_text_color_strong))
+                setTint(ContextCompat.getColor(requireContext(), R.color.stream_ui_black))
             }?.let(toolbar::setNavigationIcon)
 
             toolbar.setNavigationOnClickListener {

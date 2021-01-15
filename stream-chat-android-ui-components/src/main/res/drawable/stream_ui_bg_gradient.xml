@@ -4,8 +4,8 @@
     >
     <gradient
         android:angle="270"
-        android:endColor="@color/stream_ui_search_info_bar_start_background"
-        android:startColor="@color/stream_ui_search_info_bar_end_background"
+        android:endColor="@color/stream_ui_background_gradient_end"
+        android:startColor="@color/stream_ui_background_gradient_start"
         android:type="linear"
         />
 </shape>

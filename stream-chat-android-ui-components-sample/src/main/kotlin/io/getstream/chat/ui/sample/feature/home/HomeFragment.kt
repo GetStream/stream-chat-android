@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -33,7 +34,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -81,10 +82,20 @@ class HomeFragment : Fragment() {
     private fun setupBottomNavigation() {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.hostFragmentContainer) as NavHostFragment
-        binding.bottomNavigationView.setupWithNavController(navHostFragment.navController)
-        // disable reloading fragment when clicking again on the same tab
-        binding.bottomNavigationView.setOnNavigationItemReselectedListener {}
-        binding.bottomNavigationView.setBackgroundResource(R.drawable.shape_bottom_navigation_background)
+        binding.bottomNavigationView.apply {
+            setupWithNavController(navHostFragment.navController)
+            // disable reloading fragment when clicking again on the same tab
+            setOnNavigationItemReselectedListener {}
+            setBackgroundResource(R.drawable.shape_bottom_navigation_background)
+            getOrCreateBadge(R.id.channels_fragment)?.apply {
+                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+            }
+            getOrCreateBadge(R.id.mentions_fragment)?.apply {
+                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+            }
+        }
     }
 
     private fun setupNavigationDrawer() {
@@ -120,8 +131,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun renderState(state: HomeFragmentViewModel.State) {
-        binding.bottomNavigationView.setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
-        binding.bottomNavigationView.setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+        binding.bottomNavigationView.apply {
+            setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
+            setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+        }
 
         nameTextView.text = state.user.name
         avatarView.setUserData(state.user)

@@ -26,11 +26,11 @@ class ChatInfoSharedMediaGalleryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.attachmentWithDate.observe(viewLifecycleOwner) { attachments ->
+        viewModel.attachments.observe(viewLifecycleOwner) { attachments ->
             binding.attachmentGallery.provideImageList(
                 requireActivity(),
-                attachments.mapNotNull { attachmentWithDate ->
-                    attachmentWithDate.attachment.url ?: attachmentWithDate.attachment.imageUrl
+                attachments.mapNotNull { attachment ->
+                    attachment.url ?: attachment.imageUrl
                 }
             )
         }

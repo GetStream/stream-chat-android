@@ -73,7 +73,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun getProgressBarTint(typedArray: TypedArray) =
         typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiOfflineProgressBarTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
+            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
@@ -93,7 +93,7 @@ public class ChannelListHeaderView : ConstraintLayout {
                 )
             }
             iconTint = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_blue)
+                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
             icon = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
             backgroundTintList = getBackgroundTint(typedArray)
@@ -111,7 +111,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
@@ -130,7 +130,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_text_color_strong)
+                ContextCompat.getColor(context, R.color.stream_ui_black)
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,

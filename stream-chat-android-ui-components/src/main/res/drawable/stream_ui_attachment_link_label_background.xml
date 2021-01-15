@@ -3,5 +3,5 @@
     android:shape="rectangle"
     >
     <corners android:topRightRadius="16dp" />
-    <solid android:color="@color/stream_ui_link_attachment_background" />
+    <solid android:color="@color/stream_ui_blue_alice" />
 </shape>

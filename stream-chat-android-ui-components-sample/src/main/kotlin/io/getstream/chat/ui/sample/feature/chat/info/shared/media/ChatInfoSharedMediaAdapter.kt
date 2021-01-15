@@ -56,7 +56,7 @@ class ChatInfoSharedMediaAdapter :
 
         fun bind(item: SharedAttachment.AttachmentItem) {
             binding.mediaImageView.load(
-                item.attachmentWithDate.attachment.url ?: item.attachmentWithDate.attachment.imageUrl
+                item.attachment.url ?: item.attachment.imageUrl
             ) {
                 placeholder(R.drawable.stream_placeholder)
                 error(R.drawable.stream_placeholder)
