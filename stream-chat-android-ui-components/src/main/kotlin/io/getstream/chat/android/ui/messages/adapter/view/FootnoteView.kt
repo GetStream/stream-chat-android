@@ -11,7 +11,9 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 
@@ -57,7 +59,7 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
-    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int) {
+    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>) {
         footnote.root.isVisible = false
         with(threadsFootnote) {
             root.isVisible = true
@@ -66,6 +68,50 @@ internal class FootnoteView : ConstraintLayout {
 
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_thread_messages_indicator, replyCount, replyCount)
+        }
+        setupUserAvatars(isMine, threadParticipants)
+    }
+
+    private fun setupUserAvatars(isMine: Boolean, threadParticipants: List<User>) {
+        fun applyUser(user: User?, avatarView: AvatarView) {
+            if (user != null) {
+                avatarView.setUserData(user)
+            } else {
+                avatarView.isVisible = false
+            }
+        }
+
+        with(threadsFootnote) {
+
+            root.updateConstraints {
+                clear(threadRepliesButton.id, ConstraintSet.TOP)
+                connect(threadRepliesButton.id,
+                    ConstraintSet.TOP,
+                    if (isMine) firstMineUserImage.id else firstTheirUserImage.id,
+                    ConstraintSet.TOP)
+            }
+
+            firstTheirUserImage.isVisible = !isMine
+            secondTheirUserImage.isVisible = !isMine
+            firstMineUserImage.isVisible = isMine
+            secondMineUserImage.isVisible = isMine
+
+            val (first, second) = getTwoLastUsers(threadParticipants)
+
+            applyUser(first, if (isMine) firstMineUserImage else firstTheirUserImage)
+            applyUser(second, if (isMine) secondMineUserImage else secondTheirUserImage)
+        }
+    }
+
+    private fun getTwoLastUsers(threadParticipants: List<User>): Pair<User?, User?> {
+        if (threadParticipants.isEmpty()) {
+            return null to null
+        }
+        return threadParticipants.toSet().let { userSet ->
+            when {
+                userSet.size > 1 -> userSet.first() to userSet.elementAt(1)
+                else -> userSet.first() to null
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/threadsFootnoteContainer"
@@ -7,8 +8,16 @@
     android:layout_height="wrap_content"
     android:gravity="bottom"
     android:orientation="horizontal"
-    tools:showIn="@layout/stream_ui_item_message_plain_text"
     >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomLine"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="4dp"
+        />
+
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/threadsOrnamentLeft"
@@ -16,17 +25,74 @@
         android:layout_height="40dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_left"
         app:tint="@color/stream_ui_grey_whisper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/bottomLine"
+        tools:visibility="gone"
+        />
+    
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/secondTheirUserImage"
+        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        app:layout_constraintStart_toEndOf="@id/threadsOrnamentLeft"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarOnlineIndicatorEnabled="false"
+        tools:src="@tools:sample/avatars"
+        tools:visibility="gone"
+        />
+    
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/firstTheirUserImage"
+        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_marginStart="@dimen/stream_ui_message_thread_reply_avatar_half_size"
+        app:layout_constraintStart_toStartOf="@id/secondTheirUserImage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_goneMarginStart="0dp"
+        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarOnlineIndicatorEnabled="false"
+        tools:src="@tools:sample/avatars"
+        tools:visibility="gone"
         />
 
     <TextView
         android:id="@+id/threadRepliesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/stream_ui_spacing_tiny"
-        android:layout_marginRight="@dimen/stream_ui_spacing_tiny"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
+        app:layout_constraintStart_toEndOf="@id/firstTheirUserImage"
+        app:layout_constraintEnd_toStartOf="@id/firstMineUserImage"
+        app:layout_constraintTop_toTopOf="@id/firstTheirUserImage"
         tools:text="100 Thread Replies"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/firstMineUserImage"
+        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_marginEnd="@dimen/stream_ui_message_thread_reply_avatar_half_size"
+        app:layout_constraintEnd_toEndOf="@id/secondMineUserImage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_goneMarginStart="0dp"
+        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarOnlineIndicatorEnabled="false"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/secondMineUserImage"
+        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        android:layout_marginEnd="@dimen/stream_ui_message_thread_reply_avatar_half_size"
+        app:layout_constraintEnd_toStartOf="@id/threadsOrnamentRight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarOnlineIndicatorEnabled="false"
+        tools:src="@tools:sample/avatars"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -35,5 +101,8 @@
         android:layout_height="40dp"
         android:src="@drawable/stream_ui_thread_replies_ornament_right"
         app:tint="@color/stream_ui_grey_gainsboro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/bottomLine"
         />
-</androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
