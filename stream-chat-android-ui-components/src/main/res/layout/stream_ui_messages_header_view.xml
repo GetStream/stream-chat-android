@@ -48,13 +48,16 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="5sp"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
-        app:layout_constraintRight_toRightOf="@+id/avatar"
+        app:layout_constraintStart_toEndOf="@+id/back_button_container"
+        app:layout_constraintEnd_toStartOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="User"
         />

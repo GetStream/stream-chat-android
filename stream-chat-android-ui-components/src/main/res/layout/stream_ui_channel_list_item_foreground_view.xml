@@ -21,10 +21,13 @@
 
     <TextView
         android:id="@+id/channel_name_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginHorizontal="8dp"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/last_message_label"
         app:layout_constraintStart_toEndOf="@+id/avatar_view"
         app:layout_constraintTop_toTopOf="parent"
