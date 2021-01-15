@@ -36,7 +36,7 @@ internal class PlainTextWithMediaAttachmentsViewHolder(
             reactionsView.setReactionClickListener {
                 listeners.reactionViewClickListener.onReactionViewClick(data.message)
             }
-            threadRepliesFootnote.root.setOnClickListener {
+            footnote.setOnThreadClickListener {
                 listeners.threadClickListener.onThreadClick(data.message)
             }
 
