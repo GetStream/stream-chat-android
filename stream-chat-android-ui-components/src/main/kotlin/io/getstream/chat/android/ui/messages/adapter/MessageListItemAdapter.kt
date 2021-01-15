@@ -13,7 +13,7 @@ public class MessageListItemAdapter(
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
-        return MessageListItemViewTypeMapper.getViewTypeValue(getItem(position))
+        return viewHolderFactory.getItemViewType(getItem(position))
     }
 
     override fun onCreateViewHolder(
