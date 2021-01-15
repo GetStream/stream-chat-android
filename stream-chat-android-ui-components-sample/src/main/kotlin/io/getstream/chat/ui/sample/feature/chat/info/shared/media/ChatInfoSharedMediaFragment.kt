@@ -70,8 +70,8 @@ class ChatInfoSharedMediaFragment : Fragment() {
             addOnScrollListener(dateScrollListener)
         }
         adapter.setMediaClickListener {
-            sharedMediaViewModel.attachmentWithDate.value =
-                adapter.currentList.map { attachmentItem -> attachmentItem.attachmentWithDate }
+            sharedMediaViewModel.attachments.value =
+                adapter.currentList.map { attachmentItem -> attachmentItem.attachment }
             findNavController().navigate(R.id.action_chatInfoSharedMediaFragment_to_chatInfoSharedMediaGalleryFragment)
         }
         bindViewModel()
@@ -117,7 +117,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun getDateText(attachments: List<SharedAttachment.AttachmentItem>): String {
-        return dateFormat.format(attachments[dateScrollListener.lastVisibleItemPosition].attachmentWithDate.createdAt)
+        return dateFormat.format(attachments[dateScrollListener.lastVisibleItemPosition].createdAt)
     }
 
     private fun showEmptyState() {
