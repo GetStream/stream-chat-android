@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_channel_item_options_background_color"
+    android:background="@color/stream_ui_white_smoke"
     >
 
     <ImageView
@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_light_red"
+        app:tint="@color/stream_ui_accent_red"
         />
 
     <ImageView

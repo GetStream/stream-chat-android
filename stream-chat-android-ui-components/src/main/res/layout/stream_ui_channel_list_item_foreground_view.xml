@@ -4,7 +4,7 @@
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_background_alabaster_black"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -83,12 +83,13 @@
         android:gravity="center"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="@color/stream_ui_white"
+        android:textColor="@color/stream_ui_literal_white"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
         app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
         app:layout_constraintStart_toStartOf="@+id/last_message_time_label"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="99"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

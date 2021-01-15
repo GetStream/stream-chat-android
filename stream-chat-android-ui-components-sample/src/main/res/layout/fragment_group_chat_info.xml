@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stream_ui_background_default"
+    android:background="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
@@ -33,7 +33,7 @@
             app:icon="@drawable/ic_member_add"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
-            app:iconTint="@color/stream_ui_blue"
+            app:iconTint="@color/stream_ui_accent_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

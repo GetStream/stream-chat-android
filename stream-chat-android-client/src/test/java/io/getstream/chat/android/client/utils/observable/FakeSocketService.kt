@@ -14,8 +14,9 @@ internal class FakeSocketService(
 
     private var connectionUserId: String? = null
 
-    override fun connect(endpoint: String, apiKey: String, user: User?) {
-    }
+    override fun anonymousConnect(endpoint: String, apiKey: String) { }
+
+    override fun userConnect(endpoint: String, apiKey: String, user: User) { }
 
     private val listeners = mutableListOf<SocketListener>()
 

@@ -15,7 +15,7 @@
         android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
         android:paddingVertical="2dp"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-        android:textColor="@color/stream_ui_text_color_date_divider"
+        android:textColor="@color/stream_ui_white"
         tools:text="Today"
         />
 

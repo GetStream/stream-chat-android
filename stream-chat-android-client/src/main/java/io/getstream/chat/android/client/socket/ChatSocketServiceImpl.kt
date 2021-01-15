@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.core.internal.exhaustive
 import kotlin.properties.Delegates
 
 internal class ChatSocketServiceImpl private constructor(
@@ -20,15 +21,13 @@ internal class ChatSocketServiceImpl private constructor(
     private val networkStateProvider: NetworkStateProvider
 ) : ChatSocketService {
     private val logger = ChatLogger.get("SocketService")
-    private var endpoint: String = ""
-    private var apiKey: String = ""
-    private var user: User? = null
+    private var connectionConf: ConnectionConf = ConnectionConf.None
     private var socket: Socket? = null
     private val listeners = mutableListOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         object : HealthMonitor.HealthCallback {
-            override fun reconnect() = this@ChatSocketServiceImpl.reconnect()
+            override fun reconnect() = this@ChatSocketServiceImpl.reconnect(connectionConf)
             override fun check() {
                 (state as? State.Connected)?.let {
                     sendEvent(it.event)
@@ -40,7 +39,7 @@ internal class ChatSocketServiceImpl private constructor(
         override fun onConnected() {
             if (state == State.Disconnected || state == State.NetworkDisconnected) {
                 logger.logI("network connected, reconnecting socket")
-                reconnect()
+                reconnect(connectionConf)
             }
         }
 
@@ -76,6 +75,7 @@ internal class ChatSocketServiceImpl private constructor(
                     }
                     is State.DisconnectedPermanently -> {
                         releaseSocket()
+                        connectionConf = ConnectionConf.None
                         networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
@@ -134,23 +134,21 @@ internal class ChatSocketServiceImpl private constructor(
         }
     }
 
-    override fun connect(
-        endpoint: String,
-        apiKey: String,
-        user: User?
-    ) {
-        logger.logI("connect")
-        this.endpoint = endpoint
-        this.apiKey = apiKey
-        this.user = user
+    override fun anonymousConnect(endpoint: String, apiKey: String) =
+        connect(ConnectionConf.AnonymousConnectionConf(endpoint, apiKey))
 
+    override fun userConnect(endpoint: String, apiKey: String, user: User) =
+        connect(ConnectionConf.UserConnectionConf(endpoint, apiKey, user))
+
+    private fun connect(connectionConf: ConnectionConf) {
+        logger.logI("connect")
+        this.connectionConf = connectionConf
         if (networkStateProvider.isConnected()) {
             state = State.Disconnected
-            setupSocket()
+            setupSocket(connectionConf)
         } else {
             state = State.NetworkDisconnected
         }
-
         networkStateProvider.subscribe(networkStateListener)
     }
 
@@ -171,15 +169,26 @@ internal class ChatSocketServiceImpl private constructor(
         socket?.send(event)
     }
 
-    private fun reconnect() {
+    private fun reconnect(connectionConf: ConnectionConf) {
         releaseSocket()
-        setupSocket()
+        setupSocket(connectionConf)
     }
 
-    private fun setupSocket() {
+    private fun setupSocket(connectionConf: ConnectionConf) {
         logger.logI("setupSocket")
-        state = State.Connecting
-        socket = socketFactory.create(endpoint, apiKey, user)
+        when (connectionConf) {
+            is ConnectionConf.None -> {
+                state = State.DisconnectedPermanently
+            }
+            is ConnectionConf.AnonymousConnectionConf -> {
+                state = State.Connecting
+                socket = socketFactory.createAnonymousSocket(connectionConf.endpoint, connectionConf.apiKey)
+            }
+            is ConnectionConf.UserConnectionConf -> {
+                state = State.Connecting
+                socket = socketFactory.createNormalSocket(connectionConf.endpoint, connectionConf.apiKey, connectionConf.user)
+            }
+        }.exhaustive
     }
 
     private fun releaseSocket() {
@@ -193,6 +202,12 @@ internal class ChatSocketServiceImpl private constructor(
                 eventUiHandler.post { call(listener) }
             }
         }
+    }
+
+    internal sealed class ConnectionConf {
+        object None : ConnectionConf()
+        data class AnonymousConnectionConf(val endpoint: String, val apiKey: String) : ConnectionConf()
+        data class UserConnectionConf(val endpoint: String, val apiKey: String, val user: User) : ConnectionConf()
     }
 
     @VisibleForTesting

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_attachment_dialog_header_color"
+    android:background="@color/stream_ui_white_smoke"
     >
 
     <RadioGroup
@@ -80,7 +80,8 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/stream_ui_spacing_small"
-            android:background="@color/stream_ui_grey_light"
+            android:alpha="0.1"
+            android:background="@color/stream_ui_black"
             />
 
     </com.google.android.material.card.MaterialCardView>

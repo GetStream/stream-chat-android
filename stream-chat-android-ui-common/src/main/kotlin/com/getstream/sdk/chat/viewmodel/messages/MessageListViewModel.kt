@@ -31,7 +31,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
     private val domain: ChatDomain = ChatDomain.instance(),
-    private val client: ChatClient = ChatClient.instance()
+    private val client: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
@@ -76,32 +76,37 @@ public class MessageListViewModel @JvmOverloads constructor(
                     false,
                     ::dateSeparator
                 )
-
-                stateMerger.apply {
-                    addSource(channelController.messagesState) { messageState ->
-                        when (messageState) {
-                            is ChannelController.MessagesState.NoQueryActive,
-                            is ChannelController.MessagesState.Loading -> value = State.Loading
-                            is ChannelController.MessagesState.OfflineNoResults ->
-                                value = State.Result(MessageListItemWrapper())
-                            is ChannelController.MessagesState.Result -> {
-                                removeSource(channelController.messagesState)
-                                onNormalModeEntered()
-                            }
-                        }
-                    }
-                }
                 _reads.addSource(channelController.reads) { _reads.value = it }
                 _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
 
-                if (messageId != null && messageId.isNotEmpty()) {
+                if (messageId.isNullOrEmpty()) {
+                    stateMerger.apply {
+                        addSource(channelController.messagesState) { messageState ->
+                            when (messageState) {
+                                is ChannelController.MessagesState.NoQueryActive,
+                                is ChannelController.MessagesState.Loading -> value = State.Loading
+                                is ChannelController.MessagesState.OfflineNoResults ->
+                                    value = State.Result(MessageListItemWrapper())
+                                is ChannelController.MessagesState.Result -> {
+                                    removeSource(channelController.messagesState)
+                                    onNormalModeEntered()
+                                }
+                            }
+                        }
+                    }
+                } else {
                     domain.useCases.loadMessageById(
                         cid,
                         messageId,
                         MESSAGES_LIMIT,
                         MESSAGES_LIMIT
                     ).enqueue {
-                        _targetMessage.value = it.data()
+                        if (it.isSuccess) {
+                            _targetMessage.value = it.data()
+                            onNormalModeEntered()
+                        } else {
+                            stateMerger.value = State.Result(MessageListItemWrapper())
+                        }
                     }
                 }
             }

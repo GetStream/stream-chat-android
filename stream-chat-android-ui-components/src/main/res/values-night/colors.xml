@@ -1,56 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="stream_ui_background_light">@color/stream_ui_bunker</color>
+    <!-- Greys -->
+    <color name="stream_ui_black">#FFFFFF</color>
+    <color name="stream_ui_grey">#7A7A7A</color>
+    <color name="stream_ui_grey_gainsboro">#2D2F2F</color>
+    <color name="stream_ui_grey_whisper">#1C1E22</color>
+    <color name="stream_ui_white_smoke">#13151B</color>
+    <color name="stream_ui_white_snow">#070A0D</color>
+    <color name="stream_ui_white">#101418</color>
+    <color name="stream_ui_blue_alice">#00193D</color>
 
-    <color name="stream_ui_channel_item_title_text_color">@color/stream_ui_white</color>
-    <color name="stream_ui_channel_item_options_background_color">@color/stream_ui_woodsmoke</color>
-    <color name="stream_ui_edit_text_background_color">@color/stream_ui_woodsmoke</color>
+    <!-- Specials -->
+    <color name="stream_ui_overlay">#66000000</color>
+    <color name="stream_ui_overlay_dark">#99FFFFFF</color>
+    <color name="stream_ui_background_gradient_start">#101214</color>
+    <color name="stream_ui_background_gradient_end">#070A0D</color>
 
-    <color name="stream_ui_attachment_dialog_button_disabled">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_border_stroke">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_edit_reactions_bubble_color_mine">@color/stream_ui_background_light</color>
-    <color name="stream_ui_edit_reactions_bubble_color_theirs">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_color_mine">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_color_theirs">@color/stream_ui_background_light</color>
-    <color name="stream_ui_view_reactions_bubble_border_color_mine">@color/stream_ui_background_light</color>
-
-    <color name="stream_ui_background_default">@color/stream_ui_black</color>
-    <color name="stream_ui_background_alabaster">@color/stream_ui_background_light</color>
-    <color name="stream_ui_background_alabaster_black">@color/stream_ui_black</color>
-    <color name="stream_ui_background_date_divider">@color/stream_ui_white_60</color>
-
-    <color name="stream_ui_icon_default_tint">@color/stream_ui_white</color>
-    <color name="stream_ui_icon_light_tint">@color/stream_ui_white</color>
-    <color name="stream_ui_icon_strong_tint">@color/stream_ui_white</color>
-
-    <color name="stream_ui_text_color_light">@color/stream_ui_grey_dark</color>
-    <color name="stream_ui_text_color_strong">@color/stream_ui_white</color>
-    <color name="stream_ui_text_color_date_divider">@color/stream_ui_bunker</color>
-    <color name="stream_ui_search_info_bar_start_background">#101214</color>
-    <color name="stream_ui_search_info_bar_end_background">#070A0D</color>
-
-    <color name="stream_ui_divider">@color/stream_ui_mirage</color>
-
-    <color name="stream_ui_section_item_color">@color/stream_ui_woodsmoke</color>
-    <color name="stream_ui_attachment_dialog_header_color">@color/stream_ui_background_light</color>
-
-    <color name="stream_ui_send_button">@color/stream_ui_outer_space</color>
-    <color name="stream_ui_send_button_disabled">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_search_input_border">#1C1E22</color>
-
-    <color name="stream_ui_material_button_background_color">@color/stream_ui_white</color>
-    <color name="stream_ui_material_button_text_color">@color/stream_ui_blue</color>
-    <color name="stream_ui_sdk_version_color">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_current_user_background">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_other_message_stroke">#1C1E22</color>
-
-    <color name="stream_ui_thread_reply_stroke">@color/stream_ui_outer_space</color>
-
-    <color name="stream_ui_deleted_message_background">@color/stream_ui_outer_space</color>
-    <color name="stream_ui_link_attachment_background">#001A3D</color>
+    <!-- Other -->
+    <color name="stream_ui_button_background_color">#FFFFFF</color>
+    <color name="stream_ui_button_text_color">#005AFF</color>
+    <color name="stream_ui_border">#141924</color>
+    <color name="stream_ui_highlight">#302D22</color>
 </resources>

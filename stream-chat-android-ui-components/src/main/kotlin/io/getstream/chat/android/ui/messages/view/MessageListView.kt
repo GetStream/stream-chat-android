@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
+import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -52,6 +53,7 @@ import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
+import io.getstream.chat.android.ui.utils.extensions.safeCast
 import kotlin.math.max
 
 /**
@@ -372,7 +374,7 @@ public class MessageListView : ConstraintLayout {
     private fun configureMessageOptions(tArray: TypedArray) {
         val iconsTint = tArray.getColor(
             R.styleable.MessageListView_streamUiMessageOptionIconColor,
-            ContextCompat.getColor(context, R.color.stream_ui_boulder)
+            ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
         val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
@@ -505,10 +507,16 @@ public class MessageListView : ConstraintLayout {
                     .indexOfFirst { it is MessageItem && it.message.id == message.id }
                     .takeIf { it >= 0 }
                     ?.let {
-                        binding.chatMessagesRV
-                            .layoutManager
-                            ?.cast<LinearLayoutManager>()
-                            ?.scrollToPositionWithOffset(it, binding.chatMessagesRV.height / 2)
+                        with(binding.chatMessagesRV) {
+                            layoutManager
+                                ?.cast<LinearLayoutManager>()
+                                ?.scrollToPositionWithOffset(it, height / 3)
+                            post {
+                                findViewHolderForAdapterPosition(it)
+                                    ?.safeCast<BaseMessageItemViewHolder<*>>()
+                                    ?.startHighlightAnimation()
+                            }
+                        }
                     }
             },
             HIGHLIGHT_MENTION_DELAY

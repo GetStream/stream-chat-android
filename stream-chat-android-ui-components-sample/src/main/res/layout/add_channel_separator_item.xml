@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="24dp"
-    android:background="@color/stream_ui_section_item_color"
+    android:background="@color/stream_ui_white_smoke"
     android:paddingStart="@dimen/spacing_small"
     android:paddingEnd="@dimen/spacing_small"
     >
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
-        android:textColor="@color/stream_ui_text_color_light"
+        android:textColor="@color/stream_ui_grey"
         android:textSize="@dimen/stream_ui_text_small"
         android:textStyle="bold"
         />
