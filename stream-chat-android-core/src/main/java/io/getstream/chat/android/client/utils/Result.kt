@@ -2,21 +2,16 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 
-public class Result<T : Any> {
-    private val data: T?
+public class Result<T : Any> private constructor(
+    private val data: T?,
     private val error: ChatError?
+) {
 
     @Suppress("DEPRECATION")
-    public constructor(data: T) {
-        this.data = data
-        this.error = null
-    }
+    public constructor(data: T) : this(data, null)
 
     @Suppress("DEPRECATION")
-    public constructor(error: ChatError) {
-        this.data = null
-        this.error = error
-    }
+    public constructor(error: ChatError)  : this(null, error)
 
     public val isSuccess: Boolean
         get() = data != null
