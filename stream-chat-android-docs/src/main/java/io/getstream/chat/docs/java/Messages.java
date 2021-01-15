@@ -6,9 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
@@ -330,6 +333,95 @@ public class Messages {
                 }
             });
 
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/search/?language=java">Pinned Messages</a>
+     */
+    class PinnedMessages {
+        public void pinAndUnpinAMessage() {
+            // create pinned message
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2077, 1, 1);
+            Date pinExpirationDate = calendar.getTime();
+
+            Message message = new Message();
+            message.setText("my-message");
+            message.setPinned(true);
+            message.setPinExpires(pinExpirationDate);
+
+            channelClient.sendMessage(message).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message sentMessage = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+
+            // unpin message
+            channelClient.unpinMessage(message).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message unpinnedMessage = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+
+            // pin message for 120 seconds
+            channelClient.pinMessage(message, 120).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message pinnedMessage = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+
+            // change message expiration to 2077
+            channelClient.pinMessage(message, pinExpirationDate).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message pinnedMessage = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+
+            // remove expiration date from pinned message
+            channelClient.pinMessage(message, null).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message pinnedMessage = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+        }
+
+        public void retrievePinnedMessages() {
+            int messagesLimit = 10;
+            QueryChannelRequest request = new QueryChannelRequest().withMessages(messagesLimit);
+            channelClient.query(request).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Message> pinnedMessages = result.data().getPinnedMessages();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+        }
+
+        public void searchForAllPinnedMessages() {
+            int offset = 0;
+            int limit = 10;
+            FilterObject channelFilter = Filters.in("cid", "channelType:channelId");
+            FilterObject messageFilter = Filters.eq("pinned", true);
+            SearchMessagesRequest request = new SearchMessagesRequest(offset, limit, channelFilter, messageFilter);
+
+            client.searchMessages(request).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Message> pinnedMessages = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
         }
     }
 }
