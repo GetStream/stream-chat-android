@@ -15,7 +15,7 @@
             android:id="@+id/searchInfoBar"
             android:layout_width="match_parent"
             android:layout_height="24dp"
-            android:background="@drawable/stream_ui_search_info_bar_gradient"
+            android:background="@drawable/stream_ui_bg_gradient"
             android:paddingStart="8dp"
             android:paddingTop="5dp"
             android:paddingEnd="8dp"
@@ -65,7 +65,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
-            android:textColor="@color/stream_ui_text_color_light"
+            android:textColor="@color/stream_ui_grey"
             tools:text="No result for 'query'"
             />
 

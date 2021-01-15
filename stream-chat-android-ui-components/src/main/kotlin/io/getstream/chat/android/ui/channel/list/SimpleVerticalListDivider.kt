@@ -21,7 +21,7 @@ internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
      */
     var drawableHeight: Int? = null
 
-    private val drawOnLastItem: Boolean = false
+    var drawOnLastItem: Boolean = false
 
     private lateinit var drawable: Drawable
 

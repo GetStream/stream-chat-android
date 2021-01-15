@@ -4,6 +4,6 @@
     >
     <stroke
         android:width="3dp"
-        android:color="@color/stream_ui_grey_light"
+        android:color="@color/stream_ui_grey_gainsboro"
         />
 </shape>

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:clipToPadding="false"
-        app:cardBackgroundColor="@color/stream_ui_background_light"
+        app:cardBackgroundColor="@color/stream_ui_white"
         app:cardElevation="@dimen/stream_ui_elevation_small"
         app:layout_constraintEnd_toStartOf="@id/marginEnd"
         app:layout_constraintStart_toEndOf="@id/marginStart"
@@ -59,7 +59,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/giphyTextLabel"
                 app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
-                app:tint="@color/stream_ui_send_button_disabled"
+                app:tint="#DBDBDB"
                 tools:ignore="ContentDescription"
                 />
 
@@ -95,7 +95,7 @@
                 app:layout_constraintLeft_toRightOf="@id/giphyTextLabel"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/previousButton"
-                app:tint="@color/stream_ui_icon_strong_tint"
+                app:tint="#000000"
                 tools:ignore="ContentDescription"
                 />
 
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/stream_ui_divider"
+                android:background="@color/stream_ui_border"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/previousButton"
                 />
@@ -119,7 +119,7 @@
                 android:paddingBottom="16dp"
                 android:text="@string/stream_ui_cancel_label"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-                android:textColor="@color/stream_ui_attachment_dialog_button_enabled"
+                android:textColor="@color/stream_ui_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/verticalDivider"
@@ -130,7 +130,7 @@
                 android:id="@+id/verticalDivider"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                android:background="@color/stream_ui_divider"
+                android:background="@color/stream_ui_border"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/cancel_button"
                 app:layout_constraintRight_toLeftOf="@id/sendButton"
@@ -145,7 +145,7 @@
                 android:gravity="center"
                 android:text="@string/stream_ui_send_label"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-                android:textColor="@color/stream_ui_blue"
+                android:textColor="@color/stream_ui_accent_blue"
                 app:layout_constraintBottom_toBottomOf="@id/cancel_button"
                 app:layout_constraintLeft_toRightOf="@id/verticalDivider"
                 app:layout_constraintRight_toRightOf="parent"

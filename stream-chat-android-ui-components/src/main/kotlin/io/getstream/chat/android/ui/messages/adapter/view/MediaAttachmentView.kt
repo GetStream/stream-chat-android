@@ -106,10 +106,10 @@ internal class MediaAttachmentView : ConstraintLayout {
     fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(context, R.color.stream_ui_black_50))
+            setTint(ContextCompat.getColor(context, R.color.stream_ui_grey))
         }
         binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(context, R.color.stream_ui_black_30))
+            setTint(ContextCompat.getColor(context, R.color.stream_ui_overlay))
         }
     }
 

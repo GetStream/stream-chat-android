@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/stream_ui_background_light"
+        android:background="@color/stream_ui_white"
         >
 
         <TextView
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AvatarView"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="ChannelListHeaderView"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
 
@@ -98,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="MessagesHeaderView"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
 
@@ -132,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="SearchView"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
             <io.getstream.chat.android.ui.search.SearchInputView
@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AttachmentGallery - One picture"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
             <TextView
@@ -176,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="AttachmentGallery - Many pictures"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
         </LinearLayout>
@@ -199,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="MessagePreviewView"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 />
 
             <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
@@ -224,7 +224,7 @@
             <TextView
                 android:id="@+id/viewReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -257,7 +257,7 @@
             <TextView
                 android:id="@+id/editReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -314,7 +314,7 @@
             <TextView
                 android:id="@+id/userReactionsViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -347,7 +347,7 @@
             <TextView
                 android:id="@+id/scrollButtonViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
@@ -380,7 +380,7 @@
             <TextView
                 android:id="@+id/messageInputFieldViewLabel"
                 style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:textColor="@color/stream_ui_text_color_strong"
+                android:textColor="@color/stream_ui_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"

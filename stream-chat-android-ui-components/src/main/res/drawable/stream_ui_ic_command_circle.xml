@@ -5,7 +5,7 @@
     android:viewportHeight="24"
     >
     <path
-        android:fillColor="@color/stream_ui_blue"
+        android:fillColor="@color/stream_ui_accent_blue"
         android:pathData="M12,0L12,0A12,12 0,0 1,24 12L24,12A12,12 0,0 1,12 24L12,24A12,12 0,0 1,0 12L0,12A12,12 0,0 1,12 0z"
         />
     <path

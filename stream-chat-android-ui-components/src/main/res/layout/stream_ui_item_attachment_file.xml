@@ -17,7 +17,7 @@
         android:checkMark="@null"
         android:gravity="center"
         android:textAlignment="gravity"
-        android:textColor="@color/stream_ui_background_default"
+        android:textColor="@color/stream_ui_white_snow"
         android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -108,17 +108,17 @@ public class MessageReplyView : FrameLayout {
             when {
                 isLink -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_link_attachment_background))
+                    setTint(context.getColorCompat(R.color.stream_ui_blue_alice))
                 }
                 isMine -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_grey_90))
+                    setTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    setStrokeTint(context.getColorCompat(R.color.stream_ui_border_stroke))
+                    setStrokeTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
                     strokeWidth = DEFAULT_STROKE_WIDTH
-                    setTint(context.getColorCompat(R.color.stream_ui_background_light))
+                    setTint(context.getColorCompat(R.color.stream_ui_white))
                 }
             }
         }

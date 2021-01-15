@@ -57,7 +57,7 @@ public class SingleReactionView : FrameLayout {
 
         setWillNotDraw(false)
         minimumHeight = reactionsViewStyle.totalHeight
-        binding.reactionIcon.setColorFilter(context.getColorCompat(R.color.stream_ui_blue))
+        binding.reactionIcon.setColorFilter(context.getColorCompat(R.color.stream_ui_accent_blue))
     }
 
     private fun setReactionIcon(reaction: Reaction) {

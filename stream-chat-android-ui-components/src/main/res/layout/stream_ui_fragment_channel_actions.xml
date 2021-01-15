@@ -25,7 +25,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="64dp"
             android:singleLine="true"
-            android:textColor="@color/stream_ui_text_color_strong"
+            android:textColor="@color/stream_ui_black"
             android:textSize="@dimen/stream_ui_text_large"
             android:textStyle="bold"
             />
@@ -37,7 +37,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:singleLine="true"
-            android:textColor="@color/stream_ui_text_color_light"
+            android:textColor="@color/stream_ui_grey"
             android:textSize="@dimen/stream_ui_text_small"
             />
 
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_view_info"
         app:drawableStartCompat="@drawable/stream_ui_ic_single_user"
-        app:drawableTint="@color/stream_ui_boulder"
+        app:drawableTint="@color/stream_ui_grey"
         />
 
     <TextView
@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_channel_actions_leave_group"
         app:drawableStartCompat="@drawable/stream_ui_ic_leave_group"
-        app:drawableTint="@color/stream_ui_boulder"
+        app:drawableTint="@color/stream_ui_grey"
         />
 
     <TextView
@@ -82,10 +82,10 @@
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
         android:text="@string/stream_ui_delete_conversation"
-        android:textColor="@color/stream_ui_text_red"
+        android:textColor="@color/stream_ui_accent_red"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/stream_ui_ic_delete"
-        app:drawableTint="@color/stream_ui_light_red"
+        app:drawableTint="@color/stream_ui_accent_red"
         tools:visibility="visible"
         />
 
@@ -95,7 +95,7 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_cancel"
         app:drawableStartCompat="@drawable/stream_ui_ic_clear"
-        app:drawableTint="@color/stream_ui_boulder"
+        app:drawableTint="@color/stream_ui_grey"
         />
 
 </LinearLayout>

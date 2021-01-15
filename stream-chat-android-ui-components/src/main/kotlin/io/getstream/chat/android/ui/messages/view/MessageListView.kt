@@ -357,7 +357,7 @@ public class MessageListView : ConstraintLayout {
     private fun configureMessageOptions(tArray: TypedArray) {
         val iconsTint = tArray.getColor(
             R.styleable.MessageListView_streamUiMessageOptionIconColor,
-            ContextCompat.getColor(context, R.color.stream_ui_boulder)
+            ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
         val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
