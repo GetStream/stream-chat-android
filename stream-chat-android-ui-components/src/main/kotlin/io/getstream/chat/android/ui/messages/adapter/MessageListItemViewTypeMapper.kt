@@ -3,22 +3,15 @@ package io.getstream.chat.android.ui.messages.adapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
 
-@InternalStreamChatApi
-public object MessageListItemViewTypeMapper {
+internal object MessageListItemViewTypeMapper {
 
-    public fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem).ordinal
+    fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem)
 
-    public fun viewTypeValueToViewType(viewTypeValue: Int): MessageListItemViewType {
-        return MessageListItemViewType.values().find { it.ordinal == viewTypeValue }
-            ?: error("View type must be a value from MessageListItemViewType")
-    }
-
-    private fun listItemToViewType(messageListItem: MessageListItem): MessageListItemViewType {
+    private fun listItemToViewType(messageListItem: MessageListItem): Int {
         return when (messageListItem) {
             is MessageListItem.DateSeparatorItem -> MessageListItemViewType.DATE_DIVIDER
             is MessageListItem.LoadingMoreIndicatorItem -> MessageListItemViewType.LOADING_INDICATOR
@@ -28,7 +21,7 @@ public object MessageListItemViewTypeMapper {
         }
     }
 
-    private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): MessageListItemViewType {
+    private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
         return when {
             messageItem.message.deletedAt != null -> MessageListItemViewType.MESSAGE_DELETED
             messageItem.message.isGiphyEphemeral() -> MessageListItemViewType.GIPHY
