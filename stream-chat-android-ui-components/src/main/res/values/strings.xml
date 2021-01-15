@@ -127,7 +127,7 @@
 
     <!-- Thread Messages -->
     <plurals name="stream_ui_thread_messages_indicator">
-        <item quantity="one">%d Thread Reply</item>
+        <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
     </plurals>
 
