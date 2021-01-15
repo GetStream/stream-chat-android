@@ -14,28 +14,22 @@
     <TextView
         android:id="@+id/reply"
         style="@style/StreamUiMessageOptionItem"
-        android:visibility="gone"
         tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
         tools:text="Reply"
-        tools:visibility="visible"
         />
 
     <TextView
         android:id="@+id/showInChat"
         style="@style/StreamUiMessageOptionItem"
-        android:visibility="gone"
         tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
-        tools:text="Reply"
-        tools:visibility="visible"
+        tools:text="Show in chat"
         />
 
     <TextView
         android:id="@+id/saveImage"
         style="@style/StreamUiMessageOptionItem"
-        android:visibility="gone"
         tools:drawableStart="@drawable/stream_ui_ic_download"
         tools:text="Reply"
-        tools:visibility="visible"
         />
 
     <TextView
