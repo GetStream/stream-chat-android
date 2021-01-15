@@ -124,7 +124,7 @@ private class FileAttachmentViewHolder(
 
             if (attachment.uploadComplete == false) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_error)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_light_red)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
             }
         }
