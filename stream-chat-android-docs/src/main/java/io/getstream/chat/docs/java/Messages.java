@@ -341,7 +341,7 @@ public class Messages {
      */
     class PinnedMessages {
         public void pinAndUnpinAMessage() {
-            // create pinned message
+            // Create pinned message
             Calendar calendar = Calendar.getInstance();
             calendar.set(2077, 1, 1);
             Date pinExpirationDate = calendar.getTime();
@@ -359,7 +359,7 @@ public class Messages {
                 }
             });
 
-            // unpin message
+            // Unpin message
             channelClient.unpinMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message unpinnedMessage = result.data();
@@ -368,7 +368,7 @@ public class Messages {
                 }
             });
 
-            // pin message for 120 seconds
+            // Pin message for 120 seconds
             channelClient.pinMessage(message, 120).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message pinnedMessage = result.data();
@@ -377,7 +377,7 @@ public class Messages {
                 }
             });
 
-            // change message expiration to 2077
+            // Change message expiration to 2077
             channelClient.pinMessage(message, pinExpirationDate).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message pinnedMessage = result.data();
@@ -386,7 +386,7 @@ public class Messages {
                 }
             });
 
-            // remove expiration date from pinned message
+            // Remove expiration date from pinned message
             channelClient.pinMessage(message, null).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message pinnedMessage = result.data();
