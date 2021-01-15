@@ -15,8 +15,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -25,15 +23,12 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -49,12 +44,9 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickLis
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
-import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
-import io.getstream.chat.android.ui.utils.extensions.safeCast
-import kotlin.math.max
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -68,10 +60,7 @@ public class MessageListView : ConstraintLayout {
 
     private companion object {
         const val LOAD_MORE_THRESHOLD = 10
-        const val HIGHLIGHT_MENTION_DELAY = 100L
     }
-
-    private var firstVisiblePosition = 0
 
     private lateinit var style: MessageListViewStyle
 
@@ -87,8 +76,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadingViewContainer: ViewGroup
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
-    private var lastSeenMessageInChannel: MessageListItem? = null
-    private var lastSeenMessageInThread: MessageListItem? = null
+    private lateinit var scrollHelper: MessageListScrollHelper
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -99,8 +87,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     public var scrollToBottomButtonEnabled: Boolean = true
-
-    private var hasScrolledUp = false
 
     private var endRegionReachedHandler: () -> Unit = {
         throw IllegalStateException("endRegionReachedHandler must be set.")
@@ -156,8 +142,6 @@ public class MessageListView : ConstraintLayout {
      * If you are allowed to scroll up or not
      */
     private var lockScrollUp = true
-
-    private val logger = ChatLogger.get("MessageListView")
 
     private val DEFAULT_MESSAGE_CLICK_LISTENER =
         MessageClickListener { message ->
@@ -279,15 +263,13 @@ public class MessageListView : ConstraintLayout {
         binding = StreamUiMessageListViewBinding.inflate(context.inflater, this, true)
 
         initRecyclerView()
-        initUnseenMessagesButton()
+        initScrollHelper()
         initLoadingView()
         initEmptyStateView()
 
         if (attr != null) {
             configureAttributes(attr)
         }
-
-        hasScrolledUp = false
 
         buffer.subscribe(::handleNewWrapper)
         buffer.active()
@@ -315,9 +297,13 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private fun initUnseenMessagesButton() {
-        binding.scrollToBottomButton.setOnClickListener {
-            binding.chatMessagesRV.scrollToPosition(lastPosition())
+    private fun initScrollHelper() {
+        scrollHelper = MessageListScrollHelper(
+            recyclerView = binding.chatMessagesRV,
+            scrollButtonView = binding.scrollToBottomButton,
+            scrollToBottomButtonEnabled = scrollToBottomButtonEnabled,
+        ) {
+            lastMessageReadHandler.invoke()
         }
     }
 
@@ -353,6 +339,7 @@ public class MessageListView : ConstraintLayout {
                 NewMessagesBehaviour.COUNT_UPDATE.value
             )
         )
+        scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
 
         tArray.getText(R.styleable.MessageListView_streamUiMessagesEmptyStateLabelText)
             ?.let { emptyStateText ->
@@ -365,10 +352,6 @@ public class MessageListView : ConstraintLayout {
 
         configureMessageOptions(tArray)
         tArray.recycle()
-    }
-
-    private fun lastPosition(): Int {
-        return adapter.itemCount - 1
     }
 
     private fun configureMessageOptions(tArray: TypedArray) {
@@ -501,59 +484,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun scrollToMessage(message: Message) {
-        binding.chatMessagesRV.postDelayed(
-            {
-                adapter.currentList
-                    .indexOfFirst { it is MessageItem && it.message.id == message.id }
-                    .takeIf { it >= 0 }
-                    ?.let {
-                        with(binding.chatMessagesRV) {
-                            layoutManager
-                                ?.cast<LinearLayoutManager>()
-                                ?.scrollToPositionWithOffset(it, height / 3)
-                            post {
-                                findViewHolderForAdapterPosition(it)
-                                    ?.safeCast<BaseMessageItemViewHolder<*>>()
-                                    ?.startHighlightAnimation()
-                            }
-                        }
-                    }
-            },
-            HIGHLIGHT_MENTION_DELAY
-        )
+        scrollHelper.scrollToMessage(message)
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
         binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
-        binding.chatMessagesRV.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val currentList = adapter.currentList.toList()
-                    if (!::layoutManager.isInitialized || currentList.isEmpty()) {
-                        return
-                    }
-                    val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
-                    val currentLastVisible = layoutManager.findLastVisibleItemPosition()
-
-                    hasScrolledUp = currentLastVisible < lastPosition()
-                    firstVisiblePosition = currentFirstVisible
-
-                    val realLastVisibleMessage =
-                        max(currentLastVisible, getLastSeenMessagePosition()).coerceAtMost(currentList.lastIndex)
-                    updateLastSeen(currentList[realLastVisibleMessage])
-
-                    val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
-
-                    if (scrollToBottomButtonEnabled) {
-                        binding.scrollToBottomButton.setUnreadCount(unseenItems)
-                        binding.scrollToBottomButton.isVisible = hasScrolledUp
-                    } else {
-                        binding.scrollToBottomButton.isVisible = false
-                    }
-                }
-            }
-        )
-
         /*
          * Lock for 500 milliseconds setMessageListScrollUp in here.
          * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
@@ -638,6 +573,9 @@ public class MessageListView : ConstraintLayout {
 
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
         this.newMessagesBehaviour = newMessagesBehaviour
+        if (::scrollHelper.isInitialized) {
+            scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+        }
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
@@ -654,123 +592,21 @@ public class MessageListView : ConstraintLayout {
         buffer.enqueueData(listItem)
     }
 
-    public fun scrollToBottom() {
-        layoutManager.scrollToPosition(adapter.itemCount - 1)
-    }
-
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()
-        val entities = listItem.items
 
-        val startThreadMode = !adapter.isThread && listItem.isThread
+        val isThreadStart = !adapter.isThread && listItem.isThread
+        val isOldListEmpty = adapter.currentList.isEmpty()
 
         adapter.isThread = listItem.isThread
-
-        val oldSize = adapter.itemCount
-
-        adapter.submitList(entities) {
-            continueMessageAdd(startThreadMode, listItem, entities, oldSize)
-        }
-    }
-
-    private fun continueMessageAdd(
-        startThreadMode: Boolean,
-        listItem: MessageListItemWrapper,
-        entities: List<MessageListItem>,
-        oldSize: Int,
-    ) {
-        val newSize = adapter.itemCount
-        val sizeGrewBy = newSize - oldSize
-
-        if (startThreadMode) {
-            layoutManager.scrollToPosition(0)
-            buffer.active()
-            return
-        }
-
-        // Scroll to bottom position for typing indicator
-        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2) && !hasScrolledUp) {
-            val newPosition = adapter.itemCount - 1
-            layoutManager.scrollToPosition(newPosition)
-            buffer.active()
-            return
-        }
-
-        if (!listItem.hasNewMessages) {
-            // we only touch scroll for new messages, we ignore
-            // read
-            // typing
-            // message updates
-            logger.logI("no Scroll no new message")
-            buffer.active()
-            return
-        }
-
-        if (oldSize == 0 && newSize != 0) {
-            val newPosition = adapter.itemCount - 1
-            layoutManager.scrollToPosition(newPosition)
-            logger.logI(
-                String.format("Scroll: First load scrolling down to bottom %d", newPosition)
+        adapter.submitList(listItem.items) {
+            scrollHelper.onMessageListChanged(
+                isThreadStart = isThreadStart,
+                hasNewMessages = listItem.hasNewMessages,
+                isInitialList = isOldListEmpty && listItem.items.isNotEmpty()
             )
-            lastMessageReadHandler.invoke()
-        } else {
-            if (newSize == 0) {
-                buffer.active()
-                return
-            }
-
-            // regular new message behaviour
-            // we scroll down all the way, unless you've scrolled up
-            // if you've scrolled up we set a variable on the viewmodel that there are new messages
-            val newPosition = adapter.itemCount - 1
-            val layoutSize = layoutManager.itemCount
-            logger.logI(
-                String.format(
-                    "Scroll: Moving down to %d, layout has %d elements",
-                    newPosition,
-                    layoutSize
-                )
-            )
-            val isMine = (entities.lastOrNull() as? MessageItem)?.isMine ?: false
-            // Scroll to bottom when the user wrote the message.
-            if (isMine ||
-                !hasScrolledUp ||
-                newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-            ) {
-                layoutManager.scrollToPosition(adapter.itemCount - 1)
-            } else {
-                val unseenItems = newSize - getLastSeenMessagePosition() - 1
-                binding.scrollToBottomButton.setUnreadCount(unseenItems)
-            }
-            // we want to mark read if there is a new message
-            // and this view is currently being displayed...
-            // we can't always run it since read and typing events also influence this list..
-            // viewModel.markLastMessageRead(); // TODO this is event
-            lastMessageReadHandler.invoke()
+            buffer.active()
         }
-
-        buffer.active()
-    }
-
-    private fun scrolledBottom(delta: Int): Boolean {
-        return getLastSeenMessagePosition() + delta >= lastPosition()
-    }
-
-    private fun getLastSeenMessagePosition(): Int {
-        val lastMessageId = when (adapter.isThread) {
-            true -> lastSeenMessageInThread
-            false -> lastSeenMessageInChannel
-        }?.getStableId()
-        return adapter.currentList.indexOfLast { message ->
-            message?.getStableId() == lastMessageId
-        }
-    }
-
-    private fun updateLastSeen(messageListItem: MessageListItem?) {
-        when (adapter.isThread) {
-            true -> lastSeenMessageInThread = messageListItem
-            false -> lastSeenMessageInChannel = messageListItem
-        }.exhaustive
     }
 
     /**
