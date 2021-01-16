@@ -9,10 +9,8 @@
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         style="@style/StreamUiUserAvatarStyle"
-        android:layout_width="@dimen/stream_ui_avatar_size_medium"
-        android:layout_height="@dimen/stream_ui_avatar_size_medium"
         android:layout_marginStart="14dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,16 +20,14 @@
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:paddingStart="@dimen/spacing_medium"
         android:paddingEnd="@dimen/spacing_medium"
         android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+        app:layout_constraintBottom_toBottomOf="@id/avatarView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/avatarView"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
