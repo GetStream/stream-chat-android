@@ -32,7 +32,7 @@ public fun ImageView.loadVideoThumbnail(
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
 ) {
-    StreamImageLoader.instance().loadThumbnail(
+    StreamImageLoader.instance().loadVideoThumbnail(
         target = this,
         uri = uri,
         placeholderResId = placeholderResId,

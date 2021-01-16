@@ -23,7 +23,7 @@ public interface StreamImageLoader {
         onComplete: () -> Unit = {},
     )
 
-    public fun loadThumbnail(
+    public fun loadVideoThumbnail(
         target: ImageView,
         uri: Uri?,
         @DrawableRes placeholderResId: Int? = null,

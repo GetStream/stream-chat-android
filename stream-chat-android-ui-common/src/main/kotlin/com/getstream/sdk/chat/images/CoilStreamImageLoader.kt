@@ -54,7 +54,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         }
     }
 
-    override fun loadThumbnail(
+    override fun loadVideoThumbnail(
         target: ImageView,
         uri: Uri?,
         placeholderResId: Int?,
