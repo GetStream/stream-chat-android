@@ -73,6 +73,7 @@
             android:maxLines="1"
             android:paddingStart="@dimen/spacing_large"
             android:text="@string/home_drawer_sign_out"
+            android:textColor="@color/stream_ui_black"
             app:drawableTint="@color/stream_ui_grey"
             />
 
