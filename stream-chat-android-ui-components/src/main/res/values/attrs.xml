@@ -212,6 +212,19 @@
         <attr name="streamUiImagesMenuTitle" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="AttachmentOptionsView">
+        <attr name="streamUiIconsDefaultTint" format="color" />
+        <attr name="streamUiReplyText" format="reference" />
+        <attr name="streamUiReplyIcon" format="reference" />
+        <attr name="streamUiShowInChatIcon" format="reference" />
+        <attr name="streamUiShowInChatText" format="reference" />
+        <attr name="streamUiSaveImageIcon" format="reference" />
+        <attr name="streamUiSaveImageText" format="reference" />
+        <attr name="streamUiDeleteIcon" format="reference" />
+        <attr name="streamUiDeleteText" format="reference" />
+        <attr name="streamUiDeleteIconTint" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="MessageListView">
         <!-- Scroll button-->
         <attr name="streamUiScrollButtonEnabled" format="boolean" />

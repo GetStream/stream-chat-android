@@ -6,6 +6,7 @@
     >
 
     <io.getstream.chat.android.ui.options.AttachmentOptionsView
+        android:id="@+id/attachmentOptionsMenu"
         android:layout_width="182dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
