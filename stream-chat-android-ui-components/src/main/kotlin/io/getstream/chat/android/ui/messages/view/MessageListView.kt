@@ -573,9 +573,7 @@ public class MessageListView : ConstraintLayout {
 
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
         this.newMessagesBehaviour = newMessagesBehaviour
-        if (::scrollHelper.isInitialized) {
-            scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-        }
+        scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {

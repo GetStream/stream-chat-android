@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
-import io.getstream.chat.android.ui.utils.extensions.cast
 import io.getstream.chat.android.ui.utils.extensions.isDeleted
 import io.getstream.chat.android.ui.utils.extensions.safeCast
 import kotlin.math.max
@@ -28,7 +27,7 @@ internal class MessageListScrollHelper(
     private var isAtBottom = false
     private var unreadCount = 0
 
-    private var currentList: List<MessageListItem> = emptyList()
+    private val currentList: List<MessageListItem>
         get() {
             return adapter.currentList
         }
@@ -80,10 +79,9 @@ internal class MessageListScrollHelper(
                     .takeIf { it >= 0 }
                     ?.let {
                         with(recyclerView) {
-                            layoutManager
-                                ?.cast<LinearLayoutManager>()
+                            this@MessageListScrollHelper.layoutManager
                                 ?.scrollToPositionWithOffset(it, height / 3)
-                            post {
+                            recyclerView.post {
                                 findViewHolderForAdapterPosition(it)
                                     ?.safeCast<BaseMessageItemViewHolder<*>>()
                                     ?.startHighlightAnimation()
@@ -140,8 +138,7 @@ internal class MessageListScrollHelper(
     }
 
     private fun MessageListItem.isValid(): Boolean {
-        return this !is MessageListItem.TypingItem &&
-            !(this is MessageListItem.MessageItem && this.isTheirs && this.message.isDeleted())
+        return this is MessageListItem.MessageItem && !(this.isTheirs && this.message.isDeleted())
     }
 
     internal fun interface MessageReadListener {
