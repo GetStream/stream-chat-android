@@ -69,7 +69,8 @@ class ChatFragment : Fragment() {
         val subtitleMediator = MediatorLiveData<String?>()
 
         subtitleMediator.addSource(messageListViewModel.state) { state ->
-            handleSubtitleChange(state,
+            handleSubtitleChange(
+                state,
                 messageListViewModel.mode.value,
                 messageListViewModel.channel.value?.name
             ).let(subtitleMediator::setValue)
