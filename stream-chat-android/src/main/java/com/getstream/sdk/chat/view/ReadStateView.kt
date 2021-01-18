@@ -8,8 +8,8 @@ import android.view.Gravity
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView
@@ -36,7 +36,7 @@ public class ReadStateView : RelativeLayout {
         reads: List<ChannelUserRead>,
         isIncoming: Boolean,
         readStateStyle: ReadStateStyle = defaultReadStateStyle,
-        avatarStyle: AvatarStyle = defaultAvatarStyle
+        avatarStyle: AvatarStyle = defaultAvatarStyle,
     ) {
         this.reads = reads
         this.readStateStyle = readStateStyle
@@ -78,7 +78,7 @@ public class ReadStateView : RelativeLayout {
             )
         }
         if (!Utils.isSVGImage(image)) {
-            imageView.load(image)
+            imageView.load(data = image)
         }
         val avatarParams = LayoutParams(
             readStateStyle.readStateAvatarWidth,

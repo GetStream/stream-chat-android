@@ -6,8 +6,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.getstream.sdk.chat.ImageLoader
-import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 
@@ -45,11 +45,17 @@ public class AvatarView : AppCompatImageView {
     }
 
     public fun setChannelData(channel: Channel) {
-        load(Avatar.ChannelAvatar(channel, avatarStyle), ImageLoader.ImageTransformation.Circle)
+        load(
+            data = Avatar.ChannelAvatar(channel, avatarStyle),
+            transformation = Circle,
+        )
     }
 
     public fun setUserData(user: User) {
-        load(Avatar.UserAvatar(user, avatarStyle), ImageLoader.ImageTransformation.Circle)
+        load(
+            data = Avatar.UserAvatar(user, avatarStyle),
+            transformation = Circle,
+        )
         isOnline = user.online
     }
 

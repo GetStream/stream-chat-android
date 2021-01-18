@@ -1,8 +1,8 @@
 package io.getstream.chat.android.ui.attachments.selected
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.ImageLoader.load
-import com.getstream.sdk.chat.ImageLoader.loadVideoThumbnail
+import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMe
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
 
 internal class SelectedMediaAttachmentAdapter(
-    var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {}
+    var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {},
 ) : SimpleListAdapter<AttachmentMetaData, SelectedMediaAttachmentAdapter.SelectedMediaAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedMediaAttachmentViewHolder {
@@ -23,7 +23,7 @@ internal class SelectedMediaAttachmentAdapter(
 
     class SelectedMediaAttachmentViewHolder(
         private val binding: StreamUiItemSelectedAttachmentMediaBinding,
-        private val onAttachmentCancelled: (AttachmentMetaData) -> Unit
+        private val onAttachmentCancelled: (AttachmentMetaData) -> Unit,
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
 
         lateinit var item: AttachmentMetaData
@@ -44,9 +44,12 @@ internal class SelectedMediaAttachmentAdapter(
             binding.ivMedia.shapeAppearanceModel =
                 ShapeAppearanceModel.builder().setAllCornerSizes(cornerRadius).build()
             if (attachment.type == ModelType.attach_video) {
-                binding.ivMedia.loadVideoThumbnail(attachment.uri, R.drawable.stream_placeholder)
+                binding.ivMedia.loadVideoThumbnail(
+                    uri = attachment.uri,
+                    placeholderResId = R.drawable.stream_placeholder,
+                )
             } else {
-                binding.ivMedia.load(attachment.uri)
+                binding.ivMedia.load(data = attachment.uri)
             }
         }
     }

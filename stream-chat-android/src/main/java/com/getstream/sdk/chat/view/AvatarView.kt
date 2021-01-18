@@ -11,7 +11,8 @@ import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -65,21 +66,20 @@ internal class AvatarView @JvmOverloads constructor(
     }
 
     private suspend fun User.createBitmap(style: AvatarStyle): Bitmap =
-        ImageLoader.getBitmap(
-            context,
-            image,
-            ImageLoader.ImageTransformation.Circle
-        )
-            ?: createImageRounded(initials, style)
+        StreamImageLoader.instance().loadAsBitmap(
+            context = context,
+            url = image,
+            transformation = Circle,
+        ) ?: createImageRounded(initials, style)
 
     private suspend fun List<User>.createBitmaps(style: AvatarStyle): List<Bitmap> =
         take(3).map { it.createBitmap(style) }
 
     private suspend fun Channel.createBitmap(): Bitmap? =
-        ImageLoader.getBitmap(
-            context,
-            image,
-            ImageLoader.ImageTransformation.Circle
+        StreamImageLoader.instance().loadAsBitmap(
+            context = context,
+            url = image,
+            transformation = Circle
         )
 
     private fun createImageRounded(initials: String, avatarStyle: AvatarStyle): Bitmap {

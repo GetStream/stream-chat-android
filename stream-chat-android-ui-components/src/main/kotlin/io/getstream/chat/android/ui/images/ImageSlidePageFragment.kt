@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 private const val IMAGE_ID = "IMAGE_ID"
@@ -31,7 +31,7 @@ public class ImageSlidePageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return StreamUiItemImageGalleryBinding.inflate(LayoutInflater.from(context)).apply {
             binding = this
@@ -42,7 +42,7 @@ public class ImageSlidePageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.attachmentImage.run {
-            load(arguments?.getString(IMAGE_ID))
+            load(data = arguments?.getString(IMAGE_ID))
 
             setOnClickListener {
                 imageClickListener()

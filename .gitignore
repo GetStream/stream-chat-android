@@ -86,6 +86,7 @@ lint/tmp/
 # lint/reports/
 
 /.idea/*
+!/.idea/codeInsightSettings.xml
 !/.idea/compiler.xml
 !/.idea/codeStyles/
 !/.idea/inspectionProfiles/
