@@ -142,7 +142,7 @@ internal class FootnoteDecorator(
             clear(footnoteView.id, ConstraintSet.TOP)
             connect(footnoteView.id, ConstraintSet.TOP, threadGuideline.id, ConstraintSet.BOTTOM)
         }
-        footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount)
+        footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount, data.message.threadParticipants)
     }
 
     private fun setupMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
