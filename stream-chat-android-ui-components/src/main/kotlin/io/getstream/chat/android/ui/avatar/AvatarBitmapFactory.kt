@@ -8,7 +8,7 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.annotation.Px
-import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
@@ -27,7 +27,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int
     ): Bitmap {
-        return ImageLoader.getBitmap(context, user.image)
+        return StreamImageLoader.instance().loadAsBitmap(context, user.image)
             ?: createInitialsBitmap(style, avatarSize, user.initials)
     }
 
@@ -37,7 +37,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int
     ): List<Bitmap> {
-        return ImageLoader.getBitmap(context, channel.image)
+        return StreamImageLoader.instance().loadAsBitmap(context, channel.image)
             ?.let { listOf(it) }
             ?: createUsersBitmaps(lastActiveUsers, style, avatarSize).takeUnless { it.isEmpty() }
             ?: listOf(createInitialsBitmap(style, avatarSize, channel.initials))

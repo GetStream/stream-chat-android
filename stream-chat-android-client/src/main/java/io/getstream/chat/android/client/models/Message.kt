@@ -104,4 +104,7 @@ public data class Message(
     @SerializedName("pinned_by")
     var pinnedBy: User? = null,
 
+    @SerializedName("thread_participants")
+    var threadParticipants: List<User> = emptyList(),
+
 ) : CustomObject
