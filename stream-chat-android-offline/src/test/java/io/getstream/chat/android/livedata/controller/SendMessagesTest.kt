@@ -1,0 +1,118 @@
+package io.getstream.chat.android.livedata.controller
+
+import android.webkit.MimeTypeMap
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.same
+import com.nhaarman.mockitokotlin2.verify
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.uploadComplete
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.randomAttachmentsWithFile
+import io.getstream.chat.android.livedata.repository.ChannelRepository
+import io.getstream.chat.android.livedata.repository.MessageRepository
+import io.getstream.chat.android.livedata.repository.RepositoryHelper
+import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
+import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.When
+import org.amshove.kluent.calling
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Shadows
+import java.io.File
+
+@RunWith(AndroidJUnit4::class)
+internal class SendMessagesTest {
+
+    private val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    private val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
+
+    private val channelClient: ChannelClient = mock {
+        on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
+    }
+
+    private val chatClient: ChatClient = mock {
+        on(it.channel(any(), any())) doReturn channelClient
+    }
+
+    private val channelType: String = randomString()
+    private val channelId: String = randomString()
+    private val call: Call<String> = mock()
+    private lateinit var channelController: ChannelControllerImpl
+
+    private val messageRepository: MessageRepository = mock()
+    private val channelsRepository: ChannelRepository = mock()
+
+    private val repos: RepositoryHelper = mock {
+        on(it.messages) doReturn messageRepository
+        on(it.channels) doReturn channelsRepository
+    }
+
+    private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
+
+    private val domainImpl: ChatDomainImpl = mock {
+        on(it.scope) doReturn scope
+        on(it.generateMessageId()) doReturn randomString()
+        on(it.currentUser) doReturn User()
+        on(it.repos) doReturn repos
+        on(it.isOnline()) doReturn true
+        on(it.getActiveQueries()) doReturn emptyList()
+        on(it.retryPolicy) doReturn doNotRetryPolicy
+        on(it.client) doReturn chatClient
+    }
+
+    @Before
+    fun setup() {
+        Shadows.shadowOf(MimeTypeMap.getSingleton())
+        channelController = ChannelControllerImpl(channelType, channelId, chatClient, domainImpl)
+    }
+
+    @Test
+    fun `Message with failed attachment upload should be upload send the right state`() = scope.runBlockingTest {
+        val attachments = randomAttachmentsWithFile().toMutableList()
+        val files: List<File> = attachments.map { it.upload!! }
+
+        mockFileUploadsFailure(files)
+
+        channelController.sendMessage(Message(attachments = attachments))
+
+        verify(channelClient).sendMessage(argThat { message ->
+            message.attachments.any { attach ->
+                attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete
+            }.not()
+        })
+    }
+
+    private fun mockFileUploadsFailure(files: List<File>) {
+        for (file in files) {
+            val result = Result<String>(ChatError())
+            When calling chatClient.sendFile(
+                eq(channelController.channelType),
+                eq(channelController.channelId),
+                same(file)
+            ) doReturn TestCall(result)
+            When calling chatClient.sendImage(
+                eq(channelController.channelType),
+                eq(channelController.channelId),
+                same(file)
+            ) doReturn TestCall(result)
+        }
+    }
+}

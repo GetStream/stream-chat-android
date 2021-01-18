@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -38,6 +39,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Attachment.Companion.EXTRA_UPLOAD_COMPLETE
 import io.getstream.chat.android.client.models.Channel
@@ -61,10 +63,13 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
+import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -629,7 +634,10 @@ internal class ChannelControllerImpl(
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+            val result = runAndRetry(domainImpl.client, domainImpl.retryPolicy, ChatLogger.get("Domain")) {
+                channelClient.sendMessage(newMessage)
+            }
+
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -1429,4 +1437,32 @@ internal class ChannelControllerImpl(
         private const val TYPE_IMAGE = "image"
         private const val TYPE_FILE = "file"
     }
+}
+
+internal suspend fun <T : Any> runAndRetry(client: ChatClient, retryPolicy: RetryPolicy, logger: TaggedLogger, runnable: () -> Call<T>): Result<T> {
+    var attempt = 1
+    var result: Result<T>
+
+    while (true) {
+        result = runnable().execute()
+        if (result.isSuccess || result.error().isPermanent()) {
+            break
+        } else {
+            // retry logic
+            val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
+            val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
+
+            if (shouldRetry) {
+                // temporary failure, continue
+                logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")
+                delay(timeout.toLong())
+                attempt += 1
+            } else {
+                logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
+                break
+            }
+        }
+    }
+    // permanent failure case return
+    return result
 }
