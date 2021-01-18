@@ -45,6 +45,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val channel: LiveData<Channel> = _channel
     private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
     public val targetMessage: LiveData<Message> = _targetMessage
+    private val _threadId = MutableLiveData<String?>()
+    public val threadId: LiveData<String?> = _threadId
 
     /**
      * Whether the user is viewing a thread
@@ -155,6 +157,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         messageListData?.let {
             stateMerger.addSource(it) { stateMerger.value = State.Result(it) }
         }
+        _threadId.postValue(null)
     }
 
     /**
@@ -260,6 +263,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun onThreadModeEntered(parentMessage: Message) {
         val parentId: String = parentMessage.id
+        _threadId.postValue(parentId)
         domain.useCases.getThread(cid, parentId).enqueue { threadControllerResult ->
             if (threadControllerResult.isSuccess) {
                 val threadController = threadControllerResult.data()

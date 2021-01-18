@@ -71,16 +71,16 @@ class ChatFragment : Fragment() {
         subtitleMediator.addSource(messageListViewModel.state) { state ->
             handleSubtitleChange(
                 state,
-                messageListViewModel.mode.value,
-                messageListViewModel.channel.value?.name
+                messageListViewModel.channel.value?.name,
+                messageListViewModel.threadId.value
             ).let(subtitleMediator::setValue)
         }
 
         subtitleMediator.addSource(messageListViewModel.channel) { channel ->
             handleSubtitleChange(
                 messageListViewModel.state.value,
-                messageListViewModel.mode.value,
-                channel?.name
+                channel?.name,
+                messageListViewModel.threadId.value
             ).let(subtitleMediator::setValue)
         }
 
@@ -91,17 +91,23 @@ class ChatFragment : Fragment() {
 
     private fun handleSubtitleChange(
         state: MessageListViewModel.State?,
-        mode: MessageListViewModel.Mode?,
         channelName: String?,
+        threadId: String?,
     ): String? {
-        return if (state is MessageListViewModel.State.Result &&
-            state.messageListItem.isThread &&
-            mode is MessageListViewModel.Mode.Thread
-        ) {
+        return if (state is MessageListViewModel.State.Result && isTheCurrentThread(state, threadId)) {
             threadSubtitle(requireContext(), state.messageListItem, channelName)
         } else {
             null
         }
+    }
+
+    private fun isTheCurrentThread(state: MessageListViewModel.State.Result, threadId: String?): Boolean {
+        return state.messageListItem.isThread &&
+            state.messageListItem
+                .items
+                .filterIsInstance<MessageListItem.MessageItem>()
+                .filter { it.message.parentId == threadId || it.message.parentId == null}
+                .any()
     }
 
     private fun threadSubtitle(context: Context, messageWrapper: MessageListItemWrapper, channelName: String?): String {
