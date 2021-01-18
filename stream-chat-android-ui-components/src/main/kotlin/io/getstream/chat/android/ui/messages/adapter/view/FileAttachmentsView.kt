@@ -17,7 +17,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Attachment.Companion.EXTRA_UPLOAD_COMPLETE
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
