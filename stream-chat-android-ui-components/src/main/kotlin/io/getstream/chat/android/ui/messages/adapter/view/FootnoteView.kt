@@ -13,22 +13,11 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 internal class FootnoteView : ConstraintLayout {
-
-    private val simpleAvatarStyle = AvatarStyle(context, null).apply {
-        avatarBorderWidth = 0
-    }
-    private val borderedAvatarStyle = AvatarStyle(context, null).apply {
-        avatarBorderWidth = 1.dpToPx()
-        avatarBorderColor = context.getColorCompat(R.color.stream_ui_white)
-    }
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -92,10 +81,6 @@ internal class FootnoteView : ConstraintLayout {
             }
         }
 
-        fun applyAvatarStyle(firstAvatarView: AvatarView, isSecondNull: Boolean) {
-            firstAvatarView.setStyle(if (isSecondNull) simpleAvatarStyle else borderedAvatarStyle)
-        }
-
         with(threadsFootnote) {
             firstTheirUserImage.isVisible = !isMine
             secondTheirUserImage.isVisible = !isMine
@@ -106,7 +91,6 @@ internal class FootnoteView : ConstraintLayout {
 
             applyUser(first, if (isMine) firstMineUserImage else firstTheirUserImage)
             applyUser(second, if (isMine) secondMineUserImage else secondTheirUserImage)
-            applyAvatarStyle(if (isMine) firstMineUserImage else firstTheirUserImage, second == null)
         }
     }
 

@@ -19,7 +19,6 @@
         app:layout_constraintGuide_end="4dp"
         />
 
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/threadsOrnamentLeft"
         android:layout_width="17dp"
@@ -38,7 +37,8 @@
         android:layout_marginStart="@dimen/stream_ui_message_thread_reply_avatar_half_size"
         app:layout_constraintStart_toStartOf="@id/firstTheirUserImage"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarBorderWidth="1dp"
+        app:streamUiAvatarBorderColor="@color/stream_ui_white"
         app:streamUiAvatarOnlineIndicatorEnabled="false"
         tools:src="@tools:sample/avatars"
         tools:visibility="gone"
@@ -50,7 +50,8 @@
         android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
         app:layout_constraintStart_toEndOf="@id/threadsOrnamentLeft"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarBorderWidth="1dp"
+        app:streamUiAvatarBorderColor="@color/stream_ui_white"
         app:streamUiAvatarOnlineIndicatorEnabled="false"
         tools:src="@tools:sample/avatars"
         tools:visibility="gone"
@@ -64,8 +65,8 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
-        app:layout_goneMarginStart="24dp"
-        app:layout_goneMarginEnd="24dp"
+        app:layout_goneMarginStart="26dp"
+        app:layout_goneMarginEnd="26dp"
         app:layout_constraintStart_toEndOf="@id/secondTheirUserImage"
         app:layout_constraintEnd_toStartOf="@id/secondMineUserImage"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +80,8 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@id/firstMineUserImage"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarBorderWidth="1dp"
+        app:streamUiAvatarBorderColor="@color/stream_ui_white"
         app:streamUiAvatarOnlineIndicatorEnabled="false"
         tools:src="@tools:sample/avatars"
         />
@@ -90,7 +92,8 @@
         android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
         app:layout_constraintEnd_toStartOf="@id/threadsOrnamentRight"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:streamUiAvatarBorderWidth="0dp"
+        app:streamUiAvatarBorderWidth="1dp"
+        app:streamUiAvatarBorderColor="@color/stream_ui_white"
         app:streamUiAvatarOnlineIndicatorEnabled="false"
         tools:src="@tools:sample/avatars"
         />
