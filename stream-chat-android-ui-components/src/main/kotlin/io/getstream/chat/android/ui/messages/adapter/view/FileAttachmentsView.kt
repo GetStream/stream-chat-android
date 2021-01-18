@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Attachment.Companion.EXTRA_UPLOAD_COMPLETE
 import io.getstream.chat.android.ui.R
@@ -123,13 +124,11 @@ private class FileAttachmentViewHolder(
             fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
 
-            val uploadComplete = attachment.extraData[EXTRA_UPLOAD_COMPLETE]
-
-            if (uploadComplete == true || uploadComplete == null) {
+            if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
                 val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
-            } else if (attachment.extraData[EXTRA_UPLOAD_COMPLETE] == false) {
+            } else if (attachment.uploadComplete == false) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
                 val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
