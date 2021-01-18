@@ -66,8 +66,6 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
-    private lateinit var newMessagesBehaviour: NewMessagesBehaviour
-
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
     private lateinit var adapter: MessageListItemAdapter
@@ -85,8 +83,6 @@ public class MessageListView : ConstraintLayout {
             Gravity.CENTER
         )
     }
-
-    public var scrollToBottomButtonEnabled: Boolean = true
 
     private var endRegionReachedHandler: () -> Unit = {
         throw IllegalStateException("endRegionReachedHandler must be set.")
@@ -301,7 +297,6 @@ public class MessageListView : ConstraintLayout {
         scrollHelper = MessageListScrollHelper(
             recyclerView = binding.chatMessagesRV,
             scrollButtonView = binding.scrollToBottomButton,
-            scrollToBottomButtonEnabled = scrollToBottomButtonEnabled,
         ) {
             lastMessageReadHandler.invoke()
         }
@@ -331,15 +326,16 @@ public class MessageListView : ConstraintLayout {
             setButtonColor(style.scrollButtonViewStyle.scrollButtonColor)
             setUnreadBadgeColor(style.scrollButtonViewStyle.scrollButtonBadgeColor)
         }
-        scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
+        scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
 
-        newMessagesBehaviour = NewMessagesBehaviour.parseValue(
+        NewMessagesBehaviour.parseValue(
             tArray.getInt(
                 R.styleable.MessageListView_streamUiNewMessagesBehaviour,
                 NewMessagesBehaviour.COUNT_UPDATE.value
             )
-        )
-        scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+        ).also {
+            scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+        }
 
         tArray.getText(R.styleable.MessageListView_streamUiMessagesEmptyStateLabelText)
             ?.let { emptyStateText ->
@@ -572,8 +568,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
-        this.newMessagesBehaviour = newMessagesBehaviour
         scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+    }
+
+    public fun setScrollToBottomButtonEnabled(scrollToBottomButtonEnabled: Boolean) {
+        scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {

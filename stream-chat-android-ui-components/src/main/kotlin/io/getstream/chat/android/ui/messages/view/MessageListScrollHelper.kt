@@ -10,14 +10,15 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.utils.extensions.isDeleted
 import io.getstream.chat.android.ui.utils.extensions.safeCast
 import kotlin.math.max
+import kotlin.properties.Delegates
 
 internal class MessageListScrollHelper(
     private val recyclerView: RecyclerView,
     private val scrollButtonView: ScrollButtonView,
-    private val scrollToBottomButtonEnabled: Boolean,
     private val callback: MessageReadListener,
 ) {
-    internal var alwaysScrollToBottom = false
+    internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
+    internal var scrollToBottomButtonEnabled: Boolean by Delegates.notNull()
 
     private val layoutManager: LinearLayoutManager by lazy { recyclerView.layoutManager as LinearLayoutManager }
     private val adapter: MessageListItemAdapter by lazy { recyclerView.adapter as MessageListItemAdapter }
