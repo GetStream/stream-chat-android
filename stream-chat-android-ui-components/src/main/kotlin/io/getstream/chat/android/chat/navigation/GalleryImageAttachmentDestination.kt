@@ -16,7 +16,8 @@ public class GalleryImageAttachmentDestination(
     context: Context
 ) : AttachmentDestination(message, attachment, context) {
     override fun showImageViewer(message: Message, attachment: Attachment) {
-        val imageUrls: List<String> = message.attachments
+        val attachments = message.attachments
+        val imageUrls: List<String> = attachments
             .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
             .mapNotNull(Attachment::imageUrl)
 
@@ -29,6 +30,7 @@ public class GalleryImageAttachmentDestination(
         val createdAt = message.getCreatedAtOrThrow().time
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        start(AttachmentGalleryActivity.createIntent(context, userName, createdAt, attachmentIndex, imageUrls))
+        // TODO: clean up this class
+        start(AttachmentGalleryActivity.createIntent(context, userName, createdAt, attachmentIndex, attachments))
     }
 }

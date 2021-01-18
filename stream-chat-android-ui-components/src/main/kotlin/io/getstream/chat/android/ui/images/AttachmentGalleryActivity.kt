@@ -3,14 +3,19 @@ package io.getstream.chat.android.ui.images
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.format.DateUtils
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatTime
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.options.AttachmentOptionsDialogFragment
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
@@ -30,15 +35,16 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val urls = intent.getStringArrayExtra(EXTRA_KEY_URLS)?.toList().orEmpty()
+
+        val attachments = obtainAttachments()
+        val attachmentUrls = attachments.mapNotNull { it.imageUrl }
         val currentIndex = intent.getIntExtra(EXTRA_KEY_CURRENT_INDEX, 0)
         binding.attachmentGallery.provideImageList(
             fragmentActivity = this,
-            imageList = urls,
+            imageList = attachmentUrls,
             currentIndex = currentIndex,
             imageClickListener = {
                 binding.toolBarGroup.isVisible = isFullScreen
-
                 isFullScreen = !isFullScreen
             }
         )
@@ -47,11 +53,48 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
             subtitle.text = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
             menuButton.setOnClickListener {
-                val currentUrl = urls[currentIndex]
-                AttachmentOptionsDialogFragment.newInstance(currentUrl).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
+                val currentUrl = attachmentUrls[binding.attachmentGallery.currentItemIndex]
+                val currentAttachment = attachments.first { it.imageUrl == currentUrl }
+                val showInChatHandler = object : AttachmentOptionsDialogFragment.ShowInChatHandler {
+                    override fun onClick() {
+                        TODO("Not yet implemented")
+                    }
+                }
+                val deleteHandler = object : AttachmentOptionsDialogFragment.DeleteHandler {
+                    override fun onClick() {
+                        TODO("Not yet implemented")
+                    }
+                }
+                val replyHandler = object : AttachmentOptionsDialogFragment.ReplyHandler {
+                    override fun onClick() {
+                        TODO("Not yet implemented")
+                    }
+                }
+                val saveHandler = object : AttachmentOptionsDialogFragment.SaveImageHandler {
+                    override fun onClick() {
+                        // TODO: download of image should be performed by DownloadManager
+                        ChatDomain.instance().useCases.downloadAttachment.invoke(currentAttachment.toAttachment())
+                            .enqueue { result ->
+                                if (result.isSuccess) {
+                                    Toast.makeText(this@AttachmentGalleryActivity,
+                                        "Download finished",
+                                        Toast.LENGTH_LONG).show()
+                                } else {
+                                    Toast.makeText(this@AttachmentGalleryActivity,
+                                        "Download failed",
+                                        Toast.LENGTH_LONG).show()
+                                }
+                            }
+                    }
+                }
+                AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
+                    .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
             }
         }
     }
+
+    private fun obtainAttachments() =
+        intent.getParcelableArrayListExtra<AttachmentData>(EXTRA_KEY_ATTACHMENTS)?.toList().orEmpty()
 
     private fun subtitle(time: Long): String {
         val relativeDay = DateUtils.getRelativeTimeSpanString(
@@ -71,7 +114,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     public companion object {
-        private const val EXTRA_KEY_URLS: String = "extra_key_urls"
+        private const val EXTRA_KEY_ATTACHMENTS: String = "extra_key_attachments"
         private const val EXTRA_KEY_CURRENT_INDEX: String = "extra_key_current_index"
         private const val EXTRA_KEY_USER_NAME = "extra_key_user_name"
         private const val EXTRA_KEY_TIME = "extra_key_time"
@@ -81,14 +124,39 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             userName: String,
             time: Long,
             currentIndex: Int,
-            urls: List<String>,
+            attachments: List<Attachment>,
         ): Intent {
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)
-                putExtra(EXTRA_KEY_URLS, urls.toTypedArray())
                 putExtra(EXTRA_KEY_TIME, time)
                 putExtra(EXTRA_KEY_USER_NAME, userName)
+                putParcelableArrayListExtra(EXTRA_KEY_ATTACHMENTS, ArrayList(attachments.map { it.toAttachmentData() }))
             }
         }
+
+        private fun Attachment.toAttachmentData(): AttachmentData =
+            AttachmentData(imageUrl = this.imageUrl, assetUrl = this.assetUrl, name = this.name)
+    }
+
+    @Parcelize
+    public data class AttachmentData(
+        val authorName: String? = null,
+        val titleLink: String? = null,
+        val thumbUrl: String? = null,
+        val imageUrl: String? = null,
+        val assetUrl: String? = null,
+        val ogUrl: String? = null,
+        val mimeType: String? = null,
+        val fileSize: Int = 0,
+        val title: String? = null,
+        val text: String? = null,
+        val type: String? = null,
+        val image: String? = null,
+        val url: String? = null,
+        val name: String? = null,
+        val fallback: String? = null,
+    ): Parcelable {
+        public fun toAttachment(): Attachment =
+            Attachment(imageUrl = imageUrl, name = name, assetUrl = assetUrl)
     }
 }
