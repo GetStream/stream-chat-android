@@ -87,25 +87,26 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <include
+    <Space
+        android:id="@+id/threadGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/fileAttachmentsView"/>
+
+    <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
         android:id="@+id/footnote"
-        layout="@layout/stream_ui_item_message_footnote"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
-        />
-
-    <include
-        android:id="@+id/threadRepliesFootnote"
-        layout="@layout/stream_ui_message_threads_footnote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
-        app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <ImageView

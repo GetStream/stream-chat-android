@@ -4,7 +4,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Avatar
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAttachmentDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 
@@ -14,7 +13,6 @@ internal class MessageOptionsDecoratorProvider : DecoratorProvider {
         BackgroundDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
-        GravityDecorator(),
         LinkAttachmentDecorator()
     )
 

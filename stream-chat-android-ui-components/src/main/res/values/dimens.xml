@@ -111,7 +111,7 @@
 
     <!--MessageInputFieldView-->
     <dimen name="stream_ui_message_input_command_icon_size">16dp</dimen>
-    <dimen name="stream_ui_message_input_button_size">24dp</dimen>
+    <dimen name="stream_ui_message_input_button_size">32dp</dimen>
 
     <dimen name="stream_ui_read_state_avatar_height">14dp</dimen>
     <dimen name="stream_ui_read_state_avatar_width">14dp</dimen>
@@ -125,6 +125,7 @@
     <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
     <dimen name="stream_ui_message_corner_radius_negative">-16dp</dimen>
     <dimen name="stream_ui_message_footnote_spacing">6dp</dimen>
+    <dimen name="stream_ui_message_thread_reply_footnote_translation">18dp</dimen>
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_gallery_default_bar_height">56dp</dimen>

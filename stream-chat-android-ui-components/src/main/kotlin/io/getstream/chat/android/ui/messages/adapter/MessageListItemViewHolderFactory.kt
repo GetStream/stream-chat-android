@@ -32,8 +32,25 @@ public open class MessageListItemViewHolderFactory {
     public lateinit var listenerContainer: MessageListListenerContainer
         internal set
 
-    public fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseMessageItemViewHolder<out MessageListItem> {
-        return when (MessageListItemViewTypeMapper.viewTypeValueToViewType(viewType)) {
+    /**
+     * Returns a view type value based on the type and contents of the given [item].
+     * The view type returned here will be used as a parameter in [createViewHolder].
+     *
+     * For built-in view types, see [ViewType] and its constants.
+     */
+    public open fun getItemViewType(item: MessageListItem): Int {
+        return MessageListItemViewTypeMapper.getViewTypeValue(item)
+    }
+
+    /**
+     * Creates a new ViewHolder to be used in the Message List.
+     * The [viewType] parameter is determined by [getItemViewType].
+     */
+    public open fun createViewHolder(
+        parentView: ViewGroup,
+        viewType: Int,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return when (viewType) {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
@@ -45,58 +62,59 @@ public open class MessageListItemViewHolderFactory {
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
+            else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
 
-    public open fun createDateDividerViewHolder(
+    protected fun createDateDividerViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
         return DateDividerViewHolder(parentView, decoratorProvider.decorators)
     }
 
-    public open fun createMessageDeletedViewHolder(
+    protected fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessageDeletedViewHolder(parentView, decoratorProvider.decorators)
     }
 
-    public open fun createPlainTextViewHolder(
+    protected fun createPlainTextViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessagePlainTextViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
-    public open fun createPlainTextWithFileAttachmentsViewHolder(
+    protected fun createPlainTextWithFileAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return PlainTextWithFileAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
-    private fun createPlainTextWithMediaAttachmentsViewHolder(
+    protected fun createPlainTextWithMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return PlainTextWithMediaAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
-    public open fun createMediaAttachmentsViewHolder(
+    protected fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return OnlyMediaAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
-    public open fun createAttachmentsViewHolder(
+    protected fun createAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return OnlyFileAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
-    public open fun createThreadSeparatorViewHolder(
+    protected fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
         return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators)
     }
 
-    private fun createGiphyMessageItemViewHolder(
+    protected fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return GiphyViewHolder(parentView, decoratorProvider.decorators, listenerContainer)

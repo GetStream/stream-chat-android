@@ -94,6 +94,14 @@ public data class Message(
     var replyTo: Message? = null,
 
     @SerializedName("quoted_message_id")
-    var replyMessageId: String? = null
+    var replyMessageId: String? = null,
+
+    var pinned: Boolean = false,
+    @SerializedName("pinned_at")
+    var pinnedAt: Date? = null,
+    @SerializedName("pin_expires")
+    var pinExpires: Date? = null,
+    @SerializedName("pinned_by")
+    var pinnedBy: User? = null,
 
 ) : CustomObject
