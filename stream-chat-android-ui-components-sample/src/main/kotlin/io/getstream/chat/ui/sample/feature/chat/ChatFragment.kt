@@ -106,7 +106,7 @@ class ChatFragment : Fragment() {
             state.messageListItem
                 .items
                 .filterIsInstance<MessageListItem.MessageItem>()
-                .filter { it.message.parentId == threadId || it.message.parentId == null}
+                .filter { it.message.parentId == threadId || it.message.parentId == null }
                 .any()
     }
 
