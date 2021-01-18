@@ -7,7 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -77,7 +77,7 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
-            uri = imageUrl,
+            data = imageUrl,
             placeholderResId = R.drawable.stream_ui_picture_placeholder,
             onStart = { showLoading(true) },
             onComplete = {
