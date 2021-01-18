@@ -25,15 +25,18 @@ internal fun User.isCurrentUser(): Boolean {
 }
 
 public fun User.getLastSeenText(context: Context): String {
-    return if (online) {
-        context.getString(R.string.stream_ui_message_list_header_online)
-    } else {
-        val lastActive = lastActive ?: return String.EMPTY
-        context.getString(
+    if (online) {
+        return context.getString(R.string.stream_ui_message_list_header_online)
+    }
+
+    (lastActive ?: createdAt)?.let { date ->
+        return context.getString(
             R.string.stream_ui_message_list_header_last_seen,
-            DateUtils.getRelativeTimeSpanString(lastActive.time).toString()
+            DateUtils.getRelativeTimeSpanString(date.time).toString()
         )
     }
+
+    return String.EMPTY
 }
 
 internal fun User.asMention(context: Context): String =

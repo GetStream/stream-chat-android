@@ -17,14 +17,13 @@
         >
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/add_group_channel_title"
-            android:textColor="@color/stream_ui_black"
-            android:textStyle="bold"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
             />
+
     </androidx.appcompat.widget.Toolbar>
 
     <io.getstream.chat.ui.sample.feature.channel.add.AddChannelView

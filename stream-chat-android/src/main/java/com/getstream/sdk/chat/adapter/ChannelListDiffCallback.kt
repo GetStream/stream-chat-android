@@ -12,7 +12,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 internal class ChannelListDiffCallback @JvmOverloads constructor(
     private val oldList: List<Channel>,
     private val newList: List<Channel>,
-    private val currentUser: User = ChatDomain.instance().currentUser
+    private val currentUser: User = ChatDomain.instance().currentUser,
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -31,8 +31,9 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
             (oldChannel.updatedAt == null && newChannel.updatedAt != null) ||
             (newChannel.updatedAt != null && oldChannel.updatedAt!!.time < newChannel.updatedAt!!.time) ||
             (oldChannel.extraData != newChannel.extraData) ||
-            (!lastMessagesAreTheSame(oldChannel, newChannel)) ||
-            (channelUserReadIsDifferent(oldChannel, newChannel))
+            !lastMessagesAreTheSame(oldChannel, newChannel) ||
+            channelUserReadIsDifferent(oldChannel, newChannel) ||
+            unreadCountIsDifferent(oldChannel, newChannel)
         ) {
             return false
         }
@@ -47,7 +48,8 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
             name = !channelNameIsTheSame(newChannel, oldChannel),
             avatarView = !channelUsersAreTheSame(newChannel, oldChannel),
             readState = channelUserReadIsDifferent(oldChannel, newChannel),
-            lastMessageDate = !channelLastMessageDatesAreTheSame(oldChannel, newChannel)
+            lastMessageDate = !channelLastMessageDatesAreTheSame(oldChannel, newChannel),
+            unreadCount = unreadCountIsDifferent(oldChannel, newChannel),
         )
     }
 
@@ -76,6 +78,10 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
 
     private fun channelLastMessageDatesAreTheSame(oldChannel: Channel, newChannel: Channel): Boolean {
         return oldChannel.lastMessageAt == newChannel.lastMessageAt
+    }
+
+    private fun unreadCountIsDifferent(oldChannel: Channel, newChannel: Channel): Boolean {
+        return oldChannel.unreadCount != newChannel.unreadCount
     }
 
     private fun channelUserReadIsDifferent(oldChannel: Channel, newChannel: Channel): Boolean {

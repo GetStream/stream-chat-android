@@ -105,13 +105,16 @@ class ChannelListFragment : Fragment() {
 
         binding.searchInputView.apply {
             setDebouncedInputChangedListener { query ->
+                if (query.isEmpty()) {
+                    binding.channelsView.isVisible = true
+                    binding.searchResultListView.isVisible = false
+                }
+            }
+            setSearchStartedListener { query ->
+                Utils.hideSoftKeyboard(binding.searchInputView)
+                searchViewModel.setQuery(query)
                 binding.channelsView.isVisible = query.isEmpty()
                 binding.searchResultListView.isVisible = query.isNotEmpty()
-
-                searchViewModel.setQuery(query)
-            }
-            setSearchStartedListener {
-                Utils.hideSoftKeyboard(binding.searchInputView)
             }
         }
 

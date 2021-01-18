@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentImageBinding
 
 internal class ImagesMenuAdapter(
-    private val clickListener: (Int) -> Unit
+    private val clickListener: (Int) -> Unit,
 ) : ListAdapter<String, ImagesMenuAdapter.ImageViewHolder>(diffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -27,11 +27,11 @@ internal class ImagesMenuAdapter(
     }
 
     internal class ImageViewHolder(
-        private val binding: StreamUiItemAttachmentImageBinding
+        private val binding: StreamUiItemAttachmentImageBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(imageUrl: String) {
-            binding.image.load(imageUrl, R.drawable.stream_placeholder)
+            binding.image.load(data = imageUrl, placeholderResId = R.drawable.stream_placeholder)
         }
     }
 }

@@ -16,9 +16,9 @@ import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final ChannelItemPayloadDiff FULL_CHANNEL_ITEM_PAYLOAD_DIFF =
-            new ChannelItemPayloadDiff(true, true, true, true, true);
+            new ChannelItemPayloadDiff(true, true, true, true, true, true);
     private static final ChannelItemPayloadDiff EMPTY_CHANNEL_ITEM_PAYLOAD_DIFF =
-            new ChannelItemPayloadDiff(false, false, false, false, false);
+            new ChannelItemPayloadDiff(false, false, false, false, false, false);
     private List<Channel> channels; // cached list of channels
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;

@@ -17,7 +17,7 @@
         >
 
         <ImageView
-            android:id="@+id/linkPreviewImageViewm"
+            android:id="@+id/linkPreviewImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
