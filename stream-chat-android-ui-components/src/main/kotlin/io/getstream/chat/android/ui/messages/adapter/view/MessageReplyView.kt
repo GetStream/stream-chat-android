@@ -9,8 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.ImageLoader
-import com.getstream.sdk.chat.ImageLoader.load
+import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -169,7 +169,10 @@ public class MessageReplyView : FrameLayout {
                 logoContainer.isVisible = true
                 thumbImageView.isVisible = true
                 fileTypeImageView.isVisible = false
-                thumbImageView.load(url, ImageLoader.ImageTransformation.RoundedCorners(REPLY_IMAGE_CORNER_RADIUS))
+                thumbImageView.load(
+                    data = url,
+                    transformation = RoundedCorners(REPLY_IMAGE_CORNER_RADIUS),
+                )
             } else {
                 logoContainer.isVisible = false
             }

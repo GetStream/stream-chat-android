@@ -91,7 +91,8 @@ public class MessageInputView : ConstraintLayout {
             if (attachments.isNotEmpty()) {
                 when (attachmentSource) {
                     AttachmentSource.MEDIA,
-                    AttachmentSource.CAMERA -> {
+                    AttachmentSource.CAMERA,
+                    -> {
                         binding.messageInputFieldView.mode =
                             MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                     }
@@ -239,12 +240,12 @@ public class MessageInputView : ConstraintLayout {
 
             layoutParams.width = typedArray.getDimensionPixelSize(
                 R.styleable.MessageInputView_streamUiAttachButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_width)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
                 R.styleable.MessageInputView_streamUiAttachButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_height)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
             )
 
             setOnClickListener {
@@ -285,12 +286,12 @@ public class MessageInputView : ConstraintLayout {
 
             layoutParams.width = typedArray.getDimensionPixelSize(
                 R.styleable.MessageInputView_streamUiLightningButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_width)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
                 R.styleable.MessageInputView_streamUiLightningButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_attachment_button_height)
+                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
             )
 
             setOnClickListener {
@@ -507,7 +508,7 @@ public class MessageInputView : ConstraintLayout {
             override fun sendMessageWithAttachments(
                 message: String,
                 attachmentsFiles: List<File>,
-                messageReplyTo: Message?
+                messageReplyTo: Message?,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -515,7 +516,7 @@ public class MessageInputView : ConstraintLayout {
             override fun sendToThread(
                 parentMessage: Message,
                 messageText: String,
-                alsoSendToChannel: Boolean
+                alsoSendToChannel: Boolean,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -524,7 +525,7 @@ public class MessageInputView : ConstraintLayout {
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsFiles: List<File>
+                attachmentsFiles: List<File>,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -556,7 +557,7 @@ public class MessageInputView : ConstraintLayout {
         public fun sendMessageWithAttachments(
             message: String,
             attachmentsFiles: List<File>,
-            messageReplyTo: Message? = null
+            messageReplyTo: Message? = null,
         )
 
         public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
@@ -564,7 +565,7 @@ public class MessageInputView : ConstraintLayout {
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
+            attachmentsFiles: List<File>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

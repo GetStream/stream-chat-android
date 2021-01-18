@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaProjectCodeInsightSettings">
+    <excluded-names>
+      <name>coil.load</name>
+      <name>coil.ImageLoader</name>
+    </excluded-names>
+  </component>
+</project>
