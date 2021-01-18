@@ -53,5 +53,5 @@ internal data class MessageEntity(
     val extraData: Map<String, Any> = emptyMap(),
     val replyToId: String?,
     /** participants of thread replies */
-    val threadParticipantsIds: List<String> = emptyList()
+    val threadParticipantsIds: List<String> = emptyList(),
 )

@@ -105,6 +105,6 @@ public data class Message(
     var pinnedBy: User? = null,
 
     @SerializedName("thread_participants")
-    var threadParticipants: List<User> = emptyList()
+    var threadParticipants: List<User> = emptyList(),
 
 ) : CustomObject

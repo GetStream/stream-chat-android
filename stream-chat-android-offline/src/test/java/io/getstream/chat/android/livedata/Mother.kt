@@ -247,7 +247,7 @@ internal fun randomMessageEntity(
     shadowed: Boolean = randomBoolean(),
     extraData: Map<String, Any> = emptyMap(),
     replyToId: String? = randomString(),
-    threadParticipantsIds: List<String> = emptyList()
+    threadParticipantsIds: List<String> = emptyList(),
 ) = MessageEntity(
     id = id,
     cid = cid,
@@ -272,7 +272,7 @@ internal fun randomMessageEntity(
     shadowed = shadowed,
     extraData = extraData,
     replyToId = replyToId,
-    threadParticipantsIds = threadParticipantsIds
+    threadParticipantsIds = threadParticipantsIds,
 )
 
 internal fun randomReactionEntity(

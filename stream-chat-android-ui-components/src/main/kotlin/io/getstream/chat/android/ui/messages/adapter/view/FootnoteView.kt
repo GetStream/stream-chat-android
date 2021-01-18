@@ -82,17 +82,6 @@ internal class FootnoteView : ConstraintLayout {
         }
 
         with(threadsFootnote) {
-
-            root.updateConstraints {
-                clear(threadRepliesButton.id, ConstraintSet.TOP)
-                connect(
-                    threadRepliesButton.id,
-                    ConstraintSet.TOP,
-                    if (isMine) firstMineUserImage.id else firstTheirUserImage.id,
-                    ConstraintSet.TOP
-                )
-            }
-
             firstTheirUserImage.isVisible = !isMine
             secondTheirUserImage.isVisible = !isMine
             firstMineUserImage.isVisible = isMine

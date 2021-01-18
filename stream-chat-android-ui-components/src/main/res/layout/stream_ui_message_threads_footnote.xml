@@ -66,7 +66,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
         app:layout_constraintStart_toEndOf="@id/firstTheirUserImage"
         app:layout_constraintEnd_toStartOf="@id/firstMineUserImage"
-        app:layout_constraintTop_toTopOf="@id/firstTheirUserImage"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="100 Thread Replies"
         />
 
@@ -87,7 +87,6 @@
         android:id="@+id/secondMineUserImage"
         android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
         android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
-        android:layout_marginEnd="@dimen/stream_ui_message_thread_reply_avatar_half_size"
         app:layout_constraintEnd_toStartOf="@id/threadsOrnamentRight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:streamUiAvatarBorderWidth="0dp"
