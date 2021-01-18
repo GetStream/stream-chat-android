@@ -49,7 +49,7 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
             avatarView = !channelUsersAreTheSame(newChannel, oldChannel),
             readState = channelUserReadIsDifferent(oldChannel, newChannel),
             lastMessageDate = !channelLastMessageDatesAreTheSame(oldChannel, newChannel),
-            unreadCount = unreadCountIsDifferent(oldChannel, newChannel)
+            unreadCount = unreadCountIsDifferent(oldChannel, newChannel),
         )
     }
 
