@@ -50,6 +50,11 @@ public class AttachmentGallery : ConstraintLayout {
 
     private var isFullScreen = false
 
+    /**
+     * Informs about index of the currently visible attachment
+     */
+    public val currentItemIndex: Int by lazy { binding.attachmentGallery.currentItem }
+
     public constructor(context: Context) : super(context)
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
