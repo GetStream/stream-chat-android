@@ -6,6 +6,7 @@ public data class ChannelItemPayloadDiff(
     val lastMessage: Boolean,
     val lastMessageDate: Boolean,
     val readState: Boolean,
+    val unreadCount: Boolean,
 ) {
     public operator fun plus(other: ChannelItemPayloadDiff): ChannelItemPayloadDiff =
         ChannelItemPayloadDiff(
@@ -14,5 +15,6 @@ public data class ChannelItemPayloadDiff(
             lastMessage = lastMessage || other.lastMessage,
             lastMessageDate = lastMessageDate || other.lastMessageDate,
             readState = readState || other.readState,
+            unreadCount = unreadCount || other.unreadCount
         )
 }
