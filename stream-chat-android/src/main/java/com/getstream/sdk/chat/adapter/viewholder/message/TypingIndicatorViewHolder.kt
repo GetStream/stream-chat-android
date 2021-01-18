@@ -4,11 +4,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.updateMargins
-import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.MessageListItemPayloadDiff
 import com.getstream.sdk.chat.databinding.StreamItemTypeIndicatorBinding
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
@@ -17,7 +17,7 @@ internal class TypingIndicatorViewHolder(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val binding: StreamItemTypeIndicatorBinding =
-        StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
+        StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false),
 ) : BaseMessageListItemViewHolder<TypingItem>(binding.root) {
 
     override fun bind(messageListItem: TypingItem, diff: MessageListItemPayloadDiff) {
@@ -44,6 +44,6 @@ internal class TypingIndicatorViewHolder(
             binding.llTypingIndicator.addView(avatarView)
         }
 
-        binding.ivTypingIndicator.load(R.raw.stream_typing)
+        binding.ivTypingIndicator.load(data = R.raw.stream_typing)
     }
 }

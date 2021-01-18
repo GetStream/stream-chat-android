@@ -29,7 +29,7 @@ internal class OnlyFileAttachmentsViewHolder(
             root.setOnClickListener {
                 listeners.messageClickListener.onMessageClick(data.message)
             }
-            threadRepliesFootnote.root.setOnClickListener {
+            footnote.setOnThreadClickListener {
                 listeners.threadClickListener.onThreadClick(data.message)
             }
             reactionsView.setReactionClickListener {

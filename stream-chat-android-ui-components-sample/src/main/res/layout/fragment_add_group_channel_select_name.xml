@@ -18,15 +18,14 @@
         >
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/add_group_channel_select_name_title"
-            android:textStyle="bold"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
             />
-    </androidx.appcompat.widget.Toolbar>
 
+    </androidx.appcompat.widget.Toolbar>
 
     <TextView
         android:id="@+id/nameTitleTextView"

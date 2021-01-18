@@ -6,16 +6,13 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Avatar
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DeliveryStatusDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FailedIndicatorDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.FootnoteDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GapDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.GravityDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAttachmentDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MessageFooterDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
-import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ThreadRepliesDecorator
 
 internal class MessageListItemDecoratorProvider(
     currentUser: User,
@@ -28,15 +25,12 @@ internal class MessageListItemDecoratorProvider(
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
-        GravityDecorator(),
-        DeliveryStatusDecorator(),
         FailedIndicatorDecorator(),
-        MessageFooterDecorator(dateFormatter, isDirectMessage),
         ReactionsDecorator(),
         LinkAttachmentDecorator(),
         ReplyDecorator(currentUser),
         ReactionsDecorator(),
-        ThreadRepliesDecorator(),
+        FootnoteDecorator(dateFormatter, isDirectMessage),
     )
 
     override val decorators: List<Decorator> = messageListDecorators

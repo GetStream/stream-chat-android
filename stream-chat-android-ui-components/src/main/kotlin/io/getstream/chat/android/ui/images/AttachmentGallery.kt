@@ -12,7 +12,8 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.StreamFileProvider
+import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
@@ -104,8 +105,13 @@ public class AttachmentGallery : ConstraintLayout {
         binding.shareButton.setOnClickListener {
             it.isEnabled = false
             GlobalScope.launch(DispatcherProvider.Main) {
-                ImageLoader.getBitmapUri(context, adapter.getItem(binding.attachmentGallery.currentItem))
-                    ?.let(onSharePictureListener)
+                StreamImageLoader.instance().loadAsBitmap(
+                    context = context,
+                    url = adapter.getItem(binding.attachmentGallery.currentItem)
+                )?.let { bitmap ->
+                    StreamFileProvider.writeImageToSharableFile(context, bitmap)
+                }?.let(onSharePictureListener)
+
                 delay(500)
                 it.isEnabled = true
             }

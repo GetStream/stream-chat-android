@@ -1,3 +1,16 @@
+# Jan 18th, 2021 - 4.5.1
+## stream-chat-android
+- Fix `MessageListItemViewHolder::bind` behavior
+- Improve connection/reconnection with normal/anonymous user
+
+## stream-chat-android-client
+- Create `ChatClient::getMessagesWithAttachments` to filter message with attachments
+- Create `ChannelClient::getMessagesWithAttachments` to filter message with attachments
+- Add support for pinned messages:
+    - Add `pinMessage` and `unpinMessage` methods `ChatClient` and `ChannelClient`
+    - Add `Channel::pinnedMessages` property
+    - Add `Message:pinned`, `Message::pinnedAt`, `Message::pinExpires`, and `Message:pinnedBy` properties
+
 # Jan 7th, 2021 - 4.5.0
 ## stream-chat-android
 - Now depends explicitly on AndroidX Fragment (fixes a potential crash with result handling)

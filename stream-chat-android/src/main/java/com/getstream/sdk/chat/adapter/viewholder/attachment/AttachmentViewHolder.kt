@@ -8,13 +8,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentBinding
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -34,7 +34,7 @@ internal class AttachmentViewHolder(
     private val longClickListener: MessageLongClickListener? = null,
     private val longClickListenerView: MessageListView.MessageLongClickListenerView? = null,
     private val binding: StreamItemAttachmentBinding =
-        StreamItemAttachmentBinding.inflate(parent.inflater, parent, false)
+        StreamItemAttachmentBinding.inflate(parent.inflater, parent, false),
 ) : BaseAttachmentViewHolder(binding.root) {
 
     private val mediaBinding: StreamItemAttachMediaBinding = binding.clAttachmentMedia
@@ -140,7 +140,9 @@ internal class AttachmentViewHolder(
             attachUrl = "https:$attachUrl"
         }
 
-        mediaBinding.ivMediaThumb.load(ChatUI.instance().urlSigner.signImageUrl(attachUrl))
+        mediaBinding.ivMediaThumb.load(
+            data = ChatUI.instance().urlSigner.signImageUrl(attachUrl)
+        )
 
         if (messageItem.message.type != ModelType.message_ephemeral) {
             mediaBinding.tvMediaTitle.text = firstAttachment.title

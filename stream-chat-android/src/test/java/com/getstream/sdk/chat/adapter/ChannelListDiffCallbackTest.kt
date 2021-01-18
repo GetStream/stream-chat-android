@@ -119,6 +119,7 @@ internal class ChannelListDiffCallbackTest {
         val channel2 = channel1.copy()
 
         val expectedDiff = ChannelItemPayloadDiff(
+            unreadCount = false,
             lastMessage = false,
             name = false,
             avatarView = false,
