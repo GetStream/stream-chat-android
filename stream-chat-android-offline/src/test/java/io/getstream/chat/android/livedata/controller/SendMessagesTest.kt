@@ -93,11 +93,13 @@ internal class SendMessagesTest {
 
         channelController.sendMessage(Message(attachments = attachments))
 
-        verify(channelClient).sendMessage(argThat { message ->
-            message.attachments.any { attach ->
-                attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete
-            }.not()
-        })
+        verify(channelClient).sendMessage(
+            argThat { message ->
+                message.attachments.any { attach ->
+                    attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete
+                }.not()
+            }
+        )
     }
 
     private fun mockFileUploadsFailure(files: List<File>) {
