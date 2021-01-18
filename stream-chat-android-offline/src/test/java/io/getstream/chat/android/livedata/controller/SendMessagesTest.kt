@@ -96,7 +96,7 @@ internal class SendMessagesTest {
         verify(channelClient).sendMessage(
             argThat { message ->
                 message.attachments.any { attach ->
-                    attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete
+                    attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete == true
                 }.not()
             }
         )
