@@ -38,7 +38,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="@dimen/stream_ui_spacing_small"
-        android:background="@drawable/stream_ui_circle_white"
+        android:background="@drawable/stream_ui_circle_white_attachment_check"
         android:scaleType="center"
         android:src="@drawable/stream_ui_ic_attachment_check"
         app:tint="@color/stream_ui_black"
