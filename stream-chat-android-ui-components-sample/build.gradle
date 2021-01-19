@@ -149,4 +149,8 @@ dependencies {
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.shimmer
+
+    debugImplementation Dependencies.flipper
+    debugImplementation Dependencies.flipperNetwork
+    debugImplementation Dependencies.flipperLoader
 }

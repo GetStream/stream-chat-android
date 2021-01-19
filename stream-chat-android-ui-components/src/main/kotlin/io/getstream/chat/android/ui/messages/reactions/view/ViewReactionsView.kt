@@ -10,8 +10,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.messages.reactions.ReactionsAdapter
+import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.utils.extensions.isMine
-import io.getstream.chat.android.ui.utils.extensions.isSingleReaction
 
 public class ViewReactionsView : RecyclerView {
 
@@ -41,7 +41,7 @@ public class ViewReactionsView : RecyclerView {
 
     public fun setMessage(message: Message, isMyMessage: Boolean, commitCallback: (() -> Unit)? = null) {
         this.isMyMessage = isMyMessage
-        this.isSingleReaction = message.isSingleReaction()
+        this.isSingleReaction = message.hasSingleReaction()
 
         reactionsAdapter.submitList(createReactionItems(message)) {
             val horizontalPadding = if (isSingleReaction) 0 else reactionsViewStyle.horizontalPadding

@@ -17,36 +17,36 @@ internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: B
 private fun getSelfDisplayName(context: Context) =
     context.getString(R.string.stream_ui_channel_display_name_self)
 
-internal fun Message.isDeleted(): Boolean = deletedAt != null
+public fun Message.isDeleted(): Boolean = deletedAt != null
 
-internal fun Message.isFailed(): Boolean {
+public fun Message.isFailed(): Boolean {
     return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || this.type == ModelType.message_error
 }
 
-internal fun Message.isInThread(): Boolean = !parentId.isNullOrEmpty()
+public fun Message.isInThread(): Boolean = !parentId.isNullOrEmpty()
 
-internal fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
+public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
-internal fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
+public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
-internal fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
+public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
 
-internal fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
+public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
 
-internal fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
+public fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 
-internal fun Message.getUpdatedAtOrNull(): Date? = updatedAt ?: updatedLocallyAt
+public fun Message.getUpdatedAtOrNull(): Date? = updatedAt ?: updatedLocallyAt
 
-internal fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
+public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull()) {
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
 }
 
-internal fun Message.isSingleReaction(): Boolean {
+public fun Message.hasSingleReaction(): Boolean {
     return latestReactions.map { it.type }
         .toSet()
         .size == 1
 }
 
-internal fun Message.withReply(): Boolean = replyTo != null
+public fun Message.isReply(): Boolean = replyTo != null
 
-internal fun Message.withText(): Boolean = text.isNotEmpty()
+public fun Message.hasText(): Boolean = text.isNotEmpty()

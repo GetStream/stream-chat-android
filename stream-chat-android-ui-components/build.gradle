@@ -6,6 +6,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.hiya.jacoco-android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
