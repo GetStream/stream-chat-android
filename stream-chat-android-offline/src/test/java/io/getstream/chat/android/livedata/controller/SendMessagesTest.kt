@@ -4,11 +4,13 @@ import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.same
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -86,6 +88,10 @@ internal class SendMessagesTest {
 
     @Test
     fun `Message with failed attachment upload should be upload send the right state`() = scope.runBlockingTest {
+        whenever(domainImpl.runAndRetry<Message>(any())) doAnswer {
+            (it.arguments[0] as () -> Call<Message>).invoke().execute()
+        }
+
         val attachments = randomAttachmentsWithFile().toMutableList()
         val files: List<File> = attachments.map { it.upload!! }
 

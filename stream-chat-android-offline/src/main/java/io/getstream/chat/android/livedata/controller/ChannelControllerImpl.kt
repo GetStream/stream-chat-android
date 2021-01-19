@@ -61,7 +61,6 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.RetryUtils
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -93,7 +92,6 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl,
-    private val retryUtils: RetryUtils = RetryUtils,
 ) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
@@ -631,9 +629,7 @@ internal class ChannelControllerImpl(
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            val result = RetryUtils.runAndRetry(domainImpl.client, domainImpl.retryPolicy, ChatLogger.get("Domain")) {
-                channelClient.sendMessage(newMessage)
-            }
+            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
