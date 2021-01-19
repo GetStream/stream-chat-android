@@ -16,7 +16,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  * @see ChannelHeaderViewModel
  * @see MessageInputViewModel
  */
-public class ChannelViewModelFactory(
+public class ChannelViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null
 ) :
