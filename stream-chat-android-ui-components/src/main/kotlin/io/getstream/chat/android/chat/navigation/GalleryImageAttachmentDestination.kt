@@ -26,11 +26,9 @@ public class GalleryImageAttachmentDestination(
             return
         }
 
-        val userName = message.user.name
         val createdAt = message.getCreatedAtOrThrow().time
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        // TODO: clean up this class
-        start(AttachmentGalleryActivity.createIntent(context, userName, createdAt, attachmentIndex, attachments))
+        start(AttachmentGalleryActivity.createIntent(context, createdAt, attachmentIndex, message))
     }
 }

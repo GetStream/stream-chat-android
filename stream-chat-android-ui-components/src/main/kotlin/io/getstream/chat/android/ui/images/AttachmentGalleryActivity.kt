@@ -11,6 +11,8 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
@@ -121,25 +123,36 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
         public fun createIntent(
             context: Context,
-            userName: String,
             time: Long,
             currentIndex: Int,
-            attachments: List<Attachment>,
+            message: Message,
         ): Intent {
+            val userName = message.user.name
+            val attachments = message.attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)
                 putExtra(EXTRA_KEY_TIME, time)
                 putExtra(EXTRA_KEY_USER_NAME, userName)
-                putParcelableArrayListExtra(EXTRA_KEY_ATTACHMENTS, ArrayList(attachments.map { it.toAttachmentData() }))
+                putParcelableArrayListExtra(EXTRA_KEY_ATTACHMENTS, ArrayList(attachments))
             }
         }
 
-        private fun Attachment.toAttachmentData(): AttachmentData =
-            AttachmentData(imageUrl = this.imageUrl, assetUrl = this.assetUrl, name = this.name)
+        private fun Attachment.toAttachmentData(messageId: String, cid: String, userName: String): AttachmentData =
+            AttachmentData(
+                messageId = messageId,
+                cid = cid,
+                userName = userName,
+                imageUrl = this.imageUrl,
+                assetUrl = this.assetUrl,
+                name = this.name
+            )
     }
 
     @Parcelize
     public data class AttachmentData(
+        val messageId: String,
+        val cid: String,
+        val userName: String,
         val authorName: String? = null,
         val titleLink: String? = null,
         val thumbUrl: String? = null,
@@ -154,9 +167,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val image: String? = null,
         val url: String? = null,
         val name: String? = null,
-        val fallback: String? = null,
-    ): Parcelable {
-        public fun toAttachment(): Attachment =
-            Attachment(imageUrl = imageUrl, name = name, assetUrl = assetUrl)
+    ) : Parcelable {
+        public fun toAttachment(): Attachment = Attachment(imageUrl = imageUrl, name = name, assetUrl = assetUrl)
     }
 }
