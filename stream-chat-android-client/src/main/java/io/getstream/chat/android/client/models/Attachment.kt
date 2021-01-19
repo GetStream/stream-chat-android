@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
+import java.util.UUID
 
 public data class Attachment(
 
@@ -58,4 +59,6 @@ public data class Attachment(
         public object Success : UploadState()
         public data class Failed(val error: ChatError) : UploadState()
     }
+
+    public fun generateUploadId(): String = UUID.randomUUID().toString()
 }

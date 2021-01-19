@@ -210,15 +210,6 @@ public class ChatClient internal constructor(
         api.sendFile(channelType, channelId, file, callback)
     }
 
-    public fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ) {
-        api.sendImage(channelType, channelId, file, callback)
-    }
-
     @CheckResult
     public fun sendFile(
         channelType: String,
@@ -226,6 +217,24 @@ public class ChatClient internal constructor(
         file: File,
     ): Call<String> {
         return api.sendFile(channelType, channelId, file)
+    }
+
+    public fun sendFileSync(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback,
+    ): Call<String> {
+        return api.sendFileSync(channelType, channelId, file, callback)
+    }
+
+    public fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback,
+    ) {
+        api.sendImage(channelType, channelId, file, callback)
     }
 
     @CheckResult

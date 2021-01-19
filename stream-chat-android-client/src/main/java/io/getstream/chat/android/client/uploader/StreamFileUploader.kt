@@ -11,7 +11,7 @@ import java.io.File
 
 internal class StreamFileUploader(
     private val apiKey: String,
-    private val retrofitCdnApi: RetrofitCdnApi
+    private val retrofitCdnApi: RetrofitCdnApi,
 ) : FileUploader {
 
     override fun sendFile(
@@ -37,6 +37,34 @@ internal class StreamFileUploader(
             .call
             .enqueue(RetroProgressCallback(callback))
     }
+
+    override fun sendFileSync(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        file: File,
+        callback: ProgressCallback
+    ): String? {
+        val body = ProgressRequestBody(file, callback)
+        val part = MultipartBody.Part.createFormData("file", file.name, body)
+
+        val result = retrofitCdnApi.sendFile(
+            channelType,
+            channelId,
+            part,
+            apiKey,
+            userId,
+            connectionId
+        ).execute()
+
+        return if (result.isSuccess) {
+            result.data().file
+        } else {
+            null
+        }
+    }
+
 
     override fun sendFile(
         channelType: String,

@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
@@ -115,6 +116,8 @@ internal class ChannelControllerImpl(
     private val lastMessageAt = MutableStateFlow<Date?>(null)
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _unreadCount = MutableStateFlow(0)
+
+    private val uploadStatusMessages: MutableList<Message> = mutableListOf()
 
     override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
@@ -609,8 +612,11 @@ internal class ChannelControllerImpl(
         return if (online) {
             // upload attachments
             logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
+            upsertProgressMessage(listOf())
             newMessage.attachments = newMessage.attachments.map {
                 var attachment: Attachment = it
+
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
                     attachment.uploadComplete = result.isSuccess
@@ -623,6 +629,8 @@ internal class ChannelControllerImpl(
                 }
                 attachment
             }.toMutableList()
+
+            uploadStatusMessages.forEach { message -> cancelMessage(message) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
@@ -659,6 +667,18 @@ internal class ChannelControllerImpl(
         }
     }
 
+    private fun upsertProgressMessage(uploadIdList: List<String>) {
+        val message = Message(
+            text = "Messages Upload - 0/${uploadIdList.size}",
+            createdAt = Date(),
+            type = "ephemeral",
+        )
+
+        uploadStatusMessages.add(message)
+
+        upsertMessages(listOf(message))
+    }
+
     /**
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
@@ -675,11 +695,12 @@ internal class ChannelControllerImpl(
             mimeType.isVideoMimetype() -> TYPE_VIDEO
             else -> TYPE_FILE
         }
-        val pathResult = if (attachmentType == TYPE_IMAGE) {
+        val pathResult: Result<String> = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
         } else {
             sendFile(file)
         }
+
         val url = if (pathResult.isError) null else pathResult.data()
         val uploadState =
             if (pathResult.isError) Attachment.UploadState.Failed(pathResult.error()) else Attachment.UploadState.Success
@@ -727,6 +748,7 @@ internal class ChannelControllerImpl(
         return Result(true)
     }
 
+    //Todo: Found it!!
     suspend fun sendGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
@@ -771,6 +793,10 @@ internal class ChannelControllerImpl(
 
     fun sendFile(file: File): Result<String> {
         return client.sendFile(channelType, channelId, file).execute()
+    }
+
+    private fun sendFile(file: File, callback: ProgressCallback): Result<String> {
+        return client.sendFileSync(channelType, channelId, file, callback).execute()
     }
 
     /**
