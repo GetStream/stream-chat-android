@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 

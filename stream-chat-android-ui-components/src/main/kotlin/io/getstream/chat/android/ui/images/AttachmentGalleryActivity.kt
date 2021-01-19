@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.format.DateUtils
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -13,7 +12,6 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.options.AttachmentOptionsDialogFragment

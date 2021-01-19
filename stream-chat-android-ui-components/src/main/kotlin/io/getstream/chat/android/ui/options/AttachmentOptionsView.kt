@@ -30,10 +30,12 @@ internal class AttachmentOptionsView : FrameLayout {
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context,
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+        context,
         attrs,
         defStyleAttr,
-        defStyleRes) {
+        defStyleRes
+    ) {
         init(context, attrs)
     }
 

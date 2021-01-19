@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentOptionsBinding
 import io.getstream.chat.android.ui.view.FullScreenDialogFragment
 
-internal class AttachmentOptionsDialogFragment: FullScreenDialogFragment() {
+internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiFragmentAttachmentOptionsBinding? = null
     private val binding get() = _binding!!
 
@@ -23,30 +23,38 @@ internal class AttachmentOptionsDialogFragment: FullScreenDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.attachmentOptionsMenu.setReplyClickListener(object : AttachmentOptionsView.ReplyClickListener {
-            override fun onClick() {
-                replyHandler?.onClick()
-                dismiss()
+        binding.attachmentOptionsMenu.setReplyClickListener(
+            object : AttachmentOptionsView.ReplyClickListener {
+                override fun onClick() {
+                    replyHandler?.onClick()
+                    dismiss()
+                }
             }
-        })
-        binding.attachmentOptionsMenu.setDeleteClickListener(object : AttachmentOptionsView.DeleteClickListener {
-            override fun onClick() {
-                deleteHandler?.onClick()
-                dismiss()
+        )
+        binding.attachmentOptionsMenu.setDeleteClickListener(
+            object : AttachmentOptionsView.DeleteClickListener {
+                override fun onClick() {
+                    deleteHandler?.onClick()
+                    dismiss()
+                }
             }
-        })
-        binding.attachmentOptionsMenu.setShowInChatClickListener(object : AttachmentOptionsView.ShowInChatClickListener {
-            override fun onClick() {
-                showInChatHandler?.onClick()
-                dismiss()
+        )
+        binding.attachmentOptionsMenu.setShowInChatClickListener(
+            object : AttachmentOptionsView.ShowInChatClickListener {
+                override fun onClick() {
+                    showInChatHandler?.onClick()
+                    dismiss()
+                }
             }
-        })
-        binding.attachmentOptionsMenu.setSaveImageClickListener(object : AttachmentOptionsView.SaveImageClickListener {
-            override fun onClick() {
-                saveImageHandler?.onClick()
-                dismiss()
+        )
+        binding.attachmentOptionsMenu.setSaveImageClickListener(
+            object : AttachmentOptionsView.SaveImageClickListener {
+                override fun onClick() {
+                    saveImageHandler?.onClick()
+                    dismiss()
+                }
             }
-        })
+        )
         binding.root.setOnClickListener { dismiss() }
     }
 
