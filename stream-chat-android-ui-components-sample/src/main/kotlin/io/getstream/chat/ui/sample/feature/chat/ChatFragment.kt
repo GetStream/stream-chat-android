@@ -105,7 +105,6 @@ class ChatFragment : Fragment() {
         )
     }
 
-
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
             bindView(binding.messageInputView, viewLifecycleOwner)
