@@ -93,7 +93,7 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl,
-    private val retryUtils: RetryUtils = RetryUtils
+    private val retryUtils: RetryUtils = RetryUtils,
 ) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
