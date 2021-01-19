@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
@@ -48,6 +49,9 @@ import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -127,6 +131,8 @@ public class MessageListView : ConstraintLayout {
     private var onAttachmentDownloadHandler: (Attachment) -> Unit = {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
+
+    private var messageListItemFilter: MessageListItemFilter = MessageListItemFilter { it }
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -592,23 +598,29 @@ public class MessageListView : ConstraintLayout {
 
     public fun setMessageListItemFilter(messageListItemFilter: MessageListItemFilter) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemFilter first" }
-        buffer.setDataFilter { wrapper -> wrapper.copy(items = messageListItemFilter.filterMessageListItem(wrapper.items)) }
+        this.messageListItemFilter = messageListItemFilter
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
-        buffer.hold()
+        CoroutineScope(DispatcherProvider.IO).launch {
+            messageListItemFilter.filterMessageListItem(listItem.items).let { filteredList ->
+                withContext(DispatcherProvider.Main) {
+                    buffer.hold()
 
-        val isThreadStart = !adapter.isThread && listItem.isThread
-        val isOldListEmpty = adapter.currentList.isEmpty()
+                    val isThreadStart = !adapter.isThread && listItem.isThread
+                    val isOldListEmpty = adapter.currentList.isEmpty()
 
-        adapter.isThread = listItem.isThread
-        adapter.submitList(listItem.items) {
-            scrollHelper.onMessageListChanged(
-                isThreadStart = isThreadStart,
-                hasNewMessages = listItem.hasNewMessages,
-                isInitialList = isOldListEmpty && listItem.items.isNotEmpty()
-            )
-            buffer.active()
+                    adapter.isThread = listItem.isThread
+                    adapter.submitList(filteredList) {
+                        scrollHelper.onMessageListChanged(
+                            isThreadStart = isThreadStart,
+                            hasNewMessages = listItem.hasNewMessages,
+                            isInitialList = isOldListEmpty && listItem.items.isNotEmpty()
+                        )
+                        buffer.active()
+                    }
+                }
+            }
         }
     }
 

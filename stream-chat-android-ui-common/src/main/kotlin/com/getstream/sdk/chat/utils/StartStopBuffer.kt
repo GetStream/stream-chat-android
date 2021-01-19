@@ -13,7 +13,6 @@ public class StartStopBuffer<T> {
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
-    private var dataFilter: (T) -> T = { it }
 
     public fun hold() {
         active.set(false)
@@ -30,7 +29,7 @@ public class StartStopBuffer<T> {
     private fun propagateData() {
         CoroutineScope(DispatcherProvider.IO).launch {
             while (active.get() && events.isNotEmpty()) {
-                events.poll()?.let { dataFilter(it) }?.let {
+                events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
                         func?.invoke(it)
                     }
@@ -53,9 +52,5 @@ public class StartStopBuffer<T> {
         if (active.get()) {
             propagateData()
         }
-    }
-
-    public fun setDataFilter(dataFilter: (T) -> T) {
-        this.dataFilter = dataFilter
     }
 }
