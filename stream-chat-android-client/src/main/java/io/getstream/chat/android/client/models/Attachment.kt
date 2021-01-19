@@ -6,8 +6,6 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
 
-public const val EXTRA_UPLOAD_COMPLETE: String = "uploadComplete"
-
 public data class Attachment(
 
     @SerializedName("author_name")
@@ -49,7 +47,8 @@ public data class Attachment(
     @IgnoreDeserialisation
     var uploadState: UploadState? = null,
 
-    @SerializedName("extra_data")
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
 ) : CustomObject {
@@ -58,5 +57,9 @@ public data class Attachment(
         public object InProgress : UploadState()
         public object Success : UploadState()
         public data class Failed(val error: ChatError) : UploadState()
+    }
+
+    public companion object {
+        public const val EXTRA_UPLOAD_COMPLETE: String = "uploadComplete"
     }
 }

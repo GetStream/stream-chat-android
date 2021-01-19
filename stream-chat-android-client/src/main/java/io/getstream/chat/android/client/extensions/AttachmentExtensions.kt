@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.EXTRA_UPLOAD_COMPLETE
+import io.getstream.chat.android.client.models.Attachment.Companion.EXTRA_UPLOAD_COMPLETE
 
 internal const val ATTACHMENT_TYPE_IMAGE = "image"
 internal const val ATTACHMENT_TYPE_FILE = "file"
