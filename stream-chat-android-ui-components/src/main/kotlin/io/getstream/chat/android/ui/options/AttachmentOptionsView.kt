@@ -67,7 +67,7 @@ internal class AttachmentOptionsView : FrameLayout {
     private fun readConfiguration(array: TypedArray): Configuration {
         val iconsTint = array.getColor(
             R.styleable.AttachmentOptionsView_streamUiIconsDefaultTint,
-            ContextCompat.getColor(context, R.color.stream_ui_boulder)
+            ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
         val replyText = array.getString(R.styleable.AttachmentOptionsView_streamUiReplyText)
@@ -102,7 +102,7 @@ internal class AttachmentOptionsView : FrameLayout {
         )
         val deleteIconTint = array.getColor(
             R.styleable.AttachmentOptionsView_streamUiDeleteIconTint,
-            ContextCompat.getColor(context, R.color.stream_ui_light_red)
+            ContextCompat.getColor(context, R.color.stream_ui_accent_red)
         )
 
         return Configuration(
