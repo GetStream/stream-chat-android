@@ -5,12 +5,12 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
+import io.getstream.chat.android.ui.utils.extensions.setLeftDrawable
 import java.io.Serializable
 
 public class MessageOptionsView : FrameLayout {
@@ -204,14 +204,5 @@ public class MessageOptionsView : FrameLayout {
     private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int) {
         this.text = text
         this.setLeftDrawable(icon, iconTint)
-    }
-
-    private fun TextView.setLeftDrawable(icon: Int, iconTint: Int) {
-        setCompoundDrawablesWithIntrinsicBounds(
-            ResourcesCompat.getDrawable(resources, icon, null)?.apply { setTint(iconTint) },
-            null,
-            null,
-            null
-        )
     }
 }

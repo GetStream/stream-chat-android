@@ -93,6 +93,12 @@
     <string name="stream_ui_message_option_delete_positive_button">Delete</string>
     <string name="stream_ui_message_option_delete_negative_button">Cancel</string>
 
+    <!-- Attachment options -->
+    <string name="stream_ui_attachment_option_reply">Reply</string>
+    <string name="stream_ui_attachment_option_delete">Delete</string>
+    <string name="stream_ui_attachment_option_show_in_chat">Show in chat</string>
+    <string name="stream_ui_attachment_option_save">Save Image</string>
+
     <!-- Typing -->
     <plurals name="stream_ui_typing_text">
         <item quantity="one">%s is typing</item>
