@@ -18,8 +18,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
-import io.getstream.chat.android.ui.utils.extensions.withReply
-import io.getstream.chat.android.ui.utils.extensions.withText
+import io.getstream.chat.android.ui.utils.extensions.hasText
+import io.getstream.chat.android.ui.utils.extensions.isReply
 
 internal class BackgroundDecorator : BaseDecorator() {
 
@@ -95,12 +95,12 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) {
         setDefaultBackgroundDrawable(background, data)
 
-        val topLeftCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
-        val topRightCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
+        val topLeftCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
+        val topRightCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
         val bottomRightCorner =
-            if (data.message.withText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
         val bottomLeftCorner =
-            if (data.message.withText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
 
         attachmentView.background = ShapeAppearanceModel.builder()
             .setTopLeftCornerSize(topLeftCorner)

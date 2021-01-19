@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.isSingleReaction
+import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
 
 internal class ReactionsDecorator : BaseDecorator() {
 
@@ -88,7 +88,7 @@ internal class ReactionsDecorator : BaseDecorator() {
                     clear(reactionsSpace.id, ConstraintSet.END)
                 }
                 reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    val offset = if (data.message.isSingleReaction()) {
+                    val offset = if (data.message.hasSingleReaction()) {
                         SINGLE_REACTION_OFFSET
                     } else {
                         MULTIPLE_REACTIONS_OFFSET
