@@ -41,12 +41,12 @@ public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
 }
 
-public fun Message.isSingleReaction(): Boolean {
+public fun Message.hasSingleReaction(): Boolean {
     return latestReactions.map { it.type }
         .toSet()
         .size == 1
 }
 
-public fun Message.withReply(): Boolean = replyTo != null
+public fun Message.isReply(): Boolean = replyTo != null
 
-public fun Message.withText(): Boolean = text.isNotEmpty()
+public fun Message.hasText(): Boolean = text.isNotEmpty()
