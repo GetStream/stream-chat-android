@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -39,4 +40,6 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         highlightAnimation?.cancel()
         highlightAnimation = null
     }
+
+    protected val context: Context = itemView.context
 }

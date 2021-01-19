@@ -67,27 +67,16 @@ internal class ChannelListItemAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is ChannelListItem.LoadingMoreItem -> ChannelItemType.LOADING_MORE.ordinal
-            is ChannelListItem.ChannelItem -> ChannelItemType.DEFAULT.ordinal
-        }
+        return viewHolderFactory.getItemViewType(getItem(position))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return viewHolderFactory.createViewHolder(
-            parent,
-            ChannelItemType.values()[viewType],
-        )
+        return viewHolderFactory.createViewHolder(parent, viewType)
     }
 
-    private fun bind(
-        position: Int,
-        holder: BaseChannelListItemViewHolder,
-        payload: ChannelDiff
-    ) {
+    private fun bind(position: Int, holder: BaseChannelListItemViewHolder, payload: ChannelDiff) {
         when (val channelItem = getItem(position)) {
             is ChannelListItem.LoadingMoreItem -> Unit
-
             is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
         }
     }
