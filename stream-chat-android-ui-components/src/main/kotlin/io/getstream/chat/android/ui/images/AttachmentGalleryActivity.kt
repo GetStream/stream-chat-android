@@ -58,36 +58,16 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 val currentUrl = attachmentUrls[binding.attachmentGallery.currentItemIndex]
                 val currentAttachment = attachments.first { it.imageUrl == currentUrl }
                 val showInChatHandler = object : AttachmentOptionsDialogFragment.ShowInChatHandler {
-                    override fun onClick() {
-                        TODO("Not yet implemented")
-                    }
+                    override fun onClick() = Unit // "Not yet implemented"
                 }
                 val deleteHandler = object : AttachmentOptionsDialogFragment.DeleteHandler {
-                    override fun onClick() {
-                        TODO("Not yet implemented")
-                    }
+                    override fun onClick() = Unit // "Not yet implemented"
                 }
                 val replyHandler = object : AttachmentOptionsDialogFragment.ReplyHandler {
-                    override fun onClick() {
-                        TODO("Not yet implemented")
-                    }
+                    override fun onClick() = Unit // "Not yet implemented"
                 }
                 val saveHandler = object : AttachmentOptionsDialogFragment.SaveImageHandler {
-                    override fun onClick() {
-                        // TODO: download of image should be performed by DownloadManager
-                        ChatDomain.instance().useCases.downloadAttachment.invoke(currentAttachment.toAttachment())
-                            .enqueue { result ->
-                                if (result.isSuccess) {
-                                    Toast.makeText(this@AttachmentGalleryActivity,
-                                        "Download finished",
-                                        Toast.LENGTH_LONG).show()
-                                } else {
-                                    Toast.makeText(this@AttachmentGalleryActivity,
-                                        "Download failed",
-                                        Toast.LENGTH_LONG).show()
-                                }
-                            }
-                    }
+                    override fun onClick() = Unit // "Not yet implemented"
                 }
                 AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
                     .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
@@ -154,11 +134,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val cid: String,
         val userName: String,
         val authorName: String? = null,
-        val titleLink: String? = null,
-        val thumbUrl: String? = null,
         val imageUrl: String? = null,
         val assetUrl: String? = null,
-        val ogUrl: String? = null,
         val mimeType: String? = null,
         val fileSize: Int = 0,
         val title: String? = null,
@@ -167,7 +144,5 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val image: String? = null,
         val url: String? = null,
         val name: String? = null,
-    ) : Parcelable {
-        public fun toAttachment(): Attachment = Attachment(imageUrl = imageUrl, name = name, assetUrl = assetUrl)
-    }
+    ) : Parcelable
 }
