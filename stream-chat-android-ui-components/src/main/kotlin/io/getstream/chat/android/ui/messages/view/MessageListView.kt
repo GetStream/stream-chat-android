@@ -603,22 +603,21 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            messageListItemFilter.filterMessageListItem(listItem.items).let { filteredList ->
-                withContext(DispatcherProvider.Main) {
-                    buffer.hold()
+            val filteredList = messageListItemFilter.filterMessageListItem(listItem.items)
+            withContext(DispatcherProvider.Main) {
+                buffer.hold()
 
-                    val isThreadStart = !adapter.isThread && listItem.isThread
-                    val isOldListEmpty = adapter.currentList.isEmpty()
+                val isThreadStart = !adapter.isThread && listItem.isThread
+                val isOldListEmpty = adapter.currentList.isEmpty()
 
-                    adapter.isThread = listItem.isThread
-                    adapter.submitList(filteredList) {
-                        scrollHelper.onMessageListChanged(
-                            isThreadStart = isThreadStart,
-                            hasNewMessages = listItem.hasNewMessages,
-                            isInitialList = isOldListEmpty && listItem.items.isNotEmpty()
-                        )
-                        buffer.active()
-                    }
+                adapter.isThread = listItem.isThread
+                adapter.submitList(filteredList) {
+                    scrollHelper.onMessageListChanged(
+                        isThreadStart = isThreadStart,
+                        hasNewMessages = listItem.hasNewMessages,
+                        isInitialList = isOldListEmpty && filteredList.isNotEmpty()
+                    )
+                    buffer.active()
                 }
             }
         }
