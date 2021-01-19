@@ -7,8 +7,8 @@ import io.getstream.chat.android.client.models.User
 
 internal fun computeUnreadCount(
     currentUser: User,
-    messages: List<Message>,
     read: ChannelUserRead? = null,
+    messages: List<Message> = emptyList(),
 ): Int {
     val logger = ChatLogger.get("computeUnreadCount")
 

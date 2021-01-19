@@ -932,8 +932,8 @@ internal class ChannelControllerImpl(
     private fun updateUnreadCount() {
         _unreadCount.value = computeUnreadCount(
             currentUser = domainImpl.currentUser,
-            messages = _messages.value.values.toList(),
-            read = _read.value
+            read = _read.value,
+            messages = _messages.value.values.toList()
         )
     }
 
