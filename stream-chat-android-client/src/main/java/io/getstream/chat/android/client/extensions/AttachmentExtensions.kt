@@ -9,5 +9,8 @@ internal const val ATTACHMENT_TYPE_FILE = "file"
 internal val Attachment.isImage: Boolean
     get() = mimeType?.startsWith(ATTACHMENT_TYPE_IMAGE) ?: false
 
-public val Attachment.uploadComplete: Boolean?
+public var Attachment.uploadComplete: Boolean?
     get() = extraData[EXTRA_UPLOAD_COMPLETE] as Boolean?
+    set(value) {
+        value?.let { extraData[EXTRA_UPLOAD_COMPLETE] = it }
+    }

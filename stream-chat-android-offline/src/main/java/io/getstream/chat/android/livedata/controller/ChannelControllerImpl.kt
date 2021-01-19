@@ -37,12 +37,12 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.EXTRA_UPLOAD_COMPLETE
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -618,7 +618,7 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
-                    attachment.extraData[EXTRA_UPLOAD_COMPLETE] = result.isSuccess
+                    attachment.uploadComplete = result.isSuccess
                     if (result.isSuccess) {
                         attachment = result.data()
                     } else {
