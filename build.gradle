@@ -82,7 +82,4 @@ apiValidation {
     nonPublicMarkers += [
             'io.getstream.chat.android.core.internal.InternalStreamChatApi',
     ]
-
-    // Uncomment and execute "./gradlew apiDump" to try locally
-    validationDisabled = true
 }
