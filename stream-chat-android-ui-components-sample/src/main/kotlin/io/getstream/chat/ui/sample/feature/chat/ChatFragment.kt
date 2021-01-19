@@ -50,6 +50,7 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.messageListView.setMessageListItemFilter(HiddenMessageListItemFilter)
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         initChatViewModel()
         initMessagesViewModel()
