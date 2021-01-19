@@ -53,7 +53,8 @@ public class AttachmentGallery : ConstraintLayout {
     /**
      * Informs about index of the currently visible attachment
      */
-    public val currentItemIndex: Int by lazy { binding.attachmentGallery.currentItem }
+    public val currentItemIndex: Int
+        get() = binding.attachmentGallery.currentItem
 
     public constructor(context: Context) : super(context)
 
