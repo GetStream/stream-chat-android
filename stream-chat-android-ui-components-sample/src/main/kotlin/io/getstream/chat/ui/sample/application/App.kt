@@ -27,6 +27,7 @@ class App : Application() {
                 }
             }.build()
         )
+        ApplicationConfigurator.configureApp(this)
     }
 
     companion object {
