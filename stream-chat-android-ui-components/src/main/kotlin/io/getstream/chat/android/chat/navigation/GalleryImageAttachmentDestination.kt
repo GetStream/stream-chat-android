@@ -28,6 +28,6 @@ public class GalleryImageAttachmentDestination(
         val createdAt = message.getCreatedAtOrThrow().time
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        start(AttachmentGalleryActivity.createIntent(context, createdAt, attachmentIndex, message))
+        start(AttachmentGalleryActivity.createIntent(context, createdAt, attachmentIndex, message, attachments))
     }
 }

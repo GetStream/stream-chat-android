@@ -56,7 +56,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 val currentUrl = attachmentUrls[binding.attachmentGallery.currentItemIndex]
                 val currentAttachment = attachments.first { it.imageUrl == currentUrl }
                 val showInChatHandler = object : AttachmentOptionsDialogFragment.ShowInChatHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                    override fun onClick() = finish()
                 }
                 val deleteHandler = object : AttachmentOptionsDialogFragment.DeleteHandler {
                     override fun onClick() = Unit // "Not yet implemented"
@@ -104,14 +104,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             time: Long,
             currentIndex: Int,
             message: Message,
+            attachments: List<Attachment>,
         ): Intent {
             val userName = message.user.name
-            val attachments = message.attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
+            val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)
                 putExtra(EXTRA_KEY_TIME, time)
                 putExtra(EXTRA_KEY_USER_NAME, userName)
-                putParcelableArrayListExtra(EXTRA_KEY_ATTACHMENTS, ArrayList(attachments))
+                putParcelableArrayListExtra(EXTRA_KEY_ATTACHMENTS, ArrayList(attachmentsData))
             }
         }
 
