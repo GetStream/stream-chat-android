@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
@@ -34,7 +34,7 @@ class ChatInfoSharedGroupsViewHolder(
         binding.root.setOnClickListener { channelClickListener.onClick(channel) }
     }
 
-    override fun bind(channel: Channel, diff: ChannelDiff) {
+    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
         binding.apply {

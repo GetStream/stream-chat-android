@@ -95,23 +95,24 @@ internal class ChannelControllerImpl(
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    private val _watcherCount = MutableStateFlow<Int>(0)
+    private val _watcherCount = MutableStateFlow(0)
     private val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
     private val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
     private val _read = MutableStateFlow<ChannelUserRead?>(null)
-    private val _endOfNewerMessages = MutableStateFlow<Boolean>(false)
-    private val _endOfOlderMessages = MutableStateFlow<Boolean>(false)
-    private val _loading = MutableStateFlow<Boolean>(false)
-    private val _hidden = MutableStateFlow<Boolean>(false)
-    private val _muted = MutableStateFlow<Boolean>(false)
+    private val _endOfNewerMessages = MutableStateFlow(false)
+    private val _endOfOlderMessages = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
+    private val _hidden = MutableStateFlow(false)
+    private val _muted = MutableStateFlow(false)
     private val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
-    private val _loadingOlderMessages = MutableStateFlow<Boolean>(false)
-    private val _loadingNewerMessages = MutableStateFlow<Boolean>(false)
+    private val _loadingOlderMessages = MutableStateFlow(false)
+    private val _loadingNewerMessages = MutableStateFlow(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val lastMessageAt = MutableStateFlow<Date?>(null)
     private val _repliedMessage = MutableStateFlow<Message?>(null)
+    private val _unreadCount = MutableStateFlow(0)
 
     override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
@@ -177,11 +178,6 @@ internal class ChannelControllerImpl(
 
     /** read status for the current user */
     override val read: LiveData<ChannelUserRead?> = _read.asLiveData()
-
-    private val _unreadCount =
-        _read.combine(_messages) { channelUserRead: ChannelUserRead?, messagesMap: Map<String, Message> ->
-            computeUnreadCount(domainImpl.currentUser, channelUserRead, messagesMap.values.toList())
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, 0)
 
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
@@ -930,6 +926,15 @@ internal class ChannelControllerImpl(
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
         _messages.value = newMessages
+        updateUnreadCount()
+    }
+
+    private fun updateUnreadCount() {
+        _unreadCount.value = computeUnreadCount(
+            currentUser = domainImpl.currentUser,
+            messages = _messages.value.values.toList(),
+            read = _read.value
+        )
     }
 
     private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
@@ -1207,6 +1212,8 @@ internal class ChannelControllerImpl(
             }
 
             _read.value = incomingRead
+
+            updateUnreadCount()
         }
 
         // always post the newly updated map
