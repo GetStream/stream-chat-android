@@ -10,8 +10,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.messages.reactions.ReactionsAdapter
-import io.getstream.chat.android.ui.utils.extensions.isMine
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
+import io.getstream.chat.android.ui.utils.extensions.isMine
 
 public class ViewReactionsView : RecyclerView {
 

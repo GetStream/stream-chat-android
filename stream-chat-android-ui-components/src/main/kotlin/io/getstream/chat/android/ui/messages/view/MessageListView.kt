@@ -132,7 +132,7 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
-    private var messageListItemFilter: MessageListItemFilter = MessageListItemFilter { it }
+    private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 

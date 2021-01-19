@@ -18,8 +18,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
-import io.getstream.chat.android.ui.utils.extensions.isReply
 import io.getstream.chat.android.ui.utils.extensions.hasText
+import io.getstream.chat.android.ui.utils.extensions.isReply
 
 internal class BackgroundDecorator : BaseDecorator() {
 

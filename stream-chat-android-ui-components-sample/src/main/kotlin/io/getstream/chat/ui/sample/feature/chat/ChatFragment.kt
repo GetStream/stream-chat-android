@@ -38,7 +38,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
@@ -50,7 +50,6 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.messageListView.setMessageListItemFilter(HiddenMessageListItemFilter)
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         initChatViewModel()
         initMessagesViewModel()
