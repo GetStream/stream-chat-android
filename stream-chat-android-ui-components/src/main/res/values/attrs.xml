@@ -171,6 +171,7 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <attr name="streamUiMessagesHeaderThreadModeTitle" format="string|reference" />
     </declare-styleable>
 
     <declare-styleable name="EditReactionsView">
