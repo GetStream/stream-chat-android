@@ -38,10 +38,8 @@ internal class GiphyViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        if (data.isMine) {
-            data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
-            binding.giphyTextLabel.text = trimText(data.message.text)
-        }
+        data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
+        binding.giphyTextLabel.text = trimText(data.message.text)
     }
 
     private fun trimText(text: String): String {
