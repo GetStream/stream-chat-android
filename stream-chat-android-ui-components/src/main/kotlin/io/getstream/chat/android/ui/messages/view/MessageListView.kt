@@ -41,6 +41,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
@@ -658,6 +659,11 @@ public class MessageListView : ConstraintLayout {
         layoutManager.scrollToPosition(adapter.itemCount - 1)
     }
 
+    public fun setMessageListItemFilter(messageListItemFilter: MessageListItemFilter) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemFilter first" }
+        buffer.setDataFilter { wrapper -> wrapper.copy(items = messageListItemFilter.filterMessageListItem(wrapper.items)) }
+    }
+
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()
         val entities = listItem.items
@@ -959,6 +965,13 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ReactionViewClickListener {
         public fun onReactionViewClick(message: Message)
+    }
+
+    /**
+     * Filter functional object that can filter MessageListItem before applying them to MessageListView.
+     */
+    public fun interface MessageListItemFilter {
+        public fun filterMessageListItem(messageListItem: List<MessageListItem>): List<MessageListItem>
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {
