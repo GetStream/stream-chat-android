@@ -2,5 +2,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval"
     >
-    <solid android:color="@color/stream_ui_black_transparent" />
+    <solid android:color="@color/stream_ui_black_50" />
 </shape>

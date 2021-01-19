@@ -7,6 +7,7 @@
 
     <!-- Greys -->
     <color name="stream_ui_black">#000000</color>
+    <color name="stream_ui_black_50">#80000000</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_whisper">#ECEBEB</color>
@@ -14,7 +15,6 @@
     <color name="stream_ui_white_snow">#FCFCFC</color>
     <color name="stream_ui_white">#FFFFFF</color>
     <color name="stream_ui_blue_alice">#E9F2FF</color>
-    <color name="stream_ui_black_transparent">#80000000</color>
 
     <!-- Specials -->
     <color name="stream_ui_overlay">#33000000</color>
