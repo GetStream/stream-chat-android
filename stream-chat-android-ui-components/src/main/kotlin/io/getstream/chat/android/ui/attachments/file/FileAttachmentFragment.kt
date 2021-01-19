@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-public class FileAttachmentFragment : Fragment() {
+internal class FileAttachmentFragment : Fragment() {
 
     private var _binding: StreamUiFragmentAttachmentFileBinding? = null
     private val binding get() = _binding!!

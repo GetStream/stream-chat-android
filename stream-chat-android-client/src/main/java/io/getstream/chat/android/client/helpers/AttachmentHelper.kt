@@ -16,6 +16,6 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
     }
 
     private companion object {
-        const val QUERY_KEY_NAME_EXPIRES = "Expires"
+        private const val QUERY_KEY_NAME_EXPIRES = "Expires"
     }
 }

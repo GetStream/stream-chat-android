@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
-public class ChannelViewHolder @JvmOverloads constructor(
+internal class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
     private val channelLongClickListener: ChannelListView.ChannelLongClickListener,
@@ -92,7 +92,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    public override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
+    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
         configureForeground(diff)

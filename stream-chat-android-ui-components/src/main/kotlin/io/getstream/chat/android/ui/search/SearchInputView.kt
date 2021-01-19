@@ -16,8 +16,8 @@ import io.getstream.chat.android.ui.utils.Debouncer
 public class SearchInputView : FrameLayout {
 
     private companion object {
-        const val TYPING_DEBOUNCE_MS = 300L
-        const val FADE_DURATION = 300L
+        private const val TYPING_DEBOUNCE_MS = 300L
+        private const val FADE_DURATION = 300L
     }
 
     private val binding: StreamUiSearchViewBinding =

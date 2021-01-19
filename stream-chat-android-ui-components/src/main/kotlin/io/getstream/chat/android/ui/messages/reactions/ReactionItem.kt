@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.messages.reactions
 
 import io.getstream.chat.android.client.models.Reaction
 
-public data class ReactionItem(
+internal data class ReactionItem(
     val reaction: Reaction,
-    val isMine: Boolean
+    val isMine: Boolean,
 )

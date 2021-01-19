@@ -10,14 +10,14 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 private const val IMAGE_ID = "IMAGE_ID"
 
-public class ImageSlidePageFragment : Fragment() {
+internal class ImageSlidePageFragment : Fragment() {
 
     private lateinit var binding: StreamUiItemImageGalleryBinding
 
     private var imageClickListener: () -> Unit = {}
 
-    public companion object {
-        public fun create(imageUrl: String, imageClickListener: () -> Unit = {}): Fragment {
+    companion object {
+        fun create(imageUrl: String, imageClickListener: () -> Unit = {}): Fragment {
             return ImageSlidePageFragment().apply {
                 arguments = Bundle().apply {
                     putString(IMAGE_ID, imageUrl)

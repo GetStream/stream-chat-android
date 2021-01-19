@@ -99,6 +99,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         private const val EXTRA_KEY_USER_NAME = "extra_key_user_name"
         private const val EXTRA_KEY_TIME = "extra_key_time"
 
+        @JvmStatic
         public fun createIntent(
             context: Context,
             time: Long,

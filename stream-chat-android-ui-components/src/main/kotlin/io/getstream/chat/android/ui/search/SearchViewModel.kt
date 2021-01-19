@@ -26,7 +26,7 @@ public class SearchViewModel : ViewModel() {
     )
 
     private companion object {
-        const val QUERY_LIMIT = 30
+        private const val QUERY_LIMIT = 30
 
         val INITIAL_STATE = State(
             query = "",

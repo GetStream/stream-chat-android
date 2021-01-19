@@ -114,7 +114,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         chatDomain.useCases.stopTyping(cid).enqueue()
     }
 
-    public fun dismissReplay() {
+    public fun dismissReply() {
         if (repliedMessage.value != null) {
             chatDomain.useCases.setMessageForReply(cid, null).enqueue()
         }

@@ -58,8 +58,8 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private companion object {
-        const val CHANNEL_ID = "notification_channel_id"
-        const val CHANNEL_NAME = "Chat messages sync"
-        const val NOTIFICATION_ID = 1
+        private const val CHANNEL_ID = "notification_channel_id"
+        private const val CHANNEL_NAME = "Chat messages sync"
+        private const val NOTIFICATION_ID = 1
     }
 }

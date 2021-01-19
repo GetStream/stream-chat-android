@@ -13,8 +13,8 @@ import java.io.File
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
-    members.observe(lifecycleOwner, view::configureMembers)
-    commands.observe(lifecycleOwner, view::configureCommands)
+    members.observe(lifecycleOwner, view::setMembers)
+    commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
     getActiveThread().observe(lifecycleOwner) {
         view.inputMode = if (it != null) {
@@ -36,7 +36,11 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 viewModel.sendMessage(messageText) { replyMessageId = messageReplyTo?.id }
             }
 
-            override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>, messageReplyTo: Message?) {
+            override fun sendMessageWithAttachments(
+                message: String,
+                attachmentsFiles: List<File>,
+                messageReplyTo: Message?,
+            ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsFiles) { replyMessageId = messageReplyTo?.id }
             }
 
@@ -63,8 +67,8 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 viewModel.editMessage(oldMessage.copy(text = newMessageText))
             }
 
-            override fun dismissReplay() {
-                viewModel.dismissReplay()
+            override fun dismissReply() {
+                viewModel.dismissReply()
             }
         }
     )

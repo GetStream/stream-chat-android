@@ -1977,7 +1977,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
 	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun dismissReplay ()V
+	public final fun dismissReply ()V
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
 	public final fun getCommands ()Landroidx/lifecycle/LiveData;

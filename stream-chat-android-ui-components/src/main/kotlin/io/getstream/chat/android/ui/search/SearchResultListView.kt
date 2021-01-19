@@ -60,7 +60,7 @@ public class SearchResultListView : ViewFlipper {
         attrs ?: return
     }
 
-    public fun setMessages(query: String, messages: List<Message>) {
+    public fun showMessages(query: String, messages: List<Message>) {
         val isEmpty = messages.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS

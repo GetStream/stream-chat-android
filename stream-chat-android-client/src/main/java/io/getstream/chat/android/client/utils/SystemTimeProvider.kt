@@ -6,6 +6,6 @@ public class SystemTimeProvider {
     }
 
     private companion object {
-        const val MILLIS_TO_SECONDS_FACTOR = 1000L
+        private const val MILLIS_TO_SECONDS_FACTOR = 1000L
     }
 }

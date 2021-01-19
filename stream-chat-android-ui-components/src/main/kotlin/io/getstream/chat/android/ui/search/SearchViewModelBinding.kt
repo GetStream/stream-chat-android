@@ -17,7 +17,7 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
                 view.showLoading()
             }
             else -> {
-                view.setMessages(state.query, state.results)
+                view.showMessages(state.query, state.results)
             }
         }
     }

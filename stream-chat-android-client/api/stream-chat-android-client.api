@@ -1648,7 +1648,6 @@ public final class io/getstream/chat/android/client/extensions/MessageExtensions
 }
 
 public final class io/getstream/chat/android/client/helpers/AttachmentHelper {
-	public static final field QUERY_KEY_NAME_EXPIRES Ljava/lang/String;
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/client/utils/SystemTimeProvider;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/utils/SystemTimeProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2664,7 +2663,6 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 }
 
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
-	public static final field MILLIS_TO_SECONDS_FACTOR J
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
 }

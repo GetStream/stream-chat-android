@@ -9,64 +9,14 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/ui/attachments/AttachmentDialogPagerAdapter : androidx/viewpager2/adapter/FragmentStateAdapter {
-	public static final field Companion Lio/getstream/chat/android/ui/attachments/AttachmentDialogPagerAdapter$Companion;
-	public static final field PAGE_CAMERA_ATTACHMENT I
-	public static final field PAGE_COUNT I
-	public static final field PAGE_FILE_ATTACHMENT I
-	public static final field PAGE_MEDIA_ATTACHMENT I
-	public fun <init> (Landroidx/fragment/app/Fragment;)V
-	public fun createFragment (I)Landroidx/fragment/app/Fragment;
-	public fun getItemCount ()I
-}
-
-public final class io/getstream/chat/android/ui/attachments/AttachmentDialogPagerAdapter$Companion {
-}
-
-public final class io/getstream/chat/android/ui/attachments/file/FileAttachmentFragment : androidx/fragment/app/Fragment {
-	public fun <init> ()V
-	public fun onAttach (Landroid/content/Context;)V
-	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onDestroyView ()V
-	public fun onDetach ()V
-	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-}
-
-public final class io/getstream/chat/android/ui/attachments/media/MediaAttachmentFragment : androidx/fragment/app/Fragment {
-	public static final field Companion Lio/getstream/chat/android/ui/attachments/media/MediaAttachmentFragment$Companion;
-	public fun <init> ()V
-	public fun onAttach (Landroid/content/Context;)V
-	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onDestroyView ()V
-	public fun onDetach ()V
-	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-}
-
-public final class io/getstream/chat/android/ui/attachments/media/MediaAttachmentFragment$Companion {
-}
-
-public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
-	public final fun getAvatarBorderColor ()I
-	public final fun getAvatarBorderWidth ()I
-	public final fun getAvatarInitialText ()Lcom/getstream/sdk/chat/style/TextStyle;
-	public final fun getOnlineIndicatorEnabled ()Z
-	public final fun getOnlineIndicatorPosition ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-}
-
 public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/appcompat/widget/AppCompatImageView {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarView$Companion;
+	public static final field MAX_AVATAR_SECTIONS I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
-}
-
-public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
-	public static final field BOTTOM Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static final field TOP Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView : androidx/recyclerview/widget/RecyclerView {
@@ -94,20 +44,20 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;
 	public abstract fun onClick (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener$Companion {
-	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;
 	public abstract fun onLongClick (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener$Companion {
-	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$EndReachedListener {
@@ -116,6 +66,7 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/Channe
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;
 	public abstract fun onRestoreSwipePosition (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder;I)V
 	public abstract fun onSwipeCanceled (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;)V
 	public abstract fun onSwipeChanged (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder;IFF)V
@@ -124,7 +75,6 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/Channe
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener$Companion {
-	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener$DefaultImpls {
@@ -135,11 +85,11 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Swi
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;
 	public abstract fun onClick (Lio/getstream/chat/android/client/models/User;)V
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener$Companion {
-	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyle {
@@ -233,12 +183,12 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewhold
 
 public class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory {
 	public fun <init> ()V
-	public fun createChannelViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder;
-	public fun createLoadingMoreViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder;
+	protected fun createChannelViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder;
+	protected fun createLoadingMoreViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder;
 	public fun getItemViewType (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)I
-	public final fun getListenerContainer ()Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListListenerContainer;
-	public final fun getStyle ()Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListListenerContainer;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListListenerContainer {
@@ -248,23 +198,6 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/adapte
 	public abstract fun getMoreOptionsClickListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;
 	public abstract fun getSwipeListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListLoadingMoreViewHolder : io/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder {
-	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiChannelListLoadingViewBinding;)V
-	public synthetic fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiChannelListLoadingViewBinding;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun bind (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)V
-}
-
-public final class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelViewHolder : io/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder {
-	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;)V
-	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;Lio/getstream/chat/android/ui/databinding/StreamUiChannelListItemViewBinding;)V
-	public synthetic fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;Lio/getstream/chat/android/ui/databinding/StreamUiChannelListItemViewBinding;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun bind (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)V
-	public fun getClosedX ()F
-	public fun getOpenedX ()F
-	public fun getSwipeDeltaRange ()Lkotlin/ranges/ClosedFloatingPointRange;
-	public fun getSwipeView ()Landroid/view/View;
 }
 
 public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder : io/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder {
@@ -307,7 +240,6 @@ public final class io/getstream/chat/android/ui/images/AttachmentGallery : andro
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun getCurrentItemIndex ()I
-	public final fun init (Landroid/util/AttributeSet;)V
 	public final fun provideImageList (Landroidx/fragment/app/FragmentActivity;Ljava/util/List;ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun provideImageList$default (Lio/getstream/chat/android/ui/images/AttachmentGallery;Landroidx/fragment/app/FragmentActivity;Ljava/util/List;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun setMenuButtonClickListener (Landroid/view/View$OnClickListener;)V
@@ -317,6 +249,7 @@ public final class io/getstream/chat/android/ui/images/AttachmentGallery : andro
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion;
 	public fun <init> ()V
+	public static final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData : android/os/Parcelable {
@@ -372,40 +305,14 @@ public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity
 	public final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/ui/images/ImageSlidePageFragment : androidx/fragment/app/Fragment {
-	public static final field Companion Lio/getstream/chat/android/ui/images/ImageSlidePageFragment$Companion;
-	public fun <init> ()V
-	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-}
-
-public final class io/getstream/chat/android/ui/images/ImageSlidePageFragment$Companion {
-	public final fun create (Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Landroidx/fragment/app/Fragment;
-	public static synthetic fun create$default (Lio/getstream/chat/android/ui/images/ImageSlidePageFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Landroidx/fragment/app/Fragment;
-}
-
-public final class io/getstream/chat/android/ui/mentions/MentionsListAdapter : androidx/recyclerview/widget/ListAdapter {
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
-	public fun onBindViewHolder (Lio/getstream/chat/android/ui/mentions/MentionsListAdapter$MessagePreviewViewHolder;I)V
-	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/mentions/MentionsListAdapter$MessagePreviewViewHolder;
-	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener;)V
-}
-
-public final class io/getstream/chat/android/ui/mentions/MentionsListAdapter$MessagePreviewViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
-	public fun <init> (Lio/getstream/chat/android/ui/mentions/MentionsListAdapter;Lio/getstream/chat/android/ui/messagepreview/MessagePreviewView;)V
-}
-
 public final class io/getstream/chat/android/ui/mentions/MentionsListView : android/widget/ViewFlipper {
-	public static final field LOAD_MORE_THRESHOLD I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener;)V
 	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener;)V
-	public final fun setMessages (Ljava/util/List;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
+	public final fun showMessages (Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener {
@@ -417,7 +324,6 @@ public abstract interface class io/getstream/chat/android/ui/mentions/MentionsLi
 }
 
 public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel : androidx/lifecycle/ViewModel {
-	public static final field QUERY_LIMIT I
 	public fun <init> ()V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
@@ -460,26 +366,6 @@ public abstract class io/getstream/chat/android/ui/messages/adapter/BaseMessageI
 	protected final fun getData ()Lcom/getstream/sdk/chat/adapter/MessageListItem;
 }
 
-public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemAdapter : androidx/recyclerview/widget/ListAdapter {
-	public static final field Companion Lio/getstream/chat/android/ui/messages/adapter/MessageListItemAdapter$Companion;
-	public fun <init> (Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewHolderFactory;)V
-	public fun getItemId (I)J
-	public fun getItemViewType (I)I
-	public final fun isThread ()Z
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;ILjava/util/List;)V
-	public fun onBindViewHolder (Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;I)V
-	public fun onBindViewHolder (Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;ILjava/util/List;)V
-	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
-	public synthetic fun onViewRecycled (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
-	public fun onViewRecycled (Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;)V
-	public final fun setThread (Z)V
-}
-
-public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemAdapter$Companion {
-}
-
 public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemPayloadDiff {
 	public fun <init> (ZZZZZZZZ)V
 	public final fun component1 ()Z
@@ -519,7 +405,7 @@ public class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewHo
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem;)I
-	public final fun getListenerContainer ()Lio/getstream/chat/android/ui/messages/adapter/MessageListListenerContainer;
+	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/messages/adapter/MessageListListenerContainer;
 }
 
 public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewType {
@@ -565,7 +451,6 @@ public final class io/getstream/chat/android/ui/messages/header/MessagesHeaderVi
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;II)V
 	public final fun hideAvatar ()V
 	public final fun hideBackButtonBadge ()V
 	public final fun hideSubtitle ()V
@@ -597,19 +482,6 @@ public abstract interface class io/getstream/chat/android/ui/messages/reactions/
 	public abstract fun onReactionClick (Lio/getstream/chat/android/client/models/Reaction;)V
 }
 
-public final class io/getstream/chat/android/ui/messages/reactions/ReactionItem {
-	public fun <init> (Lio/getstream/chat/android/client/models/Reaction;Z)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Reaction;
-	public final fun component2 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/ui/messages/reactions/ReactionItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/messages/reactions/ReactionItem;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/messages/reactions/ReactionItem;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getReaction ()Lio/getstream/chat/android/client/models/Reaction;
-	public fun hashCode ()I
-	public final fun isMine ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/messages/reactions/edit/EditReactionsView : androidx/recyclerview/widget/RecyclerView {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -624,7 +496,6 @@ public final class io/getstream/chat/android/ui/messages/reactions/user/SingleRe
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setReaction (Lio/getstream/chat/android/client/models/Reaction;Z)V
-	public static synthetic fun setReaction$default (Lio/getstream/chat/android/ui/messages/reactions/user/SingleReactionView;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/reactions/user/UserReactionsView : android/widget/FrameLayout {
@@ -645,13 +516,7 @@ public final class io/getstream/chat/android/ui/messages/reactions/view/ViewReac
 	public final fun setReactionClickListener (Lio/getstream/chat/android/ui/messages/reactions/ReactionClickListener;)V
 }
 
-public final class io/getstream/chat/android/ui/messages/view/HiddenMessageListItemFilter : io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/messages/view/HiddenMessageListItemFilter;
-	public fun filterMessageListItem (Ljava/util/List;)Ljava/util/List;
-}
-
 public final class io/getstream/chat/android/ui/messages/view/MessageListView : androidx/constraintlayout/widget/ConstraintLayout {
-	public static final field LOAD_MORE_THRESHOLD I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
@@ -662,12 +527,14 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadClickListener;)V
+	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setEndRegionReachedHandler (Lkotlin/jvm/functions/Function0;)V
 	public final fun setLastMessageReadHandler (Lkotlin/jvm/functions/Function0;)V
 	public final fun setLinkClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$LinkClickListener;)V
 	public final fun setLoadingMore (Z)V
+	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageClickListener;)V
@@ -718,7 +585,7 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter {
-	public abstract fun filterMessageListItem (Ljava/util/List;)Ljava/util/List;
+	public abstract fun filter (Ljava/util/List;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageLongClickListener {
@@ -790,8 +657,6 @@ public final class io/getstream/chat/android/ui/options/MessageOptionsView : and
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
-	public static final field FADE_DURATION J
-	public static final field TYPING_DEBOUNCE_MS J
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
@@ -810,28 +675,15 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchInputV
 	public abstract fun onSearchStarted (Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/ui/search/SearchResultListAdapter : androidx/recyclerview/widget/ListAdapter {
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
-	public fun onBindViewHolder (Lio/getstream/chat/android/ui/search/SearchResultListAdapter$MessagePreviewViewHolder;I)V
-	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/search/SearchResultListAdapter$MessagePreviewViewHolder;
-	public final fun setSearchResultSelectedListener (Lio/getstream/chat/android/ui/search/SearchResultListView$SearchResultSelectedListener;)V
-}
-
-public final class io/getstream/chat/android/ui/search/SearchResultListAdapter$MessagePreviewViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
-	public fun <init> (Lio/getstream/chat/android/ui/search/SearchResultListAdapter;Lio/getstream/chat/android/ui/databinding/StreamUiItemMentionListBinding;)V
-}
-
 public final class io/getstream/chat/android/ui/search/SearchResultListView : android/widget/ViewFlipper {
 	public static final field LOAD_MORE_THRESHOLD I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/search/SearchResultListView$LoadMoreListener;)V
-	public final fun setMessages (Ljava/lang/String;Ljava/util/List;)V
 	public final fun setSearchResultSelectedListener (Lio/getstream/chat/android/ui/search/SearchResultListView$SearchResultSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
+	public final fun showMessages (Ljava/lang/String;Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/search/SearchResultListView$LoadMoreListener {
@@ -843,7 +695,6 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchResult
 }
 
 public final class io/getstream/chat/android/ui/search/SearchViewModel : androidx/lifecycle/ViewModel {
-	public static final field QUERY_LIMIT I
 	public fun <init> ()V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
@@ -879,7 +730,7 @@ public final class io/getstream/chat/android/ui/suggestions/SuggestionListView :
 	public final fun hideSuggestionList ()V
 	public final fun isSuggestionListVisible ()Z
 	public final fun setOnSuggestionClickListener (Lio/getstream/chat/android/ui/suggestions/SuggestionListView$OnSuggestionClickListener;)V
-	public final fun setSuggestions (Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions;)V
+	public final fun showSuggestionList (Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/suggestions/SuggestionListView$OnSuggestionClickListener {
@@ -920,7 +771,6 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView 
 	public final fun autoCompleteUser (Lio/getstream/chat/android/client/models/User;)V
 	public final fun clearContent ()V
 	public final fun getAttachedFiles ()Ljava/util/List;
-	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageInputFieldBinding;
 	public final fun getMessageText ()Ljava/lang/String;
 	public final fun getMode ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
 	public final fun hasAttachments ()Z
@@ -1015,15 +865,15 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputView : and
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun configureCommands (Ljava/util/List;)V
-	public final fun configureMembers (Ljava/util/List;)V
 	public final fun disableSendButton ()V
 	public final fun enableSendButton ()V
 	public final fun getChatMode ()Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
 	public final fun getInputMode ()Lio/getstream/chat/android/ui/textinput/MessageInputView$InputMode;
 	public final fun setChatMode (Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;)V
+	public final fun setCommands (Ljava/util/List;)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/textinput/MessageInputView$InputMode;)V
 	public final fun setMaxMessageLength (I)V
+	public final fun setMembers (Ljava/util/List;)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/textinput/MessageInputView$OnMessageSendButtonClickListener;)V
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/textinput/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListView (Lio/getstream/chat/android/ui/suggestions/SuggestionListView;)V
@@ -1031,8 +881,8 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputView : and
 }
 
 public final class io/getstream/chat/android/ui/textinput/MessageInputView$ChatMode : java/lang/Enum {
-	public static final field DirectChat Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
-	public static final field GroupChat Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
+	public static final field DIRECT_CHAT Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
+	public static final field GROUP_CHAT Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/textinput/MessageInputView$ChatMode;
 }
@@ -1078,7 +928,7 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputView$Input
 }
 
 public abstract interface class io/getstream/chat/android/ui/textinput/MessageInputView$MessageSendHandler {
-	public abstract fun dismissReplay ()V
+	public abstract fun dismissReply ()V
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 	public abstract fun sendMessage (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
