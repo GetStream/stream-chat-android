@@ -15,12 +15,10 @@ public class GalleryImageAttachmentDestination(
     context: Context
 ) : AttachmentDestination(message, attachment, context) {
     override fun showImageViewer(message: Message, attachment: Attachment) {
-        val attachments = message.attachments
-        val imageUrls: List<String> = attachments
-            .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
-            .mapNotNull(Attachment::imageUrl)
+        val attachments =
+            message.attachments.filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
 
-        if (imageUrls.isEmpty()) {
+        if (attachments.isEmpty()) {
             Toast.makeText(context, "Invalid image(s)!", Toast.LENGTH_SHORT).show()
             return
         }
