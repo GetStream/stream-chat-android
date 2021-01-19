@@ -36,7 +36,7 @@ public open class MessageListItemViewHolderFactory {
      * Returns a view type value based on the type and contents of the given [item].
      * The view type returned here will be used as a parameter in [createViewHolder].
      *
-     * For built-in view types, see [ViewType] and its constants.
+     * For built-in view types, see [MessageListItemViewType] and its constants.
      */
     public open fun getItemViewType(item: MessageListItem): Int {
         return MessageListItemViewTypeMapper.getViewTypeValue(item)
