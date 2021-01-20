@@ -11,10 +11,10 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiFragmentAttachmentOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private var showInChatHandler: ShowInChatHandler? = null
-    private var deleteHandler: DeleteHandler? = null
-    private var replyHandler: ReplyHandler? = null
-    private var saveImageHandler: SaveImageHandler? = null
+    private var showInChatHandler: AttachmentOptionHandler? = null
+    private var deleteHandler: AttachmentOptionHandler? = null
+    private var replyHandler: AttachmentOptionHandler? = null
+    private var saveImageHandler: AttachmentOptionHandler? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return StreamUiFragmentAttachmentOptionsBinding.inflate(inflater, container, false)
@@ -42,7 +42,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         binding.attachmentOptionsMenu.setShowInChatClickListener(
             object : AttachmentOptionsView.ShowInChatClickListener {
                 override fun onClick() {
-                    showInChatHandler?.onClick()
+                    showInChatHandler
                     dismiss()
                 }
             }
@@ -58,26 +58,27 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         binding.root.setOnClickListener { dismiss() }
     }
 
-    internal interface ShowInChatHandler { fun onClick(): Unit }
-    internal interface DeleteHandler { fun onClick(): Unit }
-    internal interface ReplyHandler { fun onClick(): Unit }
-    internal interface SaveImageHandler { fun onClick(): Unit }
-
     companion object {
         const val TAG = "AttachmentOptionsDialogFragment"
 
         fun newInstance(
-            showInChatHandler: ShowInChatHandler? = null,
-            deleteHandler: DeleteHandler? = null,
-            replyHandler: ReplyHandler? = null,
-            saveImageHandler: SaveImageHandler? = null,
+            showInChatHandlerAttachment: AttachmentOptionHandler,
+            replyHandlerAttachment: AttachmentOptionHandler,
+            deleteHandlerAttachment: AttachmentOptionHandler? = null,
+            saveImageHandlerAttachment: AttachmentOptionHandler? = null,
         ): AttachmentOptionsDialogFragment {
             return AttachmentOptionsDialogFragment().apply {
-                this.showInChatHandler = showInChatHandler
-                this.deleteHandler = deleteHandler
-                this.replyHandler = replyHandler
-                this.saveImageHandler = saveImageHandler
+                this.showInChatHandler = showInChatHandlerAttachment
+                this.deleteHandler = deleteHandlerAttachment
+                this.replyHandler = replyHandlerAttachment
+                this.saveImageHandler = saveImageHandlerAttachment
             }
         }
     }
+
+    interface AttachmentOptionHandler {
+        fun onClick(): Unit
+    }
 }
+
+

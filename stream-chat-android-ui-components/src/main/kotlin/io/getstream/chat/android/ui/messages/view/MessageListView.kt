@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
+import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -143,6 +144,14 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
+    private var onAttachmentReplyOptionClickHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit =
+        {
+            throw IllegalStateException("attachmentReplyOptionClickHandler must be set")
+        }
+    private var onAttachmentShowInChatOptionClickHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit =
+        {
+            throw IllegalStateException("attachmentShowInChatOptionClickHandler must be set")
+        }
 
     private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
 
@@ -210,7 +219,14 @@ public class MessageListView : ConstraintLayout {
         AttachmentClickListener { message, attachment ->
             ChatUI.instance()
                 .navigator
-                .navigate(GalleryImageAttachmentDestination(message, attachment, context))
+                .navigate(
+                    GalleryImageAttachmentDestination(
+                        message,
+                        attachment,
+                        context,
+                        onAttachmentReplyOptionClickHandler,
+                        onAttachmentShowInChatOptionClickHandler)
+                )
         }
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
         AttachmentDownloadClickListener { attachment ->
@@ -799,6 +815,14 @@ public class MessageListView : ConstraintLayout {
     //region Listener declarations
     public fun interface EnterThreadListener {
         public fun onThreadEntered(message: Message)
+    }
+
+    public fun setOnAttachmentReplyOptionClickHandler(handler: (AttachmentGalleryActivity.AttachmentData) -> Unit) {
+        this.onAttachmentReplyOptionClickHandler = handler
+    }
+
+    public fun setOnAttachmentShowInChatOptionClickHandler(handler: (AttachmentGalleryActivity.AttachmentData) -> Unit) {
+        this.onAttachmentShowInChatOptionClickHandler = handler
     }
 
     public fun interface MessageClickListener {

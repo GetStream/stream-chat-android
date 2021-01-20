@@ -8,12 +8,15 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import java.io.Serializable
 
 public class GalleryImageAttachmentDestination(
     message: Message,
     attachment: Attachment,
-    context: Context
-) : AttachmentDestination(message, attachment, context) {
+    context: Context,
+    private val attachmentReplyOptionHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit,
+    private val attachmentShowInChatOptionHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit,
+) : AttachmentDestination(message, attachment, context), Serializable {
     override fun showImageViewer(message: Message, attachment: Attachment) {
         val attachments =
             message.attachments.filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
@@ -26,6 +29,14 @@ public class GalleryImageAttachmentDestination(
         val createdAt = message.getCreatedAtOrThrow().time
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        start(AttachmentGalleryActivity.createIntent(context, createdAt, attachmentIndex, message, attachments))
+        start(
+            AttachmentGalleryActivity.createIntent(context,
+                createdAt,
+                attachmentIndex,
+                message,
+                attachments,
+                attachmentReplyOptionHandler,
+                attachmentShowInChatOptionHandler)
+        )
     }
 }

@@ -52,20 +52,19 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
             subtitle.text = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
+            val currentAttachment = obtainAttachments()[binding.attachmentGallery.currentItemIndex]
             menuButton.setOnClickListener {
-                val currentUrl = attachmentUrls[binding.attachmentGallery.currentItemIndex]
-                val currentAttachment = attachments.first { it.imageUrl == currentUrl }
-                val showInChatHandler = object : AttachmentOptionsDialogFragment.ShowInChatHandler {
-                    override fun onClick() = finish()
-                }
-                val deleteHandler = object : AttachmentOptionsDialogFragment.DeleteHandler {
+                val deleteHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     override fun onClick() = Unit // "Not yet implemented"
                 }
-                val replyHandler = object : AttachmentOptionsDialogFragment.ReplyHandler {
+                val saveHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     override fun onClick() = Unit // "Not yet implemented"
                 }
-                val saveHandler = object : AttachmentOptionsDialogFragment.SaveImageHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                val showInChatHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    override fun onClick() = attachmentShowInChatOptionHandler(currentAttachment)
+                }
+                val replyHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    override fun onClick() = attachmentReplyOptionHandler(currentAttachment)
                 }
                 AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
                     .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
@@ -99,6 +98,9 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         private const val EXTRA_KEY_USER_NAME = "extra_key_user_name"
         private const val EXTRA_KEY_TIME = "extra_key_time"
 
+        private lateinit var attachmentShowInChatOptionHandler: (attachmentData: AttachmentData) -> Unit
+        private lateinit var attachmentReplyOptionHandler: (attachmentData: AttachmentData) -> Unit
+
         @JvmStatic
         public fun createIntent(
             context: Context,
@@ -106,7 +108,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             currentIndex: Int,
             message: Message,
             attachments: List<Attachment>,
+            attachmentShowInChatOptionHandler: (attachmentData: AttachmentData) -> Unit,
+            attachmentReplyOptionHandler: (attachmentData: AttachmentData) -> Unit,
         ): Intent {
+            this.attachmentReplyOptionHandler = attachmentReplyOptionHandler
+            this.attachmentShowInChatOptionHandler = attachmentShowInChatOptionHandler
             val userName = message.user.name
             val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
