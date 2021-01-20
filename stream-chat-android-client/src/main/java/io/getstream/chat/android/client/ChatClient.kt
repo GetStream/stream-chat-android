@@ -261,6 +261,7 @@ public class ChatClient internal constructor(
         return api.getReactions(messageId, offset, limit)
     }
 
+    @JvmOverloads
     public fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean = false): Call<Reaction> {
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
@@ -269,6 +270,7 @@ public class ChatClient internal constructor(
         return api.deleteReaction(messageId, reactionType)
     }
 
+    @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
         return api.sendReaction(reaction, enforceUnique)
     }
