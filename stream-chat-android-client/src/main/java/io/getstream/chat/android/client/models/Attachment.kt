@@ -6,8 +6,6 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
 
-public const val EXTRA_UPLOAD_COMPLETE: String = "uploadComplete"
-
 public data class Attachment(
 
     @SerializedName("author_name")
