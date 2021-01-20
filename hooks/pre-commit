@@ -2,7 +2,6 @@
 
 
 ./gradlew ktlintCheck -q
-
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
   echo "❌ ktlintCheck failed, running ktlintFormat for you..."
@@ -13,9 +12,8 @@ if [ $EXIT_CODE -ne 0 ]; then
   exit $EXIT_CODE
 fi
 
+
 ./gradlew apiCheck -q
-
-
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
   echo "❌ apiCheck failed, running apiDump for you..."
