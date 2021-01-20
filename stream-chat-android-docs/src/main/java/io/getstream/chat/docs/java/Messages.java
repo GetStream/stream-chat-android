@@ -166,7 +166,7 @@ public class Messages {
             reaction.setType("like");
             reaction.setScore(1);
 
-            channelClient.sendReaction(reaction).enqueue(result -> {
+            channelClient.sendReaction(reaction, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
@@ -231,7 +231,7 @@ public class Messages {
             reaction.setType("like");
             reaction.setScore(score);
 
-            channelClient.sendReaction(reaction).enqueue(result -> {
+            channelClient.sendReaction(reaction, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
