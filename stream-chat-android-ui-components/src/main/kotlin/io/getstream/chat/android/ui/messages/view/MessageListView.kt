@@ -60,8 +60,8 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.SendGiphyHandl
 import io.getstream.chat.android.ui.messages.view.MessageListView.StartThreadHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
-import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
-import io.getstream.chat.android.ui.options.MessageOptionsView
+import io.getstream.chat.android.ui.options.message.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.options.message.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlinx.coroutines.CoroutineScope

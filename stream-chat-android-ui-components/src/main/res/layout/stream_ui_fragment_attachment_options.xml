@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.options.AttachmentOptionsView
+    <io.getstream.chat.android.ui.options.attachment.AttachmentOptionsView
         android:id="@+id/attachmentOptionsMenu"
         android:layout_width="182dp"
         android:layout_height="wrap_content"

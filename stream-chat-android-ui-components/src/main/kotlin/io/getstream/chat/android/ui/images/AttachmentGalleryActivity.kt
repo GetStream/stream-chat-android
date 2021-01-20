@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
-import io.getstream.chat.android.ui.options.AttachmentOptionsDialogFragment
+import io.getstream.chat.android.ui.options.attachment.AttachmentOptionsDialogFragment
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 

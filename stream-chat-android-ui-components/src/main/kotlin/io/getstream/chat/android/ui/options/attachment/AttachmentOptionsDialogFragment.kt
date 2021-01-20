@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.options
+package io.getstream.chat.android.ui.options.attachment
 
 import android.os.Bundle
 import android.view.LayoutInflater
