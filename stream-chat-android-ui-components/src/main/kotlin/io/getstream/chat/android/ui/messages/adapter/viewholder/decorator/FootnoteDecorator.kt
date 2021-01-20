@@ -121,7 +121,7 @@ internal class FootnoteDecorator(
         data: MessageListItem.MessageItem,
         isThreadMode: Boolean,
     ) {
-        val isSimpleFootnoteMode = data.message.replyCount == 0 || data.message.isInThread() || isThreadMode
+        val isSimpleFootnoteMode = data.message.replyCount == 0 || isThreadMode
         if (isSimpleFootnoteMode) {
             setupSimpleFootnote(footnoteView, root, anchorView, data)
         } else {
