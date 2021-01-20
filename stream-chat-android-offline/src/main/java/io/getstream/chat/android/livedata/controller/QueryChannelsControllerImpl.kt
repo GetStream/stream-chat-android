@@ -38,7 +38,7 @@ internal class QueryChannelsControllerImpl(
     override val filter: FilterObject,
     override val sort: QuerySort<Channel>,
     private val client: ChatClient,
-    private val domainImpl: ChatDomainImpl
+    private val domainImpl: ChatDomainImpl,
 ) : QueryChannelsController {
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
@@ -78,7 +78,7 @@ internal class QueryChannelsControllerImpl(
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
-        memberLimit: Int = MEMBER_LIMIT
+        memberLimit: Int = MEMBER_LIMIT,
     ): QueryChannelsPaginationRequest {
         return QueryChannelsPaginationRequest(
             sort,
@@ -97,7 +97,7 @@ internal class QueryChannelsControllerImpl(
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
     internal suspend fun addChannelIfFilterMatches(
-        channel: Channel
+        channel: Channel,
     ) {
         if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
@@ -147,7 +147,7 @@ internal class QueryChannelsControllerImpl(
 
     suspend fun loadMore(
         channelLimit: Int = CHANNEL_LIMIT,
-        messageLimit: Int = MESSAGE_LIMIT
+        messageLimit: Int = MESSAGE_LIMIT,
     ): Result<List<Channel>> {
         val pagination = loadMoreRequest(channelLimit, messageLimit)
         return runQuery(pagination)
@@ -156,7 +156,7 @@ internal class QueryChannelsControllerImpl(
     suspend fun query(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
-        memberLimit: Int = MEMBER_LIMIT
+        memberLimit: Int = MEMBER_LIMIT,
     ): Result<List<Channel>> {
         return runQuery(
             QueryChannelsPaginationRequest(
@@ -218,26 +218,30 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val loader = if (pagination.isFirstPage) {
+        val loading = if (pagination.isFirstPage) {
             _loading
         } else {
             _loadingMore
         }
-        if (loader.value) {
+
+        if (loading.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
             return Result(
                 ChatError("Another query channels request is in progress. Ignoring this request.")
             )
         }
-        loader.value = true
-        // start by getting the query results from offline storage
 
+        loading.value = true
+
+        // start by getting the query results from offline storage
         val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
+
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = domainImpl.scope.async { runQueryOnline(pagination) }
+
         val channels = queryOfflineJob.await()?.also { offlineChannels ->
             updateChannelsAndQueryResults(offlineChannels, pagination.isFirstPage)
-            loader.value = false
+            loading.value = offlineChannels.isEmpty()
         }
 
         val output: Result<List<Channel>> = queryOnlineJob.await().let { onlineResult ->
@@ -247,7 +251,8 @@ internal class QueryChannelsControllerImpl(
                 channels?.let { Result(it) } ?: onlineResult
             }
         }
-        loader.value = false
+
+        loading.value = false
         return output
     }
 
@@ -261,7 +266,7 @@ internal class QueryChannelsControllerImpl(
      */
     internal suspend fun updateChannelsAndQueryResults(
         channels: List<Channel>?,
-        isFirstPage: Boolean
+        isFirstPage: Boolean,
     ) {
         if (channels != null) {
             val cIds = channels.map { it.cid }

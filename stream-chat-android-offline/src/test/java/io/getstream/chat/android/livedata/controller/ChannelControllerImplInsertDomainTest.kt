@@ -42,7 +42,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         chatDomainImpl.repos.insertChannel(data.channel1)
         channelControllerImpl.upsertMessage(message1)
         // send the reaction while offline
-        channelControllerImpl.sendReaction(reaction1)
+        channelControllerImpl.sendReaction(reaction1, enforceUnique = false)
         var reactionEntity =
             chatDomainImpl.repos.reactions.select(message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
@@ -58,7 +58,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     fun deleteReaction() = runBlocking {
         chatDomainImpl.setOffline()
 
-        channelControllerImpl.sendReaction(data.reaction1)
+        channelControllerImpl.sendReaction(data.reaction1, enforceUnique = false)
         channelControllerImpl.deleteReaction(data.reaction1)
 
         val reaction =

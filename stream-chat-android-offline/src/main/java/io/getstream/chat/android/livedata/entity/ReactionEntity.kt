@@ -37,6 +37,8 @@ internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId
     var updatedAt: Date? = null
     /** when the reaction was deleted, this field is only stored in the local db */
     var deletedAt: Date? = null
+    /** if new reaction should replace all reactions the user has on this message */
+    var enforceUnique: Boolean = false
     /** all the custom data provided for this reaction */
     var extraData = mutableMapOf<String, Any>()
 

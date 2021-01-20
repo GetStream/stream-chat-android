@@ -51,7 +51,7 @@ public interface ChannelController {
     public fun sendImage(file: File): Call<String>
     public fun sendFile(file: File, callback: ProgressCallback): Call<String>
     public fun sendImage(file: File, callback: ProgressCallback): Call<String>
-    public fun sendReaction(reaction: Reaction): Call<Reaction>
+    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction>
     public fun sendAction(request: SendActionRequest): Call<Message>
     public fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
