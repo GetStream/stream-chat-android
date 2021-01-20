@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 ./gradlew ktlintCheck -q
 
 EXIT_CODE=$?
@@ -14,10 +15,16 @@ fi
 
 ./gradlew apiCheck -q
 
+
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
-  echo "❌ apiCheck failed, please run apiDump and check changes"
+  echo "❌ apiCheck failed, running apiDump for you..."
+
+  ./gradlew apiDump -q
+
+  echo "API dump done, please check the results and then try your commit again!"
   exit $EXIT_CODE
 fi
+
 
 exit 0
