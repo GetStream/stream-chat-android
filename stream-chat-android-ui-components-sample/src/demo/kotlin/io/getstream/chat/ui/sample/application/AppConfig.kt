@@ -81,5 +81,29 @@ object AppConfig {
             id = "cebf562a-4806-4c64-a827-59d50aac42ba",
             token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY2ViZjU2MmEtNDgwNi00YzY0LWE4MjctNTlkNTBhYWM0MmJhIn0.kuXab7RhQRHdsErEW5tTN_mmuyLPNU4ZbprvuPXM4OY"
         ),
+        SampleUser(
+            name = "Qatest0",
+            image = "https://www.doppelme.com/E9E9E9/qatest0/crop.png",
+            id = "qatest0",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MCJ9.Vow00KvvhLvWRZIPKomXQOYpBL_P-_-eDeDKmBRvEj4"
+        ),
+        SampleUser(
+            name = "Qatest1",
+            image = "https://www.doppelme.com/E9E9E9/qatest1/crop.png",
+            id = "qatest1",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"
+        ),
+        SampleUser(
+            name = "Qatest2",
+            image = "https://www.doppelme.com/E9E9E9/qatest2/crop.png",
+            id = "qatest2",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"
+        ),
+        SampleUser(
+            name = "Qatest3",
+            image = "https://www.doppelme.com/E9E9E9/qatest3/crop.png",
+            id = "qatest3",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MyJ9.kLZJz5kl7e3Zw7i2T39Yp05_nAmh9RGG0rt6-5zOpfE"
+        ),
     )
 }
