@@ -210,8 +210,7 @@ internal class ChatDomainImpl internal constructor(
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
     /** The retry policy for retrying failed requests */
-    override var retryPolicy: RetryPolicy =
-        DefaultRetryPolicy()
+    override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     private fun clearState() {
         _initialized.value = false
