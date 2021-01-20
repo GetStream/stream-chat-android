@@ -14,7 +14,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.context
@@ -92,7 +92,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    public override fun bind(channel: Channel, diff: ChannelDiff) {
+    public override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
         configureForeground(diff)
@@ -136,7 +136,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    private fun configureForeground(diff: ChannelDiff) {
+    private fun configureForeground(diff: ChannelListPayloadDiff) {
         binding.itemForegroundView.apply {
             diff.run {
                 if (nameChanged) {
@@ -150,11 +150,14 @@ public class ChannelViewHolder @JvmOverloads constructor(
                 val lastMessage = channel.getLastMessage()
                 if (lastMessageChanged) {
                     configureLastMessageLabelAndTimestamp(lastMessage)
-                    configureUnreadCountBadge()
                 }
 
                 if (readStateChanged) {
                     configureCurrentUserLastMessageStatus(lastMessage)
+                }
+
+                if (unreadCountChanged) {
+                    configureUnreadCountBadge()
                 }
             }
         }
