@@ -77,7 +77,7 @@ internal class ChannelControllerImplReactionsTest {
     }
 
     @Test
-    fun `when add reaction with should add it to own and latest reactions`() =
+    fun `when add reaction should add it to own and latest reactions`() =
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
