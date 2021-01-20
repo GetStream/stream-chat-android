@@ -520,7 +520,7 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun displayNewMessage (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
+	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)V
@@ -530,8 +530,8 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
-	public final fun setEndRegionReachedHandler (Lkotlin/jvm/functions/Function0;)V
-	public final fun setLastMessageReadHandler (Lkotlin/jvm/functions/Function0;)V
+	public final fun setEndRegionReachedHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler;)V
+	public final fun setLastMessageReadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$LastMessageReadHandler;)V
 	public final fun setLinkClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$LinkClickListener;)V
 	public final fun setLoadingMore (Z)V
 	public final fun setLoadingView (Landroid/view/View;)V
@@ -544,18 +544,18 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryListener;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour;)V
-	public final fun setOnAttachmentDownloadHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnBlockUserHandler (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnMessageDeleteHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMessageEditHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMessageFlagHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMessageReactionHandler (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnMessageRetryHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMuteUserHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnReplyMessageHandler (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnSendGiphyHandler (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnStartThreadHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnStartThreadListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun setOnAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
+	public final fun setOnBlockUserHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$BlockUserHandler;)V
+	public final fun setOnMessageDeleteHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageDeleteHandler;)V
+	public final fun setOnMessageEditHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageEditHandler;)V
+	public final fun setOnMessageFlagHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageFlagHandler;)V
+	public final fun setOnMessageReactionHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReactionHandler;)V
+	public final fun setOnMessageRetryHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryHandler;)V
+	public final fun setOnMuteUserHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MuteUserHandler;)V
+	public final fun setOnReplyMessageHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReplyHandler;)V
+	public final fun setOnSendGiphyHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$SendGiphyHandler;)V
+	public final fun setOnStartThreadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$StartThreadHandler;)V
+	public final fun setOnStartThreadListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$EnterThreadListener;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ReactionViewClickListener;)V
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ThreadClickListener;)V
@@ -572,8 +572,28 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onAttachmentDownloadClick (Lio/getstream/chat/android/client/models/Attachment;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler {
+	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$BlockUserHandler {
+	public abstract fun onUserBlock (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler {
+	public abstract fun onEndRegionReached ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EnterThreadListener {
+	public abstract fun onThreadEntered (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$GiphySendListener {
 	public abstract fun onGiphySend (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$LastMessageReadHandler {
+	public abstract fun onLastMessageRead ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$LinkClickListener {
@@ -584,6 +604,18 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onMessageClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageDeleteHandler {
+	public abstract fun onMessageDelete (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageEditHandler {
+	public abstract fun onMessageEdit (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageFlagHandler {
+	public abstract fun onMessageFlag (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter {
 	public abstract fun filter (Ljava/util/List;)Ljava/util/List;
 }
@@ -592,8 +624,24 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onMessageLongClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageReactionHandler {
+	public abstract fun onMessageReaction (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageReplyHandler {
+	public abstract fun onMessageReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryHandler {
+	public abstract fun onMessageRetry (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryListener {
 	public abstract fun onRetryMessage (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MuteUserHandler {
+	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour : java/lang/Enum {
@@ -608,20 +656,20 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onReactionViewClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$SendGiphyHandler {
+	public abstract fun onSendGiphy (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$StartThreadHandler {
+	public abstract fun onStartThread (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$ThreadClickListener {
 	public abstract fun onThreadClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener {
 	public abstract fun onUserClick (Lio/getstream/chat/android/client/models/User;)V
-}
-
-public final class io/getstream/chat/android/ui/messages/view/MessageListView$sam$i$io_getstream_chat_android_ui_options_MessageOptionsDialogFragment_ReactionClickHandler$0 : io/getstream/chat/android/ui/options/MessageOptionsDialogFragment$ReactionClickHandler, kotlin/jvm/internal/FunctionAdapter {
-	public fun <init> (Lkotlin/jvm/functions/Function2;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getFunctionDelegate ()Lkotlin/Function;
-	public fun hashCode ()I
-	public final synthetic fun onReactionClick (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/view/MessageListViewModelBinding {

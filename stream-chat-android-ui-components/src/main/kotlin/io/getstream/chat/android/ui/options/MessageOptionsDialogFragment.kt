@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.view.FullScreenDialogFragment
@@ -171,11 +172,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupOptionsClickListeners(messageOptionsHandlers: MessageOptionsHandlers) {
         binding.messageOptionsView.run {
             setThreadListener {
-                messageOptionsHandlers.threadReplyHandler(message)
+                messageOptionsHandlers.threadReplyHandler.onStartThread(message)
                 dismiss()
             }
             setRetryListener {
-                messageOptionsHandlers.retryHandler(message)
+                messageOptionsHandlers.retryHandler.onMessageRetry(message)
                 dismiss()
             }
             setCopyListener {
@@ -183,23 +184,23 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setEditMessageListener {
-                messageOptionsHandlers.editClickHandler(message)
+                messageOptionsHandlers.editClickHandler.onMessageEdit(message)
                 dismiss()
             }
             setFlagMessageListener {
-                messageOptionsHandlers.flagClickHandler(message)
+                messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
                 dismiss()
             }
             setMuteUserListener {
-                messageOptionsHandlers.muteClickHandler(message.user)
+                messageOptionsHandlers.muteClickHandler.onUserMute(message.user)
                 dismiss()
             }
             setBlockUserListener {
-                messageOptionsHandlers.blockClickHandler(message.user)
+                messageOptionsHandlers.blockClickHandler.invoke(message.user)
                 dismiss()
             }
             setReplyListener {
-                messageOptionsHandlers.replyClickHandler(messageItem.message.cid, messageItem.message)
+                messageOptionsHandlers.replyClickHandler.onMessageReply(messageItem.message.cid, messageItem.message)
                 dismiss()
             }
             setDeleteMessageListener {
@@ -208,7 +209,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         .setTitle(configuration.deleteConfirmationTitle)
                         .setMessage(configuration.deleteConfirmationMessage)
                         .setPositiveButton(configuration.deleteConfirmationPositiveButton) { dialog, _ ->
-                            messageOptionsHandlers.deleteClickHandler(message)
+                            messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
                             dialog.dismiss()
                             dismiss()
                         }
@@ -217,7 +218,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         }
                         .show()
                 } else {
-                    messageOptionsHandlers.deleteClickHandler(message)
+                    messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
                     dismiss()
                 }
             }
@@ -252,14 +253,14 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     internal class MessageOptionsHandlers(
-        val threadReplyHandler: (Message) -> Unit,
-        val retryHandler: (Message) -> Unit,
-        val editClickHandler: (Message) -> Unit,
-        val flagClickHandler: (Message) -> Unit,
-        val muteClickHandler: (User) -> Unit,
-        val blockClickHandler: (User) -> Unit,
-        val deleteClickHandler: (Message) -> Unit,
-        val replyClickHandler: (String, Message) -> Unit,
+        val threadReplyHandler: MessageListView.StartThreadHandler,
+        val retryHandler: MessageListView.MessageRetryHandler,
+        val editClickHandler: MessageListView.MessageEditHandler,
+        val flagClickHandler: MessageListView.MessageFlagHandler,
+        val muteClickHandler: MessageListView.MuteUserHandler,
+        val blockClickHandler: (user: User) -> Unit,
+        val deleteClickHandler: MessageListView.MessageDeleteHandler,
+        val replyClickHandler: MessageListView.MessageReplyHandler,
     ) : Serializable
 
     internal enum class OptionsMode {

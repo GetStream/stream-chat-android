@@ -55,7 +55,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
                 } else {
                     view.hideEmptyStateView()
                 }
-                view.displayNewMessage(state.messageListItem)
+                view.displayNewMessages(state.messageListItem)
                 view.hideLoadingView()
             }
         }
