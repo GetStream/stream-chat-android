@@ -55,8 +55,8 @@ internal class MessagePlainTextViewHolder(
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
+    override fun bindData(data: MessageListItem.MessageItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, isThread, diff)
 
         with(binding) {
             messageText.text = data.message.text

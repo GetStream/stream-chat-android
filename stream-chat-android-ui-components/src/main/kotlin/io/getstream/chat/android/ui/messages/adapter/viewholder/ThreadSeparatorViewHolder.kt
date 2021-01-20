@@ -8,7 +8,6 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemThreadDividerBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.utils.extensions.context
 
 internal class ThreadSeparatorViewHolder(
     parent: ViewGroup,
@@ -21,8 +20,12 @@ internal class ThreadSeparatorViewHolder(
         ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem>(binding.root, decorators) {
 
-    override fun bindData(data: MessageListItem.ThreadSeparatorItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
+    override fun bindData(
+        data: MessageListItem.ThreadSeparatorItem,
+        isThread: Boolean,
+        diff: MessageListItemPayloadDiff?
+    ) {
+        super.bindData(data, isThread, diff)
 
         binding.threadSeparatorLabel.text = context.resources.getQuantityString(
             R.plurals.stream_ui_thread_separator_replies_label,

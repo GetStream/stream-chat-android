@@ -24,7 +24,7 @@ public class MessageListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
-        holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+        holder.bindListItem(getItem(position), isThread, FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
     }
 
     override fun onBindViewHolder(
@@ -42,7 +42,7 @@ public class MessageListItemAdapter(
                 acc + messageListItemPayloadDiff
             }
 
-        holder.bindListItem(getItem(position), diff)
+        holder.bindListItem(getItem(position), isThread, diff)
     }
 
     override fun onViewRecycled(holder: BaseMessageItemViewHolder<out MessageListItem>) {

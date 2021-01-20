@@ -22,7 +22,8 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
@@ -31,7 +32,8 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -40,7 +42,8 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -49,7 +52,8 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -58,16 +62,21 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
         }
     }
 
-    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateDeletedMessage(
+        viewHolder: MessageDeletedViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
+    ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) = Unit
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,
