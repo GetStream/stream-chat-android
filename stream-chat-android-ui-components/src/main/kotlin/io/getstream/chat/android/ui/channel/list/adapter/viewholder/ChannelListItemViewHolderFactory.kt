@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemType
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemViewType
 
 public open class ChannelListItemViewHolderFactory {
 
@@ -21,8 +21,8 @@ public open class ChannelListItemViewHolderFactory {
      */
     public open fun getItemViewType(item: ChannelListItem): Int {
         return when (item) {
-            is ChannelListItem.LoadingMoreItem -> ChannelListItemType.LOADING_MORE.ordinal
-            is ChannelListItem.ChannelItem -> ChannelListItemType.DEFAULT.ordinal
+            is ChannelListItem.LoadingMoreItem -> ChannelListItemViewType.LOADING_MORE
+            is ChannelListItem.ChannelItem -> ChannelListItemViewType.DEFAULT
         }
     }
 
@@ -34,9 +34,10 @@ public open class ChannelListItemViewHolderFactory {
         parentView: ViewGroup,
         viewType: Int,
     ): BaseChannelListItemViewHolder {
-        return when (ChannelListItemType.values()[viewType]) {
-            ChannelListItemType.DEFAULT -> createChannelViewHolder(parentView)
-            ChannelListItemType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
+        return when (viewType) {
+            ChannelListItemViewType.DEFAULT -> createChannelViewHolder(parentView)
+            ChannelListItemViewType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
+            else -> throw IllegalArgumentException("Unhandled ChannelList view type: $viewType")
         }
     }
 
