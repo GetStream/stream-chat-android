@@ -26,7 +26,6 @@ import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
-import io.getstream.chat.android.ui.utils.extensions.isInThread
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 
 internal class FootnoteDecorator(
@@ -37,57 +36,70 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.messageContainer,
-        data
+        data,
+        isThread,
     )
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.fileAttachmentsView,
-        data
+        data,
+        isThread,
     )
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.messageContainer,
-        data
+        data,
+        isThread,
     )
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.mediaAttachmentsGroupView,
-        data
+        data,
+        isThread,
     )
 
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) =
+    override fun decoratePlainTextMessage(
+        viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
+    ) =
         setupFootnote(
             viewHolder.binding.footnote,
             viewHolder.binding.root,
             viewHolder.binding.threadGuideline,
             viewHolder.binding.messageContainer,
-            data
+            data,
+            isThread,
         )
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) {
         setupSimpleFootnote(
             viewHolder.binding.footnote,
             viewHolder.binding.root,
@@ -106,8 +118,9 @@ internal class FootnoteDecorator(
         threadGuideline: View,
         anchorView: View,
         data: MessageListItem.MessageItem,
+        isThreadMode: Boolean,
     ) {
-        val isSimpleFootnoteMode = data.message.replyCount == 0 || data.message.isInThread()
+        val isSimpleFootnoteMode = data.message.replyCount == 0 || isThreadMode
         if (isSimpleFootnoteMode) {
             setupSimpleFootnote(footnoteView, root, anchorView, data)
         } else {

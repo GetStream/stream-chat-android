@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.channel.list.adapter.diff.ChannelDiff
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.utils.ModelType
 
 internal fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
@@ -48,12 +48,13 @@ internal fun Channel.getLastMessageByUserId(userId: String): Message? =
             !it.isEphemeral()
     }
 
-internal fun Channel.diff(other: Channel): ChannelDiff =
-    ChannelDiff(
+internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
+    ChannelListPayloadDiff(
         nameChanged = name != other.name,
         avatarViewChanged = getUsers() != other.getUsers(),
         readStateChanged = read != other.read,
-        lastMessageChanged = getLastMessage() != other.getLastMessage()
+        lastMessageChanged = getLastMessage() != other.getLastMessage(),
+        unreadCountChanged = unreadCount != other.unreadCount,
     )
 
 internal fun Channel.getOnlineStateSubtitle(context: Context): String {
@@ -99,7 +100,7 @@ internal fun Channel.isDirectMessaging(): Boolean = getUsers().size == 1
 // None of the strings used to assemble the preview message are translatable - concatenation here should be fine
 internal fun Channel.getLastMessagePreviewText(
     context: Context,
-    isDirectMessaging: Boolean = false
+    isDirectMessaging: Boolean = false,
 ): SpannableStringBuilder? {
     return getLastMessage()?.let { message ->
         val sender = message.getSenderDisplayName(context, isDirectMessaging)

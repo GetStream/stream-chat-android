@@ -49,8 +49,8 @@ internal class OnlyMediaAttachmentsViewHolder(
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
+    override fun bindData(data: MessageListItem.MessageItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, isThread, diff)
 
         if (data.message.attachments.isMedia()) {
             binding.mediaAttachmentsGroupView.showAttachments(data.message.attachments)
