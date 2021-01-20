@@ -1760,6 +1760,10 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 	public static final fun getDisplayableName (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
+	public static synthetic fun getUsers$default (Lio/getstream/chat/android/client/models/Channel;ZILjava/lang/Object;)Ljava/util/List;
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
 }
 
@@ -1985,6 +1989,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/MediatorLiveData;
+	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
 	public final fun resetThread ()V
 	public final fun sendMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V

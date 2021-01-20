@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
@@ -17,7 +18,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 
 public class ChannelsView @JvmOverloads constructor(
     context: Context,

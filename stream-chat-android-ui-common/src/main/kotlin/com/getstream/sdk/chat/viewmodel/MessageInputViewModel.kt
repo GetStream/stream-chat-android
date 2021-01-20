@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
@@ -33,6 +34,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
     public val repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
 
+    private val _isDirectMessage: MutableLiveData<Boolean> = MutableLiveData()
+    public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
+
     init {
         chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
@@ -41,6 +45,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
                 _maxMessageLength.value = channel.config.maxMessageLength
                 _commands.value = channel.config.commands
                 _members.addSource(channelController.members) { _members.value = it }
+                _isDirectMessage.value = channel.isDirectMessaging()
                 repliedMessage.addSource(channelController.repliedMessage) { repliedMessage.value = it }
             }
         }

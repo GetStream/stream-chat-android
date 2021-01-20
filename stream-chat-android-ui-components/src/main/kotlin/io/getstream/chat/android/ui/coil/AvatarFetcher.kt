@@ -9,12 +9,12 @@ import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.size.PixelSize
 import coil.size.Size
+import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.avatar.Avatar
 import io.getstream.chat.android.ui.avatar.AvatarBitmapCombiner
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import io.getstream.chat.android.ui.utils.extensions.getUsers
 
 internal class AvatarFetcher(
     private val avatarBitmapFactory: AvatarBitmapFactory
