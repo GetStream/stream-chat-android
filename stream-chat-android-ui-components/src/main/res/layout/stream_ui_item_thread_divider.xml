@@ -8,6 +8,7 @@
     android:gravity="center"
     android:paddingVertical="2dp"
     android:textAlignment="center"
+    android:background="@drawable/stream_ui_bg_gradient"
     android:textAppearance="@style/StreamUiTextAppearance.Footnote"
     tools:text="1 Reply"
     />
