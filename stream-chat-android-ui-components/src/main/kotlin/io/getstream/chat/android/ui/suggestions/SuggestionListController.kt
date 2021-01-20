@@ -25,14 +25,14 @@ internal class SuggestionListController(
     fun showSuggestions(messageText: String) {
         this.messageText = messageText
         when {
-            messageText.isCommandMessage() -> suggestionListView.setSuggestions(messageText.getCommandSuggestions())
-            messageText.isMentionMessage() -> suggestionListView.setSuggestions(messageText.getMentionSuggestions())
+            messageText.isCommandMessage() -> suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
+            messageText.isMentionMessage() -> suggestionListView.showSuggestionList(messageText.getMentionSuggestions())
             else -> hideSuggestionList()
         }
     }
 
     fun showAvailableCommands() {
-        suggestionListView.setSuggestions(SuggestionListView.Suggestions.CommandSuggestions(commands))
+        suggestionListView.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
     }
 
     fun hideSuggestionList() {

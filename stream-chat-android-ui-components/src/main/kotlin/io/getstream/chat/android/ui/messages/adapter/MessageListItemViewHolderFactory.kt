@@ -29,8 +29,12 @@ public open class MessageListItemViewHolderFactory {
 
     internal lateinit var decoratorProvider: DecoratorProvider
 
-    public lateinit var listenerContainer: MessageListListenerContainer
-        internal set
+    protected lateinit var listenerContainer: MessageListListenerContainer
+        private set
+
+    internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
+        this.listenerContainer = listenerContainer
+    }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].

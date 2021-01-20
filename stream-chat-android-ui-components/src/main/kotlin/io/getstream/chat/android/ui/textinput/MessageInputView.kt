@@ -77,7 +77,7 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
-    public var chatMode: ChatMode by Delegates.observable(ChatMode.GroupChat) { _, _, _ ->
+    public var chatMode: ChatMode by Delegates.observable(ChatMode.GROUP_CHAT) { _, _, _ ->
         configSendAlsoToChannelCheckbox()
     }
 
@@ -121,11 +121,11 @@ public class MessageInputView : ConstraintLayout {
         this.sendMessageHandler = handler
     }
 
-    public fun configureMembers(members: List<Member>) {
+    public fun setMembers(members: List<Member>) {
         suggestionListController?.users = members.map { it.user }
     }
 
-    public fun configureCommands(commands: List<Command>) {
+    public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
     }
 
@@ -173,7 +173,7 @@ public class MessageInputView : ConstraintLayout {
         }
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
-        binding.dismissReply.setOnClickListener { sendMessageHandler.dismissReplay() }
+        binding.dismissReply.setOnClickListener { sendMessageHandler.dismissReply() }
     }
 
     private fun configSendButtonListener() {
@@ -201,10 +201,10 @@ public class MessageInputView : ConstraintLayout {
         val shouldShowCheckbox = sendAlsoToChannelCheckBoxEnabled && isThreadModeActive
         if (shouldShowCheckbox) {
             val text = when (chatMode) {
-                ChatMode.GroupChat -> {
+                ChatMode.GROUP_CHAT -> {
                     context.getString(R.string.stream_ui_send_also_to_channel)
                 }
-                ChatMode.DirectChat -> {
+                ChatMode.DIRECT_CHAT -> {
                     context.getString(R.string.stream_ui_send_also_as_direct_message)
                 }
             }
@@ -534,7 +534,7 @@ public class MessageInputView : ConstraintLayout {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
 
-            override fun dismissReplay() {
+            override fun dismissReply() {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
         }
@@ -548,19 +548,28 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public enum class ChatMode {
-        DirectChat,
-        GroupChat
+        DIRECT_CHAT,
+        GROUP_CHAT,
     }
 
     public interface MessageSendHandler {
-        public fun sendMessage(messageText: String, messageReplyTo: Message? = null)
+        public fun sendMessage(
+            messageText: String,
+            messageReplyTo: Message? = null,
+        )
+
         public fun sendMessageWithAttachments(
             message: String,
             attachmentsFiles: List<File>,
             messageReplyTo: Message? = null,
         )
 
-        public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+        public fun sendToThread(
+            parentMessage: Message,
+            messageText: String,
+            alsoSendToChannel: Boolean,
+        )
+
         public fun sendToThreadWithAttachments(
             parentMessage: Message,
             message: String,
@@ -569,7 +578,7 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
-        public fun dismissReplay()
+        public fun dismissReply()
     }
 
     public fun interface OnMessageSendButtonClickListener {

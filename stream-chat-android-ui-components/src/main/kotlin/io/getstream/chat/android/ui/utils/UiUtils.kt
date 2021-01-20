@@ -51,7 +51,7 @@ public object UiUtils {
 
 public enum class ReactionType(
     public val type: String,
-    @DrawableRes public val iconRes: Int
+    @DrawableRes public val iconRes: Int,
 ) {
     LOVE("love", R.drawable.stream_ui_ic_reaction_love),
     THUMBS_UP("thumbs_up", R.drawable.stream_ui_ic_reaction_thumbs_up),

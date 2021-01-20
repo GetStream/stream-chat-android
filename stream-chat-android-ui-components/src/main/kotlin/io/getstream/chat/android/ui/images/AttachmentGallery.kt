@@ -56,7 +56,9 @@ public class AttachmentGallery : ConstraintLayout {
     public val currentItemIndex: Int
         get() = binding.attachmentGallery.currentItem
 
-    public constructor(context: Context) : super(context)
+    public constructor(context: Context) : super(context) {
+        init(null)
+    }
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
@@ -70,7 +72,7 @@ public class AttachmentGallery : ConstraintLayout {
         init(attrs)
     }
 
-    public fun init(attr: AttributeSet?) {
+    private fun init(attr: AttributeSet?) {
         attr?.let(::configureAttributes)
         configureImagesMenu()
     }

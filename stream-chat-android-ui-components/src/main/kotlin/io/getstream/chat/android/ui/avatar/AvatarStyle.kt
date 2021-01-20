@@ -10,16 +10,16 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
 
-public class AvatarStyle internal constructor(context: Context, attrs: AttributeSet?) {
-    public var avatarBorderWidth: Int
+internal class AvatarStyle internal constructor(context: Context, attrs: AttributeSet?) {
+    var avatarBorderWidth: Int
         internal set
-    public var avatarBorderColor: Int
+    var avatarBorderColor: Int
         internal set
-    public var avatarInitialText: TextStyle
+    var avatarInitialText: TextStyle
         internal set
-    public var onlineIndicatorEnabled: Boolean
+    var onlineIndicatorEnabled: Boolean
         internal set
-    public var onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition
+    var onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition
         internal set
 
     init {

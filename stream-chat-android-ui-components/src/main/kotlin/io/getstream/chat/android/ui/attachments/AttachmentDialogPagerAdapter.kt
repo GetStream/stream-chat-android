@@ -6,7 +6,7 @@ import io.getstream.chat.android.ui.attachments.camera.CameraAttachmentFragment
 import io.getstream.chat.android.ui.attachments.file.FileAttachmentFragment
 import io.getstream.chat.android.ui.attachments.media.MediaAttachmentFragment
 
-public class AttachmentDialogPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+internal class AttachmentDialogPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
@@ -19,10 +19,10 @@ public class AttachmentDialogPagerAdapter(fragment: Fragment) : FragmentStateAda
 
     override fun getItemCount(): Int = PAGE_COUNT
 
-    public companion object {
-        public const val PAGE_MEDIA_ATTACHMENT: Int = 0
-        public const val PAGE_FILE_ATTACHMENT: Int = 1
-        public const val PAGE_CAMERA_ATTACHMENT: Int = 2
-        public const val PAGE_COUNT: Int = 3
+    companion object {
+        const val PAGE_MEDIA_ATTACHMENT: Int = 0
+        const val PAGE_FILE_ATTACHMENT: Int = 1
+        const val PAGE_CAMERA_ATTACHMENT: Int = 2
+        const val PAGE_COUNT: Int = 3
     }
 }

@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
 import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.context
 
-public class MentionsListAdapter(
+internal class MentionsListAdapter(
     context: Context,
     private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
@@ -37,12 +37,12 @@ public class MentionsListAdapter(
         holder.bind(getItem(position))
     }
 
-    public fun setMentionSelectedListener(mentionSelectedListener: MentionSelectedListener?) {
+    fun setMentionSelectedListener(mentionSelectedListener: MentionSelectedListener?) {
         this.mentionSelectedListener = mentionSelectedListener
     }
 
-    public inner class MessagePreviewViewHolder(
-        private val view: MessagePreviewView
+    inner class MessagePreviewViewHolder(
+        private val view: MessagePreviewView,
     ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var message: Message

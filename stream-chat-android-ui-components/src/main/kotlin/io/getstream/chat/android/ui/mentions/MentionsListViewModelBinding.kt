@@ -17,7 +17,7 @@ public fun MentionsListViewModel.bindView(view: MentionsListView, lifecycleOwner
                 view.showLoading()
             }
             else -> {
-                view.setMessages(state.results)
+                view.showMessages(state.results)
             }
         }
     }
