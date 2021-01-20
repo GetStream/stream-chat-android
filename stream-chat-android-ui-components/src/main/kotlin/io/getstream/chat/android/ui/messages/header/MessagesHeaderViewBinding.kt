@@ -36,7 +36,7 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
 
     activeThread.observe(lifecycle) { message ->
         if (message != null) {
-            view.setThreadMode(message.threadParticipants.size > 1)
+            view.setThreadMode()
         } else {
             view.setNormalMode()
         }

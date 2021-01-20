@@ -166,8 +166,8 @@ public class MessagesHeaderView : ConstraintLayout {
         binding.onlineLabel.text = normalModeSubTitle
     }
 
-    public fun setThreadMode(isGroupThread: Boolean) {
-        val title = threadModeTitle ?: normalModeTitle
+    public fun setThreadMode() {
+        val title = threadModeTitle ?: context.getString(R.string.stream_ui_title_thread_reply)
         val subTitleComplement = normalModeTitle
 
         binding.title.text = title
