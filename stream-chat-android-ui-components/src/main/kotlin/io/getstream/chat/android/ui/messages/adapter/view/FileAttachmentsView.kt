@@ -1,11 +1,13 @@
 package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -13,6 +15,7 @@ import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
@@ -60,7 +63,7 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
 private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -81,7 +84,7 @@ private class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
@@ -119,6 +122,16 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+
+            if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+            } else if (attachment.uploadComplete == false) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+            }
         }
     }
 

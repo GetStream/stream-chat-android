@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -611,8 +612,12 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
+                    attachment.uploadComplete = result.isSuccess
                     if (result.isSuccess) {
                         attachment = result.data()
+                    } else {
+                        attachment.uploadState = Attachment.UploadState.Failed(result.error())
+                        logger.logE("Failed to upload attachment for message")
                     }
                 }
                 attachment
@@ -621,6 +626,7 @@ internal class ChannelControllerImpl(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -632,7 +638,6 @@ internal class ChannelControllerImpl(
                 upsertMessage(processedMessage)
                 Result(processedMessage)
             } else {
-
                 logger.logE(
                     "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
                     result.error()
@@ -700,7 +705,11 @@ internal class ChannelControllerImpl(
             newAttachment = attachmentTransformer(newAttachment, file)
         }
 
-        return Result(newAttachment, if (pathResult.isError) pathResult.error() else null)
+        return if (!pathResult.isError) {
+            Result(newAttachment)
+        } else {
+            Result(pathResult.error())
+        }
     }
 
     /**
