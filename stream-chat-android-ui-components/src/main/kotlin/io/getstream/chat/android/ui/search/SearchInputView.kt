@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
+import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.Debouncer
 
@@ -53,6 +54,7 @@ public class SearchInputView : FrameLayout {
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
 
+        binding.root.setOnClickListener { binding.inputField.focusAndShowKeyboard() }
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)
 
