@@ -36,7 +36,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
     view.setOnMessageReactionHandler { message, reactionType ->
-        onEvent(MessageReaction(message, reactionType))
+        onEvent(MessageReaction(message, reactionType, enforceUnique = true))
     }
     view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
     view.setOnBlockUserHandler { user, channel -> onEvent(BlockUser(user, channel)) }

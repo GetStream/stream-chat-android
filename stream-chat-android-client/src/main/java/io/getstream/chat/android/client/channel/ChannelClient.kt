@@ -330,8 +330,8 @@ public class ChannelClient internal constructor(
         return client.sendImage(channelType, channelId, file)
     }
 
-    override fun sendReaction(reaction: Reaction): Call<Reaction> {
-        return client.sendReaction(reaction)
+    override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
+        return client.sendReaction(reaction, enforceUnique)
     }
 
     override fun sendAction(request: SendActionRequest): Call<Message> {

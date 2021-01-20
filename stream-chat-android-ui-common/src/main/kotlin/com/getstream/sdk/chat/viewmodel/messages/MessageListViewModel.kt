@@ -188,7 +188,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.useCases.sendMessage(event.message).enqueue()
             }
             is Event.MessageReaction -> {
-                onMessageReaction(event.message, event.reactionType)
+                onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
                 client.muteUser(event.user.id).enqueue()
@@ -270,7 +270,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
-    private fun onMessageReaction(message: Message, reactionType: String) {
+    private fun onMessageReaction(message: Message, reactionType: String, enforceUnique: Boolean) {
         val reaction = Reaction().apply {
             messageId = message.id
             type = reactionType
@@ -279,7 +279,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         if (message.latestReactions.any { it.type == reactionType && it.user?.id == currentUserId }) {
             domain.useCases.deleteReaction(cid, reaction).enqueue()
         } else {
-            domain.useCases.sendReaction(cid, reaction).enqueue()
+            domain.useCases.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue()
         }
     }
 
@@ -303,7 +303,11 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class FlagMessage(val message: Message) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
-        public data class MessageReaction(val message: Message, val reactionType: String) : Event()
+        public data class MessageReaction(
+            val message: Message,
+            val reactionType: String,
+            val enforceUnique: Boolean,
+        ) : Event()
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val channel: Channel) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()

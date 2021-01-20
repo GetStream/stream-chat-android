@@ -26,4 +26,10 @@ internal interface ReactionDao {
             "WHERE stream_chat_reaction.messageid = :messageId AND userId = :userId AND type = :type"
     )
     suspend fun select(messageId: String, userId: String, type: String): ReactionEntity?
+
+    @Query(
+        "SELECT * FROM stream_chat_reaction " +
+            "WHERE stream_chat_reaction.messageid = :messageId AND userId = :userId"
+    )
+    suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity>
 }
