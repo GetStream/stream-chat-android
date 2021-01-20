@@ -14,12 +14,6 @@ internal class ComputeUnreadCountTest : BaseDomainTest2() {
     private val validUserRead = ChannelUserRead(data.user1, data.message1.createdAt, 2)
 
     @Test
-    fun `when messages are null, unread count should be null`() {
-        val count = computeUnreadCount(data.user1)
-        Truth.assertThat(count).isNull()
-    }
-
-    @Test
     fun `when messages are present, but read is null, return valid messages size`() {
         val count = computeUnreadCount(
             currentUser = data.user1,
