@@ -125,7 +125,7 @@ public open class MessageListItemViewHolderFactory {
     ): BaseMessageItemViewHolder<MessageListItem> {
         return object :
             BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
-            override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
+            override fun bindData(data: MessageListItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) = Unit
         }
     }
 }
