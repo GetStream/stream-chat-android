@@ -22,34 +22,40 @@ internal class GapDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupGapView(viewHolder.binding.gapView, data)
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) =
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) =
         setupGapView(viewHolder.binding.gapView, data)
 }
