@@ -146,40 +146,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `Upload attachment with error should be configurable`() = testCoroutines.scope.runBlockingTest {
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploadsFailure(files)
-        val extra = mutableMapOf<String, Any>("The Answer" to 42)
-
-        for (attachment in attachments) {
-            val error = attachment.upload!!.toChatError()
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment) { attachment, _ ->
-                attachment.copy(extraData = extra)
-            }
-            assertFailure(result)
-            Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.UploadState.Failed::class.java)
-            Truth.assertThat(result.data().extraData).isEqualTo(extra)
-        }
-    }
-
-    @Test
-    fun `Upload attachment should with errors should have the right format`() = testCoroutines.scope.runBlockingTest {
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploadsFailure(files)
-
-        for (attachment in attachments) {
-            val error = attachment.upload!!.toChatError()
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment)
-            assertFailure(result)
-            Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.UploadState.Failed::class.java)
-        }
-    }
-
-    @Test
     fun `Errors should still return the attachments`() = testCoroutines.scope.runBlockingTest {
 
         val message = randomMessage()
