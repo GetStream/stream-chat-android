@@ -28,13 +28,13 @@ import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows
@@ -43,8 +43,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 internal class SendMessagesTest {
 
-    private val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
-    private val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
+    @get:Rule
+    val testCoroutines = TestCoroutineRule()
+
+    private val scope = testCoroutines.scope
 
     private val channelClient: ChannelClient = mock {
         on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
@@ -70,7 +72,7 @@ internal class SendMessagesTest {
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     private val domainImpl: ChatDomainImpl = mock {
-        on(it.scope) doReturn scope
+        on(it.scope) doReturn testCoroutines.scope
         on(it.generateMessageId()) doReturn randomString()
         on(it.currentUser) doReturn User()
         on(it.repos) doReturn repos
