@@ -117,7 +117,7 @@ internal class ChannelControllerImpl(
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _unreadCount = MutableStateFlow(0)
 
-    private val uploadStatusMessages: MutableList<Message> = mutableListOf()
+    private var uploadStatusMessage: Message? = null
 
     override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
@@ -613,7 +613,7 @@ internal class ChannelControllerImpl(
             // upload attachments
             logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-            upsertProgressMessage(listOf())
+            upsertProgressMessage(newMessage.attachments.size)
             newMessage.attachments = newMessage.attachments.map {
                 var attachment: Attachment = it
 
@@ -630,7 +630,7 @@ internal class ChannelControllerImpl(
                 attachment
             }.toMutableList()
 
-            uploadStatusMessages.forEach { message -> cancelMessage(message) }
+            uploadStatusMessage?.let { cancelMessage(it) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
@@ -667,14 +667,16 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private fun upsertProgressMessage(uploadIdList: List<String>) {
+    private fun upsertProgressMessage(countOfFileToUpload: Int) {
         val message = Message(
-            text = "Messages Upload - 0/${uploadIdList.size}",
+            text = "Messages Upload - 0/$countOfFileToUpload",
             createdAt = Date(),
             type = "ephemeral",
+            user = domainImpl.currentUser,
+            command = "file"
         )
 
-        uploadStatusMessages.add(message)
+        uploadStatusMessage = message
 
         upsertMessages(listOf(message))
     }

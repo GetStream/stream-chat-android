@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS_EPHEMERAL
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -66,6 +67,7 @@ public open class MessageListItemViewHolderFactory {
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
+            ATTACHMENTS_EPHEMERAL -> createPlainTextViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }

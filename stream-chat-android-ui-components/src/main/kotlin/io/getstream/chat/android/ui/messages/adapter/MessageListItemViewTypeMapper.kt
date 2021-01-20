@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS_EPHEMERAL
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -17,6 +18,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.TYP
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
+import io.getstream.chat.android.ui.utils.extensions.isAttachmentEphemeral
 
 internal object MessageListItemViewTypeMapper {
 
@@ -40,6 +42,7 @@ internal object MessageListItemViewTypeMapper {
             messageItem.message.isFileWithText() -> PLAIN_TEXT_WITH_FILE_ATTACHMENTS
             messageItem.message.attachments.isMedia() -> MEDIA_ATTACHMENTS
             messageItem.message.attachments.isAttachmentWithoutLinks() -> ATTACHMENTS
+            messageItem.message.isAttachmentEphemeral() -> ATTACHMENTS_EPHEMERAL
             else -> PLAIN_TEXT
         }
     }
