@@ -58,6 +58,7 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+        initMessageListView()
     }
 
     override fun onResume() {
@@ -126,22 +127,20 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
-            binding.messageListView.apply {
-                setOnMessageEditHandler {
-                    editMessage.postValue(it)
-                }
-                setOnAttachmentReplyOptionClickHandler {
-                    TODO("Not yet implemented")
-                }
-                setOnAttachmentShowInChatOptionClickHandler {
-                    requireActivity().findNavController(R.id.hostFragmentContainer)
-                        .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, it.messageId))
-                }
+            binding.messageListView.setOnMessageEditHandler {
+                editMessage.postValue(it)
             }
         }
+    }
 
-        // set external suggestion view which is displayed over message list
-        binding.messageInputView.setSuggestionListView(binding.suggestionListView)
+    private fun initMessageListView() = binding.messageListView.apply {
+        setOnAttachmentReplyOptionClickHandler {
+            TODO("Not yet implemented")
+        }
+        setOnAttachmentShowInChatOptionClickHandler {
+            requireActivity().findNavController(R.id.hostFragmentContainer)
+                .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, it.messageId))
+        }
     }
 
     private fun initMessagesViewModel() {
