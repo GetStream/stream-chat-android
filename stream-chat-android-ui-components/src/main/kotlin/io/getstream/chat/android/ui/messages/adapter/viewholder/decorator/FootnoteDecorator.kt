@@ -26,7 +26,6 @@ import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
-import io.getstream.chat.android.ui.utils.extensions.isInThread
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 
 internal class FootnoteDecorator(
