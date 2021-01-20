@@ -15,8 +15,8 @@ import io.getstream.chat.android.livedata.repository.mapper.toModel
  */
 internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, var client: ChatClient) {
 
-    suspend fun insertReaction(reaction: Reaction) {
-        insert(listOf(reaction.toEntity()))
+    suspend fun insertReaction(reaction: Reaction, enforceUnique: Boolean = false) {
+        insert(listOf(reaction.toEntity(enforceUnique)))
     }
 
     suspend fun insertManyReactions(reactions: List<Reaction>) {
@@ -45,6 +45,10 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
         return reactionDao.selectSyncNeeded()
     }
 
+    suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity> {
+        return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
+    }
+
     suspend fun retryReactions(): List<ReactionEntity> {
         val reactionEntities = selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
@@ -53,7 +57,7 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
             val result = if (reactionEntity.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).execute()
             } else {
-                client.sendReaction(reaction).execute()
+                client.sendReaction(reaction, reactionEntity.enforceUnique).execute()
             }
 
             if (result.isSuccess) {
