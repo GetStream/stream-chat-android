@@ -18,12 +18,16 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
-import io.getstream.chat.android.ui.utils.extensions.withReply
-import io.getstream.chat.android.ui.utils.extensions.withText
+import io.getstream.chat.android.ui.utils.extensions.hasText
+import io.getstream.chat.android.ui.utils.extensions.isReply
 
 internal class BackgroundDecorator : BaseDecorator() {
 
-    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateDeletedMessage(
+        viewHolder: MessageDeletedViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
+    ) {
         val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
         val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(bottomRightCorner).build()
@@ -35,6 +39,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
@@ -42,6 +47,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -51,6 +57,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -60,6 +67,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -69,13 +77,14 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
         data
     )
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) {
         viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
@@ -95,12 +104,12 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) {
         setDefaultBackgroundDrawable(background, data)
 
-        val topLeftCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
-        val topRightCorner = if (data.message.withReply()) 0f else DEFAULT_CORNER_RADIUS
+        val topLeftCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
+        val topRightCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
         val bottomRightCorner =
-            if (data.message.withText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
         val bottomLeftCorner =
-            if (data.message.withText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
+            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
 
         attachmentView.background = ShapeAppearanceModel.builder()
             .setTopLeftCornerSize(topLeftCorner)

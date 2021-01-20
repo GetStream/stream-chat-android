@@ -14,32 +14,38 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMed
 internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
     ) = Unit
 
     private fun setupReplyView(replyView: MessageReplyView, data: MessageListItem.MessageItem) {

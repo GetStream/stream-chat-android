@@ -38,7 +38,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
@@ -112,8 +112,14 @@ class ChatFragment : Fragment() {
                 viewLifecycleOwner,
                 {
                     when (it) {
-                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
-                        is MessageListViewModel.Mode.Normal -> resetThread()
+                        is MessageListViewModel.Mode.Thread -> {
+                            headerViewModel.setActiveThread(it.parentMessage)
+                            messageInputViewModel.setActiveThread(it.parentMessage)
+                        }
+                        is MessageListViewModel.Mode.Normal -> {
+                            headerViewModel.setActiveThread(null)
+                            messageInputViewModel.resetThread()
+                        }
                     }
                 }
             )

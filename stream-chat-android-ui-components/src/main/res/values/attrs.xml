@@ -171,6 +171,7 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <attr name="streamUiMessagesHeaderThreadModeTitle" format="string|reference" />
     </declare-styleable>
 
     <declare-styleable name="EditReactionsView">
@@ -210,6 +211,19 @@
         <attr name="streamUiCountText" format="string" />
         <attr name="streamUiCountTextColor" format="color|reference" />
         <attr name="streamUiImagesMenuTitle" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="AttachmentOptionsView">
+        <attr name="streamUiIconsDefaultTint" format="color" />
+        <attr name="streamUiReplyText" format="reference" />
+        <attr name="streamUiReplyIcon" format="reference" />
+        <attr name="streamUiShowInChatIcon" format="reference" />
+        <attr name="streamUiShowInChatText" format="reference" />
+        <attr name="streamUiSaveImageIcon" format="reference" />
+        <attr name="streamUiSaveImageText" format="reference" />
+        <attr name="streamUiDeleteIcon" format="reference" />
+        <attr name="streamUiDeleteText" format="reference" />
+        <attr name="streamUiDeleteIconTint" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="MessageListView">

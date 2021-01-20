@@ -33,4 +33,12 @@ public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: 
         }
     }
     typingUsers.observe(lifecycle, view::showTypingStateLabel)
+
+    activeThread.observe(lifecycle) { message ->
+        if (message != null) {
+            view.setThreadMode()
+        } else {
+            view.setNormalMode()
+        }
+    }
 }
