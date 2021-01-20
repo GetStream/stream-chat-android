@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
@@ -17,8 +18,10 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.bindView
 import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
+import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class ChatFragment : Fragment() {
@@ -123,8 +126,17 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
-            binding.messageListView.setOnMessageEditHandler {
-                editMessage.postValue(it)
+            binding.messageListView.apply {
+                setOnMessageEditHandler {
+                    editMessage.postValue(it)
+                }
+                setOnAttachmentReplyOptionClickHandler {
+                    TODO("Not yet implemented")
+                }
+                setOnAttachmentShowInChatOptionClickHandler {
+                    requireActivity().findNavController(R.id.hostFragmentContainer)
+                        .navigateSafely(HomeFragmentDirections.actionOpenChat(it.cid, it.messageId))
+                }
             }
         }
 
