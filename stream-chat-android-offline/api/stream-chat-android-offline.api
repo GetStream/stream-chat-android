@@ -270,6 +270,7 @@ public final class io/getstream/chat/android/livedata/dao/ReactionDao_Impl : io/
 	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectUserReactionsToMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/livedata/dao/SyncStateDao_Impl : io/getstream/chat/android/livedata/dao/SyncStateDao {
@@ -407,7 +408,11 @@ public final class io/getstream/chat/android/livedata/usecase/SendMessageWithAtt
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/SendReaction {
-	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
+}
+
+public final class io/getstream/chat/android/livedata/usecase/SendReaction$DefaultImpls {
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/SendReaction;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/SetMessageForReply {

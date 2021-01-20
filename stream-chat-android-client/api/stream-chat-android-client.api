@@ -87,7 +87,11 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)V
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun setAnonymousUser (Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
 	public static synthetic fun setAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
 	public final fun setGuestUser (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
@@ -420,7 +424,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient : io/g
 	public fun sendImage (Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
 	public fun sendImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
+	public fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public fun show ()Lio/getstream/chat/android/client/call/Call;
 	public fun stopTyping ()Lio/getstream/chat/android/client/call/Call;
@@ -485,7 +489,7 @@ public abstract interface class io/getstream/chat/android/client/controllers/Cha
 	public abstract fun sendImage (Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun show ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun stopTyping ()Lio/getstream/chat/android/client/call/Call;
@@ -513,6 +517,7 @@ public final class io/getstream/chat/android/client/controllers/ChannelControlle
 	public static synthetic fun create$default (Lio/getstream/chat/android/client/controllers/ChannelController;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun hide$default (Lio/getstream/chat/android/client/controllers/ChannelController;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/controllers/ChannelController;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/controllers/ChannelController;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun update$default (Lio/getstream/chat/android/client/controllers/ChannelController;Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
