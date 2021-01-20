@@ -15,17 +15,23 @@ internal class AvatarDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
-    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+    override fun decoratePlainTextMessage(
+        viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean
+    ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
@@ -33,6 +39,7 @@ internal class AvatarDecorator : BaseDecorator() {
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
@@ -40,11 +47,12 @@ internal class AvatarDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
+        isThread: Boolean,
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) = Unit
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
         if (data.isTheirs && data.isTheirs && data.isBottomPosition()) {
