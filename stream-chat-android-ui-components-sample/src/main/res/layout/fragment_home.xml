@@ -37,6 +37,7 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="8dp"
             app:elevation="0dp"
             app:itemIconSize="20dp"
             app:itemIconTint="@color/bottom_nav_item_color"
