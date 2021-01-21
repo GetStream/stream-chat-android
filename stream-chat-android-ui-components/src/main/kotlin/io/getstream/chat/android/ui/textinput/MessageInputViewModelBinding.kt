@@ -5,6 +5,8 @@ package io.getstream.chat.android.ui.textinput
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.textinput.MessageInputView.ChatMode.DIRECT_CHAT
+import io.getstream.chat.android.ui.textinput.MessageInputView.ChatMode.GROUP_CHAT
 import java.io.File
 
 /**
@@ -27,6 +29,9 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         message?.let {
             view.inputMode = MessageInputView.InputMode.Edit(it)
         }
+    }
+    isDirectMessage.observe(lifecycleOwner) { isDirectMessage ->
+        view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
     }
 
     view.setSendMessageHandler(
