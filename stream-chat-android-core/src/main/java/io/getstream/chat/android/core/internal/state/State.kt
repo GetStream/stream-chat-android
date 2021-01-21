@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.internal.state
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.chat.android.core.internal.state.State.StateType.Failure
@@ -14,6 +15,7 @@ import kotlinx.coroutines.runBlocking
  *
  * @param initialValue The initial value for State.
  */
+@InternalStreamChatApi
 public class State<T : Any?>(initialValue: T) {
     public companion object {
         public operator fun <T : Any?> invoke(initialValueProvider: () -> T): State<T> =
