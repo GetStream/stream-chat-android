@@ -39,7 +39,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         onEvent(MessageReaction(message, reactionType, enforceUnique = true))
     }
     view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
-    view.setOnBlockUserHandler { user, channel -> onEvent(BlockUser(user, channel)) }
+    view.setOnBlockUserHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setOnReplyMessageHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setOnAttachmentDownloadHandler { attachment -> onEvent(AttachmentDownload(attachment)) }
 

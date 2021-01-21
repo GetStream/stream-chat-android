@@ -13,7 +13,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
@@ -196,7 +195,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setBlockUserListener {
-                messageOptionsHandlers.blockClickHandler.invoke(message.user)
+                messageOptionsHandlers.blockClickHandler.onUserBlock(message.user, message.cid)
                 dismiss()
             }
             setReplyListener {
@@ -258,7 +257,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         val editClickHandler: MessageListView.MessageEditHandler,
         val flagClickHandler: MessageListView.MessageFlagHandler,
         val muteClickHandler: MessageListView.MuteUserHandler,
-        val blockClickHandler: (user: User) -> Unit,
+        val blockClickHandler: MessageListView.BlockUserHandler,
         val deleteClickHandler: MessageListView.MessageDeleteHandler,
         val replyClickHandler: MessageListView.MessageReplyHandler,
     ) : Serializable
@@ -297,7 +296,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_OPTIONS_CONFIG to configuration
+                    ARG_OPTIONS_CONFIG to configuration,
                 )
                 // pass message via static field
                 messageArg = message

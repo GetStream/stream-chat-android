@@ -186,7 +186,7 @@ public class MessageListView : ConstraintLayout {
                                 editClickHandler = messageEditHandler,
                                 flagClickHandler = messageFlagHandler,
                                 muteClickHandler = muteUserHandler,
-                                blockClickHandler = { user -> blockUserHandler.onUserBlock(user, channel) },
+                                blockClickHandler = blockUserHandler,
                                 deleteClickHandler = messageDeleteHandler,
                                 replyClickHandler = messageReplyHandler,
                             )
@@ -888,7 +888,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface BlockUserHandler {
-        public fun onUserBlock(user: User, channel: Channel)
+        public fun onUserBlock(user: User, cid: String)
     }
 
     public fun interface AttachmentDownloadHandler {

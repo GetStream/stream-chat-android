@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.utils.validateCid
 import kotlin.properties.Delegates
 
 /**
@@ -194,12 +195,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 client.muteUser(event.user.id).enqueue()
             }
             is Event.BlockUser -> {
+                validateCid(cid)
+                val (channelType, channelId) = event.cid.split(':')
                 client.shadowBanUser(
                     targetId = event.user.id,
-                    channelType = event.channel.type,
-                    channelId = event.channel.id,
+                    channelType = channelType,
+                    channelId = channelId,
                     reason = null,
-                    timeout = null
+                    timeout = null,
                 ).enqueue()
             }
             is Event.ReplyMessage -> {
@@ -309,7 +312,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             val enforceUnique: Boolean,
         ) : Event()
         public data class MuteUser(val user: User) : Event()
-        public data class BlockUser(val user: User, val channel: Channel) : Event()
+        public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class AttachmentDownload(val attachment: Attachment) : Event()
     }
