@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
-import java.io.Serializable
 
 public class GalleryImageAttachmentDestination(
     message: Message,
@@ -16,7 +15,7 @@ public class GalleryImageAttachmentDestination(
     context: Context,
     private val attachmentReplyOptionHandler: AttachmentGalleryActivity.AttachmentOptionReplyHandler,
     private val attachmentShowInChatOptionHandler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler,
-) : AttachmentDestination(message, attachment, context), Serializable {
+) : AttachmentDestination(message, attachment, context) {
     override fun showImageViewer(message: Message, attachment: Attachment) {
         val attachments =
             message.attachments.filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
