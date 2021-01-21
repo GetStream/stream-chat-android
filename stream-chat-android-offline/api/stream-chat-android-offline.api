@@ -392,11 +392,12 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/SendG
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/SendMessage {
+	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/livedata/usecase/SendMessage$DefaultImpls {
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/SendMessage;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static fun invoke (Lio/getstream/chat/android/livedata/usecase/SendMessage;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/SendMessageWithAttachments {
