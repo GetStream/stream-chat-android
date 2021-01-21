@@ -80,6 +80,7 @@ dependencies {
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
+    implementation Dependencies.coroutinesAndroid
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.retrofit
     implementation Dependencies.retrofitGsonConverter
