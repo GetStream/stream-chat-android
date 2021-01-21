@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.exhaustive
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -283,7 +284,11 @@ public class ChatClient internal constructor(
     }
 
     public fun reconnectSocket() {
-        runCatching { clientStateService.state.userOrError().let(socket::connect) }
+        when (val state = clientStateService.state) {
+            is ClientState.Anonymous -> socket.connectAnonymously()
+            is ClientState.User -> socket.connect(state.user)
+            is ClientState.Idle -> { }
+        }.exhaustive
     }
 
     public fun addSocketListener(listener: SocketListener) {
