@@ -50,3 +50,7 @@ public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachin
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/core/internal/fsm/FiniteStateMachine;
 }
 
+public final class io/getstream/chat/android/core/internal/state/State$Companion {
+	public final fun invoke (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/core/internal/state/State;
+}
+
