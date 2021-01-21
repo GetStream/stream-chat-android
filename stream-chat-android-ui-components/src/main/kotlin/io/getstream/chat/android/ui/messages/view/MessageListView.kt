@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
@@ -38,6 +39,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
@@ -47,7 +49,6 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListe
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -64,7 +65,7 @@ import kotlinx.coroutines.withContext
 public class MessageListView : ConstraintLayout {
 
     private companion object {
-        const val LOAD_MORE_THRESHOLD = 10
+        private const val LOAD_MORE_THRESHOLD = 10
     }
 
     private lateinit var style: MessageListViewStyle
@@ -528,7 +529,7 @@ public class MessageListView : ConstraintLayout {
             dateFormatter = messageDateFormatter,
             isDirectMessage = channel.isDirectMessaging()
         )
-        messageListItemViewHolderFactory.listenerContainer = this.listenerContainer
+        messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -541,6 +542,7 @@ public class MessageListView : ConstraintLayout {
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
      */
+    @JvmOverloads
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         loadingViewContainer.removeView(loadingView)
         loadingView = view
@@ -560,6 +562,7 @@ public class MessageListView : ConstraintLayout {
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
      */
+    @JvmOverloads
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         emptyStateViewContainer.removeView(emptyStateView)
         emptyStateView = view
@@ -603,7 +606,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = messageListItemFilter.filterMessageListItem(listItem.items)
+            val filteredList = messageListItemFilter.filter(listItem.items)
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
@@ -815,7 +818,7 @@ public class MessageListView : ConstraintLayout {
      * Filter functional object that can filter MessageListItem before applying them to MessageListView.
      */
     public fun interface MessageListItemFilter {
-        public fun filterMessageListItem(messageListItem: List<MessageListItem>): List<MessageListItem>
+        public fun filter(messageListItems: List<MessageListItem>): List<MessageListItem>
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {

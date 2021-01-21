@@ -4,11 +4,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem
 
-public class MessageListItemAdapter(
+internal class MessageListItemAdapter(
     private val viewHolderFactory: MessageListItemViewHolderFactory,
 ) : ListAdapter<MessageListItem, BaseMessageItemViewHolder<out MessageListItem>>(MessageListItemDiffCallback) {
 
-    public var isThread: Boolean = false
+    var isThread: Boolean = false
 
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
@@ -50,7 +50,7 @@ public class MessageListItemAdapter(
         holder.unbind()
     }
 
-    public companion object {
+    companion object {
         private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = true,
             reactions = true,

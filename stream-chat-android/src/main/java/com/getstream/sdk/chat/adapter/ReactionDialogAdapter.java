@@ -134,7 +134,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             reaction.setMessageId(message.getId());
             reaction.setType(type);
             if (!cid.equals("")) {
-                ChatDomain.instance().getUseCases().getSendReaction().invoke(cid, reaction).enqueue(reactionResult -> Unit.INSTANCE);
+                ChatDomain.instance().getUseCases().getSendReaction().invoke(cid, reaction, false).enqueue(reactionResult -> Unit.INSTANCE);
             }
 
         }

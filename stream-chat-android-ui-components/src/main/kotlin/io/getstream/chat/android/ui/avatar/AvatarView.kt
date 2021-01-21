@@ -108,12 +108,12 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    public enum class OnlineIndicatorPosition {
+    internal enum class OnlineIndicatorPosition {
         TOP,
         BOTTOM
     }
 
     internal companion object {
-        internal const val MAX_AVATAR_SECTIONS = 4
+        const val MAX_AVATAR_SECTIONS = 4
     }
 }

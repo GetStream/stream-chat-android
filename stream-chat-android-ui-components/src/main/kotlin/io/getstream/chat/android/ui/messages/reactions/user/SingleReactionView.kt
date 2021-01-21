@@ -38,7 +38,7 @@ public class SingleReactionView : FrameLayout {
         init(context, attrs)
     }
 
-    public fun setReaction(reaction: Reaction, isMyReaction: Boolean = false) {
+    public fun setReaction(reaction: Reaction, isMyReaction: Boolean) {
         // according to the design, current user reactions have the same style
         // as reactions on the current user messages in the message list
         this.isMyMessage = !isMyReaction

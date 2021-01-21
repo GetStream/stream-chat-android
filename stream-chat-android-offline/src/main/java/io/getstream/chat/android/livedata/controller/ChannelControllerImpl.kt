@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -611,8 +612,12 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
+                    attachment.uploadComplete = result.isSuccess
                     if (result.isSuccess) {
                         attachment = result.data()
+                    } else {
+                        attachment.uploadState = Attachment.UploadState.Failed(result.error())
+                        logger.logE("Failed to upload attachment for message")
                     }
                 }
                 attachment
@@ -621,6 +626,7 @@ internal class ChannelControllerImpl(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -632,7 +638,6 @@ internal class ChannelControllerImpl(
                 upsertMessage(processedMessage)
                 Result(processedMessage)
             } else {
-
                 logger.logE(
                     "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
                     result.error()
@@ -700,7 +705,11 @@ internal class ChannelControllerImpl(
             newAttachment = attachmentTransformer(newAttachment, file)
         }
 
-        return Result(newAttachment, if (pathResult.isError) pathResult.error() else null)
+        return if (!pathResult.isError) {
+            Result(newAttachment)
+        } else {
+            Result(pathResult.error())
+        }
     }
 
     /**
@@ -770,32 +779,42 @@ internal class ChannelControllerImpl(
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
-    suspend fun sendReaction(reaction: Reaction): Result<Reaction> {
-        reaction.user = domainImpl.currentUser
+    suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
+        val currentUser = domainImpl.currentUser
+        reaction.apply {
+            user = currentUser
+            userId = currentUser.id
+            syncStatus = SyncStatus.IN_PROGRESS
+        }
         val online = domainImpl.isOnline()
         // insert the message into local storage
 
-        reaction.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
-        domainImpl.repos.reactions.insertReaction(reaction)
+        if (enforceUnique) {
+            // remove all user's reactions to the message
+            val currentReactions = domainImpl.repos.reactions.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
+            currentReactions.forEach { it.deletedAt = Date() }
+            domainImpl.repos.reactions.insert(currentReactions)
+        }
+        domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
         // update livedata
-        val currentMessage = getMessage(reaction.messageId)
+        val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
-            it.addReaction(reaction, true)
+            it.addReaction(reaction, isMine = true, enforceUnique = enforceUnique)
             upsertMessage(it)
             domainImpl.repos.messages.insert(it)
         }
 
         if (online) {
             val runnable = {
-                client.sendReaction(reaction)
+                client.sendReaction(reaction, enforceUnique)
             }
             val result = domainImpl.runAndRetry(runnable)
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
                 Result(result.data())
             } else {
                 logger.logE(
@@ -808,7 +827,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
                 Result(result.error())
             }
         }
@@ -817,8 +836,12 @@ internal class ChannelControllerImpl(
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> {
         val online = domainImpl.isOnline()
-        reaction.user = domainImpl.currentUser
-        reaction.syncStatus = SyncStatus.IN_PROGRESS
+        val currentUser = domainImpl.currentUser
+        reaction.apply {
+            user = currentUser
+            userId = currentUser.id
+            syncStatus = SyncStatus.IN_PROGRESS
+        }
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
@@ -828,7 +851,7 @@ internal class ChannelControllerImpl(
         domainImpl.repos.reactions.insert(reactionEntity)
 
         // update livedata
-        val currentMessage = getMessage(reaction.messageId)
+        val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
             it.removeReaction(reaction, true)
             upsertMessage(it)

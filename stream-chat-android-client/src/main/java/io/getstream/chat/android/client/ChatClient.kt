@@ -262,16 +262,18 @@ public class ChatClient internal constructor(
         return api.getReactions(messageId, offset, limit)
     }
 
-    public fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
-        return api.sendReaction(messageId, reactionType)
+    @JvmOverloads
+    public fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean = false): Call<Reaction> {
+        return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
     public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return api.deleteReaction(messageId, reactionType)
     }
 
-    public fun sendReaction(reaction: Reaction): Call<Reaction> {
-        return api.sendReaction(reaction)
+    @JvmOverloads
+    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
+        return api.sendReaction(reaction, enforceUnique)
     }
     //endregion
 

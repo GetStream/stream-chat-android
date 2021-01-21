@@ -147,7 +147,7 @@ internal open class BaseDomainTest {
                     any<Map<String, Any>>()
                 )
             } doReturn TestCall(Result(data.channel1))
-            on { sendReaction(any()) } doReturn TestCall(
+            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
         }
@@ -182,7 +182,7 @@ internal open class BaseDomainTest {
             on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any()) } doReturn TestCall(
+            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
         }

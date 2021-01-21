@@ -63,8 +63,8 @@ public class ChannelListView @JvmOverloads constructor(
             viewHolderFactory = ChannelListItemViewHolderFactory()
         }
 
-        viewHolderFactory.listenerContainer = this.listenerContainer
-        viewHolderFactory.style = style
+        viewHolderFactory.setListenerContainer(this.listenerContainer)
+        viewHolderFactory.setStyle(style)
 
         adapter = ChannelListItemAdapter(viewHolderFactory)
 
@@ -169,6 +169,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface UserClickListener {
         public companion object {
+            @JvmField
             public val DEFAULT: UserClickListener = UserClickListener {}
         }
 
@@ -177,6 +178,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface ChannelClickListener {
         public companion object {
+            @JvmField
             public val DEFAULT: ChannelClickListener = ChannelClickListener {}
         }
 
@@ -185,6 +187,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface ChannelLongClickListener {
         public companion object {
+            @JvmField
             public val DEFAULT: ChannelLongClickListener = ChannelLongClickListener { false }
         }
 
@@ -280,7 +283,7 @@ public class ChannelListView @JvmOverloads constructor(
         public fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int)
 
         public companion object {
-
+            @JvmField
             public val DEFAULT: SwipeListener = object : SwipeListener {
                 override fun onSwipeStarted(
                     viewHolder: SwipeViewHolder,

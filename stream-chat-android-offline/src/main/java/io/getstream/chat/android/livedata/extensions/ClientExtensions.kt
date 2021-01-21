@@ -10,17 +10,47 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 
-internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user + (replyTo?.users().orEmpty())
+internal fun Message.users(): List<User> =
+    latestReactions.mapNotNull(Reaction::user) + user + (replyTo?.users().orEmpty())
 
 internal fun Channel.users(): List<User> = members.map(Member::user) +
     read.map(ChannelUserRead::user) +
     createdBy +
     messages.flatMap { it.users() }
 
-internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
+private fun Message.clearOwnReactions(userId: String) {
+    // remove own reactions from latest reactions
+    latestReactions.removeAll { reaction -> reaction.userId == userId }
+
+    // update counts
+    ownReactions.groupBy { it.type }.forEach { (type, reactions) ->
+        // update the count
+        val newCount = reactionCounts.getOrElse(type) { 0 } - reactions.size
+        if (newCount <= 0) {
+            reactionCounts.remove(type)
+        } else {
+            reactionCounts[type] = newCount
+        }
+
+        // update the score
+        val newScore = reactionScores.getOrElse(type) { 0 } - reactions.sumBy { it.score }
+        if (newScore <= 0) {
+            reactionScores.remove(type)
+        } else {
+            reactionScores[type] = newScore
+        }
+    }
+    // clear own reactions
+    ownReactions.clear()
+}
+
+internal fun Message.addReaction(reaction: Reaction, isMine: Boolean, enforceUnique: Boolean = false) {
 
     // add to own reactions
     if (isMine) {
+        if (enforceUnique) {
+            clearOwnReactions(reaction.userId)
+        }
         this.ownReactions.add(reaction)
     }
 

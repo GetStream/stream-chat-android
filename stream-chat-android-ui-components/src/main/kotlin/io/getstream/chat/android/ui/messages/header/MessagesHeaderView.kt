@@ -50,15 +50,6 @@ public class MessagesHeaderView : ConstraintLayout {
         init(attrs)
     }
 
-    public constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        init(attrs)
-    }
-
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.MessagesHeaderView).use {

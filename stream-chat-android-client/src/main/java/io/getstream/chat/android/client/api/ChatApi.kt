@@ -60,7 +60,7 @@ internal class ChatApi(
     private val retrofitAnonymousApi: RetrofitAnonymousApi,
     private val uuidGenerator: UuidGenerator,
     private val fileUploader: FileUploader,
-    private val coroutineScope: CoroutineScope = GlobalScope
+    private val coroutineScope: CoroutineScope = GlobalScope,
 ) {
 
     private var userId: String = ""
@@ -75,7 +75,7 @@ internal class ChatApi(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback
+        callback: ProgressCallback,
     ): Unit = fileUploader.sendFile(
         channelType = channelType,
         channelId = channelId,
@@ -89,7 +89,7 @@ internal class ChatApi(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback
+        callback: ProgressCallback,
     ): Unit = fileUploader.sendImage(
         channelType = channelType,
         channelId = channelId,
@@ -193,7 +193,7 @@ internal class ChatApi(
     fun getRepliesMore(
         messageId: String,
         firstId: String,
-        limit: Int
+        limit: Int,
     ): Call<List<Message>> {
         return retrofitApi.getRepliesMore(
             messageId,
@@ -218,7 +218,7 @@ internal class ChatApi(
     fun getReactions(
         messageId: String,
         offset: Int,
-        limit: Int
+        limit: Int,
     ): Call<List<Reaction>> {
         return retrofitApi.getReactions(
             messageId,
@@ -229,18 +229,18 @@ internal class ChatApi(
         ).map { it.reactions }
     }
 
-    fun sendReaction(reaction: Reaction): Call<Reaction> {
+    fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
         return retrofitApi.sendReaction(
             reaction.messageId,
             apiKey,
             userId,
             connectionId,
-            ReactionRequest(reaction)
+            ReactionRequest(reaction, enforceUnique)
         ).map { it.reaction }
     }
 
-    fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
-        return sendReaction(Reaction(messageId, reactionType, 0))
+    fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean): Call<Reaction> {
+        return sendReaction(Reaction(messageId, reactionType, 0), enforceUnique)
     }
 
     fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
@@ -280,7 +280,7 @@ internal class ChatApi(
     fun sendMessage(
         channelType: String,
         channelId: String,
-        message: Message
+        message: Message,
     ): Call<Message> {
 
         verifyMessageId(message)
@@ -314,7 +314,7 @@ internal class ChatApi(
     }
 
     fun updateMessage(
-        message: Message
+        message: Message,
     ): Call<Message> {
         return retrofitApi.updateMessage(
             message.id,
@@ -327,7 +327,7 @@ internal class ChatApi(
 
     fun stopWatching(
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Call<Unit> {
         return retrofitApi.stopWatching(
             channelType,
@@ -371,7 +371,7 @@ internal class ChatApi(
     fun queryChannel(
         channelType: String,
         channelId: String = "",
-        query: QueryChannelRequest
+        query: QueryChannelRequest,
     ): Call<Channel> {
 
         if (connectionId.isEmpty()) {
@@ -401,7 +401,7 @@ internal class ChatApi(
     fun updateChannel(
         channelType: String,
         channelId: String,
-        request: UpdateChannelRequest
+        request: UpdateChannelRequest,
     ): Call<Channel> {
         return retrofitApi.updateChannel(
             channelType,
@@ -415,18 +415,18 @@ internal class ChatApi(
     fun enableSlowMode(
         channelType: String,
         channelId: String,
-        cooldownTimeInSeconds: Int
+        cooldownTimeInSeconds: Int,
     ): Call<Channel> = updateCooldown(channelType, channelId, cooldownTimeInSeconds)
 
     fun disableSlowMode(
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Call<Channel> = updateCooldown(channelType, channelId, 0)
 
     private fun updateCooldown(
         channelType: String,
         channelId: String,
-        cooldownTimeInSeconds: Int
+        cooldownTimeInSeconds: Int,
     ): Call<Channel> =
         retrofitApi.updateCooldown(
             channelType,
@@ -439,7 +439,7 @@ internal class ChatApi(
     fun markRead(
         channelType: String,
         channelId: String,
-        messageId: String = ""
+        messageId: String = "",
     ): Call<Unit> {
         return retrofitApi.markRead(
             channelType,
@@ -459,7 +459,7 @@ internal class ChatApi(
     fun hideChannel(
         channelType: String,
         channelId: String,
-        clearHistory: Boolean
+        clearHistory: Boolean,
     ): Call<Unit> {
         return retrofitApi.hideChannel(
             channelType,
@@ -491,7 +491,7 @@ internal class ChatApi(
     fun acceptInvite(
         channelType: String,
         channelId: String,
-        message: String?
+        message: String?,
     ): Call<Channel> {
         return retrofitApi.acceptInvite(
             channelType,
@@ -536,7 +536,7 @@ internal class ChatApi(
     fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>
+        members: List<String>,
     ): Call<Channel> {
         return retrofitApi.addMembers(
             channelType,
@@ -550,7 +550,7 @@ internal class ChatApi(
     fun removeMembers(
         channelType: String,
         channelId: String,
-        members: List<String>
+        members: List<String>,
     ): Call<Channel> {
         return retrofitApi.removeMembers(
             channelType,
@@ -568,7 +568,7 @@ internal class ChatApi(
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
-        members: List<Member>
+        members: List<Member>,
     ): Call<List<Member>> {
         return retrofitApi.queryMembers(
             apiKey,
@@ -586,7 +586,7 @@ internal class ChatApi(
     }
 
     fun muteUser(
-        userId: String
+        userId: String,
     ): Call<Mute> {
         return retrofitApi.muteUser(
             apiKey,
@@ -597,7 +597,7 @@ internal class ChatApi(
     }
 
     fun unmuteUser(
-        userId: String
+        userId: String,
     ): Call<Unit> {
         return retrofitApi.unMuteUser(
             apiKey,
@@ -670,7 +670,7 @@ internal class ChatApi(
         eventType: String,
         channelType: String,
         channelId: String,
-        extraData: Map<Any, Any>
+        extraData: Map<Any, Any>,
     ): Call<ChatEvent> {
         val map = mutableMapOf<Any, Any>()
         map["type"] = eventType

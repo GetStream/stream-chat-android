@@ -24,12 +24,19 @@ public data class Attachment(
     var mimeType: String? = null,
     @SerializedName("file_size")
     var fileSize: Int = 0,
+    @SerializedName("title")
     var title: String? = null,
+    @SerializedName("text")
     var text: String? = null,
+    @SerializedName("type")
     var type: String? = null,
+    @SerializedName("image")
     var image: String? = null,
+    @SerializedName("url")
     var url: String? = null,
+    @SerializedName("name")
     var name: String? = null,
+    @SerializedName("fallback")
     var fallback: String? = null,
 
     @IgnoreSerialisation
@@ -42,7 +49,7 @@ public data class Attachment(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
 ) : CustomObject {
 
