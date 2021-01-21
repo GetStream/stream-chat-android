@@ -207,7 +207,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal lateinit var repos: RepositoryHelper
     @Volatile
-    private var syncState: SyncState? = null
+    private var syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal lateinit var initJob: Deferred<SyncState?>
 
     /** The retry policy for retrying failed requests */
@@ -258,9 +258,9 @@ internal class ChatDomainImpl internal constructor(
             repos.configs.load()
 
             // load the current user from the db
-            syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
+            syncStateFlow.value = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
             // set active channels and recover
-            syncState?.let { state ->
+            syncStateFlow.value?.let { state ->
                 // restore channels
                 state.activeChannelIds.forEach { channel(it) }
 
@@ -274,7 +274,7 @@ internal class ChatDomainImpl internal constructor(
                     ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
                     ?.let { eventHandler.handleEvent(it) }
             }
-            syncState
+            syncStateFlow.value
         }
 
         if (client.isSocketConnected()) {
@@ -325,17 +325,17 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal suspend fun storeSyncState(): SyncState? {
-        syncState?.let { _syncState ->
+        syncStateFlow.value?.let { _syncState ->
             val newSyncState = _syncState.copy(
                 activeChannelIds = activeChannelMapImpl.keys().toList(),
                 activeQueryIds =
                     activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
             )
             repos.syncState.insert(newSyncState)
-            syncState = newSyncState
+            syncStateFlow.value = newSyncState
         }
 
-        return syncState
+        return syncStateFlow.value
     }
 
     override suspend fun disconnect() {
@@ -565,7 +565,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
     private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
+        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).execute()
 
     /**
      * replay events for all active channels
@@ -593,7 +593,7 @@ internal class ChatDomainImpl internal constructor(
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
                     eventHandler.updateOfflineStorageFromEvents(resultChatEvent.data())
-                    syncState?.let { syncState = it.copy(lastSyncedAt = now) }
+                    syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = now) }
                 }
             }
         } else {
