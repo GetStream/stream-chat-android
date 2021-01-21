@@ -166,11 +166,23 @@ public class Messages {
             reaction.setType("like");
             reaction.setScore(1);
 
-            channelClient.sendReaction(reaction, false).enqueue(result -> {
+            // Add reaction 'like'
+            boolean enforceUnique = false;
+            channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                }
+            });
+
+            // Add reaction 'like' and replace all other reactions of this user by it
+            enforceUnique = true;
+            channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Reaction sentReaction = result.data();
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
         }
@@ -179,11 +191,12 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=java#removing-a-reaction">Removing A Reaction</a>
          */
         public void removeAReaction() {
-            channelClient.deleteReaction("message-id", "like").enqueue(result -> {
+            String reactionType = "like";
+            channelClient.deleteReaction("message-id", reactionType).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message message = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
         }
@@ -193,30 +206,33 @@ public class Messages {
          */
         public void paginatingReactions() {
             // Get the first 10 reactions
-            channelClient.getReactions("message-id", 0, 10).enqueue(result -> {
+            int offset = 0;
+            int limit = 10;
+            channelClient.getReactions("message-id", offset, limit).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Reaction> reactions = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
 
             // Get the second 10 reactions
-            channelClient.getReactions("message-id", 10, 10).enqueue(result -> {
+            offset = 10;
+            channelClient.getReactions("message-id", offset, limit).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Reaction> reactions = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
 
             // Get 10 reactions after particular reaction
             String reactionId = "reaction-id";
-            channelClient.getReactions("message-id", reactionId, 10).enqueue(result -> {
+            channelClient.getReactions("message-id", reactionId, limit).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Message> messages = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
         }
@@ -230,12 +246,13 @@ public class Messages {
             reaction.setMessageId("message-id");
             reaction.setType("like");
             reaction.setScore(score);
+            boolean enforceUnique = false;
 
-            channelClient.sendReaction(reaction, false).enqueue(result -> {
+            channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    Log.e(TAG, String.format("There was an error %s", result.error()));
                 }
             });
         }

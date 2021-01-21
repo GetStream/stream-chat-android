@@ -153,12 +153,22 @@ class Messages(
      */
     inner class Reactions {
         fun sendAReaction() {
-            val reaction = Reaction("message-id", "like", 1)
+            // Add reaction 'like'
+            val reaction = Reaction("message-id", type = "like", score = 1)
             channelClient.sendReaction(reaction).enqueue {
                 if (it.isSuccess) {
                     val sentReaction = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
+                }
+            }
+
+            // Add reaction 'like' and replace all other reactions of this user by it
+            channelClient.sendReaction(reaction, enforceUnique = true).enqueue {
+                if (it.isSuccess) {
+                    val sentReaction = it.data()
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
         }
@@ -167,11 +177,11 @@ class Messages(
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=kotlin#removing-a-reaction">Removing A Reaction</a>
          */
         fun removeAReaction() {
-            channelClient.deleteReaction("message-id", "like").enqueue {
+            channelClient.deleteReaction("message-id", reactionType = "like").enqueue {
                 if (it.isSuccess) {
                     val message = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
         }
@@ -181,30 +191,29 @@ class Messages(
          */
         fun paginatingReactions() {
             // Get the first 10 reactions
-            channelClient.getReactions("message-id", 0, 10).enqueue {
+            channelClient.getReactions("message-id", offset = 0, limit = 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
 
             // Get the second 10 reactions
-            channelClient.getReactions("message-id", 10, 10).enqueue {
+            channelClient.getReactions("message-id", offset = 10, limit = 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
 
             // Get 10 reactions after particular reaction
-            val reactionId = "reaction-id"
-            channelClient.getReactions("message-id", reactionId, 10).enqueue {
+            channelClient.getReactions("message-id", "reaction-id", limit = 10).enqueue {
                 if (it.isSuccess) {
                     val reactions = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
         }
@@ -213,13 +222,12 @@ class Messages(
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=kotlin#cumulative-clap-reactions">Cumulative (Clap) Reactions</a>
          */
         fun cumulativeReactions() {
-            val score = 5
-            val reaction = Reaction("message-id", "like", score)
+            val reaction = Reaction("message-id", type = "clap", score = 5)
             channelClient.sendReaction(reaction).enqueue {
                 if (it.isSuccess) {
                     val sentReaction = it.data()
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                    Log.e(TAG, String.format("There was an error %s", it.error()))
                 }
             }
         }
