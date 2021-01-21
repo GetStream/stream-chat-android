@@ -6,6 +6,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -24,12 +25,11 @@ import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.getLastMessagePreviewText
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
-import io.getstream.chat.android.ui.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.isMessageRead
 import io.getstream.chat.android.ui.utils.extensions.isNotNull
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
-public class ChannelViewHolder @JvmOverloads constructor(
+internal class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
     private val channelLongClickListener: ChannelListView.ChannelLongClickListener,
@@ -92,7 +92,7 @@ public class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    public override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
+    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
         configureForeground(diff)

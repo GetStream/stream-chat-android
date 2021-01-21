@@ -10,6 +10,12 @@ import io.getstream.chat.android.ui.utils.animateHighlight
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
+
+    /**
+     * The data that was last bound to this ViewHolder via [bindData].
+     * Can be used for listeners that need to pass along the currently
+     * bound data as a parameter.
+     */
     protected lateinit var data: T
         private set
 

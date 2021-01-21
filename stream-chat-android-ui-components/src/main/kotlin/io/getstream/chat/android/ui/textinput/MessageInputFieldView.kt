@@ -26,7 +26,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputFieldView : FrameLayout {
-    public val binding: StreamUiMessageInputFieldBinding =
+    internal val binding: StreamUiMessageInputFieldBinding =
         StreamUiMessageInputFieldBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_field_attachment_hint)

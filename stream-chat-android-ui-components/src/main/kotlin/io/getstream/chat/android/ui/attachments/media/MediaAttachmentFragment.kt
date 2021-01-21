@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaB
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-public class MediaAttachmentFragment : Fragment() {
+internal class MediaAttachmentFragment : Fragment() {
 
     private var _binding: StreamUiFragmentAttachmentMediaBinding? = null
     private val binding get() = _binding!!
@@ -135,7 +135,7 @@ public class MediaAttachmentFragment : Fragment() {
         }
     }
 
-    public companion object {
+    companion object {
         private const val SPAN_COUNT: Int = 3
         private const val SPACING: Int = 2
     }

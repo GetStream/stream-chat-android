@@ -10,8 +10,8 @@ public data class MessageListItemPayloadDiff(
     val positions: Boolean,
     val readBy: Boolean,
 ) {
-    public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff =
-        copy(
+    public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
+        return MessageListItemPayloadDiff(
             text = text || other.text,
             reactions = reactions || other.reactions,
             attachments = attachments || other.attachments,
@@ -21,4 +21,5 @@ public data class MessageListItemPayloadDiff(
             positions = positions || other.positions,
             readBy = readBy || other.readBy,
         )
+    }
 }

@@ -39,7 +39,7 @@ public class ViewReactionsView : RecyclerView {
         init(context, attrs)
     }
 
-    public fun setMessage(message: Message, isMyMessage: Boolean, commitCallback: (() -> Unit)? = null) {
+    public fun setMessage(message: Message, isMyMessage: Boolean, commitCallback: () -> Unit = {}) {
         this.isMyMessage = isMyMessage
         this.isSingleReaction = message.hasSingleReaction()
 
@@ -47,7 +47,7 @@ public class ViewReactionsView : RecyclerView {
             val horizontalPadding = if (isSingleReaction) 0 else reactionsViewStyle.horizontalPadding
             setPadding(horizontalPadding, 0, horizontalPadding, 0)
 
-            commitCallback?.invoke()
+            commitCallback()
         }
     }
 

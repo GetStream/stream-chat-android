@@ -37,7 +37,7 @@ public class SuggestionListView : FrameLayout {
         }
     }
 
-    public fun setSuggestions(suggestions: Suggestions) {
+    public fun showSuggestionList(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {

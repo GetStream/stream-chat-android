@@ -7,11 +7,19 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemViewType
 
 public open class ChannelListItemViewHolderFactory {
 
-    public lateinit var listenerContainer: ChannelListListenerContainer
-        internal set
+    protected lateinit var listenerContainer: ChannelListListenerContainer
+        private set
 
-    public lateinit var style: ChannelListViewStyle
-        internal set
+    protected lateinit var style: ChannelListViewStyle
+        private set
+
+    internal fun setListenerContainer(listenerContainer: ChannelListListenerContainer) {
+        this.listenerContainer = listenerContainer
+    }
+
+    internal fun setStyle(style: ChannelListViewStyle) {
+        this.style = style
+    }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].
@@ -41,7 +49,7 @@ public open class ChannelListItemViewHolderFactory {
         }
     }
 
-    public open fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+    protected open fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
         return ChannelViewHolder(
             parentView,
             listenerContainer.channelClickListener,
@@ -54,7 +62,7 @@ public open class ChannelListItemViewHolderFactory {
         )
     }
 
-    public open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+    protected open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
         return ChannelListLoadingMoreViewHolder(parentView)
     }
 }

@@ -15,7 +15,7 @@ import io.getstream.chat.android.ui.search.SearchResultListView.SearchResultSele
 import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.context
 
-public class SearchResultListAdapter(
+internal class SearchResultListAdapter(
     context: Context,
     private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
@@ -36,12 +36,12 @@ public class SearchResultListAdapter(
         holder.bind(getItem(position))
     }
 
-    public fun setSearchResultSelectedListener(searchResultSelectedListener: SearchResultSelectedListener?) {
+    fun setSearchResultSelectedListener(searchResultSelectedListener: SearchResultSelectedListener?) {
         this.searchResultSelectedListener = searchResultSelectedListener
     }
 
-    public inner class MessagePreviewViewHolder(
-        private val binding: StreamUiItemMentionListBinding
+    inner class MessagePreviewViewHolder(
+        private val binding: StreamUiItemMentionListBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var message: Message

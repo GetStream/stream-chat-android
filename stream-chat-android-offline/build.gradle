@@ -82,7 +82,6 @@ dependencies {
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
-    implementation Dependencies.coroutinesAndroid
 
     // Google libs
     implementation Dependencies.androidxAppCompat

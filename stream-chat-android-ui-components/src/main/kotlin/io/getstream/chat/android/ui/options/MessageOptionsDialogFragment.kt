@@ -130,7 +130,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider()
-                listenerContainer = MessageListListenerContainerImpl()
+                setListenerContainer(MessageListListenerContainerImpl())
             }
             .createViewHolder(
                 binding.messageContainer,
