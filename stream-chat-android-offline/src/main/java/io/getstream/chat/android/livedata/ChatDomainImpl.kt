@@ -326,8 +326,11 @@ internal class ChatDomainImpl internal constructor(
 
     internal suspend fun storeSyncState(): SyncState? {
         syncState?.let { _syncState ->
-            val newSyncState = _syncState.copy(activeChannelIds = activeChannelMapImpl.keys().toList(), activeQueryIds =
-            activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) })
+            val newSyncState = _syncState.copy(
+                activeChannelIds = activeChannelMapImpl.keys().toList(),
+                activeQueryIds =
+                    activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
+            )
             repos.syncState.insert(newSyncState)
             syncState = newSyncState
         }
