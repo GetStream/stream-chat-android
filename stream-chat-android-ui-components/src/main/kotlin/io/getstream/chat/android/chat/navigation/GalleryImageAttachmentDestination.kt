@@ -13,8 +13,9 @@ public class GalleryImageAttachmentDestination(
     message: Message,
     attachment: Attachment,
     context: Context,
-    private val attachmentReplyOptionHandler: AttachmentGalleryActivity.AttachmentOptionReplyHandler,
-    private val attachmentShowInChatOptionHandler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler,
+    private val attachmentReplyOptionHandler: AttachmentGalleryActivity.AttachmentReplyOptionHandler,
+    private val attachmentShowInChatOptionHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
+    private val attachmentDownloadOptionHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler,
 ) : AttachmentDestination(message, attachment, context) {
     override fun showImageViewer(message: Message, attachment: Attachment) {
         val attachments =
@@ -35,7 +36,8 @@ public class GalleryImageAttachmentDestination(
                 message,
                 attachments,
                 attachmentShowInChatOptionHandler,
-                attachmentReplyOptionHandler)
+                attachmentReplyOptionHandler,
+                attachmentDownloadOptionHandler)
         )
     }
 }

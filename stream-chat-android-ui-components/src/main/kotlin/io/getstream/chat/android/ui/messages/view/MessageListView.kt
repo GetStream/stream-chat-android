@@ -144,16 +144,23 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
-    private var onAttachmentReplyOptionClickHandler: AttachmentGalleryActivity.AttachmentOptionReplyHandler =
-        object : AttachmentGalleryActivity.AttachmentOptionReplyHandler {
+    private var onAttachmentReplyOptionClickHandler: AttachmentGalleryActivity.AttachmentReplyOptionHandler =
+        object : AttachmentGalleryActivity.AttachmentReplyOptionHandler {
             override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
                 throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
             }
         }
-    private var onAttachmentShowInChatOptionClickHandler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler =
-        object : AttachmentGalleryActivity.AttachmentOptionShowInChatHandler {
+    private var onAttachmentShowInChatOptionClickHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler =
+        object : AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
             override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
                 throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
+            }
+        }
+
+    private var onAttachmentDownloadOptionClickHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler =
+        object : AttachmentGalleryActivity.AttachmentDownloadOptionHandler {
+            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
+                onAttachmentDownloadHandler(attachmentData.toAttachment())
             }
         }
 
@@ -229,7 +236,8 @@ public class MessageListView : ConstraintLayout {
                         attachment,
                         context,
                         onAttachmentReplyOptionClickHandler,
-                        onAttachmentShowInChatOptionClickHandler)
+                        onAttachmentShowInChatOptionClickHandler,
+                        onAttachmentDownloadOptionClickHandler)
                 )
         }
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -821,11 +829,11 @@ public class MessageListView : ConstraintLayout {
         public fun onThreadEntered(message: Message)
     }
 
-    public fun setOnAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentOptionReplyHandler) {
+    public fun setOnAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
         this.onAttachmentReplyOptionClickHandler = handler
     }
 
-    public fun setOnAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler) {
+    public fun setOnAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
         this.onAttachmentShowInChatOptionClickHandler = handler
     }
 

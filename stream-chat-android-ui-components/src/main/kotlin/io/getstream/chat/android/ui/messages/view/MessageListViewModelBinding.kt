@@ -65,12 +65,12 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
 
 
-    val attachmentReplyHandler = object: AttachmentGalleryActivity.AttachmentOptionReplyHandler {
+    val attachmentReplyHandler = object: AttachmentGalleryActivity.AttachmentReplyOptionHandler {
         override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
         }
     }
     view.setOnAttachmentReplyOptionClickHandler(attachmentReplyHandler)
-    val attachmentShowInChatHandler = object: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler {
+    val attachmentShowInChatHandler = object: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
         override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
             onEvent(MessageListViewModel.Event.ShowMessage(data.messageId))
         }
