@@ -206,8 +206,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal lateinit var repos: RepositoryHelper
-    @Volatile
-    private var syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
+    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal lateinit var initJob: Deferred<SyncState?>
 
     /** The retry policy for retrying failed requests */
