@@ -258,24 +258,25 @@ internal class ChatDomainImpl internal constructor(
             repos.configs.load()
 
             // load the current user from the db
-            syncState.mutateSuspended { repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id) }
-            // set active channels and recover
-            syncState.performSuspendedOnContext { state ->
-                // restore channels
-                state?.activeChannelIds?.forEach { channel(it) }
-
-                // restore queries
-                state?.let {
-                    repos.queryChannels.selectById(it.activeQueryIds).forEach { spec ->
-                        queryChannels(spec.filter, spec.sort)
+            syncState.run {
+                mutateSuspended { repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id) }
+                // set active channels and recover
+                performSuspendedOnContext { state ->
+                    // restore channels
+                    state?.activeChannelIds?.forEach(::channel)
+                    // restore queries
+                    state?.let {
+                        repos.queryChannels.selectById(it.activeQueryIds).forEach { spec ->
+                            queryChannels(spec.filter, spec.sort)
+                        }
                     }
+                    // retrieve the last time the user marked all as read and handle it as an event
+                    state?.markedAllReadAt?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                        ?.let { eventHandler.handleEvent(it) }
                 }
 
-                // retrieve the last time the user marked all as read and handle it as an event
-                state?.markedAllReadAt?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
-                    ?.let { eventHandler.handleEvent(it) }
+                get()
             }
-            syncState.get()
         }
 
         if (client.isSocketConnected()) {
