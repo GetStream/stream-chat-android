@@ -33,10 +33,10 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
@@ -113,7 +113,7 @@ internal class ChatDomainImpl internal constructor(
         recoveryEnabled: Boolean,
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
-        appContext: Context
+        appContext: Context,
     ) : this(
         client,
         null,
@@ -206,8 +206,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal lateinit var repos: RepositoryHelper
-    private var syncState: SyncStateEntity? = null
-    internal lateinit var initJob: Deferred<SyncStateEntity?>
+    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
+    internal lateinit var initJob: Deferred<SyncState?>
 
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
@@ -257,24 +257,20 @@ internal class ChatDomainImpl internal constructor(
             repos.configs.load()
 
             // load the current user from the db
-            val initialSyncState = SyncStateEntity(currentUser.id)
-            syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
+            val syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
             // set active channels and recover
-            syncState?.let { state ->
-                // restore channels
-                state.activeChannelIds.forEach { channel(it) }
+            // restore channels
+            syncState.activeChannelIds.forEach(::channel)
+            // restore queries
+            repos.queryChannels.selectById(syncState.activeQueryIds)
+                .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
-                // restore queries
-                repos.queryChannels.selectById(state.activeQueryIds).forEach { spec ->
-                    queryChannels(spec.filter, spec.sort)
-                }
+            // retrieve the last time the user marked all as read and handle it as an event
+            syncState.markedAllReadAt
+                ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                ?.let { eventHandler.handleEvent(it) }
 
-                // retrieve the last time the user marked all as read and handle it as an event
-                state.markedAllReadAt
-                    ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
-                    ?.let { eventHandler.handleEvent(it) }
-            }
-            syncState
+            syncState.also { syncStateFlow.value = it }
         }
 
         if (client.isSocketConnected()) {
@@ -324,15 +320,18 @@ internal class ChatDomainImpl internal constructor(
         setBanned(me.banned)
     }
 
-    internal suspend fun storeSyncState(): SyncStateEntity? {
-        syncState?.let { syncState ->
-            syncState.activeChannelIds = activeChannelMapImpl.keys().toList()
-            syncState.activeQueryIds =
-                activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
-            repos.syncState.insert(syncState)
+    internal suspend fun storeSyncState(): SyncState? {
+        syncStateFlow.value?.let { _syncState ->
+            val newSyncState = _syncState.copy(
+                activeChannelIds = activeChannelMapImpl.keys().toList(),
+                activeQueryIds =
+                    activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
+            )
+            repos.syncState.insert(newSyncState)
+            syncStateFlow.value = newSyncState
         }
 
-        return syncState
+        return syncStateFlow.value
     }
 
     override suspend fun disconnect() {
@@ -489,7 +488,7 @@ internal class ChatDomainImpl internal constructor(
      */
     internal fun channel(
         channelType: String,
-        channelId: String
+        channelId: String,
     ): ChannelControllerImpl {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
@@ -550,7 +549,7 @@ internal class ChatDomainImpl internal constructor(
      */
     fun queryChannels(
         filter: FilterObject,
-        sort: QuerySort<Channel>
+        sort: QuerySort<Channel>,
     ): QueryChannelsControllerImpl =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             QueryChannelsControllerImpl(
@@ -562,7 +561,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
     private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
+        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).execute()
 
     /**
      * replay events for all active channels
@@ -590,7 +589,7 @@ internal class ChatDomainImpl internal constructor(
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
                     eventHandler.updateOfflineStorageFromEvents(resultChatEvent.data())
-                    syncState?.let { it.lastSyncedAt = now }
+                    syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = now) }
                 }
             }
         } else {
@@ -750,28 +749,28 @@ internal class ChatDomainImpl internal constructor(
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
-        pagination: QueryChannelPaginationRequest
+        pagination: QueryChannelPaginationRequest,
     ): Channel? {
         return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
-        pagination: QueryChannelsPaginationRequest
+        pagination: QueryChannelsPaginationRequest,
     ): Channel? {
         return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
-        pagination: QueryChannelsPaginationRequest
+        pagination: QueryChannelsPaginationRequest,
     ): List<Channel> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest
+        pagination: AnyChannelPaginationRequest,
     ): List<Channel> {
         return repos.selectChannels(channelIds, defaultConfig, pagination).applyPagination(pagination)
     }
