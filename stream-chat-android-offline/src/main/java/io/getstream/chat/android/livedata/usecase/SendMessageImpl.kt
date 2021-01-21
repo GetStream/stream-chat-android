@@ -19,14 +19,24 @@ public interface SendMessage {
      */
     public operator fun invoke(
         message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
+    ): Call<Message> = invoke(message, null)
+
+    /**
+     * Sends the message. Immediately adds the message to local storage
+     * API call to send the message is retried according to the retry policy specified on the chatDomain
+     * @param message the message to send
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
+    public operator fun invoke(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
     ): Call<Message>
 }
 
 internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMessage {
     override operator fun invoke(
         message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
     ): Call<Message> {
         val cid = message.cid
         validateCid(cid)
