@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 
 /**
  * Binds [MessageListView] with [MessageListViewModel].
@@ -62,4 +63,17 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
+
+
+    val attachmentReplyHandler = object: AttachmentGalleryActivity.AttachmentOptionReplyHandler {
+        override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
+        }
+    }
+    view.setOnAttachmentReplyOptionClickHandler(attachmentReplyHandler)
+    val attachmentShowInChatHandler = object: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler {
+        override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
+            onEvent(MessageListViewModel.Event.ShowMessage(data.messageId))
+        }
+    }
+    view.setOnAttachmentShowInChatOptionClickHandler(attachmentShowInChatHandler)
 }

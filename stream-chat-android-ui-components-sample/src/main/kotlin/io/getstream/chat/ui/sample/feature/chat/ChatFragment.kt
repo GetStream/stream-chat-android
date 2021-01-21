@@ -56,7 +56,6 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
-        initMessageListView()
     }
 
     override fun onResume() {
@@ -129,21 +128,6 @@ class ChatFragment : Fragment() {
                 editMessage.postValue(it)
             }
         }
-    }
-
-    private fun initMessageListView() = binding.messageListView.apply {
-        val attachmentReplyHandler = object: AttachmentGalleryActivity.AttachmentOptionReplyHandler {
-            override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
-                binding.messageInputView
-            }
-        }
-        setOnAttachmentReplyOptionClickHandler(attachmentReplyHandler)
-        val attachmentShowInChatHandler = object: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler {
-            override fun onClick(data: AttachmentGalleryActivity.AttachmentData) {
-                messageListViewModel.onEvent(MessageListViewModel.Event.ShowMessage(data.messageId))
-            }
-        }
-        setOnAttachmentShowInChatOptionClickHandler(attachmentShowInChatHandler)
     }
 
     private fun initMessagesViewModel() {
