@@ -55,16 +55,22 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             val currentAttachment = obtainAttachments()[binding.attachmentGallery.currentItemIndex]
             menuButton.setOnClickListener {
                 val deleteHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                    override fun onClick() = finish() // "Not yet implemented"
                 }
                 val saveHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                    override fun onClick() = finish() // "Not yet implemented"
                 }
                 val showInChatHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    override fun onClick() = attachmentShowInChatOptionHandler(currentAttachment)
+                    override fun onClick() {
+                        finish()
+                        attachmentShowInChatOptionHandler.onClick(currentAttachment)
+                    }
                 }
                 val replyHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    override fun onClick() = attachmentReplyOptionHandler(currentAttachment)
+                    override fun onClick() {
+                        finish()
+                        attachmentReplyOptionHandler.onClick(currentAttachment)
+                    }
                 }
                 AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
                     .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
@@ -98,8 +104,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         private const val EXTRA_KEY_USER_NAME = "extra_key_user_name"
         private const val EXTRA_KEY_TIME = "extra_key_time"
 
-        private lateinit var attachmentShowInChatOptionHandler: (attachmentData: AttachmentData) -> Unit
-        private lateinit var attachmentReplyOptionHandler: (attachmentData: AttachmentData) -> Unit
+        private lateinit var attachmentShowInChatOptionHandler: AttachmentOptionShowInChatHandler
+        private lateinit var attachmentReplyOptionHandler: AttachmentOptionReplyHandler
 
         @JvmStatic
         public fun createIntent(
@@ -108,8 +114,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             currentIndex: Int,
             message: Message,
             attachments: List<Attachment>,
-            attachmentShowInChatOptionHandler: (attachmentData: AttachmentData) -> Unit,
-            attachmentReplyOptionHandler: (attachmentData: AttachmentData) -> Unit,
+            attachmentShowInChatOptionHandler: AttachmentOptionShowInChatHandler,
+            attachmentReplyOptionHandler: AttachmentOptionReplyHandler,
         ): Intent {
             this.attachmentReplyOptionHandler = attachmentReplyOptionHandler
             this.attachmentShowInChatOptionHandler = attachmentShowInChatOptionHandler
@@ -151,4 +157,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val url: String? = null,
         val name: String? = null,
     ) : Parcelable
+
+    public interface AttachmentOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+
+    public interface AttachmentOptionShowInChatHandler : AttachmentOptionHandler
+    public interface AttachmentOptionReplyHandler : AttachmentOptionHandler
 }

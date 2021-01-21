@@ -42,7 +42,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         binding.attachmentOptionsMenu.setShowInChatClickListener(
             object : AttachmentOptionsView.ShowInChatClickListener {
                 override fun onClick() {
-                    showInChatHandler
+                    showInChatHandler?.onClick()
                     dismiss()
                 }
             }

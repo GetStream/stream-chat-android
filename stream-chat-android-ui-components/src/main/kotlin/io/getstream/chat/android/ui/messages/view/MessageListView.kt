@@ -144,13 +144,17 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
-    private var onAttachmentReplyOptionClickHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit =
-        {
-            throw IllegalStateException("attachmentReplyOptionClickHandler must be set")
+    private var onAttachmentReplyOptionClickHandler: AttachmentGalleryActivity.AttachmentOptionReplyHandler =
+        object : AttachmentGalleryActivity.AttachmentOptionReplyHandler {
+            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
+                throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
+            }
         }
-    private var onAttachmentShowInChatOptionClickHandler: (attachmentData: AttachmentGalleryActivity.AttachmentData) -> Unit =
-        {
-            throw IllegalStateException("attachmentShowInChatOptionClickHandler must be set")
+    private var onAttachmentShowInChatOptionClickHandler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler =
+        object : AttachmentGalleryActivity.AttachmentOptionShowInChatHandler {
+            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
+                throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
+            }
         }
 
     private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
@@ -817,11 +821,11 @@ public class MessageListView : ConstraintLayout {
         public fun onThreadEntered(message: Message)
     }
 
-    public fun setOnAttachmentReplyOptionClickHandler(handler: (AttachmentGalleryActivity.AttachmentData) -> Unit) {
+    public fun setOnAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentOptionReplyHandler) {
         this.onAttachmentReplyOptionClickHandler = handler
     }
 
-    public fun setOnAttachmentShowInChatOptionClickHandler(handler: (AttachmentGalleryActivity.AttachmentData) -> Unit) {
+    public fun setOnAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentOptionShowInChatHandler) {
         this.onAttachmentShowInChatOptionClickHandler = handler
     }
 
