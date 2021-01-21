@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
 import io.getstream.chat.android.livedata.dao.SyncStateDao
-import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel

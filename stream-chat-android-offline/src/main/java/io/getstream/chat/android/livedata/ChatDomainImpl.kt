@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.state.State
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.extensions.applyPagination
@@ -206,8 +207,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal lateinit var repos: RepositoryHelper
-    @Volatile
-    private var syncState: SyncState? = null
+    private val syncState: State<SyncState?> = State(null)
     internal lateinit var initJob: Deferred<SyncState?>
 
     /** The retry policy for retrying failed requests */
@@ -258,23 +258,24 @@ internal class ChatDomainImpl internal constructor(
             repos.configs.load()
 
             // load the current user from the db
-            syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
+            syncState.mutateSuspended { repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id) }
             // set active channels and recover
-            syncState?.let { state ->
+            syncState.performSuspendedOnContext { state ->
                 // restore channels
-                state.activeChannelIds.forEach { channel(it) }
+                state?.activeChannelIds?.forEach { channel(it) }
 
                 // restore queries
-                repos.queryChannels.selectById(state.activeQueryIds).forEach { spec ->
-                    queryChannels(spec.filter, spec.sort)
+                state?.let {
+                    repos.queryChannels.selectById(it.activeQueryIds).forEach { spec ->
+                        queryChannels(spec.filter, spec.sort)
+                    }
                 }
 
                 // retrieve the last time the user marked all as read and handle it as an event
-                state.markedAllReadAt
-                    ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                state?.markedAllReadAt?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
                     ?.let { eventHandler.handleEvent(it) }
             }
-            syncState
+            syncState.get()
         }
 
         if (client.isSocketConnected()) {
@@ -324,15 +325,20 @@ internal class ChatDomainImpl internal constructor(
         setBanned(me.banned)
     }
 
-    internal suspend fun storeSyncState(): SyncState? {
-        syncState?.let { _syncState ->
-            val newSyncState = _syncState.copy(activeChannelIds = activeChannelMapImpl.keys().toList(), activeQueryIds =
-            activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) })
-            repos.syncState.insert(newSyncState)
-            syncState = newSyncState
+    internal suspend fun storeSyncState(): SyncState? = syncState.run {
+        mutate { curValue ->
+            curValue?.copy(
+                activeChannelIds = activeChannelMapImpl.keys().toList(),
+                activeQueryIds = activeQueryMapImpl.values.map(QueryChannelsControllerImpl::queryChannelsSpec)
+                    .map(QueryChannelsRepository::getId)
+            )
         }
 
-        return syncState
+        performSuspendedOnContext { value ->
+            value?.let { repos.syncState.insert(it) }
+        }
+
+        get()
     }
 
     override suspend fun disconnect() {
@@ -562,7 +568,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
     private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
+        client.getSyncHistory(cids, syncState.get()?.lastSyncedAt ?: Date()).execute()
 
     /**
      * replay events for all active channels
@@ -590,7 +596,7 @@ internal class ChatDomainImpl internal constructor(
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
                     eventHandler.updateOfflineStorageFromEvents(resultChatEvent.data())
-                    syncState?.let { syncState = it.copy(lastSyncedAt = now) }
+                    syncState.mutate { it?.copy(lastSyncedAt = now) }
                 }
             }
         } else {

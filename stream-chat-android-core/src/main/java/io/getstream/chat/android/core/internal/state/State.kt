@@ -73,7 +73,7 @@ public class State<T : Any?>(initialValue: T) {
     /**
      * Performs mutate suspended action on context blocking.
      */
-    public fun mutate(mutateSuspendedAction: suspend (T) -> T) {
+    public fun mutateSuspended(mutateSuspendedAction: suspend (T) -> T) {
         fsm.sendEvent(StateChangeEvent.SuspendedChangeEvent(mutateSuspendedAction))
     }
 
@@ -87,7 +87,7 @@ public class State<T : Any?>(initialValue: T) {
     /**
      * Performs suspended side effect action on context blocking. If state contains a failure then does nothing.
      */
-    public fun performOnContext(sideEffect: suspend (T) -> Unit) {
+    public fun performSuspendedOnContext(sideEffect: suspend (T) -> Unit) {
         fsm.sendEvent(StateChangeEvent.SuspendedSideEffectAction(sideEffect))
     }
 
