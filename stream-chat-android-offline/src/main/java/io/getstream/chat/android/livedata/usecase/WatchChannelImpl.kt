@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
@@ -17,6 +18,7 @@ public interface WatchChannel {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
+    @CheckResult
     public operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController>
 }
 
@@ -26,7 +28,7 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
 
         val channelController = domainImpl.channel(cid)
 
-        if (messageLimit> 0) {
+        if (messageLimit > 0) {
             domainImpl.scope.launch {
                 channelController.watch(messageLimit)
             }

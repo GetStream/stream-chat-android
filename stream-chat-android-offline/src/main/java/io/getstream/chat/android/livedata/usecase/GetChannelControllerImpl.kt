@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
@@ -15,6 +16,7 @@ public interface GetChannelController {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
+    @CheckResult
     public operator fun invoke(cid: String): Call<ChannelController>
 }
 

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import androidx.annotation.CheckResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -92,8 +93,8 @@ public class ChatClient internal constructor(
         }
     )
 
-    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User?) -> Unit>()
-    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
+    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
+    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
 
     init {
         eventsObservable.subscribe { event ->
@@ -195,6 +196,7 @@ public class ChatClient internal constructor(
         }
     }
 
+    @CheckResult
     public fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
         return api.getGuestUser(userId, userName)
     }
@@ -217,6 +219,7 @@ public class ChatClient internal constructor(
         api.sendImage(channelType, channelId, file, callback)
     }
 
+    @CheckResult
     public fun sendFile(
         channelType: String,
         channelId: String,
@@ -225,6 +228,7 @@ public class ChatClient internal constructor(
         return api.sendFile(channelType, channelId, file)
     }
 
+    @CheckResult
     public fun queryMembers(
         channelType: String,
         channelId: String,
@@ -237,6 +241,7 @@ public class ChatClient internal constructor(
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
 
+    @CheckResult
     public fun sendImage(
         channelType: String,
         channelId: String,
@@ -245,15 +250,18 @@ public class ChatClient internal constructor(
         return api.sendImage(channelType, channelId, file)
     }
 
+    @CheckResult
     public fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteFile(channelType, channelId, url)
     }
 
+    @CheckResult
     public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteImage(channelType, channelId, url)
     }
 
     //region Reactions
+    @CheckResult
     public fun getReactions(
         messageId: String,
         offset: Int,
@@ -262,15 +270,18 @@ public class ChatClient internal constructor(
         return api.getReactions(messageId, offset, limit)
     }
 
+    @CheckResult
     @JvmOverloads
     public fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean = false): Call<Reaction> {
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
+    @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return api.deleteReaction(messageId, reactionType)
     }
 
+    @CheckResult
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
         return api.sendReaction(reaction, enforceUnique)
@@ -287,7 +298,8 @@ public class ChatClient internal constructor(
         when (val state = clientStateService.state) {
             is ClientState.Anonymous -> socket.connectAnonymously()
             is ClientState.User -> socket.connect(state.user)
-            is ClientState.Idle -> { }
+            is ClientState.Idle -> {
+            }
         }.exhaustive
     }
 
@@ -447,22 +459,27 @@ public class ChatClient internal constructor(
 
     //region: api calls
 
+    @CheckResult
     public fun getDevices(): Call<List<Device>> {
         return api.getDevices()
     }
 
+    @CheckResult
     public fun deleteDevice(deviceId: String): Call<Unit> {
         return api.deleteDevice(deviceId)
     }
 
+    @CheckResult
     public fun addDevice(deviceId: String): Call<Unit> {
         return api.addDevice(deviceId)
     }
 
+    @CheckResult
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
     }
 
+    @CheckResult
     public fun getFileAttachments(
         channelType: String,
         channelId: String,
@@ -471,6 +488,7 @@ public class ChatClient internal constructor(
     ): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
+    @CheckResult
     public fun getImageAttachments(
         channelType: String,
         channelId: String,
@@ -479,6 +497,7 @@ public class ChatClient internal constructor(
     ): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
 
+    @CheckResult
     private fun getAttachments(
         channelType: String,
         channelId: String,
@@ -500,6 +519,7 @@ public class ChatClient internal constructor(
      * @param limit max limit messages to be fetched
      * @param type The desired type attachment
      */
+    @CheckResult
     public fun getMessagesWithAttachments(
         channelType: String,
         channelId: String,
@@ -512,10 +532,12 @@ public class ChatClient internal constructor(
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 
+    @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return api.getReplies(messageId, limit)
     }
 
+    @CheckResult
     public fun getRepliesMore(
         messageId: String,
         firstId: String,
@@ -524,18 +546,22 @@ public class ChatClient internal constructor(
         return api.getRepliesMore(messageId, firstId, limit)
     }
 
+    @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message> {
         return api.sendAction(request)
     }
 
+    @CheckResult
     public fun deleteMessage(messageId: String): Call<Message> {
         return api.deleteMessage(messageId)
     }
 
+    @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
         return api.getMessage(messageId)
     }
 
+    @CheckResult
     public fun sendMessage(
         channelType: String,
         channelId: String,
@@ -544,12 +570,14 @@ public class ChatClient internal constructor(
         return api.sendMessage(channelType, channelId, message)
     }
 
+    @CheckResult
     public fun updateMessage(
         message: Message,
     ): Call<Message> {
         return api.updateMessage(message)
     }
 
+    @CheckResult
     public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
         return updateMessage(
             message.apply {
@@ -559,6 +587,7 @@ public class ChatClient internal constructor(
         )
     }
 
+    @CheckResult
     public fun pinMessage(message: Message, timeout: Int): Call<Message> {
         val calendar = Calendar.getInstance().apply {
             add(Calendar.SECOND, timeout)
@@ -571,6 +600,7 @@ public class ChatClient internal constructor(
         )
     }
 
+    @CheckResult
     public fun unpinMessage(message: Message): Call<Message> {
         return updateMessage(
             message.apply {
@@ -579,6 +609,7 @@ public class ChatClient internal constructor(
         )
     }
 
+    @CheckResult
     public fun queryChannel(
         channelType: String,
         channelId: String,
@@ -587,14 +618,17 @@ public class ChatClient internal constructor(
         return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
     }
 
+    @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         return queryChannelsPostponeHelper.queryChannels(request)
     }
 
+    @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
     }
 
+    @CheckResult
     public fun markMessageRead(
         channelType: String,
         channelId: String,
@@ -603,10 +637,12 @@ public class ChatClient internal constructor(
         return api.markRead(channelType, channelId, messageId)
     }
 
+    @CheckResult
     public fun showChannel(channelType: String, channelId: String): Call<Unit> {
         return api.showChannel(channelType, channelId)
     }
 
+    @CheckResult
     public fun hideChannel(
         channelType: String,
         channelId: String,
@@ -615,10 +651,12 @@ public class ChatClient internal constructor(
         return api.hideChannel(channelType, channelId, clearHistory)
     }
 
+    @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
         return api.stopWatching(channelType, channelId)
     }
 
+    @CheckResult
     public fun updateChannel(
         channelType: String,
         channelId: String,
@@ -631,6 +669,7 @@ public class ChatClient internal constructor(
             UpdateChannelRequest(channelExtraData, updateMessage)
         )
 
+    @CheckResult
     public fun enableSlowMode(
         channelType: String,
         channelId: String,
@@ -638,16 +677,19 @@ public class ChatClient internal constructor(
     ): Call<Channel> =
         api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
 
+    @CheckResult
     public fun disableSlowMode(
         channelType: String,
         channelId: String,
     ): Call<Channel> =
         api.disableSlowMode(channelType, channelId)
 
+    @CheckResult
     public fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId)
     }
 
+    @CheckResult
     public fun sendEvent(
         eventType: String,
         channelType: String,
@@ -659,6 +701,7 @@ public class ChatClient internal constructor(
 
     public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
 
+    @CheckResult
     public fun acceptInvite(
         channelType: String,
         channelId: String,
@@ -667,26 +710,32 @@ public class ChatClient internal constructor(
         return api.acceptInvite(channelType, channelId, message)
     }
 
+    @CheckResult
     public fun markAllRead(): Call<Unit> {
         return api.markAllRead()
     }
 
+    @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
     }
 
+    @CheckResult
     public fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)
     }
 
+    @CheckResult
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
     }
 
+    @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
     }
 
+    @CheckResult
     public fun addMembers(
         channelType: String,
         channelId: String,
@@ -699,6 +748,7 @@ public class ChatClient internal constructor(
         )
     }
 
+    @CheckResult
     public fun removeMembers(
         channelType: String,
         channelId: String,
@@ -709,35 +759,46 @@ public class ChatClient internal constructor(
         members
     )
 
+    @CheckResult
     public fun muteUser(userId: String): Call<Mute> = api.muteUser(userId)
 
+    @CheckResult
     public fun muteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.muteChannel(channelType, channelId)
     }
 
+    @CheckResult
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unMuteChannel(channelType, channelId)
     }
 
+    @CheckResult
     public fun unmuteUser(userId: String): Call<Unit> = api.unmuteUser(userId)
 
+    @CheckResult
     public fun unmuteCurrentUser(): Call<Unit> = api.unmuteCurrentUser()
 
+    @CheckResult
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
+    @CheckResult
     @Deprecated(
         message = "We are going to replace with flagUser()",
         replaceWith = ReplaceWith("this.flagUser(userId)")
     )
     public fun flag(userId: String): Call<Flag> = flagUser(userId)
 
+    @CheckResult
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
 
+    @CheckResult
     public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
 
+    @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
         api.translate(messageId, language)
 
+    @CheckResult
     public fun banUser(
         targetId: String,
         channelType: String,
@@ -755,6 +816,7 @@ public class ChatClient internal constructor(
         Unit
     }
 
+    @CheckResult
     public fun unBanUser(
         targetId: String,
         channelType: String,
@@ -768,6 +830,7 @@ public class ChatClient internal constructor(
         Unit
     }
 
+    @CheckResult
     public fun shadowBanUser(
         targetId: String,
         channelType: String,
@@ -785,6 +848,7 @@ public class ChatClient internal constructor(
         Unit
     }
 
+    @CheckResult
     public fun removeShadowBan(
         targetId: String,
         channelType: String,
@@ -848,6 +912,7 @@ public class ChatClient internal constructor(
         return channel(type, id)
     }
 
+    @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
@@ -855,6 +920,7 @@ public class ChatClient internal constructor(
     ): Call<Channel> =
         createChannel(channelType, channelId, emptyList(), extraData)
 
+    @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
@@ -862,9 +928,11 @@ public class ChatClient internal constructor(
     ): Call<Channel> =
         createChannel(channelType, channelId, members, emptyMap())
 
+    @CheckResult
     public fun createChannel(channelType: String, members: List<String>): Call<Channel> =
         createChannel(channelType, "", members, emptyMap())
 
+    @CheckResult
     public fun createChannel(
         channelType: String,
         members: List<String>,
@@ -872,6 +940,7 @@ public class ChatClient internal constructor(
     ): Call<Channel> =
         createChannel(channelType, "", members, extraData)
 
+    @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
@@ -884,6 +953,7 @@ public class ChatClient internal constructor(
             QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
         )
 
+    @CheckResult
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: Date,

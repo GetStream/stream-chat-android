@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.controllers
 
+import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -28,33 +29,88 @@ public interface ChannelController {
     public val channelId: String
     public val cid: String
 
+    @CheckResult
     public fun create(extraData: Map<String, Any> = emptyMap()): Call<Channel>
+
+    @CheckResult
     public fun create(members: List<String>, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+
+    @CheckResult
     public fun query(request: QueryChannelRequest): Call<Channel>
+
+    @CheckResult
     public fun watch(request: WatchChannelRequest): Call<Channel>
+
+    @CheckResult
     public fun watch(): Call<Channel>
+
+    @CheckResult
     public fun stopWatching(): Call<Unit>
+
+    @CheckResult
     public fun sendMessage(message: Message): Call<Message>
+
+    @CheckResult
     public fun updateMessage(message: Message): Call<Message>
+
+    @CheckResult
     public fun deleteMessage(messageId: String): Call<Message>
+
+    @CheckResult
     public fun getMessage(messageId: String): Call<Message>
+
+    @CheckResult
     public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+
+    @CheckResult
     public fun unBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+
+    @CheckResult
     public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+
+    @CheckResult
     public fun removeShadowBan(targetId: String): Call<Unit>
+
+    @CheckResult
     public fun markMessageRead(messageId: String): Call<Unit>
+
+    @CheckResult
     public fun markRead(): Call<Unit>
+
+    @CheckResult
     public fun delete(): Call<Channel>
+
+    @CheckResult
     public fun show(): Call<Unit>
+
+    @CheckResult
     public fun hide(clearHistory: Boolean = false): Call<Unit>
+
+    @CheckResult
     public fun sendFile(file: File): Call<String>
+
+    @CheckResult
     public fun sendImage(file: File): Call<String>
+
+    @CheckResult
     public fun sendFile(file: File, callback: ProgressCallback): Call<String>
+
+    @CheckResult
     public fun sendImage(file: File, callback: ProgressCallback): Call<String>
+
+    @CheckResult
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction>
+
+    @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message>
+
+    @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+
+    @CheckResult
     public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+
+    @CheckResult
     public fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
 
     @Deprecated(
@@ -114,22 +170,55 @@ public interface ChannelController {
         listener: (event: T) -> Unit
     ): Disposable
 
+    @CheckResult
     public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+
+    @CheckResult
     public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel>
+
+    @CheckResult
     public fun disableSlowMode(): Call<Channel>
+
+    @CheckResult
     public fun addMembers(vararg userIds: String): Call<Channel>
+
+    @CheckResult
     public fun removeMembers(vararg userIds: String): Call<Channel>
+
+    @CheckResult
     public fun acceptInvite(message: String?): Call<Channel>
+
+    @CheckResult
     public fun rejectInvite(): Call<Channel>
+
+    @CheckResult
     public fun mute(): Call<Unit>
+
+    @CheckResult
     public fun unmute(): Call<Unit>
+
+    @CheckResult
     public fun muteCurrentUser(): Call<Mute>
+
+    @CheckResult
     public fun muteUser(userId: String): Call<Mute>
+
+    @CheckResult
     public fun unmuteUser(userId: String): Call<Unit>
+
+    @CheckResult
     public fun unmuteCurrentUser(): Call<Unit>
+
+    @CheckResult
     public fun watch(data: Map<String, Any>): Call<Channel>
+
+    @CheckResult
     public fun stopTyping(): Call<ChatEvent>
+
+    @CheckResult
     public fun keystroke(): Call<ChatEvent>
+
+    @CheckResult
     public fun queryMembers(
         offset: Int,
         limit: Int,

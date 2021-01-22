@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
@@ -16,6 +17,7 @@ public interface GetThread {
      *
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
+    @CheckResult
     public operator fun invoke(cid: String, parentId: String): Call<ThreadController>
 }
 

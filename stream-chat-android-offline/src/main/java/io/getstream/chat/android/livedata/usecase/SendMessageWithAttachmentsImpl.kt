@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
 import android.webkit.MimeTypeMap
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -18,11 +19,12 @@ public interface SendMessageWithAttachments {
         message = "Use sendMessage() and attachment.upload instead of this useCase",
         level = DeprecationLevel.WARNING
     )
+    @CheckResult
     public operator fun invoke(
         cid: String,
         message: Message,
         files: List<File>,
-        attachmentTransformer: Attachment.(file: File) -> Unit = { }
+        attachmentTransformer: Attachment.(file: File) -> Unit = { },
     ): Call<Message>
 }
 
@@ -32,7 +34,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
         cid: String,
         message: Message,
         files: List<File>,
-        attachmentTransformer: Attachment.(file: File) -> Unit
+        attachmentTransformer: Attachment.(file: File) -> Unit,
     ): Call<Message> {
         validateCid(cid)
 
@@ -52,7 +54,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
     private suspend fun uploadFiles(
         channelControllerImpl: ChannelControllerImpl,
         files: List<File>,
-        attachmentTransformer: Attachment.(file: File) -> Unit
+        attachmentTransformer: Attachment.(file: File) -> Unit,
     ): Result<List<Attachment>> =
         files.fold(Result(emptyList())) { acc, file ->
             if (acc.isError) {
@@ -69,7 +71,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
 
     private suspend fun uploadFile(
         channelControllerImpl: ChannelControllerImpl,
-        file: File
+        file: File,
     ): Result<Attachment> =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension).let { mimetype ->
             val pathResult = when (mimetype.isImageMimetype()) {

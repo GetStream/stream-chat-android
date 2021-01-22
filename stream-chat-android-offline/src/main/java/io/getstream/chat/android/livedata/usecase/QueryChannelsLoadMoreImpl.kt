@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -18,11 +19,22 @@ public interface QueryChannelsLoadMore {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int = 30, messageLimit: Int = 10): Call<List<Channel>>
+    @CheckResult
+    public operator fun invoke(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int = 30,
+        messageLimit: Int = 10,
+    ): Call<List<Channel>>
 }
 
 internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
-    override operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int, messageLimit: Int): Call<List<Channel>> {
+    override operator fun invoke(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int,
+        messageLimit: Int,
+    ): Call<List<Channel>> {
         return CoroutineCall(domainImpl.scope) {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
@@ -12,6 +13,7 @@ public interface CreateChannel {
      *
      * @param channel the channel object
      */
+    @CheckResult
     public operator fun invoke(channel: Channel): Call<Channel>
 }
 
