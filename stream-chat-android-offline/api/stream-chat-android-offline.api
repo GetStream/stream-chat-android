@@ -493,6 +493,3 @@ public abstract interface class io/getstream/chat/android/livedata/utils/RetryPo
 	public abstract fun shouldRetry (Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
-public final class io/getstream/chat/android/livedata/utils/ValidationKt {
-}
-

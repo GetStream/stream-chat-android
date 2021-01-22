@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.validateCid
 import kotlin.properties.Delegates
 
 /**
@@ -195,12 +194,9 @@ public class MessageListViewModel @JvmOverloads constructor(
                 client.muteUser(event.user.id).enqueue()
             }
             is Event.BlockUser -> {
-                validateCid(cid)
-                val (channelType, channelId) = event.cid.split(':')
-                client.shadowBanUser(
+                val channelClient = client.channel(cid)
+                channelClient.shadowBanUser(
                     targetId = event.user.id,
-                    channelType = channelType,
-                    channelId = channelId,
                     reason = null,
                     timeout = null,
                 ).enqueue()
