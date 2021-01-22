@@ -17,6 +17,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
+import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
@@ -24,6 +25,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
+import io.getstream.chat.android.ui.utils.extensions.isDeleted
 import io.getstream.chat.android.ui.utils.extensions.isEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
@@ -88,7 +90,7 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean
+        isThread: Boolean,
     ) =
         setupFootnote(
             viewHolder.binding.footnote,
@@ -99,8 +101,12 @@ internal class FootnoteDecorator(
             isThread,
         )
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) {
-        setupSimpleFootnote(
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean,
+    ) {
+        setupSimpleFootnoteWithRootConstraints(
             viewHolder.binding.footnote,
             viewHolder.binding.root,
             viewHolder.binding.cardView,
@@ -110,6 +116,14 @@ internal class FootnoteDecorator(
             applyGravity(data.isMine)
             hideStatusIndicator()
         }
+    }
+
+    override fun decorateDeletedMessage(
+        viewHolder: MessageDeletedViewHolder,
+        data: MessageListItem.MessageItem,
+        isThread: Boolean,
+    ) {
+        setupSimpleFootnote(viewHolder.binding.footnote, data)
     }
 
     private fun setupFootnote(
@@ -122,14 +136,14 @@ internal class FootnoteDecorator(
     ) {
         val isSimpleFootnoteMode = data.message.replyCount == 0 || isThreadMode
         if (isSimpleFootnoteMode) {
-            setupSimpleFootnote(footnoteView, root, anchorView, data)
+            setupSimpleFootnoteWithRootConstraints(footnoteView, root, anchorView, data)
         } else {
             setupThreadFootnote(footnoteView, root, threadGuideline, data)
         }
         footnoteView.applyGravity(data.isMine)
     }
 
-    private fun setupSimpleFootnote(
+    private fun setupSimpleFootnoteWithRootConstraints(
         footnoteView: FootnoteView,
         root: ConstraintLayout,
         anchorView: View,
@@ -139,6 +153,10 @@ internal class FootnoteDecorator(
             clear(footnoteView.id, ConstraintSet.TOP)
             connect(footnoteView.id, ConstraintSet.TOP, anchorView.id, ConstraintSet.BOTTOM)
         }
+        setupSimpleFootnote(footnoteView, data)
+    }
+
+    private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         footnoteView.showSimpleFootnote()
         setupMessageFooterLabel(footnoteView.footerTextLabel, data)
         setupMessageFooterTime(footnoteView, data)
@@ -164,9 +182,8 @@ internal class FootnoteDecorator(
                 textView.text = data.message.user.name
                 textView.isVisible = true
             }
-            data.isNotBottomPosition() || !data.message.isEphemeral() -> {
-                textView.isVisible = false
-            }
+            data.isNotBottomPosition() -> textView.isVisible = false
+            !data.message.isEphemeral() && !data.message.isDeleted() -> textView.isVisible = false
             else -> textView.apply {
                 isVisible = true
                 text = context.getString(R.string.stream_ui_ephemeral_msg_footer)
@@ -195,6 +212,7 @@ internal class FootnoteDecorator(
             data.isNotBottomPosition() -> footnoteView.hideStatusIndicator()
             data.isTheirs -> footnoteView.hideStatusIndicator()
             data.message.isEphemeral() -> footnoteView.hideStatusIndicator()
+            data.message.isDeleted() -> footnoteView.hideStatusIndicator()
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> footnoteView.showInProgressStatusIndicator()
