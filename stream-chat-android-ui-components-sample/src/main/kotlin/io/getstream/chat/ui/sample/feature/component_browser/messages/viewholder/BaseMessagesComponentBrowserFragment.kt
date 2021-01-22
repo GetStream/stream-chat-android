@@ -39,7 +39,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
             setUserClickListener {}
 
             init(Channel(), currentUser)
-            displayNewMessage(MessageListItemWrapper(getItems()))
+            displayNewMessages(MessageListItemWrapper(getItems()))
         }
     }
 
