@@ -55,28 +55,35 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             val currentAttachment = obtainAttachments()[binding.attachmentGallery.currentItemIndex]
             menuButton.setOnClickListener {
                 val deleteHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    override fun onClick() = finish() // "Not yet implemented"
+                    override fun onClick() {
+                        attachmentDeleteOptionHandler.onClick(currentAttachment)
+                        finish()
+                    }
                 }
                 val saveHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     override fun onClick() {
-                        finish()
                         attachmentDownloadOptionHandler.onClick(currentAttachment)
+                        finish()
                     }
                 }
                 val showInChatHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     override fun onClick() {
-                        finish()
                         attachmentShowInChatOptionHandler.onClick(currentAttachment)
+                        finish()
                     }
                 }
                 val replyHandler = object : AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     override fun onClick() {
-                        finish()
                         attachmentReplyOptionHandler.onClick(currentAttachment)
+                        finish()
                     }
                 }
-                AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
-                    .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
+                AttachmentOptionsDialogFragment.newInstance(
+                    showInChatHandler = showInChatHandler,
+                    deleteHandler = deleteHandler,
+                    replyHandler = replyHandler,
+                    saveImageHandler = saveHandler
+                ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
             }
         }
     }
@@ -110,6 +117,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         private lateinit var attachmentShowInChatOptionHandler: AttachmentShowInChatOptionHandler
         private lateinit var attachmentReplyOptionHandler: AttachmentReplyOptionHandler
         private lateinit var attachmentDownloadOptionHandler: AttachmentDownloadOptionHandler
+        private lateinit var attachmentDeleteOptionHandler: AttachmentDeleteOptionHandler
 
         @JvmStatic
         public fun createIntent(
@@ -121,10 +129,12 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             attachmentShowInChatOptionHandler: AttachmentShowInChatOptionHandler,
             attachmentReplyOptionHandler: AttachmentReplyOptionHandler,
             attachmentDownloadOptionHandler: AttachmentDownloadOptionHandler,
+            attachmentDeleteOptionHandler: AttachmentDeleteOptionHandler,
         ): Intent {
             this.attachmentReplyOptionHandler = attachmentReplyOptionHandler
             this.attachmentShowInChatOptionHandler = attachmentShowInChatOptionHandler
             this.attachmentDownloadOptionHandler = attachmentDownloadOptionHandler
+            this.attachmentDeleteOptionHandler = attachmentDeleteOptionHandler
             val userName = message.user.name
             val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
@@ -186,4 +196,5 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     public interface AttachmentShowInChatOptionHandler : AttachmentOptionHandler
     public interface AttachmentReplyOptionHandler : AttachmentOptionHandler
     public interface AttachmentDownloadOptionHandler : AttachmentOptionHandler
+    public interface AttachmentDeleteOptionHandler : AttachmentOptionHandler
 }

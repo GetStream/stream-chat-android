@@ -164,6 +164,13 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
+    private var onAttachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler =
+        object : AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
+            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
+                throw IllegalStateException("onAttachmentDeleteOptionClickHandler must be set")
+            }
+        }
+
     private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
@@ -237,7 +244,8 @@ public class MessageListView : ConstraintLayout {
                         context,
                         onAttachmentReplyOptionClickHandler,
                         onAttachmentShowInChatOptionClickHandler,
-                        onAttachmentDownloadOptionClickHandler)
+                        onAttachmentDownloadOptionClickHandler,
+                        onAttachmentDeleteOptionClickHandler)
                 )
         }
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -835,6 +843,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
         this.onAttachmentShowInChatOptionClickHandler = handler
+    }
+
+    public fun setOnAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
+        this.onAttachmentDeleteOptionClickHandler = handler
     }
 
     public fun interface MessageClickListener {

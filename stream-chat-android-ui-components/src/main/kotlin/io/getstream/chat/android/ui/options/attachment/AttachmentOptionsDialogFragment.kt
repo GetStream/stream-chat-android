@@ -62,16 +62,16 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         const val TAG = "AttachmentOptionsDialogFragment"
 
         fun newInstance(
-            showInChatHandlerAttachment: AttachmentOptionHandler,
-            replyHandlerAttachment: AttachmentOptionHandler,
-            deleteHandlerAttachment: AttachmentOptionHandler? = null,
-            saveImageHandlerAttachment: AttachmentOptionHandler? = null,
+            showInChatHandler: AttachmentOptionHandler,
+            replyHandler: AttachmentOptionHandler,
+            deleteHandler: AttachmentOptionHandler? = null,
+            saveImageHandler: AttachmentOptionHandler? = null,
         ): AttachmentOptionsDialogFragment {
             return AttachmentOptionsDialogFragment().apply {
-                this.showInChatHandler = showInChatHandlerAttachment
-                this.deleteHandler = deleteHandlerAttachment
-                this.replyHandler = replyHandlerAttachment
-                this.saveImageHandler = saveImageHandlerAttachment
+                this.showInChatHandler = showInChatHandler
+                this.deleteHandler = deleteHandler
+                this.replyHandler = replyHandler
+                this.saveImageHandler = saveImageHandler
             }
         }
     }
