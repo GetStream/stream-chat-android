@@ -12,13 +12,13 @@
         android:id="@+id/avatarImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/shape_circle_grey"
-        android:padding="6dp"
+        android:background="@drawable/shape_circle_grey_whisper"
+        android:padding="10dp"
         android:src="@drawable/ic_settings"
-        app:tint="@color/stream_ui_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_ui_black"
         />
 
     <TextView

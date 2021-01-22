@@ -27,6 +27,7 @@
         <item name="boxStrokeWidthFocused">0dp</item>
         <item name="boxBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="hintTextColor">@color/grey_dark</item>
+        <item name="errorTextColor">@color/stream_ui_accent_red</item>
         <item name="errorIconDrawable">@null</item>
         <item name="hintTextAppearance">@style/StreamUiTextAppearance.CaptionBold</item>
     </style>
