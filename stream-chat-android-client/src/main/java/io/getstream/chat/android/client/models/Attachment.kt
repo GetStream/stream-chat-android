@@ -52,6 +52,10 @@ public data class Attachment(
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var uploadId: String? = null
+
 ) : CustomObject {
 
     public sealed class UploadState {
@@ -60,5 +64,7 @@ public data class Attachment(
         public data class Failed(val error: ChatError) : UploadState()
     }
 
-    public fun generateUploadId(): String = UUID.randomUUID().toString()
+    public companion object {
+        public fun generateUploadId(): String = UUID.randomUUID().toString()
+    }
 }

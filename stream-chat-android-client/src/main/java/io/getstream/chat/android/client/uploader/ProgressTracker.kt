@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.uploader
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -16,6 +17,7 @@ public object ProgressTracker {
         }
     }
 
+    //Todo: Don't use LiveData, use StateFlow instead
     public fun getProgress(id: String): LiveData<Int?> =
         Transformations.map(progressMap) { map ->
             map[id]
@@ -29,6 +31,7 @@ public fun ProgressTracker.toProgressCallback(id: String): ProgressCallback {
         override fun onError(error: ChatError) {}
 
         override fun onProgress(progress: Long) {
+            // Log.d("ProgressTracker", "progress: $progress")
             setProgress(id, progress.toInt())
         }
     }

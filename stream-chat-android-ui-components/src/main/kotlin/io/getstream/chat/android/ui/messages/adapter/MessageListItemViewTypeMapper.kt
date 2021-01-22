@@ -38,11 +38,11 @@ internal object MessageListItemViewTypeMapper {
         return when {
             messageItem.message.deletedAt != null -> MESSAGE_DELETED
             messageItem.message.isGiphyEphemeral() -> GIPHY
+            messageItem.message.isAttachmentEphemeral() -> ATTACHMENTS_EPHEMERAL
             messageItem.message.isMediaWithText() -> PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
             messageItem.message.isFileWithText() -> PLAIN_TEXT_WITH_FILE_ATTACHMENTS
             messageItem.message.attachments.isMedia() -> MEDIA_ATTACHMENTS
             messageItem.message.attachments.isAttachmentWithoutLinks() -> ATTACHMENTS
-            messageItem.message.isAttachmentEphemeral() -> ATTACHMENTS_EPHEMERAL
             else -> PLAIN_TEXT
         }
     }

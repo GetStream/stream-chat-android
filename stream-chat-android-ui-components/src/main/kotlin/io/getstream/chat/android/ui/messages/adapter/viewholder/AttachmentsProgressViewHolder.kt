@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.uploader.ProgressTracker
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageEphemeralProgressBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -35,7 +36,19 @@ internal class AttachmentsProgressViewHolder(
         super.bindData(data, diff)
 
         with(binding) {
-            this.sentFiles.text = data.message.text
+            val id = data.message.attachments[0].uploadId
+
+            this.sentFiles.text = data.message.text ?: "Progress"
+
+            id?.let(ProgressTracker::getProgress)?.observeForever { progress ->
+                val message = if (progress == 100) {
+                    "Upload complete, processing..."
+                } else {
+                    "$progress%"
+                }
+
+                this.progress.text = message
+            }
         }
     }
 }

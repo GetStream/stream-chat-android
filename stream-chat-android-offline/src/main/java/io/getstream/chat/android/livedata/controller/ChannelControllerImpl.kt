@@ -49,6 +49,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.uploader.ProgressTracker
+import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -613,13 +615,22 @@ internal class ChannelControllerImpl(
             // upload attachments
             logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-            upsertProgressMessage(newMessage.attachments.size)
+            newMessage.attachments.forEach { attachment ->
+                attachment.uploadId = Attachment.generateUploadId()
+            }
+
+            upsertProgressMessage(newMessage.attachments)
+
             newMessage.attachments = newMessage.attachments.map {
                 var attachment: Attachment = it
 
                 if (it.upload != null) {
-                    val result = uploadAttachment(it, attachmentTransformer)
+                    val result = uploadAttachment(it,
+                        attachmentTransformer,
+                        ProgressTracker.toProgressCallback(attachment.uploadId!!)
+                    )
                     attachment.uploadComplete = result.isSuccess
+
                     if (result.isSuccess) {
                         attachment = result.data()
                     } else {
@@ -630,11 +641,11 @@ internal class ChannelControllerImpl(
                 attachment
             }.toMutableList()
 
+            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+
             uploadStatusMessage?.let { cancelMessage(it) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
@@ -667,13 +678,14 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private fun upsertProgressMessage(countOfFileToUpload: Int) {
+    private fun upsertProgressMessage(attachmentList: MutableList<Attachment>) {
+
         val message = Message(
-            text = "Messages Upload - 0/$countOfFileToUpload",
             createdAt = Date(),
             type = "ephemeral",
             user = domainImpl.currentUser,
-            command = "file"
+            command = "file",
+            attachments = attachmentList
         )
 
         uploadStatusMessage = message
@@ -688,6 +700,7 @@ internal class ChannelControllerImpl(
     internal suspend fun uploadAttachment(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
+        progressCallback: ProgressCallback? = null,
     ): Result<Attachment> {
         val file =
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
@@ -700,7 +713,11 @@ internal class ChannelControllerImpl(
         val pathResult: Result<String> = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
         } else {
-            sendFile(file)
+            if (progressCallback != null) {
+                sendFile(file, progressCallback)
+            } else {
+                sendFile(file)
+            }
         }
 
         val url = if (pathResult.isError) null else pathResult.data()
