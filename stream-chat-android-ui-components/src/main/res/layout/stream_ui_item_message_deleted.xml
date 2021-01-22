@@ -27,4 +27,13 @@
         android:textStyle="italic"
         />
 
+    <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
+        android:id="@+id/footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        />
+
 </LinearLayout>
