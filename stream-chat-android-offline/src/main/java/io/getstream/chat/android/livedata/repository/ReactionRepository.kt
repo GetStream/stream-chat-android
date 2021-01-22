@@ -38,8 +38,13 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
         reactionDao.insert(reactionEntities)
     }
 
-    internal suspend fun select(messageId: String, userId: String, type: String): ReactionEntity? {
-        return reactionDao.select(messageId, userId, type)
+    internal suspend fun select(
+        messageId: String,
+        userId: String,
+        type: String,
+        getUser: suspend (userId: String) -> User,
+    ): Reaction? {
+        return reactionDao.select(messageId, userId, type)?.toModel(getUser)
     }
 
     internal suspend fun selectSyncNeeded(): List<ReactionEntity> {

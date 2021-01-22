@@ -4,21 +4,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ReactionRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomainImpl.repos.reactions }
+    val helper by lazy { chatDomainImpl.repos }
+    val repo by lazy { helper.reactions }
 
     @Test
     fun testInsertAndRead() = runBlocking {
         repo.insert(data.reaction1)
-        val entity =
-            repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
-        val reaction = entity!!.toModel { data.userMap.getValue(it) }
+        val reaction =
+            helper.selectReactionForMessageAndType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         Truth.assertThat(reaction).isEqualTo(data.reaction1)
     }
 
@@ -47,9 +46,8 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         repo.insert(data.reaction1)
         repo.insert(reaction1Updated)
 
-        val entity =
-            repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
-        val reaction = entity!!.toModel { data.userMap.getValue(it) }
+        val reaction =
+            helper.selectReactionForMessageAndType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
     }
 }

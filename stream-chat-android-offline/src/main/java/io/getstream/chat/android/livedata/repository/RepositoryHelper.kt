@@ -61,10 +61,16 @@ internal class RepositoryHelper(
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
         messages.select(messageIds, ::selectUser)
 
-    internal suspend fun selectUserReactionsToMessage(
+    internal suspend fun selectUserReactionsForMessage(
         messageId: String,
         userId: String
     ): List<Reaction> = reactions.selectUserReactionsToMessage(messageId, userId, ::selectUser)
+
+    internal suspend fun selectReactionForMessageAndType(
+        messageId: String,
+        userId: String,
+        type: String,
+    ) = reactions.select(messageId, userId, type, ::selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
