@@ -9,6 +9,7 @@ internal fun Reaction.toEntity(enforceUnique: Boolean = false): ReactionEntity {
     reactionEntity.score = score
     reactionEntity.createdAt = createdAt
     reactionEntity.updatedAt = updatedAt
+    reactionEntity.deletedAt = deletedAt
     reactionEntity.extraData = extraData
     reactionEntity.syncStatus = syncStatus
     reactionEntity.enforceUnique = enforceUnique
@@ -23,6 +24,7 @@ internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) ->
     extraData = extraData,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    deletedAt = deletedAt,
     syncStatus = syncStatus,
     userId = userId,
 )
