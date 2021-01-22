@@ -3,12 +3,16 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
-import io.getstream.chat.android.client.uploader.ProgressTracker
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageEphemeralProgressBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 internal class AttachmentsProgressViewHolder(
     parent: ViewGroup,
@@ -32,23 +36,27 @@ internal class AttachmentsProgressViewHolder(
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
+    override fun bindData(data: MessageListItem.MessageItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, isThread, diff)
+            binding.run {
+                val id = data.message.attachments[0].uploadId
 
-        with(binding) {
-            val id = data.message.attachments[0].uploadId
+                this.sentFiles.text = data.message.text ?: "Progress"
 
-            this.sentFiles.text = data.message.text ?: "Progress"
+                GlobalScope.launch(Dispatchers.Main) {
+                    id?.let(ProgressTrackerFactory.Companion::getOrCreate)
+                        ?.currentProgress()
+                        ?.collect { progress ->
+                            val message = if (progress == 100) {
+                                "Upload complete, processing..."
+                            } else {
+                                "$progress%"
+                            }
 
-            id?.let(ProgressTracker::getProgress)?.observeForever { progress ->
-                val message = if (progress == 100) {
-                    "Upload complete, processing..."
-                } else {
-                    "$progress%"
+                            this@run.progress.text = message
+                        }
                 }
-
-                this.progress.text = message
             }
         }
     }
-}
+

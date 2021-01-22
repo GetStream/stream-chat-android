@@ -30,7 +30,7 @@ internal class ProgressRequestBody(
             var read: Int
             val handler = Handler(Looper.getMainLooper())
             while (fis.read(buffer).also { read = it } != -1) {
-                Log.d("ProgressRequestBody", "uploaded: $uploaded ; total: $total")
+                // Log.d("ProgressRequestBody", "uploaded: $uploaded ; total: $total")
                 handler.post {
                     callback.onProgress((100 * uploaded / total))
                 }

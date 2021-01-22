@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.ProgressTracker
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -628,7 +628,7 @@ internal class ChannelControllerImpl(
                     val result = uploadAttachment(
                         it,
                         attachmentTransformer,
-                        ProgressTracker.toProgressCallback(attachment.uploadId!!)
+                        ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).toProgressCallback()
                     )
                     attachment.uploadComplete = result.isSuccess
 
