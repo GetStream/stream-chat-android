@@ -146,6 +146,8 @@ public final class io/getstream/chat/android/client/ChatClient$Companion {
 }
 
 public final class io/getstream/chat/android/client/ClientExtensionsKt {
+	public static final fun setUserAndAwait (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun setUserAndAwait (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;Landroidx/lifecycle/LifecycleOwner;[Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;[Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
