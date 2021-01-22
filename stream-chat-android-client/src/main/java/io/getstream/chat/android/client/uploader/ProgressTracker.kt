@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 public class ProgressTracker {
 
     private var numberOfLaps = 1
-    private var currentProgress : MutableStateFlow<Int> = MutableStateFlow(0)
-    private var lapsCompleted : MutableStateFlow<Int> = MutableStateFlow(0)
+    private var currentProgress: MutableStateFlow<Int> = MutableStateFlow(0)
+    private var lapsCompleted: MutableStateFlow<Int> = MutableStateFlow(0)
 
     public fun initProgress(numberOfLaps: Int = 1) {
         this.numberOfLaps = numberOfLaps

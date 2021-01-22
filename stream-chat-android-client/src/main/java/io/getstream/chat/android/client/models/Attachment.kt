@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
-import java.util.UUID
 
 public data class Attachment(
 
