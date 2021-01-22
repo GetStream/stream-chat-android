@@ -92,14 +92,13 @@ fun Fragment.initToolbar(toolbar: Toolbar) {
 }
 
 fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int) {
-    val badge = getBadge(menuItemId)
-        ?: getOrCreateBadge(menuItemId).apply {
-            horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)
-            verticalOffset = context.getDimensionPixelSize(R.dimen.badge_vertical_offset)
-            backgroundColor = context.getColorFromRes(R.color.bottom_nav_badge_color)
-        }
-    badge.isVisible = badgeNumber > 0
-    badge.number = badgeNumber
+    getOrCreateBadge(menuItemId).apply {
+        horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)
+        verticalOffset = context.getDimensionPixelSize(R.dimen.badge_vertical_offset)
+        backgroundColor = context.getColorFromRes(R.color.bottom_nav_badge_color)
+        isVisible = badgeNumber > 0
+        number = badgeNumber
+    }
 }
 
 fun Context?.getFragmentManager(): FragmentManager? {
