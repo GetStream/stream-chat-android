@@ -67,21 +67,18 @@
             />
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <ImageView
         android:id="@+id/addChannelButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/stream_ui_circle_white"
+        android:elevation="@dimen/stream_ui_elevation_small"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
-        app:backgroundTint="@color/stream_ui_white"
-        app:cornerRadius="20dp"
-        app:icon="@drawable/stream_ui_ic_pen"
-        app:iconGravity="textStart"
-        app:iconPadding="0dp"
-        app:iconTint="@color/stream_ui_accent_blue"
+        android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

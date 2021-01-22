@@ -77,7 +77,8 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun configAddChannelButton(typedArray: TypedArray) {
         binding.addChannelButton.apply {
-            val showAddChannelButton = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowAddChannelButton, true)
+            val showAddChannelButton =
+                typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowAddChannelButton, true)
 
             isVisible = showAddChannelButton
             isClickable = showAddChannelButton
@@ -92,17 +93,17 @@ public class ChannelListHeaderView : ConstraintLayout {
                     DEFAULT_ADD_CHANNEL_BUTTON_SIZE
                 )
             }
-            iconTint = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonTint)
+
+            imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
-            icon = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonIcon)
+            val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
-            backgroundTintList = getBackgroundTint(typedArray)
+            setImageDrawable(drawable)
+            backgroundTintList =
+                typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelBackgroundTint)
+                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
-
-    private fun getBackgroundTint(typedArray: TypedArray) =
-        typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelBackgroundTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_white)
 
     private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
         return TextStyle.Builder(typedArray).size(
