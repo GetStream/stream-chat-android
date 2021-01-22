@@ -4,6 +4,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
@@ -11,7 +12,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import java.lang.Exception
 
 @InternalStreamChatApi
 public interface DownloadAttachment {
@@ -20,6 +20,7 @@ public interface DownloadAttachment {
      *
      * @param attachment the attachment to download
      */
+    @CheckResult
     public operator fun invoke(attachment: Attachment): Call<Unit>
 }
 

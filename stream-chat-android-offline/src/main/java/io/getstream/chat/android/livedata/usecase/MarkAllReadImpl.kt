@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
@@ -9,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 public interface MarkAllRead {
+    @CheckResult
     public operator fun invoke(): Call<Boolean>
 }
 

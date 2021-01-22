@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
@@ -14,6 +15,7 @@ public interface DeleteReaction {
      * @param reaction the reaction to mark as deleted
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public operator fun invoke(cid: String, reaction: Reaction): Call<Message>
 }
 

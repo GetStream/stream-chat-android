@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.annotation.CheckResult
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -15,6 +16,7 @@ public interface GetUnreadChannelCount {
      * @see io.getstream.chat.android.livedata.usecase.GetTotalUnreadCount
      * @see io.getstream.chat.android.livedata.controller.ChannelController.unreadCount
      */
+    @CheckResult
     public operator fun invoke(): Call<LiveData<Int>>
 }
 
