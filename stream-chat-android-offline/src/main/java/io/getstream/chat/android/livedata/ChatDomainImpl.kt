@@ -714,7 +714,8 @@ internal class ChatDomainImpl internal constructor(
         return messages
     }
 
-    private suspend fun retryReactions(): List<Reaction> {
+    @VisibleForTesting
+    internal suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionSyncNeeded().onEach { reaction ->
             reaction.user = null
             val result = if (reaction.deletedAt != null) {

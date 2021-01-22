@@ -23,7 +23,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val reaction = data.reaction1.copy()
         reaction.syncStatus = SyncStatus.SYNC_NEEDED
         chatDomainImpl.repos.reactions.insert(reaction)
-        val results = chatDomainImpl.repos.reactions.retryReactions()
+        val results = chatDomainImpl.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
 
@@ -44,7 +44,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
             chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         chatDomainImpl.setOnline()
-        val reactionEntities = chatDomainImpl.repos.reactions.retryReactions()
+        val reactionEntities = chatDomainImpl.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
         reactionEntity = chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.COMPLETED)
@@ -63,7 +63,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction.deletedAt).isNotNull()
 
-        val reactions = chatDomainImpl.repos.reactions.retryReactions()
+        val reactions = chatDomainImpl.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
     }
 

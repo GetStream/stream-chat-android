@@ -10,8 +10,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ReactionRepositoryTest : BaseDomainTest() {
-    val helper by lazy { chatDomainImpl.repos }
-    val repo by lazy { helper.reactions }
+    private val helper by lazy { chatDomainImpl.repos }
+    private val repo by lazy { helper.reactions }
 
     @Test
     fun testInsertAndRead() = runBlocking {
@@ -27,15 +27,15 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         val reaction2 =
             data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
         repo.insert(listOf(data.reaction1, reaction2))
-        var reactions = repo.selectSyncNeeded()
+        var reactions = helper.selectReactionSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(1)
         Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
-        reactions = repo.retryReactions()
+        reactions = chatDomainImpl.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
         Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
-        reactions = repo.selectSyncNeeded()
+        reactions = helper.selectReactionSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(0)
     }
 
