@@ -27,7 +27,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         data.reaction1.syncStatus = SyncStatus.FAILED_PERMANENTLY
         val reaction2 =
             data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
-        repo.insertManyReactions(listOf(data.reaction1, reaction2))
+        repo.insert(listOf(data.reaction1, reaction2))
         var reactions = repo.selectSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(1)
         Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)

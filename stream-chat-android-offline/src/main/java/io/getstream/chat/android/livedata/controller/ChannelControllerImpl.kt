@@ -794,10 +794,9 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            val currentReactions =
-                domainImpl.repos.reactions.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
-            currentReactions.forEach { it.deletedAt = Date() }
-            domainImpl.repos.reactions.insert(currentReactions)
+            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
+                .onEach { it.deletedAt = Date() }
+                .also { domainImpl.repos.reactions.insert(it) }
         }
         domainImpl.repos.reactions.insert(reaction, enforceUnique)
         // update livedata
@@ -809,10 +808,7 @@ internal class ChannelControllerImpl(
         }
 
         if (online) {
-            val runnable = {
-                client.sendReaction(reaction, enforceUnique)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insert(reaction, enforceUnique)

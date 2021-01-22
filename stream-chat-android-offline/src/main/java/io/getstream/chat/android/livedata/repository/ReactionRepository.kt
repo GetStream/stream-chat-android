@@ -19,7 +19,7 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
         insert(listOf(reaction.toEntity(enforceUnique)))
     }
 
-    internal suspend fun insertManyReactions(reactions: List<Reaction>) {
+    internal suspend fun insert(reactions: List<Reaction>) {
         val entities = reactions.map(Reaction::toEntity)
         insert(entities)
     }
@@ -28,7 +28,7 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
         insert(listOf(reactionEntity))
     }
 
-    internal suspend fun insert(reactionEntities: List<ReactionEntity>) {
+    private suspend fun insert(reactionEntities: List<ReactionEntity>) {
         for (reactionEntity in reactionEntities) {
             require(reactionEntity.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
             require(reactionEntity.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
@@ -46,8 +46,13 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
         return reactionDao.selectSyncNeeded()
     }
 
-    internal suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity> {
+    internal suspend fun selectUserReactionsToMessage(
+        messageId: String,
+        userId: String,
+        getUser: suspend (userId: String) -> User,
+    ): List<Reaction> {
         return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
+            .map { it.toModel(getUser) }
     }
 
     internal suspend fun retryReactions(): List<ReactionEntity> {
