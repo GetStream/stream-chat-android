@@ -21,6 +21,10 @@ public data class Reaction(
     var updatedAt: Date? = null,
 
     @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var deletedAt: Date? = null,
+
+    @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @IgnoreSerialisation

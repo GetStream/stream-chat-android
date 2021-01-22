@@ -15,20 +15,20 @@ import io.getstream.chat.android.livedata.repository.mapper.toModel
  */
 internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, var client: ChatClient) {
 
-    suspend fun insertReaction(reaction: Reaction, enforceUnique: Boolean = false) {
+    internal suspend fun insert(reaction: Reaction, enforceUnique: Boolean = false) {
         insert(listOf(reaction.toEntity(enforceUnique)))
     }
 
-    suspend fun insertManyReactions(reactions: List<Reaction>) {
+    internal suspend fun insertManyReactions(reactions: List<Reaction>) {
         val entities = reactions.map(Reaction::toEntity)
         insert(entities)
     }
 
-    suspend fun insert(reactionEntity: ReactionEntity) {
+    private suspend fun insertEntity(reactionEntity: ReactionEntity) {
         insert(listOf(reactionEntity))
     }
 
-    suspend fun insert(reactionEntities: List<ReactionEntity>) {
+    internal suspend fun insert(reactionEntities: List<ReactionEntity>) {
         for (reactionEntity in reactionEntities) {
             require(reactionEntity.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
             require(reactionEntity.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
@@ -37,19 +37,20 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
 
         reactionDao.insert(reactionEntities)
     }
-    suspend fun select(messageId: String, userId: String, type: String): ReactionEntity? {
+
+    internal suspend fun select(messageId: String, userId: String, type: String): ReactionEntity? {
         return reactionDao.select(messageId, userId, type)
     }
 
-    suspend fun selectSyncNeeded(): List<ReactionEntity> {
+    internal suspend fun selectSyncNeeded(): List<ReactionEntity> {
         return reactionDao.selectSyncNeeded()
     }
 
-    suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity> {
+    internal suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity> {
         return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
     }
 
-    suspend fun retryReactions(): List<ReactionEntity> {
+    internal suspend fun retryReactions(): List<ReactionEntity> {
         val reactionEntities = selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
             val reaction = reactionEntity.toModel { currentUser }
@@ -62,10 +63,10 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
 
             if (result.isSuccess) {
                 reactionEntity.syncStatus = SyncStatus.COMPLETED
-                insert(reactionEntity)
+                insertEntity(reactionEntity)
             } else if (result.error().isPermanent()) {
                 reactionEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                insert(reactionEntity)
+                insertEntity(reactionEntity)
             }
         }
         return reactionEntities

@@ -15,7 +15,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repo.insertReaction(data.reaction1)
+        repo.insert(data.reaction1)
         val entity =
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         val reaction = entity!!.toModel { data.userMap.getValue(it) }
@@ -44,8 +44,8 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     fun testUpdate() = runBlocking {
         val reaction1Updated =
             data.reaction1.copy().apply { extraData = mutableMapOf("theanswer" to 42.0) }
-        repo.insertReaction(data.reaction1)
-        repo.insertReaction(reaction1Updated)
+        repo.insert(data.reaction1)
+        repo.insert(reaction1Updated)
 
         val entity =
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
