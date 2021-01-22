@@ -160,7 +160,7 @@ public class MessageListView : ConstraintLayout {
     private var onAttachmentDownloadOptionClickHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler =
         object : AttachmentGalleryActivity.AttachmentDownloadOptionHandler {
             override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-                onAttachmentDownloadHandler(attachmentData.toAttachment())
+                DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
             }
         }
 
