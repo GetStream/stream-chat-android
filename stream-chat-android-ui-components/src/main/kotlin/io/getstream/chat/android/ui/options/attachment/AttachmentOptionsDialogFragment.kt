@@ -15,6 +15,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     private var deleteHandler: AttachmentOptionHandler? = null
     private var replyHandler: AttachmentOptionHandler? = null
     private var saveImageHandler: AttachmentOptionHandler? = null
+    private var isMine: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return StreamUiFragmentAttachmentOptionsBinding.inflate(inflater, container, false)
@@ -56,6 +57,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
             }
         )
         binding.root.setOnClickListener { dismiss() }
+        binding.attachmentOptionsMenu.setDeleteItemVisiblity(isMine)
     }
 
     companion object {
@@ -66,12 +68,14 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
             replyHandler: AttachmentOptionHandler,
             deleteHandler: AttachmentOptionHandler? = null,
             saveImageHandler: AttachmentOptionHandler? = null,
+            isMine: Boolean = false,
         ): AttachmentOptionsDialogFragment {
             return AttachmentOptionsDialogFragment().apply {
                 this.showInChatHandler = showInChatHandler
                 this.deleteHandler = deleteHandler
                 this.replyHandler = replyHandler
                 this.saveImageHandler = saveImageHandler
+                this.isMine = isMine
             }
         }
     }

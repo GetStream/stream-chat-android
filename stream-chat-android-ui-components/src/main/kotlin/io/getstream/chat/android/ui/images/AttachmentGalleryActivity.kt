@@ -82,7 +82,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     showInChatHandler = showInChatHandler,
                     deleteHandler = deleteHandler,
                     replyHandler = replyHandler,
-                    saveImageHandler = saveHandler
+                    saveImageHandler = saveHandler,
+                    isMine = currentAttachment.isMine,
                 ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
             }
         }
@@ -126,6 +127,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             currentIndex: Int,
             message: Message,
             attachments: List<Attachment>,
+            isMine: Boolean,
             attachmentShowInChatOptionHandler: AttachmentShowInChatOptionHandler,
             attachmentReplyOptionHandler: AttachmentReplyOptionHandler,
             attachmentDownloadOptionHandler: AttachmentDownloadOptionHandler,
@@ -136,7 +138,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             this.attachmentDownloadOptionHandler = attachmentDownloadOptionHandler
             this.attachmentDeleteOptionHandler = attachmentDeleteOptionHandler
             val userName = message.user.name
-            val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
+            val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName, isMine) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)
                 putExtra(EXTRA_KEY_TIME, time)
@@ -145,11 +147,12 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             }
         }
 
-        private fun Attachment.toAttachmentData(messageId: String, cid: String, userName: String): AttachmentData =
+        private fun Attachment.toAttachmentData(messageId: String, cid: String, userName: String, isMine: Boolean): AttachmentData =
             AttachmentData(
                 messageId = messageId,
                 cid = cid,
                 userName = userName,
+                isMine = isMine,
                 imageUrl = this.imageUrl,
                 assetUrl = this.assetUrl,
                 name = this.name
@@ -161,6 +164,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val messageId: String,
         val cid: String,
         val userName: String,
+        val isMine: Boolean = false,
         val authorName: String? = null,
         val imageUrl: String? = null,
         val assetUrl: String? = null,

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -64,6 +65,10 @@ internal class AttachmentOptionsView : FrameLayout {
                 binding.delete.configureListItem(deleteText, deleteIcon, deleteIconTint, deleteTextTint)
             }
         }
+    }
+
+    fun setDeleteItemVisiblity(visible: Boolean) {
+        binding.delete.isVisible = visible
     }
 
     private fun readConfiguration(array: TypedArray): Configuration {
