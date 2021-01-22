@@ -63,8 +63,8 @@ public sealed class MessageListItem {
     }
 
     private companion object {
-        const val TYPING_ITEM_STABLE_ID = 1L
-        const val THREAD_SEPARATOR_ITEM_STABLE_ID = 2L
-        const val LOADING_MORE_INDICATOR_STABLE_ID = 3L
+        private const val TYPING_ITEM_STABLE_ID = 1L
+        private const val THREAD_SEPARATOR_ITEM_STABLE_ID = 2L
+        private const val LOADING_MORE_INDICATOR_STABLE_ID = 3L
     }
 }
