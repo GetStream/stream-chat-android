@@ -17,7 +17,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     fun testInsertAndRead() = runBlocking {
         repo.insert(data.reaction1)
         val reaction =
-            helper.selectReactionForMessageAndType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+            helper.selectUserReactionsToMessageByType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         Truth.assertThat(reaction).isEqualTo(data.reaction1)
     }
 
@@ -47,7 +47,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         repo.insert(reaction1Updated)
 
         val reaction =
-            helper.selectReactionForMessageAndType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+            helper.selectUserReactionsToMessageByType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
     }
 }

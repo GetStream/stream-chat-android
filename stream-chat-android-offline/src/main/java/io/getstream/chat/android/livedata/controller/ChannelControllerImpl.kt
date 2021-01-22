@@ -795,7 +795,7 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            domainImpl.repos.selectUserReactionsForMessage(reaction.messageId, currentUser.id)
+            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
                 .onEach { it.deletedAt = Date() }
                 .also { domainImpl.repos.reactions.insert(it) }
         }

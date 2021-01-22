@@ -33,7 +33,7 @@ public data class Reaction(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    var enforceUnique: Boolean = false
+    var enforceUnique: Boolean = false,
 
 ) : CustomObject {
     // this is a workaround around a backend issue

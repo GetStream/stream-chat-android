@@ -31,7 +31,7 @@ internal class ReactionRepository(private val reactionDao: ReactionDao) {
         reactionDao.insert(reactionEntities)
     }
 
-    internal suspend fun select(
+    internal suspend fun selectUserReactionsToMessageByType(
         messageId: String,
         userId: String,
         type: String,

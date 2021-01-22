@@ -41,12 +41,12 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         // send the reaction while offline
         channelControllerImpl.sendReaction(reaction1, enforceUnique = false)
         var reactionEntity =
-            chatDomainImpl.repos.selectReactionForMessageAndType(message1.id, data.user1.id, data.reaction1.type)
+            chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         chatDomainImpl.setOnline()
         val reactionEntities = chatDomainImpl.repos.reactions.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
-        reactionEntity = chatDomainImpl.repos.selectReactionForMessageAndType(message1.id, data.user1.id, "like")
+        reactionEntity = chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }
 
@@ -59,7 +59,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         channelControllerImpl.deleteReaction(data.reaction1)
 
         val reaction =
-            chatDomainImpl.repos.selectReactionForMessageAndType(data.message1.id, data.user1.id, data.reaction1.type)
+            chatDomainImpl.repos.selectUserReactionsToMessageByType(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction.deletedAt).isNotNull()
 
@@ -134,7 +134,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         // check DAO layer and converters
         val reaction = data.reaction1.copy()
         chatDomainImpl.repos.reactions.insert(reaction)
-        val reaction2 = chatDomainImpl.repos.selectReactionForMessageAndType(
+        val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessageByType(
             reaction.messageId,
             reaction.userId,
             reaction.type
