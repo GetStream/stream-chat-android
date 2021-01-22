@@ -27,7 +27,7 @@
             android:id="@+id/deleteMemberButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/shape_circle_grey"
+            android:background="@drawable/shape_circle_white_snow"
             android:cropToPadding="true"
             android:scaleType="center"
             android:src="@drawable/ic_close"
