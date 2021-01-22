@@ -620,7 +620,7 @@ internal class ChannelControllerImpl(
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-                val uploadId = UUID.randomUUID().toString()
+                val uploadId = generateUploadId()
                 newMessage.uploadId = uploadId
 
                 val progressTracker = ProgressTrackerFactory.getOrCreate(uploadId)
@@ -688,6 +688,10 @@ internal class ChannelControllerImpl(
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }
+    }
+
+    private fun generateUploadId() : String {
+        return "upload_id_${UUID.randomUUID().toString()}"
     }
 
     private fun upsertProgressMessage(uploadId: String) {
