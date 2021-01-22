@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
+import java.util.UUID
 
 public data class Message(
     var id: String = "",
@@ -107,4 +108,7 @@ public data class Message(
     @SerializedName("thread_participants")
     var threadParticipants: List<User> = emptyList(),
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var uploadId: String? = null,
 ) : CustomObject

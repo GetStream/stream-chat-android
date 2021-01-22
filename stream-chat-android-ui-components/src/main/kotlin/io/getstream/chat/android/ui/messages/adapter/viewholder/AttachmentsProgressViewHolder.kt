@@ -38,25 +38,25 @@ internal class AttachmentsProgressViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, isThread, diff)
-            binding.run {
-                val id = data.message.attachments[0].uploadId
 
-                this.sentFiles.text = data.message.text ?: "Progress"
+        data.message.uploadId?.let(ProgressTrackerFactory.Companion::getOrCreate)?.let { tracker ->
+            GlobalScope.launch(Dispatchers.Main) {
+                tracker.lapsCompleted().collect { laps ->
+                    binding.sentFiles.text = "$laps / ${tracker.getNumberOfLaps()}"
+                }
+            }
 
-                GlobalScope.launch(Dispatchers.Main) {
-                    id?.let(ProgressTrackerFactory.Companion::getOrCreate)
-                        ?.currentProgress()
-                        ?.collect { progress ->
-                            val message = if (progress == 100) {
-                                "Upload complete, processing..."
-                            } else {
-                                "$progress%"
-                            }
+            GlobalScope.launch(Dispatchers.Main) {
+                tracker.currentProgress().collect { progress ->
+                    val message = if (progress == 100) {
+                        "Upload complete, processing..."
+                    } else {
+                        "$progress%"
+                    }
 
-                            this@run.progress.text = message
-                        }
+                    binding.progress.text = message
                 }
             }
         }
     }
-
+}

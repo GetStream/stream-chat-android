@@ -11,7 +11,7 @@ public class ProgressTracker {
     private var currentProgress : MutableStateFlow<Int> = MutableStateFlow(0)
     private var lapsCompleted : MutableStateFlow<Int> = MutableStateFlow(0)
 
-    private fun initProgress(numberOfLaps: Int = 1) {
+    public fun initProgress(numberOfLaps: Int = 1) {
         this.numberOfLaps = numberOfLaps
         this.currentProgress.value = 0
         lapsCompleted.value = 0

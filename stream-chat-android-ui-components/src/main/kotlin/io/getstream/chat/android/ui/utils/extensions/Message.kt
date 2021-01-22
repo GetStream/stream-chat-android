@@ -31,7 +31,7 @@ public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
 public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
 
-public fun Message.isAttachmentEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_file
+public fun Message.isAttachmentEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_file && uploadId != null
 
 public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
 

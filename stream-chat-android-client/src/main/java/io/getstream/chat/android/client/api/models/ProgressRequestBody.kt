@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api.models
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MediaType
@@ -30,7 +29,6 @@ internal class ProgressRequestBody(
             var read: Int
             val handler = Handler(Looper.getMainLooper())
             while (fis.read(buffer).also { read = it } != -1) {
-                // Log.d("ProgressRequestBody", "uploaded: $uploaded ; total: $total")
                 handler.post {
                     callback.onProgress((100 * uploaded / total))
                 }

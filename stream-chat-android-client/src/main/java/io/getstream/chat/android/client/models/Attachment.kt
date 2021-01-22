@@ -52,19 +52,11 @@ public data class Attachment(
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
-    @IgnoreSerialisation
-    @IgnoreDeserialisation
-    var uploadId: String? = null
-
 ) : CustomObject {
 
     public sealed class UploadState {
         public object InProgress : UploadState()
         public object Success : UploadState()
         public data class Failed(val error: ChatError) : UploadState()
-    }
-
-    public companion object {
-        public fun generateUploadId(): String = UUID.randomUUID().toString()
     }
 }

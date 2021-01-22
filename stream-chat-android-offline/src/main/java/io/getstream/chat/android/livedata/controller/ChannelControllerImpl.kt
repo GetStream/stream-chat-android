@@ -83,6 +83,7 @@ import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 import kotlin.math.max
@@ -613,38 +614,48 @@ internal class ChannelControllerImpl(
 
         return if (online) {
             // upload attachments
-            logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-            newMessage.attachments.forEach { attachment ->
-                attachment.uploadId = Attachment.generateUploadId()
+            val hasAttachments = newMessage.attachments.isNotEmpty()
+
+            if (hasAttachments) {
+                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
+                val uploadId = UUID.randomUUID().toString()
+                newMessage.uploadId = uploadId
+
+                val progressTracker = ProgressTrackerFactory.getOrCreate(uploadId)
+                    .apply { initProgress(newMessage.attachments.size) }
+
+                upsertProgressMessage(uploadId)
+                newMessage.attachments = newMessage.attachments.map {
+                    progressTracker.setProgress(0)
+                    var attachment: Attachment = it
+
+                    if (it.upload != null) {
+                        val result = uploadAttachment(
+                            it,
+                            attachmentTransformer,
+                            progressTracker.toProgressCallback()
+                        )
+                        attachment.uploadComplete = result.isSuccess
+
+                        if (result.isSuccess) {
+                            attachment = result.data()
+                            progressTracker.incrementLap()
+                        } else {
+                            attachment.uploadState = Attachment.UploadState.Failed(result.error())
+                        }
+                    }
+
+                    attachment
+                }.toMutableList()
+
+                if (hasAttachments) {
+                    cancelProgressMessage()
+                }
             }
 
-            upsertProgressMessage(newMessage.attachments)
-
-            newMessage.attachments = newMessage.attachments.map {
-                var attachment: Attachment = it
-
-                if (it.upload != null) {
-                    val result = uploadAttachment(
-                        it,
-                        attachmentTransformer,
-                        ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).toProgressCallback()
-                    )
-                    attachment.uploadComplete = result.isSuccess
-
-                    if (result.isSuccess) {
-                        attachment = result.data()
-                    } else {
-                        attachment.uploadState = Attachment.UploadState.Failed(result.error())
-                        logger.logE("Failed to upload attachment for message")
-                    }
-                }
-                attachment
-            }.toMutableList()
-
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
-
-            uploadStatusMessage?.let { cancelMessage(it) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
@@ -679,19 +690,22 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private fun upsertProgressMessage(attachmentList: MutableList<Attachment>) {
-
-        val message = Message(
+    private fun upsertProgressMessage(uploadId: String) {
+        val progressMessage = Message(
             createdAt = Date(),
             type = "ephemeral",
             user = domainImpl.currentUser,
             command = "file",
-            attachments = attachmentList
+            uploadId = uploadId
         )
 
-        uploadStatusMessage = message
+        uploadStatusMessage = progressMessage
 
-        upsertMessages(listOf(message))
+        upsertMessages(listOf(progressMessage))
+    }
+
+    private suspend fun cancelProgressMessage() {
+        uploadStatusMessage?.let { cancelMessage(it) }
     }
 
     /**
