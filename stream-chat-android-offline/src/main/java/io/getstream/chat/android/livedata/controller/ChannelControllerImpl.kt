@@ -625,7 +625,8 @@ internal class ChannelControllerImpl(
                 var attachment: Attachment = it
 
                 if (it.upload != null) {
-                    val result = uploadAttachment(it,
+                    val result = uploadAttachment(
+                        it,
                         attachmentTransformer,
                         ProgressTracker.toProgressCallback(attachment.uploadId!!)
                     )

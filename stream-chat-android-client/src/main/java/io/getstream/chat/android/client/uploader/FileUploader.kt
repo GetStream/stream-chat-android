@@ -8,7 +8,6 @@ import java.io.File
  */
 public interface FileUploader {
 
-
     public fun sendFileSync(
         channelType: String,
         channelId: String,
