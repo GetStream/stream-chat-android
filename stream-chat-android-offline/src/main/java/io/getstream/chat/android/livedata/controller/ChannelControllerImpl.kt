@@ -785,6 +785,7 @@ internal class ChannelControllerImpl(
             user = currentUser
             userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
+            this.enforceUnique = enforceUnique
         }
         val online = domainImpl.isOnline()
         // insert the message into local storage
@@ -798,7 +799,7 @@ internal class ChannelControllerImpl(
                 .onEach { it.deletedAt = Date() }
                 .also { domainImpl.repos.reactions.insert(it) }
         }
-        domainImpl.repos.reactions.insert(reaction, enforceUnique)
+        domainImpl.repos.reactions.insert(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
@@ -811,7 +812,7 @@ internal class ChannelControllerImpl(
             val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insert(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.data())
             } else {
                 logger.logE(
@@ -824,7 +825,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insert(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.error())
             }
         }

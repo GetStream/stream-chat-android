@@ -72,6 +72,8 @@ internal class RepositoryHelper(
         type: String,
     ) = reactions.select(messageId, userId, type, ::selectUser)
 
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactions.selectSyncNeeded(::selectUser)
+
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
     }

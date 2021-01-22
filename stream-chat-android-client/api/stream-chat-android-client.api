@@ -2340,10 +2340,11 @@ public final class io/getstream/chat/android/client/models/Mute {
 
 public final class io/getstream/chat/android/client/models/Reaction : io/getstream/chat/android/client/models/CustomObject {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Map;
+	public final fun component11 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()I
 	public final fun component4 ()Lio/getstream/chat/android/client/models/User;
@@ -2352,12 +2353,13 @@ public final class io/getstream/chat/android/client/models/Reaction : io/getstre
 	public final fun component7 ()Ljava/util/Date;
 	public final fun component8 ()Ljava/util/Date;
 	public final fun component9 ()Lio/getstream/chat/android/client/utils/SyncStatus;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;)Lio/getstream/chat/android/client/models/Reaction;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Reaction;Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Reaction;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;Z)Lio/getstream/chat/android/client/models/Reaction;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Reaction;Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;ZILjava/lang/Object;)Lio/getstream/chat/android/client/models/Reaction;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun fetchUserId ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getDeletedAt ()Ljava/util/Date;
+	public final fun getEnforceUnique ()Z
 	public fun getExtraData ()Ljava/util/Map;
 	public fun getExtraValue (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun getMessageId ()Ljava/lang/String;
@@ -2371,6 +2373,7 @@ public final class io/getstream/chat/android/client/models/Reaction : io/getstre
 	public fun putExtraValue (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun setCreatedAt (Ljava/util/Date;)V
 	public final fun setDeletedAt (Ljava/util/Date;)V
+	public final fun setEnforceUnique (Z)V
 	public fun setExtraData (Ljava/util/Map;)V
 	public final fun setMessageId (Ljava/lang/String;)V
 	public final fun setScore (I)V

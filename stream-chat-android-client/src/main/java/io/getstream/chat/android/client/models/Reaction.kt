@@ -29,7 +29,11 @@ public data class Reaction(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var enforceUnique: Boolean = false
 
 ) : CustomObject {
     // this is a workaround around a backend issue
