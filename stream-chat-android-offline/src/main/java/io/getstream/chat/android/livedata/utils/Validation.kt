@@ -5,5 +5,5 @@ package io.getstream.chat.android.livedata.utils
  */
 internal fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }
-    require(":" in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
+    require(':' in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
 }
