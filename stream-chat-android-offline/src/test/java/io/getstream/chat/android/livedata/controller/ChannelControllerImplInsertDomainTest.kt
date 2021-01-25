@@ -7,9 +7,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -23,10 +20,10 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
     @Test
     fun reactionStorage() = runBlocking {
-        val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
-        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        chatDomainImpl.repos.reactions.insert(reactionEntity)
-        val results = chatDomainImpl.repos.reactions.retryReactions()
+        val reaction = data.reaction1.copy()
+        reaction.syncStatus = SyncStatus.SYNC_NEEDED
+        chatDomainImpl.repos.reactions.insert(reaction)
+        val results = chatDomainImpl.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
 
@@ -44,12 +41,12 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         // send the reaction while offline
         channelControllerImpl.sendReaction(reaction1, enforceUnique = false)
         var reactionEntity =
-            chatDomainImpl.repos.reactions.select(message1.id, data.user1.id, data.reaction1.type)
+            chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         chatDomainImpl.setOnline()
-        val reactionEntities = chatDomainImpl.repos.reactions.retryReactions()
+        val reactionEntities = chatDomainImpl.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
-        reactionEntity = chatDomainImpl.repos.reactions.select(message1.id, data.user1.id, "like")
+        reactionEntity = chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }
 
@@ -62,11 +59,11 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         channelControllerImpl.deleteReaction(data.reaction1)
 
         val reaction =
-            chatDomainImpl.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
+            chatDomainImpl.repos.selectUserReactionsToMessageByType(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction.deletedAt).isNotNull()
 
-        val reactions = chatDomainImpl.repos.reactions.retryReactions()
+        val reactions = chatDomainImpl.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
     }
 
@@ -135,19 +132,15 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     @Test
     fun insertReaction() = runBlocking {
         // check DAO layer and converters
-        val reactionEntity = data.reaction1.toEntity()
-        chatDomainImpl.repos.reactions.insert(reactionEntity)
-        val reactionEntity2 = chatDomainImpl.repos.reactions.select(
-            reactionEntity.messageId,
-            reactionEntity.userId,
-            reactionEntity.type
+        val reaction = data.reaction1.copy()
+        chatDomainImpl.repos.reactions.insert(reaction)
+        val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessageByType(
+            reaction.messageId,
+            reaction.userId,
+            reaction.type
         )
-        Truth.assertThat(reactionEntity2).isEqualTo(reactionEntity)
-        Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
-        // verify conversion logic is ok
-        val userMap = mutableMapOf(data.user1.id to data.user1)
-        val reactionConverted = reactionEntity2.toModel { userMap.getValue(it) }
-        Truth.assertThat(reactionConverted).isEqualTo(data.reaction1)
+        Truth.assertThat(reaction2).isEqualTo(reaction)
+        Truth.assertThat(reaction2!!.extraData).isNotNull()
     }
 
     @Test

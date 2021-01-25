@@ -785,6 +785,7 @@ internal class ChannelControllerImpl(
             user = currentUser
             userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
+            this.enforceUnique = enforceUnique
         }
         val online = domainImpl.isOnline()
         // insert the message into local storage
@@ -794,11 +795,11 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            val currentReactions = domainImpl.repos.reactions.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
-            currentReactions.forEach { it.deletedAt = Date() }
-            domainImpl.repos.reactions.insert(currentReactions)
+            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
+                .onEach { it.deletedAt = Date() }
+                .also { domainImpl.repos.reactions.insert(it) }
         }
-        domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+        domainImpl.repos.reactions.insert(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
@@ -808,13 +809,10 @@ internal class ChannelControllerImpl(
         }
 
         if (online) {
-            val runnable = {
-                client.sendReaction(reaction, enforceUnique)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.data())
             } else {
                 logger.logE(
@@ -827,7 +825,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.error())
             }
         }
@@ -841,31 +839,27 @@ internal class ChannelControllerImpl(
             user = currentUser
             userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
+            deletedAt = Date()
         }
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val reactionEntity = reaction.toEntity()
-        reactionEntity.deletedAt = Date()
-        domainImpl.repos.reactions.insert(reactionEntity)
+        domainImpl.repos.reactions.insert(reaction)
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.let {
-            it.removeReaction(reaction, true)
-            upsertMessage(it)
-            domainImpl.repos.messages.insert(it)
-        }
+        currentMessage?.apply { removeReaction(reaction, updateCounts = true) }
+            ?.also {
+                upsertMessage(it)
+                domainImpl.repos.messages.insert(it)
+            }
 
         if (online) {
-            val runnable = {
-                client.deleteReaction(reaction.messageId, reaction.type)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.data())
             } else {
                 if (result.error().isPermanent()) {
@@ -873,7 +867,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.error())
             }
         }
