@@ -146,7 +146,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         FrameLayout.LayoutParams.WRAP_CONTENT
                     )
                 )
-                viewHolder.bindListItem(messageItem, false)
+                viewHolder.bindListItem(messageItem)
             }
     }
 

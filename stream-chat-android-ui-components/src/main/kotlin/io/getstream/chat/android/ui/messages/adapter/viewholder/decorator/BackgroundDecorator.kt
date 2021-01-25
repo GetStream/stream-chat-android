@@ -26,7 +26,6 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean
     ) {
         val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
         val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
@@ -39,7 +38,6 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) {
         setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
@@ -47,7 +45,6 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -57,7 +54,6 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
@@ -67,7 +63,6 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
@@ -77,14 +72,13 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
         data
     )
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) {
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
         viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
