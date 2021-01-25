@@ -1,14 +1,14 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.parser.ChatParserImpl
+import io.getstream.chat.android.client.parser.GsonChatParser
 import io.getstream.chat.android.client.testing.loadResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 internal class DatesTests {
 
-    val parser = ChatParserImpl()
+    val parser = GsonChatParser()
     val jsonMessage = loadResource("/message.json")
     val expectedTime = 1591787071000L
 
