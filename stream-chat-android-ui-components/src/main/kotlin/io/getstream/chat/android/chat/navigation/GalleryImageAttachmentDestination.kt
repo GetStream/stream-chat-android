@@ -42,7 +42,7 @@ public class GalleryImageAttachmentDestination(
                 attachmentShowInChatOptionHandler,
                 attachmentReplyOptionHandler,
                 attachmentDownloadOptionHandler,
-                onAttachmentDeleteOptionClickHandler
+                onAttachmentDeleteOptionClickHandler,
             )
         )
     }
