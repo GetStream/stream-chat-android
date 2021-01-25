@@ -304,20 +304,20 @@ public class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$Attac
 	public synthetic fun newArray (I)[Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDeleteOptionHandler : io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentOptionHandler {
-}
-
-public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDownloadOptionHandler : io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentOptionHandler {
-}
-
-public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentOptionHandler {
+public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDeleteOptionHandler {
 	public abstract fun onClick (Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentReplyOptionHandler : io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentOptionHandler {
+public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDownloadOptionHandler {
+	public abstract fun onClick (Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler : io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentOptionHandler {
+public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentReplyOptionHandler {
+	public abstract fun onClick (Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler {
+	public abstract fun onClick (Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;)V
 }
 
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion {
