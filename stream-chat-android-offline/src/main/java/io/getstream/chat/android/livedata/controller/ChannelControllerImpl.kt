@@ -58,6 +58,7 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
+import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -669,10 +670,10 @@ internal class ChannelControllerImpl(
         val file =
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) {
-            TYPE_IMAGE
-        } else {
-            TYPE_FILE
+        val attachmentType: String = when {
+            mimeType.isImageMimetype() -> TYPE_IMAGE
+            mimeType.isVideoMimetype() -> TYPE_VIDEO
+            else -> TYPE_FILE
         }
         val pathResult = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
@@ -1443,6 +1444,7 @@ internal class ChannelControllerImpl(
 
     companion object {
         private const val TYPE_IMAGE = "image"
+        private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
     }
 }
