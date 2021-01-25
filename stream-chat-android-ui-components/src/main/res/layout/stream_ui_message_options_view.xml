@@ -14,10 +14,8 @@
     <TextView
         android:id="@+id/replyTV"
         style="@style/StreamUiMessageOptionItem"
-        android:visibility="gone"
         tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
         tools:text="Reply"
-        tools:visibility="visible"
         />
 
     <TextView
