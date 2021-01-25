@@ -16,9 +16,9 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLA
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.utils.extensions.hasLink
+import io.getstream.chat.android.ui.utils.extensions.isAttachmentEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
-import io.getstream.chat.android.ui.utils.extensions.isAttachmentEphemeral
 
 internal object MessageListItemViewTypeMapper {
 

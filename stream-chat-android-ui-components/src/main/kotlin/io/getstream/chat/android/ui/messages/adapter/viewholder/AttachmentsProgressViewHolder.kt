@@ -32,7 +32,6 @@ internal class AttachmentsProgressViewHolder(
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
             }
-
         }
     }
 

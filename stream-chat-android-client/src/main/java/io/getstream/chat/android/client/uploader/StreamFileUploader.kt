@@ -64,7 +64,7 @@ internal class StreamFileUploader(
             null
         }
     }
-    
+
     override fun sendFile(
         channelType: String,
         channelId: String,

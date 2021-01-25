@@ -690,8 +690,8 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private fun generateUploadId() : String {
-        return "upload_id_${UUID.randomUUID().toString()}"
+    private fun generateUploadId(): String {
+        return "upload_id_${UUID.randomUUID()}"
     }
 
     private fun upsertProgressMessage(uploadId: String) {
@@ -786,7 +786,6 @@ internal class ChannelControllerImpl(
         return Result(true)
     }
 
-    //Todo: Found it!!
     suspend fun sendGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
