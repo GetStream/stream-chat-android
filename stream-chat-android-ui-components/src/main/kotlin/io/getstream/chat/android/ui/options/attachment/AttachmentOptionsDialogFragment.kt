@@ -66,9 +66,9 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         fun newInstance(
             showInChatHandler: AttachmentOptionHandler,
             replyHandler: AttachmentOptionHandler,
-            deleteHandler: AttachmentOptionHandler? = null,
-            saveImageHandler: AttachmentOptionHandler? = null,
-            isMine: Boolean = false,
+            deleteHandler: AttachmentOptionHandler,
+            saveImageHandler: AttachmentOptionHandler,
+            isMine: Boolean,
         ): AttachmentOptionsDialogFragment {
             return AttachmentOptionsDialogFragment().apply {
                 this.showInChatHandler = showInChatHandler
@@ -80,7 +80,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
-    interface AttachmentOptionHandler {
+    fun interface AttachmentOptionHandler {
         fun onClick(): Unit
     }
 }
