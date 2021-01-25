@@ -33,7 +33,7 @@ internal open class SubscriptionImpl(
 
         if (filter(event)) {
             try {
-                listener?.onEvent(event)
+                listener!!.onEvent(event)
             } finally {
                 afterEventDelivered()
             }
