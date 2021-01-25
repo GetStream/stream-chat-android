@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.GsonChatParser
-import io.getstream.chat.android.client.paser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.token.TokenManager

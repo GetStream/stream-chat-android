@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.paser2
+package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser.ChatParser
 
