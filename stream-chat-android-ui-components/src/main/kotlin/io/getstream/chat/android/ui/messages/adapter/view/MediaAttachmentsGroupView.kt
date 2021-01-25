@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter.view
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
@@ -21,6 +22,9 @@ import io.getstream.chat.android.ui.utils.extensions.getOrDefault
 internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
+    val maxMediaAttachmentHeight: Int by lazy {
+        (Resources.getSystem().displayMetrics.heightPixels * MAX_HEIGHT_PERCENTAGE).toInt()
+    }
 
     private var state: State = State.Empty
 
@@ -58,6 +62,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         state = State.OneView(mediaAttachmentView)
         ConstraintSet().apply {
             constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
+            constrainMaxHeight(mediaAttachmentView.id, maxMediaAttachmentHeight)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
@@ -111,7 +116,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         second: Attachment,
         third: Attachment,
         fourth: Attachment,
-        andMoreCount: Int = 0
+        andMoreCount: Int = 0,
     ) {
         removeAllViews()
         val viewOne = createMediaAttachmentView().also { addView(it) }
@@ -193,18 +198,19 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         data class ThreeViews(
             val viewOne: MediaAttachmentView,
             val viewTwo: MediaAttachmentView,
-            val viewThree: MediaAttachmentView
+            val viewThree: MediaAttachmentView,
         ) : State()
 
         data class FourViews(
             val viewOne: MediaAttachmentView,
             val viewTwo: MediaAttachmentView,
             val viewThree: MediaAttachmentView,
-            val viewFour: MediaAttachmentView
+            val viewFour: MediaAttachmentView,
         ) : State()
     }
 
     companion object {
+        private const val MAX_HEIGHT_PERCENTAGE = .75
         private const val MAX_PREVIEW_COUNT = 4
         private val MIN_HEIGHT_PX = 95.dpToPx()
         private val STROKE_WIDTH = 2.dpToPxPrecise()
