@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import io.getstream.chat.android.ui.gallery.overview.UserMediaAttachment
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserAttachmentGalleryBinding
 
 class ComponentBrowserAttachmentGalleryFragment : Fragment() {
@@ -19,7 +20,7 @@ class ComponentBrowserAttachmentGalleryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentComponentBrowserAttachmentGalleryBinding.inflate(inflater, container, false)
         return binding.root
@@ -32,7 +33,7 @@ class ComponentBrowserAttachmentGalleryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.attachmentGallery.run {
-            provideImageList(requireActivity(), args.picturesArgs.toList())
+            provideImageList(requireActivity(), args.picturesArgs.map(::UserMediaAttachment))
 
             setMenuButtonClickListener {
                 Toast.makeText(requireContext(), "Menu click!", Toast.LENGTH_SHORT).show()

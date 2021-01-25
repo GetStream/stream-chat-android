@@ -47,6 +47,7 @@ class ChatInfoSharedAttachmentsViewModel(
 
             isLoadingMore = true
             fetchAttachments()
+            isLoadingMore = false
         }
     }
 
@@ -123,7 +124,7 @@ class ChatInfoSharedAttachmentsViewModel(
 
 class ChatInfoSharedAttachmentsViewModelFactory(
     private val cid: String,
-    private val type: ChatInfoSharedAttachmentsViewModel.AttachmentsType
+    private val type: ChatInfoSharedAttachmentsViewModel.AttachmentsType,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
