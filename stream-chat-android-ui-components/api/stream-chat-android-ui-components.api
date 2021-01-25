@@ -249,7 +249,7 @@ public final class io/getstream/chat/android/ui/images/AttachmentGallery : andro
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion;
 	public fun <init> ()V
-	public static final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentReplyOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)Landroid/content/Intent;
+	public static final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;Z)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData : android/os/Parcelable {
@@ -321,7 +321,7 @@ public abstract interface class io/getstream/chat/android/ui/images/AttachmentGa
 }
 
 public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion {
-	public final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentReplyOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)Landroid/content/Intent;
+	public final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;Z)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/ui/mentions/MentionsListView : android/widget/ViewFlipper {
