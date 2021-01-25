@@ -13,7 +13,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/stream_ui_spacing_small"
-        android:paddingVertical="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/messageInputFieldView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +61,6 @@
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/attachmentsButton"
