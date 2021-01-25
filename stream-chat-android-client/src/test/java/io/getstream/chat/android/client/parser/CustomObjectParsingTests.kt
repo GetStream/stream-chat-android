@@ -16,7 +16,7 @@ import kotlin.collections.set
 
 internal class CustomObjectParsingTests {
 
-    val parser = ChatParserImpl()
+    val parser = GsonChatParser()
 
     val gson = SkipExtraDataGson()
     val typeAdapterFactory = TypeAdapterFactory()

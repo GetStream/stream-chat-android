@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.api.GsonChatApi
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.events.ChatEvent
@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 
 internal class ChatNotifications private constructor(
     val handler: ChatNotificationHandler,
-    private val client: GsonChatApi,
+    private val client: ChatApi,
     private val context: Context
 ) {
 
@@ -167,7 +167,7 @@ internal class ChatNotifications private constructor(
     companion object {
         fun create(
             handler: ChatNotificationHandler,
-            client: GsonChatApi,
+            client: ChatApi,
             context: Context
         ) = ChatNotifications(handler, client, context).apply(ChatNotifications::init)
     }

@@ -7,8 +7,8 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.Date
 
-internal class ChatParserImplTest {
-    private val chatParser = ChatParserImpl()
+internal class GsonChatParserTest {
+    private val chatParser = GsonChatParser()
 
     /** [mapArguments] */
     @ParameterizedTest

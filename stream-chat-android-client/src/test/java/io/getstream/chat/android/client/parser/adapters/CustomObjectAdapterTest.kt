@@ -3,13 +3,13 @@ package io.getstream.chat.android.client.parser.adapters
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.parser.ChatParserImpl
+import io.getstream.chat.android.client.parser.GsonChatParser
 import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
 internal class CustomObjectAdapterTest {
-    private val parser = ChatParserImpl()
+    private val parser = GsonChatParser()
 
     @Test
     fun `check test data`() {
