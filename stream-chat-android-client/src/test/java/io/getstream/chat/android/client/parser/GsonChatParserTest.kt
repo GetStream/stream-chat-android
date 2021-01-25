@@ -12,14 +12,14 @@ internal class GsonChatParserTest {
 
     /** [mapArguments] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.parser.ChatParserImplTest#mapArguments")
+    @MethodSource("io.getstream.chat.android.client.parser.GsonChatParserTest#mapArguments")
     fun `Should render proper maps`(map: Map<Any, Any>, expectedResult: String) {
         chatParser.toJson(map) `should be equal to` expectedResult
     }
 
     /** [dateFromJsonArguments] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.parser.ChatParserImplTest#dateFromJsonArguments")
+    @MethodSource("io.getstream.chat.android.client.parser.GsonChatParserTest#dateFromJsonArguments")
     fun `Should convert to proper date`(jsonDate: String, expectedDateTime: Long) {
         chatParser.fromJson(jsonDate, Date::class.java).time `should be equal to` expectedDateTime
     }
