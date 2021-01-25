@@ -22,7 +22,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
@@ -31,7 +31,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -40,7 +40,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -49,7 +49,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -58,7 +58,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
@@ -67,7 +67,7 @@ internal class ReactionsDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) = Unit
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
@@ -77,7 +77,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         contentView: View,
         reactionsSpace: View,
         reactionsView: ViewReactionsView,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         if (data.message.latestReactions.isNotEmpty()) {
             reactionsView.isVisible = true

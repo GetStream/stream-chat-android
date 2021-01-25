@@ -25,7 +25,7 @@ internal class BackgroundDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
-        data: MessageListItem.MessageItem
+        data: MessageListItem.MessageItem,
     ) {
         val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
         val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
