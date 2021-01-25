@@ -73,13 +73,13 @@ internal class ChannelClientSubscribeTest {
         channelClient.subscribe {
             result.add(it)
         }
-        val captor = argumentCaptor<(ChatEvent) -> Unit>()
+        val captor = argumentCaptor<ChatClient.ChatEventListener>()
         verify(client).subscribe(captor.capture())
         val listener = captor.firstValue
 
-        listener.invoke(CHANNEL_EVENT)
-        listener.invoke(NON_CHANNEL_EVENT)
-        listener.invoke(OTHER_CHANNEL_EVENT)
+        listener.onEvent(CHANNEL_EVENT)
+        listener.onEvent(NON_CHANNEL_EVENT)
+        listener.onEvent(OTHER_CHANNEL_EVENT)
 
         result shouldBeEqualTo listOf(CHANNEL_EVENT)
     }
