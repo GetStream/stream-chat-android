@@ -51,4 +51,3 @@ public class GalleryImageAttachmentDestination(
 private fun Message.isMine(): Boolean {
     return ChatDomain.instance().currentUser.id == this.user.id
 }
-

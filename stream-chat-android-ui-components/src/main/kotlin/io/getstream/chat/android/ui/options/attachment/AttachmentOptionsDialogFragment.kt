@@ -84,5 +84,3 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         fun onClick(): Unit
     }
 }
-
-

@@ -245,7 +245,8 @@ public class MessageListView : ConstraintLayout {
                         onAttachmentReplyOptionClickHandler,
                         onAttachmentShowInChatOptionClickHandler,
                         onAttachmentDownloadOptionClickHandler,
-                        onAttachmentDeleteOptionClickHandler)
+                        onAttachmentDeleteOptionClickHandler
+                    )
                 )
         }
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =

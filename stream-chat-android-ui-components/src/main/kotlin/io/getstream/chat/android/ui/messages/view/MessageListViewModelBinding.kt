@@ -64,14 +64,13 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
 
-
-    val attachmentReplyHandler = object: AttachmentGalleryActivity.AttachmentReplyOptionHandler {
+    val attachmentReplyHandler = object : AttachmentGalleryActivity.AttachmentReplyOptionHandler {
         override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
             TODO("Not yet done!")
         }
     }
     view.setOnAttachmentReplyOptionClickHandler(attachmentReplyHandler)
-    val attachmentShowInChatHandler = object: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
+    val attachmentShowInChatHandler = object : AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
         override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
             onEvent(MessageListViewModel.Event.ShowMessage(attachmentData.messageId))
         }
@@ -82,7 +81,8 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
             onEvent(
                 MessageListViewModel.Event.RemoveAttachment(
                     attachmentData.messageId,
-                    attachmentData.toAttachment())
+                    attachmentData.toAttachment()
+                )
             )
         }
     }
