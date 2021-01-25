@@ -40,23 +40,7 @@ internal interface ChatApi {
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ): Call<String> {
-        return CoroutineCall(coroutineScope) {
-            val result = fileUploader.sendFileSync(
-                channelType = channelType,
-                channelId = channelId,
-                userId = userId,
-                connectionId = connectionId,
-                file = file,
-                callback
-            )
-            if (result != null) {
-                Result(result)
-            } else {
-                Result(ChatError("Upload failed"))
-            }
-        }
-    }
+    ): Call<String>
 
     fun sendImage(
         channelType: String,
