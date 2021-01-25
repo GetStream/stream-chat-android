@@ -849,7 +849,7 @@ internal class ChannelControllerImpl(
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.apply { removeReaction(reaction, true) }
+        currentMessage?.apply { removeReaction(reaction, updateCounts = true) }
             ?.also {
                 upsertMessage(it)
                 domainImpl.repos.messages.insert(it)
