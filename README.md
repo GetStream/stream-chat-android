@@ -19,10 +19,10 @@
 **Quick Links**
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
-* [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
 * [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin)
-* [Java API Docs](https://getstream.io/chat/docs/java/#introduction)
+* [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
 * [Kotlin API Docs](https://getstream.io/chat/docs/kotlin/#introduction)
+* [Java API Docs](https://getstream.io/chat/docs/java/#introduction)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 * [WhatsApp clone Tutorial](https://getstream.io/blog/build-whatsapp-clone/)
 
@@ -43,34 +43,27 @@ The Gradle sync process can take some time when you first open the project.
 
 ## Docs
 
+The official documentation for the Chat SDK is available [on our website](https://getstream.io/chat/docs/?language=kotlin). Each feature's page shows how to use it with the Android SDK, plus there are further Android-exclusive docs on the [Android Overview page](https://getstream.io/chat/docs/android_overview/?language=kotlin).
+
+The Chat Android SDKs support both Kotlin and Java usage, but *we strongly recommend using Kotlin*. The documentation is available in both languages - see [here](https://getstream.io/chat/docs/?language=java) for the Java version.
+
 This SDK consists of the following modules / artifacts:
 
 - [Chat client](stream-chat-android-client)
 - [Offline support and `LiveData` APIs](stream-chat-android-offline)
 - [Chat UI/UX](stream-chat-android)
 
-The SDK provides:
+With these modules, the SDK provides:
 
 - A low-level client for making API calls and receiving chat events
 - Offline support and LiveData APIs module
 - Ready to use ViewModels for displaying a list of channels and a conversation 
-- Four reusable chat views:
+- Reusable chat views:
     - [Channel List](https://getstream.io/chat/docs/channels_view/?language=kotlin)
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
     - [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
     - [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
     - [Message Input View](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
-
-The documentation for LiveData and the custom views is available here:
-[https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
-
-### Chat client
-
-The [low-level Chat API](stream-chat-android-client) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
-
-### Offline support and `LiveData` APIs
-
-The [Offline support and `LiveData` APIs](stream-chat-android-offline) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
 
 ## Supported features
 
@@ -222,3 +215,23 @@ val client = ChatClient.Builder(apiKey, context)
     })
     .build()
 ```
+
+To intercept socket errors:
+
+```kotlin
+client.subscribeFor<ErrorEvent> { errorEvent: ErrorEvent ->
+    println(errorEvent)
+}
+```
+
+All SDK log tags have the `Chat:` prefix, so you can filter for that those in the logs:
+
+```bash
+adb logcat com.your.package | grep "Chat:"
+```
+
+Here's a set of useful tags for debugging network communication:
+
+- `Chat:Http`
+- `Chat:Events`
+- `Chat:SocketService`
