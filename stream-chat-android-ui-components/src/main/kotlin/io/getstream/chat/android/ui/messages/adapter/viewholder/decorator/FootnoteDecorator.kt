@@ -38,59 +38,50 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.messageContainer,
         data,
-        isThread,
     )
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.fileAttachmentsView,
         data,
-        isThread,
     )
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.messageContainer,
         data,
-        isThread,
     )
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.mediaAttachmentsGroupView,
         data,
-        isThread,
     )
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) =
         setupFootnote(
             viewHolder.binding.footnote,
@@ -98,13 +89,11 @@ internal class FootnoteDecorator(
             viewHolder.binding.threadGuideline,
             viewHolder.binding.messageContainer,
             data,
-            isThread,
         )
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) {
         setupSimpleFootnoteWithRootConstraints(
             viewHolder.binding.footnote,
@@ -121,7 +110,6 @@ internal class FootnoteDecorator(
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
-        isThread: Boolean,
     ) {
         setupSimpleFootnote(viewHolder.binding.footnote, data)
     }
@@ -132,9 +120,8 @@ internal class FootnoteDecorator(
         threadGuideline: View,
         anchorView: View,
         data: MessageListItem.MessageItem,
-        isThreadMode: Boolean,
     ) {
-        val isSimpleFootnoteMode = data.message.replyCount == 0 || isThreadMode
+        val isSimpleFootnoteMode = data.message.replyCount == 0 || data.isThreadMode
         if (isSimpleFootnoteMode) {
             setupSimpleFootnoteWithRootConstraints(footnoteView, root, anchorView, data)
         } else {

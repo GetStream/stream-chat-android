@@ -66,8 +66,8 @@ internal class PlainTextWithFileAttachmentsViewHolder(
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, isThread, diff)
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
 
         binding.messageText.text = data.message.text
         binding.fileAttachmentsView.setAttachments(

@@ -21,11 +21,19 @@ public data class Reaction(
     var updatedAt: Date? = null,
 
     @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var deletedAt: Date? = null,
+
+    @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var enforceUnique: Boolean = false,
 
 ) : CustomObject {
     // this is a workaround around a backend issue

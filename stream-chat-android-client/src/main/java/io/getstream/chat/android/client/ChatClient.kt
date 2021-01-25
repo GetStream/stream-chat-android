@@ -1105,6 +1105,9 @@ public class ChatClient internal constructor(
                 ChatLogger.Config(logLevel, loggerHandler),
             )
 
+            // Should not be set by clients yet, only for development
+            config.enableMoshi = false
+
             val module =
                 ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager)
 

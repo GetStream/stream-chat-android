@@ -57,7 +57,7 @@ internal class ClientConnectionTests {
     )
     private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    private lateinit var api: ChatApi
+    private lateinit var api: GsonChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
     private lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
@@ -77,7 +77,7 @@ internal class ClientConnectionTests {
         logger = mock()
         notificationsManager = mock()
         initConnectionListener = mock()
-        api = ChatApi(
+        api = GsonChatApi(
             config.apiKey,
             retrofitApi,
             retrofitAnonymousApi,

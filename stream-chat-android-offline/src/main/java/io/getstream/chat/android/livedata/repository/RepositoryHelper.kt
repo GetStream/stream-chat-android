@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.repository
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.repository.mapper.toModel
@@ -59,6 +60,19 @@ internal class RepositoryHelper(
 
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
         messages.select(messageIds, ::selectUser)
+
+    internal suspend fun selectUserReactionsToMessage(
+        messageId: String,
+        userId: String
+    ): List<Reaction> = reactions.selectUserReactionsToMessage(messageId, userId, ::selectUser)
+
+    internal suspend fun selectUserReactionsToMessageByType(
+        messageId: String,
+        userId: String,
+        type: String,
+    ) = reactions.selectUserReactionsToMessageByType(messageId, userId, type, ::selectUser)
+
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactions.selectSyncNeeded(::selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))

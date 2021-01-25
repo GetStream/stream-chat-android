@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client
 
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -43,7 +43,7 @@ internal class MockClientBuilder {
 
     internal lateinit var retrofitApi: RetrofitApi
     internal lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
-    private lateinit var api: ChatApi
+    private lateinit var api: GsonChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
 
@@ -64,7 +64,7 @@ internal class MockClientBuilder {
         retrofitAnonymousApi = mock()
         fileUploader = mock()
         notificationsManager = mock()
-        api = ChatApi(
+        api = GsonChatApi(
             config.apiKey,
             retrofitApi,
             retrofitAnonymousApi,

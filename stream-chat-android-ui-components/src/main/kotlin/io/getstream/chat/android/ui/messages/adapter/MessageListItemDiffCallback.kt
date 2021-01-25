@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter
 import androidx.recyclerview.widget.DiffUtil
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.UserEntity
 
 internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListItem>() {
     override fun areItemsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
@@ -29,12 +30,16 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                     false
                 } else if (oldItem.positions != newItem.positions) {
                     false
-                } else oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
+                } else if (oldItem.messageReadBy.map(UserEntity::getUserId) != newItem.messageReadBy.map(UserEntity::getUserId)) {
+                    false
+                } else oldItem.isThreadMode == newItem.isThreadMode
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
             is MessageListItem.LoadingMoreIndicatorItem -> true
-            is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(User::id)
+            is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(
+                User::id
+            )
         }
 
     override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? {

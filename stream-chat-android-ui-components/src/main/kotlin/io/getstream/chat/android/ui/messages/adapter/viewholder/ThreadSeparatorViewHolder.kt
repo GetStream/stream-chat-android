@@ -22,10 +22,9 @@ internal class ThreadSeparatorViewHolder(
 
     override fun bindData(
         data: MessageListItem.ThreadSeparatorItem,
-        isThread: Boolean,
-        diff: MessageListItemPayloadDiff?
+        diff: MessageListItemPayloadDiff?,
     ) {
-        super.bindData(data, isThread, diff)
+        super.bindData(data, diff)
 
         binding.threadSeparatorLabel.text = context.resources.getQuantityString(
             R.plurals.stream_ui_thread_separator_replies_label,

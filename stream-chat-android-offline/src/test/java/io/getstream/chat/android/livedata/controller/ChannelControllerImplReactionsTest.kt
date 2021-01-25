@@ -180,7 +180,7 @@ internal class ChannelControllerImplReactionsTest {
         fun givenMockedRepositories(): Fixture {
             runBlocking {
                 whenever(repos.reactions) doReturn reactionsRepo
-                whenever(repos.reactions.selectUserReactionsToMessage(any(), any())) doReturn emptyList()
+                whenever(repos.selectUserReactionsToMessage(any(), any())) doReturn emptyList()
                 whenever(repos.messages) doReturn messagesRepo
             }
             return this
