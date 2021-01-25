@@ -4,9 +4,9 @@ import android.content.Context
 import android.widget.Toast
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
-import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 
@@ -42,7 +42,13 @@ public class GalleryImageAttachmentDestination(
                 attachmentShowInChatOptionHandler,
                 attachmentReplyOptionHandler,
                 attachmentDownloadOptionHandler,
-                onAttachmentDeleteOptionClickHandler)
+                onAttachmentDeleteOptionClickHandler
+            )
         )
     }
 }
+
+private fun Message.isMine(): Boolean {
+    return ChatDomain.instance().currentUser.id == this.user.id
+}
+
