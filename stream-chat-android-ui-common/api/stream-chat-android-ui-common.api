@@ -2108,6 +2108,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V
+	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
+	public final fun setThreadDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
+}
+
+public abstract interface class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler {
+	public abstract fun shouldAddDateSeparator (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
