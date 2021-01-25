@@ -6,8 +6,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.test.asCall
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 
 internal class QueryChannelsPostponeHelperTests {
 
-    private lateinit var api: GsonChatApi
+    private lateinit var api: ChatApi
     private lateinit var clientStateService: ClientStateService
 
     private lateinit var sut: QueryChannelsPostponeHelper
