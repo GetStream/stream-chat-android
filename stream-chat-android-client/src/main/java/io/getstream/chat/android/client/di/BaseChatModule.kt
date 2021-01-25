@@ -5,8 +5,8 @@ import android.net.ConnectivityManager
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
@@ -55,7 +55,7 @@ internal open class BaseChatModule(
 
     //region Modules
 
-    fun api(): ChatApi {
+    fun api(): GsonChatApi {
         return defaultApi
     }
 
@@ -79,7 +79,7 @@ internal open class BaseChatModule(
 
     private fun buildNotification(
         handler: ChatNotificationHandler,
-        api: ChatApi
+        api: GsonChatApi
     ): ChatNotifications {
         return ChatNotifications.create(handler, api, appContext)
     }
@@ -156,8 +156,8 @@ internal open class BaseChatModule(
         )
     }
 
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        return ChatApi(
+    private fun buildApi(chatConfig: ChatClientConfig): GsonChatApi {
+        return GsonChatApi(
             chatConfig.apiKey,
             buildRetrofitApi(RetrofitApi::class.java),
             buildRetrofitApi(RetrofitAnonymousApi::class.java),

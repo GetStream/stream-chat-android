@@ -7,8 +7,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -72,7 +72,7 @@ import java.util.Date
  */
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
-    private val api: ChatApi,
+    private val api: GsonChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),

@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsPostponeHelper(
-    private val api: ChatApi,
+    private val api: GsonChatApi,
     private val clientStateService: ClientStateService,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT

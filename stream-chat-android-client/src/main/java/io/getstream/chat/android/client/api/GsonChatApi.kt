@@ -54,7 +54,7 @@ import java.io.File
 import java.util.Date
 import kotlin.collections.set
 
-internal class ChatApi(
+internal class GsonChatApi(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val retrofitAnonymousApi: RetrofitAnonymousApi,
