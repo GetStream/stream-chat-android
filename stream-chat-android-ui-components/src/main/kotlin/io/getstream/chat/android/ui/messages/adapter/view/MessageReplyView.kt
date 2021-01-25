@@ -65,33 +65,35 @@ public class MessageReplyView : FrameLayout {
     }
 
     private fun setAvatarPosition(isMine: Boolean) {
-        binding.root.updateConstraints {
-            clear(R.id.avatarView, ConstraintSet.START)
-            clear(R.id.avatarView, ConstraintSet.END)
-            clear(R.id.replyContainer, ConstraintSet.START)
-            clear(R.id.replyContainer, ConstraintSet.END)
-        }
-        binding.replyAvatarView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            if (isMine) {
-                endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                startToEnd = R.id.replyContainer
-            } else {
-                startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                endToStart = R.id.replyContainer
+        with(binding) {
+            root.updateConstraints {
+                clear(replyAvatarView.id, ConstraintSet.START)
+                clear(replyAvatarView.id, ConstraintSet.END)
+                clear(replyContainer.id, ConstraintSet.START)
+                clear(replyContainer.id, ConstraintSet.END)
             }
-            marginStart = CONTENT_MARGIN
-            marginEnd = CONTENT_MARGIN
-        }
-        binding.replyContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            if (isMine) {
-                startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                endToStart = R.id.avatarView
-            } else {
-                startToEnd = R.id.avatarView
-                endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+            replyAvatarView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                if (isMine) {
+                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                    startToEnd = replyContainer.id
+                } else {
+                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                    endToStart = replyContainer.id
+                }
+                marginStart = CONTENT_MARGIN
+                marginEnd = CONTENT_MARGIN
             }
-            marginStart = CONTENT_MARGIN
-            marginEnd = CONTENT_MARGIN
+            binding.replyContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                if (isMine) {
+                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                    endToStart = replyAvatarView.id
+                } else {
+                    startToEnd = replyAvatarView.id
+                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                }
+                marginStart = CONTENT_MARGIN
+                marginEnd = CONTENT_MARGIN
+            }
         }
     }
 
