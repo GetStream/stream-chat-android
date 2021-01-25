@@ -193,12 +193,16 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             )
     }
 
-    public interface AttachmentOptionHandler {
+    public fun interface AttachmentShowInChatOptionHandler {
         public fun onClick(attachmentData: AttachmentData): Unit
     }
-
-    public interface AttachmentShowInChatOptionHandler : AttachmentOptionHandler
-    public interface AttachmentReplyOptionHandler : AttachmentOptionHandler
-    public interface AttachmentDownloadOptionHandler : AttachmentOptionHandler
-    public interface AttachmentDeleteOptionHandler : AttachmentOptionHandler
+    public fun interface AttachmentReplyOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+    public fun interface AttachmentDownloadOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+    public fun interface AttachmentDeleteOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
 }
