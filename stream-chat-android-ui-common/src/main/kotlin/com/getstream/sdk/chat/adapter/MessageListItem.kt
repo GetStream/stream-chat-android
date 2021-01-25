@@ -40,7 +40,7 @@ public sealed class MessageListItem {
         val positions: List<Position> = listOf(),
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf(),
-        val isThreadMode: Boolean = false
+        val isThreadMode: Boolean = false,
     ) : MessageListItem() {
         public val isTheirs: Boolean
             get() = !isMine
