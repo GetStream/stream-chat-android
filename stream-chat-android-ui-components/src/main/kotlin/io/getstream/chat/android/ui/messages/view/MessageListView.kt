@@ -157,7 +157,7 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-    private var onAttachmentDownloadOptionClickHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler =
+    private val onAttachmentDownloadOptionClickHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler =
         object : AttachmentGalleryActivity.AttachmentDownloadOptionHandler {
             override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
                 DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
@@ -831,12 +831,6 @@ public class MessageListView : ConstraintLayout {
     public fun setOnAttachmentDownloadHandler(attachmentDownloadHandler: AttachmentDownloadHandler) {
         this.attachmentDownloadHandler = attachmentDownloadHandler
     }
-    //endregion
-
-    //region Listener declarations
-    public fun interface EnterThreadListener {
-        public fun onThreadEntered(message: Message)
-    }
 
     public fun setOnAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
         this.onAttachmentReplyOptionClickHandler = handler
@@ -848,6 +842,12 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this.onAttachmentDeleteOptionClickHandler = handler
+    }
+    //endregion
+
+    //region Listener declarations
+    public fun interface EnterThreadListener {
+        public fun onThreadEntered(message: Message)
     }
 
     public fun interface MessageClickListener {
