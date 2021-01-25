@@ -14,4 +14,6 @@ public class ChatClientConfig(
 ) {
 
     public var isAnonymous: Boolean = false
+
+    internal var enableMoshi: Boolean = false
 }
