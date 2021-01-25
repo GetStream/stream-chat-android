@@ -120,11 +120,11 @@ public interface ChannelController {
     )
     public fun events(): ChatObservable
 
-    public fun subscribe(listener: ChatClient.ChatEventListener): Disposable
+    public fun subscribe(listener: ChatClient.ChatEventListener<ChatEvent>): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: String,
-        listener: ChatClient.ChatEventListener
+        listener: ChatClient.ChatEventListener<ChatEvent>
     ): Disposable
 
     /**
@@ -137,12 +137,12 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: ChatClient.ChatEventListener
+        listener: ChatClient.ChatEventListener<ChatEvent>
     ): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatClient.ChatEventListener
+        listener: ChatClient.ChatEventListener<ChatEvent>
     ): Disposable
 
     /**
@@ -153,7 +153,7 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatClient.ChatEventListener
+        listener: ChatClient.ChatEventListener<ChatEvent>
     ): Disposable
 
     /**
@@ -161,14 +161,14 @@ public interface ChannelController {
      *
      * @see [io.getstream.chat.android.client.models.EventType] for type constants
      */
-    public fun subscribeForSingle(eventType: String, listener: ChatClient.ChatEventListener): Disposable
+    public fun subscribeForSingle(eventType: String, listener: ChatClient.ChatEventListener<ChatEvent>): Disposable
 
     /**
      * Subscribes for the next channel event with the given [eventType].
      */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: ChatClient.ChatEventListener
+        listener: ChatClient.ChatEventListener<T>
     ): Disposable
 
     @CheckResult

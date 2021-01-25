@@ -14,10 +14,10 @@ internal interface EventSubscription : Disposable {
 
 internal open class SubscriptionImpl(
     private val filter: (ChatEvent) -> Boolean,
-    listener: ChatClient.ChatEventListener
+    listener: ChatClient.ChatEventListener<ChatEvent>
 ) : EventSubscription {
 
-    private var listener: ChatClient.ChatEventListener? = listener
+    private var listener: ChatClient.ChatEventListener<ChatEvent>? = listener
 
     override var isDisposed: Boolean = false
 

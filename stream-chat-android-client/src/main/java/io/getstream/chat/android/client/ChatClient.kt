@@ -319,12 +319,12 @@ public class ChatClient internal constructor(
         return socket.events()
     }
 
-    public fun interface ChatEventListener {
-        public fun onEvent(event: ChatEvent)
+    public fun interface ChatEventListener<EventT : ChatEvent> {
+        public fun onEvent(event: EventT)
     }
 
     public fun subscribe(
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return eventsObservable.subscribe(listener = listener)
     }
@@ -336,7 +336,7 @@ public class ChatClient internal constructor(
      */
     public fun subscribeFor(
         vararg eventTypes: String,
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             event.type in eventTypes
@@ -352,7 +352,7 @@ public class ChatClient internal constructor(
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val disposable = subscribeFor(
             *eventTypes,
@@ -380,7 +380,7 @@ public class ChatClient internal constructor(
      */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             eventTypes.any { type -> type.isInstance(event) }
@@ -396,7 +396,7 @@ public class ChatClient internal constructor(
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val disposable = subscribeFor(
             *eventTypes,
@@ -424,7 +424,7 @@ public class ChatClient internal constructor(
      */
     public fun subscribeForSingle(
         eventType: String,
-        listener: ChatEventListener,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             event.type == eventType
@@ -437,13 +437,14 @@ public class ChatClient internal constructor(
      */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: ChatEventListener,
+        listener: ChatEventListener<T>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             eventType.isInstance(event)
         }
-        return eventsObservable.subscribeSingle(filter) { event: ChatEvent ->
-            listener.onEvent(event)
+        return eventsObservable.subscribeSingle(filter) { event ->
+            @Suppress("UNCHECKED_CAST")
+            listener.onEvent(event as T)
         }
     }
 

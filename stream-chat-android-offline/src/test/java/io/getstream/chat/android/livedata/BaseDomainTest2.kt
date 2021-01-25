@@ -132,8 +132,8 @@ internal open class BaseDomainTest2 {
         val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
-                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
-                listener.invoke(connectedEvent)
+                val listener = invocation.arguments[0] as ChatClient.ChatEventListener<ChatEvent>
+                listener.onEvent(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
                     override fun dispose() {}

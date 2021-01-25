@@ -73,7 +73,7 @@ internal class ChannelClientSubscribeTest {
         channelClient.subscribe {
             result.add(it)
         }
-        val captor = argumentCaptor<ChatClient.ChatEventListener>()
+        val captor = argumentCaptor<ChatClient.ChatEventListener<ChatEvent>>()
         verify(client).subscribe(captor.capture())
         val listener = captor.firstValue
 

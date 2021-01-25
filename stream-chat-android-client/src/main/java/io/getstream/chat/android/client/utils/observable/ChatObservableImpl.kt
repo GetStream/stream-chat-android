@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.utils.observable
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -51,7 +52,7 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         return this
     }
 
-    override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
+    override fun subscribe(listener: ChatClient.ChatEventListener<ChatEvent>): Subscription {
         val result = Subscription(this, listener, filters, first)
 
         if (subscriptions.isEmpty()) {
