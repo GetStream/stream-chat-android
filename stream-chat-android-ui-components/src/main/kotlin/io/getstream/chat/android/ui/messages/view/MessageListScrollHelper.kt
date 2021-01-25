@@ -148,6 +148,6 @@ internal class MessageListScrollHelper(
 
     private companion object {
         private const val HIGHLIGHT_MESSAGE_DELAY = 100L
-        private const val SCROLL_BUTTON_VISIBILITY_THRESHOLD = 30
+        private const val SCROLL_BUTTON_VISIBILITY_THRESHOLD = 8
     }
 }
