@@ -55,7 +55,7 @@ internal class MessageListItemLiveData(
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
-    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null
+    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -187,7 +187,14 @@ internal class MessageListItemLiveData(
                 }
             }
 
-            items.add(MessageListItem.MessageItem(message, positions, isMine = message.user.id == currentUser.id))
+            items.add(
+                MessageListItem.MessageItem(
+                    message,
+                    positions,
+                    isMine = message.user.id == currentUser.id,
+                    isThreadMode = isThread,
+                )
+            )
             previousMessage = message
         }
         return items.toList()

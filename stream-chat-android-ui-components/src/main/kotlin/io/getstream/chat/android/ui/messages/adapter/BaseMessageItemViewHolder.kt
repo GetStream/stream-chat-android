@@ -25,14 +25,14 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     @Suppress("UNCHECKED_CAST")
-    internal fun bindListItem(messageListItem: MessageListItem, isThread: Boolean, diff: MessageListItemPayloadDiff? = null) {
+    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) {
         messageListItem as T
 
         this.data = messageListItem
-        bindData(messageListItem, isThread, diff)
+        bindData(messageListItem, diff)
     }
 
-    public abstract fun bindData(data: T, isThread: Boolean, diff: MessageListItemPayloadDiff?)
+    public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
 
     internal fun unbind() {
         cancelHighlightAnimation()
