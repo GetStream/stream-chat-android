@@ -150,10 +150,13 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 extraData = extra,
                 uploadState = Attachment.UploadState.Success
             )
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment,
+            val result = channelControllerImpl.uploadAttachment(
+                attachment = attachment,
                 attachmentTransformer = { attachment, _ ->
                     attachment.copy(extraData = extra)
-                })
+                }
+            )
+
             assertSuccess(result)
             Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
         }
@@ -198,7 +201,9 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
             message.attachments.first(),
             attachmentTransformer = { attachment, _ ->
                 attachment.copy(extraData = extra)
-            })
+            }
+        )
+
         assertSuccess(result)
         val uploadedAttachment = result.data()
 
