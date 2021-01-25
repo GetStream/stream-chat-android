@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -40,6 +41,12 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploads(files: List<File>) {
         for (file in files) {
             val result = Result(file.absolutePath)
+            When calling clientMock.sendFileSync(
+                eq(channelControllerImpl.channelType),
+                eq(channelControllerImpl.channelId),
+                same(file),
+                any()
+            ) doReturn TestCall(result)
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
@@ -56,6 +63,12 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(file.toChatError())
+            When calling clientMock.sendFileSync(
+                eq(channelControllerImpl.channelType),
+                eq(channelControllerImpl.channelId),
+                same(file),
+                any()
+            ) doReturn TestCall(result)
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
@@ -137,9 +150,10 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 extraData = extra,
                 uploadState = Attachment.UploadState.Success
             )
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment) { attachment, _ ->
-                attachment.copy(extraData = extra)
-            }
+            val result = channelControllerImpl.uploadAttachment(attachment = attachment,
+                attachmentTransformer = { attachment, _ ->
+                    attachment.copy(extraData = extra)
+                })
             assertSuccess(result)
             Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
         }
@@ -180,9 +194,11 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploads(files)
 
-        val result = channelControllerImpl.uploadAttachment(message.attachments.first()) { attachment, _ ->
-            attachment.copy(extraData = extra)
-        }
+        val result = channelControllerImpl.uploadAttachment(
+            message.attachments.first(),
+            attachmentTransformer = { attachment, _ ->
+                attachment.copy(extraData = extra)
+            })
         assertSuccess(result)
         val uploadedAttachment = result.data()
 

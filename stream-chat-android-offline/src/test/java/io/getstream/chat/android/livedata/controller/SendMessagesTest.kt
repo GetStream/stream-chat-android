@@ -113,10 +113,11 @@ internal class SendMessagesTest {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(ChatError())
-            When calling chatClient.sendFile(
+            When calling chatClient.sendFileSync(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
-                same(file)
+                same(file),
+                any()
             ) doReturn TestCall(result)
             When calling chatClient.sendImage(
                 eq(channelController.channelType),
