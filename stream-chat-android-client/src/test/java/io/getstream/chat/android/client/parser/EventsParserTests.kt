@@ -26,7 +26,7 @@ internal class EventsParserTests {
     fun before() {
         eventsCollector = mutableListOf()
         service = FakeSocketService(eventsCollector)
-        parser = EventsParser(ChatParserImpl())
+        parser = EventsParser(GsonChatParser())
         parser.setSocketService(service)
     }
 

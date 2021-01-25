@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
@@ -14,12 +15,14 @@ import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser.ChatParserImpl
+import io.getstream.chat.android.client.parser.GsonChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.token.TokenManager
@@ -36,16 +39,19 @@ internal open class BaseChatModule(
     private val config: ChatClientConfig,
     private val notificationsHandler: ChatNotificationHandler,
     private val fileUploader: FileUploader? = null,
-    private val tokenManager: TokenManager = TokenManagerImpl()
+    private val tokenManager: TokenManager = TokenManagerImpl(),
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
-    private val defaultParser: ChatParser by lazy { ChatParserImpl() }
+
+    private val gsonParser: ChatParser by lazy { GsonChatParser() }
+    private val moshiParser: ChatParser by lazy { MoshiChatParser(gsonParser) }
+
     private val defaultNotifications by lazy {
         buildNotification(notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config) }
-    private val defaultSocket by lazy { buildSocket(config, parser()) }
+    private val defaultSocket by lazy { buildSocket(config, eventParser()) }
     private val defaultFileUploader by lazy {
         StreamFileUploader(
             config.apiKey,
@@ -63,8 +69,12 @@ internal open class BaseChatModule(
         return defaultSocket
     }
 
-    fun parser(): ChatParser {
-        return defaultParser
+    fun apiParser(): ChatParser {
+        return if (config.enableMoshi) moshiParser else gsonParser
+    }
+
+    fun eventParser(): ChatParser {
+        return gsonParser
     }
 
     fun logger(): ChatLogger {
@@ -79,7 +89,7 @@ internal open class BaseChatModule(
 
     private fun buildNotification(
         handler: ChatNotificationHandler,
-        api: ChatApi
+        api: ChatApi,
     ): ChatNotifications {
         return ChatNotifications.create(handler, api, appContext)
     }
@@ -89,7 +99,7 @@ internal open class BaseChatModule(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
-        isAnonymousApi: Boolean
+        isAnonymousApi: Boolean,
     ): Retrofit {
         val okHttpClient = clientBuilder(timeout, config, parser, isAnonymousApi).build()
 
@@ -110,7 +120,7 @@ internal open class BaseChatModule(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
-        isAnonymousApi: Boolean
+        isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
         return baseClientBuilder()
             // timeouts
@@ -138,14 +148,14 @@ internal open class BaseChatModule(
 
     private fun getAnonymousProvider(
         config: ChatClientConfig,
-        isAnonymousApi: Boolean
+        isAnonymousApi: Boolean,
     ): () -> Boolean {
         return { isAnonymousApi || config.isAnonymous }
     }
 
     private fun buildSocket(
         chatConfig: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
     ): ChatSocket {
         return ChatSocketImpl(
             chatConfig.apiKey,
@@ -157,13 +167,19 @@ internal open class BaseChatModule(
     }
 
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        return ChatApi(
+        val gsonChatApi = GsonChatApi(
             chatConfig.apiKey,
             buildRetrofitApi(RetrofitApi::class.java),
             buildRetrofitApi(RetrofitAnonymousApi::class.java),
             UuidGeneratorImpl(),
             fileUploader ?: defaultFileUploader
         )
+
+        return if (chatConfig.enableMoshi) {
+            MoshiChatApi(gsonChatApi)
+        } else {
+            gsonChatApi
+        }
     }
 
     private fun <T> buildRetrofitApi(apiClass: Class<T>): T {
@@ -171,7 +187,7 @@ internal open class BaseChatModule(
             config.httpUrl,
             config.baseTimeout,
             config,
-            parser(),
+            apiParser(),
             apiClass.isAnonymousApi
         ).create(apiClass)
     }
@@ -197,7 +213,7 @@ internal open class BaseChatModule(
             config.cdnHttpUrl,
             config.cdnTimeout,
             config,
-            parser(),
+            apiParser(),
             apiClass.isAnonymousApi
         ).create(apiClass)
     }
