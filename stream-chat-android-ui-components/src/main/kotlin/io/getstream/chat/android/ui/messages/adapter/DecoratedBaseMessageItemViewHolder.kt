@@ -10,7 +10,7 @@ internal abstract class DecoratedBaseMessageItemViewHolder<T : MessageListItem>(
     private val decorators: List<Decorator>,
 ) : BaseMessageItemViewHolder<T>(itemView) {
     @CallSuper
-    override fun bindData(data: T, isThread: Boolean, diff: MessageListItemPayloadDiff?) {
-        decorators.forEach { it.decorate(this, data, isThread) }
+    override fun bindData(data: T, diff: MessageListItemPayloadDiff?) {
+        decorators.forEach { it.decorate(this, data) }
     }
 }

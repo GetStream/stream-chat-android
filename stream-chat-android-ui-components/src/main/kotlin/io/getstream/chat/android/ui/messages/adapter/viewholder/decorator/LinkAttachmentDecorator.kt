@@ -15,41 +15,36 @@ import io.getstream.chat.android.ui.utils.extensions.hasLink
 internal class LinkAttachmentDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-        isThread: Boolean
+        data: MessageListItem.MessageItem
     ) {
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-        isThread: Boolean
+        data: MessageListItem.MessageItem
     ) = Unit
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-        isThread: Boolean
+        data: MessageListItem.MessageItem
     ) {
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-        isThread: Boolean
+        data: MessageListItem.MessageItem
     ) = Unit
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem,
-        isThread: Boolean
+        data: MessageListItem.MessageItem
     ) {
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem, isThread: Boolean) = Unit
+    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
     private fun decorate(linkAttachmentView: LinkAttachmentView, message: Message) {
         val linkAttachment = message.attachments.firstOrNull { it.hasLink() }
