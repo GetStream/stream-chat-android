@@ -99,13 +99,13 @@ public class ChannelClient internal constructor(
         return client.events().filter(this::isRelevantForChannel)
     }
 
-    override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
+    override fun subscribe(listener: ChatClient.ChatEventListener): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
 
     override fun subscribeFor(
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
@@ -113,7 +113,7 @@ public class ChannelClient internal constructor(
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeFor(
             lifecycleOwner,
@@ -124,7 +124,7 @@ public class ChannelClient internal constructor(
 
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
@@ -132,7 +132,7 @@ public class ChannelClient internal constructor(
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeFor(
             lifecycleOwner,
@@ -143,24 +143,24 @@ public class ChannelClient internal constructor(
 
     override fun subscribeForSingle(
         eventType: String,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: (event: T) -> Unit,
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
-    private fun <T : ChatEvent> filterRelevantEvents(
-        listener: (event: T) -> Unit,
-    ): (T) -> Unit {
-        return { event: T ->
+    private fun filterRelevantEvents(
+        listener: ChatClient.ChatEventListener,
+    ): ChatClient.ChatEventListener {
+        return ChatClient.ChatEventListener { event ->
             if (isRelevantForChannel(event)) {
-                listener.invoke(event)
+                listener.onEvent(event)
             }
         }
     }

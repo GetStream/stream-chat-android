@@ -17,11 +17,11 @@ import kotlin.reflect.KClass
  * Subscribes to client events of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
-    crossinline listener: (event: T) -> Unit,
+    listener: ChatClient.ChatEventListener,
 ): Disposable {
     return this.subscribeFor(
         T::class.java,
-        listener = { event -> listener(event as T) }
+        listener = listener
     )
 }
 
@@ -70,7 +70,7 @@ public fun ChatClient.subscribeFor(
  * Subscribes for the next client event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
-    noinline listener: (event: T) -> Unit,
+    listener: ChatClient.ChatEventListener,
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)
 }

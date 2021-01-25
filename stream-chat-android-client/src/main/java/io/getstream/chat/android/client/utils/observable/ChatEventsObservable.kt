@@ -15,7 +15,7 @@ import java.util.Date
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
-    private var client: ChatClient
+    private var client: ChatClient,
 ) {
 
     private var subscriptions = setOf<EventSubscription>()
@@ -48,14 +48,14 @@ internal class ChatEventsObservable(
 
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
-        listener: (ChatEvent) -> Unit
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
     fun subscribeSingle(
         filter: (ChatEvent) -> Boolean = { true },
-        listener: (ChatEvent) -> Unit
+        listener: ChatClient.ChatEventListener,
     ): Disposable {
         return addSubscription(
             SubscriptionImpl(filter, listener).apply {
