@@ -83,7 +83,7 @@ public class MessageReplyView : FrameLayout {
                 marginStart = CONTENT_MARGIN
                 marginEnd = CONTENT_MARGIN
             }
-            binding.replyContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            replyContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 if (isMine) {
                     startToStart = ConstraintLayout.LayoutParams.PARENT_ID
                     endToStart = replyAvatarView.id
