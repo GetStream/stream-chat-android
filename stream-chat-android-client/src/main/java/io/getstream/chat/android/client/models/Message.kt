@@ -106,8 +106,4 @@ public data class Message(
 
     @SerializedName("thread_participants")
     var threadParticipants: List<User> = emptyList(),
-
-    @IgnoreSerialisation
-    @IgnoreDeserialisation
-    var uploadId: String? = null,
 ) : CustomObject

@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadComplete
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -641,7 +642,7 @@ internal class ChannelControllerImpl(
 
                         if (result.isSuccess) {
                             attachment = result.data()
-                            progressTracker.incrementLap()
+                            progressTracker.incrementCompletedItems()
                         } else {
                             attachment.uploadState = Attachment.UploadState.Failed(result.error())
                         }
@@ -650,9 +651,7 @@ internal class ChannelControllerImpl(
                     attachment
                 }.toMutableList()
 
-                if (hasAttachments) {
-                    cancelProgressMessage()
-                }
+                uploadStatusMessage?.let { cancelMessage(it) }
             }
 
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
@@ -699,17 +698,14 @@ internal class ChannelControllerImpl(
             createdAt = Date(),
             type = "ephemeral",
             user = domainImpl.currentUser,
-            command = "file",
-            uploadId = uploadId
-        )
+            command = "file"
+        ).apply {
+            this.uploadId = uploadId
+        }
 
         uploadStatusMessage = progressMessage
 
         upsertMessages(listOf(progressMessage))
-    }
-
-    private suspend fun cancelProgressMessage() {
-        uploadStatusMessage?.let { cancelMessage(it) }
     }
 
     /**

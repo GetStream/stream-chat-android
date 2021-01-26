@@ -94,7 +94,7 @@ public open class MessageListItemViewHolderFactory {
     protected fun createEphemeralAttachmentsProgressViewModel(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return AttachmentsProgressViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return AttachmentsProgressViewHolder(parentView)
     }
 
     protected fun createPlainTextWithFileAttachmentsViewHolder(

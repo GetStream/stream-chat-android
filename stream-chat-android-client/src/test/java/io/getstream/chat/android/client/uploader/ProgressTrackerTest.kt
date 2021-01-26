@@ -19,7 +19,7 @@ public class ProgressTrackerTest {
             initProgress()
         }
 
-        val currentProgress = tracker.currentProgress()
+        val currentProgress = tracker.currentItemProgress()
         val progressValue = randomInt()
 
         tracker.setProgress(progressValue)
@@ -35,7 +35,7 @@ public class ProgressTrackerTest {
 
         val currentLap = tracker.lapsCompleted()
 
-        tracker.incrementLap()
+        tracker.incrementCompletedItems()
 
         assertEquals(1, currentLap.value)
     }
@@ -46,7 +46,7 @@ public class ProgressTrackerTest {
             initProgress()
         }
 
-        val currentProgress = tracker.currentProgress()
+        val currentProgress = tracker.currentItemProgress()
         val progressValueList = listOf(randomInt(), randomInt(), randomInt(), randomInt())
 
         progressValueList.forEach { value ->
@@ -69,7 +69,7 @@ public class ProgressTrackerTest {
         repeat(numberOfLaps) { count ->
             assertEquals(count, currentLap.first())
 
-            tracker.incrementLap()
+            tracker.incrementCompletedItems()
         }
     }
 }
