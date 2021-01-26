@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMed
 import io.getstream.chat.android.ui.messages.adapter.viewholder.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.messages.customization.MessageListViewConfig
+import io.getstream.chat.android.ui.messages.customization.viewholder.PlainTextViewHolderConfig
 
 public open class MessageListItemViewHolderFactory {
 
@@ -59,7 +60,7 @@ public open class MessageListItemViewHolderFactory {
         return when (viewType) {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
-            PLAIN_TEXT -> createPlainTextViewHolder(parentView)
+            PLAIN_TEXT -> createPlainTextViewHolder(parentView, messageListViewConfig.viewHolders.plainTextConfig)
             PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(parentView)
             PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(parentView)
             MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
@@ -86,8 +87,9 @@ public open class MessageListItemViewHolderFactory {
 
     protected fun createPlainTextViewHolder(
         parentView: ViewGroup,
+        config: PlainTextViewHolderConfig,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessagePlainTextViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return MessagePlainTextViewHolder(parentView, decoratorProvider.decorators, listenerContainer, config)
     }
 
     protected fun createPlainTextWithFileAttachmentsViewHolder(

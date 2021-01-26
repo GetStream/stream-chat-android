@@ -10,12 +10,17 @@ import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemVie
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.messages.customization.viewholder.PlainTextViewHolderConfig
 import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
+import io.getstream.chat.android.ui.utils.extensions.spToPx
+import io.getstream.chat.android.ui.utils.extensions.spToPxPrecise
 
 internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
+    internal val config: PlainTextViewHolderConfig,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.inflater,
@@ -59,6 +64,10 @@ internal class MessagePlainTextViewHolder(
         super.bindData(data, diff)
 
         with(binding) {
+            messageText.setTextSizePx(config.textSizeSp.spToPxPrecise())
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                messageText.lineHeight = config.lineHeightSp.spToPx()
+            }
             messageText.text = data.message.text
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 horizontalBias = if (data.isTheirs) 0f else 1f
