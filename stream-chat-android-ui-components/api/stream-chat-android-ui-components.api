@@ -897,13 +897,11 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$
 }
 
 public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun component2 ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getPreviousMode ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
 	public final fun getRepliedMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
