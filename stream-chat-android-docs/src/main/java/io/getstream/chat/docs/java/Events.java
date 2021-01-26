@@ -36,7 +36,6 @@ public class Events {
                     (NewMessageEvent event) -> {
                         // To get the message
                         Message message = event.getMessage();
-                        return Unit.INSTANCE;
                     }
             );
 
@@ -50,7 +49,6 @@ public class Events {
                     // To get the message
                     Message message = ((NewMessageEvent) event).getMessage();
                 }
-                return Unit.INSTANCE;
             });
 
             // Dispose when you want to stop receiving events
@@ -66,7 +64,6 @@ public class Events {
                     new Class[]{UserPresenceChangedEvent.class},
                     event -> {
                         // Handle change
-                        return Unit.INSTANCE;
                     }
             );
 
@@ -77,7 +74,6 @@ public class Events {
                         // Use event data
                         int unreadCount = event.getMe().getTotalUnreadCount();
                         int unreadChannels = event.getMe().getUnreadChannels();
-                        return Unit.INSTANCE;
                     }
             );
         }
@@ -96,7 +92,6 @@ public class Events {
                         } else if (event instanceof DisconnectedEvent) {
                             // Socket is disconnected
                         }
-                        return Unit.INSTANCE;
                     }
             );
         }
@@ -107,7 +102,6 @@ public class Events {
         public void stopListeningEvents() {
             final Disposable disposable = client.subscribe(chatEvent -> {
                 /* ... */
-                return null;
             });
             disposable.dispose();
         }
@@ -136,7 +130,6 @@ public class Events {
                     new Class[]{NotificationAddedToChannelEvent.class},
                     addedToChannelEvent -> {
                         // Handle event
-                        return Unit.INSTANCE;
                     }
             );
         }
