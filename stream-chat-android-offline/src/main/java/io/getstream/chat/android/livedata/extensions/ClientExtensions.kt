@@ -172,3 +172,5 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
         .take(pagination.channelLimit).toList()
 
 internal fun String?.isImageMimetype() = this?.contains("image") ?: false
+
+internal fun String?.isVideoMimetype() = this?.contains("video") ?: false
