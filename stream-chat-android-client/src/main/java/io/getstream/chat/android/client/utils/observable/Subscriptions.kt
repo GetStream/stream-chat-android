@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.utils.observable
 
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
 
 public interface Disposable {
@@ -14,10 +14,10 @@ internal interface EventSubscription : Disposable {
 
 internal open class SubscriptionImpl(
     private val filter: (ChatEvent) -> Boolean,
-    listener: ChatClient.ChatEventListener<ChatEvent>
+    listener: ChatEventListener<ChatEvent>
 ) : EventSubscription {
 
-    private var listener: ChatClient.ChatEventListener<ChatEvent>? = listener
+    private var listener: ChatEventListener<ChatEvent>? = listener
 
     override var isDisposed: Boolean = false
 

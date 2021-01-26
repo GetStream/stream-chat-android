@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.controllers
 
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -120,11 +120,26 @@ public interface ChannelController {
     )
     public fun events(): ChatObservable
 
-    public fun subscribe(listener: ChatClient.ChatEventListener<ChatEvent>): Disposable
+    public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable
+
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
+    public fun subscribe(listener: (ChatEvent) -> Unit): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: String,
-        listener: ChatClient.ChatEventListener<ChatEvent>
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable
+
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -137,12 +152,31 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: ChatClient.ChatEventListener<ChatEvent>
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable
+
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: (ChatEvent) -> Unit,
     ): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatClient.ChatEventListener<ChatEvent>
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable
+
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
+    public fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -153,7 +187,17 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: ChatClient.ChatEventListener<ChatEvent>
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable
+
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -161,14 +205,14 @@ public interface ChannelController {
      *
      * @see [io.getstream.chat.android.client.models.EventType] for type constants
      */
-    public fun subscribeForSingle(eventType: String, listener: ChatClient.ChatEventListener<ChatEvent>): Disposable
+    public fun subscribeForSingle(eventType: String, listener: ChatEventListener<ChatEvent>): Disposable
 
     /**
      * Subscribes for the next channel event with the given [eventType].
      */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: ChatClient.ChatEventListener<T>
+        listener: ChatEventListener<T>,
     ): Disposable
 
     @CheckResult

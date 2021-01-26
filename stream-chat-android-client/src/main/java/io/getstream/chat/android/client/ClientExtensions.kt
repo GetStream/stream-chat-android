@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  * Subscribes to client events of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
-    listener: ChatClient.ChatEventListener<T>,
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeFor(
         T::class.java,
@@ -32,7 +32,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
-    listener: ChatClient.ChatEventListener<T>,
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeFor(
         lifecycleOwner,
@@ -46,7 +46,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
  */
 public fun ChatClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: ChatClient.ChatEventListener<ChatEvent>,
+    listener: ChatEventListener<ChatEvent>,
 ): Disposable {
     val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
     return subscribeFor(*javaClassTypes, listener = listener)
@@ -60,7 +60,7 @@ public fun ChatClient.subscribeFor(
 public fun ChatClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: ChatClient.ChatEventListener<ChatEvent>,
+    listener: ChatEventListener<ChatEvent>,
 ): Disposable {
     val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
     return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
@@ -70,7 +70,7 @@ public fun ChatClient.subscribeFor(
  * Subscribes for the next client event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
-    listener: ChatClient.ChatEventListener<T>,
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)
 }

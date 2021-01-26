@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -73,7 +74,7 @@ internal class ChannelClientSubscribeTest {
         channelClient.subscribe {
             result.add(it)
         }
-        val captor = argumentCaptor<ChatClient.ChatEventListener<ChatEvent>>()
+        val captor = argumentCaptor<ChatEventListener<ChatEvent>>()
         verify(client).subscribe(captor.capture())
         val listener = captor.firstValue
 

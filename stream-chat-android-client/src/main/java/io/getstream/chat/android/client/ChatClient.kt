@@ -319,10 +319,6 @@ public class ChatClient internal constructor(
         return socket.events()
     }
 
-    public fun interface ChatEventListener<EventT : ChatEvent> {
-        public fun onEvent(event: EventT)
-    }
-
     public fun subscribe(
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
