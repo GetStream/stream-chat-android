@@ -14,6 +14,12 @@ public class MessageListViewConfigBuilder {
     }
 
     @CustomizationDsl
+    public fun viewHolders(viewHolderConfig: ViewHolderConfig): MessageListViewConfigBuilder {
+        this.viewHolderConfig = viewHolderConfig
+        return this
+    }
+
+    @CustomizationDsl
     public fun build(): MessageListViewConfig {
         return MessageListViewConfig(viewHolders = viewHolderConfig)
     }

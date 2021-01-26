@@ -15,6 +15,12 @@ public class ViewHolderConfigBuilder {
     }
 
     @CustomizationDsl
+    public fun plainText(plainTextConfig: PlainTextViewHolderConfig): ViewHolderConfigBuilder {
+        this.plainTextConfig = plainTextConfig
+        return this
+    }
+
+    @CustomizationDsl
     public fun build(): ViewHolderConfig {
         return ViewHolderConfig(plainTextConfig = plainTextConfig)
     }

@@ -14,8 +14,20 @@ public class PlainTextViewHolderConfigBuilder {
     }
 
     @CustomizationDsl
+    public fun textSize(textSize: Float): PlainTextViewHolderConfigBuilder {
+        textSizeSp = textSize
+        return this
+    }
+
+    @CustomizationDsl
     public fun textLineHeight(lineHeightProvider: () -> Float) {
         textLineHeight = lineHeightProvider()
+    }
+
+    @CustomizationDsl
+    public fun textLineHeight(textLineHeight: Float): PlainTextViewHolderConfigBuilder {
+        this.textLineHeight = textLineHeight
+        return this
     }
 
     public fun build(): PlainTextViewHolderConfig = PlainTextViewHolderConfig(textSizeSp, textLineHeight)

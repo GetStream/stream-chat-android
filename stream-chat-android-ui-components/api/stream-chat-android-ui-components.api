@@ -468,19 +468,23 @@ public abstract interface annotation class io/getstream/chat/android/ui/messages
 public final class io/getstream/chat/android/ui/messages/customization/dsl/MessageListViewConfigBuilder {
 	public fun <init> ()V
 	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public final fun viewHolders (Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;)Lio/getstream/chat/android/ui/messages/customization/dsl/MessageListViewConfigBuilder;
 	public final fun viewHolders (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/customization/dsl/viewholder/PlainTextViewHolderConfigBuilder {
 	public fun <init> ()V
 	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+	public final fun textLineHeight (F)Lio/getstream/chat/android/ui/messages/customization/dsl/viewholder/PlainTextViewHolderConfigBuilder;
 	public final fun textLineHeight (Lkotlin/jvm/functions/Function0;)V
+	public final fun textSize (F)Lio/getstream/chat/android/ui/messages/customization/dsl/viewholder/PlainTextViewHolderConfigBuilder;
 	public final fun textSize (Lkotlin/jvm/functions/Function0;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/customization/dsl/viewholder/ViewHolderConfigBuilder {
 	public fun <init> ()V
 	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
+	public final fun plainText (Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;)Lio/getstream/chat/android/ui/messages/customization/dsl/viewholder/ViewHolderConfigBuilder;
 	public final fun plainText (Lkotlin/jvm/functions/Function1;)V
 }
 
