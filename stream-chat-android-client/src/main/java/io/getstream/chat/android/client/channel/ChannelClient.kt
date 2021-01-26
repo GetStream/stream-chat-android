@@ -104,6 +104,10 @@ public class ChannelClient internal constructor(
         return client.subscribe(filterRelevantEvents(listener))
     }
 
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
     override fun subscribe(listener: (ChatEvent) -> Unit): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
@@ -115,6 +119,10 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
     override fun subscribeFor(
         vararg eventTypes: String,
         listener: (ChatEvent) -> Unit,
@@ -134,6 +142,10 @@ public class ChannelClient internal constructor(
         )
     }
 
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
@@ -153,6 +165,10 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (ChatEvent) -> Unit,
@@ -172,6 +188,10 @@ public class ChannelClient internal constructor(
         )
     }
 
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.WARNING
+    )
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
