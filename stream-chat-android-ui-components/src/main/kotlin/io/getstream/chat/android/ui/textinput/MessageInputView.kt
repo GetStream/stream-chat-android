@@ -8,6 +8,7 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
@@ -65,14 +66,22 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configReplyMode(previousValue: InputMode, newValue: InputMode) {
-        if (newValue is InputMode.Reply) {
-            binding.replyHeader.isVisible = true
-            binding.messageInputFieldView.onReply(newValue.repliedMessage)
-            binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
-        } else {
-            binding.replyHeader.isVisible = false
-            if (previousValue is InputMode.Reply) {
-                binding.messageInputFieldView.onReplyDismissed()
+        when (newValue) {
+            is InputMode.Reply -> {
+                binding.replyHeader.isVisible = true
+                binding.messageInputFieldView.onReply(newValue.repliedMessage)
+                binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
+            }
+
+            is InputMode.Edit -> {
+                Toast.makeText(context, "Edit mode to be implemented", Toast.LENGTH_SHORT).show()
+            }
+
+            else -> {
+                binding.replyHeader.isVisible = false
+                if (previousValue is InputMode.Reply) {
+                    binding.messageInputFieldView.onReplyDismissed()
+                }
             }
         }
     }

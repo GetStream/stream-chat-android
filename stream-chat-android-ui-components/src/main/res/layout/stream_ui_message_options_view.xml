@@ -44,7 +44,7 @@
     <TextView
         android:id="@+id/editTV"
         style="@style/StreamUiMessageOptionItem"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:drawableStart="@drawable/stream_ui_ic_edit"
         tools:text="Edit message"
         tools:visibility="visible"
