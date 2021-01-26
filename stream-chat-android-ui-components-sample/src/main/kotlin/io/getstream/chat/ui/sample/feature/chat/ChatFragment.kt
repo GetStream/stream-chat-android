@@ -126,7 +126,7 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
-            binding.messageListView.setOnMessageEditHandler {
+            binding.messageListView.setMessageEditHandler {
                 editMessage.postValue(it)
             }
         }

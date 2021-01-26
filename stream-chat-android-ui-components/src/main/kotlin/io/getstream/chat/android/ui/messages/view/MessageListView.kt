@@ -39,9 +39,9 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadHandler
-import io.getstream.chat.android.ui.messages.view.MessageListView.BlockUserHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EnterThreadListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.LastMessageReadHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.LinkClickListener
@@ -54,12 +54,12 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.MessageReactio
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageReplyHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.MessageRetryListener
-import io.getstream.chat.android.ui.messages.view.MessageListView.MuteUserHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.ReactionViewClickListener
-import io.getstream.chat.android.ui.messages.view.MessageListView.SendGiphyHandler
-import io.getstream.chat.android.ui.messages.view.MessageListView.StartThreadHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadStartHandler
+import io.getstream.chat.android.ui.messages.view.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
+import io.getstream.chat.android.ui.messages.view.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
@@ -116,13 +116,13 @@ public class MessageListView : ConstraintLayout {
     private var messageDeleteHandler = MessageDeleteHandler {
         throw IllegalStateException("onMessageDeleteHandler must be set.")
     }
-    private var startThreadHandler = StartThreadHandler {
+    private var threadStartHandler = ThreadStartHandler {
         throw IllegalStateException("onStartThreadHandler must be set.")
     }
     private var messageFlagHandler = MessageFlagHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
-    private var sendGiphyHandler = SendGiphyHandler { _, _ ->
+    private var giphySendHandler = GiphySendHandler { _, _ ->
         throw IllegalStateException("onSendGiphyHandler must be set.")
     }
     private var messageRetryHandler = MessageRetryHandler {
@@ -131,10 +131,10 @@ public class MessageListView : ConstraintLayout {
     private var messageReactionHandler = MessageReactionHandler { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
     }
-    private var muteUserHandler = MuteUserHandler {
+    private var userMuteHandler = UserMuteHandler {
         throw IllegalStateException("onMuteUserHandler must be set.")
     }
-    private var blockUserHandler = BlockUserHandler { _, _ ->
+    private var userBlockHandler = UserBlockHandler { _, _ ->
         throw IllegalStateException("onBlockUserHandler must be set.")
     }
     private var messageReplyHandler = MessageReplyHandler { _, _ ->
@@ -161,7 +161,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_MESSAGE_CLICK_LISTENER =
         MessageClickListener { message ->
             if (message.replyCount > 0) {
-                startThreadHandler.onStartThread(message)
+                threadStartHandler.onStartThread(message)
                 enterThreadListener.onThreadEntered(message)
             }
         }
@@ -181,12 +181,12 @@ public class MessageListView : ConstraintLayout {
                         }
                         setMessageOptionsHandlers(
                             MessageOptionsDialogFragment.MessageOptionsHandlers(
-                                threadReplyHandler = startThreadHandler,
+                                threadReplyHandler = threadStartHandler,
                                 retryHandler = messageRetryHandler,
                                 editClickHandler = messageEditHandler,
                                 flagClickHandler = messageFlagHandler,
-                                muteClickHandler = muteUserHandler,
-                                blockClickHandler = blockUserHandler,
+                                muteClickHandler = userMuteHandler,
+                                blockClickHandler = userBlockHandler,
                                 deleteClickHandler = messageDeleteHandler,
                                 replyClickHandler = messageReplyHandler,
                             )
@@ -202,7 +202,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_THREAD_CLICK_LISTENER =
         ThreadClickListener { message ->
             if (message.replyCount > 0) {
-                startThreadHandler.onStartThread(message)
+                threadStartHandler.onStartThread(message)
                 enterThreadListener.onThreadEntered(message)
             }
         }
@@ -236,7 +236,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
     private val DEFAULT_GIPHY_SEND_LISTENER =
         GiphySendListener { message, action ->
-            sendGiphyHandler.onSendGiphy(message, action)
+            giphySendHandler.onSendGiphy(message, action)
         }
     private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
         ChatUI.instance().navigator.navigate(WebLinkDestination(url, context))
@@ -737,7 +737,7 @@ public class MessageListView : ConstraintLayout {
      *
      * @param enterThreadListener The listener to use. If null, the default will be used instead.
      */
-    public fun setOnStartThreadListener(enterThreadListener: EnterThreadListener?) {
+    public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
         this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
     }
     //endregion
@@ -751,47 +751,47 @@ public class MessageListView : ConstraintLayout {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    public fun setOnMessageEditHandler(messageEditHandler: MessageEditHandler) {
+    public fun setMessageEditHandler(messageEditHandler: MessageEditHandler) {
         this.messageEditHandler = messageEditHandler
     }
 
-    public fun setOnMessageDeleteHandler(messageDeleteHandler: MessageDeleteHandler) {
+    public fun setMessageDeleteHandler(messageDeleteHandler: MessageDeleteHandler) {
         this.messageDeleteHandler = messageDeleteHandler
     }
 
-    public fun setOnStartThreadHandler(startThreadHandler: StartThreadHandler) {
-        this.startThreadHandler = startThreadHandler
+    public fun setThreadStartHandler(threadStartHandler: ThreadStartHandler) {
+        this.threadStartHandler = threadStartHandler
     }
 
-    public fun setOnMessageFlagHandler(messageFlagHandler: MessageFlagHandler) {
+    public fun setMessageFlagHandler(messageFlagHandler: MessageFlagHandler) {
         this.messageFlagHandler = messageFlagHandler
     }
 
-    public fun setOnSendGiphyHandler(sendGiphyHandler: SendGiphyHandler) {
-        this.sendGiphyHandler = sendGiphyHandler
+    public fun setGiphySendHandler(giphySendHandler: GiphySendHandler) {
+        this.giphySendHandler = giphySendHandler
     }
 
-    public fun setOnMessageRetryHandler(messageRetryHandler: MessageRetryHandler) {
+    public fun setMessageRetryHandler(messageRetryHandler: MessageRetryHandler) {
         this.messageRetryHandler = messageRetryHandler
     }
 
-    public fun setOnMessageReactionHandler(messageReactionHandler: MessageReactionHandler) {
+    public fun setMessageReactionHandler(messageReactionHandler: MessageReactionHandler) {
         this.messageReactionHandler = messageReactionHandler
     }
 
-    public fun setOnMuteUserHandler(userMuteHandler: MuteUserHandler) {
-        this.muteUserHandler = userMuteHandler
+    public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
+        this.userMuteHandler = userMuteHandler
     }
 
-    public fun setOnBlockUserHandler(userBlockHandler: BlockUserHandler) {
-        this.blockUserHandler = userBlockHandler
+    public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
+        this.userBlockHandler = userBlockHandler
     }
 
-    public fun setOnReplyMessageHandler(messageReplyHandler: MessageReplyHandler) {
+    public fun setMessageReplyHandler(messageReplyHandler: MessageReplyHandler) {
         this.messageReplyHandler = messageReplyHandler
     }
 
-    public fun setOnAttachmentDownloadHandler(attachmentDownloadHandler: AttachmentDownloadHandler) {
+    public fun setAttachmentDownloadHandler(attachmentDownloadHandler: AttachmentDownloadHandler) {
         this.attachmentDownloadHandler = attachmentDownloadHandler
     }
     //endregion
@@ -875,19 +875,19 @@ public class MessageListView : ConstraintLayout {
         public fun onMessageReply(cid: String, message: Message)
     }
 
-    public fun interface StartThreadHandler {
+    public fun interface ThreadStartHandler {
         public fun onStartThread(message: Message)
     }
 
-    public fun interface SendGiphyHandler {
+    public fun interface GiphySendHandler {
         public fun onSendGiphy(message: Message, action: GiphyAction)
     }
 
-    public fun interface MuteUserHandler {
+    public fun interface UserMuteHandler {
         public fun onUserMute(user: User)
     }
 
-    public fun interface BlockUserHandler {
+    public fun interface UserBlockHandler {
         public fun onUserBlock(user: User, cid: String)
     }
 
