@@ -28,20 +28,20 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
-    view.setOnMessageDeleteHandler { onEvent(DeleteMessage(it)) }
-    view.setOnStartThreadHandler { onEvent(ThreadModeEntered(it)) }
-    view.setOnMessageFlagHandler { onEvent(FlagMessage(it)) }
-    view.setOnSendGiphyHandler { message, giphyAction ->
+    view.setMessageDeleteHandler { onEvent(DeleteMessage(it)) }
+    view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
+    view.setMessageFlagHandler { onEvent(FlagMessage(it)) }
+    view.setGiphySendHandler { message, giphyAction ->
         onEvent(GiphyActionSelected(message, giphyAction))
     }
-    view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
-    view.setOnMessageReactionHandler { message, reactionType ->
+    view.setMessageRetryHandler { onEvent(RetryMessage(it)) }
+    view.setMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType, enforceUnique = true))
     }
-    view.setOnMuteUserHandler { onEvent(MuteUser(it)) }
-    view.setOnBlockUserHandler { user, cid -> onEvent(BlockUser(user, cid)) }
-    view.setOnReplyMessageHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
-    view.setOnAttachmentDownloadHandler { attachment -> onEvent(AttachmentDownload(attachment)) }
+    view.setUserMuteHandler { onEvent(MuteUser(it)) }
+    view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
+    view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
+    view.setAttachmentDownloadHandler { attachment -> onEvent(AttachmentDownload(attachment)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {
