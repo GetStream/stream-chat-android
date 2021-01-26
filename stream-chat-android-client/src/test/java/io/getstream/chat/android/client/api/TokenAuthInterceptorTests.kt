@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api
 import io.getstream.chat.android.client.api.FakeResponse.Body
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatRequestError
-import io.getstream.chat.android.client.parser.ChatParserImpl
+import io.getstream.chat.android.client.parser.GsonChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -14,7 +14,7 @@ import org.junit.Test
 internal class TokenAuthInterceptorTests {
 
     val token = "token"
-    val parser = ChatParserImpl()
+    val parser = GsonChatParser()
 
     @Test
     fun undefinedToken() {

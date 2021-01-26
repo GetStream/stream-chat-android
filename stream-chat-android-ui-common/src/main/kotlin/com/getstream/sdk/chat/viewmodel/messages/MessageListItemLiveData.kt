@@ -55,7 +55,7 @@ internal class MessageListItemLiveData(
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
-    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null
+    private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -166,10 +166,16 @@ internal class MessageListItemLiveData(
                 )
             }
 
+            // date separator
+            val shouldAddDateSeparator = dateSeparatorHandler?.shouldAddDateSeparator(previousMessage, message) ?: false
+            if (shouldAddDateSeparator) {
+                items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
+            }
+
             // determine the position (top, middle, bottom)
             val user = message.user
             val positions = mutableListOf<MessageListItem.Position>()
-            if (previousMessage == null || previousMessage.user != user) {
+            if (previousMessage == null || previousMessage.user != user || shouldAddDateSeparator) {
                 positions.add(MessageListItem.Position.TOP)
             }
             if (nextMessage == null || nextMessage.user != user) {
@@ -180,14 +186,15 @@ internal class MessageListItemLiveData(
                     positions.add(MessageListItem.Position.MIDDLE)
                 }
             }
-            // date separators
-            dateSeparator?.let {
-                if (it(previousMessage, message)) {
-                    items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
-                }
-            }
 
-            items.add(MessageListItem.MessageItem(message, positions, isMine = message.user.id == currentUser.id))
+            items.add(
+                MessageListItem.MessageItem(
+                    message,
+                    positions,
+                    isMine = message.user.id == currentUser.id,
+                    isThreadMode = isThread,
+                )
+            )
             previousMessage = message
         }
         return items.toList()

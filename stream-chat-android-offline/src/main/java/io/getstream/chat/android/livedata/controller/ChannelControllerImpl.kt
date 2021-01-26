@@ -58,6 +58,7 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
+import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -669,10 +670,10 @@ internal class ChannelControllerImpl(
         val file =
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) {
-            TYPE_IMAGE
-        } else {
-            TYPE_FILE
+        val attachmentType: String = when {
+            mimeType.isImageMimetype() -> TYPE_IMAGE
+            mimeType.isVideoMimetype() -> TYPE_VIDEO
+            else -> TYPE_FILE
         }
         val pathResult = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
@@ -785,6 +786,7 @@ internal class ChannelControllerImpl(
             user = currentUser
             userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
+            this.enforceUnique = enforceUnique
         }
         val online = domainImpl.isOnline()
         // insert the message into local storage
@@ -794,11 +796,11 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            val currentReactions = domainImpl.repos.reactions.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
-            currentReactions.forEach { it.deletedAt = Date() }
-            domainImpl.repos.reactions.insert(currentReactions)
+            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
+                .onEach { it.deletedAt = Date() }
+                .also { domainImpl.repos.reactions.insert(it) }
         }
-        domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+        domainImpl.repos.reactions.insert(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
@@ -808,13 +810,10 @@ internal class ChannelControllerImpl(
         }
 
         if (online) {
-            val runnable = {
-                client.sendReaction(reaction, enforceUnique)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.data())
             } else {
                 logger.logE(
@@ -827,7 +826,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insertReaction(reaction, enforceUnique)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.error())
             }
         }
@@ -841,31 +840,27 @@ internal class ChannelControllerImpl(
             user = currentUser
             userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
+            deletedAt = Date()
         }
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val reactionEntity = reaction.toEntity()
-        reactionEntity.deletedAt = Date()
-        domainImpl.repos.reactions.insert(reactionEntity)
+        domainImpl.repos.reactions.insert(reaction)
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.let {
-            it.removeReaction(reaction, true)
-            upsertMessage(it)
-            domainImpl.repos.messages.insert(it)
-        }
+        currentMessage?.apply { removeReaction(reaction, updateCounts = true) }
+            ?.also {
+                upsertMessage(it)
+                domainImpl.repos.messages.insert(it)
+            }
 
         if (online) {
-            val runnable = {
-                client.deleteReaction(reaction.messageId, reaction.type)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.data())
             } else {
                 if (result.error().isPermanent()) {
@@ -873,7 +868,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insertReaction(reaction)
+                domainImpl.repos.reactions.insert(reaction)
                 Result(result.error())
             }
         }
@@ -1449,6 +1444,7 @@ internal class ChannelControllerImpl(
 
     companion object {
         private const val TYPE_IMAGE = "image"
+        private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
     }
 }

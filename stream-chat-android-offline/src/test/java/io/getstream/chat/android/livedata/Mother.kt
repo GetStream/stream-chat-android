@@ -275,16 +275,6 @@ internal fun randomMessageEntity(
     threadParticipantsIds = threadParticipantsIds,
 )
 
-internal fun randomReactionEntity(
-    messageId: String = randomString(),
-    userId: String = randomString(),
-    type: String = randomString()
-) = ReactionEntity(messageId, userId, type)
-
-internal fun randomMemberEntity(userId: String = randomString()) = MemberEntity(userId)
-
-internal fun randomChannelUserReadEntity(userId: String = randomString()) = ChannelUserReadEntity(userId)
-
 internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 
 internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {

@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
@@ -684,8 +685,8 @@ internal class ChatDomainImpl internal constructor(
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messages = retryMessages()
-        val reactionEntities = repos.reactions.retryReactions()
-        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactionEntities.size} reaction entities")
+        val reactions = retryReactions()
+        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
     }
 
     @VisibleForTesting
@@ -711,6 +712,26 @@ internal class ChatDomainImpl internal constructor(
         }
 
         return messages
+    }
+
+    @VisibleForTesting
+    internal suspend fun retryReactions(): List<Reaction> {
+        return repos.selectReactionSyncNeeded().onEach { reaction ->
+            reaction.user = null
+            val result = if (reaction.deletedAt != null) {
+                client.deleteReaction(reaction.messageId, reaction.type).execute()
+            } else {
+                client.sendReaction(reaction, reaction.enforceUnique).execute()
+            }
+
+            if (result.isSuccess) {
+                reaction.syncStatus = SyncStatus.COMPLETED
+                repos.reactions.insert(reaction)
+            } else if (result.error().isPermanent()) {
+                reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                repos.reactions.insert(reaction)
+            }
+        }
     }
 
     suspend fun storeStateForChannel(channel: Channel) {
