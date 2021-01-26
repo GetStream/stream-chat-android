@@ -399,7 +399,7 @@ public class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewHo
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
-	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
+	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextWithFileAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextWithMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
@@ -460,6 +460,9 @@ public final class io/getstream/chat/android/ui/messages/customization/MessageLi
 public final class io/getstream/chat/android/ui/messages/customization/MessageListViewConfig$Companion {
 	public final fun getDEFAULT_CONFIG ()Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+}
+
+public abstract interface annotation class io/getstream/chat/android/ui/messages/customization/dsl/CustomizationDsl : java/lang/annotation/Annotation {
 }
 
 public final class io/getstream/chat/android/ui/messages/customization/dsl/MessageListViewConfigBuilder {

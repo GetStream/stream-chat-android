@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.TextViewCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
@@ -65,9 +66,7 @@ internal class MessagePlainTextViewHolder(
 
         with(binding) {
             messageText.setTextSizePx(config.textSizeSp.spToPxPrecise())
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                messageText.lineHeight = config.lineHeightSp.spToPx()
-            }
+            TextViewCompat.setLineHeight(messageText, config.lineHeightSp.spToPx())
             messageText.text = data.message.text
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 horizontalBias = if (data.isTheirs) 0f else 1f
