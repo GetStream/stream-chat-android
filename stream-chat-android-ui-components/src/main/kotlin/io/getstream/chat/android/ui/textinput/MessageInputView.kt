@@ -8,7 +8,6 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
@@ -62,23 +61,29 @@ public class MessageInputView : ConstraintLayout {
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
-        configReplyMode(previousValue, newValue)
+        configInputMode(previousValue, newValue)
     }
 
-    private fun configReplyMode(previousValue: InputMode, newValue: InputMode) {
+    private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
         when (newValue) {
             is InputMode.Reply -> {
-                binding.replyHeader.isVisible = true
+                binding.inputModeHeader.isVisible = true
+                binding.headerLabel.text = context.getString(R.string.stream_ui_reply_to_message)
+                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_arrow_curve_left)
                 binding.messageInputFieldView.onReply(newValue.repliedMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
 
             is InputMode.Edit -> {
-                Toast.makeText(context, "Edit mode to be implemented", Toast.LENGTH_SHORT).show()
+                binding.inputModeHeader.isVisible = true
+                binding.headerLabel.text = context.getString(R.string.stream_ui_message_option_edit)
+                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_edit)
+                binding.messageInputFieldView.onEdit(newValue.oldMessage)
+                binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
 
             else -> {
-                binding.replyHeader.isVisible = false
+                binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
                 }
@@ -182,7 +187,15 @@ public class MessageInputView : ConstraintLayout {
         }
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
-        binding.dismissReply.setOnClickListener { sendMessageHandler.dismissReply() }
+        binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
+    }
+
+    private fun dismissInputMode(inputMode: InputMode) {
+        if (inputMode is InputMode.Reply) {
+            sendMessageHandler.dismissReply()
+        }
+
+        this.inputMode = InputMode.Normal
     }
 
     private fun configSendButtonListener() {
@@ -506,6 +519,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun editMessage(oldMessage: Message) {
         sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
+        inputMode = InputMode.Normal
     }
 
     private companion object {

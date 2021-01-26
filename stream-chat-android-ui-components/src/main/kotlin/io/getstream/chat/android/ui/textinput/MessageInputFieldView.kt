@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.attachments.selected.SelectedFileAttachmentA
 import io.getstream.chat.android.ui.attachments.selected.SelectedMediaAttachmentAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
+import io.getstream.chat.android.ui.utils.extensions.hasNoAttachments
 import io.getstream.chat.android.ui.utils.extensions.leftDrawable
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import java.io.File
@@ -161,6 +162,10 @@ public class MessageInputFieldView : FrameLayout {
         }
     }
 
+    public fun onEdit(edit: Message) {
+        mode = Mode.EditMessageMode(edit)
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeItem(attachment)
@@ -236,7 +241,9 @@ public class MessageInputFieldView : FrameLayout {
     private fun switchToEditMode(mode: Mode.EditMessageMode) {
         binding.messageEditText.hint = normalModeHint
 
-        messageText = mode.oldMessage.text
+        val oldMessage = mode.oldMessage
+
+        messageText = oldMessage.text
     }
 
     private fun switchToCommandMode(mode: Mode.CommandMode) {
