@@ -652,6 +652,7 @@ internal class ChannelControllerImpl(
                 }.toMutableList()
 
                 uploadStatusMessage?.let { cancelMessage(it) }
+                uploadStatusMessage = null
             }
 
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
