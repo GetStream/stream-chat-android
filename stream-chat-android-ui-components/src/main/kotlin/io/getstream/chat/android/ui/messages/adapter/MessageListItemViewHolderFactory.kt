@@ -24,10 +24,12 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
+import io.getstream.chat.android.ui.messages.customization.MessageListViewConfig
 
 public open class MessageListItemViewHolderFactory {
 
     internal lateinit var decoratorProvider: DecoratorProvider
+    public var messageListViewConfig: MessageListViewConfig = MessageListViewConfig.DEFAULT_CONFIG
 
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set

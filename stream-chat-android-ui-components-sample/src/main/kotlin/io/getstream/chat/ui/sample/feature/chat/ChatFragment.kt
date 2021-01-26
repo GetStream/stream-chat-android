@@ -16,6 +16,8 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.messages.customization.MessageListViewConfig
+import io.getstream.chat.android.ui.messages.customization.viewholder.PlainTextViewHolderConfig
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.bindView
 import io.getstream.chat.android.ui.textinput.bindView
@@ -54,10 +56,23 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
+        setupMessageListView()
         initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+    }
+
+    private fun setupMessageListView() {
+        val config = MessageListViewConfig {
+            viewHolders {
+                plainText {
+                    textSize { PlainTextViewHolderConfig.DEFAULT_TEXT_SIZE_SP }
+                    textLineHeight { PlainTextViewHolderConfig.DEFAULT_TEXT_LINE_HEIGHT_SP }
+                }
+            }
+        }
+        binding.messageListView.setMessageListViewConfig(config)
     }
 
     override fun onResume() {

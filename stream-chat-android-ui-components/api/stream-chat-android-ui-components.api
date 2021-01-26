@@ -406,6 +406,8 @@ public class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewHo
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/messages/adapter/MessageListListenerContainer;
+	public final fun getMessageListViewConfig ()Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public final fun setMessageListViewConfig (Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewType {
@@ -441,6 +443,74 @@ public final class io/getstream/chat/android/ui/messages/adapter/view/MessageRep
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;Z)V
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/MessageListViewConfig {
+	public static final field Companion Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig$Companion;
+	public fun <init> (Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
+	public final fun copy (Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;)Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;ILjava/lang/Object;)Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getViewHolders ()Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/MessageListViewConfig$Companion {
+	public final fun getDEFAULT_CONFIG ()Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/dsl/MessageListViewConfigBuilder {
+	public fun <init> ()V
+	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;
+	public final fun viewHolders (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/dsl/viewholder/PlainTextViewHolderConfigBuilder {
+	public fun <init> ()V
+	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+	public final fun textLineHeight (Lkotlin/jvm/functions/Function0;)V
+	public final fun textSize (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/dsl/viewholder/ViewHolderConfigBuilder {
+	public fun <init> ()V
+	public final fun build ()Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
+	public final fun plainText (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig {
+	public static final field Companion Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig$Companion;
+	public static final field DEFAULT_TEXT_LINE_HEIGHT_SP F
+	public static final field DEFAULT_TEXT_SIZE_SP F
+	public fun <init> (FF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;FFILjava/lang/Object;)Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLineHeightSp ()F
+	public final fun getTextSizeSp ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig$Companion {
+	public final fun getDEFAULT_CONFIG ()Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig {
+	public static final field Companion Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig$Companion;
+	public fun <init> (Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;)V
+	public final fun getPlainTextConfig ()Lio/getstream/chat/android/ui/messages/customization/viewholder/PlainTextViewHolderConfig;
+}
+
+public final class io/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig$Companion {
+	public final fun getDEFAULT_CONFIG ()Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
+	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/messages/customization/viewholder/ViewHolderConfig;
 }
 
 public final class io/getstream/chat/android/ui/messages/header/ChannelHeaderViewModelBinding {
@@ -540,6 +610,7 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageClickListener;)V
 	public final fun setMessageDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setMessageListItemFilter (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter;)V
+	public final fun setMessageListViewConfig (Lio/getstream/chat/android/ui/messages/customization/MessageListViewConfig;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageLongClickListener;)V
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryListener;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewHolderFactory;)V

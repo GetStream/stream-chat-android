@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainerImpl
+import io.getstream.chat.android.ui.messages.customization.MessageListViewConfig
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadHandler
@@ -95,6 +96,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
+    private lateinit var messageListViewConfig: MessageListViewConfig
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -605,6 +607,14 @@ public class MessageListView : ConstraintLayout {
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
+        if (::messageListViewConfig.isInitialized) {
+            this.messageListItemViewHolderFactory.messageListViewConfig = messageListViewConfig
+        }
+    }
+
+    public fun setMessageListViewConfig(messageListViewConfig: MessageListViewConfig) {
+        check(::messageListItemViewHolderFactory.isInitialized.not()) { "Message list item view holder factory was already initialized, please set MessageListViewConfig first" }
+        this.messageListViewConfig = messageListViewConfig
     }
 
     public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
