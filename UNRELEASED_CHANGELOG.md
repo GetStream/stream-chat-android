@@ -7,7 +7,10 @@
 - Add `enforceUnique` parameter to `ChatClient::sendReaction` and `ChannelClient::sendReaction` methods .
 If reaction is sent with `enforceUnique` set to true, new reaction will replace all reactions the user has on this message.
 - Add suspending `setUserAndAwait` extension for `ChatClient`
-- Replace client event listener functions with ChatEventListener functional interface.
+- Replace chat event listener Kotlin functions with ChatEventListener functional interface in order to promote
+a better integration experience for Java clients. Old methods that use the Kotlin function have been deprecated.
+Deprecated interfaces, such as ChannelController, have not been updated. ChannelClient, which inherits from ChannelController
+for the sake of backwards compatibility, has been updated.
 
 ## stream-chat-android-offline
 - Add `enforceUnique` parameter to `SendReaction` use case. If reaction is sent with `enforceUnique` set to true,
