@@ -251,6 +251,17 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         fun onReactionClick(message: Message, reactionType: String)
     }
 
+    internal fun interface ConfirmDeleteMessageClickHandler {
+        fun onConfirmDeleteMessage(
+            message: Message,
+            callback: ConfirmDeleteMessageCallback
+        )
+
+        fun interface ConfirmDeleteMessageCallback {
+            fun onConfirmDeleteMessage()
+        }
+    }
+
     internal class MessageOptionsHandlers(
         val threadReplyHandler: MessageListView.ThreadStartHandler,
         val retryHandler: MessageListView.MessageRetryHandler,
