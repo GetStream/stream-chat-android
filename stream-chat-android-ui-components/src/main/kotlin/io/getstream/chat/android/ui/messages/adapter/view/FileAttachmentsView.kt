@@ -174,8 +174,7 @@ private class FileAttachmentViewHolder(
 
     override fun unbind() {
         super.unbind()
-        scope?.cancel()
-        scope = null
+        clearScope()
     }
 
     companion object {

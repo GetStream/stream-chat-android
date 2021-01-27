@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.ProgressCallback
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 public class ProgressTracker {
 
@@ -16,7 +17,7 @@ public class ProgressTracker {
         currentProgress.value = progress
     }
 
-    public fun currentProgress(): Flow<Int> = currentProgress
+    public fun currentProgress(): StateFlow<Int> = currentProgress
 
     public fun setComplete(isComplete: Boolean) {
         this.isComplete.value = isComplete

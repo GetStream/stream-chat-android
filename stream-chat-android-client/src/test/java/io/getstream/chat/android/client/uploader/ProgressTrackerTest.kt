@@ -15,9 +15,7 @@ public class ProgressTrackerTest {
 
     @Test
     public fun `proves that progress is set`() {
-        val tracker = ProgressTracker().apply {
-            initProgress()
-        }
+        val tracker = ProgressTracker()
 
         val currentProgress = tracker.currentProgress()
         val progressValue = randomInt()
@@ -28,23 +26,8 @@ public class ProgressTrackerTest {
     }
 
     @Test
-    public fun `proves that laps is set`() {
-        val tracker = ProgressTracker().apply {
-            initProgress()
-        }
-
-        val currentLap = tracker.lapsCompleted()
-
-        tracker.incrementCompletedItems()
-
-        assertEquals(1, currentLap.value)
-    }
-
-    @Test
     public fun `proves that progress gets communicated`(): Unit = testCoroutines.scope.runBlockingTest {
-        val tracker = ProgressTracker().apply {
-            initProgress()
-        }
+        val tracker = ProgressTracker()
 
         val currentProgress = tracker.currentProgress()
         val progressValueList = listOf(randomInt(), randomInt(), randomInt(), randomInt())
@@ -53,23 +36,6 @@ public class ProgressTrackerTest {
             tracker.setProgress(value)
 
             assertEquals(value, currentProgress.first())
-        }
-    }
-
-    @Test
-    public fun `proves that lap completion get communicated`(): Unit = testCoroutines.scope.runBlockingTest {
-        val numberOfItems = 5
-
-        val tracker = ProgressTracker().apply {
-            initProgress(numberOfItems = numberOfItems)
-        }
-
-        val currentLap = tracker.lapsCompleted()
-
-        repeat(numberOfItems) { count ->
-            assertEquals(count, currentLap.first())
-
-            tracker.incrementCompletedItems()
         }
     }
 }
