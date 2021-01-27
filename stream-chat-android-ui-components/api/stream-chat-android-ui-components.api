@@ -585,8 +585,11 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)V
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentClickListener;)V
+	public final fun setAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadClickListener;)V
 	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
+	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
+	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
@@ -612,9 +615,6 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryListener;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour;)V
-	public final fun setOnAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
-	public final fun setOnAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
-	public final fun setOnAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ReactionViewClickListener;)V
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ThreadClickListener;)V
