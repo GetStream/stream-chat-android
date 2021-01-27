@@ -58,7 +58,7 @@
             android:text="@string/chat_info_option_shared_media_empty_title"
             android:textColor="@color/stream_ui_black"
             android:textStyle="bold"
-            app:drawableTopCompat="@drawable/empty_shared_files"
+            app:drawableTopCompat="@drawable/ic_empty_shared_media"
             />
 
         <TextView
