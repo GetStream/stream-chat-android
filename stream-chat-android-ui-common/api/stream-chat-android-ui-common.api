@@ -234,6 +234,8 @@ public class com/getstream/sdk/chat/navigation/destinations/AttachmentDestinatio
 	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun navigate ()V
+	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 }
@@ -1781,6 +1783,10 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 
 public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
 	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
+}
+
+public final class com/getstream/sdk/chat/utils/extensions/ViewKt {
+	public static final fun getActivity (Landroid/view/View;)Landroidx/appcompat/app/AppCompatActivity;
 }
 
 public class com/getstream/sdk/chat/utils/frescoimageviewer/ImageViewer : android/content/DialogInterface$OnKeyListener, com/getstream/sdk/chat/utils/frescoimageviewer/OnDismissListener {

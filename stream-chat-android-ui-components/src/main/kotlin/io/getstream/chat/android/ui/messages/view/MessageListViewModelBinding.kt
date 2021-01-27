@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 
 /**
  * Binds [MessageListView] with [MessageListViewModel].
@@ -64,27 +63,18 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
 
-    val attachmentReplyHandler = object : AttachmentGalleryActivity.AttachmentReplyOptionHandler {
-        override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-            TODO("Not yet done!")
-        }
+    view.setAttachmentReplyOptionClickHandler {
+        TODO("Not yet done!")
     }
-    view.setAttachmentReplyOptionClickHandler(attachmentReplyHandler)
-    val attachmentShowInChatHandler = object : AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
-        override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-            onEvent(MessageListViewModel.Event.ShowMessage(attachmentData.messageId))
-        }
+    view.setAttachmentShowInChatOptionClickHandler { attachmentData ->
+        onEvent(MessageListViewModel.Event.ShowMessage(attachmentData.messageId))
     }
-    view.setAttachmentShowInChatOptionClickHandler(attachmentShowInChatHandler)
-    val attachmentDeleteOptionHandler = object : AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
-        override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-            onEvent(
-                MessageListViewModel.Event.RemoveAttachment(
-                    attachmentData.messageId,
-                    attachmentData.toAttachment()
-                )
+    view.setAttachmentDeleteOptionClickHandler { attachmentData ->
+        onEvent(
+            MessageListViewModel.Event.RemoveAttachment(
+                attachmentData.messageId,
+                attachmentData.toAttachment()
             )
-        }
+        )
     }
-    view.setAttachmentDeleteOptionClickHandler(attachmentDeleteOptionHandler)
 }

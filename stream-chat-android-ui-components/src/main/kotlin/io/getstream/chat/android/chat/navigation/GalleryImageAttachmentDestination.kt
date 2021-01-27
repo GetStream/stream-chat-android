@@ -4,11 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.launch
-import androidx.appcompat.app.AppCompatActivity
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.chat.navigation.AttachmentOptionSelect.Input
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
@@ -23,8 +24,42 @@ public class GalleryImageAttachmentDestination(
     private val attachmentReplyOptionHandler: AttachmentGalleryActivity.AttachmentReplyOptionHandler,
     private val attachmentShowInChatOptionHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     private val attachmentDownloadOptionHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler,
-    private val onAttachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler,
+    private val attachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler,
 ) : AttachmentDestination(message, attachment, context) {
+
+    private var launcher: ActivityResultLauncher<Input>? = null
+
+    internal fun register(
+        activityResultRegistry: ActivityResultRegistry,
+    ) {
+        launcher = activityResultRegistry.register(
+            "attachment_gallery_launcher",
+            AttachmentOptionSelect()
+        ) { result: AttachmentGalleryActivity.AttachmentOptionResult? ->
+            result?.apply {
+                when (this) {
+                    is AttachmentGalleryActivity.AttachmentOptionResult.Reply -> {
+                        attachmentReplyOptionHandler.onClick(this.data)
+                    }
+                    is AttachmentGalleryActivity.AttachmentOptionResult.ShowInChat -> {
+                        attachmentShowInChatOptionHandler.onClick(this.data)
+                    }
+                    is AttachmentGalleryActivity.AttachmentOptionResult.Delete -> {
+                        attachmentDeleteOptionClickHandler.onClick(this.data)
+                    }
+                    is AttachmentGalleryActivity.AttachmentOptionResult.Download -> {
+                        attachmentDownloadOptionHandler.onClick(this.data)
+                    }
+                }
+            }
+        }
+    }
+
+    internal fun unregister() {
+        launcher?.unregister()
+        launcher = null
+    }
+
     override fun showImageViewer(message: Message, attachment: Attachment) {
         val attachments: List<Attachment> =
             message.attachments.filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
@@ -37,52 +72,35 @@ public class GalleryImageAttachmentDestination(
         val createdAt: Long = message.getCreatedAtOrThrow().time
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        check(context is AppCompatActivity)
-        val launcher = context.activityResultRegistry.register(
-            "attachment_gallery_launcher",
-            AttachmentOptionSelect(
+        launcher?.launch(
+            Input(
                 createdAt = createdAt,
                 attachmentIndex = attachmentIndex,
                 message = message,
                 attachments = attachments
             )
-        ) { result: AttachmentGalleryActivity.AttachmentOptionResult? ->
-            result?.apply {
-                when (this) {
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Reply -> {
-                        attachmentReplyOptionHandler.onClick(this.data)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.ShowInChat -> {
-                        attachmentShowInChatOptionHandler.onClick(this.data)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Delete -> {
-                        onAttachmentDeleteOptionClickHandler.onClick(this.data)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Download -> {
-                        attachmentDownloadOptionHandler.onClick(this.data)
-                    }
-                }
-            }
-        }
-        launcher.launch()
+        )
     }
 }
 
-private class AttachmentOptionSelect(
-    val createdAt: Long,
-    val attachmentIndex: Int,
-    val message: Message,
-    val attachments: List<Attachment>,
-) : ActivityResultContract<Unit, AttachmentGalleryActivity.AttachmentOptionResult?>() {
+private class AttachmentOptionSelect :
+    ActivityResultContract<Input, AttachmentGalleryActivity.AttachmentOptionResult?>() {
 
-    override fun createIntent(context: Context, input: Unit?): Intent =
+    class Input(
+        val createdAt: Long,
+        val attachmentIndex: Int,
+        val message: Message,
+        val attachments: List<Attachment>,
+    )
+
+    override fun createIntent(context: Context, input: Input): Intent =
         AttachmentGalleryActivity.createIntent(
             context,
-            createdAt,
-            attachmentIndex,
-            message,
-            attachments,
-            message.isMine(),
+            input.createdAt,
+            input.attachmentIndex,
+            input.message,
+            input.attachments,
+            input.message.isMine(),
         )
 
     override fun parseResult(resultCode: Int, result: Intent?): AttachmentGalleryActivity.AttachmentOptionResult? {
