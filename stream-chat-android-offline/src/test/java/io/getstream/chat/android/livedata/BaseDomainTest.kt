@@ -246,7 +246,7 @@ internal open class BaseDomainTest {
             }
         )
 
-        chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
+        chatDomainImpl.repos.configs.insert("messaging" to data.config1)
         chatDomainImpl.repos.users.insert(data.userMap.values.toList())
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)

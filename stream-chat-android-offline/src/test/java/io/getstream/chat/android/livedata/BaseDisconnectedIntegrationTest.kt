@@ -82,7 +82,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
             println("setup")
 
             // setup channel controller and query controllers for tests
-            chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
+            chatDomainImpl.repos.configs.insert("messaging" to data.config1)
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateLiveDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())

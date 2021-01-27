@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.model.config
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
@@ -48,7 +49,7 @@ internal class RepositoryHelper(
         // convert the channels
         return channelEntities.map { entity ->
             entity.toModel(::selectUser) { messages.select(it, ::selectUser) }.apply {
-                config = configs.select(type) ?: defaultConfig
+                config = configs.select(type)?.config ?: defaultConfig
                 messages = messagesMap[cid] ?: messages
             }
         }
