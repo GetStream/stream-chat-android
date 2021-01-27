@@ -83,8 +83,11 @@ dependencies {
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.retrofit
-    implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.gson
+    implementation Dependencies.retrofitGsonConverter
+    implementation Dependencies.moshi
+    implementation Dependencies.retrofitMoshiConverter
+    kapt Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
     debugImplementation Dependencies.flipper

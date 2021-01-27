@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedMediaGalleryBinding
 
 class ChatInfoSharedMediaGalleryFragment : Fragment() {
+    private val args: ChatInfoSharedMediaGalleryFragmentArgs by navArgs()
 
     private var _binding: FragmentChatInfoSharedMediaGalleryBinding? = null
     private val binding get() = _binding!!
@@ -18,7 +20,7 @@ class ChatInfoSharedMediaGalleryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatInfoSharedMediaGalleryBinding.inflate(inflater, container, false)
         return binding.root
@@ -26,12 +28,11 @@ class ChatInfoSharedMediaGalleryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.attachments.observe(viewLifecycleOwner) { attachments ->
+        viewModel.userMediaAttachments.observe(viewLifecycleOwner) {
             binding.attachmentGallery.provideImageList(
-                requireActivity(),
-                attachments.mapNotNull { attachment ->
-                    attachment.url ?: attachment.imageUrl
-                }
+                fragmentActivity = requireActivity(),
+                imageList = it,
+                currentIndex = args.currentIndex
             )
         }
     }
