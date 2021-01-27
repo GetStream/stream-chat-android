@@ -38,15 +38,14 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
         }
 
         fun listenAllChannelEvents() {
-            val disposable: Disposable = channelClient
-                .subscribe { event: ChatEvent ->
-                    when (event) {
-                        is NewMessageEvent -> {
-                            // To get the message
-                            val message = event.message
-                        }
+            val disposable: Disposable = channelClient.subscribe { event: ChatEvent ->
+                when (event) {
+                    is NewMessageEvent -> {
+                        // To get the message
+                        val message = event.message
                     }
                 }
+            }
 
             // Dispose when you want to stop receiving events
             disposable.dispose()
@@ -73,7 +72,11 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
          * @see <a href="https://getstream.io/chat/docs/event_listening/?language=kotlin#connection-events">Connection Events</a>
          */
         fun listenConnectionEvents() {
-            client.subscribeFor(ConnectedEvent::class, ConnectingEvent::class, DisconnectedEvent::class) { event ->
+            client.subscribeFor(
+                ConnectedEvent::class,
+                ConnectingEvent::class,
+                DisconnectedEvent::class
+            ) { event ->
                 when (event) {
                     is ConnectedEvent -> {
                         // Socket is connected

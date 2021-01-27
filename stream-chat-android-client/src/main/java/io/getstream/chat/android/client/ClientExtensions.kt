@@ -52,6 +52,17 @@ public fun ChatClient.subscribeFor(
     return subscribeFor(*javaClassTypes, listener = listener)
 }
 
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@Deprecated("Use subscribeFor with ChatEventListener parameter")
+@SinceKotlin("99999.9")
+public fun ChatClient.subscribeFor(
+    vararg eventTypes: KClass<out ChatEvent>,
+    listener: (ChatEvent) -> Unit,
+): Disposable {
+    val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
+    return subscribeFor(*javaClassTypes, listener = listener)
+}
+
 /**
  * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
  *
@@ -61,6 +72,18 @@ public fun ChatClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
     listener: ChatEventListener<ChatEvent>,
+): Disposable {
+    val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
+    return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
+}
+
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@Deprecated("Use subscribeFor with ChatEventListener parameter")
+@SinceKotlin("99999.9")
+public fun ChatClient.subscribeFor(
+    lifecycleOwner: LifecycleOwner,
+    vararg eventTypes: KClass<out ChatEvent>,
+    listener: (ChatEvent) -> Unit,
 ): Disposable {
     val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
     return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)

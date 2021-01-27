@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
-import kotlin.Unit;
 
 public class Events {
     private ChatClient client;
@@ -44,7 +43,7 @@ public class Events {
         }
 
         public void listenAllChannelEvents() {
-            Disposable disposable = channelClient.subscribe((ChatEvent event) -> {
+            Disposable disposable = client.subscribe((ChatEvent event) -> {
                 if (event instanceof NewMessageEvent) {
                     // To get the message
                     Message message = ((NewMessageEvent) event).getMessage();

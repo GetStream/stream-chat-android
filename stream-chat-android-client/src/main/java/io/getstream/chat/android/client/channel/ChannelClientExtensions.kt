@@ -69,5 +69,7 @@ public fun ChannelClient.subscribeFor(
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeForSingle(
     listener: ChatEventListener<T>
 ): Disposable {
-    return this.subscribeForSingle(T::class.java, listener)
+    return this.subscribeForSingle(T::class.java) { event ->
+        listener.onEvent(event as T)
+    }
 }
