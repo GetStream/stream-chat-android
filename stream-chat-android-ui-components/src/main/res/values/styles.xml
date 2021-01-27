@@ -51,15 +51,23 @@
         <item name="streamUiAvatarOnlineIndicatorPosition">bottom</item>
     </style>
 
-    <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/StreamUiBottomSheetStyle</item>
-    </style>
-
     <style name="StreamUiChatInfoAvatarStyle" parent="StreamUiBaseAvatarStyle">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_extra_large</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_extra_large</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_extra_large</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUiGalleryAvatarStyle" parent="StreamUiBaseAvatarStyle">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarBorderWidth">1dp</item>
+    </style>
+
+    <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/StreamUiBottomSheetStyle</item>
     </style>
 
     <style name="StreamUiBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">

@@ -116,8 +116,10 @@
                 />
         </action>
 
-        <action android:id="@+id/action_homeFragment_to_groupChatInfoFragment"
-            app:destination="@id/groupChatInfoFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_groupChatInfoFragment"
+            app:destination="@id/groupChatInfoFragment"
+            >
             <argument
                 android:name="cid"
                 app:argType="string"
@@ -301,7 +303,13 @@
         android:id="@+id/chatInfoSharedMediaGalleryFragment"
         android:name="io.getstream.chat.ui.sample.feature.chat.info.shared.media.ChatInfoSharedMediaGalleryFragment"
         android:label="ChatInfoSharedMediaGalleryFragment"
-        />
+        >
+        <argument
+            android:name="currentIndex"
+            app:argType="integer"
+            app:defaultValue="0"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/chatInfoSharedFilesFragment"

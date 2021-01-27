@@ -76,10 +76,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="closeButton, title, subtitle, menuButton"
-        android:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.images.AttachmentGallery
+    <io.getstream.chat.android.ui.gallery.AttachmentGallery
         android:id="@+id/attachmentGallery"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.images
+package io.getstream.chat.android.ui.gallery
 
 import android.content.Context
 import android.content.Intent
@@ -18,7 +18,8 @@ import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryBinding
-import io.getstream.chat.android.ui.images.menu.ImagesMenuDialogFragment
+import io.getstream.chat.android.ui.gallery.overview.MediaAttachmentDialogFragment
+import io.getstream.chat.android.ui.gallery.overview.UserMediaAttachment
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -46,7 +47,7 @@ public class AttachmentGallery : ConstraintLayout {
 
     private var imagesMenuTitle: String = ""
 
-    private var imageList: List<String> = mutableListOf()
+    private var imageList: List<UserMediaAttachment> = mutableListOf()
 
     private var isFullScreen = false
 
@@ -79,13 +80,13 @@ public class AttachmentGallery : ConstraintLayout {
 
     public fun provideImageList(
         fragmentActivity: FragmentActivity,
-        imageList: List<String>,
+        imageList: List<UserMediaAttachment>,
         currentIndex: Int = 0,
         imageClickListener: () -> Unit = {},
     ) {
         adapter = AttachmentSlidePagerAdapter(
             fragmentActivity = fragmentActivity,
-            imageList = imageList,
+            imageList = imageList.map { it.imageUrl },
             imageClickListener = {
                 isFullScreen = !isFullScreen
                 binding.bottomBarGroup.isVisible = !isFullScreen
@@ -189,7 +190,7 @@ public class AttachmentGallery : ConstraintLayout {
     private fun configureImagesMenu() {
         binding.menuButton.setOnClickListener {
             context.getFragmentManager()?.let { fragmentManager ->
-                ImagesMenuDialogFragment.newInstance(imagesMenuTitle, imageList)
+                MediaAttachmentDialogFragment.newInstance(imagesMenuTitle, imageList)
                     .apply {
                         setImageClickListener { position ->
                             binding.attachmentGallery.setCurrentItem(position, true)

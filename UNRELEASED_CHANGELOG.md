@@ -20,3 +20,5 @@ for the sake of backwards compatibility, has been updated.
 ## stream-chat-android-ui-common
 - Add a new `isThreadMode` flag to the `MessageListItem.MessageItem` class. 
   It shows is a message item should be shown as part of thread mode in chat.
+- Add possibility to set `DateSeparatorHandler` via `MessageListViewModel::setDateSeparatorHandler`
+  and `MessageListViewModel::setThreadDateSeparatorHandler` which determines when to add date separator between messages

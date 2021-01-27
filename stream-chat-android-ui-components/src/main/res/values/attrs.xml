@@ -275,4 +275,8 @@
     <declare-styleable name="MessageReplyView">
         <attr name="streamUiEllipsize" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="StreamUiMediaAttachmentGritView">
+        <attr name="streamUiShowUserAvatars" format="boolean" />
+    </declare-styleable>
 </resources>
