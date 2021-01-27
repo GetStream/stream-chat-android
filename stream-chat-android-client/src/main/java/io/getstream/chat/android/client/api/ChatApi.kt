@@ -33,13 +33,6 @@ internal interface ChatApi {
         channelId: String,
         file: File,
         callback: ProgressCallback,
-    )
-
-    fun sendFileSync(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback
     ): Call<String>
 
     fun sendImage(

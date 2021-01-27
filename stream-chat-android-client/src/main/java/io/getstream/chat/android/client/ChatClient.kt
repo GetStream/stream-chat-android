@@ -201,31 +201,18 @@ public class ChatClient internal constructor(
         return api.getGuestUser(userId, userName)
     }
 
-    public fun sendFile(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ) {
-        api.sendFile(channelType, channelId, file, callback)
-    }
-
     @CheckResult
     public fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
+        callback: ProgressCallback? = null,
     ): Call<String> {
-        return api.sendFile(channelType, channelId, file)
-    }
-
-    public fun sendFileSync(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ): Call<String> {
-        return api.sendFileSync(channelType, channelId, file, callback)
+        return if (callback != null) {
+            api.sendFile(channelType, channelId, file, callback)
+        } else {
+            api.sendFile(channelType, channelId, file)
+        }
     }
 
     public fun sendImage(

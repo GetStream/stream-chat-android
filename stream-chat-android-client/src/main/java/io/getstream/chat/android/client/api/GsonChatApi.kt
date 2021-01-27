@@ -71,20 +71,6 @@ internal class GsonChatApi(
         this.connectionId = connectionId
     }
 
-    override fun sendFile(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ): Unit = fileUploader.sendFile(
-        channelType = channelType,
-        channelId = channelId,
-        userId = userId,
-        connectionId = connectionId,
-        file = file,
-        callback = callback
-    )
-
     override fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
         return CoroutineCall(coroutineScope) {
             val result = fileUploader.sendFile(
@@ -102,14 +88,14 @@ internal class GsonChatApi(
         }
     }
 
-    override fun sendFileSync(
+    override fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback,
     ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = fileUploader.sendFileSync(
+            val result = fileUploader.sendFile(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,

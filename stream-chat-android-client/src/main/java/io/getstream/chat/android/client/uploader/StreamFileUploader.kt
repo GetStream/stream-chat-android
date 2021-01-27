@@ -21,30 +21,6 @@ internal class StreamFileUploader(
         connectionId: String,
         file: File,
         callback: ProgressCallback
-    ) {
-        val body = ProgressRequestBody(file, callback)
-        val part = MultipartBody.Part.createFormData("file", file.name, body)
-
-        retrofitCdnApi
-            .sendFile(
-                channelType,
-                channelId,
-                part,
-                apiKey,
-                userId,
-                connectionId
-            )
-            .call
-            .enqueue(RetroProgressCallback(callback))
-    }
-
-    override fun sendFileSync(
-        channelType: String,
-        channelId: String,
-        userId: String,
-        connectionId: String,
-        file: File,
-        callback: ProgressCallback
     ): String? {
         val body = ProgressRequestBody(file, callback)
         val part = MultipartBody.Part.createFormData("file", file.name, body)

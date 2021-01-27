@@ -843,7 +843,7 @@ internal class ChannelControllerImpl(
     }
 
     private suspend fun sendFile(file: File, callback: ProgressCallback): Result<String> {
-        return client.sendFileSync(channelType, channelId, file, callback).await()
+        return client.sendFile(channelType, channelId, file, callback).await()
     }
 
     /**

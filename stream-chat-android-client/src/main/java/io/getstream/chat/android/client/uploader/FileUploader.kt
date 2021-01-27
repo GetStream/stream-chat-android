@@ -8,15 +8,6 @@ import java.io.File
  */
 public interface FileUploader {
 
-    public fun sendFileSync(
-        channelType: String,
-        channelId: String,
-        userId: String,
-        connectionId: String,
-        file: File,
-        callback: ProgressCallback
-    ): String?
-
     /**
      * Sends file to given channel.
      * Progress can be accessed via [callback]
@@ -28,7 +19,7 @@ public interface FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback
-    )
+    ): String?
 
     /**
      * Sends file to given channel.
