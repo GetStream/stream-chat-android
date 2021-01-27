@@ -144,31 +144,21 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
-    private var onAttachmentReplyOptionClickHandler: AttachmentGalleryActivity.AttachmentReplyOptionHandler =
-        object : AttachmentGalleryActivity.AttachmentReplyOptionHandler {
-            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-                throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
-            }
+    private var attachmentReplyOptionClickHandler: AttachmentGalleryActivity.AttachmentReplyOptionHandler =
+        AttachmentGalleryActivity.AttachmentReplyOptionHandler {
+            throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
         }
-    private var onAttachmentShowInChatOptionClickHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler =
-        object : AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
-            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-                throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
-            }
+    private var attachmentShowInChatOptionClickHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler =
+        AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
+            throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
         }
-
     private val onAttachmentDownloadOptionClickHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler =
-        object : AttachmentGalleryActivity.AttachmentDownloadOptionHandler {
-            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-                DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
-            }
+        AttachmentGalleryActivity.AttachmentDownloadOptionHandler { attachmentData ->
+            DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
         }
-
-    private var onAttachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler =
-        object : AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
-            override fun onClick(attachmentData: AttachmentGalleryActivity.AttachmentData) {
-                throw IllegalStateException("onAttachmentDeleteOptionClickHandler must be set")
-            }
+    private var attachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler =
+        AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
+            throw IllegalStateException("onAttachmentDeleteOptionClickHandler must be set")
         }
 
     private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
@@ -242,10 +232,10 @@ public class MessageListView : ConstraintLayout {
                         message,
                         attachment,
                         context,
-                        onAttachmentReplyOptionClickHandler,
-                        onAttachmentShowInChatOptionClickHandler,
+                        attachmentReplyOptionClickHandler,
+                        attachmentShowInChatOptionClickHandler,
                         onAttachmentDownloadOptionClickHandler,
-                        onAttachmentDeleteOptionClickHandler
+                        attachmentDeleteOptionClickHandler
                     )
                 )
         }
@@ -832,16 +822,16 @@ public class MessageListView : ConstraintLayout {
         this.attachmentDownloadHandler = attachmentDownloadHandler
     }
 
-    public fun setOnAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
-        this.onAttachmentReplyOptionClickHandler = handler
+    public fun setAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
+        this.attachmentReplyOptionClickHandler = handler
     }
 
-    public fun setOnAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
-        this.onAttachmentShowInChatOptionClickHandler = handler
+    public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
+        this.attachmentShowInChatOptionClickHandler = handler
     }
 
-    public fun setOnAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
-        this.onAttachmentDeleteOptionClickHandler = handler
+    public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
+        this.attachmentDeleteOptionClickHandler = handler
     }
     //endregion
 
