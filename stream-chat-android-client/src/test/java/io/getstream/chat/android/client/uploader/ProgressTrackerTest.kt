@@ -58,15 +58,15 @@ public class ProgressTrackerTest {
 
     @Test
     public fun `proves that lap completion get communicated`(): Unit = testCoroutines.scope.runBlockingTest {
-        val numberOfLaps = 5
+        val numberOfItems = 5
 
         val tracker = ProgressTracker().apply {
-            initProgress(numberOfLaps = numberOfLaps)
+            initProgress(numberOfItems = numberOfItems)
         }
 
         val currentLap = tracker.lapsCompleted()
 
-        repeat(numberOfLaps) { count ->
+        repeat(numberOfItems) { count ->
             assertEquals(count, currentLap.first())
 
             tracker.incrementCompletedItems()
