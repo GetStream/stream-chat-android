@@ -1,8 +1,10 @@
 package io.getstream.chat.android.client.uploader
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
+@InternalStreamChatApi
 public object ProgressTrackerFactory {
 
     private val instanceMap: ConcurrentMap<String, ProgressTracker> = ConcurrentHashMap()
