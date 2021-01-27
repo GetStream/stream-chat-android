@@ -14,4 +14,3 @@ public var Message.uploadId: String?
     set(value) {
         value?.let { extraData[EXTRA_UPLOAD_ID] = it }
     }
-

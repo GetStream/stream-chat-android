@@ -821,16 +821,16 @@ internal class ChannelControllerImpl(
         }
     }
 
-    fun sendImage(file: File): Result<String> {
-        return client.sendImage(channelType, channelId, file).execute()
+    suspend fun sendImage(file: File): Result<String> {
+        return client.sendImage(channelType, channelId, file).await()
     }
 
-    fun sendFile(file: File): Result<String> {
-        return client.sendFile(channelType, channelId, file).execute()
+    suspend fun sendFile(file: File): Result<String> {
+        return client.sendFile(channelType, channelId, file).await()
     }
 
-    private fun sendFile(file: File, callback: ProgressCallback): Result<String> {
-        return client.sendFileSync(channelType, channelId, file, callback).execute()
+    private suspend fun sendFile(file: File, callback: ProgressCallback): Result<String> {
+        return client.sendFileSync(channelType, channelId, file, callback).await()
     }
 
     /**
