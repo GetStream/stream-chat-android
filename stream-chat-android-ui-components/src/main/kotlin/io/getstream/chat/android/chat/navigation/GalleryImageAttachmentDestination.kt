@@ -6,13 +6,13 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.images.AttachmentGalleryActivity
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 
 public class GalleryImageAttachmentDestination(
     message: Message,
     attachment: Attachment,
-    context: Context
+    context: Context,
 ) : AttachmentDestination(message, attachment, context) {
     override fun showImageViewer(message: Message, attachment: Attachment) {
         val attachments =

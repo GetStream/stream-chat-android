@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.images.AttachmentGallery
+    <io.getstream.chat.android.ui.gallery.AttachmentGallery
         android:id="@+id/attachmentGallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

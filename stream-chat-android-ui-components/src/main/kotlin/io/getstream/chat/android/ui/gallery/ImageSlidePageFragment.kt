@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.images
+package io.getstream.chat.android.ui.gallery
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 private const val IMAGE_ID = "IMAGE_ID"
@@ -33,9 +34,9 @@ internal class ImageSlidePageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return StreamUiItemImageGalleryBinding.inflate(LayoutInflater.from(context)).apply {
-            binding = this
-        }.root
+        return StreamUiItemImageGalleryBinding.inflate(requireContext().inflater)
+            .apply { binding = this }
+            .root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
