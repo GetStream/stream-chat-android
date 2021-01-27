@@ -128,30 +128,31 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
 
-            fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+            if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+            } else if (attachment.uploadComplete == false) {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
+            }
 
             attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
                 GlobalScope.launch(DispatcherProvider.Main) {
                     tracker.currentProgress().collect { progress ->
                         val nominalProgress = progress.toLong() * tracker.maxValue / 100
 
-                        if (attachment.uploadComplete != true) fileSize.text = "$nominalProgress / ${tracker.maxValue}"
+                        if (attachment.uploadComplete != true) fileSize.text =
+                            "$nominalProgress / ${attachment.upload?.length()}"
                     }
 
                     tracker.isComplete().collect {
                         fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
                     }
                 }
-            }
-
-            if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
-            } else if (attachment.uploadComplete == false) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
             }
         }
     }
