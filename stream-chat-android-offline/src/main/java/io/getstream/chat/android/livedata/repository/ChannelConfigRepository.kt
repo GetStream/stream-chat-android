@@ -1,12 +1,12 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.model.config
 import io.getstream.chat.android.livedata.model.type
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Collections
 
 /**
@@ -14,10 +14,11 @@ import java.util.Collections
  * Call channelConfigRepository.load to load all configs into memory
  */
 internal class ChannelConfigRepository(private val channelConfigDao: ChannelConfigDao) {
-    private val channelConfigs: MutableMap<String, Config> = Collections.synchronizedMap(mutableMapOf())
+    private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
 
     internal suspend fun load() {
-        channelConfigs += channelConfigDao.selectAll().map { it.channelType to it.config }
+        channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
+            .associateBy(ChannelConfig::type)
     }
 
     @VisibleForTesting
@@ -26,19 +27,19 @@ internal class ChannelConfigRepository(private val channelConfigDao: ChannelConf
     }
 
     internal fun select(channelType: String): ChannelConfig? {
-        return channelConfigs[channelType]?.let { ChannelConfig(channelType, it) }
+        return channelConfigs[channelType]
     }
 
     suspend fun insert(configs: Collection<ChannelConfig>) {
         // update the local configs
-        channelConfigs += configs
+        channelConfigs += configs.associateBy(ChannelConfig::type)
 
         // insert into room db
-        channelConfigDao.insertMany(configs.map { ChannelConfigEntity(it.type, it.config) })
+        channelConfigDao.insertMany(configs.map(ChannelConfig::toEntity))
     }
 
     suspend fun insert(config: ChannelConfig) {
-        channelConfigs += config
-        channelConfigDao.insert(ChannelConfigEntity(config.type, config.config))
+        channelConfigs += config.type to config
+        channelConfigDao.insert(config.toEntity())
     }
 }

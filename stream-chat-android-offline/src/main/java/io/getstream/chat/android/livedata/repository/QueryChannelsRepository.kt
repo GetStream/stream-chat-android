@@ -11,7 +11,7 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
 import java.util.Objects
 
-internal class QueryChannelsRepository(var queryChannelsDao: QueryChannelsDao) {
+internal class QueryChannelsRepository(private val queryChannelsDao: QueryChannelsDao) {
     suspend fun insert(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
