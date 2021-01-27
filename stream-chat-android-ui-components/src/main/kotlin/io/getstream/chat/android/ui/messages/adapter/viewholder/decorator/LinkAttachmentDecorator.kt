@@ -1,7 +1,11 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
+import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.view.LinkAttachmentView
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
@@ -41,6 +45,7 @@ internal class LinkAttachmentDecorator : BaseDecorator() {
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
+        applyMaxPossibleWidth(viewHolder.binding.root, viewHolder.binding.messageContainer, data.message)
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
@@ -53,6 +58,22 @@ internal class LinkAttachmentDecorator : BaseDecorator() {
             linkAttachmentView.showLinkAttachment(linkAttachment)
         } else {
             linkAttachmentView.isVisible = false
+        }
+    }
+
+    private fun applyMaxPossibleWidth(root: ConstraintLayout, messageContainer: View, message: Message) {
+        val hasLink = message.attachments.any { it.hasLink() }
+        val layoutWidth = messageContainer.layoutParams.width
+        if (hasLink && layoutWidth == ConstraintSet.WRAP_CONTENT) {
+            root.updateConstraints {
+                constrainWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT)
+                constrainDefaultWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT_SPREAD)
+            }
+        } else if (!hasLink && layoutWidth == ConstraintSet.MATCH_CONSTRAINT) {
+            root.updateConstraints {
+                constrainWidth(messageContainer.id, ConstraintSet.WRAP_CONTENT)
+                constrainDefaultWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT_WRAP)
+            }
         }
     }
 }

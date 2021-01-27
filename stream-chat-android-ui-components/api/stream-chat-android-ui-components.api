@@ -235,24 +235,24 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelsV
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel;Lio/getstream/chat/android/ui/channel/list/ChannelsView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/images/AttachmentGallery : androidx/constraintlayout/widget/ConstraintLayout {
+public final class io/getstream/chat/android/ui/gallery/AttachmentGallery : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun getCurrentItemIndex ()I
 	public final fun provideImageList (Landroidx/fragment/app/FragmentActivity;Ljava/util/List;ILkotlin/jvm/functions/Function0;)V
-	public static synthetic fun provideImageList$default (Lio/getstream/chat/android/ui/images/AttachmentGallery;Landroidx/fragment/app/FragmentActivity;Ljava/util/List;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun provideImageList$default (Lio/getstream/chat/android/ui/gallery/AttachmentGallery;Landroidx/fragment/app/FragmentActivity;Ljava/util/List;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun setMenuButtonClickListener (Landroid/view/View$OnClickListener;)V
 	public final fun setOnSharePictureListener (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
-	public static final field Companion Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion;
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$Companion;
 	public fun <init> ()V
 	public static final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData : android/os/Parcelable {
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData : android/os/Parcelable {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -270,8 +270,8 @@ public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()I
 	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData;
 	public fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAssetUrl ()Ljava/lang/String;
@@ -293,16 +293,56 @@ public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
-public class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData$Creator : android/os/Parcelable$Creator {
+public class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData$Creator : android/os/Parcelable$Creator {
 	public fun <init> ()V
-	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData;
 	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
-	public final fun newArray (I)[Lio/getstream/chat/android/ui/images/AttachmentGalleryActivity$AttachmentData;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentData;
 	public synthetic fun newArray (I)[Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/ui/images/AttachmentGalleryActivity$Companion {
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;JILio/getstream/chat/android/client/models/Message;Ljava/util/List;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {
+	public static final field Companion Lio/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$Companion;
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun disablePagination ()V
+	public final fun enablePagination ()V
+	public final fun getAttachments ()Ljava/util/List;
+	public final fun setAttachments (Ljava/util/List;)V
+	public final fun setMediaClickListener (Lio/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$MediaClickListener;)V
+	public final fun setOnLoadMoreListener (Lio/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$OnLoadMoreListener;)V
+}
+
+public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$MediaClickListener {
+	public abstract fun onClick (I)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$OnLoadMoreListener {
+	public abstract fun onLoadMore ()V
+}
+
+public final class io/getstream/chat/android/ui/gallery/overview/UserMediaAttachment {
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component3 ()Ljava/util/Date;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;)Lio/getstream/chat/android/ui/gallery/overview/UserMediaAttachment;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/overview/UserMediaAttachment;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/overview/UserMediaAttachment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getImageUrl ()Ljava/lang/String;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/mentions/MentionsListView : android/widget/ViewFlipper {
@@ -527,10 +567,13 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadClickListener;)V
+	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setEndRegionReachedHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler;)V
+	public final fun setEnterThreadListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$EnterThreadListener;)V
+	public final fun setGiphySendHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$GiphySendHandler;)V
 	public final fun setLastMessageReadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$LastMessageReadHandler;)V
 	public final fun setLinkClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$LinkClickListener;)V
 	public final fun setLoadingMore (Z)V
@@ -539,27 +582,24 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageClickListener;)V
 	public final fun setMessageDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
+	public final fun setMessageDeleteHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageDeleteHandler;)V
+	public final fun setMessageEditHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageEditHandler;)V
+	public final fun setMessageFlagHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageFlagHandler;)V
 	public final fun setMessageListItemFilter (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageLongClickListener;)V
+	public final fun setMessageReactionHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReactionHandler;)V
+	public final fun setMessageReplyHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReplyHandler;)V
+	public final fun setMessageRetryHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryHandler;)V
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryListener;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour;)V
-	public final fun setOnAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
-	public final fun setOnBlockUserHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$BlockUserHandler;)V
-	public final fun setOnMessageDeleteHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageDeleteHandler;)V
-	public final fun setOnMessageEditHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageEditHandler;)V
-	public final fun setOnMessageFlagHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageFlagHandler;)V
-	public final fun setOnMessageReactionHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReactionHandler;)V
-	public final fun setOnMessageRetryHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageRetryHandler;)V
-	public final fun setOnMuteUserHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MuteUserHandler;)V
-	public final fun setOnReplyMessageHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReplyHandler;)V
-	public final fun setOnSendGiphyHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$SendGiphyHandler;)V
-	public final fun setOnStartThreadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$StartThreadHandler;)V
-	public final fun setOnStartThreadListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$EnterThreadListener;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ReactionViewClickListener;)V
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$ThreadClickListener;)V
+	public final fun setThreadStartHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$ThreadStartHandler;)V
+	public final fun setUserBlockHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$UserBlockHandler;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener;)V
+	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$UserMuteHandler;)V
 	public final fun showEmptyStateView ()V
 	public final fun showLoadingView ()V
 }
@@ -576,16 +616,16 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$BlockUserHandler {
-	public abstract fun onUserBlock (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
-}
-
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler {
 	public abstract fun onEndRegionReached ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EnterThreadListener {
 	public abstract fun onThreadEntered (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$GiphySendHandler {
+	public abstract fun onSendGiphy (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$GiphySendListener {
@@ -640,10 +680,6 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onRetryMessage (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MuteUserHandler {
-	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
-}
-
 public final class io/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour : java/lang/Enum {
 	public static final field COUNT_UPDATE Lio/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour;
 	public static final field Companion Lio/getstream/chat/android/ui/messages/view/MessageListView$NewMessagesBehaviour$Companion;
@@ -656,20 +692,24 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onReactionViewClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$SendGiphyHandler {
-	public abstract fun onSendGiphy (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$StartThreadHandler {
-	public abstract fun onStartThread (Lio/getstream/chat/android/client/models/Message;)V
-}
-
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$ThreadClickListener {
 	public abstract fun onThreadClick (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$ThreadStartHandler {
+	public abstract fun onStartThread (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$UserBlockHandler {
+	public abstract fun onUserBlock (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener {
 	public abstract fun onUserClick (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$UserMuteHandler {
+	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
 }
 
 public final class io/getstream/chat/android/ui/messages/view/MessageListViewModelBinding {
@@ -897,13 +937,11 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$
 }
 
 public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun component2 ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getPreviousMode ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
 	public final fun getRepliedMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
