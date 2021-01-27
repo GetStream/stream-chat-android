@@ -568,6 +568,7 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadClickListener;)V
 	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
+	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
@@ -614,6 +615,10 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler {
 	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$ConfirmDeleteMessageHandler {
+	public abstract fun onConfirmDeleteMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler {
