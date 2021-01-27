@@ -26,7 +26,8 @@ import io.getstream.chat.android.ui.utils.SimpleListAdapter
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -84,6 +85,11 @@ private class FileAttachmentsAdapter(
                 )
             }
     }
+
+    override fun onViewRecycled(holder: FileAttachmentViewHolder) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
 }
 
 private class FileAttachmentViewHolder(
@@ -93,6 +99,13 @@ private class FileAttachmentViewHolder(
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
+
+    private var scope: CoroutineScope? = null
+
+    private fun clearScope() {
+        scope?.cancel()
+        scope = null
+    }
 
     init {
         binding.root.setOnClickListener {
@@ -141,7 +154,9 @@ private class FileAttachmentViewHolder(
             }
 
             attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-                GlobalScope.launch(DispatcherProvider.Main) {
+                scope = CoroutineScope(DispatcherProvider.Main)
+
+                scope!!.launch(DispatcherProvider.Main) {
                     tracker.currentProgress().collect { progress ->
                         val nominalProgress = progress.toLong() * tracker.maxValue / 100
 
@@ -155,6 +170,12 @@ private class FileAttachmentViewHolder(
                 }
             }
         }
+    }
+
+    override fun unbind() {
+        super.unbind()
+        scope?.cancel()
+        scope = null
     }
 
     companion object {

@@ -36,5 +36,7 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         val context: Context = itemView.context
 
         abstract fun bind(item: T)
+
+        open fun unbind() {}
     }
 }
