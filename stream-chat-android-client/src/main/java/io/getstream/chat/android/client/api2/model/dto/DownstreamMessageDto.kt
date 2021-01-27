@@ -16,5 +16,5 @@ internal data class DownstreamMessageDto(
     val shadowed: Boolean,
     val created_at: Date,
     val updated_at: Date,
-    val deleted_at: Date? = null,
+    val deleted_at: Date?,
 )
