@@ -19,7 +19,7 @@ public class ProgressTrackerTest {
             initProgress()
         }
 
-        val currentProgress = tracker.currentItemProgress()
+        val currentProgress = tracker.currentProgress()
         val progressValue = randomInt()
 
         tracker.setProgress(progressValue)
@@ -46,7 +46,7 @@ public class ProgressTrackerTest {
             initProgress()
         }
 
-        val currentProgress = tracker.currentItemProgress()
+        val currentProgress = tracker.currentProgress()
         val progressValueList = listOf(randomInt(), randomInt(), randomInt(), randomInt())
 
         progressValueList.forEach { value ->

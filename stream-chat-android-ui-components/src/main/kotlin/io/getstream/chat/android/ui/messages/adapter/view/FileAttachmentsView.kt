@@ -16,13 +16,19 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.extensions.uploadComplete
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.utils.SimpleListAdapter
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -121,7 +127,22 @@ private class FileAttachmentViewHolder(
         binding.apply {
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
+
             fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+
+            attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+                GlobalScope.launch(DispatcherProvider.Main) {
+                    tracker.currentProgress().collect { progress ->
+                        val nominalProgress = progress.toLong() * tracker.maxValue / 100
+
+                        if (attachment.uploadComplete != true) fileSize.text = "$nominalProgress / ${tracker.maxValue}"
+                    }
+
+                    tracker.isComplete().collect {
+                        fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+                    }
+                }
+            }
 
             if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)

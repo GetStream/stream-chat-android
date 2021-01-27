@@ -2,39 +2,34 @@ package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.ProgressCallback
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 public class ProgressTracker {
 
-    private var numberOfItems = 1
-    private val currentItemProgress: MutableStateFlow<Int> = MutableStateFlow(0)
-    private val lapsCompleted: MutableStateFlow<Int> = MutableStateFlow(0)
+    private val currentProgress: MutableStateFlow<Int> = MutableStateFlow(0)
+    private val isComplete: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    public fun initProgress(numberOfItems: Int = 1) {
-        this.numberOfItems = numberOfItems
-        this.currentItemProgress.value = 0
-        lapsCompleted.value = 0
-    }
-
-    public fun getNumberOfItems(): Int = numberOfItems
-
-    public fun currentItemProgress(): StateFlow<Int> = currentItemProgress
-
-    public fun lapsCompleted(): StateFlow<Int> = lapsCompleted
+    public var maxValue: Long = 0
 
     public fun setProgress(progress: Int) {
-        currentItemProgress.value = progress
+        currentProgress.value = progress
     }
 
-    public fun incrementCompletedItems() {
-        lapsCompleted.value += 1
+    public fun currentProgress(): Flow<Int> = currentProgress
+
+    public fun setComplete(isComplete: Boolean) {
+        this.isComplete.value = isComplete
     }
+
+    public fun isComplete(): Flow<Boolean> = isComplete
 }
 
 public fun ProgressTracker.toProgressCallback(): ProgressCallback {
     return object : ProgressCallback {
-        override fun onSuccess(file: String) {}
+        override fun onSuccess(file: String) {
+            setComplete(true)
+        }
 
         override fun onError(error: ChatError) {}
 

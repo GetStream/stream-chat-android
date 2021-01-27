@@ -624,25 +624,36 @@ internal class ChannelControllerImpl(
                 val uploadId = generateUploadId()
                 newMessage.uploadId = uploadId
 
-                val progressTracker = ProgressTrackerFactory.getOrCreate(uploadId)
-                    .apply { initProgress(newMessage.attachments.size) }
+                val messageProgress = ProgressTrackerFactory.getOrCreate(uploadId).apply {
+                    maxValue = newMessage.attachments.size.toLong()
+                }
 
                 upsertProgressMessage(uploadId)
+
+                var filesCounter = 0
+
+                newMessage.attachments.forEach { attachment ->
+                    attachment.uploadId = generateUploadId()
+                }
+
                 newMessage.attachments = newMessage.attachments.map {
-                    progressTracker.setProgress(0)
                     var attachment: Attachment = it
+
+                    val attachmentProgress = ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
+                        maxValue = attachment.upload?.length() ?: 0L
+                    }
 
                     if (it.upload != null) {
                         val result = uploadAttachment(
                             it,
                             attachmentTransformer,
-                            progressTracker.toProgressCallback()
+                            attachmentProgress.toProgressCallback()
                         )
                         attachment.uploadComplete = result.isSuccess
 
                         if (result.isSuccess) {
                             attachment = result.data()
-                            progressTracker.incrementCompletedItems()
+                            messageProgress.setProgress(++filesCounter)
                         } else {
                             attachment.uploadState = Attachment.UploadState.Failed(result.error())
                         }
@@ -650,6 +661,8 @@ internal class ChannelControllerImpl(
 
                     attachment
                 }.toMutableList()
+
+                messageProgress.setComplete(true)
 
                 uploadStatusMessage?.let { cancelMessage(it) }
                 uploadStatusMessage = null

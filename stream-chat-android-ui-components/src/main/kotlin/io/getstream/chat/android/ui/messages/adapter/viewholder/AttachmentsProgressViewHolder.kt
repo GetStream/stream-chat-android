@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 internal class AttachmentsProgressViewHolder(
@@ -37,20 +38,12 @@ internal class AttachmentsProgressViewHolder(
 
         data.message.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
             scope.launch {
-                tracker.lapsCompleted().collect { laps ->
-                    binding.sentFiles.text = "$laps / ${tracker.getNumberOfItems()}"
+                tracker.currentProgress().collect { progress ->
+                    binding.sentFiles.text = "$progress / ${tracker.maxValue}"
                 }
-            }
 
-            scope.launch {
-                tracker.currentItemProgress().collect { progress ->
-                    val message = if (progress == 100) {
-                        "Upload complete, processing..."
-                    } else {
-                        "$progress%"
-                    }
-
-                    binding.progress.text = message
+                tracker.isComplete().filter { isComplete -> isComplete }.collect {
+                    binding.sentFiles.text = "Upload complete, processing..."
                 }
             }
         }
