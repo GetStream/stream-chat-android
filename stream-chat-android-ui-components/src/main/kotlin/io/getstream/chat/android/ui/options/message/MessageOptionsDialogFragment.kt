@@ -252,12 +252,12 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     internal class MessageOptionsHandlers(
-        val threadReplyHandler: MessageListView.StartThreadHandler,
+        val threadReplyHandler: MessageListView.ThreadStartHandler,
         val retryHandler: MessageListView.MessageRetryHandler,
         val editClickHandler: MessageListView.MessageEditHandler,
         val flagClickHandler: MessageListView.MessageFlagHandler,
-        val muteClickHandler: MessageListView.MuteUserHandler,
-        val blockClickHandler: MessageListView.BlockUserHandler,
+        val muteClickHandler: MessageListView.UserMuteHandler,
+        val blockClickHandler: MessageListView.UserBlockHandler,
         val deleteClickHandler: MessageListView.MessageDeleteHandler,
         val replyClickHandler: MessageListView.MessageReplyHandler,
     ) : Serializable

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.images
+package io.getstream.chat.android.ui.gallery
 
 import android.app.Activity
 import android.content.Context
@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
+import io.getstream.chat.android.ui.gallery.overview.UserMediaAttachment
 import io.getstream.chat.android.ui.options.attachment.AttachmentOptionsDialogFragment
 import kotlinx.parcelize.Parcelize
 import java.util.Date
@@ -42,7 +43,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val currentIndex = intent.getIntExtra(EXTRA_KEY_CURRENT_INDEX, 0)
         binding.attachmentGallery.provideImageList(
             fragmentActivity = this,
-            imageList = attachmentUrls,
+            imageList = attachmentUrls.map { UserMediaAttachment(it) },
             currentIndex = currentIndex,
             imageClickListener = {
                 binding.toolBarGroup.isVisible = isFullScreen

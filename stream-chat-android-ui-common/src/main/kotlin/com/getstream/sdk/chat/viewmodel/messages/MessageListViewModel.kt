@@ -59,6 +59,24 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val state: LiveData<State> = stateMerger
     public val currentUser: User = domain.currentUser
 
+    private var dateSeparatorHandler: DateSeparatorHandler? =
+        DateSeparatorHandler { previousMessage: Message?, message: Message ->
+            if (previousMessage == null) {
+                true
+            } else {
+                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+            }
+        }
+
+    private var threadDateSeparatorHandler: DateSeparatorHandler? =
+        DateSeparatorHandler { previousMessage: Message?, message: Message ->
+            if (previousMessage == null) {
+                false
+            } else {
+                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+            }
+        }
+
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
@@ -74,7 +92,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     channelController.reads,
                     typingIds,
                     false,
-                    ::dateSeparator
+                    dateSeparatorHandler,
                 )
                 _reads.addSource(channelController.reads) { _reads.value = it }
                 _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
@@ -84,7 +102,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                         addSource(channelController.messagesState) { messageState ->
                             when (messageState) {
                                 is ChannelController.MessagesState.NoQueryActive,
-                                is ChannelController.MessagesState.Loading -> value = State.Loading
+                                is ChannelController.MessagesState.Loading,
+                                -> value = State.Loading
                                 is ChannelController.MessagesState.OfflineNoResults ->
                                     value = State.Result(MessageListItemWrapper())
                                 is ChannelController.MessagesState.Result -> {
@@ -113,22 +132,6 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
-    private fun dateSeparator(previous: Message?, message: Message): Boolean {
-        return if (previous == null) {
-            true
-        } else {
-            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
-        }
-    }
-
-    private fun threadDateSeparator(previous: Message?, message: Message): Boolean {
-        return if (previous == null) {
-            false
-        } else {
-            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
-        }
-    }
-
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
             currentUser,
@@ -136,7 +139,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             reads,
             null,
             true,
-            ::threadDateSeparator
+            threadDateSeparatorHandler,
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -241,6 +244,26 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
             }
         }.exhaustive
+    }
+
+    /**
+     * Sets the date separator handler which determines when to add date separators.
+     * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
+     *
+     * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
+     */
+    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
+        this.dateSeparatorHandler = dateSeparatorHandler
+    }
+
+    /**
+     * Sets thread date separator handler which determines when to add date separators inside the thread.
+     * @see setDateSeparatorHandler
+     *
+     * @param threadDateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
+     */
+    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
+        this.threadDateSeparatorHandler = threadDateSeparatorHandler
     }
 
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
@@ -351,6 +374,10 @@ public class MessageListViewModel @JvmOverloads constructor(
     public sealed class Mode {
         public data class Thread(val parentMessage: Message) : Mode()
         public object Normal : Mode()
+    }
+
+    public fun interface DateSeparatorHandler {
+        public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
     }
 
     internal companion object {

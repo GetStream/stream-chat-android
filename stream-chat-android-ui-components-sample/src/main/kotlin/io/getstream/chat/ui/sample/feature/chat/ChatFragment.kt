@@ -13,6 +13,8 @@ import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.bindView
@@ -20,6 +22,7 @@ import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import java.util.Calendar
 
 class ChatFragment : Fragment() {
 
@@ -123,7 +126,7 @@ class ChatFragment : Fragment() {
                     }
                 }
             )
-            binding.messageListView.setOnMessageEditHandler {
+            binding.messageListView.setMessageEditHandler {
                 editMessage.postValue(it)
             }
         }
@@ -133,8 +136,25 @@ class ChatFragment : Fragment() {
     }
 
     private fun initMessagesViewModel() {
+        val calendar = Calendar.getInstance()
         messageListViewModel
-            .apply { bindView(binding.messageListView, viewLifecycleOwner) } // TODO replace with new design message list
+            .apply {
+                setDateSeparatorHandler { previousMessage, message ->
+                    if (previousMessage == null) {
+                        true
+                    } else {
+                        shouldShowDateSeparator(calendar, previousMessage, message)
+                    }
+                }
+                setThreadDateSeparatorHandler { previousMessage, message ->
+                    if (previousMessage == null) {
+                        false
+                    } else {
+                        shouldShowDateSeparator(calendar, previousMessage, message)
+                    }
+                }
+            }
+            .apply { bindView(binding.messageListView, viewLifecycleOwner) }
             .apply {
                 state.observe(
                     viewLifecycleOwner,
@@ -145,5 +165,17 @@ class ChatFragment : Fragment() {
                     }
                 )
             }
+    }
+
+    private fun shouldShowDateSeparator(calendar: Calendar, previousMessage: Message, message: Message): Boolean {
+        val (previousYear, previousDayOfYear) = calendar.run {
+            time = previousMessage.getCreatedAtOrThrow()
+            get(Calendar.YEAR) to get(Calendar.DAY_OF_YEAR)
+        }
+        val (year, dayOfYear) = calendar.run {
+            time = message.getCreatedAtOrThrow()
+            get(Calendar.YEAR) to get(Calendar.DAY_OF_YEAR)
+        }
+        return previousYear != year || previousDayOfYear != dayOfYear
     }
 }

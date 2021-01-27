@@ -152,13 +152,12 @@ public class MessageInputFieldView : FrameLayout {
     }
 
     public fun onReply(replyMessage: Message) {
-        mode = Mode.ReplyMessageMode(replyMessage, mode)
+        mode = Mode.ReplyMessageMode(replyMessage)
     }
 
     public fun onReplyDismissed() {
-        val currentMode = mode
-        if (currentMode is Mode.ReplyMessageMode) {
-            mode = currentMode.previousMode
+        if (mode is Mode.ReplyMessageMode) {
+            mode = Mode.MessageMode
         }
     }
 
@@ -301,6 +300,6 @@ public class MessageInputFieldView : FrameLayout {
         public data class CommandMode(val command: Command) : Mode()
         public data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         public data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
-        public data class ReplyMessageMode(val repliedMessage: Message, val previousMode: Mode) : Mode()
+        public data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
 }
