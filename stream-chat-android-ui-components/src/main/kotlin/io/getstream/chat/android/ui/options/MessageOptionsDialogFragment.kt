@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -56,6 +55,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
 
     private var reactionClickHandler: ReactionClickHandler? = null
+    private var confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler? = null
     private var messageOptionsHandlers: MessageOptionsHandlers? = null
 
     override fun onCreateView(
@@ -94,6 +94,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
         this.reactionClickHandler = reactionClickHandler
+    }
+
+    fun setConfirmDeleteMessageClickHandler(confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler) {
+        this.confirmDeleteMessageClickHandler = confirmDeleteMessageClickHandler
     }
 
     fun setMessageOptionsHandlers(messageOptionsHandlers: MessageOptionsHandlers) {
@@ -204,22 +208,13 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
             setDeleteMessageListener {
                 if (configuration.deleteConfirmationEnabled) {
-                    AlertDialog.Builder(requireContext())
-                        .setTitle(configuration.deleteConfirmationTitle)
-                        .setMessage(configuration.deleteConfirmationMessage)
-                        .setPositiveButton(configuration.deleteConfirmationPositiveButton) { dialog, _ ->
-                            messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
-                            dialog.dismiss()
-                            dismiss()
-                        }
-                        .setNegativeButton(configuration.deleteConfirmationNegativeButton) { dialog, _ ->
-                            dialog.dismiss()
-                        }
-                        .show()
+                    confirmDeleteMessageClickHandler?.onConfirmDeleteMessage(message) {
+                        messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
+                    }
                 } else {
                     messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
-                    dismiss()
                 }
+                dismiss()
             }
         }
     }
