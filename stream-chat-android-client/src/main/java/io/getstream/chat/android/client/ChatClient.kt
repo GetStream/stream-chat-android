@@ -316,12 +316,6 @@ public class ChatClient internal constructor(
         return socket.events()
     }
 
-    public fun subscribe(
-        listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return eventsObservable.subscribe(listener = listener)
-    }
-
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     @Deprecated(message = "Use subscribe with ChatEventListener parameter")
     @SinceKotlin("99999.9")
@@ -329,6 +323,25 @@ public class ChatClient internal constructor(
         listener: (ChatEvent) -> Unit,
     ): Disposable {
         return eventsObservable.subscribe(listener = listener)
+    }
+
+    public fun subscribe(
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return eventsObservable.subscribe(listener = listener)
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (ChatEvent) -> Unit,
+    ): Disposable {
+        val filter = { event: ChatEvent ->
+            event.type in eventTypes
+        }
+        return eventsObservable.subscribe(filter, listener)
     }
 
     /**
@@ -350,13 +363,29 @@ public class ChatClient internal constructor(
     @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
     @SinceKotlin("99999.9")
     public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
         listener: (ChatEvent) -> Unit,
     ): Disposable {
-        val filter = { event: ChatEvent ->
-            event.type in eventTypes
-        }
-        return eventsObservable.subscribe(filter, listener)
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener.invoke(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
     }
 
     /**
@@ -391,32 +420,16 @@ public class ChatClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @Deprecated("Use subscribeFor with ChatEventListener parameter")
     @SinceKotlin("99999.9")
     public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: String,
+        vararg eventTypes: Class<out ChatEvent>,
         listener: (ChatEvent) -> Unit,
     ): Disposable {
-        val disposable = subscribeFor(
-            *eventTypes,
-            listener = { event ->
-                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener.invoke(event)
-                }
-            }
-        )
-
-        lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    disposable.dispose()
-                }
-            }
-        )
-
-        return disposable
+        val filter = { event: ChatEvent ->
+            eventTypes.any { type -> type.isInstance(event) }
+        }
+        return eventsObservable.subscribe(filter, listener)
     }
 
     /**
@@ -436,13 +449,29 @@ public class ChatClient internal constructor(
     @Deprecated("Use subscribeFor with ChatEventListener parameter")
     @SinceKotlin("99999.9")
     public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
         listener: (ChatEvent) -> Unit,
     ): Disposable {
-        val filter = { event: ChatEvent ->
-            eventTypes.any { type -> type.isInstance(event) }
-        }
-        return eventsObservable.subscribe(filter, listener)
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener.invoke(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
     }
 
     /**
@@ -477,32 +506,16 @@ public class ChatClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeFor with ChatEventListener parameter")
+    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
     @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: Class<out ChatEvent>,
+    public fun subscribeForSingle(
+        eventType: String,
         listener: (ChatEvent) -> Unit,
     ): Disposable {
-        val disposable = subscribeFor(
-            *eventTypes,
-            listener = { event ->
-                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener.invoke(event)
-                }
-            }
-        )
-
-        lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    disposable.dispose()
-                }
-            }
-        )
-
-        return disposable
+        val filter = { event: ChatEvent ->
+            event.type == eventType
+        }
+        return eventsObservable.subscribeSingle(filter, listener)
     }
 
     /**
@@ -521,14 +534,17 @@ public class ChatClient internal constructor(
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
     @SinceKotlin("99999.9")
-    public fun subscribeForSingle(
-        eventType: String,
+    public fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
         listener: (ChatEvent) -> Unit,
     ): Disposable {
         val filter = { event: ChatEvent ->
-            event.type == eventType
+            eventType.isInstance(event)
         }
-        return eventsObservable.subscribeSingle(filter, listener)
+        return eventsObservable.subscribeSingle(filter) { event ->
+            @Suppress("UNCHECKED_CAST")
+            listener.invoke(event as T)
+        }
     }
 
     /**
@@ -544,22 +560,6 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribeSingle(filter) { event ->
             @Suppress("UNCHECKED_CAST")
             listener.onEvent(event as T)
-        }
-    }
-
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
-    @SinceKotlin("99999.9")
-    public fun <T : ChatEvent> subscribeForSingle(
-        eventType: Class<T>,
-        listener: (ChatEvent) -> Unit,
-    ): Disposable {
-        val filter = { event: ChatEvent ->
-            eventType.isInstance(event)
-        }
-        return eventsObservable.subscribeSingle(filter) { event ->
-            @Suppress("UNCHECKED_CAST")
-            listener.invoke(event as T)
         }
     }
 
