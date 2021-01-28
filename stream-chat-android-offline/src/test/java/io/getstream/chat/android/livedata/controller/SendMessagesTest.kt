@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -104,7 +103,7 @@ internal class SendMessagesTest {
         verify(channelClient).sendMessage(
             argThat { message ->
                 message.attachments.any { attach ->
-                    attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete == true
+                    attach.uploadState !is Attachment.UploadState.Failed
                 }.not()
             }
         )

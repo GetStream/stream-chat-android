@@ -15,7 +15,6 @@ import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
@@ -141,16 +140,16 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
 
-            if (attachment.uploadComplete == true || attachment.uploadComplete == null) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-            } else if (attachment.uploadComplete == false) {
+            if (attachment.uploadState is Attachment.UploadState.Failed) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
                 val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
+            } else {
+                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
+                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
             attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
@@ -160,8 +159,9 @@ private class FileAttachmentViewHolder(
                     tracker.currentProgress().collect { progress ->
                         val nominalProgress = progress.toLong() * tracker.maxValue / 100
 
-                        if (attachment.uploadComplete != true) fileSize.text =
-                            "$nominalProgress / ${attachment.upload?.length()}"
+                        if (attachment.uploadState is Attachment.UploadState.InProgress) {
+                            fileSize.text = "$nominalProgress / ${attachment.upload?.length()}"
+                        }
                     }
 
                     tracker.isComplete().collect {

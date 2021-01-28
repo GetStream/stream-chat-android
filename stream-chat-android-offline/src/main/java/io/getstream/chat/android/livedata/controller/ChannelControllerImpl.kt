@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -634,10 +633,12 @@ internal class ChannelControllerImpl(
 
                 newMessage.attachments.forEach { attachment ->
                     attachment.uploadId = generateUploadId()
+                    attachment.uploadState = Attachment.UploadState.InProgress
                 }
 
                 newMessage.attachments = newMessage.attachments.map {
                     var attachment: Attachment = it
+
 
                     val attachmentProgress = ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
                         maxValue = attachment.upload?.length() ?: 0L
@@ -649,7 +650,7 @@ internal class ChannelControllerImpl(
                             attachmentTransformer,
                             attachmentProgress.toProgressCallback()
                         )
-                        attachment.uploadComplete = result.isSuccess
+                        attachment.uploadState = Attachment.UploadState.Success
 
                         if (result.isSuccess) {
                             attachment = result.data()
