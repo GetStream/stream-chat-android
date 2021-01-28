@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-//Todo: Adapt this behaviour in a latter moment.
+// Todo: Adapt this behaviour in a latter moment.
 internal class AttachmentsProgressViewHolder(
     parent: ViewGroup,
     internal val binding: StreamUiItemMessageEphemeralProgressBinding =
