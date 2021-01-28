@@ -1646,9 +1646,7 @@ public final class io/getstream/chat/android/client/events/UsersUnmutedEvent : i
 }
 
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
-	public static final fun getUploadComplete (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/Boolean;
 	public static final fun getUploadId (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
-	public static final fun setUploadComplete (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/Boolean;)V
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
 }
 
