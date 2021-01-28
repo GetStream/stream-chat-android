@@ -2,10 +2,12 @@ package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@InternalStreamChatApi
 public class ProgressTracker {
 
     private val currentProgress: MutableStateFlow<Int> = MutableStateFlow(0)
