@@ -28,7 +28,6 @@ public class TypingIndicators {
                 new Class[]{TypingStartEvent.class},
                 event -> {
                     // Handle change
-                    return Unit.INSTANCE;
                 }
         );
 
@@ -37,7 +36,6 @@ public class TypingIndicators {
                 new Class[]{TypingStopEvent.class},
                 event -> {
                     // Handle change
-                    return Unit.INSTANCE;
                 }
         );
     }
