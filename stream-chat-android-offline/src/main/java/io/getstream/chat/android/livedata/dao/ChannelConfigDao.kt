@@ -10,31 +10,31 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.CommandInnerEntity
 
 @Dao
-internal interface ChannelConfigDao {
+internal abstract class ChannelConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
-    suspend fun insert(channelConfigEntities: List<ChannelConfigEntity>) {
-        channelConfigEntities.map(ChannelConfigEntity::channelConfigInnerEntity).also { insertConfigs(it) }
-        channelConfigEntities.flatMap(ChannelConfigEntity::commands).also { insertCommands(it) }
+    open suspend fun insert(channelConfigEntities: List<ChannelConfigEntity>) {
+        insertConfigs(channelConfigEntities.map(ChannelConfigEntity::channelConfigInnerEntity))
+        insertCommands(channelConfigEntities.flatMap(ChannelConfigEntity::commands))
     }
 
     @Transaction
-    suspend fun insert(channelConfigEntity: ChannelConfigEntity) {
+    open suspend fun insert(channelConfigEntity: ChannelConfigEntity) {
         insertConfig(channelConfigEntity.channelConfigInnerEntity)
         insertCommands(channelConfigEntity.commands)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertConfig(channelConfigInnerEntity: ChannelConfigInnerEntity)
+    protected abstract suspend fun insertConfig(channelConfigInnerEntity: ChannelConfigInnerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertConfigs(channelConfigInnerEntities: List<ChannelConfigInnerEntity>)
+    protected abstract suspend fun insertConfigs(channelConfigInnerEntities: List<ChannelConfigInnerEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCommands(commands: List<CommandInnerEntity>)
+    protected abstract suspend fun insertCommands(commands: List<CommandInnerEntity>)
 
     @Transaction
     @Query("SELECT * FROM stream_chat_channel_config LIMIT 100")
-    suspend fun selectAll(): List<ChannelConfigEntity>
+    abstract suspend fun selectAll(): List<ChannelConfigEntity>
 }
