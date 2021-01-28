@@ -243,6 +243,21 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 }
             }
+            is Event.ReplyAttachment -> {
+                val messageId = event.repliedMessageId
+                val cid = event.cid
+                domain.useCases.loadMessageById(
+                    cid,
+                    messageId,
+                    MESSAGES_LIMIT,
+                    MESSAGES_LIMIT
+                ).enqueue {
+                    if (it.isSuccess) {
+                        val message = it.data()
+                        onEvent(Event.ReplyMessage(cid, message))
+                    }
+                }
+            }
         }.exhaustive
     }
 
@@ -366,6 +381,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
+        public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
         public data class AttachmentDownload(val attachment: Attachment) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()

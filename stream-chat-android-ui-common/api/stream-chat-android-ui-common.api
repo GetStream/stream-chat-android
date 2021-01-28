@@ -2235,6 +2235,19 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getRepliedMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Ljava/lang/String;
