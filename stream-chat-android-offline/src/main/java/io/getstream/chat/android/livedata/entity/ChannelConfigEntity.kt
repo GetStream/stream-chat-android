@@ -46,7 +46,7 @@ internal data class CommandInnerEntity(
     val channelType: String,
 ) {
     @PrimaryKey
-    var id: Int = name.hashCode() + description.hashCode() + args.hashCode() + set.hashCode() + channelType.hashCode()
+    var id: Int = hashCode()
 }
 
 internal data class ChannelConfigEntity(
