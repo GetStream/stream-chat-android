@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.api
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -28,6 +29,7 @@ internal interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)
 
+    @CheckResult
     fun sendFile(
         channelType: String,
         channelId: String,
@@ -42,69 +44,93 @@ internal interface ChatApi {
         callback: ProgressCallback,
     )
 
+    @CheckResult
     fun sendFile(channelType: String, channelId: String, file: File): Call<String>
 
+    @CheckResult
     fun sendImage(channelType: String, channelId: String, file: File): Call<String>
 
+    @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
+    @CheckResult
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
+    @CheckResult
     fun addDevice(firebaseToken: String): Call<Unit>
 
+    @CheckResult
     fun deleteDevice(firebaseToken: String): Call<Unit>
 
+    @CheckResult
     fun getDevices(): Call<List<Device>>
 
+    @CheckResult
     fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
 
+    @CheckResult
     fun getRepliesMore(
         messageId: String,
         firstId: String,
         limit: Int,
     ): Call<List<Message>>
 
+    @CheckResult
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
 
+    @CheckResult
     fun getReactions(
         messageId: String,
         offset: Int,
         limit: Int,
     ): Call<List<Reaction>>
 
+    @CheckResult
     fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
+    @CheckResult
     fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean): Call<Reaction>
 
+    @CheckResult
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
 
+    @CheckResult
     fun deleteMessage(messageId: String): Call<Message>
 
+    @CheckResult
     fun sendAction(request: SendActionRequest): Call<Message>
 
+    @CheckResult
     fun getMessage(messageId: String): Call<Message>
 
+    @CheckResult
     fun sendMessage(
         channelType: String,
         channelId: String,
         message: Message,
     ): Call<Message>
 
+    @CheckResult
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
+    @CheckResult
     fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
 
+    @CheckResult
     fun updateMessage(
         message: Message,
     ): Call<Message>
 
+    @CheckResult
     fun stopWatching(
         channelType: String,
         channelId: String,
     ): Call<Unit>
 
+    @CheckResult
     fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>
 
+    @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>
 
     fun queryChannel(
@@ -113,69 +139,86 @@ internal interface ChatApi {
         query: QueryChannelRequest,
     ): Call<Channel>
 
+    @CheckResult
     fun updateChannel(
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest,
     ): Call<Channel>
 
+    @CheckResult
     fun enableSlowMode(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel>
 
+    @CheckResult
     fun disableSlowMode(
         channelType: String,
         channelId: String,
     ): Call<Channel>
 
+    @CheckResult
     fun markRead(
         channelType: String,
         channelId: String,
         messageId: String = "",
     ): Call<Unit>
 
+    @CheckResult
     fun showChannel(channelType: String, channelId: String): Call<Unit>
 
+    @CheckResult
     fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
     ): Call<Unit>
 
+    @CheckResult
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
 
+    @CheckResult
     fun muteCurrentUser(): Call<Mute>
 
+    @CheckResult
     fun unmuteCurrentUser(): Call<Unit>
 
+    @CheckResult
     fun acceptInvite(
         channelType: String,
         channelId: String,
         message: String?,
     ): Call<Channel>
 
+    @CheckResult
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
 
+    @CheckResult
     fun markAllRead(): Call<Unit>
 
+    @CheckResult
     fun getGuestUser(userId: String, userName: String): Call<GuestUser>
 
+    @CheckResult
     fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>>
 
+    @CheckResult
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>,
     ): Call<Channel>
 
+    @CheckResult
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>,
     ): Call<Channel>
 
+    @CheckResult
     fun queryMembers(
         channelType: String,
         channelId: String,
@@ -186,18 +229,23 @@ internal interface ChatApi {
         members: List<Member>,
     ): Call<List<Member>>
 
+    @CheckResult
     fun muteUser(
         userId: String,
     ): Call<Mute>
 
+    @CheckResult
     fun unmuteUser(
         userId: String,
     ): Call<Unit>
 
+    @CheckResult
     fun flagUser(userId: String): Call<Flag>
 
+    @CheckResult
     fun flagMessage(messageId: String): Call<Flag>
 
+    @CheckResult
     fun banUser(
         targetId: String,
         timeout: Int?,
@@ -207,6 +255,7 @@ internal interface ChatApi {
         shadow: Boolean,
     ): Call<CompletableResponse>
 
+    @CheckResult
     fun unBanUser(
         targetId: String,
         channelType: String,
@@ -214,6 +263,7 @@ internal interface ChatApi {
         shadow: Boolean,
     ): Call<CompletableResponse>
 
+    @CheckResult
     fun sendEvent(
         eventType: String,
         channelType: String,
@@ -221,8 +271,10 @@ internal interface ChatApi {
         extraData: Map<Any, Any>,
     ): Call<ChatEvent>
 
+    @CheckResult
     fun translate(messageId: String, language: String): Call<Message>
 
+    @CheckResult
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
 
     fun warmUp()
