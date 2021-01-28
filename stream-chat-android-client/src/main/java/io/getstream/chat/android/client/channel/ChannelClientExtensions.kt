@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.channel
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlin.reflect.KClass
@@ -9,11 +10,13 @@ import kotlin.reflect.KClass
  * Subscribes to events of type [T] in the channel.
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
-    crossinline listener: (event: T) -> Unit
+    listener: ChatEventListener<T>
 ): Disposable {
     return this.subscribeFor(
         T::class.java,
-        listener = { event -> listener(event as T) }
+        listener = { event ->
+            listener.onEvent(event as T)
+        }
     )
 }
 
@@ -24,12 +27,14 @@ public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
-    crossinline listener: (event: T) -> Unit
+    listener: ChatEventListener<T>
 ): Disposable {
     return this.subscribeFor(
         lifecycleOwner,
         T::class.java,
-        listener = { event -> listener(event as T) }
+        listener = { event ->
+            listener.onEvent(event as T)
+        }
     )
 }
 
@@ -38,7 +43,7 @@ public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
  */
 public fun ChannelClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: (event: ChatEvent) -> Unit
+    listener: ChatEventListener<ChatEvent>
 ): Disposable {
     val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
     return subscribeFor(*javaClassTypes, listener = listener)
@@ -52,7 +57,7 @@ public fun ChannelClient.subscribeFor(
 public fun ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: (event: ChatEvent) -> Unit
+    listener: ChatEventListener<ChatEvent>
 ): Disposable {
     val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
     return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
@@ -62,7 +67,7 @@ public fun ChannelClient.subscribeFor(
  * Subscribes for the next channel event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeForSingle(
-    noinline listener: (event: T) -> Unit
+    listener: ChatEventListener<T>
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)
 }

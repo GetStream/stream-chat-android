@@ -111,7 +111,6 @@ public class UserPresence {
                 new Class[]{UserPresenceChangedEvent.class},
                 event -> {
                     // Handle change
-                    return Unit.INSTANCE;
                 }
         );
     }

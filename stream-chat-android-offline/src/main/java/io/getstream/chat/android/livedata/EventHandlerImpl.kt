@@ -59,16 +59,15 @@ import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.livedata.extensions.addReaction
-import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.extensions.setMember
 import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
 
 internal class EventHandlerImpl(
-    private val domainImpl: ChatDomainImpl
+    private val domainImpl: ChatDomainImpl,
 ) {
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
@@ -180,7 +179,8 @@ internal class EventHandlerImpl(
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 is ChannelUserUnbannedEvent,
-                is MarkAllReadEvent -> Unit
+                is MarkAllReadEvent,
+                -> Unit
                 is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
@@ -209,19 +209,23 @@ internal class EventHandlerImpl(
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
                     event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }
@@ -256,31 +260,19 @@ internal class EventHandlerImpl(
                 }
 
                 is ReactionNewEvent -> {
-                    // get the message, update the reaction data, update the message
-                    // note that we need to use event.reaction and not event.message
-                    // event.message only has a subset of reactions
-                    batch.getCurrentMessage(event.reaction.messageId)?.let {
-                        val updatedMessage = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
-                        }
-                        batch.addMessage(updatedMessage)
-                    }
+                    event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
+                    batch.addMessage(event.message)
                 }
                 is ReactionDeletedEvent -> {
-                    // get the message, update the reaction data, update the message
-                    batch.getCurrentMessage(event.reaction.messageId)?.also {
-                        val updatedMessage = it.copy(reactionCounts = event.message.reactionCounts)
-                            .apply { removeReaction(event.reaction, false) }
-                        batch.addMessage(updatedMessage)
-                    }
+                    event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
+                    batch.addMessage(event.message)
                 }
                 is ReactionUpdateEvent -> {
-                    batch.getCurrentMessage(event.reaction.messageId)?.let {
-                        val updatedMessage = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
-                        }
-                        batch.addMessage(updatedMessage)
-                    }
+                    event.message.enrichWithCid(event.cid)
+                    event.message.enrichWithOwnReactions(batch, event.user)
+                    batch.addMessage(event.message)
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
@@ -412,7 +404,8 @@ internal class EventHandlerImpl(
                 is UserDeletedEvent,
                 is UserPresenceChangedEvent,
                 is UserStartWatchingEvent,
-                is UserStopWatchingEvent -> Unit
+                is UserStopWatchingEvent,
+                -> Unit
             }.exhaustive
         }
 
@@ -463,6 +456,14 @@ internal class EventHandlerImpl(
         // queryRepo mainly monitors for the notification added to channel event
         for (queryRepo in domainImpl.getActiveQueries()) {
             queryRepo.handleEvents(sortedEvents)
+        }
+    }
+
+    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User) {
+        if (domainImpl.currentUser.id != user.id) {
+            ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+        } else {
+            // for events of current user we keep "ownReactions" from the event
         }
     }
 }
