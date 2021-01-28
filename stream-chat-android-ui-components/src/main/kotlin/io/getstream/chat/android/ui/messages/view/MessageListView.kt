@@ -244,7 +244,7 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-    private val galleryImageAttachmentDestination by lazy {
+    private val galleryImageAttachmentDestination =
         GalleryImageAttachmentDestination(
             Message(), // Set before navigation
             Attachment(), // Set before navigation
@@ -254,7 +254,6 @@ public class MessageListView : ConstraintLayout {
             _attachmentDownloadOptionHandler,
             _attachmentDeleteOptionHandler,
         )
-    }
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
