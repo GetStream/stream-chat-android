@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
-import com.google.gson.Gson
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -27,6 +26,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -72,8 +72,7 @@ private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
-internal val gson = Gson()
-
+internal val gson = StreamGson.gson
 /**
  * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.

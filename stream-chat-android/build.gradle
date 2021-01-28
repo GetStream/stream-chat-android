@@ -76,7 +76,7 @@ dependencies {
     api project(":stream-chat-android-ui-common")
 
     implementation Dependencies.kotlinStdLib
-    implementation Dependencies.activityKtx
+    implementation Dependencies.androidxActivity
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.androidxLifecycleExtensions

@@ -19,7 +19,9 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
+import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.view.EndlessScrollListener
@@ -32,6 +34,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -60,8 +63,8 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.ThreadStartHan
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserMuteHandler
-import io.getstream.chat.android.ui.options.MessageOptionsDialogFragment
-import io.getstream.chat.android.ui.options.MessageOptionsView
+import io.getstream.chat.android.ui.options.message.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.options.message.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlinx.coroutines.CoroutineScope
@@ -144,6 +147,40 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
+    private var _attachmentReplyOptionHandler by ListenerDelegate(
+        initialValue = AttachmentGalleryActivity.AttachmentReplyOptionHandler {
+            throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
+        }
+    ) { realListener ->
+        AttachmentGalleryActivity.AttachmentReplyOptionHandler { realListener().onClick(it) }
+    }
+
+    private var _attachmentShowInChatOptionClickHandler by ListenerDelegate(
+        initialValue = AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
+            throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
+        }
+    ) { realListener ->
+        AttachmentGalleryActivity.AttachmentShowInChatOptionHandler { realListener().onClick(it) }
+    }
+
+    private val _attachmentDownloadOptionHandler by ListenerDelegate(
+        initialValue = AttachmentGalleryActivity.AttachmentDownloadOptionHandler { attachmentData ->
+            DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
+        }
+    ) { realListener ->
+        AttachmentGalleryActivity.AttachmentDownloadOptionHandler { realListener().onClick(it) }
+    }
+
+    private var _attachmentDeleteOptionHandler by ListenerDelegate(
+        initialValue = AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
+            throw IllegalStateException("onAttachmentDeleteOptionClickHandler must be set")
+        }
+    ) { realListener ->
+        AttachmentGalleryActivity.AttachmentDeleteOptionHandler { attachmentData ->
+            realListener().onClick(attachmentData)
+        }
+    }
+
     private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
@@ -206,12 +243,31 @@ public class MessageListView : ConstraintLayout {
                 enterThreadListener.onThreadEntered(message)
             }
         }
+
+    private val galleryImageAttachmentDestination =
+        GalleryImageAttachmentDestination(
+            Message(), // Set before navigation
+            Attachment(), // Set before navigation
+            context,
+            _attachmentReplyOptionHandler,
+            _attachmentShowInChatOptionClickHandler,
+            _attachmentDownloadOptionHandler,
+            _attachmentDeleteOptionHandler,
+        )
+
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
+            galleryImageAttachmentDestination.apply {
+                this.message = message
+                this.attachment = attachment
+            }
             ChatUI.instance()
                 .navigator
-                .navigate(GalleryImageAttachmentDestination(message, attachment, context))
+                .navigate(
+                    galleryImageAttachmentDestination
+                )
         }
+
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
         AttachmentDownloadClickListener { attachment ->
             attachmentDownloadHandler.onAttachmentDownload(attachment)
@@ -494,6 +550,18 @@ public class MessageListView : ConstraintLayout {
             deleteConfirmationPositiveButton = deleteDialogPositiveButton,
             deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        activity?.activityResultRegistry?.let { registry ->
+            galleryImageAttachmentDestination.register(registry)
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        galleryImageAttachmentDestination.unregister()
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {
@@ -793,6 +861,18 @@ public class MessageListView : ConstraintLayout {
 
     public fun setAttachmentDownloadHandler(attachmentDownloadHandler: AttachmentDownloadHandler) {
         this.attachmentDownloadHandler = attachmentDownloadHandler
+    }
+
+    public fun setAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
+        this._attachmentReplyOptionHandler = handler
+    }
+
+    public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
+        this._attachmentShowInChatOptionClickHandler = handler
+    }
+
+    public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
+        this._attachmentDeleteOptionHandler = handler
     }
     //endregion
 
