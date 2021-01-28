@@ -16,6 +16,7 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -129,8 +130,8 @@ internal open class BaseDomainTest {
 
         val client: ChatClient = mock {
             on { subscribe(any()) } doAnswer { invocation ->
-                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
-                listener.invoke(connectedEvent)
+                val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
+                listener.onEvent(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
                     override fun dispose() {}
@@ -172,8 +173,8 @@ internal open class BaseDomainTest {
         val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
-                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
-                listener.invoke(connectedEvent)
+                val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
+                listener.onEvent(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
                     override fun dispose() {}

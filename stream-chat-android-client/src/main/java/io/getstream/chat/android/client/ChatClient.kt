@@ -70,6 +70,7 @@ import java.util.Date
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -311,16 +312,21 @@ public class ChatClient internal constructor(
         socket.removeListener(listener)
     }
 
-    @Deprecated(
-        message = "Use subscribe() on the client directly instead",
-        level = DeprecationLevel.WARNING
-    )
+    @Deprecated(message = "Use subscribe() on the client directly instead")
     public fun events(): ChatObservable {
         return socket.events()
     }
 
+    @Deprecated(message = "Use subscribe with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun subscribe(
         listener: (event: ChatEvent) -> Unit,
+    ): Disposable {
+        return eventsObservable.subscribe(listener = listener)
+    }
+
+    public fun subscribe(
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return eventsObservable.subscribe(listener = listener)
     }
@@ -330,9 +336,26 @@ public class ChatClient internal constructor(
      *
      * @see [io.getstream.chat.android.client.models.EventType] for type constants
      */
+    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit,
+    ): Disposable {
+        val filter = { event: ChatEvent ->
+            event.type in eventTypes
+        }
+        return eventsObservable.subscribe(filter, listener)
+    }
+
+    /**
+     * Subscribes to the specific [eventTypes] of the client.
+     *
+     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     */
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             event.type in eventTypes
@@ -345,6 +368,8 @@ public class ChatClient internal constructor(
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
      */
+    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
@@ -372,11 +397,57 @@ public class ChatClient internal constructor(
     }
 
     /**
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener.onEvent(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
+    }
+
+    /**
+     * Subscribes to the specific [eventTypes] of the client.
+     */
+    @Deprecated("Use subscribeFor with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
+    public fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit,
+    ): Disposable {
+        val filter = { event: ChatEvent ->
+            eventTypes.any { type -> type.isInstance(event) }
+        }
+        return eventsObservable.subscribe(filter, listener)
+    }
+
+    /**
      * Subscribes to the specific [eventTypes] of the client.
      */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         val filter = { event: ChatEvent ->
             eventTypes.any { type -> type.isInstance(event) }
@@ -389,6 +460,8 @@ public class ChatClient internal constructor(
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
      */
+    @Deprecated("Use subscribeFor with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
@@ -399,6 +472,37 @@ public class ChatClient internal constructor(
             listener = { event ->
                 if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     listener(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
+    }
+
+    /**
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener.onEvent(event)
                 }
             }
         )
@@ -418,6 +522,8 @@ public class ChatClient internal constructor(
     /**
      * Subscribes for the next event with the given [eventType].
      */
+    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit,
@@ -431,6 +537,21 @@ public class ChatClient internal constructor(
     /**
      * Subscribes for the next event with the given [eventType].
      */
+    public fun subscribeForSingle(
+        eventType: String,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        val filter = { event: ChatEvent ->
+            event.type == eventType
+        }
+        return eventsObservable.subscribeSingle(filter, listener)
+    }
+
+    /**
+     * Subscribes for the next event with the given [eventType].
+     */
+    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
+    @SinceKotlin("99999.9")
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit,
@@ -438,9 +559,25 @@ public class ChatClient internal constructor(
         val filter = { event: ChatEvent ->
             eventType.isInstance(event)
         }
-        return eventsObservable.subscribeSingle(filter) { event: ChatEvent ->
+        return eventsObservable.subscribeSingle(filter) { event ->
             @Suppress("UNCHECKED_CAST")
-            listener.invoke(event as T)
+            listener(event as T)
+        }
+    }
+
+    /**
+     * Subscribes for the next event with the given [eventType].
+     */
+    public fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: ChatEventListener<T>,
+    ): Disposable {
+        val filter = { event: ChatEvent ->
+            eventType.isInstance(event)
+        }
+        return eventsObservable.subscribeSingle(filter) { event ->
+            @Suppress("UNCHECKED_CAST")
+            listener.onEvent(event as T)
         }
     }
 
@@ -1142,7 +1279,9 @@ public class ChatClient internal constructor(
             remoteMessage: RemoteMessage,
             defaultNotificationConfig: NotificationConfig = NotificationConfig(),
         ): Boolean {
-            return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(defaultNotificationConfig)
+            return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(
+                defaultNotificationConfig
+            )
         }
     }
 }
