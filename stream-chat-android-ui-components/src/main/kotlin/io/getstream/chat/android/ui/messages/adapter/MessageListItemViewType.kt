@@ -18,5 +18,4 @@ public object MessageListItemViewType {
     public const val THREAD_SEPARATOR: Int = OFFSET + 9
     public const val TYPING_INDICATOR: Int = OFFSET + 10
     public const val GIPHY: Int = OFFSET + 11
-    public const val ATTACHMENTS_EPHEMERAL: Int = OFFSET + 12
 }

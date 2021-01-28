@@ -1,8 +1,13 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
+import android.util.Log
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFileAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -11,6 +16,11 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListene
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 internal class OnlyFileAttachmentsViewHolder(
     parent: ViewGroup,
@@ -23,6 +33,8 @@ internal class OnlyFileAttachmentsViewHolder(
             false
         ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    private var scope: CoroutineScope? = null
 
     init {
         binding.run {
@@ -56,5 +68,33 @@ internal class OnlyFileAttachmentsViewHolder(
         super.bindData(data, diff)
 
         binding.fileAttachmentsView.setAttachments(data.message.attachments)
+
+        clearScope()
+        val scope = CoroutineScope(DispatcherProvider.Main)
+
+        data.message.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+            val totalFiles = data.message.attachments.size
+            scope.launch {
+                tracker.currentProgress().collect { progress ->
+                    Log.d("OnlyFileAttachments", "Upload sent: $progress / $totalFiles")
+                }
+
+                tracker.isComplete().filter { isComplete -> isComplete }.collect {
+                    Log.d("OnlyFileAttachments", "Upload complete: ${context.getString(R.string.stream_ui_upload_complete)}")
+                }
+            }
+        }
+
+        this.scope = scope
+    }
+
+    private fun clearScope() {
+        scope?.cancel()
+        scope = null
+    }
+
+    override fun unbind() {
+        super.unbind()
+        clearScope()
     }
 }

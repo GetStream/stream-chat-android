@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS_EPHEMERAL
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -15,7 +14,6 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLA
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.TYPING_INDICATOR
-import io.getstream.chat.android.ui.messages.adapter.viewholder.AttachmentsProgressViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.DateDividerViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
@@ -68,7 +66,6 @@ public open class MessageListItemViewHolderFactory {
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
-            ATTACHMENTS_EPHEMERAL -> createEphemeralAttachmentsProgressViewModel(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -89,12 +86,6 @@ public open class MessageListItemViewHolderFactory {
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessagePlainTextViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
-    }
-
-    protected fun createEphemeralAttachmentsProgressViewModel(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return AttachmentsProgressViewHolder(parentView)
     }
 
     protected fun createPlainTextWithFileAttachmentsViewHolder(

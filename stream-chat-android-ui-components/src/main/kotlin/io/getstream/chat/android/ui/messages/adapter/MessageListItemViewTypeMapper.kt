@@ -4,7 +4,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.ATTACHMENTS_EPHEMERAL
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -16,7 +15,6 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.PLA
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.utils.extensions.hasLink
-import io.getstream.chat.android.ui.utils.extensions.isAttachmentEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isMedia
 
@@ -38,7 +36,6 @@ internal object MessageListItemViewTypeMapper {
         return when {
             messageItem.message.deletedAt != null -> MESSAGE_DELETED
             messageItem.message.isGiphyEphemeral() -> GIPHY
-            messageItem.message.isAttachmentEphemeral() -> ATTACHMENTS_EPHEMERAL
             messageItem.message.isMediaWithText() -> PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
             messageItem.message.isFileWithText() -> PLAIN_TEXT_WITH_FILE_ATTACHMENTS
             messageItem.message.attachments.isMedia() -> MEDIA_ATTACHMENTS
