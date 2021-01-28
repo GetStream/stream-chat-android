@@ -7,10 +7,10 @@ import com.google.gson.GsonBuilder
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
-public object JsonUtils {
+public object StreamGson {
 
-    public fun defaultStreamGson() : Gson {
-        return GsonBuilder()
+    public val gson: Gson by lazy {
+        GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
             .addSerializationExclusionStrategy(
                 object : ExclusionStrategy {

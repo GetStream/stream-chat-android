@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 internal class GsonChatParser : ChatParser {
 
     @VisibleForTesting(otherwise = PRIVATE)
-    internal val gson: Gson by lazy { JsonUtils.defaultStreamGson() }
+    internal val gson: Gson = StreamGson.gson
 
     override fun toJson(any: Any): String {
         return gson.toJson(any)
