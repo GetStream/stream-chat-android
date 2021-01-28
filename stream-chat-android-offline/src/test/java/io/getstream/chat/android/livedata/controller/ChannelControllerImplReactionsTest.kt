@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.ReactionRepository
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
@@ -47,28 +47,6 @@ internal class ChannelControllerImplReactionsTest {
             score = 234
         },
     )
-    private val otherReactions: List<Reaction> = listOf(
-        Reaction().apply {
-            userId = "otherUser"
-            type = "type1"
-            score = 345
-        },
-        Reaction().apply {
-            userId = "otherUser"
-            type = "type2"
-            score = 456
-        },
-        Reaction().apply {
-            userId = "otherUser2"
-            type = "type1"
-            score = 567
-        },
-        Reaction().apply {
-            userId = "otherUser2"
-            type = "type2"
-            score = 678
-        },
-    )
 
     private val newReaction = Reaction().apply {
         userId = currentUser.id
@@ -81,7 +59,7 @@ internal class ChannelControllerImplReactionsTest {
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions, otherReactions)
+                .givenMessageWithReactions(myReactions)
                 .get()
 
             sut.sendReaction(newReaction, enforceUnique = false)
@@ -89,7 +67,7 @@ internal class ChannelControllerImplReactionsTest {
             val result = sut.messages.getOrAwaitValue().first()
             result.ownReactions.size `should be equal to` myReactions.size + 1
             result.ownReactions.contains(newReaction) `should be equal to` true
-            result.latestReactions.size `should be equal to` myReactions.size + otherReactions.size + 1
+            result.latestReactions.size `should be equal to` myReactions.size + 1
             result.latestReactions.contains(newReaction) `should be equal to` true
         }
 
@@ -98,7 +76,7 @@ internal class ChannelControllerImplReactionsTest {
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions, otherReactions)
+                .givenMessageWithReactions(myReactions)
                 .get()
 
             sut.sendReaction(newReaction, enforceUnique = true)
@@ -106,7 +84,7 @@ internal class ChannelControllerImplReactionsTest {
             val result = sut.messages.getOrAwaitValue().first()
             result.ownReactions.size `should be equal to` 1
             result.ownReactions.first() `should be equal to` newReaction
-            result.latestReactions.size `should be equal to` otherReactions.size + 1
+            result.latestReactions.size `should be equal to` 1
             result.latestReactions.contains(newReaction) `should be equal to` true
         }
 
@@ -115,16 +93,13 @@ internal class ChannelControllerImplReactionsTest {
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions, otherReactions)
+                .givenMessageWithReactions(myReactions)
                 .get()
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
             val result = sut.messages.getOrAwaitValue().first()
             result.reactionCounts[newReaction.type] `should be equal to` 1
-            otherReactions.groupBy { it.type }.forEach { (type, reactions) ->
-                result.reactionCounts[type] `should be equal to` reactions.size
-            }
         }
 
     @Test
@@ -132,16 +107,13 @@ internal class ChannelControllerImplReactionsTest {
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions, otherReactions)
+                .givenMessageWithReactions(myReactions)
                 .get()
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
             val result = sut.messages.getOrAwaitValue().first()
             result.reactionScores[newReaction.type] `should be equal to` newReaction.score
-            otherReactions.groupBy { it.type }.forEach { (type, reactions) ->
-                result.reactionScores[type] `should be equal to` reactions.map { it.score }.sum()
-            }
         }
 
     @Test
@@ -149,7 +121,7 @@ internal class ChannelControllerImplReactionsTest {
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions, otherReactions)
+                .givenMessageWithReactions(myReactions)
                 .get()
             val deletedReaction = myReactions.first()
 
@@ -186,11 +158,10 @@ internal class ChannelControllerImplReactionsTest {
             return this
         }
 
-        fun givenMessageWithReactions(myReactions: List<Reaction>, otherReactions: List<Reaction>): Fixture {
+        fun givenMessageWithReactions(myReactions: List<Reaction>): Fixture {
             runBlocking {
                 val message = Message().apply {
-                    myReactions.forEach { reaction -> addReaction(reaction, isMine = true) }
-                    otherReactions.forEach { reaction -> addReaction(reaction, isMine = false) }
+                    myReactions.forEach(::addMyReaction)
                 }
                 channelControllerImpl.upsertMessage(message)
             }

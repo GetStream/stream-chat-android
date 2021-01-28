@@ -18,89 +18,6 @@ internal fun Channel.users(): List<User> = members.map(Member::user) +
     createdBy +
     messages.flatMap { it.users() }
 
-private fun Message.clearOwnReactions(userId: String) {
-    // remove own reactions from latest reactions
-    latestReactions.removeAll { reaction -> reaction.userId == userId }
-
-    // update counts
-    ownReactions.groupBy { it.type }.forEach { (type, reactions) ->
-        // update the count
-        val newCount = reactionCounts.getOrElse(type) { 0 } - reactions.size
-        if (newCount <= 0) {
-            reactionCounts.remove(type)
-        } else {
-            reactionCounts[type] = newCount
-        }
-
-        // update the score
-        val newScore = reactionScores.getOrElse(type) { 0 } - reactions.sumBy { it.score }
-        if (newScore <= 0) {
-            reactionScores.remove(type)
-        } else {
-            reactionScores[type] = newScore
-        }
-    }
-    // clear own reactions
-    ownReactions.clear()
-}
-
-internal fun Message.addReaction(reaction: Reaction, isMine: Boolean, enforceUnique: Boolean = false) {
-
-    // add to own reactions
-    if (isMine) {
-        if (enforceUnique) {
-            clearOwnReactions(reaction.userId)
-        }
-        this.ownReactions.add(reaction)
-    }
-
-    // add to latest reactions
-    this.latestReactions.add(reaction)
-
-    // update the count
-    val currentCount = this.reactionCounts.getOrElse(reaction.type) { 0 }
-    // copy the object so livedata's diffutils can notice a change
-    this.reactionCounts = this.reactionCounts.toMutableMap()
-    this.reactionCounts[reaction.type] = currentCount + 1
-    // update the score
-    val currentScore = this.reactionScores.getOrElse(reaction.type) { 0 }
-    this.reactionScores = this.reactionScores.toMutableMap()
-    this.reactionScores[reaction.type] = currentScore + reaction.score
-}
-
-internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
-
-    val countBeforeFilter = ownReactions.size + latestReactions.size
-    ownReactions =
-        ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
-            .toMutableList()
-    latestReactions =
-        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
-            .toMutableList()
-    val countAfterFilter = ownReactions.size + latestReactions.size
-
-    if (updateCounts) {
-        val shouldDecrement =
-            countBeforeFilter > countAfterFilter || this.latestReactions.size >= 15
-        if (shouldDecrement) {
-            this.reactionCounts = this.reactionCounts.toMutableMap()
-            val currentCount = this.reactionCounts.getOrElse(reaction.type) { 1 }
-            val newCount = currentCount - 1
-            this.reactionCounts[reaction.type] = newCount
-            if (newCount <= 0) {
-                reactionCounts.remove(reaction.type)
-            }
-            this.reactionScores = this.reactionScores.toMutableMap()
-            val currentScore = this.reactionScores.getOrElse(reaction.type) { 1 }
-            val newScore = currentScore - reaction.score
-            this.reactionScores[reaction.type] = newScore
-            if (newScore <= 0) {
-                reactionScores.remove(reaction.type)
-            }
-        }
-    }
-}
-
 internal val Channel.lastMessage: Message?
     get() = messages.lastOrNull()
 
@@ -138,7 +55,6 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
 
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
-private const val NETWORK_NOT_AVAILABLE = -1
 
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
