@@ -554,7 +554,7 @@ public class ChatClient internal constructor(
     @SinceKotlin("99999.9")
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: (event: ChatEvent) -> Unit,
+        listener: (event: T) -> Unit,
     ): Disposable {
         val filter = { event: ChatEvent ->
             eventType.isInstance(event)
