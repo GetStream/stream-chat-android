@@ -130,7 +130,7 @@ dependencies {
 
     implementation Dependencies.kotlinStdLib
 
-    implementation Dependencies.activityKtx
+    implementation Dependencies.androidxActivity
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions

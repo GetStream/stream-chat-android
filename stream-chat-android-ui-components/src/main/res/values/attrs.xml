@@ -224,6 +224,7 @@
         <attr name="streamUiDeleteIcon" format="reference" />
         <attr name="streamUiDeleteText" format="reference" />
         <attr name="streamUiDeleteIconTint" format="reference" />
+        <attr name="streamUiDeleteTextTint" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="MessageListView">

@@ -28,8 +28,9 @@ internal class DownloadAttachmentImpl(private val domainImpl: ChatDomainImpl) : 
     override operator fun invoke(attachment: Attachment): Call<Unit> {
         val result: Result<Unit> = try {
             val downloadManager = domainImpl.appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val url = attachment.assetUrl ?: attachment.imageUrl
             downloadManager.enqueue(
-                DownloadManager.Request(Uri.parse(attachment.assetUrl))
+                DownloadManager.Request(Uri.parse(url))
                     .setTitle(attachment.name)
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, attachment.name)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
