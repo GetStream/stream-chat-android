@@ -73,7 +73,6 @@ public class UnreadCounts {
                             Integer unreadChannels = notificationMarkReadEvent.getUnreadChannels();
                             Integer totalUnreadCount = notificationMarkReadEvent.getTotalUnreadCount();
                         }
-                        return Unit.INSTANCE;
                     }
             );
         }

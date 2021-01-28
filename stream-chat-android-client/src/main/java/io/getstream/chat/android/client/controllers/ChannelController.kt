@@ -119,11 +119,11 @@ public interface ChannelController {
     )
     public fun events(): ChatObservable
 
-    public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribe(listener: (ChatEvent) -> Unit): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit
+        listener: (ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -136,12 +136,19 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable
 
+    /**
+     * Subscribes to one or more event [eventTypes]. Does not respect any lifecycle.
+     *
+     * @param eventTypes a list of events we wish to observe
+     * @param listener callback invoked when events are received
+     * @return
+     */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -152,7 +159,7 @@ public interface ChannelController {
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit,
     ): Disposable
 
     /**
@@ -167,7 +174,7 @@ public interface ChannelController {
      */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
-        listener: (event: T) -> Unit
+        listener: (event: T) -> Unit,
     ): Disposable
 
     @CheckResult
@@ -224,6 +231,6 @@ public interface ChannelController {
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member> = QuerySort(),
-        members: List<Member> = emptyList()
+        members: List<Member> = emptyList(),
     ): Call<List<Member>>
 }
