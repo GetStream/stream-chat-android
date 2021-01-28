@@ -34,9 +34,9 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.whenFalse
 import com.getstream.sdk.chat.utils.extensions.whenTrue
-import com.getstream.sdk.chat.view.common.activity
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message

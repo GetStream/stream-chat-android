@@ -14,9 +14,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
 
 public open class AttachmentDestination(
-    public val message: Message,
-    public val attachment: Attachment,
-    context: Context
+    public var message: Message,
+    public var attachment: Attachment,
+    context: Context,
 ) : ChatDestination(context) {
 
     override fun navigate() {

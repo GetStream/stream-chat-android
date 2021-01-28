@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.options
+package io.getstream.chat.android.ui.options.message
 
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.AvatarDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.BackgroundDecorator

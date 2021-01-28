@@ -29,7 +29,7 @@
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
             />
 
-        <io.getstream.chat.android.ui.options.MessageOptionsView
+        <io.getstream.chat.android.ui.options.message.MessageOptionsView
             android:id="@+id/messageOptionsView"
             android:layout_width="264dp"
             android:layout_height="wrap_content"
