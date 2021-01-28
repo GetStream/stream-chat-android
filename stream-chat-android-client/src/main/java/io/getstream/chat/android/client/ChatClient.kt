@@ -379,7 +379,7 @@ public class ChatClient internal constructor(
             *eventTypes,
             listener = { event ->
                 if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener.invoke(event)
+                    listener(event)
                 }
             }
         )
@@ -471,7 +471,7 @@ public class ChatClient internal constructor(
             *eventTypes,
             listener = { event ->
                 if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener.invoke(event)
+                    listener(event)
                 }
             }
         )
@@ -561,7 +561,7 @@ public class ChatClient internal constructor(
         }
         return eventsObservable.subscribeSingle(filter) { event ->
             @Suppress("UNCHECKED_CAST")
-            listener.invoke(event as T)
+            listener(event as T)
         }
     }
 
