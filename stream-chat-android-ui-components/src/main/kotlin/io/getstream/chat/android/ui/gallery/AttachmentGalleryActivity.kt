@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.gallery
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -60,29 +59,25 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     val result = Intent().apply {
                         putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Delete(currentAttachment))
                     }
-                    setResult(Activity.RESULT_OK, Intent(result))
-                    finish()
+                    setResultAndFinish(result)
                 }
                 val saveHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     val result = Intent().apply {
                         putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Download(currentAttachment))
                     }
-                    setResult(Activity.RESULT_OK, Intent(result))
-                    finish()
+                    setResultAndFinish(result)
                 }
                 val showInChatHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     val result = Intent().apply {
                         putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.ShowInChat(currentAttachment))
                     }
-                    setResult(Activity.RESULT_OK, Intent(result))
-                    finish()
+                    setResultAndFinish(result)
                 }
                 val replyHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
                     val result = Intent().apply {
                         putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Reply(currentAttachment))
                     }
-                    setResult(Activity.RESULT_OK, Intent(result))
-                    finish()
+                    setResultAndFinish(result)
                 }
                 AttachmentOptionsDialogFragment.newInstance(
                     showInChatHandler = showInChatHandler,
@@ -97,6 +92,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private fun obtainAttachments() =
         intent.getParcelableArrayListExtra<AttachmentData>(EXTRA_KEY_ATTACHMENTS)?.toList().orEmpty()
+
+    private fun setResultAndFinish(result: Intent) {
+        setResult(RESULT_OK, result)
+        finish()
+    }
 
     private fun subtitle(time: Long): String {
         val relativeDay = DateUtils.getRelativeTimeSpanString(
