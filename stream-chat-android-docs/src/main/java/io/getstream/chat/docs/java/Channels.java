@@ -450,7 +450,6 @@ public class Channels {
                     new Class[]{ChannelsMuteEvent.class},
                     channelsMuteEvent -> {
                         List<ChannelMute> mutes = ((ChannelsMuteEvent) channelsMuteEvent).getChannelsMute();
-                        return Unit.INSTANCE;
                     }
             );
         }
