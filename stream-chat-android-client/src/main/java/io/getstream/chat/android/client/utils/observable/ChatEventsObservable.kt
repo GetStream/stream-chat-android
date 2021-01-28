@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -15,7 +16,7 @@ import java.util.Date
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
-    private var client: ChatClient
+    private var client: ChatClient,
 ) {
 
     private var subscriptions = setOf<EventSubscription>()
@@ -48,14 +49,14 @@ internal class ChatEventsObservable(
 
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
-        listener: (ChatEvent) -> Unit
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
     fun subscribeSingle(
         filter: (ChatEvent) -> Boolean = { true },
-        listener: (ChatEvent) -> Unit
+        listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return addSubscription(
             SubscriptionImpl(filter, listener).apply {

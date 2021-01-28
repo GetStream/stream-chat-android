@@ -7,7 +7,7 @@ public class Subscription(
     private val observable: ChatObservable,
     private var listener: ((ChatEvent) -> Unit)?,
     private val filters: MutableList<(event: ChatEvent) -> Boolean> = mutableListOf(),
-    private val firstOnly: Boolean
+    private val firstOnly: Boolean,
 ) {
 
     private var deliveredCounter = 0

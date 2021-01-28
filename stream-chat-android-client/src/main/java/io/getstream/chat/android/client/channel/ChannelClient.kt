@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.channel
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -99,10 +100,20 @@ public class ChannelClient internal constructor(
         return client.events().filter(this::isRelevantForChannel)
     }
 
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribe with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
 
+    public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable {
+        return client.subscribe(filterRelevantEvents(listener))
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeFor with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit,
@@ -110,6 +121,16 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeFor with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
@@ -122,6 +143,21 @@ public class ChannelClient internal constructor(
         )
     }
 
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return client.subscribeFor(
+            lifecycleOwner,
+            *eventTypes,
+            listener = filterRelevantEvents(listener)
+        )
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeFor with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit,
@@ -129,6 +165,16 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
+    public fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeFor with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
@@ -141,6 +187,21 @@ public class ChannelClient internal constructor(
         )
     }
 
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return client.subscribeFor(
+            lifecycleOwner,
+            *eventTypes,
+            listener = filterRelevantEvents(listener)
+        )
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeForSingle with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit,
@@ -148,6 +209,16 @@ public class ChannelClient internal constructor(
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
+    public fun subscribeForSingle(
+        eventType: String,
+        listener: ChatEventListener<ChatEvent>,
+    ): Disposable {
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    @Deprecated("User subscribeForSingle with ChatEventListener")
+    @SinceKotlin("99999.9")
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit,
@@ -155,12 +226,19 @@ public class ChannelClient internal constructor(
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
+    public fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: ChatEventListener<T>,
+    ): Disposable {
+        return subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
     private fun <T : ChatEvent> filterRelevantEvents(
-        listener: (event: T) -> Unit,
-    ): (T) -> Unit {
-        return { event: T ->
+        listener: ChatEventListener<T>,
+    ): ChatEventListener<T> {
+        return ChatEventListener { event: T ->
             if (isRelevantForChannel(event)) {
-                listener.invoke(event)
+                listener.onEvent(event)
             }
         }
     }
