@@ -153,6 +153,7 @@ private class FileAttachmentViewHolder(
             }
 
             attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+                clearScope()
                 scope = CoroutineScope(DispatcherProvider.Main)
 
                 scope!!.launch(DispatcherProvider.Main) {
