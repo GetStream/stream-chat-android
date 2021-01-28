@@ -11,19 +11,19 @@ import java.util.Date
 internal data class ChannelConfigInnerEntity(
     @PrimaryKey
     val channelType: String,
-    val createdAt: Date? = null,
-    val updatedAt: Date? = null,
-    val isTypingEvents: Boolean = false,
-    val isReadEvents: Boolean = false,
-    val isConnectEvents: Boolean = false,
-    val isSearch: Boolean = false,
-    val isReactionsEnabled: Boolean = false,
-    val isRepliesEnabled: Boolean = false,
-    val isMutes: Boolean = false,
-    val maxMessageLength: Int = Int.MAX_VALUE,
-    val automod: String = "",
-    val infinite: String = "",
-    val name: String = "",
+    val createdAt: Date?,
+    val updatedAt: Date?,
+    val isTypingEvents: Boolean,
+    val isReadEvents: Boolean,
+    val isConnectEvents: Boolean,
+    val isSearch: Boolean,
+    val isReactionsEnabled: Boolean,
+    val isRepliesEnabled: Boolean,
+    val isMutes: Boolean,
+    val maxMessageLength: Int,
+    val automod: String,
+    val infinite: String,
+    val name: String,
 )
 
 @Entity(
