@@ -30,25 +30,10 @@ internal interface ChatApi {
     fun setConnection(userId: String, connectionId: String)
 
     @CheckResult
-    fun sendFile(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ): Call<String>
-
-    fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    )
+    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
 
     @CheckResult
-    fun sendFile(channelType: String, channelId: String, file: File): Call<String>
-
-    @CheckResult
-    fun sendImage(channelType: String, channelId: String, file: File): Call<String>
+    fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
 
     @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
