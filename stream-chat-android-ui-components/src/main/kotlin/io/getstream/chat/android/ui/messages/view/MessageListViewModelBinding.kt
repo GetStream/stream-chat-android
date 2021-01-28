@@ -4,9 +4,9 @@ package io.getstream.chat.android.ui.messages.view
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.AttachmentDownload
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.FlagMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
@@ -41,7 +41,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setUserMuteHandler { onEvent(MuteUser(it)) }
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
-    view.setAttachmentDownloadHandler { attachment -> onEvent(AttachmentDownload(attachment)) }
+    view.setAttachmentDownloadHandler { attachment -> onEvent(DownloadAttachment(attachment)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {

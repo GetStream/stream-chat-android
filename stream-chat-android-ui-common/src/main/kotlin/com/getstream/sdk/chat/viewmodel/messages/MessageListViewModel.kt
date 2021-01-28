@@ -207,7 +207,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyMessage -> {
                 domain.useCases.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
-            is Event.AttachmentDownload -> {
+            is Event.DownloadAttachment -> {
                 domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
             }
             is Event.ShowMessage -> {
@@ -382,7 +382,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
-        public data class AttachmentDownload(val attachment: Attachment) : Event()
+        public data class DownloadAttachment(val attachment: Attachment) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
     }
