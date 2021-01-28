@@ -629,15 +629,6 @@ internal class ChannelControllerImpl(
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-                val uploadId = generateUploadId()
-                newMessage.uploadId = uploadId
-
-                val messageProgress = ProgressTrackerFactory.getOrCreate(uploadId).apply {
-                    maxValue = newMessage.attachments.size.toLong()
-                }
-
-                var filesCounter = 0
-
                 newMessage.attachments = newMessage.attachments.map {
                     var attachment: Attachment = it
 
@@ -651,20 +642,19 @@ internal class ChannelControllerImpl(
                             attachmentTransformer,
                             attachmentProgress.toProgressCallback()
                         )
-                        attachment.uploadState = Attachment.UploadState.Success
 
                         if (result.isSuccess) {
                             attachment = result.data()
-                            messageProgress.setProgress(++filesCounter)
+                            attachmentProgress.setComplete(true)
+                            attachment.uploadState = Attachment.UploadState.Success
                         } else {
+                            attachmentProgress.setComplete(false)
                             attachment.uploadState = Attachment.UploadState.Failed(result.error())
                         }
                     }
 
                     attachment
                 }.toMutableList()
-
-                messageProgress.setComplete(true)
 
                 uploadStatusMessage?.let { cancelMessage(it) }
                 uploadStatusMessage = null

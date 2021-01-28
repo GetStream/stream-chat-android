@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
@@ -31,8 +30,6 @@ public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
 public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
-
-public fun Message.isAttachmentEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_file && this.uploadId != null
 
 public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
 

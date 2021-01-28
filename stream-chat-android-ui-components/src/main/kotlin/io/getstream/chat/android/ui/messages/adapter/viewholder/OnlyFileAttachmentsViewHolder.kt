@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
@@ -69,23 +70,40 @@ internal class OnlyFileAttachmentsViewHolder(
 
         binding.fileAttachmentsView.setAttachments(data.message.attachments)
 
-        clearScope()
-        val scope = CoroutineScope(DispatcherProvider.Main)
+        val uploadIdList = data.message
+            .attachments
+            .filter { attachment ->
+                attachment.uploadState == Attachment.UploadState.InProgress
+            }
+            .mapNotNull { attachment ->
+            attachment.uploadId
+        }
 
-        data.message.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-            val totalFiles = data.message.attachments.size
+        if (uploadIdList.isNotEmpty()) {
+            clearScope()
+            val scope = CoroutineScope(DispatcherProvider.Main)
+            this.scope = scope
+
             scope.launch {
-                tracker.currentProgress().collect { progress ->
-                    Log.d("OnlyFileAttachments", "Upload sent: $progress / $totalFiles")
-                }
+                var filesSent = 0
+                val totalFiles = uploadIdList.size
 
-                tracker.isComplete().filter { isComplete -> isComplete }.collect {
-                    Log.d("OnlyFileAttachments", "Upload complete: ${context.getString(R.string.stream_ui_upload_complete)}")
+                uploadIdList.forEach { uploadId ->
+                    val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+
+                    tracker.isComplete().filter { isComplete -> isComplete }.collect {
+                        filesSent += 1
+
+                        if (filesSent == totalFiles) {
+                            Log.d("OnlyFileAttachments",
+                                "Upload complete: ${context.getString(R.string.stream_ui_upload_complete)}")
+                        } else {
+                            Log.d("OnlyFileAttachments", "Upload sent: $filesSent / $totalFiles")
+                        }
+                    }
                 }
             }
         }
-
-        this.scope = scope
     }
 
     private fun clearScope() {
