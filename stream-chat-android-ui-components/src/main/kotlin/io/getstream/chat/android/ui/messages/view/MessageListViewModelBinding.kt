@@ -62,4 +62,19 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
+
+    view.setAttachmentReplyOptionClickHandler {
+        TODO("Not yet done!")
+    }
+    view.setAttachmentShowInChatOptionClickHandler { attachmentData ->
+        onEvent(MessageListViewModel.Event.ShowMessage(attachmentData.messageId))
+    }
+    view.setAttachmentDeleteOptionClickHandler { attachmentData ->
+        onEvent(
+            MessageListViewModel.Event.RemoveAttachment(
+                attachmentData.messageId,
+                attachmentData.toAttachment()
+            )
+        )
+    }
 }

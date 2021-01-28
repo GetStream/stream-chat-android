@@ -71,7 +71,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-offline")
 
-    implementation Dependencies.activityKtx
+    implementation Dependencies.androidxActivity
     implementation Dependencies.androidxAnnotations
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxRecyclerview
