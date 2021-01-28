@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
@@ -191,7 +192,7 @@ internal class QueryChannelsControllerImpl(
                 _endOfChannels.value = true
             }
             // first things first, store the configs
-            val channelConfigs = channelsResponse.map { it.type to it.config }
+            val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
             domainImpl.repos.configs.insert(channelConfigs)
             logger.logI("api call returned ${channelsResponse.size} channels")
             updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)

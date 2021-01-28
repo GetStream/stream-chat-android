@@ -6,8 +6,6 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.CommandInnerEntity
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.model.config
-import io.getstream.chat.android.livedata.model.type
 
 internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity(
     channelConfigInnerEntity = with(config) {
@@ -31,8 +29,9 @@ internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity
     commands = config.commands.map { it.toEntity(type) },
 )
 
-internal fun ChannelConfigEntity.toModel(): ChannelConfig =
-    channelConfigInnerEntity.channelType to with(channelConfigInnerEntity) {
+internal fun ChannelConfigEntity.toModel(): ChannelConfig = ChannelConfig(
+    channelConfigInnerEntity.channelType,
+    with(channelConfigInnerEntity) {
         Config(
             created_at = createdAt,
             updated_at = updatedAt,
@@ -50,6 +49,7 @@ internal fun ChannelConfigEntity.toModel(): ChannelConfig =
             commands = commands.map(CommandInnerEntity::toModel),
         )
     }
+)
 
 private fun CommandInnerEntity.toModel() = Command(
     name = name,

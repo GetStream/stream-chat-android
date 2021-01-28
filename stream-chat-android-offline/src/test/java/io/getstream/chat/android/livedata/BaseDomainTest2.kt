@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
@@ -206,7 +207,7 @@ internal open class BaseDomainTest2 {
             }
         )
 
-        chatDomainImpl.repos.configs.insert("messaging" to data.config1)
+        chatDomainImpl.repos.configs.insert(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.users.insert(data.userMap.values.toList())
 
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
