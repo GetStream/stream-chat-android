@@ -639,7 +639,6 @@ internal class ChannelControllerImpl(
                 newMessage.attachments = newMessage.attachments.map {
                     var attachment: Attachment = it
 
-
                     val attachmentProgress = ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
                         maxValue = attachment.upload?.length() ?: 0L
                     }

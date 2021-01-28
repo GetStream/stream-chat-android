@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -41,16 +41,11 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploads(files: List<File>) {
         for (file in files) {
             val result = Result(file.absolutePath)
-            When calling clientMock.sendFileSync(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                any()
-            ) doReturn TestCall(result)
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),
@@ -63,16 +58,11 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(file.toChatError())
-            When calling clientMock.sendFileSync(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                any()
-            ) doReturn TestCall(result)
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),

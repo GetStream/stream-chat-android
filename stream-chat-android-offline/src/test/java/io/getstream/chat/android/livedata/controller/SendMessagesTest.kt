@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.controller
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -112,11 +113,11 @@ internal class SendMessagesTest {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(ChatError())
-            When calling chatClient.sendFileSync(
+            When calling chatClient.sendFile(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
                 same(file),
-                any()
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling chatClient.sendImage(
                 eq(channelController.channelType),
