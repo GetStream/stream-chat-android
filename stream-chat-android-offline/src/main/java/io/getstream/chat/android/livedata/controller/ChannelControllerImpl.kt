@@ -569,6 +569,7 @@ internal class ChannelControllerImpl(
     ): Result<Message> {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
+        val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
         if (newMessage.id.isEmpty()) {
@@ -579,8 +580,9 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
+
         // TODO: type should be a sealed/class or enum at the client level
-        newMessage.type = if (newMessage.text.startsWith("/")) {
+        newMessage.type = if (newMessage.text.startsWith("/") || hasAttachments) {
             "ephemeral"
         } else {
             "regular"
@@ -591,8 +593,16 @@ internal class ChannelControllerImpl(
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
+        newMessage.attachments.forEach { attachment ->
+            attachment.uploadId = generateUploadId()
+            attachment.uploadState = Attachment.UploadState.InProgress
+        }
+
         // TODO remove usage of MessageEntity
         val messageEntity = newMessage.toEntity()
+        if (hasAttachments) {
+            uploadStatusMessage = newMessage
+        }
 
         // Update livedata in channel controller
         upsertMessage(newMessage)
@@ -615,8 +625,6 @@ internal class ChannelControllerImpl(
         return if (online) {
             // upload attachments
 
-            val hasAttachments = newMessage.attachments.isNotEmpty()
-
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
@@ -627,14 +635,7 @@ internal class ChannelControllerImpl(
                     maxValue = newMessage.attachments.size.toLong()
                 }
 
-                upsertProgressMessage(uploadId)
-
                 var filesCounter = 0
-
-                newMessage.attachments.forEach { attachment ->
-                    attachment.uploadId = generateUploadId()
-                    attachment.uploadState = Attachment.UploadState.InProgress
-                }
 
                 newMessage.attachments = newMessage.attachments.map {
                     var attachment: Attachment = it
@@ -668,6 +669,7 @@ internal class ChannelControllerImpl(
                 uploadStatusMessage = null
             }
 
+            newMessage.type = "regular"
             val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
@@ -705,21 +707,6 @@ internal class ChannelControllerImpl(
 
     private fun generateUploadId(): String {
         return "upload_id_${UUID.randomUUID()}"
-    }
-
-    private fun upsertProgressMessage(uploadId: String) {
-        val progressMessage = Message(
-            createdAt = Date(),
-            type = "ephemeral",
-            user = domainImpl.currentUser,
-            command = "file"
-        ).apply {
-            this.uploadId = uploadId
-        }
-
-        uploadStatusMessage = progressMessage
-
-        upsertMessages(listOf(progressMessage))
     }
 
     /**
