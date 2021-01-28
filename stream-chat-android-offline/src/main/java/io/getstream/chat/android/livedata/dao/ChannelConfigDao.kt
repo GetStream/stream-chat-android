@@ -14,19 +14,19 @@ internal interface ChannelConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
-    suspend fun insertMany(channelConfigEntities: List<ChannelConfigEntity>) {
+    suspend fun insert(channelConfigEntities: List<ChannelConfigEntity>) {
         channelConfigEntities.map(ChannelConfigEntity::channelConfigInnerEntity).also { insertConfigs(it) }
         channelConfigEntities.flatMap(ChannelConfigEntity::commands).also { insertCommands(it) }
     }
 
     @Transaction
     suspend fun insert(channelConfigEntity: ChannelConfigEntity) {
-        insert(channelConfigEntity.channelConfigInnerEntity)
+        insertConfig(channelConfigEntity.channelConfigInnerEntity)
         insertCommands(channelConfigEntity.commands)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(channelConfigInnerEntity: ChannelConfigInnerEntity)
+    suspend fun insertConfig(channelConfigInnerEntity: ChannelConfigInnerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertConfigs(channelConfigInnerEntities: List<ChannelConfigInnerEntity>)

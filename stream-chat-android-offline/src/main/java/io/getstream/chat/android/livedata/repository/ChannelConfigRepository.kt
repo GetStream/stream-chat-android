@@ -35,7 +35,7 @@ internal class ChannelConfigRepository(private val channelConfigDao: ChannelConf
         channelConfigs += configs.associateBy(ChannelConfig::type)
 
         // insert into room db
-        channelConfigDao.insertMany(configs.map(ChannelConfig::toEntity))
+        channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
     }
 
     suspend fun insert(config: ChannelConfig) {
