@@ -1,10 +1,10 @@
 package com.getstream.sdk.chat
 
-private const val ACTIVITY_KTX_VERSION = "1.2.0-rc01"
 private const val ANDROID_GRADLE_PLUGIN_VERSION = "4.1.0"
 private const val ANDROID_JUNIT5_GRADLE_PLUGIN_VERSION = "1.6.2.0"
 private const val ANDROID_MAVEN_GRADLE_PLUGIN_VERSION = "2.1"
 private const val ANDROID_LEGACY_SUPPORT = "1.0.0"
+private const val ANDROIDX_ACTIVITY_VERSION = "1.2.0-rc01"
 private const val ANDROIDX_ANNOTATIONS_VERSION = "1.1.0"
 private const val ANDROIDX_APPCOMPAT_VERSION = "1.2.0"
 private const val ANDROIDX_CORE_TEST_VERSION = "2.1.0"
@@ -80,11 +80,11 @@ private const val TRUTH_VERSION = "1.1"
 private const val WORK_VERSION = "2.4.0"
 
 object Dependencies {
-    const val activityKtx = "androidx.activity:activity-ktx:$ACTIVITY_KTX_VERSION"
     const val androidGradlePlugin = "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION"
     const val androidJunit5GradlePlugin = "de.mannodermaus.gradle.plugins:android-junit5:$ANDROID_JUNIT5_GRADLE_PLUGIN_VERSION"
     const val androidMavenGradlePlugin = "com.github.dcendents:android-maven-gradle-plugin:$ANDROID_MAVEN_GRADLE_PLUGIN_VERSION"
     const val androidLegacySupport = "androidx.legacy:legacy-support-v4:$ANDROID_LEGACY_SUPPORT"
+    const val androidxActivity = "androidx.activity:activity-ktx:$ANDROIDX_ACTIVITY_VERSION"
     const val androidxAnnotations = "androidx.annotation:annotation:$ANDROIDX_ANNOTATIONS_VERSION"
     const val androidxAppCompat = "androidx.appcompat:appcompat:$ANDROIDX_APPCOMPAT_VERSION"
     const val androidxArchCoreTest = "androidx.arch.core:core-testing:$ANDROIDX_CORE_TEST_VERSION"

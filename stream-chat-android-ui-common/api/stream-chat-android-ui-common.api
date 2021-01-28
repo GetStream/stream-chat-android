@@ -234,6 +234,8 @@ public class com/getstream/sdk/chat/navigation/destinations/AttachmentDestinatio
 	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun navigate ()V
+	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 }
@@ -1783,6 +1785,10 @@ public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
 	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/ViewKt {
+	public static final fun getActivity (Landroid/view/View;)Landroidx/appcompat/app/AppCompatActivity;
+}
+
 public class com/getstream/sdk/chat/utils/frescoimageviewer/ImageViewer : android/content/DialogInterface$OnKeyListener, com/getstream/sdk/chat/utils/frescoimageviewer/OnDismissListener {
 	protected fun <init> (Lcom/getstream/sdk/chat/utils/frescoimageviewer/ImageViewer$Builder;)V
 	public static fun createImageRequestBuilder ()Lcom/facebook/imagepipeline/request/ImageRequestBuilder;
@@ -2216,6 +2222,19 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveAttachment;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveAttachment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -2236,6 +2255,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RetryMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RetryMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShowMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShowMessage;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShowMessage;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShowMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.options
+package io.getstream.chat.android.ui.options.attachment
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -61,9 +62,13 @@ internal class AttachmentOptionsView : FrameLayout {
                 binding.reply.configureListItem(replyText, replyIcon, iconsDefaultTint)
                 binding.showInChat.configureListItem(showInChatText, showInChatIcon, iconsDefaultTint)
                 binding.saveImage.configureListItem(saveImageText, saveImageIcon, iconsDefaultTint)
-                binding.delete.configureListItem(deleteText, deleteIcon, deleteIconTint)
+                binding.delete.configureListItem(deleteText, deleteIcon, deleteIconTint, deleteTextTint)
             }
         }
+    }
+
+    fun setDeleteItemVisiblity(visible: Boolean) {
+        binding.delete.isVisible = visible
     }
 
     private fun readConfiguration(array: TypedArray): Configuration {
@@ -107,6 +112,11 @@ internal class AttachmentOptionsView : FrameLayout {
             ContextCompat.getColor(context, R.color.stream_ui_accent_red)
         )
 
+        val deleteTextTint = array.getColor(
+            R.styleable.AttachmentOptionsView_streamUiDeleteTextTint,
+            ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+        )
+
         return Configuration(
             iconsDefaultTint = iconsTint,
             replyText = replyText,
@@ -118,6 +128,7 @@ internal class AttachmentOptionsView : FrameLayout {
             deleteText = deleteText,
             deleteIcon = deleteIcon,
             deleteIconTint = deleteIconTint,
+            deleteTextTint = deleteTextTint
         )
     }
 
@@ -131,6 +142,7 @@ internal class AttachmentOptionsView : FrameLayout {
         val saveImageText: String,
         val deleteIcon: Int,
         val deleteIconTint: Int,
+        val deleteTextTint: Int,
         val deleteText: String,
     ) : Serializable
 
@@ -152,6 +164,12 @@ internal class AttachmentOptionsView : FrameLayout {
 
     private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int) {
         this.text = text
+        this.setLeftDrawable(icon, iconTint)
+    }
+
+    private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int, textTint: Int) {
+        this.text = text
+        this.setTextColor(textTint)
         this.setLeftDrawable(icon, iconTint)
     }
 }

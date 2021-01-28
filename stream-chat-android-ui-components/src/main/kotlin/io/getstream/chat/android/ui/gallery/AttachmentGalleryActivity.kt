@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.gallery.overview.UserMediaAttachment
-import io.getstream.chat.android.ui.options.AttachmentOptionsDialogFragment
+import io.getstream.chat.android.ui.options.attachment.AttachmentOptionsDialogFragment
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -53,29 +53,50 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             closeButton.setOnClickListener { this@AttachmentGalleryActivity.onBackPressed() }
             title.text = intent.getStringExtra(EXTRA_KEY_USER_NAME)
             subtitle.text = subtitle(intent.getLongExtra(EXTRA_KEY_TIME, 0))
+            val currentAttachment = obtainAttachments()[binding.attachmentGallery.currentItemIndex]
             menuButton.setOnClickListener {
-                val currentUrl = attachmentUrls[binding.attachmentGallery.currentItemIndex]
-                val currentAttachment = attachments.first { it.imageUrl == currentUrl }
-                val showInChatHandler = object : AttachmentOptionsDialogFragment.ShowInChatHandler {
-                    override fun onClick() = finish()
+                val deleteHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    val result = Intent().apply {
+                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Delete(currentAttachment))
+                    }
+                    setResultAndFinish(result)
                 }
-                val deleteHandler = object : AttachmentOptionsDialogFragment.DeleteHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                val saveHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    val result = Intent().apply {
+                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Download(currentAttachment))
+                    }
+                    setResultAndFinish(result)
                 }
-                val replyHandler = object : AttachmentOptionsDialogFragment.ReplyHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                val showInChatHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    val result = Intent().apply {
+                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.ShowInChat(currentAttachment))
+                    }
+                    setResultAndFinish(result)
                 }
-                val saveHandler = object : AttachmentOptionsDialogFragment.SaveImageHandler {
-                    override fun onClick() = Unit // "Not yet implemented"
+                val replyHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+                    val result = Intent().apply {
+                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Reply(currentAttachment))
+                    }
+                    setResultAndFinish(result)
                 }
-                AttachmentOptionsDialogFragment.newInstance(showInChatHandler, deleteHandler, replyHandler, saveHandler)
-                    .show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
+                AttachmentOptionsDialogFragment.newInstance(
+                    showInChatHandler = showInChatHandler,
+                    deleteHandler = deleteHandler,
+                    replyHandler = replyHandler,
+                    saveImageHandler = saveHandler,
+                    isMine = currentAttachment.isMine,
+                ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
             }
         }
     }
 
     private fun obtainAttachments() =
         intent.getParcelableArrayListExtra<AttachmentData>(EXTRA_KEY_ATTACHMENTS)?.toList().orEmpty()
+
+    private fun setResultAndFinish(result: Intent) {
+        setResult(RESULT_OK, result)
+        finish()
+    }
 
     private fun subtitle(time: Long): String {
         val relativeDay = DateUtils.getRelativeTimeSpanString(
@@ -100,6 +121,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         private const val EXTRA_KEY_USER_NAME = "extra_key_user_name"
         private const val EXTRA_KEY_TIME = "extra_key_time"
 
+        internal const val EXTRA_ATTACHMENT_OPTION_RESULT = "extra_attachment_option_result"
+
         @JvmStatic
         public fun createIntent(
             context: Context,
@@ -107,9 +130,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             currentIndex: Int,
             message: Message,
             attachments: List<Attachment>,
+            isMine: Boolean,
         ): Intent {
             val userName = message.user.name
-            val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName) }
+            val attachmentsData = attachments.map { it.toAttachmentData(message.id, message.cid, userName, isMine) }
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_CURRENT_INDEX, currentIndex)
                 putExtra(EXTRA_KEY_TIME, time)
@@ -118,11 +142,17 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             }
         }
 
-        private fun Attachment.toAttachmentData(messageId: String, cid: String, userName: String): AttachmentData =
+        private fun Attachment.toAttachmentData(
+            messageId: String,
+            cid: String,
+            userName: String,
+            isMine: Boolean,
+        ): AttachmentData =
             AttachmentData(
                 messageId = messageId,
                 cid = cid,
                 userName = userName,
+                isMine = isMine,
                 imageUrl = this.imageUrl,
                 assetUrl = this.assetUrl,
                 name = this.name
@@ -134,6 +164,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val messageId: String,
         val cid: String,
         val userName: String,
+        val isMine: Boolean = false,
         val authorName: String? = null,
         val imageUrl: String? = null,
         val assetUrl: String? = null,
@@ -145,5 +176,50 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val image: String? = null,
         val url: String? = null,
         val name: String? = null,
-    ) : Parcelable
+    ) : Parcelable {
+        public fun toAttachment(): Attachment =
+            Attachment(
+                authorName = authorName,
+                imageUrl = imageUrl,
+                assetUrl = assetUrl,
+                url = url,
+                name = name,
+                image = image,
+                type = type,
+                text = text,
+                title = title,
+                fileSize = fileSize,
+                mimeType = mimeType,
+            )
+    }
+
+    public fun interface AttachmentShowInChatOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+
+    public fun interface AttachmentReplyOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+
+    public fun interface AttachmentDownloadOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+
+    public fun interface AttachmentDeleteOptionHandler {
+        public fun onClick(attachmentData: AttachmentData): Unit
+    }
+
+    internal sealed class AttachmentOptionResult(open val data: AttachmentData) : Parcelable {
+        @Parcelize
+        internal class Reply(override val data: AttachmentData) : AttachmentOptionResult(data)
+
+        @Parcelize
+        internal class ShowInChat(override val data: AttachmentData) : AttachmentOptionResult(data)
+
+        @Parcelize
+        internal class Delete(override val data: AttachmentData) : AttachmentOptionResult(data)
+
+        @Parcelize
+        internal class Download(override val data: AttachmentData) : AttachmentOptionResult(data)
+    }
 }
