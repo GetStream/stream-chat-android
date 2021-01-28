@@ -187,7 +187,7 @@ internal class QueryChannelsControllerImpl(
             recoveryNeeded = false
 
             // store the results in the database
-            val channelsResponse = response.data()
+            val channelsResponse = response.data().toSet()
             if (channelsResponse.size < pagination.channelLimit) {
                 _endOfChannels.value = true
             }
@@ -206,7 +206,7 @@ internal class QueryChannelsControllerImpl(
         return response
     }
 
-    private fun updateQueryChannelsSpec(channels: List<Channel>, isFirstPage: Boolean) {
+    private fun updateQueryChannelsSpec(channels: Collection<Channel>, isFirstPage: Boolean) {
         val newCids = channels.map(Channel::cid)
         queryChannelsSpec.cids =
             if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()

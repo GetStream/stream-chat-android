@@ -739,7 +739,7 @@ internal class ChatDomainImpl internal constructor(
         return storeStateForChannels(listOf(channel))
     }
 
-    suspend fun storeStateForChannels(channelsResponse: List<Channel>) {
+    suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
         val users = mutableMapOf<String, User>()
         val configs: MutableCollection<ChannelConfig> = mutableSetOf()
         // start by gathering all the users
