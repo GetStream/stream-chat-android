@@ -51,27 +51,32 @@ class GroupChatInfoMemberOptionsViewModel(
             ).await()
             if (result.isSuccess) {
                 _state.addSource(
-                    Transformations.map(result.data().channelsState) { channelState ->
-                        when (channelState) {
-                            is QueryChannelsController.ChannelsState.Result -> {
-                                State(
-                                    directChannelCid = channelState.channels.filterNot { channel ->
-                                        channel.isDraft
-                                    }.firstOrNull()?.cid,
-                                    loading = false,
-                                )
-                            }
-                            QueryChannelsController.ChannelsState.NoQueryActive,
-                            QueryChannelsController.ChannelsState.Loading,
-                            -> State(directChannelCid = null, loading = true)
-                            QueryChannelsController.ChannelsState.OfflineNoResults -> State(
-                                directChannelCid = null,
-                                loading = false,
-                            )
-                        }
-                    }
+                    Transformations.map(
+                        result.data().channelsState,
+                        this@GroupChatInfoMemberOptionsViewModel::mapChannelState,
+                    )
                 ) { newState -> _state.value = newState }
             }
+        }
+    }
+
+    private fun mapChannelState(channelState: QueryChannelsController.ChannelsState): State {
+        return when (channelState) {
+            is QueryChannelsController.ChannelsState.Result -> {
+                State(
+                    directChannelCid = channelState.channels.filterNot { channel ->
+                        channel.isDraft
+                    }.firstOrNull()?.cid,
+                    loading = false,
+                )
+            }
+            QueryChannelsController.ChannelsState.NoQueryActive,
+            QueryChannelsController.ChannelsState.Loading,
+            -> State(directChannelCid = null, loading = true)
+            QueryChannelsController.ChannelsState.OfflineNoResults -> State(
+                directChannelCid = null,
+                loading = false,
+            )
         }
     }
 
