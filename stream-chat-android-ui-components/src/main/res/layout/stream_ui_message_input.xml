@@ -9,7 +9,7 @@
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/replyHeader"
+        android:id="@+id/inputModeHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/stream_ui_spacing_small"
@@ -24,7 +24,7 @@
         >
 
         <ImageView
-            android:id="@+id/replyIcon"
+            android:id="@+id/inputModeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/stream_ui_ic_arrow_curve_left"
@@ -43,13 +43,13 @@
             android:text="@string/stream_ui_reply_to_message"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/dismissReply"
-            app:layout_constraintStart_toEndOf="@id/replyIcon"
+            app:layout_constraintEnd_toStartOf="@id/dismissInputMode"
+            app:layout_constraintStart_toEndOf="@id/inputModeIcon"
             app:layout_constraintTop_toTopOf="parent"
             />
 
         <ImageView
-            android:id="@+id/dismissReply"
+            android:id="@+id/dismissInputMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/stream_ui_ic_clear"
@@ -93,7 +93,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/sendAlsoToChannel"
         app:layout_constraintEnd_toStartOf="@id/sendButtonContainer"
         app:layout_constraintStart_toEndOf="@id/commandsButton"
-        app:layout_constraintTop_toBottomOf="@id/replyHeader"
+        app:layout_constraintTop_toBottomOf="@id/inputModeHeader"
         tools:layout_height="40dp"
         />
 

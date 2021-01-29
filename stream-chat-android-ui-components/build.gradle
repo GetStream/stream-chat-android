@@ -79,7 +79,7 @@ dependencies {
 
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.coroutinesCore
-    implementation Dependencies.androidxActivity
+    implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.constraintLayout

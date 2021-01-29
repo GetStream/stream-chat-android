@@ -556,6 +556,7 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler;)V
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
+	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
@@ -602,6 +603,10 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$AttachmentDownloadHandler {
 	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$ConfirmDeleteMessageHandler {
+	public abstract fun onConfirmDeleteMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$EndRegionReachedHandler {
@@ -853,6 +858,7 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView 
 	public final fun hasContent ()Z
 	public final fun hasText ()Z
 	public final fun isMaxMessageLengthExceeded ()Z
+	public final fun onEdit (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun onReply (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun onReplyDismissed ()V
 	public final fun setContentChangeListener (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener;)V

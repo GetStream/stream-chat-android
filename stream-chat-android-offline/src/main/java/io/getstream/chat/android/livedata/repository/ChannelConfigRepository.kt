@@ -1,45 +1,44 @@
 package io.getstream.chat.android.livedata.repository
 
-import io.getstream.chat.android.client.models.Config
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
+import io.getstream.chat.android.livedata.model.ChannelConfig
+import io.getstream.chat.android.livedata.repository.mapper.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toModel
+import java.util.Collections
 
 /**
  * The channel config repository stores all channel configs in room as well as in memory
  * Call channelConfigRepository.load to load all configs into memory
  */
-internal class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
-    var channelConfigs: MutableMap<String, Config> = mutableMapOf()
+internal class ChannelConfigRepository(private val channelConfigDao: ChannelConfigDao) {
+    private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
 
-    suspend fun load() {
-        val configEntities = channelConfigDao.selectAll()
-        for (configEntity in configEntities) {
-            channelConfigs[configEntity.channelType] = configEntity.config
-        }
+    internal suspend fun load() {
+        channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
+            .associateBy(ChannelConfig::type)
     }
 
-    fun clearCache() {
-        channelConfigs = mutableMapOf()
+    @VisibleForTesting
+    internal fun clearCache() {
+        channelConfigs.clear()
     }
 
-    fun select(channelType: String): Config? {
-        return channelConfigs.getOrElse(channelType) { null }
+    internal fun select(channelType: String): ChannelConfig? {
+        return channelConfigs[channelType]
     }
 
-    suspend fun insert(configEntities: List<ChannelConfigEntity>) {
-
+    suspend fun insert(configs: Collection<ChannelConfig>) {
         // update the local configs
-        for (configEntity in configEntities) {
-            channelConfigs[configEntity.channelType] = configEntity.config
-        }
+        channelConfigs += configs.associateBy(ChannelConfig::type)
 
         // insert into room db
-        channelConfigDao.insertMany(configEntities)
+        channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
     }
 
-    suspend fun insertConfigs(configs: MutableMap<String, Config>) {
-        val configEntities = configs.map { ChannelConfigEntity(it.key, it.value) }
-
-        insert(configEntities)
+    suspend fun insert(config: ChannelConfig) {
+        channelConfigs += config.type to config
+        channelConfigDao.insert(config.toEntity())
     }
 }

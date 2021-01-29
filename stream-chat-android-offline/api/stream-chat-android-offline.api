@@ -221,10 +221,9 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Th
 	public abstract fun getThreadId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/dao/ChannelConfigDao_Impl : io/getstream/chat/android/livedata/dao/ChannelConfigDao {
+public final class io/getstream/chat/android/livedata/dao/ChannelConfigDao_Impl {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun insert (Lio/getstream/chat/android/livedata/entity/ChannelConfigEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

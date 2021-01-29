@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
@@ -17,46 +18,62 @@ import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
 class ChatInfoViewModel(
-    private val cid: String,
+    private val cid: String?,
+    userData: UserData?,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val chatClient: ChatClient = ChatClient.instance()
+    chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val channelClient: ChannelClient = chatClient.channel(cid)
+    private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
     private val _channelDeletedState = MutableLiveData(false)
     val state: LiveData<State> = _state
     val channelDeletedState: LiveData<Boolean> = _channelDeletedState
 
     init {
-        _state.value = State()
-        viewModelScope.launch {
-            val channelControllerResult = chatDomain.useCases.getChannelController(cid).await()
-            if (channelControllerResult.isSuccess) {
-                val canDeleteChannel = channelControllerResult.data().members.value.isCurrentUserOwnerOrAdmin()
-                _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
+        if (cid != null) {
+            channelClient = chatClient.channel(cid)
+            _state.value = State()
+            viewModelScope.launch {
+                val channelControllerResult = chatDomain.useCases.getChannelController(cid).await()
+                if (channelControllerResult.isSuccess) {
+                    val canDeleteChannel = channelControllerResult.data().members.value.isCurrentUserOwnerOrAdmin()
+                    _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
+                }
+                // Currently, we don't receive any event when channel member is banned/shadow banned, so
+                // we need to get member data from the server
+                val result =
+                    channelClient.queryMembers(
+                        offset = 0,
+                        limit = 1,
+                        filter = Filters.ne("id", chatDomain.currentUser.id)
+                    )
+                        .await()
+                if (result.isSuccess) {
+                    val member = result.data().firstOrNull()
+                    // Update member, member block status, and channel notifications
+                    _state.value = _state.value!!.copy(
+                        member = member,
+                        isMemberBlocked = member?.shadowBanned ?: false,
+                        notificationsEnabled = chatDomain.currentUser.channelMutes.any { it.channel.cid == cid },
+                        loading = false,
+                    )
+
+                    // Muted channel members
+                    _state.addSource(chatDomain.muted) { mutes -> updateMutes(mutes) }
+                } else {
+                    // TODO: Handle error
+                    _state.value = _state.value!!.copy(loading = false)
+                }
             }
-            // Currently, we don't receive any event when channel member is banned/shadow banned, so
-            // we need to get member data from the server
-            val result =
-                channelClient.queryMembers(offset = 0, limit = 1, filter = Filters.ne("id", chatDomain.currentUser.id))
-                    .await()
-            if (result.isSuccess) {
-                val member = result.data().firstOrNull()
-                // Update member, member block status, and channel notifications
-                _state.value = _state.value!!.copy(
-                    member = member,
-                    isMemberBlocked = member?.shadowBanned ?: false,
-                    notificationsEnabled = chatDomain.currentUser.channelMutes.any { it.channel.cid == cid },
+        } else {
+            _state.value =
+                State(
+                    member = Member(user = userData!!.toUser()),
+                    canDeleteChannel = false,
+                    channelExists = false,
                     loading = false,
                 )
-
-                // Muted channel members
-                _state.addSource(chatDomain.muted) { mutes -> updateMutes(mutes) }
-            } else {
-                // TODO: Handle error
-                _state.value = _state.value!!.copy(loading = false)
-            }
         }
     }
 
@@ -129,6 +146,7 @@ class ChatInfoViewModel(
     }
 
     private fun deleteChannel() {
+        val cid = requireNotNull(cid)
         viewModelScope.launch {
             val result = chatDomain.useCases.deleteChannel(cid).await()
             if (result.isSuccess) {
@@ -153,6 +171,7 @@ class ChatInfoViewModel(
         val isMemberMuted: Boolean = false,
         val isMemberBlocked: Boolean = false,
         val canDeleteChannel: Boolean = false,
+        val channelExists: Boolean = true,
         val loading: Boolean = true,
     )
 
@@ -162,5 +181,20 @@ class ChatInfoViewModel(
         data class OptionBlockUserClicked(val isEnabled: Boolean) : Action()
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
         object ChannelDeleted : Action()
+    }
+}
+
+class ChatInfoViewModelFactory(private val cid: String?, private val userData: UserData?) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        require(cid != null || userData != null) {
+            "Either cid or userData should not be null"
+        }
+        require(modelClass == ChatInfoViewModel::class.java) {
+            "ChatInfoViewModelFactory can only create instances of ChatInfoViewModel"
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return ChatInfoViewModel(cid, userData) as T
     }
 }

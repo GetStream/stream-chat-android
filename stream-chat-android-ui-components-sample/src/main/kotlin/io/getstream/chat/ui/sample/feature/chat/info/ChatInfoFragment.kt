@@ -17,14 +17,12 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
-import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 
 class ChatInfoFragment : Fragment() {
 
     private val args: ChatInfoFragmentArgs by navArgs()
-    private val factory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
-    private val viewModel: ChatInfoViewModel by viewModels { factory }
+    private val viewModel: ChatInfoViewModel by viewModels { ChatInfoViewModelFactory(args.cid, args.userData) }
     private val adapter: ChatInfoAdapter = ChatInfoAdapter()
 
     private var _binding: FragmentChatInfoBinding? = null
@@ -81,11 +79,13 @@ class ChatInfoFragment : Fragment() {
                 add(ChatInfoItem.Separator)
             }
 
-            add(ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled))
+            if (state.channelExists) {
+                add(ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled))
 
-            if (state.member != null) {
-                add(ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted))
-                add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
+                if (state.member != null) {
+                    add(ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted))
+                    add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
+                }
             }
 
             add(ChatInfoItem.Option.SharedMedia)

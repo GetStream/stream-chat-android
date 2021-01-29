@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.common.name
 import kotlinx.coroutines.launch
 
@@ -22,9 +23,9 @@ class GroupChatInfoViewModel(
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()
-    private val _channelLeftState = MutableLiveData(false)
+    private val _events = MutableLiveData<Event<UiEvent>>()
+    val events: LiveData<Event<UiEvent>> = _events
     val state: LiveData<State> = _state
-    val channelLeftState: LiveData<Boolean> = _channelLeftState
 
     init {
         _state.value = INITIAL_STATE
@@ -49,10 +50,18 @@ class GroupChatInfoViewModel(
     fun onAction(action: Action) {
         when (action) {
             is Action.NameChanged -> changeGroupName(action.name)
+            is Action.MemberClicked -> handleMemberClick(action.member)
             Action.MembersSeparatorClicked -> _state.value = _state.value!!.copy(shouldExpandMembers = true)
             is Action.MuteChannelClicked -> switchGroupMute(action.isEnabled)
             is Action.ChannelMutesUpdated -> updateChannelMuteStatus(action.channelMutes)
             Action.LeaveChannelClicked -> leaveChannel()
+        }
+    }
+
+    private fun handleMemberClick(member: Member) {
+        if (member.getUserId() != chatDomain.currentUser.id) {
+            val currentState = _state.value!!
+            _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
         }
     }
 
@@ -69,7 +78,7 @@ class GroupChatInfoViewModel(
         viewModelScope.launch {
             val result = chatDomain.useCases.leaveChannel(cid).await()
             if (result.isSuccess) {
-                _channelLeftState.value = true
+                _events.value = Event(UiEvent.RedirectToHome)
             } else {
                 // TODO: Handle error
             }
@@ -114,10 +123,16 @@ class GroupChatInfoViewModel(
 
     sealed class Action {
         data class NameChanged(val name: String) : Action()
+        data class MemberClicked(val member: Member) : Action()
         object MembersSeparatorClicked : Action()
         data class MuteChannelClicked(val isEnabled: Boolean) : Action()
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
         object LeaveChannelClicked : Action()
+    }
+
+    sealed class UiEvent {
+        data class ShowMemberOptions(val member: Member, val channelName: String) : UiEvent()
+        object RedirectToHome : UiEvent()
     }
 
     companion object {
