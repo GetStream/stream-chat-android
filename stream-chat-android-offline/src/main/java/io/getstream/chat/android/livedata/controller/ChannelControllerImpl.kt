@@ -598,6 +598,12 @@ internal class ChannelControllerImpl(
             attachment.uploadState = Attachment.UploadState.InProgress
         }
 
+        val attachmentProgressList = newMessage.attachments.map { attachment ->
+            ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
+                maxValue = attachment.upload?.length() ?: 0L
+            }
+        }
+
         // TODO remove usage of MessageEntity
         val messageEntity = newMessage.toEntity()
         if (hasAttachments) {
@@ -628,16 +634,13 @@ internal class ChannelControllerImpl(
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-                newMessage.attachments = newMessage.attachments.map {
-                    var attachment: Attachment = it
+                newMessage.attachments = newMessage.attachments.mapIndexed { i, attach ->
+                    var attachment: Attachment = attach
+                    val attachmentProgress = attachmentProgressList[i]
 
-                    val attachmentProgress = ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
-                        maxValue = attachment.upload?.length() ?: 0L
-                    }
-
-                    if (it.upload != null) {
+                    if (attachment.upload != null) {
                         val result = uploadAttachment(
-                            it,
+                            attachment,
                             attachmentTransformer,
                             attachmentProgress.toProgressCallback()
                         )

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -21,7 +20,8 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decora
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 internal class OnlyFileAttachmentsViewHolder(
@@ -99,18 +99,20 @@ internal class OnlyFileAttachmentsViewHolder(
         binding.sentFiles.text =
             String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
 
-        uploadIdList.forEach { uploadId ->
-            val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+        uploadIdList.map { uploadId ->
+            ProgressTrackerFactory.getOrCreate(uploadId).isComplete().map { listOf(it) }
+        }.reduce { acc, flow ->
+            acc.combine(flow) { flow1, flow2 -> flow1 + flow2 }
+        }.map { stateList ->
+            stateList.filter { it }
+        }.collect { stateList ->
+            filesSent = stateList.size
 
-            tracker.isComplete().filter { isComplete -> isComplete }.collect {
-                filesSent += 1
-
-                if (filesSent == totalFiles) {
-                    binding.sentFiles.text = context.getString(R.string.stream_ui_upload_complete)
-                } else {
-                    binding.sentFiles.text =
-                        String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
-                }
+            if (filesSent == totalFiles) {
+                binding.sentFiles.text = context.getString(R.string.stream_ui_upload_complete)
+            } else {
+                binding.sentFiles.text =
+                    String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
             }
         }
     }
