@@ -24,3 +24,4 @@ for the sake of backwards compatibility, has been updated.
   and `MessageListViewModel::setThreadDateSeparatorHandler` which determines when to add date separator between messages
 - Add `MessageListViewModel.Event.ReplyAttachment`, `MessageListViewModel.Event.DownloadAttachment`, `MessageListViewModel.Event.ShowMessage`,
   and `MessageListViewModel.Event.RemoveAttachment` classes.
+- Deprecate `MessageListViewModel.Event.AttachmentDownload`
