@@ -27,12 +27,11 @@ class ChatPreviewViewModel(
     init {
         _state.value = State(cid = null)
         viewModelScope.launch {
-            val result = ChatClient.instance()
-                .createChannel(
-                    channelType = "messaging",
-                    members = listOf(chatDomain.currentUser.id, memberId),
-                    extraData = mapOf(CHANNEL_ARG_DRAFT to true)
-                ).await()
+            val result = chatClient.createChannel(
+                channelType = "messaging",
+                members = listOf(chatDomain.currentUser.id, memberId),
+                extraData = mapOf(CHANNEL_ARG_DRAFT to true)
+            ).await()
             if (result.isSuccess) {
                 cid = result.data().cid
                 _state.value = State(cid!!)
