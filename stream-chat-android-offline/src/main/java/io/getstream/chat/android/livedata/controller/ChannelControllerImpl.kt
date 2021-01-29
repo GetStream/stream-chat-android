@@ -663,7 +663,7 @@ internal class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    private fun uploadAttachment(
+    internal fun uploadAttachment(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Attachment> {
@@ -888,7 +888,7 @@ internal class ChannelControllerImpl(
 
     // This one needs to be public for flows such as running a message action
 
-    private fun upsertMessage(message: Message) {
+    internal fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 
