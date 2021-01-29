@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.ui.sample.R
@@ -114,3 +115,8 @@ val ChannelData.name: String
 
 val Member.isOwner: Boolean
     get() = role == "owner"
+
+const val CHANNEL_ARG_DRAFT = "draft"
+
+val Channel.isDraft: Boolean
+    get() = getExtraValue(CHANNEL_ARG_DRAFT, false)

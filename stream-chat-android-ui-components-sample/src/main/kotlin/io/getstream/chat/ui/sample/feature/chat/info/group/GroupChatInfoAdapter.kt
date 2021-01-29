@@ -2,6 +2,7 @@ package io.getstream.chat.ui.sample.feature.chat.info.group
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupNameItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoMembersSeparatorItemBinding
@@ -14,6 +15,7 @@ import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoMembersSeparatorVie
 
 class GroupChatInfoAdapter : ChatInfoAdapter() {
 
+    private var memberClickListener: MemberClickListener? = null
     private var membersSeparatorClickListener: MembersSeparatorClickListener? = null
     private var nameChangedListener: NameChangedListener? = null
 
@@ -22,7 +24,7 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
             TYPE_GROUP_MEMBER_ITEM ->
                 ChatInfoGroupMemberItemBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
-                    .let(::ChatInfoGroupMemberViewHolder)
+                    .let { ChatInfoGroupMemberViewHolder(it, memberClickListener) }
             TYPE_MEMBERS_SEPARATOR ->
                 ChatInfoMembersSeparatorItemBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
@@ -44,6 +46,10 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
         }
     }
 
+    fun setMemberClickListener(listener: MemberClickListener) {
+        memberClickListener = listener
+    }
+
     fun setMembersSeparatorClickListener(listener: MembersSeparatorClickListener?) {
         membersSeparatorClickListener = listener
     }
@@ -56,6 +62,10 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
         private const val TYPE_GROUP_MEMBER_ITEM = 10
         private const val TYPE_MEMBERS_SEPARATOR = 11
         private const val TYPE_EDIT_GROUP_NAME = 12
+    }
+
+    fun interface MemberClickListener {
+        fun onClick(member: Member)
     }
 
     fun interface MembersSeparatorClickListener {
