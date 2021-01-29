@@ -131,4 +131,5 @@
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_gallery_default_bar_height">56dp</dimen>
+    <dimen name="stream_ui_options_menu_corner_radius">16dp</dimen>
 </resources>
