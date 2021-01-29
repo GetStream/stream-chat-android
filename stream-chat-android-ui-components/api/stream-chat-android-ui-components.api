@@ -892,6 +892,7 @@ public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView 
 	public final fun hasContent ()Z
 	public final fun hasText ()Z
 	public final fun isMaxMessageLengthExceeded ()Z
+	public final fun onEdit (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun onReply (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun onReplyDismissed ()V
 	public final fun setContentChangeListener (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener;)V
