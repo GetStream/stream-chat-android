@@ -71,6 +71,7 @@
         android:src="@drawable/stream_ui_ic_attach"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="?selectableItemBackgroundBorderless"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -83,6 +84,7 @@
         android:tint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
+        android:background="?selectableItemBackgroundBorderless"
         />
 
     <io.getstream.chat.android.ui.textinput.MessageInputFieldView
