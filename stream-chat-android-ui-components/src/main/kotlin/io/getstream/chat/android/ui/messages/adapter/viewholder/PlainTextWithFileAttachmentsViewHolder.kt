@@ -1,8 +1,14 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextWithFileAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -13,6 +19,12 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickLis
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.utils.extensions.hasLink
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 internal class PlainTextWithFileAttachmentsViewHolder(
     parent: ViewGroup,
@@ -25,6 +37,8 @@ internal class PlainTextWithFileAttachmentsViewHolder(
             false
         ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    private var scope: CoroutineScope? = null
 
     init {
         binding.run {
@@ -75,5 +89,60 @@ internal class PlainTextWithFileAttachmentsViewHolder(
                 .attachments
                 .filter { it.hasLink().not() }
         )
+
+        val uploadIdList: List<String> = data.message
+            .attachments
+            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
+            .mapNotNull { attachment -> attachment.uploadId }
+
+        val needUpload = uploadIdList.isNotEmpty()
+
+        if (needUpload) {
+            clearScope()
+            val scope = CoroutineScope(DispatcherProvider.Main)
+            this.scope = scope
+
+            scope.launch {
+                trackFilesSent(uploadIdList)
+            }
+        } else {
+            binding.sentFiles.isVisible = false
+        }
+    }
+
+    private suspend fun trackFilesSent(uploadIdList: List<String>) {
+        var filesSent = 0
+        val totalFiles = uploadIdList.size
+
+        binding.sentFiles.isVisible = true
+        binding.sentFiles.text =
+            String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
+
+        uploadIdList.map { uploadId ->
+            ProgressTrackerFactory.getOrCreate(uploadId).isComplete().map { listOf(it) }
+        }.reduce { acc, flow ->
+            acc.combine(flow) { flow1, flow2 -> flow1 + flow2 }
+        }.map { stateList ->
+            stateList.filter { it }
+        }.collect { stateList ->
+            filesSent = stateList.size
+
+            if (filesSent == totalFiles) {
+                binding.sentFiles.text = context.getString(R.string.stream_ui_upload_complete)
+            } else {
+                binding.sentFiles.text =
+                    String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
+            }
+        }
+    }
+
+    private fun clearScope() {
+        scope?.cancel()
+        scope = null
+    }
+
+    override fun unbind() {
+        super.unbind()
+        clearScope()
     }
 }
