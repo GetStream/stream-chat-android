@@ -7,13 +7,13 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.messages.reactions.ReactionsAdapter
-import io.getstream.chat.android.ui.utils.UiUtils
-import io.getstream.chat.android.ui.utils.extensions.isMineReactionOfType
+import io.getstream.chat.android.ui.utils.ReactionType
 
+@InternalStreamChatApi
 public class EditReactionsView : RecyclerView {
 
     private lateinit var reactionsViewStyle: EditReactionsViewStyle
@@ -42,10 +42,12 @@ public class EditReactionsView : RecyclerView {
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
 
-        val reactionItems = UiUtils.getReactionTypes().keys.map { reactionType ->
-            message.latestReactions
-                .any { it.isMineReactionOfType(reactionType) }
-                .let { isMine -> ReactionItem(Reaction(type = reactionType), isMine) }
+        val reactionItems = ReactionType.values().map { reactionType ->
+            ReactionItem(
+                type = reactionType.type,
+                isMine = message.ownReactions.any { it.type == reactionType.type },
+                iconDrawableRes = reactionType.iconRes
+            )
         }
         reactionsAdapter.submitList(reactionItems)
     }
