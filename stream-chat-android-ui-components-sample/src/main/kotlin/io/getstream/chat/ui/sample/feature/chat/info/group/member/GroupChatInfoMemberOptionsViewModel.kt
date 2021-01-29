@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
@@ -44,7 +45,7 @@ class GroupChatInfoMemberOptionsViewModel(
                         ),
                     ),
                 ),
-                sort = QuerySort.desc("last_updated"),
+                sort = QuerySort.desc(Channel::lastUpdated),
                 messageLimit = 0,
                 limit = 1,
             ).await()
