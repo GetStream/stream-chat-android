@@ -1670,8 +1670,6 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
-	public static final fun getUploadId (Lio/getstream/chat/android/client/models/Message;)Ljava/lang/String;
-	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/client/helpers/AttachmentHelper {
@@ -2649,17 +2647,7 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/lang/String;
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Ljava/lang/String;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/lang/String;
-	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)V
-}
-
-public final class io/getstream/chat/android/client/uploader/ProgressTracker {
-	public fun <init> ()V
-	public final fun currentProgress ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getMaxValue ()J
-	public final fun isComplete ()Lkotlinx/coroutines/flow/Flow;
-	public final fun setComplete (Z)V
-	public final fun setMaxValue (J)V
-	public final fun setProgress (I)V
+	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {

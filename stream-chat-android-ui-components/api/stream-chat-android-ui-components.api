@@ -456,7 +456,6 @@ public class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewHo
 	public fun <init> ()V
 	protected final fun createAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
-	protected final fun createEphemeralAttachmentsProgressViewModel (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder;
@@ -471,7 +470,6 @@ public class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewHo
 
 public final class io/getstream/chat/android/ui/messages/adapter/MessageListItemViewType {
 	public static final field ATTACHMENTS I
-	public static final field ATTACHMENTS_EPHEMERAL I
 	public static final field DATE_DIVIDER I
 	public static final field GIPHY I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/messages/adapter/MessageListItemViewType;
@@ -1133,7 +1131,6 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageKt {
 	public static final fun hasNoAttachments (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun hasSingleReaction (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun hasText (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isAttachmentEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isDeleted (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isFailed (Lio/getstream/chat/android/client/models/Message;)Z
