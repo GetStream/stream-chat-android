@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,8 @@ import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 internal class FileAttachmentsView : RecyclerView {
@@ -147,21 +150,36 @@ private class FileAttachmentViewHolder(
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
-            attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-                clearScope()
-                scope = CoroutineScope(DispatcherProvider.Main)
+            binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
 
-                scope!!.launch(DispatcherProvider.Main) {
-                    tracker.currentProgress().collect { progress ->
-                        val nominalProgress = progress.toLong() * tracker.maxValue / 100
+            if (attachment.uploadState is Attachment.UploadState.InProgress) {
+                attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+                    val progress = tracker.currentProgress()
+                    val completion = tracker.isComplete()
+                    val totalValue = MediaStringUtil.convertFileSizeByteCount(
+                        attachment.upload?.length() ?: 0
+                    )
 
-                        if (attachment.uploadState is Attachment.UploadState.InProgress) {
-                            fileSize.text = "$nominalProgress / ${attachment.upload?.length()}"
+                    val fileProgress = progress.combine(completion, ::Pair)
+
+                    clearScope()
+                    scope = CoroutineScope(DispatcherProvider.Main)
+
+                    scope!!.launch {
+                        fileProgress.collect { (progress, isComplete) ->
+                            if (!isComplete) {
+                                val nominalProgress = MediaStringUtil.convertFileSizeByteCount(
+                                    progress.toLong() * tracker.maxValue / 100
+                                )
+
+                                fileSize.text = "$nominalProgress / $totalValue"
+                            } else {
+                                binding.progressBar.isVisible = false
+                                fileSize.text = attachment.upload?.length()?.let {
+                                    MediaStringUtil.convertFileSizeByteCount(it)
+                                }
+                            }
                         }
-                    }
-
-                    tracker.isComplete().collect {
-                        fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
                     }
                 }
             }
