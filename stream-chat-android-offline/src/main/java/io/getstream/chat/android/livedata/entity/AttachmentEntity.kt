@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
     tableName = "attachment_inner_entity",
     foreignKeys = [
         ForeignKey(
-            entity = MessageEntity::class,
+            entity = MessageInnerEntity::class,
             parentColumns = ["id"],
             childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,

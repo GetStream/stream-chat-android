@@ -1,22 +1,27 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.client.models.Attachment
+import androidx.room.Relation
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
 internal data class MessageEntity(
+    @Embedded val messageInnerEntity: MessageInnerEntity,
+    @Relation(entity = AttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
+    val attachments: List<AttachmentEntity>,
+)
+
+@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
+internal data class MessageInnerEntity(
     @PrimaryKey
     val id: String,
     val cid: String,
     val userId: String,
     /** the message text */
     val text: String = "",
-    /** the list of attachments */
-    val attachments: List<Attachment> = emptyList(),
     /** message type can be system, regular or ephemeral */
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */

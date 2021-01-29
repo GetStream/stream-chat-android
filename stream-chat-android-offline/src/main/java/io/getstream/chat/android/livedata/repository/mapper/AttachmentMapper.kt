@@ -31,7 +31,7 @@ internal fun Attachment.toEntity(messageId: String): AttachmentEntity = Attachme
     extraData = extraData,
 )
 
-internal fun AttachmentEntity.toAttachment(): Attachment = Attachment(
+internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     authorName = authorName,
     titleLink = titleLink,
     thumbUrl = thumbUrl,

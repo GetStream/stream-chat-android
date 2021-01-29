@@ -20,11 +20,12 @@ import io.getstream.chat.android.livedata.dao.QueryChannelsDao
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.dao.SyncStateDao
 import io.getstream.chat.android.livedata.dao.UserDao
+import io.getstream.chat.android.livedata.entity.AttachmentEntity
 import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.CommandInnerEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.MessageInnerEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
@@ -34,7 +35,8 @@ import io.getstream.chat.android.livedata.entity.UserEntity
     entities = [
         QueryChannelsEntity::class,
         ChannelSortInnerEntity::class,
-        MessageEntity::class,
+        MessageInnerEntity::class,
+        AttachmentEntity::class,
         UserEntity::class,
         ReactionEntity::class,
         ChannelEntity::class,
@@ -42,7 +44,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
         CommandInnerEntity::class,
         SyncStateEntity::class
     ],
-    version = 34,
+    version = 35,
     exportSchema = false
 )
 

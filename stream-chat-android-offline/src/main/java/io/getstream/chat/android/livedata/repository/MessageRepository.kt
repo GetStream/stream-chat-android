@@ -37,9 +37,9 @@ internal class MessageRepository(
         if (pagination != null && pagination.hasFilter()) {
             // handle the differences between gt, gte, lt and lte
             val message = messageDao.select(pagination.messageFilterValue)
-            if (message?.createdAt == null) return listOf()
+            if (message?.messageInnerEntity?.createdAt == null) return listOf()
             val messageLimit = pagination.messageLimit
-            val messageTime = message.createdAt
+            val messageTime = message.messageInnerEntity.createdAt
 
             when (pagination.messageFilterDirection) {
                 Pagination.GREATER_THAN_OR_EQUAL -> {
