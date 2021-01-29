@@ -16,7 +16,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
@@ -187,18 +187,13 @@ internal class QueryChannelsControllerImpl(
             recoveryNeeded = false
 
             // store the results in the database
-            val channelsResponse = response.data()
+            val channelsResponse = response.data().toSet()
             if (channelsResponse.size < pagination.channelLimit) {
                 _endOfChannels.value = true
             }
             // first things first, store the configs
-            val configEntities = channelsResponse.associateBy { it.type }.values.map {
-                ChannelConfigEntity(
-                    it.type,
-                    it.config
-                )
-            }
-            domainImpl.repos.configs.insert(configEntities)
+            val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
+            domainImpl.repos.configs.insert(channelConfigs)
             logger.logI("api call returned ${channelsResponse.size} channels")
             updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
@@ -211,7 +206,7 @@ internal class QueryChannelsControllerImpl(
         return response
     }
 
-    private fun updateQueryChannelsSpec(channels: List<Channel>, isFirstPage: Boolean) {
+    private fun updateQueryChannelsSpec(channels: Collection<Channel>, isFirstPage: Boolean) {
         val newCids = channels.map(Channel::cid)
         queryChannelsSpec.cids =
             if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
