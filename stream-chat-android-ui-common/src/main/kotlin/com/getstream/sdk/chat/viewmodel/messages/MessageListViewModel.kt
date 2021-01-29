@@ -329,6 +329,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         val reaction = Reaction().apply {
             messageId = message.id
             type = reactionType
+            score = 1
         }
         val currentUserId = ChatDomain.instance().currentUser.id
         if (message.latestReactions.any { it.type == reactionType && it.user?.id == currentUserId }) {

@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -54,11 +55,11 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
-import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.extensions.removeMyReaction
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -803,7 +804,7 @@ internal class ChannelControllerImpl(
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
-            it.addReaction(reaction, isMine = true, enforceUnique = enforceUnique)
+            it.addMyReaction(reaction, enforceUnique = enforceUnique)
             upsertMessage(it)
             domainImpl.repos.messages.insert(it)
         }
@@ -849,7 +850,7 @@ internal class ChannelControllerImpl(
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.apply { removeReaction(reaction, updateCounts = true) }
+        currentMessage?.apply { removeMyReaction(reaction) }
             ?.also {
                 upsertMessage(it)
                 domainImpl.repos.messages.insert(it)
@@ -1045,10 +1046,13 @@ internal class ChannelControllerImpl(
                 event.watcherCount?.let { setWatcherCount(it) }
             }
             is ReactionNewEvent -> {
-                upsertEventMessage(event.message)
+                upsertMessage(event.message)
+            }
+            is ReactionUpdateEvent -> {
+                upsertMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertEventMessage(event.message)
+                upsertMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 deleteMember(event.user.id)
@@ -1062,15 +1066,12 @@ internal class ChannelControllerImpl(
             is NotificationAddedToChannelEvent -> {
                 upsertMembers(event.channel.members)
             }
-
             is UserPresenceChangedEvent -> {
                 upsertUserPresence(event.user)
             }
-
             is UserUpdatedEvent -> {
                 upsertUser(event.user)
             }
-
             is UserStartWatchingEvent -> {
                 upsertWatcher(event.user)
                 setWatcherCount(event.watcherCount)
@@ -1113,12 +1114,10 @@ internal class ChannelControllerImpl(
             is MessageReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
             }
-
             is NotificationMarkReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
             }
-
             is MarkAllReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
             }

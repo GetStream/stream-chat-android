@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:ignore="ContentDescription"
-        tools:src="@drawable/ic_delete_contact"
+        tools:src="@drawable/ic_delete"
         />
 
     <TextView
