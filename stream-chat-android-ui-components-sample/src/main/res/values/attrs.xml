@@ -3,4 +3,11 @@
     <declare-styleable name="AddChannelView">
         <attr name="isAddGroupChannel" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="GroupChatInfoMemberOptionView">
+        <attr name="optionTextColor" format="color|reference" />
+        <attr name="optionIconTint" format="color|reference" />
+        <attr name="optionText" format="string|reference" />
+        <attr name="optionIcon" format="reference" />
+    </declare-styleable>
 </resources>

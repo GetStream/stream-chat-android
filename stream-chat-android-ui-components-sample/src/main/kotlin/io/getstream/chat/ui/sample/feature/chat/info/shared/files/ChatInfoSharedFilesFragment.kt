@@ -20,13 +20,12 @@ import io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment
 class ChatInfoSharedFilesFragment : Fragment() {
 
     private val args: ChatInfoSharedFilesFragmentArgs by navArgs()
-    private val factory: ChatInfoSharedAttachmentsViewModelFactory by lazy {
+    private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels {
         ChatInfoSharedAttachmentsViewModelFactory(
-            args.cid,
+            args.cid!!,
             ChatInfoSharedAttachmentsViewModel.AttachmentsType.FILES
         )
     }
-    private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels { factory }
     private val adapter: ChatInfoSharedFilesAdapter = ChatInfoSharedFilesAdapter()
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
@@ -38,7 +37,7 @@ class ChatInfoSharedFilesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatInfoSharedFilesBinding.inflate(inflater, container, false)
         return binding.root
@@ -50,9 +49,19 @@ class ChatInfoSharedFilesFragment : Fragment() {
         binding.filesRecyclerView.adapter = adapter
         binding.filesRecyclerView.addOnScrollListener(scrollListener)
         adapter.setAttachmentClickListener { attachmentItem ->
-            ChatUI.instance().navigator.navigate(AttachmentDestination(attachmentItem.message, attachmentItem.attachment, requireContext()))
+            ChatUI.instance().navigator.navigate(
+                AttachmentDestination(
+                    attachmentItem.message,
+                    attachmentItem.attachment,
+                    requireContext(),
+                )
+            )
         }
-        bindViewModel()
+        if (args.cid != null) {
+            bindViewModel()
+        } else {
+            showEmptyState()
+        }
     }
 
     override fun onDestroyView() {

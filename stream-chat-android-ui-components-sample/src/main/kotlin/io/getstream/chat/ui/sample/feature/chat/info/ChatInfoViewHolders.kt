@@ -4,6 +4,7 @@ import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
@@ -20,7 +21,7 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
 import io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoAdapter
 
 abstract class BaseViewHolder<T : ChatInfoItem>(
-    itemView: View
+    itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
@@ -59,7 +60,7 @@ class ChatInfoSeparatorViewHolder(binding: ChatInfoSeparatorItemBinding) :
 
 class ChatInfoOptionViewHolder(
     private val binding: ChatInfoOptionItemBinding,
-    private val optionClickListener: ChatInfoAdapter.ChatInfoOptionClickListener?
+    private val optionClickListener: ChatInfoAdapter.ChatInfoOptionClickListener?,
 ) : BaseViewHolder<ChatInfoItem.Option>(binding.root) {
 
     private lateinit var option: ChatInfoItem.Option
@@ -80,7 +81,7 @@ class ChatInfoOptionViewHolder(
 
 class ChatInfoStatefulOptionViewHolder(
     private val binding: ChatInfoStatefulOptionItemBinding,
-    private val optionChangedListener: ChatInfoAdapter.ChatInfoStatefulOptionChangedListener?
+    private val optionChangedListener: ChatInfoAdapter.ChatInfoStatefulOptionChangedListener?,
 ) : BaseViewHolder<ChatInfoItem.Option.Stateful>(binding.root) {
 
     private lateinit var option: ChatInfoItem.Option.Stateful
@@ -100,11 +101,22 @@ class ChatInfoStatefulOptionViewHolder(
     }
 }
 
-class ChatInfoGroupMemberViewHolder(private val binding: ChatInfoGroupMemberItemBinding) :
-    BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
+class ChatInfoGroupMemberViewHolder(
+    private val binding: ChatInfoGroupMemberItemBinding,
+    private val memberClickListener: GroupChatInfoAdapter.MemberClickListener?,
+) : BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
+
+    private lateinit var member: Member
+
+    init {
+        binding.root.setOnClickListener {
+            memberClickListener?.onClick(member)
+        }
+    }
 
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
+            member = this
             binding.userAvatar.setUserData(user)
             binding.nameTextView.text = user.name
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
@@ -115,7 +127,7 @@ class ChatInfoGroupMemberViewHolder(private val binding: ChatInfoGroupMemberItem
 
 class ChatInfoMembersSeparatorViewHolder(
     private val binding: ChatInfoMembersSeparatorItemBinding,
-    private val membersSeparatorClickListener: GroupChatInfoAdapter.MembersSeparatorClickListener?
+    private val membersSeparatorClickListener: GroupChatInfoAdapter.MembersSeparatorClickListener?,
 ) : BaseViewHolder<ChatInfoItem.MembersSeparator>(binding.root) {
 
     init {
@@ -130,7 +142,7 @@ class ChatInfoMembersSeparatorViewHolder(
 
 class ChatInfoGroupNameViewHolder(
     private val binding: ChatInfoGroupNameItemBinding,
-    private val nameChangedListener: GroupChatInfoAdapter.NameChangedListener?
+    private val nameChangedListener: GroupChatInfoAdapter.NameChangedListener?,
 ) : BaseViewHolder<ChatInfoItem.ChannelName>(binding.root) {
 
     init {
