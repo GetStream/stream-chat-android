@@ -23,7 +23,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     private val args: ChatInfoSharedMediaFragmentArgs by navArgs()
     private val factory: ChatInfoSharedAttachmentsViewModelFactory by lazy {
         ChatInfoSharedAttachmentsViewModelFactory(
-            args.cid,
+            args.cid!!,
             ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA
         )
     }
@@ -57,7 +57,11 @@ class ChatInfoSharedMediaFragment : Fragment() {
             viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
         }
 
-        bindViewModel()
+        if (args.cid != null) {
+            bindViewModel()
+        } else {
+            showEmptyState()
+        }
     }
 
     override fun onDestroyView() {

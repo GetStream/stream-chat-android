@@ -229,7 +229,14 @@
         <argument
             android:name="cid"
             app:argType="string"
-            app:nullable="false"
+            app:nullable="true"
+            />
+
+        <argument
+            android:name="userData"
+            android:defaultValue="@null"
+            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"
+            app:nullable="true"
             />
 
         <action
@@ -289,7 +296,7 @@
         <argument
             android:name="cid"
             app:argType="string"
-            app:nullable="false"
+            app:nullable="true"
             />
 
         <action
@@ -319,7 +326,7 @@
         <argument
             android:name="cid"
             app:argType="string"
-            app:nullable="false"
+            app:nullable="true"
             />
     </fragment>
 
@@ -345,6 +352,51 @@
             app:destination="@id/chatInfoSharedMediaFragment"
             app:launchSingleTop="true"
             />
+
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/bottom_navigation"
+            app:popUpToInclusive="true"
+         />
+
+        <action
+            android:id="@+id/action_open_chat_preview"
+            app:destination="@id/chatPreviewFragment"
+            app:launchSingleTop="true"
+         />
+        <action
+            android:id="@+id/action_open_chat_info"
+            app:destination="@id/chatInfoFragment"
+            app:launchSingleTop="true"
+          />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatPreviewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.preview.ChatPreviewFragment"
+        android:label="ChatPreviewFragment"
+        >
+        <argument
+            android:name="userData"
+            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"
+            app:nullable="false"
+            />
+
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/groupChatInfoFragment"
+            app:popUpToInclusive="true"
+           />
+
+        <action
+            android:id="@+id/action_open_chat_info"
+            app:destination="@id/chatInfoFragment"
+            app:launchSingleTop="true"
+           />
     </fragment>
 
     <fragment
