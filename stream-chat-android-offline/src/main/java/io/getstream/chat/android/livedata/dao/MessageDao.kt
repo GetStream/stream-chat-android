@@ -13,14 +13,13 @@ import java.util.Date
 
 @Dao
 internal abstract class MessageDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+
     @Transaction
-    open suspend fun insertMany(messageEntities: List<MessageEntity>) {
+    open suspend fun insert(messageEntities: List<MessageEntity>) {
         insertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) {
         insertMessageInnerEntity(messageEntity.messageInnerEntity)

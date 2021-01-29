@@ -83,7 +83,7 @@ internal class MessageRepository(
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messagesToInsert.map { it.toEntity() })
+        messageDao.insert(messagesToInsert.map { it.toEntity() })
     }
 
     suspend fun insert(message: Message, cache: Boolean = false) {
