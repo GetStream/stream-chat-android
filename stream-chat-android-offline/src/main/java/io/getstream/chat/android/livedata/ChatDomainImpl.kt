@@ -37,6 +37,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
@@ -143,7 +144,7 @@ internal class ChatDomainImpl internal constructor(
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(this)
 
-    var defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
+    val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
     /** if the client connection has been initialized */
     override val initialized: LiveData<Boolean> = _initialized.asLiveData()
@@ -737,15 +738,15 @@ internal class ChatDomainImpl internal constructor(
         return storeStateForChannels(listOf(channel))
     }
 
-    suspend fun storeStateForChannels(channelsResponse: List<Channel>) {
+    suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
         val users = mutableMapOf<String, User>()
-        val configs: MutableMap<String, Config> = mutableMapOf()
+        val configs: MutableCollection<ChannelConfig> = mutableSetOf()
         // start by gathering all the users
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
 
             users.putAll(channel.users().associateBy { it.id })
-            configs[channel.type] = channel.config
+            configs += ChannelConfig(channel.type, channel.config)
 
             channel.messages.forEach { message ->
                 message.enrichWithCid(channel.cid)
@@ -756,7 +757,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         // store the channel configs
-        repos.configs.insertConfigs(configs)
+        repos.configs.insert(configs)
         // store the users
         repos.users.insert(users.values.toList())
         // store the channel data
@@ -802,7 +803,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
-        return repos.configs.select(channelType) ?: defaultConfig
+        return repos.configs.select(channelType)?.config ?: defaultConfig
     }
 
     companion object {

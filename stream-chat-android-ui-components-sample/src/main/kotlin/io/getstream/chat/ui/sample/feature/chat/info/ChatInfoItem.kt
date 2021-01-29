@@ -58,7 +58,7 @@ sealed class ChatInfoItem {
 
         object DeleteConversation : Option() {
             override val iconResId: Int
-                get() = R.drawable.ic_delete_contact
+                get() = R.drawable.ic_delete
             override val textResId: Int
                 get() = R.string.chat_info_option_delete_conversation
             override val tintResId: Int

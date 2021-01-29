@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
@@ -95,7 +96,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             println("setup")
 
             // setup channel controller and query controllers for tests
-            runBlocking { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+            runBlocking { chatDomainImpl.repos.configs.insert(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateLiveDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
