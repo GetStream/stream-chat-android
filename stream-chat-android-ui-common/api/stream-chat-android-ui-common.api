@@ -2164,6 +2164,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;Lio/getstream/chat/android/client/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$EndRegionReached : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$EndRegionReached;
 }
@@ -2231,6 +2242,19 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getRepliedMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -207,6 +207,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyMessage -> {
                 domain.useCases.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
+            is Event.DownloadAttachment -> {
+                domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
+            }
             is Event.AttachmentDownload -> {
                 domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
             }
@@ -240,6 +243,21 @@ public class MessageListViewModel @JvmOverloads constructor(
                             }
                         }
                         domain.useCases.editMessage(message).enqueue()
+                    }
+                }
+            }
+            is Event.ReplyAttachment -> {
+                val messageId = event.repliedMessageId
+                val cid = event.cid
+                domain.useCases.loadMessageById(
+                    cid,
+                    messageId,
+                    MESSAGES_LIMIT,
+                    MESSAGES_LIMIT
+                ).enqueue {
+                    if (it.isSuccess) {
+                        val message = it.data()
+                        onEvent(Event.ReplyMessage(cid, message))
                     }
                 }
             }
@@ -367,6 +385,9 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
+        public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
+        public data class DownloadAttachment(val attachment: Attachment) : Event()
+        @Deprecated(replaceWith = ReplaceWith("DownloadAttachment"), message = "Deprecated class.")
         public data class AttachmentDownload(val attachment: Attachment) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()

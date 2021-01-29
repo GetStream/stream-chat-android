@@ -161,6 +161,10 @@ public class MessageInputFieldView : FrameLayout {
         }
     }
 
+    public fun onEdit(edit: Message) {
+        mode = Mode.EditMessageMode(edit)
+    }
+
     private fun cancelAttachment(attachment: AttachmentMetaData) {
         selectedAttachments = selectedAttachments - attachment
         selectedFileAttachmentAdapter.removeItem(attachment)
@@ -236,7 +240,9 @@ public class MessageInputFieldView : FrameLayout {
     private fun switchToEditMode(mode: Mode.EditMessageMode) {
         binding.messageEditText.hint = normalModeHint
 
-        messageText = mode.oldMessage.text
+        val oldMessage = mode.oldMessage
+
+        messageText = oldMessage.text
     }
 
     private fun switchToCommandMode(mode: Mode.CommandMode) {

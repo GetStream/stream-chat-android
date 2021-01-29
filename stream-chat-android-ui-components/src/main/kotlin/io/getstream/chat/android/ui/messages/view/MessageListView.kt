@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.messages.view
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
@@ -147,6 +148,20 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
+    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, title, description, positiveText, negativeText, confirmCallback ->
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(description)
+            .setPositiveButton(positiveText) { dialog, _ ->
+                dialog.dismiss()
+                confirmCallback()
+            }
+            .setNegativeButton(negativeText) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private var _attachmentReplyOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentReplyOptionHandler {
             throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
@@ -215,6 +230,16 @@ public class MessageListView : ConstraintLayout {
                     .apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
+                        }
+                        setConfirmDeleteMessageClickHandler { message, callback ->
+                            confirmDeleteMessageHandler.onConfirmDeleteMessage(
+                                message,
+                                messageOptionsConfiguration.deleteConfirmationTitle,
+                                messageOptionsConfiguration.deleteConfirmationMessage,
+                                messageOptionsConfiguration.deleteConfirmationPositiveButton,
+                                messageOptionsConfiguration.deleteConfirmationNegativeButton,
+                                callback::onConfirmDeleteMessage
+                            )
                         }
                         setMessageOptionsHandlers(
                             MessageOptionsDialogFragment.MessageOptionsHandlers(
@@ -863,6 +888,10 @@ public class MessageListView : ConstraintLayout {
         this.attachmentDownloadHandler = attachmentDownloadHandler
     }
 
+    public fun setConfirmDeleteMessageHandler(confirmDeleteMessageHandler: ConfirmDeleteMessageHandler) {
+        this.confirmDeleteMessageHandler = confirmDeleteMessageHandler
+    }
+
     public fun setAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
         this._attachmentReplyOptionHandler = handler
     }
@@ -937,6 +966,17 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageDeleteHandler {
         public fun onMessageDelete(message: Message)
+    }
+
+    public fun interface ConfirmDeleteMessageHandler {
+        public fun onConfirmDeleteMessage(
+            message: Message,
+            title: String,
+            description: String,
+            positiveText: String,
+            negativeText: String,
+            confirmCallback: () -> Unit,
+        )
     }
 
     public fun interface MessageFlagHandler {

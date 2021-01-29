@@ -5,6 +5,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="leave">Leave</string>
+    <string name="remove">Remove</string>
 
     <!--User Login Screen-->
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
@@ -82,4 +83,9 @@
     <string name="chat_group_info_edit_name_label">NAME</string>
     <string name="chat_group_info_edit_name_hint">Add a group name</string>
     <string name="chat_group_info_leave_confirm">Are you sure you want to leave the group %s?</string>
+    <string name="chat_group_info_user_option_view_info">View Info</string>
+    <string name="chat_group_info_user_option_message">Message</string>
+    <string name="chat_group_info_user_option_remove">Remove From Group</string>
+    <string name="chat_group_info_user_remove_title">Remove %s</string>
+    <string name="chat_group_info_user_remove_description">Are you sure you want to remove %s from %s?</string>
 </resources>

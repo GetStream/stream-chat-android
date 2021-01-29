@@ -58,12 +58,12 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
@@ -546,8 +546,7 @@ internal class ChannelControllerImpl(
                 }
             }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
-            val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
-            domainImpl.repos.configs.insert(listOf(configEntities))
+            domainImpl.repos.configs.insert(ChannelConfig(channelResponse.type, channelResponse.config))
 
             domainImpl.storeStateForChannel(channelResponse)
         } else {

@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
@@ -77,7 +78,7 @@ class AddChannelViewModel : ViewModel() {
     private fun createChannel() {
         val client = requireNotNull(channelClient) { "Cannot create Channel without initializing ChannelClient" }
         viewModelScope.launch(Dispatchers.IO) {
-            val result = client.update(message = null, extraData = mapOf(DRAFT_EXTRA_DATA to false)).execute()
+            val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).execute()
             if (result.isSuccess) {
                 _state.postValue(State.NavigateToChannel(result.data().cid))
             }
@@ -94,7 +95,7 @@ class AddChannelViewModel : ViewModel() {
                 .createChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map { it.id } + currentUserId,
-                    extraData = mapOf(DRAFT_EXTRA_DATA to true)
+                    extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).execute()
             if (result.isSuccess) {
                 val cid = result.data().cid
@@ -122,7 +123,6 @@ class AddChannelViewModel : ViewModel() {
 
     companion object {
         private const val USERS_LIMIT = 30
-        private const val DRAFT_EXTRA_DATA = "draft"
         private const val CHANNEL_MESSAGING_TYPE = "messaging"
         private val USERS_QUERY_SORT = QuerySort<User>().asc("name")
     }
