@@ -84,11 +84,6 @@ private class FileAttachmentsAdapter(
                 )
             }
     }
-
-    override fun onViewRecycled(holder: FileAttachmentViewHolder) {
-        super.onViewRecycled(holder)
-        holder.unbind()
-    }
 }
 
 private class FileAttachmentViewHolder(

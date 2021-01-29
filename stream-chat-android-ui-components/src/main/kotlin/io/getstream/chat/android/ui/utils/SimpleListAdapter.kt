@@ -32,6 +32,11 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         notifyDataSetChanged()
     }
 
+    override fun onViewRecycled(holder: VH) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
+
     abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val context: Context = itemView.context
 

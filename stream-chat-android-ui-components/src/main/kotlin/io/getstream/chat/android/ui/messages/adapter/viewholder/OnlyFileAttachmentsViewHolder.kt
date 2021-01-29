@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.messages.adapter.viewholder
 
 import android.util.Log
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.extensions.uploadId
@@ -70,37 +71,45 @@ internal class OnlyFileAttachmentsViewHolder(
 
         binding.fileAttachmentsView.setAttachments(data.message.attachments)
 
-        val uploadIdList = data.message
+        val uploadIdList: List<String> = data.message
             .attachments
-            .filter { attachment ->
-                attachment.uploadState == Attachment.UploadState.InProgress
-            }
-            .mapNotNull { attachment ->
-            attachment.uploadId
-        }
+            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
+            .mapNotNull { attachment -> attachment.uploadId }
 
-        if (uploadIdList.isNotEmpty()) {
+        val needUpload = uploadIdList.isNotEmpty()
+
+        if (needUpload) {
             clearScope()
             val scope = CoroutineScope(DispatcherProvider.Main)
             this.scope = scope
 
             scope.launch {
-                var filesSent = 0
-                val totalFiles = uploadIdList.size
+                trackFilesSent(uploadIdList)
+            }
+        } else {
+            binding.sentFiles.isVisible = false
+        }
+    }
 
-                uploadIdList.forEach { uploadId ->
-                    val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+    private suspend fun trackFilesSent(uploadIdList: List<String>) {
+        var filesSent = 0
+        val totalFiles = uploadIdList.size
 
-                    tracker.isComplete().filter { isComplete -> isComplete }.collect {
-                        filesSent += 1
+        binding.sentFiles.isVisible = true
+        binding.sentFiles.text =
+            String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
 
-                        if (filesSent == totalFiles) {
-                            Log.d("OnlyFileAttachments",
-                                "Upload complete: ${context.getString(R.string.stream_ui_upload_complete)}")
-                        } else {
-                            Log.d("OnlyFileAttachments", "Upload sent: $filesSent / $totalFiles")
-                        }
-                    }
+        uploadIdList.forEach { uploadId ->
+            val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+
+            tracker.isComplete().filter { isComplete -> isComplete }.collect {
+                filesSent += 1
+
+                if (filesSent == totalFiles) {
+                    binding.sentFiles.text = context.getString(R.string.stream_ui_upload_complete)
+                } else {
+                    binding.sentFiles.text =
+                        String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
                 }
             }
         }
