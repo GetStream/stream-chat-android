@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
@@ -35,6 +36,7 @@ internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
+        style: MessageListItemStyle?,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     override fun decorateGiphyMessage(

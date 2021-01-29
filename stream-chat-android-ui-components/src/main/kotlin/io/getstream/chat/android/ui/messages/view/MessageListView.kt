@@ -639,6 +639,8 @@ public class MessageListView : ConstraintLayout {
             dateFormatter = messageDateFormatter,
             isDirectMessage = channel.isDirectMessaging()
         )
+
+        messageListItemViewHolderFactory.messageItemStyle = style.itemStyle
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)

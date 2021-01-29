@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.hasText
@@ -38,8 +39,9 @@ internal class BackgroundDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
+        style: MessageListItemStyle?,
     ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
+        setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data, style)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -115,7 +117,11 @@ internal class BackgroundDecorator : BaseDecorator() {
             .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_literal_transparent)) }
     }
 
-    private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
+    private fun setDefaultBackgroundDrawable(
+        view: View,
+        data: MessageListItem.MessageItem,
+        style: MessageListItemStyle? = null,
+    ) {
         val radius = DEFAULT_CORNER_RADIUS
         val bottomRightCorner = if (data.isMine && data.isBottomPosition()) 0f else radius
         val bottomLeftCorner = if (data.isMine.not() && data.isBottomPosition()) 0f else radius
@@ -126,22 +132,22 @@ internal class BackgroundDecorator : BaseDecorator() {
             val hasLink = data.message.attachments.any(Attachment::hasLink)
             if (data.isMine) {
                 paintStyle = Paint.Style.FILL
-                setTint(
-                    ContextCompat.getColor(
-                        view.context,
-                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_CURRENT_USER_BACKGROUND
-                    )
-                )
+
+                val backgroundTintColor = if (hasLink) {
+                    ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                } else style?.messageColorMine ?: ContextCompat.getColor(view.context, MESSAGE_CURRENT_USER_BACKGROUND)
+
+                setTint(backgroundTintColor)
             } else {
                 paintStyle = Paint.Style.FILL_AND_STROKE
                 setStrokeTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_STROKE_COLOR))
                 strokeWidth = DEFAULT_STROKE_WIDTH
-                setTint(
-                    ContextCompat.getColor(
-                        view.context,
-                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_OTHER_USER_BACKGROUND
-                    )
-                )
+
+                val backgroundTintColor = if (hasLink) {
+                    ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                } else style?.messageColorTheirs ?: ContextCompat.getColor(view.context, MESSAGE_OTHER_USER_BACKGROUND)
+
+                setTint(backgroundTintColor)
             }
         }
     }

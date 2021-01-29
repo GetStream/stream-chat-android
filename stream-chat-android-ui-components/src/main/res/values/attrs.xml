@@ -266,6 +266,14 @@
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
         <attr name="streamUiDeleteConfirmationTitle" format="string" />
         <attr name="streamUiDeleteConfirmationMessage" format="string" />
+
+        <!-- Message text color -->
+        <attr name="streamUiMessageTextColorMine" format="color" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+
+        <!-- Message background color -->
+        <attr name="streamUiMessageBackgroundColorMine" format="color"/>
+        <attr name="streamUiMessageBackgroundColorTheirs" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="ChannelsView">

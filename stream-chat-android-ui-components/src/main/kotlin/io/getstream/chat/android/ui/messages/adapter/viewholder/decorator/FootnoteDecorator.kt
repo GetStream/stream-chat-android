@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isDeleted
@@ -82,14 +83,14 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-    ) =
-        setupFootnote(
-            viewHolder.binding.footnote,
-            viewHolder.binding.root,
-            viewHolder.binding.threadGuideline,
-            viewHolder.binding.messageContainer,
-            data,
-        )
+        style: MessageListItemStyle?,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
