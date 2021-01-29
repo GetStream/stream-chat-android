@@ -52,6 +52,7 @@
         app:layout_constraintTop_toTopOf="@id/bottomBarGuideline"
         app:tint="@color/stream_ui_black"
         tools:ignore="ContentDescription"
+        android:background="?selectableItemBackgroundBorderless"
         />
 
     <ImageView
@@ -66,6 +67,7 @@
         app:layout_constraintTop_toTopOf="@id/bottomBarGuideline"
         app:tint="@color/stream_ui_black"
         tools:ignore="ContentDescription"
+        android:background="?selectableItemBackgroundBorderless"
         />
     
     <androidx.constraintlayout.widget.Group
