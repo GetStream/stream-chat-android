@@ -56,28 +56,16 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             val currentAttachment = obtainAttachments()[binding.attachmentGallery.currentItemIndex]
             menuButton.setOnClickListener {
                 val deleteHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    val result = Intent().apply {
-                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Delete(currentAttachment))
-                    }
-                    setResultAndFinish(result)
+                    setResultAndFinish(AttachmentOptionResult.Delete(currentAttachment))
                 }
                 val saveHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    val result = Intent().apply {
-                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Download(currentAttachment))
-                    }
-                    setResultAndFinish(result)
+                    setResultAndFinish(AttachmentOptionResult.Download(currentAttachment))
                 }
                 val showInChatHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    val result = Intent().apply {
-                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.ShowInChat(currentAttachment))
-                    }
-                    setResultAndFinish(result)
+                    setResultAndFinish(AttachmentOptionResult.ShowInChat(currentAttachment))
                 }
                 val replyHandler = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
-                    val result = Intent().apply {
-                        putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, AttachmentOptionResult.Reply(currentAttachment))
-                    }
-                    setResultAndFinish(result)
+                    setResultAndFinish(AttachmentOptionResult.Reply(currentAttachment))
                 }
                 AttachmentOptionsDialogFragment.newInstance(
                     showInChatHandler = showInChatHandler,
@@ -93,8 +81,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun obtainAttachments() =
         intent.getParcelableArrayListExtra<AttachmentData>(EXTRA_KEY_ATTACHMENTS)?.toList().orEmpty()
 
-    private fun setResultAndFinish(result: Intent) {
-        setResult(RESULT_OK, result)
+    private fun setResultAndFinish(result: AttachmentOptionResult) {
+        Intent().apply {
+            putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, result)
+            setResult(RESULT_OK, this)
+        }
         finish()
     }
 
