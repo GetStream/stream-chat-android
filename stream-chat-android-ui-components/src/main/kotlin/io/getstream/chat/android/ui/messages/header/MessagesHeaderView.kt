@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.forEach
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Channel
@@ -360,7 +361,7 @@ public class MessagesHeaderView : ConstraintLayout {
         val showAvatar =
             attrs.getBoolean(R.styleable.MessagesHeaderView_streamUiMessagesHeaderShowUserAvatar, true)
         binding.avatar.apply {
-            isVisible = showAvatar
+            isInvisible = !showAvatar
             isClickable = showAvatar
         }
     }
