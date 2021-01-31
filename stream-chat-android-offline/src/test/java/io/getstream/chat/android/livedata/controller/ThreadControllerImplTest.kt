@@ -76,7 +76,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     fun `loading more should set loading and endReached variables`() = testCoroutines.scope.runBlockingTest {
         // mock the loadOlderThreadMessages to return 1 result when asking for 2 messages
         val threadReply2 = data.createMessage().apply { parentId = threadId }
-        whenever(channelControllerMock.loadOlderThreadMessages(any(), eq(2), any())) doReturn Result(listOf(threadReply2))
+        whenever(channelControllerMock.loadOlderThreadMessages(any(), any(), eq(null))) doReturn Result(listOf(threadReply2))
         threadController.loadOlderMessages(2)
 
         // verify that loading is false and end reached is true

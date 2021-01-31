@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Start a thread"
+                android:text="@string/stream_more_action_start_thread"
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Copy"
+                android:text="@string/stream_more_action_copy"
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
@@ -130,7 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Flag"
+                android:text="@string/stream_more_action_flag"
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
@@ -161,7 +161,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Edit"
+                android:text="@string/stream_more_action_edit"
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
@@ -192,7 +192,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Delete"
+                android:text="@string/stream_more_action_delete"
                 android:textColor="#8A000000"
                 />
         </LinearLayout>
