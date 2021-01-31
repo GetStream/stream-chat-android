@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.messages.adapter
 import androidx.recyclerview.widget.DiffUtil
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.UserEntity
 
 internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListItem>() {
     override fun areItemsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
@@ -14,25 +13,16 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
         when (oldItem) {
             is MessageListItem.MessageItem -> {
                 newItem as MessageListItem.MessageItem
-                if (oldItem.message.text != newItem.message.text) {
-                    false
-                } else if (oldItem.message.reactionScores != newItem.message.reactionScores) {
-                    false
-                } else if (oldItem.message.reactionCounts != newItem.message.reactionCounts) {
-                    false
-                } else if (oldItem.message.attachments != newItem.message.attachments) {
-                    false
-                } else if (oldItem.message.replyCount != newItem.message.replyCount) {
-                    false
-                } else if (oldItem.message.syncStatus != newItem.message.syncStatus) {
-                    false
-                } else if (oldItem.message.deletedAt != newItem.message.deletedAt) {
-                    false
-                } else if (oldItem.positions != newItem.positions) {
-                    false
-                } else if (oldItem.messageReadBy.map(UserEntity::getUserId) != newItem.messageReadBy.map(UserEntity::getUserId)) {
-                    false
-                } else oldItem.isThreadMode == newItem.isThreadMode
+                oldItem.message.text == newItem.message.text &&
+                    oldItem.message.reactionScores == newItem.message.reactionScores &&
+                    oldItem.message.reactionCounts == newItem.message.reactionCounts &&
+                    oldItem.message.attachments == newItem.message.attachments &&
+                    oldItem.message.replyCount == newItem.message.replyCount &&
+                    oldItem.message.syncStatus == newItem.message.syncStatus &&
+                    oldItem.message.deletedAt == newItem.message.deletedAt &&
+                    oldItem.positions == newItem.positions &&
+                    oldItem.isMessageRead == newItem.isMessageRead &&
+                    oldItem.isThreadMode == newItem.isThreadMode
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
@@ -53,7 +43,6 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 syncStatus = oldItem.message.syncStatus != newItem.message.syncStatus,
                 deleted = oldItem.message.deletedAt != newItem.message.deletedAt,
                 positions = oldItem.positions != newItem.positions,
-                readBy = oldItem.messageReadBy.map { it.getUserId() } == newItem.messageReadBy.map { it.getUserId() }
             )
         } else {
             null
