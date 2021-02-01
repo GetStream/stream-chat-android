@@ -124,7 +124,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         with(binding.editReactionsView) {
             setMessage(message, messageItem.isMine)
             setReactionClickListener {
-                reactionClickHandler?.onReactionClick(message, it.type)
+                reactionClickHandler?.onReactionClick(message, it)
                 dismiss()
             }
         }
@@ -157,7 +157,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupUserReactionsView() {
         with(binding.userReactionsView) {
             isVisible = true
-            setMessage(message)
+            setMessage(message, currentUser)
         }
     }
 

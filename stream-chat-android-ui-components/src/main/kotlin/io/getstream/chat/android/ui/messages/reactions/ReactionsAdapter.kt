@@ -8,13 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
-import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.context
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 internal class ReactionsAdapter(
     @Px private val itemSize: Int,
-    private val reactionClickListener: ReactionClickListener
+    private val reactionClickListener: ReactionClickListener,
 ) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
@@ -30,7 +29,7 @@ internal class ReactionsAdapter(
     class ReactionViewHolder(
         private val binding: StreamUiItemMessageReactionBinding,
         @Px private val itemSize: Int,
-        private val reactionClickListener: ReactionClickListener
+        private val reactionClickListener: ReactionClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var reactionItem: ReactionItem
@@ -41,28 +40,14 @@ internal class ReactionsAdapter(
                 height = itemSize
             }
             binding.root.setOnClickListener {
-                reactionClickListener.onReactionClick(reactionItem.reaction)
+                reactionClickListener.onReactionClick(reactionItem.type)
             }
         }
 
         fun bind(reactionItem: ReactionItem) {
             this.reactionItem = reactionItem
-            bindReactionIcon(reactionItem)
-            bindReactionAffiliation(reactionItem)
-        }
 
-        private fun bindReactionIcon(reactionItem: ReactionItem) {
-            val reactionType = reactionItem.reaction.type
-            val reactionIcon = UiUtils.getReactionTypes()[reactionType]
-            if (reactionIcon != null) {
-                binding.reactionIcon.setImageResource(reactionIcon)
-            } else {
-                // better to have a proper fallback icon
-                binding.reactionIcon.setImageDrawable(null)
-            }
-        }
-
-        private fun bindReactionAffiliation(reactionItem: ReactionItem) {
+            binding.reactionIcon.setImageResource(reactionItem.iconDrawableRes)
             val iconTintResId = if (reactionItem.isMine) {
                 R.color.stream_ui_accent_blue
             } else {

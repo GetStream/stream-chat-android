@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.ui.sample.common.showToast
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserUserReactionsViewBinding
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessageWithReactions
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 
+@InternalStreamChatApi
 class ComponentBrowserUserReactionsFragment : Fragment() {
     private var _binding: FragmentComponentBrowserUserReactionsViewBinding? = null
     private val binding get() = _binding!!
@@ -16,8 +20,8 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         _binding = FragmentComponentBrowserUserReactionsViewBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -30,11 +34,56 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            userReactionsView1.setMessage(randomMessageWithReactions(count = 1))
-            userReactionsView1.setReactionClickListener { showToast(it.type) }
-            userReactionsView2.setMessage(randomMessageWithReactions(count = 2))
-            userReactionsView3.setMessage(randomMessageWithReactions(count = 5))
-            userReactionsView4.setMessage(randomMessageWithReactions(count = 30))
+            val currentUser = randomUser()
+            userReactionsView1.setMessage(
+                message = randomMessage().apply {
+                    latestReactions = mutableListOf(
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                    )
+                },
+                currentUser = currentUser
+            )
+            userReactionsView2.setMessage(
+                message = randomMessage().apply {
+                    latestReactions = mutableListOf(
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = ReactionType.LOVE.type, user = randomUser()),
+                    )
+                },
+                currentUser = currentUser
+            )
+            userReactionsView3.setMessage(
+                message = randomMessage().apply {
+                    latestReactions = mutableListOf(
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
+                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
+                    )
+                },
+                currentUser = currentUser
+            )
+            userReactionsView4.setMessage(
+                message = randomMessage().apply {
+                    latestReactions = mutableListOf(
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = ReactionType.THUMBS_UP.type, user = randomUser()),
+                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
+                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
+                        Reaction(type = ReactionType.WUT.type, user = currentUser),
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = ReactionType.THUMBS_UP.type, user = randomUser()),
+                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
+                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
+                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
+                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = ReactionType.THUMBS_UP.type, user = currentUser),
+                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
+                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
+                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
+                    )
+                },
+                currentUser = currentUser
+            )
         }
     }
 }

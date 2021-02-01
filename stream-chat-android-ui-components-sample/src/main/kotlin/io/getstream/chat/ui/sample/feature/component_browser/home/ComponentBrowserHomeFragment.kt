@@ -8,17 +8,21 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.textinput.MessageInputFieldView
+import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomCommand
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessageWithReactions
+import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
 import java.util.Date
 
+@InternalStreamChatApi
 class ComponentBrowserHomeFragment : Fragment() {
 
     private var _binding: FragmentComponentBrowserHomeBinding? = null
@@ -34,7 +38,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentComponentBrowserHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -147,21 +151,52 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupViewReactionsView() {
-        binding.viewReactionsView.setMessage(randomMessageWithReactions(count = 30), isMyMessage = true)
+        binding.viewReactionsView.setMessage(
+            message = randomMessage().apply {
+                reactionCounts = mutableMapOf(
+                    ReactionType.LOVE.type to 10,
+                    ReactionType.WUT.type to 20,
+                    ReactionType.LOL.type to 20,
+                    ReactionType.THUMBS_UP.type to 20
+                )
+                ownReactions = mutableListOf(
+                    Reaction(type = ReactionType.LOVE.type),
+                    Reaction(type = ReactionType.WUT.type)
+                )
+            },
+            isMyMessage = true
+        )
         binding.viewReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)
         }
     }
 
     private fun setupEditReactionsView() {
-        binding.editReactionsView.setMessage(randomMessageWithReactions(count = 30), isMyMessage = true)
+        binding.editReactionsView.setMessage(
+            message = randomMessage().apply {
+                ownReactions = mutableListOf(
+                    Reaction(type = ReactionType.LOVE.type),
+                    Reaction(type = ReactionType.WUT.type)
+                )
+            },
+            isMyMessage = false
+        )
         binding.editReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)
         }
     }
 
     private fun setupUserReactionsView() {
-        binding.userReactionsView.setMessage(randomMessageWithReactions(count = 2))
+        val currentUser = randomUser()
+        binding.userReactionsView.setMessage(
+            message = randomMessage().apply {
+                latestReactions = mutableListOf(
+                    Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                    Reaction(type = ReactionType.LOVE.type, user = randomUser()),
+                )
+            },
+            currentUser = currentUser
+        )
         binding.userReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
         }
