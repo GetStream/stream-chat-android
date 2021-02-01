@@ -209,11 +209,7 @@ public class ChatClient internal constructor(
         file: File,
         callback: ProgressCallback? = null,
     ): Call<String> {
-        return if (callback != null) {
-            api.sendFile(channelType, channelId, file, callback)
-        } else {
-            api.sendFile(channelType, channelId, file)
-        }
+        return api.sendFile(channelType, channelId, file, callback)
     }
 
     public fun sendImage(
