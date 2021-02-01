@@ -44,7 +44,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         false
     ),
 ) : SwipeViewHolder(binding.root) {
-
     private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().currentUser
 
@@ -77,10 +76,15 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                 }
                 root.apply {
                     setOnClickListener {
-                        channelClickListener.onClick(channel)
+                        if (!swiping) {
+                            channelClickListener.onClick(channel)
+                        }
                     }
                     setOnLongClickListener {
-                        channelLongClickListener.onLongClick(channel)
+                        when {
+                            !swiping -> channelLongClickListener.onLongClick(channel)
+                            else -> false
+                        }
                     }
                     doOnNextLayout {
                         setSwipeListener(root, swipeListener)

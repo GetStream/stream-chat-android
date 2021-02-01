@@ -207,8 +207,10 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewhold
 	public abstract fun getOpenedX ()F
 	public abstract fun getSwipeDeltaRange ()Lkotlin/ranges/ClosedFloatingPointRange;
 	public abstract fun getSwipeView ()Landroid/view/View;
+	protected final fun getSwiping ()Z
 	protected final fun setListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setSwipeListener (Landroid/view/View;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
+	protected final fun setSwiping (Z)V
 }
 
 public final class io/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
