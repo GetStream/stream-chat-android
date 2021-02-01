@@ -204,7 +204,7 @@ internal class FootnoteDecorator(
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> footnoteView.showInProgressStatusIndicator()
                 SyncStatus.COMPLETED -> {
-                    if (data.messageReadBy.isNotEmpty()) footnoteView.showReadStatusIndicator()
+                    if (data.isMessageRead) footnoteView.showReadStatusIndicator()
                     else footnoteView.showSentStatusIndicator()
                 }
             }.exhaustive
