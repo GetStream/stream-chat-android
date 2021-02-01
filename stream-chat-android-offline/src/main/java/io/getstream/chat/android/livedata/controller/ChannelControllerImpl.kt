@@ -796,9 +796,11 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
-                .onEach { it.deletedAt = Date() }
-                .also { domainImpl.repos.reactions.insert(it) }
+            domainImpl.repos.updateReactionsForMessageByDeletedDate(
+                userId = currentUser.id,
+                messageId = reaction.messageId,
+                deletedAt = Date()
+            )
         }
         domainImpl.repos.reactions.insert(reaction)
         // update livedata
