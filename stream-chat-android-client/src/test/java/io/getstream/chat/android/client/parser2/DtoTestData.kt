@@ -12,32 +12,32 @@ internal object DtoTestData {
     @Language("JSON")
     val downstreamJson =
         """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "attachments" : [],
           "cid": "cid",
-          "type": "",
-          "text": "",
+          "created_at": "2020-06-10T11:04:31.0Z",
           "html": "",
+          "i18n": {},
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "latest_reactions": [],
+          "mentioned_users": [],
+          "own_reactions": [],
+          "reaction_counts": {},
+          "reaction_scores": {},
+          "reply_count": 0,
+          "pinned": false,
+          "shadowed": false,
+          "show_in_channel": false,
+          "silent": false,
+          "text": "",
+          "thread_participants" : [],
+          "type": "",
+          "updated_at": "2020-06-10T11:04:31.588Z",
           "user": {
             "id": "",
             "role": "",
             "invisible": false,
             "banned": false
           },
-          "silent": false,
-          "shadowed": false,
-          "created_at": "2020-06-10T11:04:31.0Z",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "reply_count": 0,
-          "reaction_counts": {},
-          "reaction_scores": {},
-          "latest_reactions": [],
-          "own_reactions": [],
-          "show_in_channel": false,
-          "mentioned_users": [],
-          "i18n": {},
-          "thread_participants" : [],
-          "attachments" : [],
-          "pinned": false,
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -60,7 +60,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         silent = false,
         shadowed = false,
         created_at = Date(1591787071000),
@@ -105,32 +111,32 @@ internal object DtoTestData {
     @Language("JSON")
     val downstreamJsonWithoutExtraData =
         """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "attachments" : [],
           "cid": "cid",
-          "type": "",
-          "text": "",
+          "created_at": "2020-06-10T11:04:31.0Z",
           "html": "",
+          "i18n": {},
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "latest_reactions": [],
+          "mentioned_users": [],
+          "own_reactions": [],
+          "reaction_counts": {},
+          "reaction_scores": {},
+          "reply_count": 0,
+          "pinned": false,
+          "shadowed": false,
+          "show_in_channel": false,
+          "silent": false,
+          "text": "",
+          "thread_participants" : [],
+          "type": "",
+          "updated_at": "2020-06-10T11:04:31.588Z",
           "user": {
             "id": "",
             "role": "",
             "invisible": false,
             "banned": false
-          },
-          "silent": false,
-          "shadowed": false,
-          "created_at": "2020-06-10T11:04:31.0Z",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "reply_count": 0,
-          "reaction_counts": {},
-          "reaction_scores": {},
-          "latest_reactions": [],
-          "own_reactions": [],
-          "show_in_channel": false,
-          "mentioned_users": [],
-          "i18n": {},
-          "thread_participants" : [],
-          "attachments" : [],
-          "pinned": false
+          }
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -139,7 +145,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         silent = false,
         shadowed = false,
         created_at = Date(1591787071000),
@@ -169,23 +181,23 @@ internal object DtoTestData {
     @Language("JSON")
     val upstreamJson =
         """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "attachments": [],
           "cid": "cid",
-          "text": "",
           "html": "",
-          "user": {
-            "id": "",
-            "role": "",
-            "invisible": false,
-            "banned": false
-          },
-          "silent": false,
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "mentioned_users": [],
+          "pinned": false,
           "shadowed": false,
-          "show_in_channel":false,
-          "mentioned_users":[],
-          "attachments":[],
-          "pinned":false,
-          "thread_participants":[],
+          "show_in_channel": false,
+          "silent": false,
+          "text": "",
+          "thread_participants": [],
+          "user": {
+            "banned": false,
+            "id": "",
+            "invisible": false,
+            "role": ""
+          },
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -208,7 +220,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         silent = false,
         shadowed = false,
         extraData = mapOf(
@@ -242,23 +260,23 @@ internal object DtoTestData {
     @Language("JSON")
     val upstreamJsonWithoutExtraData =
         """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "attachments": [],
           "cid": "cid",
-          "text": "",
           "html": "",
-          "user": {
-            "id": "",
-            "role": "",
-            "invisible": false,
-            "banned": false
-          },
-          "silent": false,
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "mentioned_users": [],
+          "pinned": false,
           "shadowed": false,
-          "show_in_channel":false,
-          "mentioned_users":[],
-          "attachments":[],
-          "pinned":false,
-          "thread_participants":[]
+          "show_in_channel": false,
+          "silent": false,
+          "text": "",
+          "thread_participants": [],
+          "user": {
+            "banned": false,
+            "id": "",
+            "invisible": false,
+            "role": ""
+          }
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -267,7 +285,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         silent = false,
         shadowed = false,
         extraData = emptyMap(),
@@ -287,25 +311,32 @@ internal object DtoTestData {
     val reactionJson =
         """{
           "message_id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "type":"like",
-          "score":0,
+          "score": 0,
+          "type": "like",
           "user": {
-            "id":"",
-            "role":"",
-            "invisible":false,
-            "banned":false
+            "banned": false,
+            "id": "",
+            "invisible": false,
+            "role": ""
           },
-          "user_id":"",
+          "user_id": "",
           "extraData": {
-              "key1": true
+            "key1": true
           },
           "customKey1": "customVal1"
-        }""".withoutWhitespace()
+        }
+        """.withoutWhitespace()
     val reaction = ReactionDto(
         message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
         type = "like",
         score = 0,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         user_id = "",
         created_at = null,
         updated_at = null,
@@ -321,21 +352,27 @@ internal object DtoTestData {
     val reactionJsonWithoutExtraData =
         """{
           "message_id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "type":"like",
-          "score":0,
+          "score": 0,
+          "type": "like",
           "user": {
-            "id":"",
-            "role":"",
-            "invisible":false,
-            "banned":false
+            "banned": false,
+            "id": "",
+            "invisible": false,
+            "role": ""
           },
-          "user_id":""
+          "user_id": ""
         }""".withoutWhitespace()
     val reactionWithoutExtraData = ReactionDto(
         message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
         type = "like",
         score = 0,
-        user = UserDto("", "", false, false, emptyMap()),
+        user = UserDto(
+            banned = false,
+            id = "",
+            invisible = false,
+            role = "",
+            extraData = emptyMap()
+        ),
         user_id = "",
         created_at = null,
         updated_at = null,

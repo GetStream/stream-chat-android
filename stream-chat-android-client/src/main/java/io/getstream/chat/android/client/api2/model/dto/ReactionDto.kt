@@ -9,12 +9,13 @@ import java.util.Date
  */
 @JsonClass(generateAdapter = true)
 internal data class ReactionDto(
+    val created_at: Date?,
     val message_id: String,
-    val type: String,
     val score: Int,
+    val type: String,
+    val updated_at: Date?,
     val user: UserDto?,
     val user_id: String,
-    val created_at: Date?,
-    val updated_at: Date?,
+
     val extraData: Map<String, Any>,
 )
