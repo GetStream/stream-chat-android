@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Message
 internal class MoshiChatApi(
     private val apiKey: String,
     private val legacyApiDelegate: ChatApi,
-    private val mapper: DtoMapper,
     private val messageApi: MessageApi,
 ) : ChatApi by legacyApiDelegate {
 
@@ -28,8 +27,8 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            message = MessageRequest(mapper.toDto(message)!!),
-        ).map { response -> mapper.toDomain(response.message)!! }
+            message = MessageRequest(message.toDto()),
+        ).map { response -> response.message.toDomain() }
     }
 
     override fun updateMessage(message: Message): Call<Message> {
@@ -38,8 +37,8 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            message = MessageRequest(mapper.toDto(message)!!),
-        ).map { response -> mapper.toDomain(response.message)!! }
+            message = MessageRequest(message.toDto()),
+        ).map { response -> response.message.toDomain() }
     }
 
     override fun getMessage(messageId: String): Call<Message> {
@@ -48,7 +47,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId
-        ).map { response -> mapper.toDomain(response.message)!! }
+        ).map { response -> response.message.toDomain() }
     }
 
     override fun deleteMessage(messageId: String): Call<Message> {
@@ -57,6 +56,6 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-        ).map { response -> mapper.toDomain(response.message)!! }
+        ).map { response -> response.message.toDomain() }
     }
 }
