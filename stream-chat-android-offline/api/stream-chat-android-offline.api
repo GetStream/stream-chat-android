@@ -237,20 +237,26 @@ public final class io/getstream/chat/android/livedata/dao/ChannelDao_Impl : io/g
 	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/livedata/dao/MessageDao_Impl : io/getstream/chat/android/livedata/dao/MessageDao {
+public final class io/getstream/chat/android/livedata/dao/MessageDao_Impl {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insert (Lio/getstream/chat/android/livedata/entity/MessageEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun messagesForChannel (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun messagesForChannel$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Ljava/lang/String;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun messagesForChannelEqualOrNewerThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun messagesForChannelEqualOrNewerThan$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun messagesForChannelEqualOrOlderThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun messagesForChannelEqualOrOlderThan$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun messagesForChannelNewerThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun messagesForChannelNewerThan$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun messagesForChannelOlderThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun messagesForChannelOlderThan$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun selectSyncNeeded$default (Lio/getstream/chat/android/livedata/dao/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/livedata/dao/QueryChannelsDao_Impl : io/getstream/chat/android/livedata/dao/QueryChannelsDao {

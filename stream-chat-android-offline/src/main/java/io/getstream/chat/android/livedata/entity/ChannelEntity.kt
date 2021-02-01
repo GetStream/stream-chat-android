@@ -1,12 +1,9 @@
 package io.getstream.chat.android.livedata.entity
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import java.util.Date
 
 /**
@@ -51,9 +48,7 @@ internal data class ChannelEntity(
     /** denormalize the last message date so we can sort on it */
     var lastMessageAt: Date? = null,
 
-    /** denormalize the last message to optimise read performance for channel list showing the last message */
-    @Embedded(prefix = "last_message")
-    var lastMessage: MessageEntity? = null,
+    var lastMessageId: String? = null,
 
     /** when the channel was created */
     var createdAt: Date? = null,
@@ -72,22 +67,14 @@ internal data class ChannelEntity(
 ) {
     /** updates last message and lastMessageAt on this channel entity */
     internal fun updateLastMessage(messageEntity: MessageEntity) {
-        val createdAt = messageEntity.createdAt ?: messageEntity.createdLocallyAt
+        val createdAt = messageEntity.messageInnerEntity.createdAt ?: messageEntity.messageInnerEntity.createdLocallyAt
         val messageEntityCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
-        val updateNeeded = messageEntity.id == lastMessage?.id
+        val updateNeeded = messageEntity.messageInnerEntity.id == lastMessageId
         val newLastMessage = lastMessageAt == null || messageEntityCreatedAt.after(lastMessageAt)
         if (newLastMessage || updateNeeded) {
             lastMessageAt = messageEntityCreatedAt
-            lastMessage = messageEntity
+            lastMessageId = messageEntity.messageInnerEntity.id
         }
     }
-
-    /** updates last message and lastmessagedate on this channel entity */
-    fun updateReads(read: ChannelUserRead) {
-        reads[read.getUserId()] = read.toEntity()
-    }
-
-    private fun max(date: Date?, otherDate: Date?): Date? =
-        date?.takeIf { otherDate == null || it.after(otherDate) } ?: otherDate
 }

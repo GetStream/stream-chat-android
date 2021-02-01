@@ -71,11 +71,11 @@ internal class RepositoryHelperTests {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
             When calling users.select("userId") doReturn randomUser(id = "userId")
-            val channelEntity1 = randomChannelEntity(lastMessage = null).apply {
+            val channelEntity1 = randomChannelEntity(lastMessageId = null).apply {
                 cid = "cid1"
                 createdByUserId = "userId"
             }
-            val channelEntity2 = randomChannelEntity(lastMessage = null).apply {
+            val channelEntity2 = randomChannelEntity(lastMessageId = null).apply {
                 cid = "cid2"
                 createdByUserId = "userId"
             }
@@ -102,11 +102,11 @@ internal class RepositoryHelperTests {
             When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest), any()) doReturn listOf(
                 message2
             )
-            val channelEntity1 = randomChannelEntity(lastMessage = null).apply {
+            val channelEntity1 = randomChannelEntity(lastMessageId = null).apply {
                 cid = "cid1"
                 createdByUserId = "userId"
             }
-            val channelEntity2 = randomChannelEntity(lastMessage = null).apply {
+            val channelEntity2 = randomChannelEntity(lastMessageId = null).apply {
                 cid = "cid2"
                 createdByUserId = "userId"
             }
