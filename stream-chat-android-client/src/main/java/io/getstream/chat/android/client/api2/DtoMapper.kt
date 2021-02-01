@@ -1,11 +1,13 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UserDto
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -65,7 +67,7 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         pinnedAt = pinned_at,
         pinExpires = pin_expires,
         pinnedBy = pinned_by?.toDomain(),
-        channelInfo = channel,
+        channelInfo = channel?.toDomain(),
         extraData = extraData.toMutableMap(),
     )
 
@@ -143,4 +145,13 @@ internal fun ReactionDto.toDomain(): Reaction =
         userId = user_id,
         createdAt = created_at,
         updatedAt = updated_at,
+    )
+
+internal fun ChannelInfoDto.toDomain(): ChannelInfo =
+    ChannelInfo(
+        cid = cid,
+        id = id,
+        type = type,
+        memberCount = member_count,
+        name = name,
     )

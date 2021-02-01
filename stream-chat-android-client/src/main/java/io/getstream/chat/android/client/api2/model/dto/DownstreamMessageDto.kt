@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.models.ChannelInfo
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
@@ -44,7 +43,7 @@ internal data class DownstreamMessageDto(
     val pin_expires: Date?,
     val pinned_by: UserDto?,
 
-    val channel: ChannelInfo,
+    val channel: ChannelInfoDto?,
 
     val extraData: Map<String, Any>,
 )
