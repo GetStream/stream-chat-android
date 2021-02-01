@@ -27,6 +27,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect ()V
 	public final fun disconnectSocket ()V

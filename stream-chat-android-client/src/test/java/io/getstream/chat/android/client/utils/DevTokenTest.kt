@@ -1,5 +1,8 @@
 package io.getstream.chat.android.client.utils
 
+import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.token.FakeTokenManager
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -8,11 +11,24 @@ import org.robolectric.annotation.Config
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-internal class ChatUtilsTest(private val userId: String, private val expectedToken: String) {
+internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
+
+    private val client = ChatClient(
+        config = mock(),
+        api = mock(),
+        socket = mock(),
+        notifications = mock(),
+        tokenManager = FakeTokenManager("")
+    )
 
     @Test
     fun `Should return valid dev token`() {
         ChatUtils.devToken(userId) `should be equal to` expectedToken
+    }
+
+    @Test
+    fun `Should return valid dev token from ChatClient`() {
+        client.devToken(userId) `should be equal to` expectedToken
     }
 
     companion object {

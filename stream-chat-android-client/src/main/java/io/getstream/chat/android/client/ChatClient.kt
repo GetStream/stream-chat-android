@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.utils.ChatUtils
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -1130,6 +1131,8 @@ public class ChatClient internal constructor(
 
     private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
         notifications.isValidRemoteMessage(remoteMessage)
+
+    public fun devToken(userId: String): String = ChatUtils.devToken(userId)
 
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
