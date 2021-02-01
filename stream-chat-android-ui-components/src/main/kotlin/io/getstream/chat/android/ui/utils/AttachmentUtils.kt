@@ -65,5 +65,4 @@ internal object AttachmentUtils {
             }
         }
     }
-
 }
