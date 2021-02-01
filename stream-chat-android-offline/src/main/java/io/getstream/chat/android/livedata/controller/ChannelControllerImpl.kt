@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.uploader.ProgressTracker
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -625,32 +626,11 @@ internal class ChannelControllerImpl(
 
         return if (online) {
             // upload attachments
-
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
                 newMessage.attachments = newMessage.attachments.mapIndexed { i, attach ->
-                    var attachment: Attachment = attach
-                    val attachmentProgress = attachmentProgressList[i]
-
-                    if (attachment.upload != null) {
-                        val result = uploadAttachment(
-                            attachment,
-                            attachmentTransformer,
-                            attachmentProgress.toProgressCallback()
-                        )
-
-                        if (result.isSuccess) {
-                            attachment = result.data()
-                            attachmentProgress.setComplete(true)
-                            attachment.uploadState = Attachment.UploadState.Success
-                        } else {
-                            attachmentProgress.setComplete(false)
-                            attachment.uploadState = Attachment.UploadState.Failed(result.error())
-                        }
-                    }
-
-                    attachment
+                    sendAttachment(attach, attachmentProgressList[i], attachmentTransformer)
                 }.toMutableList()
 
                 uploadStatusMessage?.let { cancelMessage(it) }
@@ -663,29 +643,9 @@ internal class ChannelControllerImpl(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             if (result.isSuccess) {
-                val processedMessage: Message = result.data()
-                processedMessage.apply {
-                    enrichWithCid(cid)
-                    syncStatus = SyncStatus.COMPLETED
-                    domainImpl.repos.messages.insert(this)
-                }
-
-                upsertMessage(processedMessage)
-                Result(processedMessage)
+                handleSendAttachmentSuccess(result)
             } else {
-                logger.logE(
-                    "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
-                    result.error()
-                )
-
-                if (result.error().isPermanent()) {
-                    newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    newMessage.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                upsertMessage(newMessage)
-                domainImpl.repos.messages.insert(newMessage)
-                Result(result.error())
+                handleSendAttachmentFail(newMessage, result)
             }
         } else {
             uploadStatusMessage = null
@@ -698,14 +658,70 @@ internal class ChannelControllerImpl(
         return "upload_id_${UUID.randomUUID()}"
     }
 
+    private suspend fun sendAttachment(
+        attachment: Attachment,
+        attachmentProgress: ProgressTracker,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
+    ): Attachment {
+        var newAttachment: Attachment = attachment
+
+        if (newAttachment.upload != null) {
+            val result = uploadAttachment(
+                newAttachment,
+                attachmentTransformer,
+                attachmentProgress.toProgressCallback()
+            )
+
+            if (result.isSuccess) {
+                newAttachment = result.data()
+                attachmentProgress.setComplete(true)
+                newAttachment.uploadState = Attachment.UploadState.Success
+            } else {
+                attachmentProgress.setComplete(false)
+                newAttachment.uploadState = Attachment.UploadState.Failed(result.error())
+            }
+        }
+
+        return newAttachment
+    }
+
+    private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
+        val processedMessage: Message = result.data()
+        processedMessage.apply {
+            enrichWithCid(cid)
+            syncStatus = SyncStatus.COMPLETED
+            domainImpl.repos.messages.insert(this)
+        }
+
+        upsertMessage(processedMessage)
+        return Result(processedMessage)
+    }
+
+    private suspend fun handleSendAttachmentFail(message: Message, result: Result<Message>): Result<Message> {
+        logger.logE(
+            "Failed to send message with id ${message.id} and text ${message.text}: ${result.error()}",
+            result.error()
+        )
+
+        if (result.error().isPermanent()) {
+            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+        } else {
+            message.syncStatus = SyncStatus.SYNC_NEEDED
+        }
+
+        upsertMessage(message)
+        domainImpl.repos.messages.insert(message)
+        return Result(result.error())
+    }
+
     // TODO: type should be a sealed/class or enum at the client level
-    private fun getMessageType(message: Message) : String {
+    private fun getMessageType(message: Message): String {
         val hasAttachments = message.attachments.isNotEmpty()
         val hasAttachmentsToUpload = message.attachments.any { attachment ->
             attachment.uploadState is Attachment.UploadState.InProgress
         }
 
-        return if (newMessage.text.startsWith("/") || (hasAttachments && hasAttachmentsToUpload)) {
+        return if (message.text.startsWith("/") || (hasAttachments && hasAttachmentsToUpload)) {
             "ephemeral"
         } else {
             "regular"
