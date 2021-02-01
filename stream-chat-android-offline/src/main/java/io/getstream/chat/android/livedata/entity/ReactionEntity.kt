@@ -59,5 +59,5 @@ internal data class ReactionEntity(
     val syncStatus: SyncStatus,
 ) {
     @PrimaryKey
-    var id = hashCode()
+    var id = messageId.hashCode() + userId.hashCode() + type.hashCode()
 }
