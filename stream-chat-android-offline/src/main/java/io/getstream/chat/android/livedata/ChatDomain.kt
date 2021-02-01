@@ -77,6 +77,9 @@ public interface ChatDomain {
     /** The retry policy for retrying failed requests */
     public var retryPolicy: RetryPolicy
 
+    /**
+     * Updates about currently typing users in active channels. See [TypingEvent].
+     */
     public val typingUpdates: LiveData<TypingEvent>
 
     /** a helper object which lists all the initialized use cases for the chat domain */
