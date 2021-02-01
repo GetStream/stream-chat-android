@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.usecase.SetMessageForReply
 
 /**
  * The Channel Controller exposes convenient livedata objects to build your chat interface
@@ -27,8 +28,10 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 public interface ChannelController {
     public val channelType: String
     public val channelId: String
+
     /** a list of messages sorted by message.createdAt */
     public val messages: LiveData<List<Message>>
+
     /**
      * Similar to the messages field, but returns the a MessagesState object
      * This sealed class makes it easier to verify that you've implemented all possible error/no result states
@@ -36,39 +39,59 @@ public interface ChannelController {
      * @see MessagesState
      */
     public val messagesState: LiveData<MessagesState>
+
     /** Old messages loaded from history of conversation */
     public val oldMessages: LiveData<List<Message>>
+
     /** the number of people currently watching the channel */
     public val watcherCount: LiveData<Int>
+
     /** the list of users currently watching this channel */
     public val watchers: LiveData<List<User>>
+
     /** who is currently typing (current user is excluded from this) */
     public val typing: LiveData<TypingEvent>
+
     /** how far every user in this channel has read */
     public val reads: LiveData<List<ChannelUserRead>>
+
     /** read status for the current user */
     public val read: LiveData<ChannelUserRead?>
+
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
     public val unreadCount: LiveData<Int?>
+
     /** the list of members of this channel */
     public val members: LiveData<List<Member>>
+
     /** if we are currently loading */
     public val loading: LiveData<Boolean>
+
     /** if we are currently loading older messages */
     public val loadingOlderMessages: LiveData<Boolean>
+
     /** if we are currently loading newer messages */
     public val loadingNewerMessages: LiveData<Boolean>
+
     /** set to true if there are no more older messages to load */
     public val endOfOlderMessages: LiveData<Boolean>
+
     /** set to true if there are no more newer messages to load */
     public val endOfNewerMessages: LiveData<Boolean>
     public val recoveryNeeded: Boolean
     public val cid: String
+
     /** LiveData object with the channel data */
     public val channelData: LiveData<ChannelData>
-    /** Contains message if reply happens or null if no reply */
+
+    /**
+     * Contains the Message that is selected to be replied to in this channel,
+     * or null if no such selection exists.
+     *
+     * See [SetMessageForReply].
+     */
     public val repliedMessage: LiveData<Message?>
 
     public fun clean()
@@ -83,6 +106,7 @@ public interface ChannelController {
          * If you know that a query will be started you typically want to display a loading icon.
          * */
         public object NoQueryActive : MessagesState()
+
         /** Indicates we are loading the first page of results.
          * We are in this state if ChannelController.loading is true
          * For seeing if we're loading more results have a look at loadingNewerMessages and loadingOlderMessages
@@ -92,8 +116,10 @@ public interface ChannelController {
          * @see loadingOlderMessages
          * */
         public object Loading : MessagesState()
+
         /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
         public object OfflineNoResults : MessagesState()
+
         /** The list of messages, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
          * @see ChatDomainImpl.online

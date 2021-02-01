@@ -82,7 +82,7 @@ internal val gson = StreamGson.gson
  * A different Room database is used for different users. That's why it's mandatory to specify the user id when
  * initializing the ChatRepository
  *
- * chatDomain.channel(type, id) returns a repo object with channel specific livedata object
+ * chatDomain.channel(type, id) returns a controller object with channel specific livedata objects
  * chatDomain.queryChannels(query) returns a livedata object for the specific queryChannels query
  *
  * chatDomain.online livedata object indicates if you're online or not
@@ -176,20 +176,20 @@ internal class ChatDomainImpl internal constructor(
     override val banned: LiveData<Boolean> = _banned.asLiveData()
 
     /**
-     * The error event livedata object is triggered when errors in the underlying components occure.
+     * The error event livedata object is triggered when errors in the underlying components occur.
      * The following example shows how to observe these errors
      *
-     *  repo.errorEvent.observe(this, EventObserver {
+     *  channelController.errorEvent.observe(this) {
      *       // create a toast
      *   })
      *
      */
     override val errorEvents: LiveData<Event<ChatError>> = _errorEvent.filterNotNull().asLiveData()
 
-    /** the event subscription, cancel using repo.stopListening */
+    /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
-    /** stores the mapping from cid to channelRepository */
+    /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
     override val typingUpdates: LiveData<TypingEvent> = _typingChannels
@@ -396,8 +396,8 @@ internal class ChatDomainImpl internal constructor(
             }
 
             // update livedata
-            val channelRepo = channel(c.cid)
-            channelRepo.updateLiveDataFromChannel(c)
+            val channelController = channel(c.cid)
+            channelController.updateLiveDataFromChannel(c)
 
             // Update Room State
             repos.insertChannel(c)
@@ -484,25 +484,22 @@ internal class ChatDomainImpl internal constructor(
         return channel(parts[0], parts[1])
     }
 
-    /**
-     * repo.channel("messaging", "12") return a ChatChannelRepository
-     */
     internal fun channel(
         channelType: String,
         channelId: String,
     ): ChannelControllerImpl {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
-            val channelRepo =
+            val channelController =
                 ChannelControllerImpl(
                     channelType,
                     channelId,
                     client,
                     this
                 )
-            activeChannelMapImpl[cid] = channelRepo
+            activeChannelMapImpl[cid] = channelController
             scope.launch(DispatcherProvider.Main) {
-                addTypingChannel(channelRepo)
+                addTypingChannel(channelController)
             }
         }
         return activeChannelMapImpl.getValue(cid)
@@ -622,7 +619,7 @@ internal class ChatDomainImpl internal constructor(
             .toList()
             .filter { it.recoveryNeeded || recoverAll }
             .take(3)
-        for (queryRepo in queriesToRetry) {
+        for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
                 QuerySort<Channel>(),
                 INITIAL_CHANNEL_OFFSET,
@@ -630,9 +627,9 @@ internal class ChatDomainImpl internal constructor(
                 MESSAGE_LIMIT,
                 MEMBER_LIMIT
             )
-            val response = queryRepo.runQueryOnline(pagination)
+            val response = queryChannelController.runQueryOnline(pagination)
             if (response.isSuccess) {
-                queryRepo.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
+                queryChannelController.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
@@ -797,8 +794,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun clean() {
-        for (channelRepo in activeChannelMapImpl.values.toList()) {
-            channelRepo.clean()
+        for (channelController in activeChannelMapImpl.values.toList()) {
+            channelController.clean()
         }
     }
 
