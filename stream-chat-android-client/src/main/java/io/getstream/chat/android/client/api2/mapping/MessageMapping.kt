@@ -1,15 +1,12 @@
-package io.getstream.chat.android.client.api2
+package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UserDto
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 
 internal fun Message.toDto(): UpstreamMessageDto =
@@ -69,89 +66,4 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         pinnedBy = pinned_by?.toDomain(),
         channelInfo = channel?.toDomain(),
         extraData = extraData.toMutableMap(),
-    )
-
-internal fun User.toDto(): UserDto =
-    UserDto(
-        id = id,
-        role = role,
-        invisible = invisible,
-        banned = banned,
-    )
-
-internal fun UserDto.toDomain(): User =
-    User(
-        id = id,
-        role = role,
-        invisible = invisible,
-        banned = banned,
-    )
-
-internal fun Attachment.toDto(): AttachmentDto =
-    AttachmentDto(
-        author_name = authorName,
-        title_link = titleLink,
-        thumb_url = thumbUrl,
-        image_url = imageUrl,
-        asset_url = assetUrl,
-        og_scrape_url = ogUrl,
-        mime_type = mimeType,
-        file_size = fileSize,
-        title = title,
-        text = text,
-        type = type,
-        image = image,
-        url = url,
-        name = name,
-        fallback = fallback,
-    )
-
-internal fun AttachmentDto.toDomain(): Attachment =
-    Attachment(
-        authorName = author_name,
-        titleLink = title_link,
-        thumbUrl = thumb_url,
-        imageUrl = image_url,
-        assetUrl = asset_url,
-        ogUrl = og_scrape_url,
-        mimeType = mime_type,
-        fileSize = file_size,
-        title = title,
-        text = text,
-        type = type,
-        image = image,
-        url = url,
-        name = name,
-        fallback = fallback,
-    )
-
-internal fun Reaction.toDto(): ReactionDto =
-    ReactionDto(
-        message_id = messageId,
-        type = type,
-        score = score,
-        user = user?.toDto(),
-        user_id = userId,
-        created_at = createdAt,
-        updated_at = updatedAt,
-    )
-
-internal fun ReactionDto.toDomain(): Reaction =
-    Reaction(
-        messageId = message_id,
-        type = type,
-        score = score,
-        user = user?.toDomain(),
-        userId = user_id,
-        createdAt = created_at,
-        updatedAt = updated_at,
-    )
-
-internal fun ChannelInfoDto.toDomain(): ChannelInfo =
-    ChannelInfo(
-        cid = cid,
-        id = id,
-        type = type,
-        memberCount = member_count,
-        name = name,
     )

@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api2.mapping.toDomain
+import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
