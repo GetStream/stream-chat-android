@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -13,10 +14,12 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,
+            deferred = true
         )
     ]
 )
 internal data class AttachmentEntity(
+    @ColumnInfo(index = true)
     val messageId: String,
     val authorName: String?,
     val titleLink: String?,
