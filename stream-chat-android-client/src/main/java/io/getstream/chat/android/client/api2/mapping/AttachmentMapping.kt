@@ -20,6 +20,7 @@ internal fun Attachment.toDto(): AttachmentDto =
         url = url,
         name = name,
         fallback = fallback,
+        extraData = extraData,
     )
 
 internal fun AttachmentDto.toDomain(): Attachment =
@@ -39,4 +40,5 @@ internal fun AttachmentDto.toDomain(): Attachment =
         url = url,
         name = name,
         fallback = fallback,
+        extraData = extraData.toMutableMap(),
     )

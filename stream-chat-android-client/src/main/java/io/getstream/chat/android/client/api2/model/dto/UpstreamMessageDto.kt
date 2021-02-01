@@ -3,6 +3,10 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
+/**
+ * See [io.getstream.chat.android.client.parser2.UpstreamMessageDtoAdapter] for
+ * special [extraData] handling.
+ */
 @JsonClass(generateAdapter = true)
 internal data class UpstreamMessageDto(
     val id: String,

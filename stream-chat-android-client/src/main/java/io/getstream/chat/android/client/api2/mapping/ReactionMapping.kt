@@ -12,6 +12,7 @@ internal fun Reaction.toDto(): ReactionDto =
         user_id = userId,
         created_at = createdAt,
         updated_at = updatedAt,
+        extraData = extraData,
     )
 
 internal fun ReactionDto.toDomain(): Reaction =
@@ -23,4 +24,5 @@ internal fun ReactionDto.toDomain(): Reaction =
         userId = user_id,
         createdAt = created_at,
         updatedAt = updated_at,
+        extraData = extraData.toMutableMap(),
     )

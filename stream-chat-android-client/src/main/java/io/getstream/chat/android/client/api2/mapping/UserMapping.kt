@@ -9,6 +9,7 @@ internal fun User.toDto(): UserDto =
         role = role,
         invisible = invisible,
         banned = banned,
+        extraData = extraData,
     )
 
 internal fun UserDto.toDomain(): User =
@@ -17,4 +18,5 @@ internal fun UserDto.toDomain(): User =
         role = role,
         invisible = invisible,
         banned = banned,
+        extraData = extraData.toMutableMap(),
     )
