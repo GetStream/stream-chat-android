@@ -706,7 +706,7 @@ internal class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    internal fun uploadAttachment(
+    internal suspend fun uploadAttachment(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
         progressCallback: ProgressCallback? = null,
