@@ -15,7 +15,7 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListene
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.utils.trackFilesSent
+import io.getstream.chat.android.ui.utils.AttachmentUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -80,7 +80,7 @@ internal class OnlyFileAttachmentsViewHolder(
             this.scope = scope
 
             scope.launch {
-                trackFilesSent(context, uploadIdList, binding.sentFiles)
+                AttachmentUtils.trackFilesSent(context, uploadIdList, binding.sentFiles)
             }
         } else {
             binding.sentFiles.isVisible = false

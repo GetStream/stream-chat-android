@@ -43,24 +43,27 @@ internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData) {
     }
 }
 
-internal suspend fun trackFilesSent(context: Context, uploadIdList: List<String>, sentFilesView: TextView) {
-    val filesSent = 0
-    val totalFiles = uploadIdList.size
+internal object AttachmentUtils {
+    internal suspend fun trackFilesSent(context: Context, uploadIdList: List<String>, sentFilesView: TextView) {
+        val filesSent = 0
+        val totalFiles = uploadIdList.size
 
-    sentFilesView.isVisible = true
-    sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, filesSent, totalFiles)
+        sentFilesView.isVisible = true
+        sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, filesSent, totalFiles)
 
-    val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
-        ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
-    }
+        val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
+            ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
+        }
 
-    combine(completionFlows) { isCompleteArray ->
-        isCompleteArray.count { isComplete -> isComplete }
-    }.collect { completedCount ->
-        if (completedCount == totalFiles) {
-            sentFilesView.text = context.getString(R.string.stream_ui_upload_complete)
-        } else {
-            sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, completedCount, totalFiles)
+        combine(completionFlows) { isCompleteArray ->
+            isCompleteArray.count { isComplete -> isComplete }
+        }.collect { completedCount ->
+            if (completedCount == totalFiles) {
+                sentFilesView.text = context.getString(R.string.stream_ui_upload_complete)
+            } else {
+                sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, completedCount, totalFiles)
+            }
         }
     }
+
 }
