@@ -6,48 +6,32 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
-import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
-import io.getstream.chat.android.ui.messages.reactions.ReactionItem
-import io.getstream.chat.android.ui.utils.extensions.isMine
+import io.getstream.chat.android.ui.utils.UiUtils
 
+@InternalStreamChatApi
 public class UserReactionsView : FrameLayout {
 
     private val binding = StreamUiUserReactionsViewBinding.inflate(context.inflater, this, true)
 
-    private var reactionClickListener: ReactionClickListener? = null
-    private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter {
-        reactionClickListener?.onReactionClick(it)
-    }
+    private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter()
+    private val gridLayoutManager: GridLayoutManager
 
-    public constructor(context: Context) : super(context) {
-        init()
-    }
+    public constructor(context: Context) : super(context)
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init()
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init()
-    }
-
-    public fun setMessage(message: Message) {
-        bindTitle(message)
-        bindReactionList(message)
-    }
-
-    public fun setReactionClickListener(reactionClickListener: ReactionClickListener?) {
-        this.reactionClickListener = reactionClickListener
-    }
-
-    private fun init() {
+    init {
         binding.recyclerView.adapter = userReactionsAdapter
+        gridLayoutManager = binding.recyclerView.layoutManager as GridLayoutManager
+    }
+
+    public fun setMessage(message: Message, currentUser: User) {
+        bindTitle(message)
+        bindReactionList(message, currentUser)
     }
 
     private fun bindTitle(message: Message) {
@@ -59,16 +43,24 @@ public class UserReactionsView : FrameLayout {
         )
     }
 
-    private fun bindReactionList(message: Message) {
-        val layoutManager = binding.recyclerView.layoutManager as GridLayoutManager
-        layoutManager.spanCount = message.latestReactions
-            .size
-            .coerceAtMost(MAX_COLUMNS_COUNT)
+    private fun bindReactionList(message: Message, currentUser: User) {
+        val userReactionItems = message.latestReactions.mapNotNull {
+            val user = it.user
+            val iconDrawableRes = UiUtils.getReactionIcon(it.type)
+            if (user != null && iconDrawableRes != null) {
+                UserReactionItem(
+                    user = user,
+                    reaction = it,
+                    isMine = user.id == currentUser.id,
+                    iconDrawableRes = iconDrawableRes
+                )
+            } else {
+                null
+            }
+        }
 
-        val reactionItems = message.latestReactions
-            .filter { it.user != null }
-            .map { ReactionItem(it, it.isMine()) }
-        userReactionsAdapter.submitList(reactionItems)
+        gridLayoutManager.spanCount = userReactionItems.size.coerceAtMost(MAX_COLUMNS_COUNT)
+        userReactionsAdapter.submitList(userReactionItems)
     }
 
     private companion object {

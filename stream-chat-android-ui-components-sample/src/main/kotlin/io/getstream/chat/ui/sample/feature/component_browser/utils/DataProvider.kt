@@ -9,12 +9,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.utils.ReactionType
 
 internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
     val res = context.resources
@@ -52,14 +50,6 @@ internal fun randomChannel(members: List<Member> = emptyList()): Channel {
 
 internal fun randomMember(withImage: Boolean = true): Member {
     return Member(user = randomUser(withImage))
-}
-
-internal fun randomMessageWithReactions(count: Int): Message {
-    return randomMessage().apply {
-        latestReactions = MutableList(count) {
-            Reaction(user = randomUser(), type = ReactionType.values().random().type)
-        }
-    }
 }
 
 internal fun randomMessage(): Message {

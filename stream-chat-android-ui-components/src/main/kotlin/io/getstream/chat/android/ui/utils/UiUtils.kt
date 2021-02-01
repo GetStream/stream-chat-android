@@ -44,8 +44,9 @@ public object UiUtils {
         }
     }
 
-    internal fun getReactionTypes(): Map<String, Int> {
-        return reactionTypes
+    @DrawableRes
+    internal fun getReactionIcon(type: String): Int? {
+        return reactionTypes[type]
     }
 }
 
