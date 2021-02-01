@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
@@ -152,36 +153,47 @@ private class FileAttachmentViewHolder(
             binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
 
             if (attachment.uploadState is Attachment.UploadState.InProgress) {
-                attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-                    val progress = tracker.currentProgress()
-                    val completion = tracker.isComplete()
-                    val totalValue = MediaStringUtil.convertFileSizeByteCount(
-                        attachment.upload?.length() ?: 0
-                    )
+                handleInProgressAttachment(fileSize)
+            }
+        }
+    }
 
-                    val fileProgress = progress.combine(completion, ::Pair)
+    private fun handleInProgressAttachment(fileSizeView: TextView) {
+        attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+            val progress = tracker.currentProgress()
+            val completion = tracker.isComplete()
+            val totalValue = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0)
+            val progressCorrection = tracker.maxValue / 100F
 
-                    clearScope()
-                    scope = CoroutineScope(DispatcherProvider.Main)
+            val fileProgress = progress.combine(completion, ::Pair)
 
-                    scope!!.launch {
-                        fileProgress.collect { (progress, isComplete) ->
-                            if (!isComplete) {
-                                val nominalProgress = MediaStringUtil.convertFileSizeByteCount(
-                                    progress.toLong() * tracker.maxValue / 100
-                                )
+            clearScope()
+            scope = CoroutineScope(DispatcherProvider.Main)
 
-                                fileSize.text = "$nominalProgress / $totalValue"
-                            } else {
-                                binding.progressBar.isVisible = false
-                                fileSize.text = attachment.upload?.length()?.let {
-                                    MediaStringUtil.convertFileSizeByteCount(it)
-                                }
-                            }
-                        }
-                    }
+            scope!!.launch {
+                fileProgress.collect { (progress, isComplete) ->
+                    updateProgress(context, fileSizeView, progress, isComplete, progressCorrection, totalValue)
                 }
             }
+        }
+    }
+
+    private fun updateProgress(
+        context: Context,
+        fileSizeView: TextView,
+        progress: Int,
+        isComplete: Boolean,
+        progressCorrection: Float,
+        targetValue: String,
+    ) {
+        if (!isComplete) {
+            val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
+
+            fileSizeView.text =
+                context.getString(R.string.stream_ui_upload_sending_percentage, nominalProgress, targetValue)
+        } else {
+            binding.progressBar.isVisible = false
+            fileSizeView.text = attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
         }
     }
 

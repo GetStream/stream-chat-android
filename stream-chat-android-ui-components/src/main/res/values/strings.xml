@@ -148,4 +148,5 @@
     <string name="stream_ui_gallery_share_sheet_title">Share Image</string>
     <string name="stream_ui_upload_complete">Upload complete, processing…</string>
     <string name="stream_ui_upload_sending">Uploading %d / %d …</string>
+    <string name="stream_ui_upload_sending_percentage">%s / %s</string>
 </resources>
