@@ -45,4 +45,9 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_margin">8dp</item>
     </style>
+
+    <style name="BottomNavigationItemTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/stream_ui_text_small</item>
+    </style>
 </resources>

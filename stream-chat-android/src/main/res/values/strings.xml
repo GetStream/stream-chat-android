@@ -71,4 +71,11 @@
     <!-- Message list view -->
     <string name="stream_messages_empty_state_label">No messages</string>
 
+    <!-- Message more action view -->
+    <string name="stream_more_action_start_thread">Start a thread</string>
+    <string name="stream_more_action_copy">Copy</string>
+    <string name="stream_more_action_flag">Flag</string>
+    <string name="stream_more_action_edit">Edit</string>
+    <string name="stream_more_action_delete">Delete</string>
+
 </resources>

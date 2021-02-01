@@ -28,7 +28,7 @@ sealed class ChatInfoItem {
         abstract val textResId: Int
 
         @get:ColorRes
-        open val tintResId: Int = R.color.grey
+        open val tintResId: Int = R.color.stream_ui_grey
 
         @get:ColorRes
         open val textColorResId: Int = R.color.stream_ui_black
