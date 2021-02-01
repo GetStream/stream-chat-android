@@ -36,42 +36,42 @@
             >
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView1"
+                android:id="@+id/viewReactionsView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView2"
+                android:id="@+id/viewReactionsView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView3"
+                android:id="@+id/viewReactionsView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView4"
+                android:id="@+id/viewReactionsView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView5"
+                android:id="@+id/viewReactionsView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
             <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-                android:id="@+id/reactionsView6"
+                android:id="@+id/viewReactionsView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

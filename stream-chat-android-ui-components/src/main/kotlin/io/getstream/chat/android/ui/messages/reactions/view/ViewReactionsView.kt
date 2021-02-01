@@ -7,12 +7,14 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.messages.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.messages.reactions.ReactionsAdapter
+import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
-import io.getstream.chat.android.ui.utils.extensions.isMine
 
+@InternalStreamChatApi
 public class ViewReactionsView : RecyclerView {
 
     private lateinit var reactionsViewStyle: ViewReactionsViewStyle
@@ -79,15 +81,15 @@ public class ViewReactionsView : RecyclerView {
     }
 
     private fun createReactionItems(message: Message): List<ReactionItem> {
-        val reactionsMap = mutableMapOf<String, ReactionItem>()
-        message.latestReactions.forEach { reaction ->
-            val isMine = reaction.isMine()
-            if (!reactionsMap.containsKey(reaction.type) || isMine) {
-                reactionsMap[reaction.type] = ReactionItem(reaction, isMine)
-            }
-        }
-        return reactionsMap.values
-            .toList()
-            .sortedBy { if (isMyMessage) it.isMine else !it.isMine }
+        return message.reactionCounts.keys
+            .mapNotNull { type ->
+                UiUtils.getReactionIcon(type)?.let {
+                    ReactionItem(
+                        type = type,
+                        isMine = message.ownReactions.any { it.type == type },
+                        iconDrawableRes = it
+                    )
+                }
+            }.sortedBy { if (isMyMessage) it.isMine else !it.isMine }
     }
 }
