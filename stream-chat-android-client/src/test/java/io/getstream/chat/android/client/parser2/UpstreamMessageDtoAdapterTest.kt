@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.parser2.DtoTestData.upstreamJson
 import io.getstream.chat.android.client.parser2.DtoTestData.upstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.DtoTestData.upstreamMessage
 import io.getstream.chat.android.client.parser2.DtoTestData.upstreamMessageWithoutExtraData
-import org.amshove.kluent.shouldBeEqualTo
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -16,13 +16,13 @@ internal class UpstreamMessageDtoAdapterTest {
     @Test
     fun `Serialize JSON message with custom fields`() {
         val jsonString = parser.toJson(upstreamMessage)
-        jsonString shouldBeEqualTo upstreamJson
+        assertThat(jsonString).isEqualTo(upstreamJson)
     }
 
     @Test
     fun `Serialize JSON message without custom fields`() {
         val jsonString = parser.toJson(upstreamMessageWithoutExtraData)
-        jsonString shouldBeEqualTo upstreamJsonWithoutExtraData
+        assertThat(jsonString).isEqualTo(upstreamJsonWithoutExtraData)
     }
 
     @Test

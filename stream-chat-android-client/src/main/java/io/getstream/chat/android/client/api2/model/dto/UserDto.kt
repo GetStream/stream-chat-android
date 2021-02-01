@@ -4,8 +4,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class UserDto(
-    var id: String,
-    var role: String,
-    var invisible: Boolean,
-    var banned: Boolean,
+    val id: String,
+    val role: String,
+    val invisible: Boolean,
+    val banned: Boolean,
 )

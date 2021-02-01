@@ -13,6 +13,7 @@ internal object DtoTestData {
         """{
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "cid": "cid",
+          "type": "",
           "text": "",
           "html": "",
           "user": {
@@ -25,6 +26,17 @@ internal object DtoTestData {
           "shadowed": false,
           "created_at": "2020-06-10T11:04:31.0Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
+          "reply_count": 0,
+          "reaction_counts": {},
+          "reaction_scores": {},
+          "latest_reactions": [],
+          "own_reactions": [],
+          "show_in_channel": false,
+          "mentioned_users": [],
+          "i18n": {},
+          "thread_participants" : [],
+          "attachments" : [],
+          "pinned": false,
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -68,7 +80,25 @@ internal object DtoTestData {
                 "b",
                 "c"
             ),
-        )
+        ),
+        type = "",
+        reply_count = 0,
+        reaction_counts = emptyMap(),
+        reaction_scores = emptyMap(),
+        latest_reactions = emptyList(),
+        own_reactions = emptyList(),
+        show_in_channel = false,
+        mentioned_users = emptyList(),
+        i18n = emptyMap(),
+        thread_participants = emptyList(),
+        attachments = emptyList(),
+        quoted_message_id = null,
+        quoted_message = null,
+        pinned = false,
+        pinned_by = null,
+        pinned_at = null,
+        pin_expires = null,
+        channel = null,
     )
 
     @Language("JSON")
@@ -76,6 +106,7 @@ internal object DtoTestData {
         """{
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "cid": "cid",
+          "type": "",
           "text": "",
           "html": "",
           "user": {
@@ -87,7 +118,18 @@ internal object DtoTestData {
           "silent": false,
           "shadowed": false,
           "created_at": "2020-06-10T11:04:31.0Z",
-          "updated_at": "2020-06-10T11:04:31.588Z"
+          "updated_at": "2020-06-10T11:04:31.588Z",
+          "reply_count": 0,
+          "reaction_counts": {},
+          "reaction_scores": {},
+          "latest_reactions": [],
+          "own_reactions": [],
+          "show_in_channel": false,
+          "mentioned_users": [],
+          "i18n": {},
+          "thread_participants" : [],
+          "attachments" : [],
+          "pinned": false
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -102,7 +144,25 @@ internal object DtoTestData {
         created_at = Date(1591787071000),
         updated_at = Date(1591787071588),
         deleted_at = null,
-        extraData = emptyMap()
+        extraData = emptyMap(),
+        type = "",
+        reply_count = 0,
+        reaction_counts = emptyMap(),
+        reaction_scores = emptyMap(),
+        latest_reactions = emptyList(),
+        own_reactions = emptyList(),
+        show_in_channel = false,
+        mentioned_users = emptyList(),
+        i18n = emptyMap(),
+        thread_participants = emptyList(),
+        attachments = emptyList(),
+        quoted_message_id = null,
+        quoted_message = null,
+        pinned = false,
+        pinned_by = null,
+        pinned_at = null,
+        pin_expires = null,
+        channel = null,
     )
 
     @Language("JSON")
@@ -120,6 +180,11 @@ internal object DtoTestData {
           },
           "silent": false,
           "shadowed": false,
+          "show_in_channel":false,
+          "mentioned_users":[],
+          "attachments":[],
+          "pinned":false,
+          "thread_participants":[],
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -160,7 +225,17 @@ internal object DtoTestData {
                 "b",
                 "c"
             ),
-        )
+        ),
+        show_in_channel = false,
+        mentioned_users = emptyList(),
+        thread_participants = emptyList(),
+        attachments = emptyList(),
+        quoted_message_id = null,
+        quoted_message = null,
+        pinned = false,
+        pinned_by = null,
+        pinned_at = null,
+        pin_expires = null,
     )
 
     @Language("JSON")
@@ -177,7 +252,12 @@ internal object DtoTestData {
             "banned": false
           },
           "silent": false,
-          "shadowed": false
+          "shadowed": false,
+          "show_in_channel":false,
+          "mentioned_users":[],
+          "attachments":[],
+          "pinned":false,
+          "thread_participants":[]
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -189,7 +269,17 @@ internal object DtoTestData {
         user = UserDto("", "", false, false),
         silent = false,
         shadowed = false,
-        extraData = emptyMap()
+        extraData = emptyMap(),
+        show_in_channel = false,
+        mentioned_users = emptyList(),
+        thread_participants = emptyList(),
+        attachments = emptyList(),
+        quoted_message_id = null,
+        quoted_message = null,
+        pinned = false,
+        pinned_by = null,
+        pinned_at = null,
+        pin_expires = null,
     )
 
     private fun String.withoutWhitespace() = filterNot(Char::isWhitespace)

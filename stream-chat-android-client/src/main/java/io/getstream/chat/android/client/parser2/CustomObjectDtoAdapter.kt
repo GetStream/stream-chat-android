@@ -68,10 +68,15 @@ internal abstract class CustomObjectDtoAdapter<Value : Any>(private val kClass: 
     @Suppress("UNCHECKED_CAST")
     protected fun serializeWithExtraData(
         jsonWriter: JsonWriter,
-        value: Value,
+        value: Value?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
         valueAdapter: JsonAdapter<Value>,
     ) {
+        if (value == null) {
+            jsonWriter.nullValue()
+            return
+        }
+
         // Convert input value into a Map
         val map: MutableMap<String, Any?> = valueAdapter.toJsonValue(value) as MutableMap<String, Any?>
 
