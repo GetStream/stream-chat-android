@@ -96,7 +96,7 @@ fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int
     getOrCreateBadge(menuItemId).apply {
         horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)
         verticalOffset = context.getDimensionPixelSize(R.dimen.badge_vertical_offset)
-        backgroundColor = context.getColorFromRes(R.color.bottom_nav_badge_color)
+        backgroundColor = context.getColorFromRes(R.color.stream_ui_accent_red)
         isVisible = badgeNumber > 0
         number = badgeNumber
     }
