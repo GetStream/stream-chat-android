@@ -13,4 +13,5 @@ internal data class UpstreamMessageDto(
     val user: UserDto,
     val silent: Boolean,
     val shadowed: Boolean,
+    val extraData: Map<String, Any>,
 )

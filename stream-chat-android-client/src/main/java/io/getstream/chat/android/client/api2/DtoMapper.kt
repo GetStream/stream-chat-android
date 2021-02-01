@@ -19,6 +19,7 @@ internal class DtoMapper {
             user = toDto(user),
             silent = silent,
             shadowed = shadowed,
+            extraData = extraData,
         )
     }
 
