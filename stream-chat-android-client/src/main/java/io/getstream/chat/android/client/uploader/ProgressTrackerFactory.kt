@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentMap
 @InternalStreamChatApi
 public object ProgressTrackerFactory {
 
-    private val instanceMap: ConcurrentMap<String, ProgressTracker> = ConcurrentHashMap()
+    private val instanceMap: MutableMap<String, ProgressTracker> = ConcurrentHashMap()
 
     public fun getOrCreate(id: String): ProgressTracker {
         return if (instanceMap.containsKey(id)) {
