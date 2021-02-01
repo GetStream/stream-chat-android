@@ -16,31 +16,23 @@ internal object DownstreamMessageDtoAdapter :
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
         messageAdapter: JsonAdapter<DownstreamMessageDto>,
-    ): DownstreamMessageDto {
-        return parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
-    }
+    ): DownstreamMessageDto = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamMessageDto) {
-        error("Can't convert this to Json")
-    }
+    fun toJson(jsonWriter: JsonWriter, value: DownstreamMessageDto): Unit = error("Can't convert this to Json")
 }
 
 internal object UpstreamMessageDtoAdapter :
     CustomObjectDtoAdapter<UpstreamMessageDto>(UpstreamMessageDto::class) {
 
     @FromJson
-    fun fromJson(jsonReader: JsonReader): UpstreamMessageDto {
-        error("Can't parse this from Json")
-    }
+    fun fromJson(jsonReader: JsonReader): UpstreamMessageDto = error("Can't parse this from Json")
 
     @ToJson
     fun toJson(
         jsonWriter: JsonWriter,
-        message: UpstreamMessageDto,
+        message: UpstreamMessageDto?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
         messageAdapter: JsonAdapter<UpstreamMessageDto>,
-    ) {
-        serializeWithExtraData(jsonWriter, message, mapAdapter, messageAdapter)
-    }
+    ) = serializeWithExtraData(jsonWriter, message, mapAdapter, messageAdapter)
 }
