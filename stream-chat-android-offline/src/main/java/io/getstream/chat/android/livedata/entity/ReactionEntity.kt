@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -25,23 +27,37 @@ import java.util.Date
             value = ["messageId", "userId", "type"],
             unique = true
         ), Index(value = ["syncStatus"])
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = MessageInnerEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["messageId"],
+            onDelete = ForeignKey.CASCADE,
+            deferred = true
+        )
     ]
 )
-internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
-
+internal data class ReactionEntity(
+    @ColumnInfo(index = true)
+    val messageId: String,
+    val userId: String,
+    val type: String,
     /** the score, used if you want to allow users to clap/like etc multiple times */
-    var score: Int = 1
+    val score: Int = 1,
     /** when the reaction was created */
-    var createdAt: Date? = null
+    val createdAt: Date? = null,
     /** when the reaction was updated */
-    var updatedAt: Date? = null
+    val updatedAt: Date? = null,
     /** when the reaction was deleted, this field is only stored in the local db */
-    var deletedAt: Date? = null
+    val deletedAt: Date? = null,
     /** if new reaction should replace all reactions the user has on this message */
-    var enforceUnique: Boolean = false
+    val enforceUnique: Boolean = false,
     /** all the custom data provided for this reaction */
-    var extraData = mutableMapOf<String, Any>()
-
+    val extraData: Map<String, Any>,
     /** if the reaction has been synced to the servers */
-    var syncStatus: SyncStatus = SyncStatus.COMPLETED
+    val syncStatus: SyncStatus,
+) {
+    @PrimaryKey
+    var id = hashCode()
 }
