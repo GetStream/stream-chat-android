@@ -6,9 +6,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFileAttachmentsBinding
 import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
@@ -17,11 +15,9 @@ import io.getstream.chat.android.ui.messages.adapter.view.AttachmentClickListene
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.adapter.view.AttachmentLongClickListener
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.utils.trackFilesSent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 internal class OnlyFileAttachmentsViewHolder(
@@ -84,36 +80,10 @@ internal class OnlyFileAttachmentsViewHolder(
             this.scope = scope
 
             scope.launch {
-                trackFilesSent(uploadIdList)
+                trackFilesSent(context, uploadIdList, binding.sentFiles)
             }
         } else {
             binding.sentFiles.isVisible = false
-        }
-    }
-
-    private suspend fun trackFilesSent(uploadIdList: List<String>) {
-        var filesSent = 0
-        val totalFiles = uploadIdList.size
-
-        binding.sentFiles.isVisible = true
-        binding.sentFiles.text =
-            String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
-
-        uploadIdList.map { uploadId ->
-            ProgressTrackerFactory.getOrCreate(uploadId).isComplete().map { listOf(it) }
-        }.reduce { acc, flow ->
-            acc.combine(flow) { flow1, flow2 -> flow1 + flow2 }
-        }.map { stateList ->
-            stateList.filter { it }
-        }.collect { stateList ->
-            filesSent = stateList.size
-
-            if (filesSent == totalFiles) {
-                binding.sentFiles.text = context.getString(R.string.stream_ui_upload_complete)
-            } else {
-                binding.sentFiles.text =
-                    String.format(context.getString(R.string.stream_ui_upload_sending), filesSent, totalFiles)
-            }
         }
     }
 
