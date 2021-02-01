@@ -17,4 +17,5 @@ internal data class DownstreamMessageDto(
     val created_at: Date,
     val updated_at: Date,
     val deleted_at: Date?,
+    val extraData: Map<String, Any>,
 )

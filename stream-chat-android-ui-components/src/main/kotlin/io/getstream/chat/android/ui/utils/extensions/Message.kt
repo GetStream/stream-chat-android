@@ -42,9 +42,7 @@ public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull
 }
 
 public fun Message.hasSingleReaction(): Boolean {
-    return latestReactions.map { it.type }
-        .toSet()
-        .size == 1
+    return reactionCounts.size == 1
 }
 
 public fun Message.isReply(): Boolean = replyTo != null

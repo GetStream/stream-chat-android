@@ -14,10 +14,6 @@
 
     <color name="login_text">@color/black</color>
 
-    <color name="bottom_nav_selected_color">@color/black</color>
-    <color name="bottom_nav_unselected_color">@color/grey_dark</color>
-    <color name="bottom_nav_badge_color">#FF3742</color>
-
     <color name="channels_shimmer_color">#CCCCCC</color>
 
     <color name="component_browser_sub_card">@color/stream_ui_white_snow</color>

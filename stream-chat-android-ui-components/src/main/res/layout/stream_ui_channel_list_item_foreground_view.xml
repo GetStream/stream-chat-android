@@ -4,7 +4,9 @@
     android:id="@+id/foreground_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
-    android:background="@color/stream_ui_white_snow"
+    android:background="@drawable/stream_ui_foreground_channel_list"
+    android:backgroundTintMode="src_in"
+    android:backgroundTint="@color/stream_ui_white_snow"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView

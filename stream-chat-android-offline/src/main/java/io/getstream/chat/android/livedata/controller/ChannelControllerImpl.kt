@@ -279,7 +279,7 @@ internal class ChannelControllerImpl(
      *
      * @return whether the channel was marked as read or not
      */
-    internal suspend fun markRead(): Boolean {
+    internal fun markRead(): Boolean {
         if (!getConfig().isReadEvents) {
             return false
         }
@@ -324,7 +324,7 @@ internal class ChannelControllerImpl(
         return messages
     }
 
-    private suspend fun removeMessagesBefore(date: Date) {
+    private fun removeMessagesBefore(date: Date) {
         val copy = _messages.value
         // start off empty
         _messages.value = mutableMapOf()
@@ -706,7 +706,7 @@ internal class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    internal suspend fun uploadAttachment(
+    internal fun uploadAttachment(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
         progressCallback: ProgressCallback? = null,
@@ -941,11 +941,11 @@ internal class ChannelControllerImpl(
 
     // This one needs to be public for flows such as running a message action
 
-    internal suspend fun upsertMessage(message: Message) {
+    internal fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 
-    private suspend fun upsertEventMessage(message: Message) {
+    private fun upsertEventMessage(message: Message) {
         // make sure we don't lose ownReactions
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
@@ -1193,7 +1193,7 @@ internal class ChannelControllerImpl(
         }
     }
 
-    private suspend fun upsertUser(user: User) {
+    private fun upsertUser(user: User) {
         upsertUserPresence(user)
         // channels have users
         val userId = user.id
@@ -1295,13 +1295,13 @@ internal class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    internal suspend fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    private fun updateLiveDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateLiveDataFromChannel(localChannel)
     }
 
-    internal suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)

@@ -4,10 +4,7 @@ import androidx.recyclerview.widget.DiffUtil
 
 internal class ReactionItemDiffCallback : DiffUtil.ItemCallback<ReactionItem>() {
     override fun areItemsTheSame(oldItem: ReactionItem, newItem: ReactionItem): Boolean {
-        return oldItem.reaction.messageId == newItem.reaction.messageId &&
-            oldItem.reaction.fetchUserId() == newItem.reaction.fetchUserId() &&
-            oldItem.reaction.type == newItem.reaction.type &&
-            oldItem.isMine == newItem.isMine
+        return oldItem.type == newItem.type
     }
 
     override fun areContentsTheSame(oldItem: ReactionItem, newItem: ReactionItem): Boolean {

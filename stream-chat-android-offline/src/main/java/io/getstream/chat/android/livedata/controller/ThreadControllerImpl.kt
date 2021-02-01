@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import wasCreatedAfterOrAt
 
@@ -30,7 +29,7 @@ internal class ThreadControllerImpl(
 
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
-
+    private var firstMessage: Message? = null
     private val logger = ChatLogger.get("ThreadController")
 
     private val threadMessages: Flow<List<Message>> = channelControllerImpl.unfilteredMessages.map { messageList -> messageList.filter { it.id == threadId || it.parentId == threadId } }
@@ -59,10 +58,10 @@ internal class ThreadControllerImpl(
             return Result(ChatError(errorMsg))
         }
         _loadingOlderMessages.value = true
-        val firstMessage: Message? = sortedVisibleMessages.first().firstOrNull()
         val result = channelControllerImpl.loadOlderThreadMessages(threadId, limit, firstMessage)
         if (result.isSuccess) {
             _endOfOlderMessages.value = result.data().size < limit
+            firstMessage = result.data().sortedBy { it.createdAt }.firstOrNull() ?: firstMessage
         }
 
         _loadingOlderMessages.value = false
