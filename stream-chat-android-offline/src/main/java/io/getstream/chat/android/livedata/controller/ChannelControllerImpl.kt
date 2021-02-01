@@ -581,12 +581,7 @@ internal class ChannelControllerImpl(
 
         newMessage.user = domainImpl.currentUser
 
-        // TODO: type should be a sealed/class or enum at the client level
-        newMessage.type = if (newMessage.text.startsWith("/") || hasAttachments) {
-            "ephemeral"
-        } else {
-            "regular"
-        }
+        newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
@@ -701,6 +696,20 @@ internal class ChannelControllerImpl(
 
     private fun generateUploadId(): String {
         return "upload_id_${UUID.randomUUID()}"
+    }
+
+    // TODO: type should be a sealed/class or enum at the client level
+    private fun getMessageType(message: Message) : String {
+        val hasAttachments = message.attachments.isNotEmpty()
+        val hasAttachmentsToUpload = message.attachments.any { attachment ->
+            attachment.uploadState is Attachment.UploadState.InProgress
+        }
+
+        return if (newMessage.text.startsWith("/") || (hasAttachments && hasAttachmentsToUpload)) {
+            "ephemeral"
+        } else {
+            "regular"
+        }
     }
 
     /**
