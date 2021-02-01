@@ -32,7 +32,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         hideMessagesBefore = hiddenMessagesBefore,
         members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
-        lastMessage = lastMessage,
+        lastMessageId = lastMessage?.messageInnerEntity?.id,
         lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
     )
@@ -56,7 +56,7 @@ internal suspend fun ChannelEntity.toModel(
     hidden = hidden,
     hiddenMessagesBefore = hideMessagesBefore,
     members = members.values.map { it.toModel(getUser) },
-    messages = listOfNotNull(lastMessage?.toModel(getUser, getMessage)),
+    messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId)
 )

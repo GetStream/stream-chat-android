@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.converter
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
@@ -26,21 +25,6 @@ internal class ListConverterTest : BaseTest() {
         val output = converter.stringListToString(input)
         val converted = converter.stringToStringList(output)
         Truth.assertThat(converted!!).isEqualTo(input)
-    }
-
-    @Test
-    fun attachmentListNull() {
-        val output = converter.attachmentListToString(null)
-        val converted = converter.stringToAttachmentList(output)
-        Truth.assertThat(converted).isEqualTo(listOf<Attachment>())
-    }
-
-    @Test
-    fun attachmentList() {
-        val input = listOf(data.attachment1)
-        val output = converter.attachmentListToString(input)
-        val converted = converter.stringToAttachmentList(output)
-        Truth.assertThat(converted).isEqualTo(input)
     }
 
     @Test
