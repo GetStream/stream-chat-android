@@ -40,6 +40,8 @@
             app:elevation="0dp"
             app:itemIconSize="20dp"
             app:itemIconTint="@color/bottom_nav_item_color"
+            app:itemTextAppearanceActive="@style/BottomNavigationItemTextAppearance"
+            app:itemTextAppearanceInactive="@style/BottomNavigationItemTextAppearance"
             app:itemTextColor="@color/bottom_nav_item_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
