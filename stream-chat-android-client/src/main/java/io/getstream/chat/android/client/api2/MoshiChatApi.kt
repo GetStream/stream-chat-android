@@ -28,8 +28,8 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            message = MessageRequest(mapper.toDto(message)),
-        ).map { response -> mapper.toDomain(response.message) }
+            message = MessageRequest(mapper.toDto(message)!!),
+        ).map { response -> mapper.toDomain(response.message)!! }
     }
 
     override fun updateMessage(message: Message): Call<Message> {
@@ -38,8 +38,8 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            message = MessageRequest(mapper.toDto(message)),
-        ).map { response -> mapper.toDomain(response.message) }
+            message = MessageRequest(mapper.toDto(message)!!),
+        ).map { response -> mapper.toDomain(response.message)!! }
     }
 
     override fun getMessage(messageId: String): Call<Message> {
@@ -48,7 +48,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId
-        ).map { response -> mapper.toDomain(response.message) }
+        ).map { response -> mapper.toDomain(response.message)!! }
     }
 
     override fun deleteMessage(messageId: String): Call<Message> {
@@ -57,6 +57,6 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-        ).map { response -> mapper.toDomain(response.message) }
+        ).map { response -> mapper.toDomain(response.message)!! }
     }
 }
