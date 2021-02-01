@@ -72,11 +72,9 @@ internal abstract class MessageDao {
     abstract suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND createdAt < :deleteMessagesBefore")
-    @Transaction
     abstract suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
 
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND id = :messageId")
-    @Transaction
     abstract suspend fun deleteMessage(cid: String, messageId: String)
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:ids)")
