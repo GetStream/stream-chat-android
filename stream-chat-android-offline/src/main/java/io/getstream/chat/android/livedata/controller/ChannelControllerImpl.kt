@@ -693,6 +693,7 @@ internal class ChannelControllerImpl(
                 Result(result.error())
             }
         } else {
+            uploadStatusMessage = null
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }
