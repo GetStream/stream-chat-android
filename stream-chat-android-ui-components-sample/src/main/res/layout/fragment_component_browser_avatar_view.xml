@@ -134,7 +134,7 @@
 
             <TextView
                 style="@style/ComponentBrowserLabel"
-                android:text="Border indicator"
+                android:text="With border"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
