@@ -64,8 +64,8 @@ public class MediaAttachmentGridView : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.StreamUiMediaAttachmentGritView).use {
-            showUserAvatars = it.getBoolean(R.styleable.StreamUiMediaAttachmentGritView_streamUiShowUserAvatars, false)
+        context.obtainStyledAttributes(attrs, R.styleable.MediaAttachmentGridView).use {
+            showUserAvatars = it.getBoolean(R.styleable.MediaAttachmentGridView_streamUiShowUserAvatars, false)
         }
 
         binding.mediaRecyclerView.apply {
