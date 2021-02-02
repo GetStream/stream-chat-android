@@ -277,7 +277,7 @@
         <attr name="streamUiEllipsize" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="StreamUiMediaAttachmentGritView">
+    <declare-styleable name="MediaAttachmentGridView">
         <attr name="streamUiShowUserAvatars" format="boolean" />
     </declare-styleable>
 </resources>
