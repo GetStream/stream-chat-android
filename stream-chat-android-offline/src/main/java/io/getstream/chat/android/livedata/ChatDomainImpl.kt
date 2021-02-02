@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -688,7 +689,20 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private suspend fun retryChannels(): List<ChannelEntity> {
-        return repos.channels.retryChannels()
+        val channelEntities = repos.channels.selectSyncNeeded()
+
+        for (channel in channelEntities) {
+            val members = channel.members.keys.toList()
+            val result = client.createChannel(channel.type, channel.channelId, members, channel.extraData).await()
+            if (result.isSuccess) {
+                channel.syncStatus = SyncStatus.COMPLETED
+                repos.channels.insert(channel)
+            } else if (result.isError && result.error().isPermanent()) {
+                channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                repos.channels.insert(channel)
+            }
+        }
+        return channelEntities
     }
 
     @VisibleForTesting

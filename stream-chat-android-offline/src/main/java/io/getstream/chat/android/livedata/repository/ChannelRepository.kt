@@ -4,10 +4,8 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 
 internal class ChannelRepository(
@@ -63,23 +61,5 @@ internal class ChannelRepository(
 
     suspend fun selectSyncNeeded(): List<ChannelEntity> {
         return channelDao.selectSyncNeeded()
-    }
-
-    suspend fun retryChannels(): List<ChannelEntity> {
-        val channelEntities = selectSyncNeeded()
-
-        for (channelEntity in channelEntities) {
-            val members = channelEntity.members.keys.toList()
-            val result =
-                client.createChannel(channelEntity.type, channelEntity.channelId, members, channelEntity.extraData).execute()
-            if (result.isSuccess) {
-                channelEntity.syncStatus = SyncStatus.COMPLETED
-                insert(channelEntity)
-            } else if (result.isError && result.error().isPermanent()) {
-                channelEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                insert(channelEntity)
-            }
-        }
-        return channelEntities
     }
 }
