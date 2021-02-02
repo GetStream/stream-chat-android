@@ -8,7 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.view.bindView
@@ -37,8 +36,8 @@ class ChannelFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         _binding = FragmentChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,15 +73,12 @@ class ChannelFragment : Fragment() {
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
             bindView(binding.messageInputView, viewLifecycleOwner)
-            messagesViewModel.mode.observe(
-                viewLifecycleOwner,
-                Observer {
-                    when (it) {
-                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
-                        is MessageListViewModel.Mode.Normal -> resetThread()
-                    }
+            messagesViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
+                    is MessageListViewModel.Mode.Normal -> resetThread()
                 }
-            )
+            }
             binding.messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
@@ -97,16 +93,13 @@ class ChannelFragment : Fragment() {
         messagesViewModel
             .apply { bindView(binding.messageListView, viewLifecycleOwner) }
             .apply {
-                state.observe(
-                    viewLifecycleOwner,
-                    Observer {
-                        when (it) {
-                            is MessageListViewModel.State.Loading -> showProgressBar()
-                            is MessageListViewModel.State.Result -> hideProgressBar()
-                            is MessageListViewModel.State.NavigateUp -> navigateUp()
-                        }
+                state.observe(viewLifecycleOwner) {
+                    when (it) {
+                        is MessageListViewModel.State.Loading -> showProgressBar()
+                        is MessageListViewModel.State.Result -> hideProgressBar()
+                        is MessageListViewModel.State.NavigateUp -> navigateUp()
                     }
-                )
+                }
             }
     }
 
