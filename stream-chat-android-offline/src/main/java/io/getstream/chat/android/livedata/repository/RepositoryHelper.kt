@@ -60,8 +60,16 @@ internal class RepositoryHelper(
         userRepository.insertMe(currentUser)
     }
 
+    internal suspend fun insertUser(user: User) {
+        userRepository.insertUser(user)
+    }
+
     internal suspend fun insertManyUsers(users: List<User>) {
         userRepository.insert(users)
+    }
+
+    internal suspend fun selectCurrentUser(): User? {
+        return userRepository.selectMe()
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
