@@ -264,8 +264,6 @@ internal fun randomMessageEntity(
         updatedAt = updatedAt,
         updatedLocallyAt = updatedLocallyAt,
         deletedAt = deletedAt,
-        latestReactions = latestReactions,
-        ownReactions = ownReactions,
         mentionedUsersId = mentionedUsersId,
         reactionCounts = reactionCounts,
         reactionScores = reactionScores,
@@ -276,7 +274,9 @@ internal fun randomMessageEntity(
         replyToId = replyToId,
         threadParticipantsIds = threadParticipantsIds,
     ),
-    attachments = attachments
+    attachments = attachments,
+    latestReactions = latestReactions,
+    ownReactions = ownReactions,
 )
 
 internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()

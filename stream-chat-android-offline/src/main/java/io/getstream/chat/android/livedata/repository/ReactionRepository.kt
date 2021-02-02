@@ -1,11 +1,13 @@
 package io.getstream.chat.android.livedata.repository
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
+import java.util.Date
 
 /**
  * We don't do any caching on reactions since usage is infrequent
@@ -16,6 +18,7 @@ internal class ReactionRepository(private val reactionDao: ReactionDao) {
         insert(listOf(reaction.toEntity()))
     }
 
+    @VisibleForTesting
     internal suspend fun insert(reactions: List<Reaction>) {
         val entities = reactions.map(Reaction::toEntity)
         insert(entities)
@@ -29,6 +32,10 @@ internal class ReactionRepository(private val reactionDao: ReactionDao) {
         }
 
         reactionDao.insert(reactionEntities)
+    }
+
+    internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
+        reactionDao.setDeleteAt(userId, messageId, deletedAt)
     }
 
     internal suspend fun selectUserReactionsToMessageByType(
