@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -11,13 +10,11 @@ import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 internal class ChannelRepository(
-    var channelDao: ChannelDao,
-    var cacheSize: Int = 100,
-    var currentUser: User,
-    var client: ChatClient,
+    private val channelDao: ChannelDao,
+    cacheSize: Int = 100,
 ) {
-    // the channel cache is simple, just keeps the last 100 users in memory
-    var channelCache = LruCache<String, ChannelEntity>(cacheSize)
+    // the channel cache is simple, just keeps the last several users in memory
+    private val channelCache = LruCache<String, ChannelEntity>(cacheSize)
 
     suspend fun insert(channelEntity: ChannelEntity) {
         insert(listOf(channelEntity))

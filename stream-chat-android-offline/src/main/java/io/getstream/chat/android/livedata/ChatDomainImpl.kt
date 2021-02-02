@@ -253,7 +253,7 @@ internal class ChatDomainImpl internal constructor(
 
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
-        repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
+        repos = RepositoryHelper(RepositoryFactory(database, user), scope)
 
         // load channel configs from Room into memory
         initJob = scope.async {
