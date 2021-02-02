@@ -5,16 +5,18 @@ import io.getstream.chat.android.client.models.User
 
 internal fun User.toDto(): UserDto =
     UserDto(
-        id = id,
-        role = role,
-        invisible = invisible,
         banned = banned,
+        id = id,
+        invisible = invisible,
+        role = role,
+        extraData = extraData,
     )
 
 internal fun UserDto.toDomain(): User =
     User(
-        id = id,
-        role = role,
-        invisible = invisible,
         banned = banned,
+        id = id,
+        invisible = invisible,
+        role = role,
+        extraData = extraData.toMutableMap(),
     )
