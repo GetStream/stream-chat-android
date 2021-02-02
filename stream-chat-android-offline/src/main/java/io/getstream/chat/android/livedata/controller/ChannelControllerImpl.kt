@@ -599,16 +599,16 @@ internal class ChannelControllerImpl(
 
         newMessage.user = domainImpl.currentUser
 
+        newMessage.attachments.forEach { attachment ->
+            attachment.uploadId = generateUploadId()
+            attachment.uploadState = Attachment.UploadState.InProgress
+        }
+
         newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
-        }
-
-        newMessage.attachments.forEach { attachment ->
-            attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress
         }
 
         val attachmentProgressList = newMessage.attachments.map { attachment ->
