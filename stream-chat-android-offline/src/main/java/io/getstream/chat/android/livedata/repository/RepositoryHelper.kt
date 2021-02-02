@@ -50,7 +50,7 @@ internal class RepositoryHelper(
 
         // convert the channels
         return channelEntities.map { entity ->
-            entity.toModel(::selectUser) { messages.select(it, ::selectUser) }.apply {
+            entity.toModel(::selectUser, ::selectMessage).apply {
                 config = configsRepository.select(type)?.config ?: defaultConfig
                 messages = messagesMap[cid] ?: messages
             }
@@ -130,6 +130,10 @@ internal class RepositoryHelper(
     suspend fun removeChannel(cid: String) {
         channels.delete(cid)
     }
+
+    suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
+
+    private suspend fun selectMessage(messageId: String): Message? = messages.select(messageId, ::selectUser)
 
     private suspend fun selectUser(userId: String): User =
         userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")

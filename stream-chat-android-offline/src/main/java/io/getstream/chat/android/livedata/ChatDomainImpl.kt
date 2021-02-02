@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
@@ -35,7 +36,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
@@ -76,6 +76,7 @@ private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
 internal val gson = StreamGson.gson
+
 /**
  * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.
@@ -688,21 +689,26 @@ internal class ChatDomainImpl internal constructor(
         logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
     }
 
-    private suspend fun retryChannels(): List<ChannelEntity> {
-        val channelEntities = repos.channels.selectSyncNeeded()
+    private suspend fun retryChannels(): List<Channel> {
+        return repos.selectChannelsSyncNeeded().onEach { channel ->
+            val result = client.createChannel(
+                channel.type,
+                channel.id,
+                channel.members.map(UserEntity::getUserId),
+                channel.extraData
+            ).await()
 
-        for (channel in channelEntities) {
-            val members = channel.members.keys.toList()
-            val result = client.createChannel(channel.type, channel.channelId, members, channel.extraData).await()
-            if (result.isSuccess) {
-                channel.syncStatus = SyncStatus.COMPLETED
-                repos.channels.insert(channel)
-            } else if (result.isError && result.error().isPermanent()) {
-                channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                repos.channels.insert(channel)
+            when {
+                result.isSuccess -> {
+                    channel.syncStatus = SyncStatus.COMPLETED
+                    repos.insertChannel(channel)
+                }
+                result.isError && result.error().isPermanent() -> {
+                    channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    repos.insertChannel(channel)
+                }
             }
         }
-        return channelEntities
     }
 
     @VisibleForTesting

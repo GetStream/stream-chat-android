@@ -3,16 +3,18 @@ package io.getstream.chat.android.livedata.repository
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
+import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 internal class ChannelRepository(
     var channelDao: ChannelDao,
     var cacheSize: Int = 100,
     var currentUser: User,
-    var client: ChatClient
+    var client: ChatClient,
 ) {
     // the channel cache is simple, just keeps the last 100 users in memory
     var channelCache = LruCache<String, ChannelEntity>(cacheSize)
@@ -59,7 +61,10 @@ internal class ChannelRepository(
         return dbChannels
     }
 
-    suspend fun selectSyncNeeded(): List<ChannelEntity> {
-        return channelDao.selectSyncNeeded()
+    internal suspend fun selectSyncNeeded(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): List<Channel> {
+        return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
     }
 }
