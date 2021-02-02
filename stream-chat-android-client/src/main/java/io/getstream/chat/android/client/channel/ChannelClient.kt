@@ -531,9 +531,27 @@ public class ChannelClient internal constructor(
         return client.sendEvent(EventType.TYPING_START, channelType, channelId)
     }
 
+    public fun keystroke(parentId: String): Call<ChatEvent> {
+        return client.sendEvent(
+            eventType = EventType.TYPING_START,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = mapOf("parent_id" to parentId),
+        )
+    }
+
     @CheckResult
     override fun stopTyping(): Call<ChatEvent> {
         return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
+    }
+
+    public fun stopTyping(parentId: String): Call<ChatEvent> {
+        return client.sendEvent(
+            eventType = EventType.TYPING_STOP,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = mapOf("parent_id" to parentId),
+        )
     }
 
     @CheckResult

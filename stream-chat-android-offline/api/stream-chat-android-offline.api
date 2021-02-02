@@ -341,7 +341,11 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/HideC
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/Keystroke {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+}
+
+public final class io/getstream/chat/android/livedata/usecase/Keystroke$DefaultImpls {
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/Keystroke;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/LeaveChannel {
@@ -434,7 +438,11 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/Shuff
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/StopTyping {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+}
+
+public final class io/getstream/chat/android/livedata/usecase/StopTyping$DefaultImpls {
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/StopTyping;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/ThreadLoadMore {
