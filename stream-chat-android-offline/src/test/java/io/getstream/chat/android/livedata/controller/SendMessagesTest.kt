@@ -102,9 +102,31 @@ internal class SendMessagesTest {
 
         verify(channelClient).sendMessage(
             argThat { message ->
-                message.attachments.any { attach ->
-                    attach.uploadState !is Attachment.UploadState.Failed
-                }.not()
+                message.attachments.all { attach ->
+                    attach.uploadState is Attachment.UploadState.Failed
+                }
+            }
+        )
+    }
+
+    @Test
+    fun `Attachments should be sent with success as uploadState when request success`() = scope.runBlockingTest {
+        whenever(domainImpl.runAndRetry<Message>(any())) doAnswer {
+            (it.arguments[0] as () -> Call<Message>).invoke().execute()
+        }
+
+        val attachments = randomAttachmentsWithFile().toMutableList()
+        val files: List<File> = attachments.map { it.upload!! }
+
+        mockFileUploadsSuccess(files)
+
+        channelController.sendMessage(Message(attachments = attachments))
+
+        verify(channelClient).sendMessage(
+            argThat { message ->
+                message.attachments.all { attach ->
+                    attach.uploadState is Attachment.UploadState.Success
+                }
             }
         )
     }
@@ -112,6 +134,23 @@ internal class SendMessagesTest {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(ChatError())
+            When calling chatClient.sendFile(
+                eq(channelController.channelType),
+                eq(channelController.channelId),
+                same(file),
+                anyOrNull()
+            ) doReturn TestCall(result)
+            When calling chatClient.sendImage(
+                eq(channelController.channelType),
+                eq(channelController.channelId),
+                same(file)
+            ) doReturn TestCall(result)
+        }
+    }
+
+    private fun mockFileUploadsSuccess(files: List<File>) {
+        for (file in files) {
+            val result = Result<String>("file")
             When calling chatClient.sendFile(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
