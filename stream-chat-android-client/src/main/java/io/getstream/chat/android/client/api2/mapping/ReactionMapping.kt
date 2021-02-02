@@ -5,22 +5,24 @@ import io.getstream.chat.android.client.models.Reaction
 
 internal fun Reaction.toDto(): ReactionDto =
     ReactionDto(
+        created_at = createdAt,
         message_id = messageId,
-        type = type,
         score = score,
+        type = type,
+        updated_at = updatedAt,
         user = user?.toDto(),
         user_id = userId,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        extraData = extraData,
     )
 
 internal fun ReactionDto.toDomain(): Reaction =
     Reaction(
+        createdAt = created_at,
         messageId = message_id,
-        type = type,
         score = score,
+        type = type,
+        updatedAt = updated_at,
         user = user?.toDomain(),
         userId = user_id,
-        createdAt = created_at,
-        updatedAt = updated_at,
+        extraData = extraData.toMutableMap(),
     )
