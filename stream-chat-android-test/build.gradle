@@ -31,7 +31,7 @@ dependencies {
 
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.kotlinStdLib
-    implementation Dependencies.coroutinesTest
+    api Dependencies.coroutinesTest
     implementation Dependencies.androidxArchCoreTest
     implementation Dependencies.junitJupiterApi
     implementation Dependencies.junit4

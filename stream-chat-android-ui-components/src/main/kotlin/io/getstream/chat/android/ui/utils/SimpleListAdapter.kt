@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.utils
 
 import android.content.Context
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 
 internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
@@ -32,9 +33,17 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         notifyDataSetChanged()
     }
 
+    @CallSuper
+    override fun onViewRecycled(holder: VH) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
+
     abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val context: Context = itemView.context
 
         abstract fun bind(item: T)
+
+        open fun unbind() {}
     }
 }

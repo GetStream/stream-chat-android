@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.controller
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -15,7 +16,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.uploadComplete
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -58,7 +58,6 @@ internal class SendMessagesTest {
 
     private val channelType: String = randomString()
     private val channelId: String = randomString()
-    private val call: Call<String> = mock()
     private lateinit var channelController: ChannelControllerImpl
 
     private val messageRepository: MessageRepository = mock()
@@ -94,7 +93,11 @@ internal class SendMessagesTest {
             (it.arguments[0] as () -> Call<Message>).invoke().execute()
         }
 
-        val attachments = randomAttachmentsWithFile().toMutableList()
+        val attachments = randomAttachmentsWithFile()
+            .map { attachment ->
+                attachment.apply { this.uploadState = Attachment.UploadState.InProgress }
+            }
+            .toMutableList()
         val files: List<File> = attachments.map { it.upload!! }
 
         mockFileUploadsFailure(files)
@@ -104,7 +107,7 @@ internal class SendMessagesTest {
         verify(channelClient).sendMessage(
             argThat { message ->
                 message.attachments.any { attach ->
-                    attach.uploadState !is Attachment.UploadState.Failed || attach.uploadComplete == true
+                    attach.uploadState !is Attachment.UploadState.Failed
                 }.not()
             }
         )
@@ -116,7 +119,8 @@ internal class SendMessagesTest {
             When calling chatClient.sendFile(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
-                same(file)
+                same(file),
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling chatClient.sendImage(
                 eq(channelController.channelType),
