@@ -10,7 +10,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
     val recyclerView: RecyclerView,
     val layoutManager: ScrollPauseLinearLayoutManager,
     private val swipeStateByPosition: MutableMap<Int, SwipeState> = mutableMapOf(),
-    private var multiSwipeEnabled: Boolean = false
+    private var multiSwipeEnabled: Boolean = false,
 ) : ChannelListView.SwipeListener {
 
     // Represents the internal swipe state of the ViewHolder
@@ -20,7 +20,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
     }
 
     override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
-        // pause scrolling
+        // disable scrolling
         layoutManager.verticalScrollEnabled = false
     }
 
@@ -35,6 +35,8 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
                 swipeView.x = clampedX
             }
         }
+        // cancel ripple animation
+        viewHolder.itemView.isPressed = false
     }
 
     override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {

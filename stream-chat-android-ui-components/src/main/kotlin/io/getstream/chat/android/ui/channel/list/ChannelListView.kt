@@ -188,7 +188,10 @@ public class ChannelListView @JvmOverloads constructor(
     public fun interface ChannelLongClickListener {
         public companion object {
             @JvmField
-            public val DEFAULT: ChannelLongClickListener = ChannelLongClickListener { false }
+            public val DEFAULT: ChannelLongClickListener = ChannelLongClickListener {
+                // consume the long click by default so that it doesn't become a regular click
+                true
+            }
         }
 
         /**
