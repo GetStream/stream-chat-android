@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ChannelDao
-import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 
@@ -14,26 +13,23 @@ internal class ChannelRepository(
     cacheSize: Int = 100,
 ) {
     // the channel cache is simple, just keeps the last several users in memory
-    private val channelCache = LruCache<String, ChannelEntity>(cacheSize)
+    private val channelCache = LruCache<String, Channel>(cacheSize)
 
-    suspend fun insert(channelEntity: ChannelEntity) {
-        insert(listOf(channelEntity))
+    suspend fun insert(channel: Channel) {
+        updateCache(listOf(channel))
+        channelDao.insert(channel.toEntity())
     }
 
-    private fun updateCache(channelEntities: List<ChannelEntity>) {
-        for (channelEntity in channelEntities) {
-            channelCache.put(channelEntity.cid, channelEntity)
+    private fun updateCache(channels: Collection<Channel>) {
+        for (channel in channels) {
+            channelCache.put(channel.cid, channel)
         }
     }
 
     suspend fun insertChannels(channels: Collection<Channel>) {
-        insert(channels.map(Channel::toEntity))
-    }
-
-    private suspend fun insert(channelEntities: List<ChannelEntity>) {
-        if (channelEntities.isEmpty()) return
-        channelDao.insertMany(channelEntities)
-        updateCache(channelEntities)
+        if (channels.isEmpty()) return
+        updateCache(channels)
+        channelDao.insertMany(channels.map(Channel::toEntity))
     }
 
     suspend fun delete(cid: String) {
@@ -41,18 +37,22 @@ internal class ChannelRepository(
         channelDao.delete(cid)
     }
 
-    suspend fun select(cid: String): ChannelEntity? {
-        return select(listOf(cid)).getOrElse(0) { null }
+    suspend fun select(
+        cid: String,
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): Channel? {
+        return select(listOf(cid), getUser, getMessage).getOrNull(0)
     }
 
-    suspend fun select(channelCIDs: List<String>): List<ChannelEntity> {
-        val cachedChannels: MutableList<ChannelEntity> = mutableListOf()
-        for (cid in channelCIDs) {
-            val channelEntity = channelCache.get(cid)
-            channelEntity?.let { cachedChannels.add(it) }
-        }
+    suspend fun select(
+        channelCIDs: List<String>,
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): List<Channel> {
+        val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf()) { channelCache.get(it) }
         val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
-        val dbChannels = channelDao.select(missingChannelIds).toMutableList()
+        val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()
         updateCache(dbChannels)
         dbChannels.addAll(cachedChannels)
         return dbChannels
