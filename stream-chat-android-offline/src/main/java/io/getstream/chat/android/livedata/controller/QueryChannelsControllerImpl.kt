@@ -193,7 +193,7 @@ internal class QueryChannelsControllerImpl(
             }
             // first things first, store the configs
             val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-            domainImpl.repos.configs.insert(channelConfigs)
+            domainImpl.repos.configChannel(channelConfigs)
             logger.logI("api call returned ${channelsResponse.size} channels")
             updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
