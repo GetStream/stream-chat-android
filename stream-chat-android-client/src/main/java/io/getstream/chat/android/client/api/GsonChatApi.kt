@@ -240,10 +240,6 @@ internal class GsonChatApi(
         ).map { it.reaction }
     }
 
-    override fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean): Call<Reaction> {
-        return sendReaction(Reaction(messageId, reactionType, 0), enforceUnique)
-    }
-
     override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return retrofitApi.deleteReaction(
             messageId,
