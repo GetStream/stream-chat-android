@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.ProgressRequestBody
-import io.getstream.chat.android.client.api.models.RetroProgressCallback
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MultipartBody
@@ -11,7 +10,7 @@ import java.io.File
 
 internal class StreamFileUploader(
     private val apiKey: String,
-    private val retrofitCdnApi: RetrofitCdnApi
+    private val retrofitCdnApi: RetrofitCdnApi,
 ) : FileUploader {
 
     override fun sendFile(
@@ -20,22 +19,25 @@ internal class StreamFileUploader(
         userId: String,
         connectionId: String,
         file: File,
-        callback: ProgressCallback
-    ) {
+        callback: ProgressCallback,
+    ): String? {
         val body = ProgressRequestBody(file, callback)
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
-        retrofitCdnApi
-            .sendFile(
-                channelType,
-                channelId,
-                part,
-                apiKey,
-                userId,
-                connectionId
-            )
-            .call
-            .enqueue(RetroProgressCallback(callback))
+        val result = retrofitCdnApi.sendFile(
+            channelType,
+            channelId,
+            part,
+            apiKey,
+            userId,
+            connectionId
+        ).execute()
+
+        return if (result.isSuccess) {
+            result.data().file
+        } else {
+            null
+        }
     }
 
     override fun sendFile(
@@ -43,7 +45,7 @@ internal class StreamFileUploader(
         channelId: String,
         userId: String,
         connectionId: String,
-        file: File
+        file: File,
     ): String? {
         val part = MultipartBody.Part.createFormData(
             "file",
@@ -73,12 +75,12 @@ internal class StreamFileUploader(
         userId: String,
         connectionId: String,
         file: File,
-        callback: ProgressCallback
-    ) {
+        callback: ProgressCallback,
+    ): String? {
         val body = ProgressRequestBody(file, callback)
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
-        retrofitCdnApi
+        val result = retrofitCdnApi
             .sendImage(
                 channelType,
                 channelId,
@@ -86,9 +88,13 @@ internal class StreamFileUploader(
                 apiKey,
                 userId,
                 connectionId
-            )
-            .call
-            .enqueue(RetroProgressCallback(callback))
+            ).execute()
+
+        return if (result.isSuccess) {
+            result.data().file
+        } else {
+            null
+        }
     }
 
     override fun sendImage(
@@ -96,7 +102,7 @@ internal class StreamFileUploader(
         channelId: String,
         userId: String,
         connectionId: String,
-        file: File
+        file: File,
     ): String? {
         val part = MultipartBody.Part.createFormData(
             "file",
@@ -125,7 +131,7 @@ internal class StreamFileUploader(
         channelId: String,
         userId: String,
         connectionId: String,
-        url: String
+        url: String,
     ) {
         retrofitCdnApi.deleteFile(channelType, channelId, apiKey, connectionId, url).execute()
     }
@@ -135,7 +141,7 @@ internal class StreamFileUploader(
         channelId: String,
         userId: String,
         connectionId: String,
-        url: String
+        url: String,
     ) {
         retrofitCdnApi.deleteImage(channelType, channelId, apiKey, connectionId, url).execute()
     }

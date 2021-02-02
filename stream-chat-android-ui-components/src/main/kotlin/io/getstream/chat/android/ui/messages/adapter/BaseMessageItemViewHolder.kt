@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.messages.adapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.utils.animateHighlight
@@ -34,7 +35,8 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
 
     public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
 
-    internal fun unbind() {
+    @CallSuper
+    public open fun unbind() {
         cancelHighlightAnimation()
     }
 

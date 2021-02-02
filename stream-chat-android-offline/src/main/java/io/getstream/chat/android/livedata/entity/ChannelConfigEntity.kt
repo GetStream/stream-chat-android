@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -43,6 +44,7 @@ internal data class CommandInnerEntity(
     val description: String,
     val args: String,
     val set: String,
+    @ColumnInfo(index = true)
     val channelType: String,
 ) {
     @PrimaryKey

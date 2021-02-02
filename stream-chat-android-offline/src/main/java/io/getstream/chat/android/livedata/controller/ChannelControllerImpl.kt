@@ -38,7 +38,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.uploadComplete
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -50,6 +50,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.uploader.ProgressTracker
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.client.uploader.toProgressCallback
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
@@ -81,6 +85,7 @@ import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 import kotlin.math.max
@@ -116,6 +121,8 @@ internal class ChannelControllerImpl(
     private val lastMessageAt = MutableStateFlow<Date?>(null)
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _unreadCount = MutableStateFlow(0)
+
+    private var uploadStatusMessage: Message? = null
 
     override val repliedMessage: LiveData<Message?> = _repliedMessage.asLiveData()
 
@@ -563,6 +570,7 @@ internal class ChannelControllerImpl(
     ): Result<Message> {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
+        val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
         if (newMessage.id.isEmpty()) {
@@ -573,20 +581,30 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
-        // TODO: type should be a sealed/class or enum at the client level
-        newMessage.type = if (newMessage.text.startsWith("/")) {
-            "ephemeral"
-        } else {
-            "regular"
-        }
+
+        newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
+        newMessage.attachments.forEach { attachment ->
+            attachment.uploadId = generateUploadId()
+            attachment.uploadState = Attachment.UploadState.InProgress
+        }
+
+        val attachmentProgressList = newMessage.attachments.map { attachment ->
+            ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
+                maxValue = attachment.upload?.length() ?: 0L
+            }
+        }
+
         // TODO remove usage of MessageEntity
         val messageEntity = newMessage.toEntity()
+        if (hasAttachments) {
+            uploadStatusMessage = newMessage
+        }
 
         // Update livedata in channel controller
         upsertMessage(newMessage)
@@ -608,54 +626,105 @@ internal class ChannelControllerImpl(
 
         return if (online) {
             // upload attachments
-            logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
-            newMessage.attachments = newMessage.attachments.map {
-                var attachment: Attachment = it
-                if (it.upload != null) {
-                    val result = uploadAttachment(it, attachmentTransformer)
-                    attachment.uploadComplete = result.isSuccess
-                    if (result.isSuccess) {
-                        attachment = result.data()
-                    } else {
-                        attachment.uploadState = Attachment.UploadState.Failed(result.error())
-                        logger.logE("Failed to upload attachment for message")
-                    }
-                }
-                attachment
-            }.toMutableList()
+            if (hasAttachments) {
+                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
+                newMessage.attachments = newMessage.attachments.mapIndexed { i, attach ->
+                    sendAttachment(attach, attachmentProgressList[i], attachmentTransformer)
+                }.toMutableList()
+
+                uploadStatusMessage?.let { cancelMessage(it) }
+                uploadStatusMessage = null
+            }
+
+            newMessage.type = "regular"
+            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
-
             if (result.isSuccess) {
-                val processedMessage: Message = result.data()
-                processedMessage.apply {
-                    enrichWithCid(cid)
-                    syncStatus = SyncStatus.COMPLETED
-                    domainImpl.repos.messages.insert(this)
-                }
-
-                upsertMessage(processedMessage)
-                Result(processedMessage)
+                handleSendAttachmentSuccess(result)
             } else {
-                logger.logE(
-                    "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
-                    result.error()
-                )
-
-                if (result.error().isPermanent()) {
-                    newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    newMessage.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                upsertMessage(newMessage)
-                domainImpl.repos.messages.insert(newMessage)
-                Result(result.error())
+                handleSendAttachmentFail(newMessage, result)
             }
         } else {
+            uploadStatusMessage = null
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
+        }
+    }
+
+    private fun generateUploadId(): String {
+        return "upload_id_${UUID.randomUUID()}"
+    }
+
+    private suspend fun sendAttachment(
+        attachment: Attachment,
+        attachmentProgress: ProgressTracker,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
+    ): Attachment {
+        var newAttachment: Attachment = attachment
+
+        if (newAttachment.upload != null) {
+            val result = uploadAttachment(
+                newAttachment,
+                attachmentTransformer,
+                attachmentProgress.toProgressCallback()
+            )
+
+            if (result.isSuccess) {
+                newAttachment = result.data()
+                attachmentProgress.setComplete(true)
+                newAttachment.uploadState = Attachment.UploadState.Success
+            } else {
+                attachmentProgress.setComplete(false)
+                newAttachment.uploadState = Attachment.UploadState.Failed(result.error())
+            }
+        }
+
+        return newAttachment
+    }
+
+    private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
+        val processedMessage: Message = result.data()
+        processedMessage.apply {
+            enrichWithCid(cid)
+            syncStatus = SyncStatus.COMPLETED
+            domainImpl.repos.messages.insert(this)
+        }
+
+        upsertMessage(processedMessage)
+        return Result(processedMessage)
+    }
+
+    private suspend fun handleSendAttachmentFail(message: Message, result: Result<Message>): Result<Message> {
+        logger.logE(
+            "Failed to send message with id ${message.id} and text ${message.text}: ${result.error()}",
+            result.error()
+        )
+
+        if (result.error().isPermanent()) {
+            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+        } else {
+            message.syncStatus = SyncStatus.SYNC_NEEDED
+        }
+
+        upsertMessage(message)
+        domainImpl.repos.messages.insert(message)
+        return Result(result.error())
+    }
+
+    // TODO: type should be a sealed/class or enum at the client level
+    private fun getMessageType(message: Message): String {
+        val hasAttachments = message.attachments.isNotEmpty()
+        val hasAttachmentsToUpload = message.attachments.any { attachment ->
+            attachment.uploadState is Attachment.UploadState.InProgress
+        }
+
+        return if (message.text.startsWith("/") || (hasAttachments && hasAttachmentsToUpload)) {
+            "ephemeral"
+        } else {
+            "regular"
         }
     }
 
@@ -663,9 +732,10 @@ internal class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    internal fun uploadAttachment(
+    internal suspend fun uploadAttachment(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
+        progressCallback: ProgressCallback? = null,
     ): Result<Attachment> {
         val file =
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
@@ -675,11 +745,16 @@ internal class ChannelControllerImpl(
             mimeType.isVideoMimetype() -> TYPE_VIDEO
             else -> TYPE_FILE
         }
-        val pathResult = if (attachmentType == TYPE_IMAGE) {
+        val pathResult: Result<String> = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
         } else {
-            sendFile(file)
+            if (progressCallback != null) {
+                sendFile(file, progressCallback)
+            } else {
+                sendFile(file)
+            }
         }
+
         val url = if (pathResult.isError) null else pathResult.data()
         val uploadState =
             if (pathResult.isError) Attachment.UploadState.Failed(pathResult.error()) else Attachment.UploadState.Success
@@ -765,12 +840,16 @@ internal class ChannelControllerImpl(
         }
     }
 
-    fun sendImage(file: File): Result<String> {
-        return client.sendImage(channelType, channelId, file).execute()
+    suspend fun sendImage(file: File): Result<String> {
+        return client.sendImage(channelType, channelId, file).await()
     }
 
-    fun sendFile(file: File): Result<String> {
-        return client.sendFile(channelType, channelId, file).execute()
+    suspend fun sendFile(file: File): Result<String> {
+        return client.sendFile(channelType, channelId, file).await()
+    }
+
+    private suspend fun sendFile(file: File, callback: ProgressCallback): Result<String> {
+        return client.sendFile(channelType, channelId, file, callback).await()
     }
 
     /**
@@ -796,9 +875,11 @@ internal class ChannelControllerImpl(
         }
         if (enforceUnique) {
             // remove all user's reactions to the message
-            domainImpl.repos.selectUserReactionsToMessage(reaction.messageId, currentUser.id)
-                .onEach { it.deletedAt = Date() }
-                .also { domainImpl.repos.reactions.insert(it) }
+            domainImpl.repos.updateReactionsForMessageByDeletedDate(
+                userId = currentUser.id,
+                messageId = reaction.messageId,
+                deletedAt = Date()
+            )
         }
         domainImpl.repos.reactions.insert(reaction)
         // update livedata

@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.AttachmentEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.MessageInnerEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.util.Date
 
 @Dao
@@ -18,12 +19,14 @@ internal abstract class MessageDao {
     open suspend fun insert(messageEntities: List<MessageEntity>) {
         insertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
+        insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) {
         insertMessageInnerEntity(messageEntity.messageInnerEntity)
         insertAttachments(messageEntity.attachments)
+        insertReactions(messageEntity.let { it.latestReactions + it.ownReactions })
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -34,6 +37,9 @@ internal abstract class MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insertAttachments(attachmentEntities: List<AttachmentEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    protected abstract suspend fun insertReactions(reactions: List<ReactionEntity>)
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt > :dateFilter ORDER BY createdAt ASC LIMIT :limit")
     @Transaction
