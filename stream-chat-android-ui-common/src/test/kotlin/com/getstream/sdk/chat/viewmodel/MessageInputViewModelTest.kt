@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createMessage
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -71,8 +72,8 @@ internal class MessageInputViewModelTest {
         When calling channelControllerResult.data() doReturn channelController
         When calling channelController.toChannel() doReturn channel
         When calling editMessage(any()) doReturn mock()
-        When calling keystroke(eq(CID)) doReturn mock()
-        When calling stopTyping(eq(CID)) doReturn mock()
+        When calling keystroke(eq(CID), anyOrNull()) doReturn mock()
+        When calling stopTyping(eq(CID), anyOrNull()) doReturn mock()
     }
 
     @Test
@@ -102,7 +103,7 @@ internal class MessageInputViewModelTest {
 
         messageInputViewModel.editMessage(message)
 
-        Verify on stopTyping that stopTyping(eq(CID)) was called
+        Verify on stopTyping that stopTyping(eq(CID), anyOrNull()) was called
         Verify on editMessage that editMessage(eq(message)) was called
     }
 }
