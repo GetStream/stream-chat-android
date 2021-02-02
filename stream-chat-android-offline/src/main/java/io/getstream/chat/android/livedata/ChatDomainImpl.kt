@@ -689,7 +689,8 @@ internal class ChatDomainImpl internal constructor(
         logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
     }
 
-    private suspend fun retryChannels(): List<Channel> {
+    @VisibleForTesting
+    internal suspend fun retryChannels(): List<Channel> {
         return repos.selectChannelsSyncNeeded().onEach { channel ->
             val result = client.createChannel(
                 channel.type,
