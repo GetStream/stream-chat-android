@@ -10,36 +10,36 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelConfigRepositoryTest : BaseDomainTest() {
-    private val repo by lazy { chatDomainImpl.repos.configs }
+    private val repoHelper by lazy { chatDomainImpl.repos }
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repo.insert(ChannelConfig("messaging", data.config1))
-        val config = repo.select("messaging")
+        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        val config = repoHelper.selectConfig("messaging")
         Truth.assertThat(config).isEqualTo(config)
     }
 
     @Test
     fun testLoadAndRead() = runBlocking {
-        repo.insert(ChannelConfig("messaging", data.config1))
-        repo.clearCache()
-        var config = repo.select("messaging")
+        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.clearCache()
+        var config = repoHelper.selectConfig("messaging")
         Truth.assertThat(config).isNull()
-        repo.load()
-        config = repo.select("messaging")
+        repoHelper.loadChannelConfig()
+        config = repoHelper.selectConfig("messaging")
         Truth.assertThat(config?.config).isEqualTo(data.config1)
     }
 
     @Test
     fun testUpdate() = runBlocking {
-        repo.insert(ChannelConfig("messaging", data.config1))
+        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
         data.config1.maxMessageLength = 200
-        repo.insert(ChannelConfig("messaging", data.config1))
+        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
 
-        repo.clearCache()
-        repo.load()
+        repoHelper.clearCache()
+        repoHelper.loadChannelConfig()
 
-        val config = repo.select("messaging")?.config
+        val config = repoHelper.selectConfig("messaging")?.config
         Truth.assertThat(config).isEqualTo(data.config1)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }

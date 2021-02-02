@@ -57,14 +57,6 @@ internal class RepositoryHelper(
         }
     }
 
-    internal suspend fun updateCurrentUser(currentUser: User) {
-        userRepository.insertMe(currentUser)
-    }
-
-    internal suspend fun insertManyUsers(users: List<User>) {
-        userRepository.insert(users)
-    }
-
     internal suspend fun configChannel(configs: Collection<ChannelConfig>) {
         configsRepository.insert(configs)
     }
@@ -79,6 +71,11 @@ internal class RepositoryHelper(
 
     internal suspend fun loadChannelConfig() {
         configsRepository.load()
+    }
+
+    @VisibleForTesting
+    internal fun clearCache() {
+        configsRepository.clearCache()
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
