@@ -536,7 +536,7 @@ public class ChannelClient internal constructor(
             eventType = EventType.TYPING_START,
             channelType = channelType,
             channelId = channelId,
-            extraData = mapOf("parent_id" to parentId),
+            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
         )
     }
 
@@ -550,7 +550,7 @@ public class ChannelClient internal constructor(
             eventType = EventType.TYPING_STOP,
             channelType = channelType,
             channelId = channelId,
-            extraData = mapOf("parent_id" to parentId),
+            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
         )
     }
 
@@ -589,4 +589,8 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
+
+    private companion object {
+        private const val ARG_TYPING_PARENT_ID = "parent_id"
+    }
 }
