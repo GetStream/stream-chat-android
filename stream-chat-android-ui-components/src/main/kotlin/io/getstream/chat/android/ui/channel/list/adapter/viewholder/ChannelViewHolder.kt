@@ -81,10 +81,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                         }
                     }
                     setOnLongClickListener {
-                        when {
-                            !swiping -> channelLongClickListener.onLongClick(channel)
-                            else -> false
-                        }
+                        if (!swiping) {
+                            channelLongClickListener.onLongClick(channel)
+                        } else true // consume if we're swiping
                     }
                     doOnNextLayout {
                         setSwipeListener(root, swipeListener)
