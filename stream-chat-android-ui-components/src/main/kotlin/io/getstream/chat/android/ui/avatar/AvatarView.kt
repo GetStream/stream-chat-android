@@ -83,8 +83,8 @@ public class AvatarView : AppCompatImageView {
         this.avatarStyle = avatarStyle
         borderPaint.color = avatarStyle.avatarBorderColor
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
-        val borderWidth = this.avatarStyle.avatarBorderWidth
-        setPadding(borderWidth, borderWidth, borderWidth, borderWidth)
+        val padding = this.avatarStyle.avatarBorderWidth - 1
+        setPadding(padding, padding, padding, padding)
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {
