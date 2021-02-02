@@ -113,21 +113,18 @@ class ChatFragment : Fragment() {
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
             bindView(binding.messageInputView, viewLifecycleOwner)
-            messageListViewModel.mode.observe(
-                viewLifecycleOwner,
-                {
-                    when (it) {
-                        is MessageListViewModel.Mode.Thread -> {
-                            headerViewModel.setActiveThread(it.parentMessage)
-                            messageInputViewModel.setActiveThread(it.parentMessage)
-                        }
-                        is MessageListViewModel.Mode.Normal -> {
-                            headerViewModel.setActiveThread(null)
-                            messageInputViewModel.resetThread()
-                        }
+            messageListViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        headerViewModel.setActiveThread(it.parentMessage)
+                        messageInputViewModel.setActiveThread(it.parentMessage)
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        headerViewModel.setActiveThread(null)
+                        messageInputViewModel.resetThread()
                     }
                 }
-            )
+            }
             binding.messageListView.setMessageEditHandler {
                 editMessage.postValue(it)
             }
@@ -139,38 +136,39 @@ class ChatFragment : Fragment() {
 
     private fun initMessagesViewModel() {
         val calendar = Calendar.getInstance()
-        messageListViewModel
-            .apply {
-                setDateSeparatorHandler { previousMessage, message ->
-                    if (previousMessage == null) {
-                        true
-                    } else {
-                        shouldShowDateSeparator(calendar, previousMessage, message)
-                    }
+        messageListViewModel.apply {
+            setDateSeparatorHandler { previousMessage, message ->
+                if (previousMessage == null) {
+                    true
+                } else {
+                    shouldShowDateSeparator(calendar, previousMessage, message)
                 }
-                setThreadDateSeparatorHandler { previousMessage, message ->
-                    if (previousMessage == null) {
-                        false
-                    } else {
-                        shouldShowDateSeparator(calendar, previousMessage, message)
-                    }
-                }
-                bindView(binding.messageListView, viewLifecycleOwner)
-                state.observe(
-                    viewLifecycleOwner,
-                    {
-                        when (it) {
-                            is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
-                        }
-                    }
-                )
             }
-        binding.messageListView.setConfirmDeleteMessageHandler { message: Message,
+            setThreadDateSeparatorHandler { previousMessage, message ->
+                if (previousMessage == null) {
+                    false
+                } else {
+                    shouldShowDateSeparator(calendar, previousMessage, message)
+                }
+            }
+            bindView(binding.messageListView, viewLifecycleOwner)
+            state.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.State.Loading,
+                    is MessageListViewModel.State.Result,
+                    -> Unit
+                    is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
+                }
+            }
+        }
+        binding.messageListView.setConfirmDeleteMessageHandler {
+            message: Message,
             title: String,
             description: String,
             positiveText: String,
             negativeText: String,
-            confirmCallback: () -> Unit ->
+            confirmCallback: () -> Unit,
+            ->
             ConfirmationDialogFragment.newInstance(
                 R.drawable.ic_delete,
                 R.color.red,
