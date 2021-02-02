@@ -58,7 +58,6 @@ internal class SendMessagesTest {
 
     private val channelType: String = randomString()
     private val channelId: String = randomString()
-    private val call: Call<String> = mock()
     private lateinit var channelController: ChannelControllerImpl
 
     private val messageRepository: MessageRepository = mock()
@@ -94,7 +93,11 @@ internal class SendMessagesTest {
             (it.arguments[0] as () -> Call<Message>).invoke().execute()
         }
 
-        val attachments = randomAttachmentsWithFile().toMutableList()
+        val attachments = randomAttachmentsWithFile()
+            .map { attachment ->
+                attachment.apply { this.uploadState = Attachment.UploadState.InProgress }
+            }
+            .toMutableList()
         val files: List<File> = attachments.map { it.upload!! }
 
         mockFileUploadsFailure(files)
