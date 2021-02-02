@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -230,6 +229,8 @@ internal class ChannelControllerImpl(
     private val channelClient = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
+    private var keystrokeParentMessageId: String? = null
+
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> =
@@ -245,28 +246,44 @@ internal class ChannelControllerImpl(
         return domainImpl.getChannelConfig(channelType)
     }
 
-    fun keystroke(): Result<Boolean> {
+    fun keystroke(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
-            val result = client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
+
+            val channelClient = client.channel(channelType = channelType, channelId = channelId)
+            val result = if (parentId != null) {
+                channelClient.keystroke(parentId)
+            } else {
+                channelClient.keystroke()
+            }.execute()
+
             return if (result.isSuccess) {
+                keystrokeParentMessageId = parentId
                 Result(result.isSuccess)
             } else {
-                Result(result.isSuccess)
+                Result(result.error())
             }
         }
         return Result(false)
     }
 
-    fun stopTyping(): Result<Boolean> {
+    fun stopTyping(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
-            val result = client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
+
+            val channelClient = client.channel(channelType = channelType, channelId = channelId)
+            val result = if (parentId != null) {
+                channelClient.stopTyping(parentId)
+            } else {
+                channelClient.stopTyping()
+            }.execute()
+
             return if (result.isSuccess) {
+                keystrokeParentMessageId = null
                 Result(result.isSuccess)
             } else {
                 Result(result.error())
@@ -1060,7 +1077,7 @@ internal class ChannelControllerImpl(
         // cleanup your own typing state
         val now = Date()
         if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-            stopTyping()
+            stopTyping(keystrokeParentMessageId)
         }
 
         // Cleanup typing events that are older than 15 seconds

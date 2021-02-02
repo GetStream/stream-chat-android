@@ -531,9 +531,27 @@ public class ChannelClient internal constructor(
         return client.sendEvent(EventType.TYPING_START, channelType, channelId)
     }
 
+    public fun keystroke(parentId: String): Call<ChatEvent> {
+        return client.sendEvent(
+            eventType = EventType.TYPING_START,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
+        )
+    }
+
     @CheckResult
     override fun stopTyping(): Call<ChatEvent> {
         return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
+    }
+
+    public fun stopTyping(parentId: String): Call<ChatEvent> {
+        return client.sendEvent(
+            eventType = EventType.TYPING_STOP,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
+        )
     }
 
     @CheckResult
@@ -571,4 +589,8 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
+
+    private companion object {
+        private const val ARG_TYPING_PARENT_ID = "parent_id"
+    }
 }

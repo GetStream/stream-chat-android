@@ -339,7 +339,8 @@ internal fun createTypingStartEventStringJson() =
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
-            "cid": "channelType:channelId"
+            "cid": "channelType:channelId",
+            "parent_id": "parentMessageId"
         """.trimIndent()
     )
 
@@ -350,7 +351,8 @@ internal fun createTypingStopEventStringJson() =
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
-            "cid": "channelType:channelId"
+            "cid": "channelType:channelId",
+            "parent_id": "parentMessageId"
         """.trimIndent()
     )
 
