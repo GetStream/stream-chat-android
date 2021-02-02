@@ -19,7 +19,7 @@ public interface FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback
-    )
+    ): String?
 
     /**
      * Sends file to given channel.
@@ -44,7 +44,7 @@ public interface FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback
-    )
+    ): String?
 
     /**
      * Sends image to given channel
