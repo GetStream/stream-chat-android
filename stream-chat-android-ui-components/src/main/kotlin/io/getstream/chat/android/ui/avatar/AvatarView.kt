@@ -79,10 +79,12 @@ public class AvatarView : AppCompatImageView {
         setStyle(AvatarStyle(context, attrs))
     }
 
-    internal fun setStyle(avatarStyle: AvatarStyle) {
+    private fun setStyle(avatarStyle: AvatarStyle) {
         this.avatarStyle = avatarStyle
         borderPaint.color = avatarStyle.avatarBorderColor
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
+        val padding = this.avatarStyle.avatarBorderWidth - 1
+        setPadding(padding, padding, padding, padding)
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {
