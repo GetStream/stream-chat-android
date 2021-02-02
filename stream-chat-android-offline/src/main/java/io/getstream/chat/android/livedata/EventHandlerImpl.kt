@@ -423,8 +423,8 @@ internal class EventHandlerImpl(
                 }
                 is ChannelDeletedEvent -> {
                     domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
-                    domainImpl.repos.channels.select(event.cid)?.let {
-                        domainImpl.repos.channels.insert(it.apply { deletedAt = event.createdAt })
+                    domainImpl.repos.selectChannel(event.cid)?.let {
+                        domainImpl.repos.insertChannel(it.apply { deletedAt = event.createdAt })
                     }
                 }
             }

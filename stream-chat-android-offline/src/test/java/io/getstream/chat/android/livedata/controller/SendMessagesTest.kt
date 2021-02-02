@@ -61,11 +61,9 @@ internal class SendMessagesTest {
     private lateinit var channelController: ChannelControllerImpl
 
     private val messageRepository: MessageRepository = mock()
-    private val channelsRepository: ChannelRepository = mock()
 
     private val repos: RepositoryHelper = mock {
         on(it.messages) doReturn messageRepository
-        on(it.channels) doReturn channelsRepository
     }
 
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()

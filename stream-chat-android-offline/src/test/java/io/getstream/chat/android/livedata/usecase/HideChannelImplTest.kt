@@ -20,7 +20,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     fun loadHidden() = runBlocking {
         val channelEntity = data.channel1.toEntity()
         channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        chatDomainImpl.repos.insertChannel(channelEntity)
         // setup the channel controller
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
@@ -34,7 +34,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         // insert the channel and queryChannelsResult
         val channelEntity = data.channel1.toEntity()
         channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        chatDomainImpl.repos.insertChannel(channelEntity)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))
         chatDomainImpl.repos.queryChannels.insert(query)
 

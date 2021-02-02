@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -21,7 +22,7 @@ internal class RepositoryHelper(
 ) {
     val users = factory.createUserRepository()
     val configs = factory.createChannelConfigRepository()
-    val channels = factory.createChannelRepository()
+    private val channels = factory.createChannelRepository()
     val queryChannels = factory.createQueryChannelsRepository()
     val messages = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
@@ -68,6 +69,22 @@ internal class RepositoryHelper(
         userId: String,
     ): List<Reaction> = reactions.selectUserReactionsToMessage(messageId, userId, ::selectUser)
 
+    internal suspend fun retryChannels(): List<ChannelEntity> {
+        return channels.retryChannels()
+    }
+
+    internal suspend fun selectChannel(cid: String): ChannelEntity? {
+        return channels.select(cid)
+    }
+
+    internal suspend fun selectChannel(channelCIDs: List<String>): List<ChannelEntity> {
+        return channels.select(channelCIDs)
+    }
+
+    internal suspend fun insertChannel(channelEntity: ChannelEntity) {
+        return channels.insert(channelEntity)
+    }
+
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
         reactions.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
 
@@ -91,6 +108,10 @@ internal class RepositoryHelper(
 
     suspend fun removeChannel(cid: String) {
         channels.delete(cid)
+    }
+
+    suspend fun selectChannelSyncNeeded(): List<ChannelEntity> {
+        return channels.selectSyncNeeded()
     }
 
     private suspend fun selectUser(userId: String): User =

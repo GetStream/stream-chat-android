@@ -355,7 +355,7 @@ internal class ChannelControllerImpl(
         setHidden(true)
         val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
-            val channelEntity = domainImpl.repos.channels.select(cid)
+            val channelEntity = domainImpl.repos.selectChannel(cid)
             channelEntity?.let {
                 it.hidden = true
                 if (clearHistory) {
@@ -365,7 +365,8 @@ internal class ChannelControllerImpl(
                     removeMessagesBefore(now)
                     domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
                 }
-                domainImpl.repos.channels.insert(it)
+
+                domainImpl.repos.insertChannel(it)
             }
         }
         return result
@@ -375,10 +376,10 @@ internal class ChannelControllerImpl(
         setHidden(false)
         val result = channelClient.show().execute()
         if (result.isSuccess) {
-            val channelEntity = domainImpl.repos.channels.select(cid)
+            val channelEntity = domainImpl.repos.selectChannel(cid)
             channelEntity?.let {
                 it.hidden = false
-                domainImpl.repos.channels.insert(it)
+                domainImpl.repos.insertChannel(it)
             }
         }
         return result
@@ -634,11 +635,11 @@ internal class ChannelControllerImpl(
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insert(newMessage)
 
-        val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
+        val channelStateEntity = domainImpl.repos.selectChannel(newMessage.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.updateLastMessage(messageEntity)
-            domainImpl.repos.channels.insert(it)
+            domainImpl.repos.insertChannel(it)
         }
 
         return if (online) {

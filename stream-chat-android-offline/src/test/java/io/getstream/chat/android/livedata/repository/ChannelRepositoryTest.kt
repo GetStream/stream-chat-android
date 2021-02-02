@@ -17,12 +17,12 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelRepositoryTest : BaseDomainTest2() {
-    val repo by lazy { chatDomainImpl.repos.channels }
+    val repositoryHelper by lazy { chatDomainImpl.repos }
 
     @Test
     fun `inserting a channel and reading it should be equal`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1))
-        val entity = repo.select(data.channel1.cid)
+        repositoryHelper.insertChannels(listOf(data.channel1))
+        val entity = repositoryHelper.selectChannel(data.channel1.cid)
         val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
         channel.config = data.channel1.config
         channel.watchers = data.channel1.watchers
@@ -33,17 +33,17 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `deleting a channel should work`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1))
-        repo.delete(data.channel1.cid)
-        val entity = repo.select(data.channel1.cid)
+        repositoryHelper.insertChannels(listOf(data.channel1))
+        repositoryHelper.removeChannel(data.channel1.cid)
+        val entity = repositoryHelper.selectChannel(data.channel1.cid)
 
         Truth.assertThat(entity).isNull()
     }
 
     @Test
     fun `updating a channel should work as intended`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1, data.channel1Updated))
-        val entity = repo.select(data.channel1.cid)
+        repositoryHelper.insertChannels(listOf(data.channel1, data.channel1Updated))
+        val entity = repositoryHelper.selectChannel(data.channel1.cid)
         val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
 
         // ignore these 4 fields
@@ -59,18 +59,18 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
         data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
         data.channel2.syncStatus = SyncStatus.COMPLETED
 
-        repo.insertChannels(listOf(data.channel1, data.channel2))
+        repositoryHelper.insertChannels(listOf(data.channel1, data.channel2))
 
-        var channels = repo.selectSyncNeeded()
+        var channels = repositoryHelper.selectChannelSyncNeeded()
         Truth.assertThat(channels.size).isEqualTo(1)
         Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
         When calling clientMock.createChannel(any(), any(), any(), any()) doReturn TestCall(Result(data.channel1))
-        channels = repo.retryChannels()
+        channels = repositoryHelper.retryChannels()
         Truth.assertThat(channels.size).isEqualTo(1)
         Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
-        channels = repo.selectSyncNeeded()
+        channels = repositoryHelper.selectChannelSyncNeeded()
         Truth.assertThat(channels.size).isEqualTo(0)
     }
 }

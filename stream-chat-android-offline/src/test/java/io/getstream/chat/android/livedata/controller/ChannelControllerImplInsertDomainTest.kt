@@ -77,7 +77,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val message1 = data.createMessage()
         channelControllerImpl.sendMessage(message1)
         // get the message and channel state both live and offline versions
-        val roomChannel = chatDomainImpl.repos.channels.select(message1.cid)
+        val roomChannel = chatDomainImpl.repos.selectChannel(message1.cid)
         val liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
