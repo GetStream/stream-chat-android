@@ -75,39 +75,28 @@ internal class GsonChatApi(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback,
-    ): Unit = fileUploader.sendFile(
-        channelType = channelType,
-        channelId = channelId,
-        userId = userId,
-        connectionId = connectionId,
-        file = file,
-        callback = callback
-    )
-
-    override fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-        callback: ProgressCallback,
-    ): Unit = fileUploader.sendImage(
-        channelType = channelType,
-        channelId = channelId,
-        userId = userId,
-        connectionId = connectionId,
-        file = file,
-        callback = callback
-    )
-
-    override fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
+        callback: ProgressCallback?,
+    ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = fileUploader.sendFile(
-                channelType = channelType,
-                channelId = channelId,
-                userId = userId,
-                connectionId = connectionId,
-                file = file
-            )
+            val result = if (callback != null) {
+                fileUploader.sendFile(
+                    channelType = channelType,
+                    channelId = channelId,
+                    userId = userId,
+                    connectionId = connectionId,
+                    file = file,
+                    callback
+                )
+            } else {
+                fileUploader.sendFile(
+                    channelType = channelType,
+                    channelId = channelId,
+                    userId = userId,
+                    connectionId = connectionId,
+                    file = file,
+                )
+            }
+
             if (result != null) {
                 Result(result)
             } else {
@@ -116,15 +105,27 @@ internal class GsonChatApi(
         }
     }
 
-    override fun sendImage(channelType: String, channelId: String, file: File): Call<String> {
+    override fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback?): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = fileUploader.sendImage(
-                channelType = channelType,
-                channelId = channelId,
-                userId = userId,
-                connectionId = connectionId,
-                file = file
-            )
+            val result = if (callback != null) {
+                fileUploader.sendImage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    userId = userId,
+                    connectionId = connectionId,
+                    file = file,
+                    callback
+                )
+            } else {
+                fileUploader.sendImage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    userId = userId,
+                    connectionId = connectionId,
+                    file = file
+                )
+            }
+
             if (result != null) {
                 Result(result)
             } else {

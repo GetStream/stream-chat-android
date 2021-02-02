@@ -101,5 +101,4 @@ dependencies {
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.kluent
-    testImplementation Dependencies.coroutinesTest
 }

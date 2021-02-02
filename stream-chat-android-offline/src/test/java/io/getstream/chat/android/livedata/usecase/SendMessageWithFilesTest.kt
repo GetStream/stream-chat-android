@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -43,7 +44,8 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),
@@ -59,7 +61,8 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
             When calling clientMock.sendFile(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull()
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),
@@ -73,7 +76,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     fun `Should return message sending files`() = testCoroutines.scope.runBlockingTest {
         val message = randomMessage()
         message.cid = channelControllerImpl.cid
-        message.attachments = randomAttachmentsWithFile().toMutableList()
+        message.attachments = defaultAttachments()
 
         val expectedAttachments =
             message.attachments.map { it.copy(assetUrl = it.upload!!.absolutePath, upload = null, type = "file") }
@@ -97,7 +100,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
     @Test
     fun `Upload attachment should have the right format`() = testCoroutines.scope.runBlockingTest {
-        val attachments = randomAttachmentsWithFile().toMutableList()
+        val attachments = defaultAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 
         mockFileUploads(files)
@@ -120,7 +123,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
     @Test
     fun `Upload attachment should be configurable`() = testCoroutines.scope.runBlockingTest {
-        val attachments = randomAttachmentsWithFile().toMutableList()
+        val attachments = defaultAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 
         mockFileUploads(files)
@@ -137,9 +140,13 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 extraData = extra,
                 uploadState = Attachment.UploadState.Success
             )
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment) { attachment, _ ->
-                attachment.copy(extraData = extra)
-            }
+            val result = channelControllerImpl.uploadAttachment(
+                attachment = attachment,
+                attachmentTransformer = { attachment, _ ->
+                    attachment.copy(extraData = extra)
+                }
+            )
+
             assertSuccess(result)
             Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
         }
@@ -147,10 +154,9 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
     @Test
     fun `Errors should still return the attachments`() = testCoroutines.scope.runBlockingTest {
-
         val message = randomMessage()
         message.cid = channelControllerImpl.cid
-        message.attachments = randomAttachmentsWithFile(1).toMutableList()
+        message.attachments = defaultAttachments()
 
         val expectedAttachments =
             message.attachments.map { it.copy(uploadState = Attachment.UploadState.Failed(it.upload!!.toChatError())) }
@@ -173,16 +179,20 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     fun `Should return apply the right transformation to attachments`() = testCoroutines.scope.runBlockingTest {
         val message = randomMessage()
         message.cid = channelControllerImpl.cid
-        message.attachments = randomAttachmentsWithFile().toMutableList()
+        message.attachments = defaultAttachments()
         val extra = mutableMapOf<String, Any>("the answer" to 42)
 
         val files: List<File> = message.attachments.map { it.upload!! }
 
         mockFileUploads(files)
 
-        val result = channelControllerImpl.uploadAttachment(message.attachments.first()) { attachment, _ ->
-            attachment.copy(extraData = extra)
-        }
+        val result = channelControllerImpl.uploadAttachment(
+            message.attachments.first(),
+            attachmentTransformer = { attachment, _ ->
+                attachment.copy(extraData = extra)
+            }
+        )
+
         assertSuccess(result)
         val uploadedAttachment = result.data()
 
@@ -192,7 +202,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     @Test
     fun `Should throw an exception if the channel cid is empty`() = testCoroutines.scope.runBlockingTest {
         val message = randomMessage()
-        message.attachments = randomAttachmentsWithFile().toMutableList()
+        message.attachments = defaultAttachments()
         message.cid = ""
 
         invoking {
@@ -204,13 +214,20 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     fun `Should throw an exception if the channel cid doesn't contain a colon`() =
         testCoroutines.scope.runBlockingTest {
             val message = randomMessage()
-            message.attachments = randomAttachmentsWithFile().toMutableList()
+            message.attachments = defaultAttachments()
             message.cid = "abc"
 
             invoking {
                 sendMessageWithFile(message)
             } `should throw` IllegalArgumentException::class `with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
         }
+
+    private fun defaultAttachments() =
+        randomAttachmentsWithFile()
+            .map { attachment ->
+                attachment.apply { this.uploadState = Attachment.UploadState.InProgress }
+            }
+            .toMutableList()
 }
 
 private fun File.toChatError(): ChatError = ChatError(absolutePath)
