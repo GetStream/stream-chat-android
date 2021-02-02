@@ -131,6 +131,34 @@
                 android:id="@+id/avatarViewLargeIndicator"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 />
+
+            <TextView
+                style="@style/ComponentBrowserLabel"
+                android:text="With border"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewSmallIndicatorBorder"
+                style="@style/StreamUiMessageListAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewMediumIndicatorBorder"
+                style="@style/StreamUiUserAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewLargeIndicatorBorder"
+                style="@style/StreamUiGroupActionsAvatarStyle"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

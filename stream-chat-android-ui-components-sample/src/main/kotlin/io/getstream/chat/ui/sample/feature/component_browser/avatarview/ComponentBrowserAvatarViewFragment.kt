@@ -105,14 +105,27 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
             )
         )
 
+        val user1 = randomUser(isOnline = true)
+        val user2 = randomUser(isOnline = true)
+        val user3 = randomUser(isOnline = true)
         binding.avatarViewSmallIndicator.apply {
-            setUserData(randomUser(isOnline = true))
+            setUserData(user1)
         }
         binding.avatarViewMediumIndicator.apply {
-            setUserData(randomUser(isOnline = true))
+            setUserData(user2)
         }
         binding.avatarViewLargeIndicator.apply {
-            setUserData(randomUser(isOnline = true))
+            setUserData(user3)
+        }
+
+        binding.avatarViewSmallIndicatorBorder.apply {
+            setUserData(user1)
+        }
+        binding.avatarViewMediumIndicatorBorder.apply {
+            setUserData(user2)
+        }
+        binding.avatarViewLargeIndicatorBorder.apply {
+            setUserData(user3)
         }
     }
 }
