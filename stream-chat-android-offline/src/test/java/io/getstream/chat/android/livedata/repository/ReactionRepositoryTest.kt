@@ -5,6 +5,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -12,6 +13,13 @@ import org.junit.runner.RunWith
 internal class ReactionRepositoryTest : BaseDomainTest() {
     private val helper by lazy { chatDomainImpl.repos }
     private val repo by lazy { helper.reactions }
+
+    @Before
+    fun beforeEach() {
+        runBlocking {
+            helper.messages.insert(data.message1)
+        }
+    }
 
     @Test
     fun testInsertAndRead() = runBlocking {

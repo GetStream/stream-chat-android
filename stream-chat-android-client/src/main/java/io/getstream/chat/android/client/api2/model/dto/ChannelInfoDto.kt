@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 internal data class ChannelInfoDto(
     val cid: String?,
     val id: String?,
-    val type: String?,
     val member_count: Int,
     val name: String?,
+    val type: String?,
 )

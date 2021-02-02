@@ -7,7 +7,7 @@ internal fun ChannelInfoDto.toDomain(): ChannelInfo =
     ChannelInfo(
         cid = cid,
         id = id,
-        type = type,
         memberCount = member_count,
         name = name,
+        type = type,
     )

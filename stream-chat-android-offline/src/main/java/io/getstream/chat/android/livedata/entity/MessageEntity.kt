@@ -12,6 +12,12 @@ internal data class MessageEntity(
     @Embedded val messageInnerEntity: MessageInnerEntity,
     @Relation(entity = AttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
     val attachments: List<AttachmentEntity>,
+    /** the reactions from the current user */
+    @Relation(entity = ReactionEntity::class, parentColumn = "id", entityColumn = "messageId")
+    val ownReactions: List<ReactionEntity> = emptyList(),
+    /** the last 5 reactions on this message */
+    @Relation(entity = ReactionEntity::class, parentColumn = "id", entityColumn = "messageId")
+    val latestReactions: List<ReactionEntity> = emptyList(),
 )
 
 @Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
@@ -38,10 +44,6 @@ internal data class MessageInnerEntity(
     val updatedLocallyAt: Date? = null,
     /** when the message was deleted */
     val deletedAt: Date? = null,
-    /** the last 5 reactions on this message */
-    val latestReactions: List<ReactionEntity> = emptyList(),
-    /** the reactions from the current user */
-    val ownReactions: List<ReactionEntity> = emptyList(),
     /** the users mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
     /** a mapping between reaction type and the count, ie like:10, heart:4 */

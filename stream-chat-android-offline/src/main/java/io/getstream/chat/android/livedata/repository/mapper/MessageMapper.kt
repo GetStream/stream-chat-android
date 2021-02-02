@@ -59,11 +59,11 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         reactionCounts = reactionCounts,
         reactionScores = reactionScores,
         shadowed = shadowed,
-        latestReactions = latestReactions.map(Reaction::toEntity),
-        ownReactions = ownReactions.map(Reaction::toEntity),
         mentionedUsersId = mentionedUsers.map(User::id),
         replyToId = replyTo?.id ?: replyMessageId,
         threadParticipantsIds = threadParticipants.map(User::id),
     ),
     attachments = attachments.map { it.toEntity(id) },
+    latestReactions = latestReactions.map(Reaction::toEntity),
+    ownReactions = ownReactions.map(Reaction::toEntity),
 )

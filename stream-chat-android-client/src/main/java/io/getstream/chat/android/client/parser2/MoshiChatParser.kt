@@ -13,6 +13,9 @@ internal class MoshiChatParser : ChatParser {
             .addAdapter(DateAdapter())
             .add(DownstreamMessageDtoAdapter)
             .add(UpstreamMessageDtoAdapter)
+            .add(AttachmentDtoAdapter)
+            .add(ReactionDtoAdapter)
+            .add(UserDtoAdapter)
             .build()
     }
 
