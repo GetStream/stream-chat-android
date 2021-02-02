@@ -107,16 +107,16 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     @Synchronized
     public fun keystroke() {
-        if (isThread) return
-        chatDomain.useCases.keystroke(cid).enqueue()
+        val parentId = activeThread.value?.id
+        chatDomain.useCases.keystroke(cid, parentId).enqueue()
     }
 
     /**
      * stopTyping - Sets last typing to null and sends the typing.stop event
      */
     public fun stopTyping() {
-        if (isThread) return
-        chatDomain.useCases.stopTyping(cid).enqueue()
+        val parentId = activeThread.value?.id
+        chatDomain.useCases.stopTyping(cid, parentId).enqueue()
     }
 
     public fun dismissReply() {

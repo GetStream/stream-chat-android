@@ -202,13 +202,14 @@ public class ChatClient internal constructor(
         return api.getGuestUser(userId, userName)
     }
 
+    @CheckResult
     public fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback,
-    ) {
-        api.sendFile(channelType, channelId, file, callback)
+        callback: ProgressCallback? = null,
+    ): Call<String> {
+        return api.sendFile(channelType, channelId, file, callback)
     }
 
     public fun sendImage(
@@ -218,15 +219,6 @@ public class ChatClient internal constructor(
         callback: ProgressCallback,
     ) {
         api.sendImage(channelType, channelId, file, callback)
-    }
-
-    @CheckResult
-    public fun sendFile(
-        channelType: String,
-        channelId: String,
-        file: File,
-    ): Call<String> {
-        return api.sendFile(channelType, channelId, file)
     }
 
     @CheckResult

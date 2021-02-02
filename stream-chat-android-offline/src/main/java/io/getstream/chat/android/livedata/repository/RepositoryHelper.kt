@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
@@ -12,10 +13,11 @@ import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import java.util.Date
 
 internal class RepositoryHelper(
     factory: RepositoryFactory,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) {
     val users = factory.createUserRepository()
     val configs = factory.createChannelConfigRepository()
@@ -28,7 +30,7 @@ internal class RepositoryHelper(
     internal suspend fun selectChannels(
         channelIds: List<String>,
         defaultConfig: Config,
-        pagination: AnyChannelPaginationRequest? = null
+        pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = channels.select(channelIds)
@@ -63,9 +65,13 @@ internal class RepositoryHelper(
 
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
-        userId: String
+        userId: String,
     ): List<Reaction> = reactions.selectUserReactionsToMessage(messageId, userId, ::selectUser)
 
+    internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
+        reactions.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
+
+    @VisibleForTesting
     internal suspend fun selectUserReactionsToMessageByType(
         messageId: String,
         userId: String,
