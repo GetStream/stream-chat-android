@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
@@ -680,10 +681,14 @@ internal class ChatDomainImpl internal constructor(
     internal suspend fun retryFailedEntities() {
         delay(1000)
         // retry channels, messages and reactions in that order..
-        val channelEntities = repos.channels.retryChannels()
+        val channels = retryChannels()
         val messages = retryMessages()
         val reactions = retryReactions()
-        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+        logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+    }
+
+    private suspend fun retryChannels(): List<ChannelEntity> {
+        return repos.channels.retryChannels()
     }
 
     @VisibleForTesting
