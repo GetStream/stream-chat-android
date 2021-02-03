@@ -564,7 +564,7 @@ internal class ChannelControllerImpl(
                 }
             }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
-            domainImpl.repos.configs.insert(ChannelConfig(channelResponse.type, channelResponse.config))
+            domainImpl.repos.insertConfigChannel(ChannelConfig(channelResponse.type, channelResponse.config))
 
             domainImpl.storeStateForChannel(channelResponse)
         } else {
