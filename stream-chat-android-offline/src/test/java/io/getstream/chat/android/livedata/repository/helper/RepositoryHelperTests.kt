@@ -13,19 +13,9 @@ import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
-import io.getstream.chat.android.livedata.repository.ChannelRepository
-import io.getstream.chat.android.livedata.repository.MessageRepository
-import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
-import io.getstream.chat.android.livedata.repository.ReactionRepository
-import io.getstream.chat.android.livedata.repository.RepositoryFactory
-import io.getstream.chat.android.livedata.repository.RepositoryHelper
-import io.getstream.chat.android.livedata.repository.SyncStateRepository
-import io.getstream.chat.android.livedata.repository.UserRepository
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When
@@ -37,44 +27,10 @@ import org.amshove.kluent.on
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.that
 import org.amshove.kluent.was
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class RepositoryHelperTests {
-
-    private lateinit var users: UserRepository
-    private lateinit var configs: ChannelConfigRepository
-    private lateinit var channels: ChannelRepository
-    private lateinit var queryChannels: QueryChannelsRepository
-    private lateinit var messages: MessageRepository
-    private lateinit var reactions: ReactionRepository
-    private lateinit var syncState: SyncStateRepository
-
-    private val scope = TestCoroutineScope()
-
-    private lateinit var sut: RepositoryHelper
-
-    @BeforeEach
-    fun setUp() {
-        users = mock()
-        configs = mock()
-        channels = mock()
-        queryChannels = mock()
-        messages = mock()
-        reactions = mock()
-        syncState = mock()
-        val factory: RepositoryFactory = mock {
-            on { createUserRepository() } doReturn users
-            on { createChannelConfigRepository() } doReturn configs
-            on { createChannelRepository() } doReturn channels
-            on { createQueryChannelsRepository() } doReturn queryChannels
-            on { createMessageRepository() } doReturn messages
-            on { createReactionRepository() } doReturn reactions
-            on { createSyncStateRepository() } doReturn syncState
-        }
-        sut = RepositoryHelper(factory, scope)
-    }
+internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
 
     @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
