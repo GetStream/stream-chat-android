@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.os.Handler
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -527,6 +528,47 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                         Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
                     }
                 }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/slow_mode/?language=kotlin">Throttling & Slow mode</a>
+     */
+    inner class ThrottlingAndSlowMode {
+        private fun disableMessageSendingUi() {}
+        private fun enableMessageSendingUi() {}
+
+        fun enableAndDisable() {
+            val channelClient = client.channel("messaging", "general")
+
+            // Enable slow mode and set cooldown to 1s
+            channelClient.enableSlowMode(cooldownTimeInSeconds = 1).enqueue { /* Result handling */ }
+
+            // Increase cooldown to 30s
+            channelClient.enableSlowMode(cooldownTimeInSeconds = 30).enqueue { /* Result handling */ }
+
+            // Disable slow mode
+            channelClient.disableSlowMode().enqueue { /* Result handling */ }
+        }
+
+        fun blockUi() {
+            val channelClient = client.channel("messaging", "general")
+
+            // Get the cooldown value
+            channelClient.query(QueryChannelRequest()).enqueue { result ->
+                if (result.isSuccess) {
+                    val channel = result.data()
+                    val cooldown = channel.cooldown
+
+                    val message = Message(text = "Hello")
+                    channelClient.sendMessage(message).enqueue {
+                        // After sending a message, block the UI temporarily
+                        // The disable/enable UI methods have to be implemented by you
+                        disableMessageSendingUi()
+                        Handler().postDelayed(::enableMessageSendingUi, cooldown.toLong())
+                    }
+                }
+            }
         }
     }
 }
