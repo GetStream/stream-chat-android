@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 internal class ExampleBaseDomainTest2 : BaseDomainTest2() {
     @Test
     fun `test that room testing setup is configured correctly`(): Unit = runBlocking {
-        chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
+        chatDomainImpl.repos.selectChannelWithoutMessages(data.channel1.cid)
         queryControllerImpl.query(10)
     }
 }

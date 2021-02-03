@@ -3,20 +3,19 @@ package io.getstream.chat.android.livedata.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDomainTest2
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelRepositoryTest : BaseDomainTest2() {
-    val repo by lazy { chatDomainImpl.repos.channels }
+    private val repo by lazy { helper.channels }
+    private val helper by lazy { chatDomainImpl.repos }
 
     @Test
     fun `inserting a channel and reading it should be equal`() = runBlocking {
         repo.insertChannels(listOf(data.channel1))
-        val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
+        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
         channel.config = data.channel1.config
         channel.watchers = data.channel1.watchers
         channel.watcherCount = data.channel1.watcherCount
@@ -28,7 +27,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `deleting a channel should work`() = runBlocking {
         repo.insertChannels(listOf(data.channel1))
         repo.delete(data.channel1.cid)
-        val entity = repo.select(data.channel1.cid)
+        val entity = helper.selectChannelWithoutMessages(data.channel1.cid)
 
         Truth.assertThat(entity).isNull()
     }
@@ -36,8 +35,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     @Test
     fun `updating a channel should work as intended`() = runBlocking {
         repo.insertChannels(listOf(data.channel1, data.channel1Updated))
-        val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toModel(getUser = { data.userMap[it]!! }, getMessage = { null })
+        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
 
         // ignore these 4 fields
         channel.config = data.channel1.config

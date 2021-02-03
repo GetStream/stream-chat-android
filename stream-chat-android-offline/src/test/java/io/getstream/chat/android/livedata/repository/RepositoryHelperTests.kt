@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.randomChannelEntity
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -70,16 +69,11 @@ internal class RepositoryHelperTests {
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
-            When calling users.select("userId") doReturn randomUser(id = "userId")
-            val channelEntity1 = randomChannelEntity(lastMessageId = null).apply {
-                cid = "cid1"
-                createdByUserId = "userId"
-            }
-            val channelEntity2 = randomChannelEntity(lastMessageId = null).apply {
-                cid = "cid2"
-                createdByUserId = "userId"
-            }
-            When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
+            val user = randomUser(id = "userId")
+            When calling users.select("userId") doReturn user
+            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
+            val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
+            When calling channels.select(eq(listOf("cid1", "cid2")), any(), any()) doReturn listOf(channel1, channel2)
 
             val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
@@ -102,15 +96,12 @@ internal class RepositoryHelperTests {
             When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest), any()) doReturn listOf(
                 message2
             )
-            val channelEntity1 = randomChannelEntity(lastMessageId = null).apply {
-                cid = "cid1"
-                createdByUserId = "userId"
-            }
-            val channelEntity2 = randomChannelEntity(lastMessageId = null).apply {
-                cid = "cid2"
-                createdByUserId = "userId"
-            }
-            When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
+            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
+            val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
+            When calling channels.select(eq(listOf("cid1", "cid2")), any(), any()) doReturn listOf(
+                channel1,
+                channelEntity2
+            )
 
             val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
@@ -155,29 +146,30 @@ internal class RepositoryHelperTests {
     }
 
     @Test
-    fun `When insert a list of channels, all participant users of these channels need to be stored`() = runBlockingTest {
-        val (listOfUser: List<User>, listOfChannels: List<Channel>) =
-            (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
-                val memberUser = randomUser()
-                val channelUser = randomUser()
-                val userRead = randomUser()
-                val messageUser = randomUser()
-                val channel = randomChannel(
-                    createdBy = channelUser,
-                    members = listOf(Member(memberUser)),
-                    read = listOf(ChannelUserRead(userRead)),
-                    messages = listOf(randomMessage(user = messageUser))
-                )
-                acc.first + listOf(memberUser, channelUser, userRead, messageUser) to acc.second + channel
-            }
+    fun `When insert a list of channels, all participant users of these channels need to be stored`() =
+        runBlockingTest {
+            val (listOfUser: List<User>, listOfChannels: List<Channel>) =
+                (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
+                    val memberUser = randomUser()
+                    val channelUser = randomUser()
+                    val userRead = randomUser()
+                    val messageUser = randomUser()
+                    val channel = randomChannel(
+                        createdBy = channelUser,
+                        members = listOf(Member(memberUser)),
+                        read = listOf(ChannelUserRead(userRead)),
+                        messages = listOf(randomMessage(user = messageUser))
+                    )
+                    acc.first + listOf(memberUser, channelUser, userRead, messageUser) to acc.second + channel
+                }
 
-        sut.insertChannels(listOfChannels)
+            sut.insertChannels(listOfChannels)
 
-        Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
-        Verify on users that users.insert(
-            com.nhaarman.mockitokotlin2.check { listUser ->
-                listUser `should contain same` listOfUser
-            }
-        ) was called
-    }
+            Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
+            Verify on users that users.insert(
+                com.nhaarman.mockitokotlin2.check { listUser ->
+                    listUser `should contain same` listOfUser
+                }
+            ) was called
+        }
 }
