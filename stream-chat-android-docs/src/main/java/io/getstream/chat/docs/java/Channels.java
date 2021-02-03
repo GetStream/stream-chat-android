@@ -39,7 +39,7 @@ public class Channels {
      */
     class ChannelInitialization {
         public void initialization() {
-            ChannelClient channelClient = client.channel("messaging", "channel-id");
+            ChannelClient channelClient = client.channel("messaging", "general");
 
             List<String> members = Arrays.asList("thierry", "tommaso");
 
