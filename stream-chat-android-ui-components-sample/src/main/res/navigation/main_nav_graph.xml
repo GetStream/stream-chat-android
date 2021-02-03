@@ -299,23 +299,6 @@
             app:nullable="true"
             />
 
-        <action
-            android:id="@+id/action_chatInfoSharedMediaFragment_to_chatInfoSharedMediaGalleryFragment"
-            app:destination="@id/chatInfoSharedMediaGalleryFragment"
-            app:launchSingleTop="true"
-            />
-    </fragment>
-
-    <fragment
-        android:id="@+id/chatInfoSharedMediaGalleryFragment"
-        android:name="io.getstream.chat.ui.sample.feature.chat.info.shared.media.ChatInfoSharedMediaGalleryFragment"
-        android:label="ChatInfoSharedMediaGalleryFragment"
-        >
-        <argument
-            android:name="currentIndex"
-            app:argType="integer"
-            app:defaultValue="0"
-            />
     </fragment>
 
     <fragment
@@ -359,18 +342,18 @@
             app:launchSingleTop="true"
             app:popUpTo="@+id/bottom_navigation"
             app:popUpToInclusive="true"
-         />
+            />
 
         <action
             android:id="@+id/action_open_chat_preview"
             app:destination="@id/chatPreviewFragment"
             app:launchSingleTop="true"
-         />
+            />
         <action
             android:id="@+id/action_open_chat_info"
             app:destination="@id/chatInfoFragment"
             app:launchSingleTop="true"
-          />
+            />
     </fragment>
 
     <fragment
@@ -390,13 +373,13 @@
             app:launchSingleTop="true"
             app:popUpTo="@+id/groupChatInfoFragment"
             app:popUpToInclusive="true"
-           />
+            />
 
         <action
             android:id="@+id/action_open_chat_info"
             app:destination="@id/chatInfoFragment"
             app:launchSingleTop="true"
-           />
+            />
     </fragment>
 
     <fragment
@@ -435,10 +418,6 @@
         <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment"
             app:destination="@id/componentBrowserEditReactionsFragment"
-            />
-        <action
-            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAttachmentGalleryFragment"
-            app:destination="@id/componentBrowserAttachmentGalleryFragment"
             />
         <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment"
@@ -488,16 +467,6 @@
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
         />
-    <fragment
-        android:id="@+id/componentBrowserAttachmentGalleryFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.attachments.gallery.ComponentBrowserAttachmentGalleryFragment"
-        android:label="ComponentBrowserAttachmentGalleryFragment"
-        >
-        <argument
-            android:name="picturesArgs"
-            app:argType="string[]"
-            />
-    </fragment>
 
     <fragment
         android:id="@+id/componentBrowserMessagePreviewViewFragment"

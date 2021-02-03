@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.utils.Utils
-import io.getstream.chat.android.ui.gallery.overview.UserMediaAttachment
+import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.ui.sample.common.initToolbar
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedMediaBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel
 import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModelFactory
@@ -28,7 +30,24 @@ class ChatInfoSharedMediaFragment : Fragment() {
         )
     }
     private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels { factory }
-    private val sharedMediaViewModel: ChatInfoSharedMediaViewModel by activityViewModels()
+
+    private val attachmentGalleryDestination by lazy {
+        AttachmentGalleryDestination(
+            requireContext(),
+            attachmentReplyOptionHandler = {
+                showToast("Reply")
+            },
+            attachmentShowInChatOptionHandler = {
+                showToast("Show in chat")
+            },
+            attachmentDownloadOptionHandler = {
+                showToast("Download")
+            },
+            attachmentDeleteOptionClickHandler = {
+                showToast("Delete")
+            },
+        )
+    }
 
     private var _binding: FragmentChatInfoSharedMediaBinding? = null
     private val binding get() = _binding!!
@@ -46,12 +65,15 @@ class ChatInfoSharedMediaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initToolbar(binding.toolbar)
 
+        activity?.activityResultRegistry?.let { registry ->
+            attachmentGalleryDestination.register(registry)
+        }
         binding.mediaAttachmentGridView.setMediaClickListener {
-            sharedMediaViewModel.userMediaAttachments.value = binding.mediaAttachmentGridView.getAttachments()
-            findNavController().navigate(
-                ChatInfoSharedMediaFragmentDirections
-                    .actionChatInfoSharedMediaFragmentToChatInfoSharedMediaGalleryFragment(it)
-            )
+            val attachmentGalleryItems = binding.mediaAttachmentGridView.getAttachments()
+            attachmentGalleryDestination.setData(attachmentGalleryItems, it)
+            ChatUI.instance()
+                .navigator
+                .navigate(attachmentGalleryDestination)
         }
         binding.mediaAttachmentGridView.setOnLoadMoreListener {
             viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
@@ -65,6 +87,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        attachmentGalleryDestination.unregister()
         _binding = null
         super.onDestroyView()
     }
@@ -76,14 +99,19 @@ class ChatInfoSharedMediaFragment : Fragment() {
             } else {
                 val results = state.results.filterIsInstance<SharedAttachment.AttachmentItem>()
                     .mapNotNull {
-                        val imageUrl = it.attachment.url ?: it.attachment.imageUrl
-                        if (imageUrl != null) {
-                            UserMediaAttachment(imageUrl, it.message.user, it.createdAt)
+                        if (!it.attachment.imageUrl.isNullOrEmpty() && it.attachment.titleLink.isNullOrEmpty()) {
+                            AttachmentGalleryItem(
+                                attachment = it.attachment,
+                                user = it.message.user,
+                                createdAt = it.createdAt,
+                                messageId = it.message.id,
+                                cid = it.message.cid,
+                                isMine = it.message.user.id == ChatDomain.instance().currentUser.id
+                            )
                         } else {
                             null
                         }
                     }
-
                 if (results.isEmpty()) {
                     showEmptyState()
                 } else {
@@ -103,14 +131,14 @@ class ChatInfoSharedMediaFragment : Fragment() {
         }
     }
 
-    private fun showResults(userMediaAttachments: List<UserMediaAttachment>) {
+    private fun showResults(attachmentGalleryItems: List<AttachmentGalleryItem>) {
         with(binding) {
             toolbar.elevation = 0f
             progressBar.isVisible = false
             mediaAttachmentGridView.isVisible = true
             emptyStateView.isVisible = false
             mediaAttachmentGridView.enablePagination()
-            mediaAttachmentGridView.setAttachments(userMediaAttachments)
+            mediaAttachmentGridView.setAttachments(attachmentGalleryItems)
         }
     }
 

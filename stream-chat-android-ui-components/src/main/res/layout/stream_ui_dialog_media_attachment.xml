@@ -24,12 +24,12 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/stream_ui_gallery_overview_title"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
         app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Photos"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/stream_ui_gallery_default_bar_height"
+        app:layout_constraintGuide_begin="40dp"
         />
 
     <io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView

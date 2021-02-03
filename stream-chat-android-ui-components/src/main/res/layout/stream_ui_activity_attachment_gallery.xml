@@ -6,86 +6,155 @@
     android:layout_height="match_parent"
     >
 
-    <ImageView
-        android:id="@+id/closeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/stream_ui_ic_close"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@color/stream_ui_white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_black"
-        tools:ignore="ContentDescription"
-        />
+        >
 
-    <TextView
-        android:id="@+id/title"
+        <ImageView
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stream_ui_spacing_small"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/stream_ui_ic_close"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/userTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+            android:gravity="center"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            app:layout_constraintBottom_toTopOf="@id/attachmentDateTextView"
+            app:layout_constraintEnd_toStartOf="@id/attachmentActionsButton"
+            app:layout_constraintStart_toEndOf="@id/closeButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="User"
+            />
+
+        <TextView
+            android:id="@+id/attachmentDateTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/attachmentActionsButton"
+            app:layout_constraintStart_toEndOf="@id/closeButton"
+            app:layout_constraintTop_toBottomOf="@id/userTextView"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Sent yesterday at 4:08 PM"
+            />
+
+        <ImageView
+            android:id="@+id/attachmentActionsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/stream_ui_ic_three_dots_menu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/stream_ui_black"
+            tools:ignore="ContentDescription"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/stream_ui_divider_height"
+            android:background="@drawable/stream_ui_divider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/galleryViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
-        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:gravity="center_horizontal|bottom"
-        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        app:layout_constraintBottom_toTopOf="@id/subtitle"
-        app:layout_constraintLeft_toRightOf="@id/closeButton"
-        app:layout_constraintRight_toLeftOf="@id/menuButton"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="User"
-        />
-
-    <TextView
-        android:id="@+id/subtitle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_horizontal|top"
-        android:paddingTop="@dimen/stream_ui_spacing_tiny"
-        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
-        app:layout_constraintLeft_toLeftOf="@id/title"
-        app:layout_constraintRight_toRightOf="@id/title"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        tools:text="Sent yesterday at 4:08 PM"
-        />
-
-    <ImageView
-        android:id="@+id/menuButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
-        android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/stream_ui_ic_three_dots_menu"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
+        android:background="@color/stream_ui_white_snow"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_black"
-        tools:ignore="ContentDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/toolbarGuideline"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/stream_ui_gallery_default_bar_height"
-        />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/toolBarGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="closeButton, title, subtitle, menuButton"
-        />
-
-    <io.getstream.chat.android.ui.gallery.AttachmentGallery
-        android:id="@+id/attachmentGallery"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="56dp"
+        android:background="@color/stream_ui_white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/subtitle"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/stream_ui_divider_height"
+            android:background="@drawable/stream_ui_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/imageCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            android:textColor="@color/stream_ui_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1 of 4"
+            />
+
+        <ImageView
+            android:id="@+id/shareImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stream_ui_spacing_small"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="6dp"
+            android:src="@drawable/stream_ui_ic_share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+
+        <ImageView
+            android:id="@+id/galleryOverviewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/stream_ui_ic_grid_menu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

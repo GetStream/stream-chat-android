@@ -59,7 +59,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupMessagePreviewView()
         setupViewReactionsView()
         setupEditReactionsView()
-        setupAttachmentGallery()
         setupUserReactionsView()
         setupMessageList()
         setupTypingIndicator()
@@ -108,31 +107,6 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
-        }
-    }
-
-    private fun setupAttachmentGallery() {
-        binding.attachmentGalleryMultiPictureLabel.setOnClickListener {
-            arrayOf(
-                "https://getstream.io/random_png/?id=80c26629-bc25-4ee5-a8ae-4824f8097b53&name=chani",
-                "https://getstream.io/random_png/?id=80c26629-bc25-4ee5-a8ae-4824f8097b53&name=paul",
-                "https://getstream.io/random_png/?id=80c26629-bc25-4ee5-a8ae-4824f8097b53&name=letto",
-                "https://getstream.io/random_png/?id=80c26629-bc25-4ee5-a8ae-4824f8097b53&name=duncan"
-            )
-                .let(
-                    ComponentBrowserHomeFragmentDirections
-                    ::actionComponentBrowserHomeFragmentToComponentBrowserAttachmentGalleryFragment
-                )
-                .let(findNavController()::navigateSafely)
-        }
-
-        binding.attachmentGalleryOnePictureLabel.setOnClickListener {
-            arrayOf("https://getstream.io/random_png/?id=80c26629-bc25-4ee5-a8ae-4824f8097b53&name=chani")
-                .let(
-                    ComponentBrowserHomeFragmentDirections
-                    ::actionComponentBrowserHomeFragmentToComponentBrowserAttachmentGalleryFragment
-                )
-                .let(findNavController()::navigateSafely)
         }
     }
 

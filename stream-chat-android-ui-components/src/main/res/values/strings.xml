@@ -141,11 +141,12 @@
 
     <string name="stream_ui_reply_to_message">Reply to message</string>
 
-    <!-- AttachmentGallery -->
-    <string name="stream_ui_images_menu_default_title">Photos</string>
-
-    <!-- Gallery -->
+    <!-- Attachment Gallery -->
+    <string name="stream_ui_gallery_overview_title">Photos</string>
     <string name="stream_ui_gallery_share_sheet_title">Share Image</string>
+    <string name="stream_ui_gallery_count_template"> %d - %d</string>
+
+    <!-- File Attachment -->
     <string name="stream_ui_upload_complete">Upload complete, processing…</string>
     <string name="stream_ui_upload_sending">Uploading %d / %d …</string>
     <string name="stream_ui_upload_sending_percentage">%s / %s</string>
