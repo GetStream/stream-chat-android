@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+-. `ChatUtils::devToken` is not accesible anymore, it has been moved to `ChatClient::devToken`
 
 ## stream-chat-android-client
 - Add support for typing events in threads:

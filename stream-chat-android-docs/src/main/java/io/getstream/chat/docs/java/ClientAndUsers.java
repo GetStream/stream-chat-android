@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.token.TokenProvider;
-import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.docs.TokenService;
 
@@ -114,7 +113,7 @@ public class ClientAndUsers {
         public void developmentToken() {
             User user = new User();
             user.setId("user-id");
-            String token = ChatUtils.devToken(user.getId());
+            String token = client.devToken(user.getId());
 
             client.setUser(user, token, new InitConnectionListener() {
                 @Override
