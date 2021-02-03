@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
+import java.util.Date
 
 @Dao
 internal interface ChannelDao {
@@ -35,4 +36,7 @@ internal interface ChannelDao {
 
     @Query("DELETE from stream_chat_channel_state WHERE cid = :cid")
     suspend fun delete(cid: String)
+
+    @Query("UPDATE stream_chat_channel_state SET deletedAt = :deletedAt WHERE cid = :cid")
+    suspend fun setDeletedAt(cid: String, deletedAt: Date)
 }
