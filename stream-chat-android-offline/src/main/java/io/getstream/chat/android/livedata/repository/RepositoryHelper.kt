@@ -166,11 +166,10 @@ internal class RepositoryHelper(
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
 
-    private suspend fun selectMessage(messageId: String): Message? {
-        return selectMessage(messageId, ::selectUser)
-    }
-
-    suspend fun selectMessage(messageId: String, getUser: suspend (userId: String) -> User): Message? {
+    suspend fun selectMessage(
+        messageId: String,
+        getUser: suspend (userId: String) -> User = { selectUser(it) },
+    ): Message? {
         return messageRepository.select(messageId, getUser)
     }
 
