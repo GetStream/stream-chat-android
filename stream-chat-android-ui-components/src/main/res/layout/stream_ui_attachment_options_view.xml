@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,7 +22,6 @@
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_option_reply"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
-            tools:text="Reply"
             />
 
         <TextView
@@ -31,7 +29,6 @@
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_option_show_in_chat"
             tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
-            tools:text="Show in chat"
             />
 
         <TextView
@@ -39,7 +36,6 @@
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_option_save"
             tools:drawableStart="@drawable/stream_ui_ic_download"
-            tools:text="Reply"
             />
 
         <TextView
@@ -48,7 +44,6 @@
             android:text="@string/stream_ui_attachment_option_delete"
             app:drawableTint="@color/stream_ui_accent_red"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
-            tools:text="Delete Message"
             />
 
     </LinearLayout>
