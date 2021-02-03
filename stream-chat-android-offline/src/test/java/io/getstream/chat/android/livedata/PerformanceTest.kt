@@ -37,7 +37,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
         val query = QueryChannelsSpec(data.filter1, QuerySort()).apply { cids = listOf(data.channel1.cid) }
         chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.repos.messages.insert(data.message1)
-        chatDomainImpl.repos.queryChannels.insert(query)
+        chatDomainImpl.repos.queryInsert(query)
 
         // API call to .queryChannels is mocked and returns data.channel1
 
