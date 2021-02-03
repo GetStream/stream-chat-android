@@ -754,7 +754,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         // store the channel configs
-        repos.configChannel(configs)
+        repos.insertConfigChannel(configs)
         // store the users
         repos.users.insert(users.values.toList())
         // store the channel data

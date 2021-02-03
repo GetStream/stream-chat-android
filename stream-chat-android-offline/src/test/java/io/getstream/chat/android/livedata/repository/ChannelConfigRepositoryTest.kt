@@ -14,14 +14,14 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
         val config = repoHelper.selectConfig("messaging")
         Truth.assertThat(config).isEqualTo(config)
     }
 
     @Test
     fun testLoadAndRead() = runBlocking {
-        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
         repoHelper.clearCache()
         var config = repoHelper.selectConfig("messaging")
         Truth.assertThat(config).isNull()
@@ -32,9 +32,9 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testUpdate() = runBlocking {
-        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
         data.config1.maxMessageLength = 200
-        repoHelper.configChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
 
         repoHelper.clearCache()
         repoHelper.loadChannelConfig()

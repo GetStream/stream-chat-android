@@ -57,11 +57,11 @@ internal class RepositoryHelper(
         }
     }
 
-    internal suspend fun configChannel(configs: Collection<ChannelConfig>) {
+    internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
         configsRepository.insert(configs)
     }
 
-    internal suspend fun configChannel(config: ChannelConfig) {
+    internal suspend fun insertConfigChannel(config: ChannelConfig) {
         configsRepository.insert(config)
     }
 
