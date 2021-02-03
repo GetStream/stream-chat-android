@@ -98,6 +98,10 @@ internal class RepositoryHelper(
         configsRepository.clearCache()
     }
 
+    internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
+        channels.setDeletedAt(cid, deletedAt)
+    }
+
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
         return messages.selectSyncNeeded(::selectUser)
     }

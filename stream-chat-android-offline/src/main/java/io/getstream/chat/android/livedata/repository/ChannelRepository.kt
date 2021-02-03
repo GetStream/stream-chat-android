@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
+import java.util.Date
 
 internal class ChannelRepository(
     private val channelDao: ChannelDao,
@@ -63,5 +64,9 @@ internal class ChannelRepository(
         getMessage: suspend (messageId: String) -> Message?,
     ): List<Channel> {
         return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
+    }
+
+    internal suspend fun setDeletedAt(cid: String, deletedAt: Date) {
+        channelDao.setDeletedAt(cid, deletedAt)
     }
 }
