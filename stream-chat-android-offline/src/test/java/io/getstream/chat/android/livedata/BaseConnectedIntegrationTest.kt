@@ -65,7 +65,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 return 1000
             }
         }
-        chatDomainImpl.repos.users.insert(data.userMap.values.toList())
+        chatDomainImpl.repos.insertManyUsers(data.userMap.values.toList())
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
                 println("error event$it")

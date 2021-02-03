@@ -14,6 +14,9 @@ class TypingIndicators(val channelClient: ChannelClient) {
         // Sends a typing.start event at most once every two seconds
         channelClient.keystroke().enqueue()
 
+        // Sends a typing.start event for a particular thread
+        channelClient.keystroke(parentId = "threadId").enqueue()
+
         // Sends the typing.stop event
         channelClient.stopTyping().enqueue()
     }

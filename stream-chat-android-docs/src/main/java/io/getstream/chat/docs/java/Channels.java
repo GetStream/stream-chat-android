@@ -1,5 +1,7 @@
 package io.getstream.chat.docs.java;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,6 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 import static java.util.Collections.emptyList;
@@ -551,6 +552,53 @@ public class Channels {
                     List<Member> members = result.data();
                 } else {
                     Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/slow_mode/?language=java">Throttling & Slow mode</a>
+     */
+    class ThrottlingAndSlowMode {
+        private void disableMessageSendingUi() {
+        }
+
+        private void enableMessageSendingUi() {
+        }
+
+        public void enableAndDisable() {
+            final ChannelClient channelClient = client.channel("messaging", "general");
+
+            // Enable slow mode and set cooldown to 1s
+            channelClient.enableSlowMode(1).enqueue(result -> { /* Result handling */ });
+
+            // Increase cooldown to 30s
+            channelClient.enableSlowMode(30).enqueue(result -> { /* Result handling */ });
+
+            // Disable slow mode
+            channelClient.disableSlowMode().enqueue(result -> { /* Result handling */ });
+        }
+
+        public void blockUi() {
+            final ChannelClient channelClient = client.channel("messaging", "general");
+
+            // Get the cooldown value
+            channelClient.query(new QueryChannelRequest()).enqueue(channelResult -> {
+                if (channelResult.isSuccess()) {
+                    final Channel channel = channelResult.data();
+                    int cooldown = channel.getCooldown();
+
+                    Message message = new Message();
+                    message.setText("Hello");
+                    channelClient.sendMessage(message).enqueue((messageResult) -> {
+                        // After sending a message, block the UI temporarily
+                        // The disable/enable UI methods have to be implemented by you
+                        disableMessageSendingUi();
+
+                        new Handler(Looper.getMainLooper())
+                                .postDelayed(() -> enableMessageSendingUi(), cooldown);
+                    });
                 }
             });
         }
