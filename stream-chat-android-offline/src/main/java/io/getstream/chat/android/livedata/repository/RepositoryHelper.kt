@@ -55,7 +55,7 @@ internal class RepositoryHelper(
     private fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
         config = configsRepository.select(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
-            val fullList = (messageMap[cid] ?: error("")) + messages
+            val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinct()
         } else {
             messages

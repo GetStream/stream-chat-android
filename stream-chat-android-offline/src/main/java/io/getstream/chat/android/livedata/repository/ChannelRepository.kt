@@ -67,6 +67,7 @@ internal class ChannelRepository(
     }
 
     internal suspend fun setDeletedAt(cid: String, deletedAt: Date) {
+        channelCache.remove(cid)
         channelDao.setDeletedAt(cid, deletedAt)
     }
 }
