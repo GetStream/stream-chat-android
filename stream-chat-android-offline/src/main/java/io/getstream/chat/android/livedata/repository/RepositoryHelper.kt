@@ -93,7 +93,7 @@ internal class RepositoryHelper(
         configs?.let { insertConfigChannel(it) }
         insertManyUsers(users)
         insertChannels(channels)
-        this.messages.insert(messages, cacheForMessages) //Todo: Refactor this line once this.messages becomes private
+        this.messages.insert(messages, cacheForMessages) // Todo: Refactor this line once this.messages becomes private
     }
 
     internal suspend fun insertConfigChannel(config: ChannelConfig) {
