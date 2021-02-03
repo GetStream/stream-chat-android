@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
     private val scope: CoroutineScope,
-    private val runnable: suspend () -> Result<T>
+    public val runnable: suspend () -> Result<T>,
 ) : Call<T> {
 
     private var job: Job? = null

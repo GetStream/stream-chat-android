@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.ClientState
@@ -50,6 +51,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.ConnectionData
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenManager
@@ -59,11 +61,13 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
@@ -123,12 +127,63 @@ public class ChatClient internal constructor(
     //region Set user
 
     /**
+     * Creates a [Call] implementation that wraps a call that would otherwise be
+     * asynchronous and provide results to an [InitConnectionListener].
+     *
+     * @param performCall This should perform the call, passing in the
+     *                    [initListener] to it.
+     */
+    private fun createInitListenerCall(
+        performCall: (initListener: InitConnectionListener) -> Unit,
+    ): Call<ConnectionData> {
+        return object : Call<ConnectionData> {
+            override fun execute(): Result<ConnectionData> {
+                // Uses coroutines to turn the async call into blocking
+                return runBlocking { await() }
+            }
+
+            override fun enqueue(callback: Call.Callback<ConnectionData>) {
+                // Converts InitConnectionListener to Call.Callback
+                performCall(
+                    object : InitConnectionListener() {
+                        override fun onSuccess(data: ConnectionData) {
+                            val connectionData =
+                                io.getstream.chat.android.client.socket.ConnectionData(data.user, data.connectionId)
+                            callback.onResult(Result(connectionData))
+                        }
+
+                        override fun onError(error: ChatError) {
+                            callback.onResult(Result(error))
+                        }
+                    }
+                )
+            }
+
+            override fun cancel() {}
+        }
+    }
+
+    /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      *
      * @see ChatClient.setUser with [TokenProvider] for advanced use cases
      */
+    @Deprecated(
+        message = "Use connectUser instead",
+        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })")
+    )
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         setUser(user, ImmediateTokenProvider(token), listener)
+    }
+
+    /**
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     *
+     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases
+     */
+    @CheckResult
+    public fun connectUser(user: User, token: String): Call<ConnectionData> {
+        return connectUser(user, ImmediateTokenProvider(token))
     }
 
     /**
@@ -144,6 +199,10 @@ public class ChatClient internal constructor(
      * @param tokenProvider a [TokenProvider] implementation
      * @param listener socket connection listener
      */
+    @Deprecated(
+        message = "Use connectUser instead",
+        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })")
+    )
     public fun setUser(
         user: User,
         tokenProvider: TokenProvider,
@@ -166,10 +225,31 @@ public class ChatClient internal constructor(
         }
     }
 
+    /**
+     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
+     * for the initial token, and it's also invoked whenever the user's token has expired, to
+     * fetch a new token.
+     *
+     * This method performs required operations before connecting with the Stream API.
+     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
+     * You can use [listener] to get updates about socket connection.
+     *
+     * @param user the user to set
+     * @param tokenProvider a [TokenProvider] implementation
+     */
+    @CheckResult
+    public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
+    }
+
     private fun notifySetUser(user: User) {
         preSetUserListeners.forEach { it(user) }
     }
 
+    @Deprecated(
+        message = "Use connectAnonymousUser instead",
+        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })")
+    )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
         connectionListener = object : InitConnectionListener() {
@@ -189,6 +269,15 @@ public class ChatClient internal constructor(
         }
     }
 
+    @CheckResult
+    public fun connectAnonymousUser(): Call<ConnectionData> {
+        return createInitListenerCall { initListener -> setAnonymousUser(initListener) }
+    }
+
+    @Deprecated(
+        message = "Use connectGuestUser instead",
+        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })")
+    )
     public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
         getGuestToken(userId, username).enqueue {
             if (it.isSuccess) {
@@ -197,6 +286,11 @@ public class ChatClient internal constructor(
                 listener?.onError(it.error())
             }
         }
+    }
+
+    @CheckResult
+    public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
+        return createInitListenerCall { initListener -> setGuestUser(userId, username, initListener) }
     }
 
     @CheckResult

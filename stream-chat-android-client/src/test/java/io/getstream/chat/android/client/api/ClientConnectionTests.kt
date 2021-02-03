@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api
 
-import android.content.Context
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -8,6 +7,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -17,7 +17,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.client.socket.ConnectionData
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -35,7 +35,6 @@ internal class ClientConnectionTests {
     private val connectionId = "connection-id"
     private val user = User().apply { id = userId }
     private val token = "token"
-    private val context = mock<Context>()
 
     private val config = ChatClientConfig(
         "api-key",
@@ -65,7 +64,7 @@ internal class ClientConnectionTests {
     private lateinit var client: ChatClient
     private lateinit var logger: ChatLogger
     private lateinit var notificationsManager: ChatNotifications
-    private lateinit var initConnectionListener: InitConnectionListener
+    private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
 
     @Before
@@ -76,14 +75,13 @@ internal class ClientConnectionTests {
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
-        initConnectionListener = mock()
+        initCallback = mock()
         api = GsonChatApi(
             config.apiKey,
             retrofitApi,
             retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader,
-
         )
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
@@ -102,28 +100,28 @@ internal class ClientConnectionTests {
 
     @Test
     fun successConnection() {
-        client.setUser(user, token)
+        client.connectUser(user, token).enqueue()
 
         verify(socket, times(1)).connect(user)
     }
 
     @Test
     fun `Should not connect and report error when user is already set`() {
-        client.setUser(user, token)
+        client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
         reset(socket)
 
-        client.setUser(user, token, initConnectionListener)
+        client.connectUser(user, token).enqueue(initCallback)
 
         verify(socket, never()).connect(user)
 
         val error = ChatError("User cannot be set until previous one is disconnected.")
-        verify(initConnectionListener).onError(argThat { message == error.message })
+        verify(initCallback).onResult(argThat { this.error().message == error.message })
     }
 
     @Test
     fun connectAndDisconnect() {
-        client.setUser(user, token)
+        client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
         client.disconnect()
