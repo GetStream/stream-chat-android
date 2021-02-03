@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
 
     @Test
-    fun `When enrich channel If there is channel config in repo Should update channel by config from repo`() {
+    fun `Given a channel config in repo Should update channel by config from repo`() {
         sut.run {
             val channel = randomChannel(type = "channelType")
             val defaultConfig = Config(name = "default")
@@ -29,7 +29,7 @@ internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
     }
 
     @Test
-    fun `When enrich channel If there is not channel config in repo Should update channel by default config`() {
+    fun `Given no channel config in repo Should update channel by default config`() {
         sut.run {
             val channel = randomChannel(type = "channelType")
             val defaultConfig = Config(name = "default")
@@ -42,7 +42,7 @@ internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
     }
 
     @Test
-    fun `When enrich channel If there are messages for channel in the map And channel messages are empty Should update channel with these messages`() {
+    fun `Given messages for channel in the map And channel messages are empty Should update channel with these messages`() {
         sut.run {
             val message1 = randomMessage()
             val message2 = randomMessage()
@@ -59,7 +59,7 @@ internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
     }
 
     @Test
-    fun `When enrich channel If there are messages for channel in the map And channel messages are not empty Should update channel with distinct set of messages`() {
+    fun `Given messages for channel in the map And channel messages are not empty Should update channel with distinct set of messages`() {
         sut.run {
             val message1 = randomMessage()
             val message2 = randomMessage()
@@ -78,7 +78,7 @@ internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
     }
 
     @Test
-    fun `When enrich channel If there are no messages for channel in the map Should not update channel messages`() {
+    fun `Given no messages for channel in the map Should not update channel messages`() {
         sut.run {
             val message1 = randomMessage()
             val message2 = randomMessage()
