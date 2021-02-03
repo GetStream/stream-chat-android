@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.ChatUtils
 import io.getstream.chat.docs.StaticInstances.TAG
 import io.getstream.chat.docs.TokenService
 
@@ -101,7 +100,7 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
          */
         fun developmentToken() {
             val user: User = User("user-id")
-            val token: String = ChatUtils.devToken(user.id)
+            val token: String = client.devToken(user.id)
             client.setUser(
                 user,
                 token,
