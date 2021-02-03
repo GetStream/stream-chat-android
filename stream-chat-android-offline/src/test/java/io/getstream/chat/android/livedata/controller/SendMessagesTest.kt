@@ -60,11 +60,9 @@ internal class SendMessagesTest {
     private val channelId: String = randomString()
     private lateinit var channelController: ChannelControllerImpl
 
-    private val messageRepository: MessageRepository = mock()
     private val channelsRepository: ChannelRepository = mock()
 
     private val repos: RepositoryHelper = mock {
-        on(it.messages) doReturn messageRepository
         on(it.channels) doReturn channelsRepository
     }
 

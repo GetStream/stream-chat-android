@@ -728,9 +728,9 @@ internal class ChatDomainImpl internal constructor(
 
             if (result.isSuccess) {
                 // TODO: 1.1 image upload support
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.COMPLETED))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
             }
         }
 
@@ -786,7 +786,7 @@ internal class ChatDomainImpl internal constructor(
         // store the channel data
         repos.insertChannels(channelsResponse)
         // store the messages
-        repos.messages.insert(messages)
+        repos.insertMessages(messages)
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }

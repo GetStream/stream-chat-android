@@ -362,7 +362,7 @@ internal class ChannelControllerImpl(
                     it.hiddenMessagesBefore = now
                     hideMessagesBefore = now
                     removeMessagesBefore(now)
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
+                    domainImpl.repos.deleteChannelMessagesBefore(cid, now)
                 }
                 domainImpl.repos.channels.insert(it)
             }
@@ -406,7 +406,7 @@ internal class ChannelControllerImpl(
             }
             // Remove messages from repository
             val now = Date()
-            domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
+            domainImpl.repos.deleteChannelMessagesBefore(cid, now)
             Result(Unit)
         } else {
             Result(result.error())
@@ -630,7 +630,7 @@ internal class ChannelControllerImpl(
         }
 
         // we insert early to ensure we don't lose messages
-        domainImpl.repos.messages.insert(newMessage)
+        domainImpl.repos..insertMessage(newMessage)
         domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
         return if (online) {
@@ -699,7 +699,7 @@ internal class ChannelControllerImpl(
         processedMessage.apply {
             enrichWithCid(cid)
             syncStatus = SyncStatus.COMPLETED
-            domainImpl.repos.messages.insert(this)
+            domainImpl.repos.insertMessage(this)
         }
 
         upsertMessage(processedMessage)
@@ -719,7 +719,7 @@ internal class ChannelControllerImpl(
         }
 
         upsertMessage(message)
-        domainImpl.repos.messages.insert(message)
+        domainImpl.repos.insertMessage(message)
         return Result(result.error())
     }
 
@@ -806,7 +806,7 @@ internal class ChannelControllerImpl(
             throw IllegalArgumentException("Only ephemeral message can be canceled")
         }
 
-        domainImpl.repos.messages.deleteChannelMessage(message)
+        domainImpl.repos.deleteChannelMessage(message)
         removeLocalMessage(message)
         return Result(true)
     }
@@ -840,7 +840,7 @@ internal class ChannelControllerImpl(
             val processedMessage: Message = result.data()
             processedMessage.apply {
                 syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.messages.insert(this)
+                domainImpl.repos.insertMessage(this)
             }
             upsertMessage(processedMessage)
             Result(processedMessage)
@@ -896,7 +896,7 @@ internal class ChannelControllerImpl(
         currentMessage?.let {
             it.addMyReaction(reaction, enforceUnique = enforceUnique)
             upsertMessage(it)
-            domainImpl.repos.messages.insert(it)
+            domainImpl.repos.insertMessage(it)
         }
 
         if (online) {
@@ -943,7 +943,7 @@ internal class ChannelControllerImpl(
         currentMessage?.apply { removeMyReaction(reaction) }
             ?.also {
                 upsertMessage(it)
-                domainImpl.repos.messages.insert(it)
+                domainImpl.repos.insertMessage(it)
             }
 
         if (online) {
@@ -1402,7 +1402,7 @@ internal class ChannelControllerImpl(
         upsertMessage(editedMessage)
 
         // Update Room State
-        domainImpl.repos.messages.insert(editedMessage)
+        domainImpl.repos.insertMessage(editedMessage)
 
         if (online) {
             val runnable = {
@@ -1418,7 +1418,7 @@ internal class ChannelControllerImpl(
                 editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insert(editedMessage)
+                domainImpl.repos.insertMessage(editedMessage)
 
                 return Result(editedMessage)
             } else {
@@ -1429,7 +1429,7 @@ internal class ChannelControllerImpl(
                 }
 
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insert(editedMessage)
+                domainImpl.repos.insertMessage(editedMessage)
                 return Result(result.error())
             }
         }
@@ -1445,7 +1445,7 @@ internal class ChannelControllerImpl(
         upsertMessage(message)
 
         // Update Room State
-        domainImpl.repos.messages.insert(message)
+        domainImpl.repos.insertMessage(message)
 
         if (online) {
             val runnable = {
@@ -1455,7 +1455,7 @@ internal class ChannelControllerImpl(
             if (result.isSuccess) {
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
-                domainImpl.repos.messages.insert(message)
+                domainImpl.repos.insertMessage(message)
                 return Result(result.data())
             } else {
                 message.syncStatus = if (result.error().isPermanent()) {
@@ -1465,7 +1465,7 @@ internal class ChannelControllerImpl(
                 }
 
                 upsertMessage(message)
-                domainImpl.repos.messages.insert(message)
+                domainImpl.repos.insertMessage(message)
                 return Result(result.error())
             }
         }

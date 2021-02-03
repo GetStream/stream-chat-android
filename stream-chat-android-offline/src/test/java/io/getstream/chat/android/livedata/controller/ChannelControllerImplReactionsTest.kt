@@ -138,7 +138,6 @@ internal class ChannelControllerImplReactionsTest {
         private val chatDomainImpl: ChatDomainImpl = mock()
         private val repos: RepositoryHelper = mock()
         private val reactionsRepo: ReactionRepository = mock()
-        private val messagesRepo: MessageRepository = mock()
         private val channelControllerImpl: ChannelControllerImpl
 
         init {
@@ -153,7 +152,6 @@ internal class ChannelControllerImplReactionsTest {
             runBlocking {
                 whenever(repos.reactions) doReturn reactionsRepo
                 whenever(repos.selectUserReactionsToMessage(any(), any())) doReturn emptyList()
-                whenever(repos.messages) doReturn messagesRepo
             }
             return this
         }

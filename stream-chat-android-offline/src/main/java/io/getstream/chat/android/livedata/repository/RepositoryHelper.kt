@@ -25,7 +25,7 @@ internal class RepositoryHelper(
     private val configsRepository = factory.createChannelConfigRepository()
     val channels = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
-    val messages = factory.createMessageRepository()
+    private val messageRepository = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
     val syncState = factory.createSyncStateRepository()
 
@@ -42,7 +42,7 @@ internal class RepositoryHelper(
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
                 scope.async {
-                    cid to messages.selectMessagesForChannel(cid, pagination, ::selectUser)
+                    cid to messageRepository.selectMessagesForChannel(cid, pagination, ::selectUser)
                 }
             }.awaitAll().toMap()
         } else {
@@ -128,11 +128,11 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
-        return messages.selectSyncNeeded(::selectUser)
+        return messageRepository.selectSyncNeeded(::selectUser)
     }
 
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
-        messages.select(messageIds, ::selectUser)
+        messageRepository.select(messageIds, ::selectUser)
 
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
@@ -184,5 +184,33 @@ internal class RepositoryHelper(
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return channels.select(cid, ::selectUser, ::selectMessage)
+    }
+
+    suspend fun selectMessagesForChannel(
+        cid: String,
+        pagination: AnyChannelPaginationRequest?,
+        getUser: suspend (userId: String) -> User,
+    ): List<Message> {
+        return messageRepository.selectMessagesForChannel(cid, pagination, getUser)
+    }
+
+    suspend fun insertMessage(message: Message, cache: Boolean = false) {
+        messageRepository.insert(message, cache)
+    }
+
+    suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
+        messageRepository.insert(messages, cache)
+    }
+
+    suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
+        messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
+    }
+
+    suspend fun deleteChannelMessage(message: Message) {
+        messageRepository.deleteChannelMessage(message)
+    }
+
+    fun messageCacheSize(): Int {
+        return messageRepository.messageCache.size()
     }
 }
