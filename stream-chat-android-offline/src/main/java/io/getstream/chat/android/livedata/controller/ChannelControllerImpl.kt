@@ -630,7 +630,7 @@ internal class ChannelControllerImpl(
         }
 
         // we insert early to ensure we don't lose messages
-        domainImpl.repos..insertMessage(newMessage)
+        domainImpl.repos.insertMessage(newMessage)
         domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
         return if (online) {

@@ -166,7 +166,13 @@ internal class RepositoryHelper(
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
 
-    private suspend fun selectMessage(messageId: String): Message? = messages.select(messageId, ::selectUser)
+    private suspend fun selectMessage(messageId: String): Message? {
+        return selectMessage(messageId, ::selectUser)
+    }
+
+    suspend fun selectMessage(messageId: String, getUser: suspend (userId: String) -> User): Message? {
+        return messageRepository.select(messageId, getUser)
+    }
 
     private suspend fun selectUser(userId: String): User =
         userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
@@ -178,6 +184,7 @@ internal class RepositoryHelper(
     suspend fun querySelectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
         return queryChannelsRepository.selectByFilterAndQuerySort(queryChannelsSpec)
     }
+
     suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insert(queryChannelsSpec)
     }
