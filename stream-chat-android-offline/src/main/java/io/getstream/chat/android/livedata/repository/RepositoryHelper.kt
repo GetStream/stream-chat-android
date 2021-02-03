@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +51,8 @@ internal class RepositoryHelper(
         return channels.onEach { it.enrichChannel(messagesMap, defaultConfig) }
     }
 
-    private fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
+    @VisibleForTesting
+    internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
         config = configsRepository.select(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
