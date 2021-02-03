@@ -24,13 +24,10 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.DecoratorProvider
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 public open class MessageListItemViewHolderFactory {
 
     internal lateinit var decoratorProvider: DecoratorProvider
-
-    internal lateinit var messageItemStyle: MessageListItemStyle
 
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
@@ -92,7 +89,6 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            messageItemStyle
         )
     }
 

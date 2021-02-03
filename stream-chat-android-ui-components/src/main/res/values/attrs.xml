@@ -272,8 +272,12 @@
         <attr name="streamUiMessageTextColorTheirs" format="color" />
 
         <!-- Message background color -->
-        <attr name="streamUiMessageBackgroundColorMine" format="color"/>
-        <attr name="streamUiMessageBackgroundColorTheirs" format="color"/>
+        <attr name="streamUiMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
+
+        <!-- Message link color -->
+        <attr name="streamUiMessageLinkColorMine" format="color" />
+        <attr name="streamUiMessageLinkColorTheirs" format="color" />
     </declare-styleable>
 
     <declare-styleable name="ChannelsView">

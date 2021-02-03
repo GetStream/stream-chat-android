@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.messages.view.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EnterThreadListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendHandler
@@ -86,7 +87,8 @@ public class MessageListView : ConstraintLayout {
         private const val LOAD_MORE_THRESHOLD = 10
     }
 
-    private lateinit var style: MessageListViewStyle
+    private lateinit var messageListViewStyle:
+        MessageListViewStyle
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
@@ -148,19 +150,20 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
-    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, title, description, positiveText, negativeText, confirmCallback ->
-        AlertDialog.Builder(context)
-            .setTitle(title)
-            .setMessage(description)
-            .setPositiveButton(positiveText) { dialog, _ ->
-                dialog.dismiss()
-                confirmCallback()
-            }
-            .setNegativeButton(negativeText) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
+    private var confirmDeleteMessageHandler =
+        ConfirmDeleteMessageHandler { message, title, description, positiveText, negativeText, confirmCallback ->
+            AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(description)
+                .setPositiveButton(positiveText) { dialog, _ ->
+                    dialog.dismiss()
+                    confirmCallback()
+                }
+                .setNegativeButton(negativeText) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
 
     private var _attachmentReplyOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentReplyOptionHandler {
@@ -225,7 +228,8 @@ public class MessageListView : ConstraintLayout {
                         message,
                         messageOptionsConfiguration.copy(
                             threadEnabled = !adapter.isThread && !message.isInThread(),
-                        )
+                        ),
+                        messageListViewStyle.itemStyle
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -305,7 +309,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message)
+                MessageOptionsDialogFragment.newReactionOptionsInstance(message, messageListViewStyle.itemStyle)
                     .apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
@@ -409,7 +413,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
-        style = MessageListViewStyle(context, attrs)
+        messageListViewStyle = MessageListViewStyle(context, attrs)
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
@@ -426,13 +430,13 @@ public class MessageListView : ConstraintLayout {
         }
 
         with(binding.scrollToBottomButton) {
-            setUnreadBadgeEnabled(style.scrollButtonViewStyle.scrollButtonUnreadEnabled)
-            setButtonRippleColor(style.scrollButtonViewStyle.scrollButtonRippleColor)
-            setButtonIcon(style.scrollButtonViewStyle.scrollButtonIcon)
-            setButtonColor(style.scrollButtonViewStyle.scrollButtonColor)
-            setUnreadBadgeColor(style.scrollButtonViewStyle.scrollButtonBadgeColor)
+            setUnreadBadgeEnabled(messageListViewStyle.scrollButtonViewStyle.scrollButtonUnreadEnabled)
+            setButtonRippleColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonRippleColor)
+            setButtonIcon(messageListViewStyle.scrollButtonViewStyle.scrollButtonIcon)
+            setButtonColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonColor)
+            setUnreadBadgeColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeColor)
         }
-        scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
+        scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
             tArray.getInt(
@@ -637,10 +641,10 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             currentUser = currentUser,
             dateFormatter = messageDateFormatter,
-            isDirectMessage = channel.isDirectMessaging()
+            isDirectMessage = channel.isDirectMessaging(),
+            messageListViewStyle.itemStyle
         )
 
-        messageListItemViewHolderFactory.messageItemStyle = style.itemStyle
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)

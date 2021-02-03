@@ -14,7 +14,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 
 internal class LinkAttachmentDecorator : BaseDecorator() {
@@ -45,13 +44,15 @@ internal class LinkAttachmentDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?
     ) {
         applyMaxPossibleWidth(viewHolder.binding.root, viewHolder.binding.messageContainer, data.message)
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun decorate(linkAttachmentView: LinkAttachmentView, message: Message) {
         val linkAttachment = message.attachments.firstOrNull { it.hasLink() }

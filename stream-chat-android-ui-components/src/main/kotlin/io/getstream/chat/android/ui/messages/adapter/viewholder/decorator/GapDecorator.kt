@@ -9,7 +9,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class GapDecorator : BaseDecorator() {
 
@@ -29,7 +28,6 @@ internal class GapDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?,
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -52,6 +50,8 @@ internal class GapDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) =
-        setupGapView(viewHolder.binding.gapView, data)
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupGapView(viewHolder.binding.gapView, data)
 }

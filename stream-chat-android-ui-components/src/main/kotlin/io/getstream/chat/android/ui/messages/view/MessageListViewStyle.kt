@@ -46,14 +46,12 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                 ).build()
 
             itemStyle = MessageListItemStyle.Builder(attributes)
-                .messageBackgroundColorMine(
-                    R.styleable.MessageListView_streamUiMessageBackgroundColorMine,
-                    context.getColorCompat(R.color.stream_ui_grey_gainsboro)
-                )
-                .messageBackgroundColorTheirs(
-                    R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs,
-                    context.getColorCompat(R.color.stream_ui_white)
-                )
+                .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
+                .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
+                .messageTextColorMine(R.styleable.MessageListView_streamUiMessageTextColorMine)
+                .messageTextColorTheirs(R.styleable.MessageListView_streamUiMessageTextColorTheirs)
+                .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
+                .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                 .build()
         }
     }

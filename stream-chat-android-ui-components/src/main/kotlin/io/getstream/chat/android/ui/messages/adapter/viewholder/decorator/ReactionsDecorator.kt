@@ -15,7 +15,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachm
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
 
@@ -24,7 +23,6 @@ internal class ReactionsDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?,
     ) {
         with(viewHolder.binding) {
             setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
@@ -72,7 +70,10 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,

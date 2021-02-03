@@ -3,38 +3,95 @@ package io.getstream.chat.android.ui.messages.view
 import android.content.res.TypedArray
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import java.io.Serializable
 
 internal class MessageListItemStyle private constructor(
-    val messageColorMine: Int,
-    val messageColorTheirs: Int,
-) {
+    @ColorInt val messageBackgroundColorMine: Int?,
+    @ColorInt val messageBackgroundColorTheirs: Int?,
+    @ColorInt val messageTextColorMine: Int?,
+    @ColorInt val messageTextColorTheirs: Int?,
+    @ColorInt val messageLinkTextColorMine: Int?,
+    @ColorInt val messageLinkTextColorTheirs: Int?,
+) : Serializable {
 
-    internal class Builder(private val attributes: TypedArray? = null) {
+    internal companion object {
+        internal const val VALUE_NOT_SET = Integer.MAX_VALUE
+    }
+
+    internal class Builder(private val attributes: TypedArray) {
         @ColorInt
-        private var messageColorMine: Int = 0
+        private var messageBackgroundColorMine: Int = 0
 
         @ColorInt
-        private var messageColorTheirs: Int = 0
+        private var messageBackgroundColorTheirs: Int = 0
+
+        @ColorInt
+        private var messageTextColorMine: Int = 0
+
+        @ColorInt
+        private var messageTextColorTheirs: Int = 0
+
+        @ColorInt
+        private var messageLinkTextColorMine: Int = 0
+
+        @ColorInt
+        private var messageLinkTextColorTheirs: Int = 0
 
         fun messageBackgroundColorMine(
-            @StyleableRes messageColorMineStyleableId: Int,
-            @ColorInt defaultValue: Int,
+            @StyleableRes messageBackgroundColorMineStyleableId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
         ) = apply {
-            messageColorMine = attributes?.getColor(messageColorMineStyleableId, defaultValue) ?: defaultValue
+            messageBackgroundColorMine = attributes.getColor(messageBackgroundColorMineStyleableId, defaultValue)
         }
 
         fun messageBackgroundColorTheirs(
-            @StyleableRes messageColorTheirsStyleableId: Int = 0,
-            @ColorInt defaultValue: Int,
+            @StyleableRes messageBackgroundColorTheirsId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
         ) = apply {
-            messageColorTheirs = attributes?.getColor(messageColorTheirsStyleableId, defaultValue) ?: defaultValue
+            messageBackgroundColorTheirs = attributes.getColor(messageBackgroundColorTheirsId, defaultValue)
+        }
+
+        fun messageTextColorMine(
+            @StyleableRes messageTextColorMineId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
+        ) = apply {
+            messageTextColorMine = attributes.getColor(messageTextColorMineId, defaultValue)
+        }
+
+        fun messageTextColorTheirs(
+            @StyleableRes messageTextColorTheirsId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
+        ) = apply {
+            messageTextColorTheirs = attributes.getColor(messageTextColorTheirsId, defaultValue)
+        }
+
+        fun messageLinkTextColorMine(
+            @StyleableRes messageLinkTextColorMineId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
+        ) = apply {
+            messageLinkTextColorMine = attributes.getColor(messageLinkTextColorMineId, defaultValue)
+        }
+
+        fun messageLinkTextColorTheirs(
+            @StyleableRes messageLinkTextColorTheirsId: Int,
+            @ColorInt defaultValue: Int = VALUE_NOT_SET,
+        ) = apply {
+            messageLinkTextColorTheirs = attributes.getColor(messageLinkTextColorTheirsId, defaultValue)
         }
 
         fun build(): MessageListItemStyle {
             return MessageListItemStyle(
-                messageColorMine,
-                messageColorTheirs
+                messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
+                messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
+                messageTextColorMine = messageTextColorMine.nullIfNotSet(),
+                messageTextColorTheirs = messageTextColorTheirs.nullIfNotSet(),
+                messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
+                messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
             )
+        }
+
+        private fun Int.nullIfNotSet(): Int? {
+            return if (this == VALUE_NOT_SET) null else this
         }
     }
 }

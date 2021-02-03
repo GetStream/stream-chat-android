@@ -154,9 +154,8 @@ class ChatFragment : Fragment() {
             bindView(binding.messageListView, viewLifecycleOwner)
             state.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageListViewModel.State.Loading,
-                    is MessageListViewModel.State.Result,
-                    -> Unit
+                    is MessageListViewModel.State.Loading -> Unit
+                    is MessageListViewModel.State.Result -> Unit
                     is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
                 }
             }

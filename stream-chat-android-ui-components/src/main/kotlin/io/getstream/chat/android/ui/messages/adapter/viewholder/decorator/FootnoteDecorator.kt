@@ -23,7 +23,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isDeleted
@@ -83,7 +82,6 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,

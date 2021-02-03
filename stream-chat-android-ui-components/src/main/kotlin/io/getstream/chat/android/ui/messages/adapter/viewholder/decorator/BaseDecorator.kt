@@ -11,31 +11,23 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal abstract class BaseDecorator : Decorator {
 
     final override fun <T : MessageListItem> decorate(
         viewHolder: BaseMessageItemViewHolder<T>,
         data: T,
-        style: MessageListItemStyle?,
     ) {
         if (data !is MessageListItem.MessageItem) {
             return
         }
         when (viewHolder) {
             is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data)
-            is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data, style)
+            is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data)
             is OnlyMediaAttachmentsViewHolder -> decorateOnlyMediaAttachmentsMessage(viewHolder, data)
-            is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(
-                viewHolder,
-                data
-            )
+            is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data)
             is OnlyFileAttachmentsViewHolder -> decorateOnlyFileAttachmentsMessage(viewHolder, data)
-            is PlainTextWithFileAttachmentsViewHolder -> decoratePlainTextWithFileAttachmentsMessage(
-                viewHolder,
-                data
-            )
+            is PlainTextWithFileAttachmentsViewHolder -> decoratePlainTextWithFileAttachmentsMessage(viewHolder, data)
             is GiphyViewHolder -> decorateGiphyMessage(viewHolder, data)
             is DateDividerViewHolder -> Unit
             else -> Unit
@@ -65,7 +57,6 @@ internal abstract class BaseDecorator : Decorator {
     protected abstract fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?,
     )
 
     protected open fun decorateDeletedMessage(
@@ -73,5 +64,8 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    abstract fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem)
+    abstract fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    )
 }

@@ -11,14 +11,12 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class FailedIndicatorDecorator : BaseDecorator() {
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?
     ) {
         setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
     }
@@ -56,7 +54,10 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupFailedIndicator(
         deliveryFailedIcon: ImageView,

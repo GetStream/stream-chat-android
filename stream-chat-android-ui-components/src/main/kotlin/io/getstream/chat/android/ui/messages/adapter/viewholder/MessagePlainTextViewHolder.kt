@@ -10,21 +10,19 @@ import io.getstream.chat.android.ui.messages.adapter.DecoratedBaseMessageItemVie
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.Decorator
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.LongClickFriendlyLinkMovementMethod
 
 internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
-    style: MessageListItemStyle?,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.inflater,
             parent,
             false
         ),
-) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators, style) {
+) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
         binding.run {

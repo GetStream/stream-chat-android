@@ -10,7 +10,6 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class AvatarDecorator : BaseDecorator() {
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -23,7 +22,6 @@ internal class AvatarDecorator : BaseDecorator() {
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-        style: MessageListItemStyle?
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
@@ -49,7 +47,10 @@ internal class AvatarDecorator : BaseDecorator() {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
         if (data.isTheirs && data.isTheirs && data.isBottomPosition()) {
