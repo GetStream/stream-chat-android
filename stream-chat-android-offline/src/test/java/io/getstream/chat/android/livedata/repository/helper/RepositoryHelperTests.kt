@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.helper
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
@@ -13,6 +13,15 @@ import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
+import io.getstream.chat.android.livedata.repository.ChannelRepository
+import io.getstream.chat.android.livedata.repository.MessageRepository
+import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
+import io.getstream.chat.android.livedata.repository.ReactionRepository
+import io.getstream.chat.android.livedata.repository.RepositoryFactory
+import io.getstream.chat.android.livedata.repository.RepositoryHelper
+import io.getstream.chat.android.livedata.repository.SyncStateRepository
+import io.getstream.chat.android.livedata.repository.UserRepository
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
