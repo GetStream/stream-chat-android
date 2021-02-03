@@ -631,14 +631,7 @@ internal class ChannelControllerImpl(
 
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insert(newMessage)
-
-        // TODO make updateLastMessageMethod
-        /*val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid).
-        channelStateEntity?.let {
-            // update channel lastMessage at and lastMessageAt
-            it.updateLastMessage(messageEntity)
-            domainImpl.repos.channels.insert(it)
-        }*/
+        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
         return if (online) {
             // upload attachments

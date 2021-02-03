@@ -64,17 +64,4 @@ internal data class ChannelEntity(
 
     /** if the channel has been synced to the servers */
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
-) {
-    /** updates last message and lastMessageAt on this channel entity */
-    internal fun updateLastMessage(messageEntity: MessageEntity) {
-        val createdAt = messageEntity.messageInnerEntity.createdAt ?: messageEntity.messageInnerEntity.createdLocallyAt
-        val messageEntityCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
-
-        val updateNeeded = messageEntity.messageInnerEntity.id == lastMessageId
-        val newLastMessage = lastMessageAt == null || messageEntityCreatedAt.after(lastMessageAt)
-        if (newLastMessage || updateNeeded) {
-            lastMessageAt = messageEntityCreatedAt
-            lastMessageId = messageEntity.messageInnerEntity.id
-        }
-    }
-}
+)

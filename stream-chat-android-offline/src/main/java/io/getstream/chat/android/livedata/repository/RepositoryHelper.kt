@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.mapper.toModel
@@ -100,6 +101,29 @@ internal class RepositoryHelper(
 
     internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
         channels.setDeletedAt(cid, deletedAt)
+    }
+
+    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
+        selectChannelWithoutMessages(cid)?.also { channel ->
+            val messageCreatedAt = checkNotNull(
+                lastMessage.createdAt
+                    ?: lastMessage.createdLocallyAt
+            ) { "created at cant be null, be sure to set message.createdAt" }
+
+            val oldLastMessage = channel.lastMessage
+            val updateNeeded = if (oldLastMessage != null) {
+                lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)
+            } else {
+                true
+            }
+
+            if (updateNeeded) {
+                channel.apply {
+                    lastMessageAt = messageCreatedAt
+                    messages = listOf(lastMessage)
+                }.also { channels.insert(it) }
+            }
+        }
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
