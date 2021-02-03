@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.addMyReaction
-import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.ReactionRepository
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
