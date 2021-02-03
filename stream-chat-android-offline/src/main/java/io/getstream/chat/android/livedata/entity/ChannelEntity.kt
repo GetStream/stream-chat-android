@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
 /**
- * ChannelStateEntity stores both the channel information as well as references
+ * ChannelEntity stores both the channel information as well as references
  * to all of the channel's state
  *
  * note that we don't store channel watchers or watcher_count.
@@ -18,50 +18,35 @@ import java.util.Date
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
-    var type: String,
-    var channelId: String,
-    val cooldown: Int = 0,
-    @PrimaryKey
-    var cid: String = "%s:%s".format(type, channelId),
-
+    val type: String,
+    val channelId: String,
+    val cooldown: Int,
     /** created by user id */
-    var createdByUserId: String,
-
+    val createdByUserId: String,
     /** if the channel is frozen or not (new messages wont be allowed) */
-    var frozen: Boolean = false,
-
+    val frozen: Boolean,
     /** if the channel is hidden (new messages will cause to reappear) */
-    var hidden: Boolean? = null,
-
+    val hidden: Boolean?,
     /** hide messages before this date */
-    var hideMessagesBefore: Date? = null,
-
+    val hideMessagesBefore: Date?,
     /** till when the channel is muted */
-    var mutedTill: Date? = null,
-
-    /** list of the channel members, can be regular members, moderators or admins */
-    var members: MutableMap<String, MemberEntity> = mutableMapOf(),
-
+    val members: Map<String, MemberEntity>,
     /** list of how far each user has read */
-    var reads: MutableMap<String, ChannelUserReadEntity> = mutableMapOf(),
-
+    val reads: Map<String, ChannelUserReadEntity>,
     /** denormalize the last message date so we can sort on it */
-    var lastMessageAt: Date? = null,
-
-    var lastMessageId: String? = null,
-
+    val lastMessageAt: Date?,
+    val lastMessageId: String?,
     /** when the channel was created */
-    var createdAt: Date? = null,
-
+    val createdAt: Date?,
     /** when the channel was updated */
-    var updatedAt: Date? = null,
-
+    val updatedAt: Date?,
     /** when the channel was deleted */
-    var deletedAt: Date? = null,
-
+    val deletedAt: Date?,
     /** all the custom data provided for this channel */
-    var extraData: MutableMap<String, Any> = mutableMapOf(),
-
+    val extraData: Map<String, Any>,
     /** if the channel has been synced to the servers */
-    var syncStatus: SyncStatus = SyncStatus.COMPLETED,
-)
+    val syncStatus: SyncStatus,
+) {
+    @PrimaryKey
+    var cid: String = "%s:%s".format(type, channelId)
+}
