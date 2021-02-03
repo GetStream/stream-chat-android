@@ -255,7 +255,7 @@ internal class ChatDomainImpl internal constructor(
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
-            repos.configs.load()
+            repos.loadChannelConfig()
 
             // load the current user from the db
             val syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
@@ -754,7 +754,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         // store the channel configs
-        repos.configs.insert(configs)
+        repos.insertConfigChannel(configs)
         // store the users
         repos.insertManyUsers(users.values.toList())
         // store the channel data
@@ -800,7 +800,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
-        return repos.configs.select(channelType)?.config ?: defaultConfig
+        return repos.selectConfig(channelType)?.config ?: defaultConfig
     }
 
     companion object {
