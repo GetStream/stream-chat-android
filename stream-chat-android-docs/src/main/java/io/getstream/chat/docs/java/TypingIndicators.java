@@ -12,8 +12,12 @@ public class TypingIndicators {
      * @see <a href="https://getstream.io/chat/docs/typing_indicators/?language=java#sending-start-and-stop-typing-events">Sending Start and Stop Typing</a>
      */
     public void sendingStartAndStopTypingEvents() {
-        // Sends a typing.start event at most once every two seconds
+        // Sends a typing.start event
         channelClient.keystroke().enqueue();
+
+        // Sends a typing.start event for a particular thread
+        String threadId = "threadId";
+        channelClient.keystroke(threadId).enqueue();
 
         // Sends the typing.stop event
         channelClient.stopTyping().enqueue();
