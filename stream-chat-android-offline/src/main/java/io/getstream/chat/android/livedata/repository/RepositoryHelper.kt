@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
@@ -23,7 +24,7 @@ internal class RepositoryHelper(
     private val userRepository = factory.createUserRepository()
     private val configsRepository = factory.createChannelConfigRepository()
     val channels = factory.createChannelRepository()
-    val queryChannels = factory.createQueryChannelsRepository()
+    private val queryChannelsRepository = factory.createQueryChannelsRepository()
     val messages = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
     val syncState = factory.createSyncStateRepository()
@@ -169,6 +170,17 @@ internal class RepositoryHelper(
 
     private suspend fun selectUser(userId: String): User =
         userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
+
+    suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
+        return queryChannelsRepository.selectById(ids)
+    }
+
+    suspend fun querySelectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
+        return queryChannelsRepository.selectByFilterAndQuerySort(queryChannelsSpec)
+    }
+    suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
+        return queryChannelsRepository.insert(queryChannelsSpec)
+    }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return channels.select(cid, ::selectUser, ::selectMessage)
