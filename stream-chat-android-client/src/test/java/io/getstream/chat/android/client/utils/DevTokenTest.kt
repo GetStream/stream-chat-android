@@ -23,11 +23,6 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
 
     @Test
     fun `Should return valid dev token`() {
-        ChatUtils.devToken(userId) `should be equal to` expectedToken
-    }
-
-    @Test
-    fun `Should return valid dev token from ChatClient`() {
         client.devToken(userId) `should be equal to` expectedToken
     }
 
