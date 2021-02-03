@@ -19,7 +19,7 @@ internal class RepositoryHelper(
     factory: RepositoryFactory,
     private val scope: CoroutineScope,
 ) {
-    val users = factory.createUserRepository()
+    private val userRepository = factory.createUserRepository()
     val configs = factory.createChannelConfigRepository()
     val channels = factory.createChannelRepository()
     val queryChannels = factory.createQueryChannelsRepository()
@@ -56,6 +56,22 @@ internal class RepositoryHelper(
         }
     }
 
+    internal suspend fun updateCurrentUser(currentUser: User) {
+        userRepository.insertMe(currentUser)
+    }
+
+    internal suspend fun insertUser(user: User) {
+        userRepository.insertUser(user)
+    }
+
+    internal suspend fun insertManyUsers(users: List<User>) {
+        userRepository.insert(users)
+    }
+
+    internal suspend fun selectCurrentUser(): User? {
+        return userRepository.selectMe()
+    }
+
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
         return messages.selectSyncNeeded(::selectUser)
     }
@@ -86,7 +102,7 @@ internal class RepositoryHelper(
 
     suspend fun insertChannels(channels: Collection<Channel>) {
         this.channels.insertChannels(channels)
-        users.insert(channels.flatMap(Channel::users))
+        userRepository.insert(channels.flatMap(Channel::users))
     }
 
     suspend fun removeChannel(cid: String) {
@@ -94,5 +110,5 @@ internal class RepositoryHelper(
     }
 
     private suspend fun selectUser(userId: String): User =
-        users.select(userId) ?: error("User with the userId: `$userId` has not been found")
+        userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
 }

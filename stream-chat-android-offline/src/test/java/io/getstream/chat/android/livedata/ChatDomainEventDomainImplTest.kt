@@ -104,8 +104,8 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `the current user information should be stored using users insertMe`() = runBlocking {
         data.user1.extraData = mutableMapOf("snack" to "icecream")
-        chatDomainImpl.repos.users.insertMe(data.user1)
-        val me = chatDomainImpl.repos.users.selectMe()
+        chatDomainImpl.repos.updateCurrentUser(data.user1)
+        val me = chatDomainImpl.repos.selectCurrentUser()
         Truth.assertThat(me).isNotNull()
         Truth.assertThat(me?.id).isEqualTo("broad-lake-3")
     }
