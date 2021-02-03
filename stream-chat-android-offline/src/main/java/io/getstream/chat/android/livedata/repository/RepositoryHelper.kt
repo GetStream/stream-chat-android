@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,7 @@ internal class RepositoryHelper(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channelEntities = channels.select(channelIds)
+        val channels = channels.select(channelIds, ::selectUser, ::selectMessage)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -48,12 +48,17 @@ internal class RepositoryHelper(
             emptyMap()
         }
 
-        // convert the channels
-        return channelEntities.map { entity ->
-            entity.toModel(::selectUser) { messages.select(it, ::selectUser) }.apply {
-                config = configsRepository.select(type)?.config ?: defaultConfig
-                messages = messagesMap[cid] ?: messages
-            }
+        return channels.onEach { it.enrichChannel(messagesMap, defaultConfig) }
+    }
+
+    @VisibleForTesting
+    internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
+        config = configsRepository.select(type)?.config ?: defaultConfig
+        messages = if (messageMap.containsKey(cid)) {
+            val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
+            fullList.distinct()
+        } else {
+            messages
         }
     }
 
@@ -94,6 +99,33 @@ internal class RepositoryHelper(
         configsRepository.clearCache()
     }
 
+    internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
+        channels.setDeletedAt(cid, deletedAt)
+    }
+
+    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
+        selectChannelWithoutMessages(cid)?.also { channel ->
+            val messageCreatedAt = checkNotNull(
+                lastMessage.createdAt
+                    ?: lastMessage.createdLocallyAt
+            ) { "created at cant be null, be sure to set message.createdAt" }
+
+            val oldLastMessage = channel.lastMessage
+            val updateNeeded = if (oldLastMessage != null) {
+                lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)
+            } else {
+                true
+            }
+
+            if (updateNeeded) {
+                channel.apply {
+                    lastMessageAt = messageCreatedAt
+                    messages = listOf(lastMessage)
+                }.also { channels.insert(it) }
+            }
+        }
+    }
+
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
         return messages.selectSyncNeeded(::selectUser)
     }
@@ -131,6 +163,14 @@ internal class RepositoryHelper(
         channels.delete(cid)
     }
 
+    suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
+
+    private suspend fun selectMessage(messageId: String): Message? = messages.select(messageId, ::selectUser)
+
     private suspend fun selectUser(userId: String): User =
         userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
+
+    suspend fun selectChannelWithoutMessages(cid: String): Channel? {
+        return channels.select(cid, ::selectUser, ::selectMessage)
+    }
 }

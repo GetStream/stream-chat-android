@@ -50,7 +50,7 @@ internal suspend fun ChannelEntity.toModel(
     createdAt = createdAt,
     updatedAt = updatedAt,
     deletedAt = deletedAt,
-    extraData = extraData,
+    extraData = extraData.toMutableMap(),
     lastMessageAt = lastMessageAt,
     syncStatus = syncStatus,
     hidden = hidden,

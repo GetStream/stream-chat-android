@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -18,9 +17,9 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun loadHidden() = runBlocking {
-        val channelEntity = data.channel1.toEntity()
-        channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        val channel = data.channel1
+        channel.hidden = true
+        chatDomainImpl.repos.channels.insert(channel)
         // setup the channel controller
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
@@ -32,9 +31,9 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun loadHiddenQueryChannels() = runBlocking {
         // insert the channel and queryChannelsResult
-        val channelEntity = data.channel1.toEntity()
-        channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        val channel = data.channel1
+        channel.hidden = true
+        chatDomainImpl.repos.channels.insert(channel)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))
         chatDomainImpl.repos.queryChannels.insert(query)
 
@@ -43,8 +42,8 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channels = queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0))
 
         // verify we have 1 channel in the result list and that it's hidden
-        val channel = channels?.firstOrNull { it.cid == data.channel1.cid }
-        Truth.assertThat(channel?.hidden).isTrue()
+        val localChannel = channels?.firstOrNull { it.cid == data.channel1.cid }
+        Truth.assertThat(localChannel?.hidden).isTrue()
     }
 
     @Test
