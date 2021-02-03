@@ -266,7 +266,7 @@ internal class ChatDomainImpl internal constructor(
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
             // restore queries
-            repos.queryChannels.selectById(syncState.activeQueryIds)
+            repos.querySelectById(syncState.activeQueryIds)
                 .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
             // retrieve the last time the user marked all as read and handle it as an event
