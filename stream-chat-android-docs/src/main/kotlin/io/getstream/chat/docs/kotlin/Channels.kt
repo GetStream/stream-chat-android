@@ -31,7 +31,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
      */
     inner class ChannelInitialization {
         fun initialization() {
-            val channelClient = client.channel("messaging", "channel-id")
+            val channelClient = client.channel(channelType = "messaging", channelId = "general")
             channelClient
                 .create(
                     members = listOf("thierry", "tommaso"),
