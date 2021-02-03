@@ -35,7 +35,7 @@ internal class RepositoryHelper(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channels.select(channelIds, ::selectUser, ::selectMessage)
+        val channels = channels.select(channelIds, ::selectUser) { messageId -> selectMessage(messageId) }
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -164,7 +164,9 @@ internal class RepositoryHelper(
         channels.delete(cid)
     }
 
-    suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
+    suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser) { messageId ->
+        selectMessage(messageId)
+    }
 
     suspend fun selectMessage(
         messageId: String,
@@ -189,7 +191,9 @@ internal class RepositoryHelper(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channels.select(cid, ::selectUser, ::selectMessage)
+        return channels.select(cid, ::selectUser) { messageId ->
+            selectMessage(messageId)
+        }
     }
 
     suspend fun selectMessagesForChannel(
