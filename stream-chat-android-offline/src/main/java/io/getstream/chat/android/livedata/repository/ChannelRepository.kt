@@ -51,7 +51,7 @@ internal class ChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): List<Channel> {
-        val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf()) { channelCache.get(it) }
+        val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
         val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
         val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()
         updateCache(dbChannels)
