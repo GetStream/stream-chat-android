@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
@@ -19,8 +20,8 @@ internal class RepositoryHelper(
     factory: RepositoryFactory,
     private val scope: CoroutineScope,
 ) {
-    val users = factory.createUserRepository()
-    val configs = factory.createChannelConfigRepository()
+    private val userRepository = factory.createUserRepository()
+    private val configsRepository = factory.createChannelConfigRepository()
     val channels = factory.createChannelRepository()
     val queryChannels = factory.createQueryChannelsRepository()
     val messages = factory.createMessageRepository()
@@ -50,10 +51,47 @@ internal class RepositoryHelper(
         // convert the channels
         return channelEntities.map { entity ->
             entity.toModel(::selectUser) { messages.select(it, ::selectUser) }.apply {
-                config = configs.select(type)?.config ?: defaultConfig
+                config = configsRepository.select(type)?.config ?: defaultConfig
                 messages = messagesMap[cid] ?: messages
             }
         }
+    }
+
+    internal suspend fun updateCurrentUser(currentUser: User) {
+        userRepository.insertMe(currentUser)
+    }
+
+    internal suspend fun insertUser(user: User) {
+        userRepository.insertUser(user)
+    }
+
+    internal suspend fun insertManyUsers(users: List<User>) {
+        userRepository.insert(users)
+    }
+
+    internal suspend fun selectCurrentUser(): User? {
+        return userRepository.selectMe()
+    }
+
+    internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
+        configsRepository.insert(configs)
+    }
+
+    internal suspend fun insertConfigChannel(config: ChannelConfig) {
+        configsRepository.insert(config)
+    }
+
+    internal fun selectConfig(channelType: String): ChannelConfig? {
+        return configsRepository.select(channelType)
+    }
+
+    internal suspend fun loadChannelConfig() {
+        configsRepository.load()
+    }
+
+    @VisibleForTesting
+    internal fun clearCache() {
+        configsRepository.clearCache()
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
@@ -86,7 +124,7 @@ internal class RepositoryHelper(
 
     suspend fun insertChannels(channels: Collection<Channel>) {
         this.channels.insertChannels(channels)
-        users.insert(channels.flatMap(Channel::users))
+        userRepository.insert(channels.flatMap(Channel::users))
     }
 
     suspend fun removeChannel(cid: String) {
@@ -94,5 +132,5 @@ internal class RepositoryHelper(
     }
 
     private suspend fun selectUser(userId: String): User =
-        users.select(userId) ?: error("User with the userId: `$userId` has not been found")
+        userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
 }

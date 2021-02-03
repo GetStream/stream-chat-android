@@ -65,7 +65,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 return 1000
             }
         }
-        chatDomainImpl.repos.users.insert(data.userMap.values.toList())
+        chatDomainImpl.repos.insertManyUsers(data.userMap.values.toList())
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
                 println("error event$it")
@@ -96,7 +96,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             println("setup")
 
             // setup channel controller and query controllers for tests
-            runBlocking { chatDomainImpl.repos.configs.insert(ChannelConfig("messaging", data.config1)) }
+            runBlocking { chatDomainImpl.repos.insertConfigChannel(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateLiveDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
