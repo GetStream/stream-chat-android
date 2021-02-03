@@ -49,7 +49,7 @@ public open class AttachmentDestination(
                 }
             }
             ModelType.attach_video -> url = attachment.assetUrl
-            ModelType.attach_giphy -> url = attachment.assetUrl
+            ModelType.attach_giphy -> url = attachment.thumbUrl
             ModelType.attach_product -> url = attachment.url
         }
 
