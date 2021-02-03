@@ -60,14 +60,6 @@ public class ChannelsView @JvmOverloads constructor(
 
     private fun parseAttrs(attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
-            it.getText(R.styleable.ChannelsView_streamUiChannelsEmptyStateLabelText)?.let { emptyStateText ->
-                emptyStateView.apply {
-                    if (this is TextView) {
-                        text = emptyStateText
-                    }
-                }
-            }
-
             it.getResourceId(
                 R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable,
                 R.drawable.stream_ui_divider
