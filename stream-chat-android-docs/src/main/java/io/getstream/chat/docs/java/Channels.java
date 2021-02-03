@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -594,7 +595,9 @@ public class Channels {
                         // After sending a message, block the UI temporarily
                         // The disable/enable UI methods have to be implemented by you
                         disableMessageSendingUi();
-                        new Handler().postDelayed(() -> enableMessageSendingUi(), cooldown);
+
+                        new Handler(Looper.getMainLooper())
+                                .postDelayed(() -> enableMessageSendingUi(), cooldown);
                     });
                 }
             });

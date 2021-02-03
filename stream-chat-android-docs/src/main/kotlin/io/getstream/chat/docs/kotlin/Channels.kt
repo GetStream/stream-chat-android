@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.kotlin
 
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -565,7 +566,9 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                         // After sending a message, block the UI temporarily
                         // The disable/enable UI methods have to be implemented by you
                         disableMessageSendingUi()
-                        Handler().postDelayed(::enableMessageSendingUi, cooldown.toLong())
+
+                        Handler(Looper.getMainLooper())
+                            .postDelayed(::enableMessageSendingUi, cooldown.toLong())
                     }
                 }
             }
