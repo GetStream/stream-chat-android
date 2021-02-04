@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
+import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,7 @@ internal class RepositoryHelper(
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
     private val messageRepository = factory.createMessageRepository()
     private val reactions = factory.createReactionRepository()
-    val syncState = factory.createSyncStateRepository()
+    private val syncState = factory.createSyncStateRepository()
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
@@ -247,5 +248,13 @@ internal class RepositoryHelper(
 
     internal suspend fun insertReaction(reaction: Reaction) {
         reactions.insert(reaction)
+    }
+
+    internal suspend fun selectSyncState(userId: String): SyncState? {
+        return syncState.select(userId)
+    }
+
+    internal suspend fun insertSyncState(newSyncState: SyncState) {
+        syncState.insert(newSyncState)
     }
 }

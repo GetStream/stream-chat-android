@@ -261,7 +261,7 @@ internal class ChatDomainImpl internal constructor(
             repos.loadChannelConfig()
 
             // load the current user from the db
-            val syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
+            val syncState = repos.selectSyncState(currentUser.id) ?: SyncState(currentUser.id)
             // set active channels and recover
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
@@ -331,7 +331,7 @@ internal class ChatDomainImpl internal constructor(
                 activeQueryIds =
                     activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
             )
-            repos.syncState.insert(newSyncState)
+            repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
         }
 
