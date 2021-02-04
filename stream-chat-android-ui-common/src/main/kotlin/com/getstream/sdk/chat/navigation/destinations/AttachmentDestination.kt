@@ -33,16 +33,23 @@ public open class AttachmentDestination(
                 return
             }
             ModelType.attach_image -> {
-                if (attachment.ogUrl != null) {
-                    url = attachment.ogUrl
-                    type = ModelType.attach_link
-                } else {
-                    showImageViewer(message, attachment)
-                    return
+                when {
+                    attachment.ogUrl != null -> {
+                        url = attachment.ogUrl
+                        type = ModelType.attach_link
+                    }
+                    attachment.isGif() -> {
+                        url = attachment.imageUrl
+                        type = ModelType.attach_giphy
+                    }
+                    else -> {
+                        showImageViewer(message, attachment)
+                        return
+                    }
                 }
             }
             ModelType.attach_video -> url = attachment.assetUrl
-            ModelType.attach_giphy -> url = attachment.assetUrl
+            ModelType.attach_giphy -> url = attachment.thumbUrl
             ModelType.attach_product -> url = attachment.url
         }
 
@@ -97,7 +104,7 @@ public open class AttachmentDestination(
 
     protected open fun showImageViewer(
         message: Message,
-        attachment: Attachment
+        attachment: Attachment,
     ) {
         val imageUrls: List<String> = message.attachments
             .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
@@ -116,4 +123,6 @@ public open class AttachmentDestination(
             )
             .show()
     }
+
+    private fun Attachment.isGif() = mimeType?.contains("gif") ?: false
 }

@@ -1,13 +1,13 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
--. `ChatUtils::devToken` is not accesible anymore, it has been moved to `ChatClient::devToken`
+-. `ChatUtils::devToken` is not accessible anymore, it has been moved to `ChatClient::devToken`
 
 ## stream-chat-android-client
 - Add support for typing events in threads:
     - Add `parentId` to `TypingStartEvent` and `TypingStopEvent`
     - Add `parentId` to ``ChannelClient::keystroke` and `ChannelClient::stopTyping`
-- `ChatClient::sendFile` is merged into one variation with `ProgressCallback` as an optional parameter. Now the method returns `Call<String>`, the option with asyonchronous call with no return is removed. 
+- `ChatClient::sendFile` and `ChatClient::sendImage` each now have just one definition with `ProgressCallback` as an optional parameter. These methods both return `Call<String>`, allowing for sync/async execution, and error handling. The old overloads that were asynchronous and returned no value/error have been removed.
 - `FileUploader::sendFile` and `FileUploader::sendImages` variations with `ProgressCallback` are no longer async with no return type. Now they are synchronous with `String?` as return type
 
 ## stream-chat-android-offline
