@@ -27,8 +27,8 @@ internal class RepositoryHelper(
     private val channelsRepository = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
     private val messageRepository = factory.createMessageRepository()
-    private val reactions = factory.createReactionRepository()
-    private val syncState = factory.createSyncStateRepository()
+    private val reactionsRepository = factory.createReactionRepository()
+    private val syncStateRepository = factory.createSyncStateRepository()
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
@@ -159,19 +159,19 @@ internal class RepositoryHelper(
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-    ): List<Reaction> = reactions.selectUserReactionsToMessage(messageId, userId, ::selectUser)
+    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, ::selectUser)
 
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
-        reactions.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
+        reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
 
     @VisibleForTesting
     internal suspend fun selectUserReactionsToMessageByType(
         messageId: String,
         userId: String,
         type: String,
-    ) = reactions.selectUserReactionsToMessageByType(messageId, userId, type, ::selectUser)
+    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, ::selectUser)
 
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactions.selectSyncNeeded(::selectUser)
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(::selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -247,14 +247,14 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun insertReaction(reaction: Reaction) {
-        reactions.insert(reaction)
+        reactionsRepository.insert(reaction)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {
-        return syncState.select(userId)
+        return syncStateRepository.select(userId)
     }
 
     internal suspend fun insertSyncState(newSyncState: SyncState) {
-        syncState.insert(newSyncState)
+        syncStateRepository.insert(newSyncState)
     }
 }
