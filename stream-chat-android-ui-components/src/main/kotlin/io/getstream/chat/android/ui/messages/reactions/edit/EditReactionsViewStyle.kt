@@ -37,50 +37,28 @@ internal class EditReactionsViewStyle(context: Context, attrs: AttributeSet?) {
                 R.styleable.EditReactionsView_streamUiReactionsBubbleColorTheirs,
                 context.getColorCompat(R.color.stream_ui_white),
             )
-            totalHeight = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsTotalHeight,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_total_height),
-            )
-            horizontalPadding = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsHorizontalPadding,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_padding),
-            )
-            itemSize = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsItemSize,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_item_size),
-            )
-            bubbleHeight = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsBubbleHeight,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_height),
-            )
-            bubbleRadius = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsBubbleRadius,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_radius),
-            )
-            largeTailBubbleCy = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsLargeTailBubbleCy,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_cy),
-            )
-            largeTailBubbleRadius = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsLargeTailBubbleRadius,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_radius),
-            )
-            largeTailBubbleOffset = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsLargeTailBubbleOffset,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_offset),
-            )
-            smallTailBubbleCy = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsSmallTailBubbleCy,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_cy),
-            )
-            smallTailBubbleRadius = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsSmallTailBubbleRadius,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_radius),
-            )
-            smallTailBubbleOffset = a.getDimensionPixelSize(
-                R.styleable.EditReactionsView_streamUiReactionsSmallTailBubbleOffset,
-                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_offset),
-            )
+            totalHeight =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_total_height)
+            horizontalPadding =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_padding)
+            itemSize =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_item_size)
+            bubbleHeight =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_height)
+            bubbleRadius =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_radius)
+            largeTailBubbleCy =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_cy)
+            largeTailBubbleRadius =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_radius)
+            largeTailBubbleOffset =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_offset)
+            smallTailBubbleCy =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_cy)
+            smallTailBubbleRadius =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_radius)
+            smallTailBubbleOffset =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_offset)
         }
     }
 }
