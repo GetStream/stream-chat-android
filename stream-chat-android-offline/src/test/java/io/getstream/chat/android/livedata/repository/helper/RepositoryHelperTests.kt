@@ -104,7 +104,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
         sut.insertChannel(channel)
 
         Verify on channels that channels.insertChannels(eq(listOf(channel))) was called
-        Verify on users that users.insert(
+        Verify on users that users.insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
                 listUser.size `should be equal to` 4
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser)
@@ -133,7 +133,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             sut.insertChannels(listOfChannels)
 
             Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
-            Verify on users that users.insert(
+            Verify on users that users.insertUsers(
                 com.nhaarman.mockitokotlin2.check { listUser ->
                     listUser `should contain same` listOfUser
                 }
@@ -157,7 +157,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             )
 
             Verify on configs that configs.insert(configList) was called
-            Verify on users that users.insert(userList) was called
+            Verify on users that users.insertUsers(userList) was called
             Verify on channels that channels.insertChannels(channelList) was called
             Verify on messages that messages.insertMessages(messageList, false) was called
         }
@@ -179,7 +179,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             )
 
             VerifyNoInteractions on configs
-            Verify on users that users.insert(userList) was called
+            Verify on users that users.insertUsers(userList) was called
             Verify on channels that channels.insertChannels(channelList) was called
             Verify on messages that messages.insertMessages(messageList, false) was called
         }

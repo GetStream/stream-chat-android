@@ -316,7 +316,7 @@ internal class ChatDomainImpl internal constructor(
             throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser.id}. create a new chatdomain when connecting a different user.")
         }
         currentUser = me
-        repos.updateCurrentUser(me)
+        repos.insertCurrentUser(me)
         _mutedUsers.value = me.mutes
         setTotalUnreadCount(me.totalUnreadCount)
         setChannelUnreadCount(me.unreadChannels)

@@ -5,15 +5,25 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.UserDao
 import io.getstream.chat.android.livedata.entity.UserEntity
 
-internal class UserRepository(
+internal interface UserRepository {
+    suspend fun insertUsers(users: Collection<User>)
+    suspend fun insertUser(user: User)
+    suspend fun insertCurrentUser(user: User)
+    suspend fun selectCurrentUser(): User?
+    suspend fun selectUser(userId: String): User?
+    suspend fun selectUsers(userIds: List<String>): List<User>
+    suspend fun selectUserMap(userIds: List<String>): Map<String, User>
+}
+
+internal class UserRepositoryImpl(
     private val userDao: UserDao,
     private val currentUser: User,
     cacheSize: Int = 100
-) {
+) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
 
-    suspend fun insert(users: Collection<User>) {
+    override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
         cacheUsers(users)
         userDao.insertMany(users.map(::toEntity))
@@ -25,24 +35,24 @@ internal class UserRepository(
         }
     }
 
-    suspend fun insertUser(user: User) {
+    override suspend fun insertUser(user: User) {
         userDao.insert(toEntity(user))
     }
 
-    suspend fun insertMe(user: User) {
+    override suspend fun insertCurrentUser(user: User) {
         val userEntity = toEntity(user).copy(id = ME_ID)
         userDao.insert(userEntity)
     }
 
-    suspend fun selectMe(): User? {
+    override suspend fun selectCurrentUser(): User? {
         return userDao.select(ME_ID)?.let(::toModel)
     }
 
-    suspend fun selectUser(userId: String): User? {
+    override suspend fun selectUser(userId: String): User? {
         return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
     }
 
-    suspend fun select(userIds: List<String>): List<User> {
+    override suspend fun selectUsers(userIds: List<String>): List<User> {
         val cacheUsers: List<User> = userIds.mapNotNull(userCache::get)
         val missingUserIds = userIds.filter { userCache.get(it) == null }
         val dbUsers = if (missingUserIds.isNotEmpty()) {
@@ -53,8 +63,8 @@ internal class UserRepository(
         return dbUsers + cacheUsers
     }
 
-    suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
-        select(userIds).associateBy(User::id) + (currentUser.id to currentUser)
+    override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
+        selectUsers(userIds).associateBy(User::id) + (currentUser.id to currentUser)
 
     private fun toEntity(user: User): UserEntity = with(user) {
         UserEntity(

@@ -25,7 +25,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     @Before
     override fun setup() {
         super.setup()
-        runBlocking { repo.insertManyUsers(data.userMap.values) }
+        runBlocking { repo.insertUsers(data.userMap.values) }
     }
 
     @Test

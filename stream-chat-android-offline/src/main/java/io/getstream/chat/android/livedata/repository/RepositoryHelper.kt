@@ -27,14 +27,19 @@ internal class RepositoryHelper private constructor(
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
-) {
+) : UserRepository by userRepository {
+
+    private val selectUser: suspend (userId: String) -> User = { userId ->
+        selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+    }
+
     internal suspend fun selectChannels(
         channelIds: List<String>,
         defaultConfig: Config,
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.select(channelIds, ::selectUser, ::selectMessage)
+        val channels = channelsRepository.select(channelIds, selectUser, ::selectMessage)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -70,22 +75,6 @@ internal class RepositoryHelper private constructor(
         channelsRepository.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
     }
 
-    internal suspend fun updateCurrentUser(currentUser: User) {
-        userRepository.insertMe(currentUser)
-    }
-
-    internal suspend fun insertUser(user: User) {
-        userRepository.insertUser(user)
-    }
-
-    internal suspend fun insertManyUsers(users: Collection<User>) {
-        userRepository.insert(users)
-    }
-
-    internal suspend fun selectCurrentUser(): User? {
-        return userRepository.selectMe()
-    }
-
     internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
         configsRepository.insert(configs)
     }
@@ -98,7 +87,7 @@ internal class RepositoryHelper private constructor(
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertConfigChannel(it) }
-        insertManyUsers(users)
+        insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
     }
@@ -157,7 +146,7 @@ internal class RepositoryHelper private constructor(
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, ::selectUser)
+    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, selectUser)
 
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
         reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
@@ -167,9 +156,9 @@ internal class RepositoryHelper private constructor(
         messageId: String,
         userId: String,
         type: String,
-    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, ::selectUser)
+    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, selectUser)
 
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(::selectUser)
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -177,7 +166,7 @@ internal class RepositoryHelper private constructor(
 
     suspend fun insertChannels(channels: Collection<Channel>) {
         this.channelsRepository.insertChannels(channels)
-        userRepository.insert(channels.flatMap(Channel::users))
+        userRepository.insertUsers(channels.flatMap(Channel::users))
     }
 
     internal suspend fun deleteChannel(cid: String) {
@@ -185,7 +174,7 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> =
-        channelsRepository.selectSyncNeeded(::selectUser, ::selectMessage)
+        channelsRepository.selectSyncNeeded(selectUser, ::selectMessage)
 
     suspend fun removeChannel(cid: String) {
         channelsRepository.delete(cid)
@@ -196,9 +185,6 @@ internal class RepositoryHelper private constructor(
     ): Message? {
         return messageRepository.selectMessage(messageId)
     }
-
-    private suspend fun selectUser(userId: String): User =
-        userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
 
     suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsRepository.selectById(ids)
@@ -213,7 +199,7 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelsRepository.select(cid, ::selectUser, ::selectMessage)
+        return channelsRepository.select(cid, selectUser, ::selectMessage)
     }
 
     suspend fun selectMessagesForChannel(
