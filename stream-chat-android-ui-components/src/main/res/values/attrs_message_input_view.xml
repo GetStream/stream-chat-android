@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--MessageInputViewNew-->
+    <declare-styleable name="MessageInputView">
+        <!--Attachment Button-->
+        <attr name="streamUiAttachButtonEnabled" format="boolean" />
+        <attr name="streamUiAttachButtonIcon" format="reference" />
+        <attr name="streamUiAttachButtonIconColor" format="color|reference" />
+        <attr name="streamUiAttachButtonIconPressedColor" format="color|reference" />
+        <attr name="streamUiAttachButtonIconDisabledColor" format="color|reference" />
+        <attr name="streamUiAttachButtonSelectedIconColor" format="color|reference" />
+
+        <!--Lightning Button-->
+        <attr name="streamUiLightningButtonEnabled" format="boolean" />
+        <attr name="streamUiLightningButtonIcon" format="reference" />
+        <attr name="streamUiLightningButtonIconColor" format="color|reference" />
+        <attr name="streamUiLightningButtonIconPressedColor" format="color|reference" />
+        <attr name="streamUiLightningButtonIconDisabledColor" format="color|reference" />
+
+        <!--Input Text-->
+        <attr name="streamUiMessageInputTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageInputTextColor" format="color|reference" />
+        <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
+        <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
+        <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
+
+        <!--Send Button-->
+        <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonDisabledIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonPressedIconColor" format="color|reference" />
+        <attr name="streamUiSendButtonEnabledIcon" format="reference" />
+        <attr name="streamUiSendButtonDisabledIcon" format="reference" />
+        <attr name="streamUiSendButtonEnabled" format="boolean" />
+
+        <!-- "Also send to channel" CheckBox -->
+        <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
+    </declare-styleable>
+
+</resources>

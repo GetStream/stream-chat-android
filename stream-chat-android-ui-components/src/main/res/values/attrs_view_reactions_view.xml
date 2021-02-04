@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ViewReactionsView">
+        <attr name="streamUiReactionsBubbleColorMine" />
+        <attr name="streamUiReactionsBubbleColorTheirs" />
+        <attr name="streamUiReactionsBubbleBorderColorMine" format="color|reference" />
+    </declare-styleable>
+</resources>
