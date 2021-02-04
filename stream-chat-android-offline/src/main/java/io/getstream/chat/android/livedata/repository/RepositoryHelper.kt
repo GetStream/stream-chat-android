@@ -26,7 +26,7 @@ internal class RepositoryHelper(
     private val channelsRepository = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
     private val messageRepository = factory.createMessageRepository()
-    val reactions = factory.createReactionRepository()
+    private val reactions = factory.createReactionRepository()
     val syncState = factory.createSyncStateRepository()
 
     internal suspend fun selectChannels(
@@ -96,7 +96,7 @@ internal class RepositoryHelper(
         users: List<User>,
         channels: Collection<Channel>,
         messages: List<Message>,
-        cacheForMessages: Boolean = false
+        cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertConfigChannel(it) }
         insertManyUsers(users)
@@ -185,7 +185,8 @@ internal class RepositoryHelper(
         channelsRepository.delete(cid)
     }
 
-    suspend fun selectChannelsSyncNeeded(): List<Channel> = channelsRepository.selectSyncNeeded(::selectUser, ::selectMessage)
+    suspend fun selectChannelsSyncNeeded(): List<Channel> =
+        channelsRepository.selectSyncNeeded(::selectUser, ::selectMessage)
 
     suspend fun removeChannel(cid: String) {
         channelsRepository.delete(cid)
@@ -242,5 +243,9 @@ internal class RepositoryHelper(
 
     fun messageCacheSize(): Int {
         return messageRepository.messageCache.size()
+    }
+
+    internal suspend fun insertReaction(reaction: Reaction) {
+        reactions.insert(reaction)
     }
 }

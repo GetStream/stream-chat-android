@@ -23,7 +23,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         chatDomainImpl.repos.insertMessage(data.message1)
         val reaction = data.reaction1.copy()
         reaction.syncStatus = SyncStatus.SYNC_NEEDED
-        chatDomainImpl.repos.reactions.insert(reaction)
+        chatDomainImpl.repos.insertReaction(reaction)
         val results = chatDomainImpl.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
@@ -135,7 +135,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         // check DAO layer and converters
         chatDomainImpl.repos.insertMessage(data.message1)
         val reaction = data.reaction1.copy()
-        chatDomainImpl.repos.reactions.insert(reaction)
+        chatDomainImpl.repos.insertReaction(reaction)
         val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessageByType(
             reaction.messageId,
             reaction.userId,

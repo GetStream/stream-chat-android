@@ -749,10 +749,10 @@ internal class ChatDomainImpl internal constructor(
 
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                repos.reactions.insert(reaction)
+                repos.insertReaction(reaction)
             } else if (result.error().isPermanent()) {
                 reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                repos.reactions.insert(reaction)
+                repos.insertReaction(reaction)
             }
         }
     }

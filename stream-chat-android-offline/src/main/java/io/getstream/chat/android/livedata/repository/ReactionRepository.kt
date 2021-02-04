@@ -19,7 +19,7 @@ internal class ReactionRepository(private val reactionDao: ReactionDao) {
     }
 
     @VisibleForTesting
-    internal suspend fun insert(reactions: List<Reaction>) {
+    internal suspend fun insert(reactions: Collection<Reaction>) {
         val entities = reactions.map(Reaction::toEntity)
         insert(entities)
     }
