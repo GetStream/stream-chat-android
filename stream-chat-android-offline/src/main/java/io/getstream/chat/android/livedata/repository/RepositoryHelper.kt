@@ -23,7 +23,7 @@ internal class RepositoryHelper(
 ) {
     private val userRepository = factory.createUserRepository()
     private val configsRepository = factory.createChannelConfigRepository()
-    val channels = factory.createChannelRepository()
+    private val channelsRepository = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
     private val messageRepository = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
@@ -35,7 +35,7 @@ internal class RepositoryHelper(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channels.select(channelIds, ::selectUser) { messageId -> selectMessage(messageId) }
+        val channels = channelsRepository.select(channelIds, ::selectUser, ::selectMessage)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -63,6 +63,14 @@ internal class RepositoryHelper(
         }
     }
 
+    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean) {
+        channelsRepository.setHiddenForChannel(cid, isHidden)
+    }
+
+    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean, hideMessagesBefore: Date) {
+        channelsRepository.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
+    }
+
     internal suspend fun updateCurrentUser(currentUser: User) {
         userRepository.insertMe(currentUser)
     }
@@ -71,7 +79,7 @@ internal class RepositoryHelper(
         userRepository.insertUser(user)
     }
 
-    internal suspend fun insertManyUsers(users: List<User>) {
+    internal suspend fun insertManyUsers(users: Collection<User>) {
         userRepository.insert(users)
     }
 
@@ -114,7 +122,7 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
-        channels.setDeletedAt(cid, deletedAt)
+        channelsRepository.setDeletedAt(cid, deletedAt)
     }
 
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
@@ -135,7 +143,7 @@ internal class RepositoryHelper(
                 channel.apply {
                     lastMessageAt = messageCreatedAt
                     messages = listOf(lastMessage)
-                }.also { channels.insert(it) }
+                }.also { channelsRepository.insert(it) }
             }
         }
     }
@@ -169,23 +177,24 @@ internal class RepositoryHelper(
     }
 
     suspend fun insertChannels(channels: Collection<Channel>) {
-        this.channels.insertChannels(channels)
+        this.channelsRepository.insertChannels(channels)
         userRepository.insert(channels.flatMap(Channel::users))
     }
 
-    suspend fun removeChannel(cid: String) {
-        channels.delete(cid)
+    internal suspend fun deleteChannel(cid: String) {
+        channelsRepository.delete(cid)
     }
 
-    suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser) { messageId ->
-        selectMessage(messageId)
+    suspend fun selectChannelsSyncNeeded(): List<Channel> = channelsRepository.selectSyncNeeded(::selectUser, ::selectMessage)
+
+    suspend fun removeChannel(cid: String) {
+        channelsRepository.delete(cid)
     }
 
     suspend fun selectMessage(
         messageId: String,
-        getUser: suspend (userId: String) -> User = { selectUser(it) },
     ): Message? {
-        return messageRepository.select(messageId, getUser)
+        return messageRepository.select(messageId, ::selectUser)
     }
 
     private suspend fun selectUser(userId: String): User =
@@ -204,9 +213,7 @@ internal class RepositoryHelper(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channels.select(cid, ::selectUser) { messageId ->
-            selectMessage(messageId)
-        }
+        return channelsRepository.select(cid, ::selectUser, ::selectMessage)
     }
 
     suspend fun selectMessagesForChannel(

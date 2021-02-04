@@ -9,12 +9,11 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelRepositoryTest : BaseDomainTest2() {
-    private val repo by lazy { helper.channels }
     private val helper by lazy { chatDomainImpl.repos }
 
     @Test
     fun `inserting a channel and reading it should be equal`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1))
+        helper.insertChannels(listOf(data.channel1))
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
         channel.config = data.channel1.config
         channel.watchers = data.channel1.watchers
@@ -25,8 +24,8 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `deleting a channel should work`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1))
-        repo.delete(data.channel1.cid)
+        helper.insertChannels(listOf(data.channel1))
+        helper.deleteChannel(data.channel1.cid)
         val entity = helper.selectChannelWithoutMessages(data.channel1.cid)
 
         Truth.assertThat(entity).isNull()
@@ -34,7 +33,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `updating a channel should work as intended`() = runBlocking {
-        repo.insertChannels(listOf(data.channel1, data.channel1Updated))
+        helper.insertChannels(listOf(data.channel1, data.channel1Updated))
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
 
         // ignore these 4 fields

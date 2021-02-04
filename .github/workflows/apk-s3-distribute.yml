@@ -1,0 +1,33 @@
+name: App Distribute CI
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  build_ui_components_sample_app:
+    name: Build and push to S3
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Prepare environment
+        run: |
+          git fetch --unshallow
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
+      - name: Assemble
+        run: ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Upload APK
+        run: aws s3 cp stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk s3://${{ secrets.AWS_S3_BUCKET }} --sse AES256

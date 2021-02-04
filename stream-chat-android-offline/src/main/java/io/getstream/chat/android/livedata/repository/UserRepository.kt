@@ -13,13 +13,13 @@ internal class UserRepository(
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
 
-    suspend fun insert(users: List<User>) {
+    suspend fun insert(users: Collection<User>) {
         if (users.isEmpty()) return
         cacheUsers(users)
         userDao.insertMany(users.map(::toEntity))
     }
 
-    private fun cacheUsers(users: List<User>) {
+    private fun cacheUsers(users: Collection<User>) {
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
         }

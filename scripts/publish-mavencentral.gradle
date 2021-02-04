@@ -70,7 +70,7 @@ publishing {
                 licenses {
                     license {
                         name = 'Stream License'
-                        url = 'https://github.com/GetStream/stream-chat-android/blob/master/LICENSE'
+                        url = 'https://github.com/GetStream/stream-chat-android/blob/main/LICENSE'
                     }
                 }
                 developers {
