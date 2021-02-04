@@ -19,7 +19,6 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.bindView
 import io.getstream.chat.android.ui.textinput.bindView
-import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -161,24 +160,11 @@ class ChatFragment : Fragment() {
                 }
             }
         }
-        binding.messageListView.setConfirmDeleteMessageHandler {
-            message: Message,
-            title: String,
-            description: String,
-            positiveText: String,
-            negativeText: String,
-            confirmCallback: () -> Unit,
-            ->
-            ConfirmationDialogFragment.newInstance(
-                R.drawable.ic_delete,
-                R.color.red,
-                title,
-                description,
-                positiveText,
-                negativeText
-            ).apply {
-                confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
-            }.show(parentFragmentManager, null)
+        binding.messageListView.setConfirmDeleteMessageHandler { message: Message, confirmCallback: () -> Unit ->
+            ConfirmationDialogFragment.newDeleteMessageInstance(requireContext())
+                .apply {
+                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
+                }.show(parentFragmentManager, null)
         }
     }
 

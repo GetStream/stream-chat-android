@@ -80,6 +80,15 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CONFIRM_TEXT = "confirm_text"
         private const val ARG_CANCEL_TEXT = "cancel_text"
 
+        fun newDeleteMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.ic_delete,
+            iconTintResId = R.color.red,
+            title = context.getString(R.string.stream_ui_message_option_delete_confirmation_title),
+            description = context.getString(R.string.stream_ui_message_option_delete_confirmation_message),
+            confirmText = context.getString(R.string.stream_ui_message_option_delete_positive_button),
+            cancelText = context.getString(R.string.stream_ui_message_option_delete_negative_button),
+        )
+
         fun newDeleteChannelInstance(context: Context): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.ic_delete,
             iconTintResId = R.color.red,

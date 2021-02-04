@@ -9,7 +9,6 @@
         android:id="@+id/attachmentGallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:streamUiCountText="%s -> %s"
         app:streamUiCountTextColor="@color/stream_ui_black"
         />
 

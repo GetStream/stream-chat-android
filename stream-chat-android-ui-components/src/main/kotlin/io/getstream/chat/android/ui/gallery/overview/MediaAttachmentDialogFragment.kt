@@ -13,7 +13,6 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
     private var _binding: StreamUiDialogMediaAttachmentBinding? = null
     private val binding get() = _binding!!
 
-    private val title: String by lazy { requireArguments().getString(ARG_TITLE)!! }
     private lateinit var userMediaAttachments: List<UserMediaAttachment>
 
     private var imageClickListener: (Int) -> Unit = {}
@@ -34,7 +33,6 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
             closeButton.setOnClickListener {
                 dismiss()
             }
-            title.text = this@MediaAttachmentDialogFragment.title
             mediaAttachmentGridView.setMediaClickListener {
                 imageClickListener.invoke(it)
             }
@@ -60,15 +58,10 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
     }
 
     internal companion object {
-        private const val ARG_TITLE = "title"
-
         private var userMediaAttachmentsArg: List<UserMediaAttachment>? = null
 
-        fun newInstance(title: String, userMediaAttachments: List<UserMediaAttachment>): MediaAttachmentDialogFragment {
+        fun newInstance(userMediaAttachments: List<UserMediaAttachment>): MediaAttachmentDialogFragment {
             return MediaAttachmentDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                }
                 // pass attachments via static field
                 userMediaAttachmentsArg = userMediaAttachments
             }
