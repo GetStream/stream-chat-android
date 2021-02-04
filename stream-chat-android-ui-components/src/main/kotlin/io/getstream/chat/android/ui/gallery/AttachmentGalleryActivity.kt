@@ -145,13 +145,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     private fun onGalleryPageSelected(position: Int) {
-        val count = attachmentGalleryItems.size
-        if (count > 1) {
-            binding.imageCountTextView.isVisible = true
-            binding.imageCountTextView.text = getString(R.string.stream_ui_gallery_count_template, position + 1, count)
-        } else {
-            binding.imageCountTextView.isVisible = false
-        }
+        binding.imageCountTextView.text = getString(
+            R.string.stream_ui_gallery_count_template,
+            position + 1,
+            attachmentGalleryItems.size
+        )
 
         val currentItem = attachmentGalleryItems[position]
         binding.attachmentDateTextView.text = getRelativeAttachmentDate(currentItem.createdAt)

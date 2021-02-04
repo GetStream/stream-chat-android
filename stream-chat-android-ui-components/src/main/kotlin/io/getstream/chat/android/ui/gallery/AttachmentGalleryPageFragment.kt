@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
+import java.lang.IllegalArgumentException
 
 internal class AttachmentGalleryPageFragment : Fragment() {
     private lateinit var binding: StreamUiItemImageGalleryBinding
-    private val imageUrl: String by lazy { requireArguments().getString(ARG_IMAGE_URL)!! }
+    private val imageUrl: String by lazy {
+        requireArguments().getString(ARG_IMAGE_URL) ?: throw IllegalArgumentException("Image URL must not be null")
+    }
 
     private var imageClickListener: () -> Unit = {}
 

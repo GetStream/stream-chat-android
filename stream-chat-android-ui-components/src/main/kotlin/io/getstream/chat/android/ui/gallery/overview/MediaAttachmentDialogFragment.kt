@@ -34,9 +34,7 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
             mediaAttachmentGridView.setMediaClickListener {
                 imageClickListener.invoke(it)
             }
-            viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner) {
-                mediaAttachmentGridView.setAttachments(it)
-            }
+            viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)
         }
     }
 
