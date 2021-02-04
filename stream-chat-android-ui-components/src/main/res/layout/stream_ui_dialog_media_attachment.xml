@@ -22,6 +22,7 @@
 
     <TextView
         android:id="@+id/title"
+        android:text="@string/stream_ui_images_menu_default_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"

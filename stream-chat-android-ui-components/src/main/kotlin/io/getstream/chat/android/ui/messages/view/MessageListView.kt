@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -43,6 +42,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListListenerContaine
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.messages.view.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.messages.view.MessageListView.EnterThreadListener
 import io.getstream.chat.android.ui.messages.view.MessageListView.GiphySendHandler
@@ -148,15 +148,15 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
-    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, title, description, positiveText, negativeText, confirmCallback ->
+    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, confirmCallback ->
         AlertDialog.Builder(context)
-            .setTitle(title)
-            .setMessage(description)
-            .setPositiveButton(positiveText) { dialog, _ ->
+            .setTitle(R.string.stream_ui_message_option_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_message_option_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_option_delete_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 confirmCallback()
             }
-            .setNegativeButton(negativeText) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_message_option_delete_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -234,10 +234,6 @@ public class MessageListView : ConstraintLayout {
                         setConfirmDeleteMessageClickHandler { message, callback ->
                             confirmDeleteMessageHandler.onConfirmDeleteMessage(
                                 message,
-                                messageOptionsConfiguration.deleteConfirmationTitle,
-                                messageOptionsConfiguration.deleteConfirmationMessage,
-                                messageOptionsConfiguration.deleteConfirmationPositiveButton,
-                                messageOptionsConfiguration.deleteConfirmationNegativeButton,
                                 callback::onConfirmDeleteMessage
                             )
                         }
@@ -443,15 +439,6 @@ public class MessageListView : ConstraintLayout {
             scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
 
-        tArray.getText(R.styleable.MessageListView_streamUiMessagesEmptyStateLabelText)
-            ?.let { emptyStateText ->
-                emptyStateView.let {
-                    if (it is TextView) {
-                        it.text = emptyStateText
-                    }
-                }
-            }
-
         configureMessageOptions(tArray)
         tArray.recycle()
     }
@@ -462,66 +449,46 @@ public class MessageListView : ConstraintLayout {
             ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_reply)
         val replyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
-        val threadReplyText =
-            tArray.getString(R.styleable.MessageListView_streamUiThreadReplyOptionMessage)
-                ?: context.getString(R.string.stream_ui_message_option_thread_reply)
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
         )
 
-        val retryText =
-            tArray.getString(R.styleable.MessageListView_streamUiRetryOptionMessage)
-                ?: context.getString(R.string.stream_ui_message_option_retry)
         val retryIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiRetryOptionIcon,
             R.drawable.stream_ui_ic_send
         )
 
-        val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_copy)
         val copyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
         )
 
-        val editText = tArray.getString(R.styleable.MessageListView_streamUiEditOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_edit)
         val editIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiEditOptionIcon,
             R.drawable.stream_ui_ic_edit
         )
 
-        val flagText = tArray.getString(R.styleable.MessageListView_streamUiFlagOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_flag)
         val flagIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiFlagOptionIcon,
             R.drawable.stream_ui_ic_flag
         )
 
-        val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
         )
 
-        val blockText = tArray.getString(R.styleable.MessageListView_streamUiBlockOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_block_user)
         val blockIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
         )
 
-        val deleteText = tArray.getString(R.styleable.MessageListView_streamUiDeleteOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_delete_user)
         val deleteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete
@@ -532,48 +499,19 @@ public class MessageListView : ConstraintLayout {
         val deleteConfirmationEnabled =
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
-        val deleteDialogTitle =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
-
-        val deleteDialogMessage =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
-
-        val deleteDialogPositiveButton =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
-
-        val deleteDialogNegativeButton =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
-
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
-            replyText = replyText,
             replyIcon = replyIcon,
-            threadReplyText = threadReplyText,
             threadReplyIcon = threadReplyIcon,
-            retryText = retryText,
             retryIcon = retryIcon,
-            copyText = copyText,
             copyIcon = copyIcon,
-            editText = editText,
             editIcon = editIcon,
-            flagText = flagText,
             flagIcon = flagIcon,
-            muteText = muteText,
             muteIcon = muteIcon,
-            blockText = blockText,
             blockIcon = blockIcon,
-            deleteText = deleteText,
             deleteIcon = deleteIcon,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
-            deleteConfirmationTitle = deleteDialogTitle,
-            deleteConfirmationMessage = deleteDialogMessage,
-            deleteConfirmationPositiveButton = deleteDialogPositiveButton,
-            deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
     }
 
@@ -971,10 +909,6 @@ public class MessageListView : ConstraintLayout {
     public fun interface ConfirmDeleteMessageHandler {
         public fun onConfirmDeleteMessage(
             message: Message,
-            title: String,
-            description: String,
-            positiveText: String,
-            negativeText: String,
             confirmCallback: () -> Unit,
         )
     }

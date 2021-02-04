@@ -24,7 +24,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     fun `verify that a new message event is stored in room`() = runBlocking {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+        val message = chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNotNull()
     }
 
@@ -49,14 +49,14 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNotNull()
     }
 
     @Test
     fun `when you are added to a channel it should be stored in room`() = runBlocking {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        val channel = chatDomainImpl.repos.channels.select(data.notificationAddedToChannel2Event.channel.cid)
+        val channel = chatDomainImpl.repos.selectChannelWithoutMessages(data.notificationAddedToChannel2Event.channel.cid)
         Truth.assertThat(channel).isNotNull()
     }
 
@@ -65,7 +65,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -77,7 +77,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id) { data.userMap[it]!! }
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -90,8 +90,8 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =
-                chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
-            val channel = chatDomainImpl.repos.channels.select(data.channel1.cid)
+                chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            val channel = chatDomainImpl.repos.selectChannelWithoutMessages(data.channel1.cid)
             Truth.assertThat(message).isNull()
             Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
             val channelController = chatDomainImpl.channel(data.channel1)
@@ -131,10 +131,10 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.readEvent)
         // check channel level read info
         val cid = data.readEvent.cid
-        val channel = chatDomainImpl.repos.channels.select(cid)
-        Truth.assertThat(channel!!.reads.size).isEqualTo(1)
-        val read = channel.reads.values.first()
-        Truth.assertThat(read.userId).isEqualTo(data.readEvent.user.id)
+        val channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)
+        Truth.assertThat(channel!!.read.size).isEqualTo(1)
+        val read = channel.read.first()
+        Truth.assertThat(read.user.id).isEqualTo(data.readEvent.user.id)
     }
 
     @Test
@@ -147,7 +147,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         Truth.assertThat(secondId).isEqualTo(messageId)
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent)
         // fetch the message
-        var message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
+        var message = chatDomainImpl.repos.selectMessage(messageId) { data.userMap[it]!! }!!
 
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(1)
@@ -160,7 +160,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
         // add a reaction from a different user, it should not go into own reaction
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent2)
-        message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
+        message = chatDomainImpl.repos.selectMessage(messageId) { data.userMap[it]!! }!!
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
         Truth.assertThat(message.ownReactions.size).isEqualTo(1)
@@ -171,7 +171,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.channelUpdatedEvent)
         // check channel level read info
         val cid = data.channelUpdatedEvent.cid
-        val channel = chatDomainImpl.repos.channels.select(cid)!!
+        val channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
     }
 
@@ -182,10 +182,10 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members
-        var channel = chatDomainImpl.repos.channels.select(cid)!!
+        var channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
         chatDomainImpl.eventHandler.handleEvent(data.memberRemovedFromChannel)
-        channel = chatDomainImpl.repos.channels.select(cid)!!
+        channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(1)
     }
 
@@ -196,11 +196,11 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members
-        var channel = chatDomainImpl.repos.channels.select(cid)!!
+        var channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
         // remove user 1
         chatDomainImpl.eventHandler.handleEvent(data.notificationRemovedFromChannel)
-        channel = chatDomainImpl.repos.channels.select(cid)!!
+        channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(1)
     }
 }

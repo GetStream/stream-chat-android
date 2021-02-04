@@ -103,10 +103,11 @@ public abstract class PorterImageView extends AppCompatImageView {
         if (!isInEditMode()) {
             int saveCount = canvas.saveLayer(0.0f, 0.0f, getWidth(), getHeight(), null, Canvas.ALL_SAVE_FLAG);
             try {
-                if (invalidated) {
+                boolean invalidatedCopy = invalidated;
+                if (invalidatedCopy) {
                     Drawable drawable = getDrawable();
                     if (drawable != null) {
-                        invalidated = false;
+                        invalidatedCopy = false;
                         Matrix imageMatrix = getImageMatrix();
                         if (imageMatrix == null) {// && mPaddingTop == 0 && mPaddingLeft == 0) {
                             drawable.draw(drawableCanvas);
@@ -126,7 +127,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     }
                 }
 
-                if (!invalidated) {
+                if (!invalidatedCopy) {
                     drawablePaint.setXfermode(null);
                     canvas.drawBitmap(drawableBitmap, 0.0f, 0.0f, drawablePaint);
                 }

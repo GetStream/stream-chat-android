@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
@@ -18,9 +17,9 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun loadHidden() = runBlocking {
-        val channelEntity = data.channel1.toEntity()
-        channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        val channel = data.channel1
+        channel.hidden = true
+        chatDomainImpl.repos.channels.insert(channel)
         // setup the channel controller
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
@@ -32,19 +31,19 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun loadHiddenQueryChannels() = runBlocking {
         // insert the channel and queryChannelsResult
-        val channelEntity = data.channel1.toEntity()
-        channelEntity.hidden = true
-        chatDomainImpl.repos.channels.insert(channelEntity)
+        val channel = data.channel1
+        channel.hidden = true
+        chatDomainImpl.repos.channels.insert(channel)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))
-        chatDomainImpl.repos.queryChannels.insert(query)
+        chatDomainImpl.repos.queryInsert(query)
 
         // setup the query channel controller
         val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
         val channels = queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0))
 
         // verify we have 1 channel in the result list and that it's hidden
-        val channel = channels?.firstOrNull { it.cid == data.channel1.cid }
-        Truth.assertThat(channel?.hidden).isTrue()
+        val localChannel = channels?.firstOrNull { it.cid == data.channel1.cid }
+        Truth.assertThat(localChannel?.hidden).isTrue()
     }
 
     @Test
@@ -79,7 +78,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         // add a message that should no longer be visible afterwards
-        chatDomainImpl.repos.messages.insert(data.message2Older)
+        chatDomainImpl.repos.insertMessage(data.message2Older)
         channelControllerImpl.handleEvent(data.newMessageEvent2)
         // keep history = false, so messages should go bye bye
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, false).execute()

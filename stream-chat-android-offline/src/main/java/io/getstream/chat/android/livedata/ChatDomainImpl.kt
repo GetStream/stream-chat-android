@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
@@ -74,6 +76,7 @@ private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
 internal val gson = StreamGson.gson
+
 /**
  * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.
@@ -250,7 +253,7 @@ internal class ChatDomainImpl internal constructor(
 
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
-        repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
+        repos = RepositoryHelper(RepositoryFactory(database, user), scope)
 
         // load channel configs from Room into memory
         initJob = scope.async {
@@ -263,7 +266,7 @@ internal class ChatDomainImpl internal constructor(
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
             // restore queries
-            repos.queryChannels.selectById(syncState.activeQueryIds)
+            repos.querySelectById(syncState.activeQueryIds)
                 .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
             // retrieve the last time the user marked all as read and handle it as an event
@@ -680,10 +683,33 @@ internal class ChatDomainImpl internal constructor(
     internal suspend fun retryFailedEntities() {
         delay(1000)
         // retry channels, messages and reactions in that order..
-        val channelEntities = repos.channels.retryChannels()
+        val channels = retryChannels()
         val messages = retryMessages()
         val reactions = retryReactions()
-        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+        logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+    }
+
+    @VisibleForTesting
+    internal suspend fun retryChannels(): List<Channel> {
+        return repos.selectChannelsSyncNeeded().onEach { channel ->
+            val result = client.createChannel(
+                channel.type,
+                channel.id,
+                channel.members.map(UserEntity::getUserId),
+                channel.extraData
+            ).await()
+
+            when {
+                result.isSuccess -> {
+                    channel.syncStatus = SyncStatus.COMPLETED
+                    repos.insertChannel(channel)
+                }
+                result.isError && result.error().isPermanent() -> {
+                    channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    repos.insertChannel(channel)
+                }
+            }
+        }
     }
 
     @VisibleForTesting
@@ -702,9 +728,9 @@ internal class ChatDomainImpl internal constructor(
 
             if (result.isSuccess) {
                 // TODO: 1.1 image upload support
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.COMPLETED))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
             }
         }
 
@@ -753,14 +779,12 @@ internal class ChatDomainImpl internal constructor(
             messages.addAll(channel.messages)
         }
 
-        // store the channel configs
-        repos.insertConfigChannel(configs)
-        // store the users
-        repos.insertManyUsers(users.values.toList())
-        // store the channel data
-        repos.insertChannels(channelsResponse)
-        // store the messages
-        repos.messages.insert(messages)
+        repos.storeStateForChannels(
+            configs = configs,
+            users = users.values.toList(),
+            channels = channelsResponse,
+            messages = messages
+        )
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }

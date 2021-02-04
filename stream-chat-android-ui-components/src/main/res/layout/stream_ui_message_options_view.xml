@@ -20,75 +20,75 @@
         <TextView
             android:id="@+id/replyTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_reply"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
-            tools:text="Reply"
             />
 
         <TextView
             android:id="@+id/threadReplyTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_thread_reply"
             tools:drawableStart="@drawable/stream_ui_ic_thread_reply"
-            tools:text="Thread Reply"
             />
 
         <TextView
             android:id="@+id/retryTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_retry"
             android:visibility="gone"
             tools:drawableStart="@drawable/stream_ui_ic_send"
-            tools:text="Resend"
             tools:visibility="visible"
             />
 
         <TextView
             android:id="@+id/copyTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_copy"
             tools:drawableStart="@drawable/stream_ui_ic_copy"
-            tools:text="Copy message"
             />
 
         <TextView
             android:id="@+id/editTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_edit"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_edit"
-            tools:text="Edit message"
             tools:visibility="visible"
             />
 
         <TextView
             android:id="@+id/flagTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_flag"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_flag"
-            tools:text="Flag message"
             tools:visibility="visible"
             />
 
         <TextView
             android:id="@+id/muteTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_mute"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_mute"
-            tools:text="Mute User"
             tools:visibility="visible"
             />
 
         <TextView
             android:id="@+id/blockTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_block_user"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_user_block"
-            tools:text="Block User"
             tools:visibility="visible"
             />
 
         <TextView
             android:id="@+id/deleteTV"
             style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_option_delete_user"
             app:drawableTint="@color/stream_ui_accent_red"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
-            tools:text="Delete Message"
             />
 
     </LinearLayout>

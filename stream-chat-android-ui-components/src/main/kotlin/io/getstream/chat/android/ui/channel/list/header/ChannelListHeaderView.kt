@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
 public class ChannelListHeaderView : ConstraintLayout {
@@ -55,14 +54,10 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun configOnlineTitle(typedArray: TypedArray) {
         getOnlineTitleTextStyle(typedArray).apply(binding.onlineTextView)
-        binding.onlineTextView.text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOnlineTitleText)
-            ?: context.getString(R.string.stream_ui_channels_header_view_online_title)
     }
 
     private fun configOfflineTitleContainer(typedArray: TypedArray) {
         getOfflineTitleTextStyle(typedArray).apply(binding.offlineTextView)
-        binding.offlineTextView.text = typedArray.getString(R.styleable.ChannelListHeaderView_streamUiOfflineTitleText)
-            ?: context.getString(R.string.stream_ui_channels_header_view_offline_title)
 
         binding.offlineProgressBar.apply {
             isVisible =
@@ -82,17 +77,6 @@ public class ChannelListHeaderView : ConstraintLayout {
 
             isVisible = showAddChannelButton
             isClickable = showAddChannelButton
-
-            layoutParams = layoutParams.apply {
-                height = typedArray.getDimensionPixelSize(
-                    R.styleable.ChannelListHeaderView_streamUiAddChannelButtonHeight,
-                    DEFAULT_ADD_CHANNEL_BUTTON_SIZE
-                )
-                width = typedArray.getDimensionPixelSize(
-                    R.styleable.ChannelListHeaderView_streamUiAddChannelButtonWidth,
-                    DEFAULT_ADD_CHANNEL_BUTTON_SIZE
-                )
-            }
 
             imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
@@ -176,9 +160,5 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     public fun interface AddChannelButtonClickListener {
         public fun onAddChannelClick()
-    }
-
-    private companion object {
-        private val DEFAULT_ADD_CHANNEL_BUTTON_SIZE = 40.dpToPx()
     }
 }

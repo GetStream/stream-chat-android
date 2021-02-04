@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class MessageRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomainImpl.repos.messages }
+    val repo by lazy { chatDomainImpl.repos }
 
     private fun AnyChannelPaginationRequest.setFilter(messageFilterDirection: Pagination, messageFilterValue: String) {
         this.messageFilterDirection = messageFilterDirection
@@ -23,8 +23,8 @@ internal class MessageRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repo.insert(data.message1)
-        val message = repo.select(data.message1.id) { data.userMap.getValue(it) }
+        repo.insertMessage(data.message1)
+        val message = repo.selectMessage(data.message1.id) { data.userMap.getValue(it) }
         // ignore the channel field, we don't have that information at the message repository level
         Truth.assertThat(message).isEqualTo(data.message1)
     }
@@ -44,20 +44,20 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     fun testMessageObjectWithExtraData() = runBlocking {
         val extra = mutableMapOf("int" to 10, "string" to "green", "list" to listOf("a", "b"))
         val messageIn = data.createMessage().apply { extraData = extra; id = "testMessageObjectWithExtraData" }
-        repo.insert(messageIn, true)
-        val messageOut = repo.select(messageIn.id) { data.userMap.getValue(it) }
+        repo.insertMessage(messageIn, true)
+        val messageOut = repo.selectMessage(messageIn.id) { data.userMap.getValue(it) }
         Truth.assertThat(messageOut!!.extraData).isEqualTo(extra)
     }
 
     @Test
     fun testUpdate() = runBlocking {
-        repo.insert(data.message1, true)
-        repo.insert(data.message1Updated, true)
+        repo.insertMessage(data.message1, true)
+        repo.insertMessage(data.message1Updated, true)
 
-        val message = repo.select(data.message1Updated.id) { data.userMap.getValue(it) }
+        val message = repo.selectMessage(data.message1Updated.id) { data.userMap.getValue(it) }
 
         Truth.assertThat(message).isEqualTo(data.message1Updated)
-        Truth.assertThat(repo.messageCache.size()).isEqualTo(1)
+        Truth.assertThat(repo.messageCacheSize()).isEqualTo(1)
     }
 
     @Test
@@ -74,7 +74,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
             id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
                 data.user1; createdAt = calendar(2019, 9, 1)
         }
-        repo.insert(listOf(message1, message2, message3), true)
+        repo.insertMessages(listOf(message1, message2, message3), true)
 
         // this should select the first message
         val pagination = AnyChannelPaginationRequest(1)

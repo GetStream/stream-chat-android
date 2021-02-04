@@ -36,8 +36,8 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
         // Insert a query, channel and message into offline storage
         val query = QueryChannelsSpec(data.filter1, QuerySort()).apply { cids = listOf(data.channel1.cid) }
         chatDomainImpl.repos.insertChannel(data.channel1)
-        chatDomainImpl.repos.messages.insert(data.message1)
-        chatDomainImpl.repos.queryChannels.insert(query)
+        chatDomainImpl.repos.insertMessage(data.message1)
+        chatDomainImpl.repos.queryInsert(query)
 
         // API call to .queryChannels is mocked and returns data.channel1
 
@@ -71,7 +71,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
         }
         // Insert 1 message into offline storage
         chatDomainImpl.repos.insertChannel(data.channel1)
-        chatDomainImpl.repos.messages.insert(data.message1)
+        chatDomainImpl.repos.insertMessage(data.message1)
 
         // API call to .watch is mocked and returns data.channel1
 
