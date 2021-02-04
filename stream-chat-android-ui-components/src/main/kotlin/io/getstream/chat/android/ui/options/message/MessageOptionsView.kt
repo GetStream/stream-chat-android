@@ -52,6 +52,7 @@ public class MessageOptionsView : FrameLayout {
         binding.flagTV.configureListItem(configuration.flagIcon, iconsTint)
         binding.muteTV.configureListItem(configuration.muteIcon, iconsTint)
         binding.blockTV.configureListItem(configuration.blockIcon, iconsTint)
+        binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
     }
 
