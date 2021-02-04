@@ -135,15 +135,14 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
                 paintStyle = Paint.Style.FILL
                 // for messages with links, we use a different background color than other messages by default.
                 // however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.
-                val myLinkBackgroundColor =
+                val backgroundTintColor = if (hasLink) {
                     style.messageBackgroundColorMine ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
-
-                val myRegularBackgroundColor = style.messageBackgroundColorMine ?: ContextCompat.getColor(
-                    view.context,
-                    MESSAGE_CURRENT_USER_BACKGROUND
-                )
-
-                val backgroundTintColor = if (hasLink) myLinkBackgroundColor else myRegularBackgroundColor
+                } else {
+                    style.messageBackgroundColorMine ?: ContextCompat.getColor(
+                        view.context,
+                        MESSAGE_CURRENT_USER_BACKGROUND
+                    )
+                }
 
                 setTint(backgroundTintColor)
             } else {
@@ -151,16 +150,14 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
                 setStrokeTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_STROKE_COLOR))
                 strokeWidth = DEFAULT_STROKE_WIDTH
 
-                val theirLinkBackgroundColor =
+                val backgroundTintColor = if (hasLink) {
                     style.messageBackgroundColorTheirs ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
-
-                val theirRegularBackgroundColor =
+                } else {
                     style.messageBackgroundColorTheirs ?: ContextCompat.getColor(
                         view.context,
                         MESSAGE_OTHER_USER_BACKGROUND
                     )
-
-                val backgroundTintColor = if (hasLink) theirLinkBackgroundColor else theirRegularBackgroundColor
+                }
 
                 setTint(backgroundTintColor)
             }

@@ -20,22 +20,22 @@ internal class MessageListItemStyle private constructor(
 
     internal class Builder(private val attributes: TypedArray) {
         @ColorInt
-        private var messageBackgroundColorMine: Int = 0
+        private var messageBackgroundColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
-        private var messageBackgroundColorTheirs: Int = 0
+        private var messageBackgroundColorTheirs: Int = VALUE_NOT_SET
 
         @ColorInt
-        private var messageTextColorMine: Int = 0
+        private var messageTextColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
-        private var messageTextColorTheirs: Int = 0
+        private var messageTextColorTheirs: Int = VALUE_NOT_SET
 
         @ColorInt
-        private var messageLinkTextColorMine: Int = 0
+        private var messageLinkTextColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
-        private var messageLinkTextColorTheirs: Int = 0
+        private var messageLinkTextColorTheirs: Int = VALUE_NOT_SET
 
         fun messageBackgroundColorMine(
             @StyleableRes messageBackgroundColorMineStyleableId: Int,

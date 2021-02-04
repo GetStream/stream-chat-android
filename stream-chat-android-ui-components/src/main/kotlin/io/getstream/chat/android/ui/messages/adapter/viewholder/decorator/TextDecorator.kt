@@ -18,25 +18,16 @@ internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() 
         textView: TextView,
         isMine: Boolean,
     ) {
-        val defaultTextColor = ContextCompat.getColor(textView.context, R.color.stream_ui_black)
+        val styleTextColor = if (isMine) style.messageTextColorMine else style.messageTextColorTheirs
+        val styleLinkTextColor = if (isMine) style.messageLinkTextColorMine else style.messageLinkTextColorTheirs
 
-        val defaultLinkTextColor = ContextCompat.getColor(textView.context, R.color.stream_ui_accent_blue)
-
-        val textColorMine = style.messageTextColorMine ?: defaultTextColor
-
-        val textColorTheirs = style.messageTextColorTheirs ?: defaultTextColor
-
-        val linkColorTextMine = style.messageLinkTextColorMine ?: defaultLinkTextColor
-
-        val linkColorTextTheirs = style.messageLinkTextColorTheirs ?: defaultLinkTextColor
-
-        val textColor = if (isMine) textColorMine else textColorTheirs
-
-        val linkColor = if (isMine) linkColorTextMine else linkColorTextTheirs
+        val textColor = styleTextColor ?: ContextCompat.getColor(textView.context, R.color.stream_ui_black)
+        val linkTextColor =
+            styleLinkTextColor ?: ContextCompat.getColor(textView.context, R.color.stream_ui_accent_blue)
 
         textView.apply {
             setTextColor(textColor)
-            setLinkTextColor(linkColor)
+            setLinkTextColor(linkTextColor)
         }
     }
 

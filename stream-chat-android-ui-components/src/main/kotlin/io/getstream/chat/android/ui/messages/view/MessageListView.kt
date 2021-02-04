@@ -87,8 +87,7 @@ public class MessageListView : ConstraintLayout {
         private const val LOAD_MORE_THRESHOLD = 10
     }
 
-    private lateinit var messageListViewStyle:
-        MessageListViewStyle
+    private lateinit var messageListViewStyle: MessageListViewStyle
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
@@ -229,7 +228,7 @@ public class MessageListView : ConstraintLayout {
                         messageOptionsConfiguration.copy(
                             threadEnabled = !adapter.isThread && !message.isInThread(),
                         ),
-                        messageListViewStyle.itemStyle
+                        messageListViewStyle.itemStyle,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -642,7 +641,7 @@ public class MessageListView : ConstraintLayout {
             currentUser = currentUser,
             dateFormatter = messageDateFormatter,
             isDirectMessage = channel.isDirectMessaging(),
-            messageListViewStyle.itemStyle
+            messageListViewStyle.itemStyle,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
