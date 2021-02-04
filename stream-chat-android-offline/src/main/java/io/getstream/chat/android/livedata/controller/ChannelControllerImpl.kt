@@ -885,7 +885,7 @@ internal class ChannelControllerImpl(
                 deletedAt = Date()
             )
         }
-        domainImpl.repos.reactions.insert(reaction)
+        domainImpl.repos.insertReaction(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
@@ -898,7 +898,7 @@ internal class ChannelControllerImpl(
             val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insert(reaction)
+                domainImpl.repos.insertReaction(reaction)
                 Result(result.data())
             } else {
                 logger.logE(
@@ -911,7 +911,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insert(reaction)
+                domainImpl.repos.insertReaction(reaction)
                 Result(result.error())
             }
         }
@@ -931,7 +931,7 @@ internal class ChannelControllerImpl(
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        domainImpl.repos.reactions.insert(reaction)
+        domainImpl.repos.insertReaction(reaction)
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)?.copy()
@@ -945,7 +945,7 @@ internal class ChannelControllerImpl(
             val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.reactions.insert(reaction)
+                domainImpl.repos.insertReaction(reaction)
                 Result(result.data())
             } else {
                 if (result.error().isPermanent()) {
@@ -953,7 +953,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.reactions.insert(reaction)
+                domainImpl.repos.insertReaction(reaction)
                 Result(result.error())
             }
         }
