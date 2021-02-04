@@ -37,21 +37,22 @@ public class AttachmentGalleryDestination(
     }
 
     public fun register(activityResultRegistry: ActivityResultRegistry) {
-        launcher = activityResultRegistry.register("attachment_gallery_launcher", AttachmentGalleryResultContract()) {
-            it?.apply {
-                when (this) {
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Reply -> {
-                        attachmentReplyOptionHandler.onClick(this.result)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.ShowInChat -> {
-                        attachmentShowInChatOptionHandler.onClick(this.result)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Delete -> {
-                        attachmentDeleteOptionClickHandler.onClick(this.result)
-                    }
-                    is AttachmentGalleryActivity.AttachmentOptionResult.Download -> {
-                        attachmentDownloadOptionHandler.onClick(this.result)
-                    }
+        launcher = activityResultRegistry.register(
+            "attachment_gallery_launcher",
+            AttachmentGalleryResultContract()
+        ) { result ->
+            when (result) {
+                is AttachmentGalleryActivity.AttachmentOptionResult.Reply -> {
+                    attachmentReplyOptionHandler.onClick(result.result)
+                }
+                is AttachmentGalleryActivity.AttachmentOptionResult.ShowInChat -> {
+                    attachmentShowInChatOptionHandler.onClick(result.result)
+                }
+                is AttachmentGalleryActivity.AttachmentOptionResult.Delete -> {
+                    attachmentDeleteOptionClickHandler.onClick(result.result)
+                }
+                is AttachmentGalleryActivity.AttachmentOptionResult.Download -> {
+                    attachmentDownloadOptionHandler.onClick(result.result)
                 }
             }
         }
