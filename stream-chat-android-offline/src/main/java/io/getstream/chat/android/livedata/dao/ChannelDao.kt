@@ -41,7 +41,7 @@ internal interface ChannelDao {
     suspend fun setDeletedAt(cid: String, deletedAt: Date)
 
     @Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")
-    suspend fun setHidden(cid: String, hidden: Boolean, hideMessagesBefore: Date?)
+    suspend fun setHidden(cid: String, hidden: Boolean, hideMessagesBefore: Date)
 
     @Query("UPDATE stream_chat_channel_state SET hidden = :hidden WHERE cid = :cid")
     suspend fun setHidden(cid: String, hidden: Boolean)

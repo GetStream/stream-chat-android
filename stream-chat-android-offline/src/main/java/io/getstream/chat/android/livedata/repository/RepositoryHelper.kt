@@ -67,7 +67,7 @@ internal class RepositoryHelper(
         channelsRepository.setHiddenForChannel(cid, isHidden)
     }
 
-    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean, hideMessagesBefore: Date?) {
+    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean, hideMessagesBefore: Date) {
         channelsRepository.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
     }
 

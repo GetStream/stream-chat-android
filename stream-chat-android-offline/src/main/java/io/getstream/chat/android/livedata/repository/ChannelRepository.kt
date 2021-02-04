@@ -71,7 +71,7 @@ internal class ChannelRepository(
         channelDao.setDeletedAt(cid, deletedAt)
     }
 
-    internal suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date?) {
+    internal suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
         channelCache.remove(cid)
         channelDao.setHidden(cid, hidden, hideMessagesBefore)
     }
