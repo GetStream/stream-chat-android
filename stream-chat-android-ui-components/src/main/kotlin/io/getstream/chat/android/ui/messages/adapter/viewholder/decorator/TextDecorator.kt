@@ -1,9 +1,7 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
@@ -14,42 +12,25 @@ import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() {
 
-    private fun decorateMessageText(
-        textView: TextView,
-        isMine: Boolean,
-    ) {
-        val styleTextColor = if (isMine) style.messageTextColorMine else style.messageTextColorTheirs
-        val styleLinkTextColor = if (isMine) style.messageLinkTextColorMine else style.messageLinkTextColorTheirs
-
-        val textColor = styleTextColor ?: ContextCompat.getColor(textView.context, R.color.stream_ui_black)
-        val linkTextColor =
-            styleLinkTextColor ?: ContextCompat.getColor(textView.context, R.color.stream_ui_accent_blue)
-
-        textView.apply {
-            setTextColor(textColor)
-            setLinkTextColor(linkTextColor)
-        }
-    }
-
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        decorateMessageText(viewHolder.binding.messageText, data.isMine)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        decorateMessageText(viewHolder.binding.sentFiles, data.isMine)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.sentFiles::setTextColor)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        decorateMessageText(viewHolder.binding.messageText, data.isMine)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
@@ -61,11 +42,34 @@ internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() 
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        decorateMessageText(viewHolder.binding.messageText, data.isMine)
+        viewHolder.binding.apply {
+            getStyleTextColor(data.isMine)?.let { textColor ->
+                messageText.setTextColor(textColor)
+                // set title & description colors as well
+                linkAttachmentView.binding.apply {
+                    descriptionTextView.setTextColor(textColor)
+                    titleTextView.setTextColor(textColor)
+                }
+            }
+
+            getStyleLinkTextColor(data.isMine)?.let { linkTextColor ->
+                messageText.setLinkTextColor(linkTextColor)
+            }
+        }
     }
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    @ColorInt
+    private fun getStyleTextColor(isMine: Boolean): Int? {
+        return if (isMine) style.messageTextColorMine else style.messageTextColorTheirs
+    }
+
+    @ColorInt
+    private fun getStyleLinkTextColor(isMine: Boolean): Int? {
+        return if (isMine) style.messageLinkTextColorMine else style.messageLinkTextColorTheirs
+    }
 }
