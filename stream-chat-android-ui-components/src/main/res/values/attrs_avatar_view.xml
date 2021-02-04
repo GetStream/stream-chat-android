@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AvatarView">
+        <attr name="streamUiAvatarBorderColor" format="color|reference" />
+        <attr name="streamUiAvatarBorderWidth" format="dimension|reference" />
+        <attr name="streamUiAvatarTextSize" format="dimension|reference" />
+        <attr name="streamUiAvatarTextColor" format="color|reference" />
+        <attr name="streamUiAvatarTextFont" format="reference" />
+        <attr name="streamUiAvatarTextFontAssets" format="string" />
+        <attr name="streamUiAvatarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
+        <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

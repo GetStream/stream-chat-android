@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--ChannelListView-->
+    <declare-styleable name="ChannelListView">
+        <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
+    </declare-styleable>
+</resources>

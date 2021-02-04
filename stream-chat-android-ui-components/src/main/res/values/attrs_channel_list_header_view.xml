@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--ChannelsHeaderView-->
+    <declare-styleable name="ChannelListHeaderView">
+        <attr name="streamUiShowUserAvatar" format="boolean" />
+
+        <attr name="streamUiOnlineTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiOnlineTitleTextColor" format="color|reference" />
+        <attr name="streamUiOnlineTitleTextFont" format="reference" />
+        <attr name="streamUiOnlineTitleFontAssets" format="string" />
+        <attr name="streamUiOnlineTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiOfflineTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiOfflineTitleTextColor" format="color|reference" />
+        <attr name="streamUiOfflineTitleTextFont" format="reference" />
+        <attr name="streamUiOfflineTitleFontAssets" format="string" />
+        <attr name="streamUiOfflineTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiShowOfflineProgressBar" format="boolean" />
+        <attr name="streamUiOfflineProgressBarTint" format="color|reference" />
+
+        <attr name="streamUiShowAddChannelButton" format="boolean" />
+        <attr name="streamUiAddChannelButtonIcon" format="reference" />
+        <attr name="streamUiAddChannelButtonTint" format="color|reference" />
+        <attr name="streamUiAddChannelBackgroundTint" format="color|reference" />
+    </declare-styleable>
+
+</resources>
