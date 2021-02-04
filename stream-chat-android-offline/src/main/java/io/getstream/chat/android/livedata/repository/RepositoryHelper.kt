@@ -18,18 +18,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
-internal class RepositoryHelper(
-    factory: RepositoryFactory,
+internal class RepositoryHelper private constructor(
+    private val userRepository: UserRepository,
+    private val configsRepository: ChannelConfigRepository,
+    private val channelsRepository: ChannelRepository,
+    private val queryChannelsRepository: QueryChannelsRepository,
+    private val messageRepository: MessageRepository,
+    private val reactionsRepository: ReactionRepository,
+    private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
 ) {
-    private val userRepository = factory.createUserRepository()
-    private val configsRepository = factory.createChannelConfigRepository()
-    private val channelsRepository = factory.createChannelRepository()
-    private val queryChannelsRepository = factory.createQueryChannelsRepository()
-    private val messageRepository = factory.createMessageRepository(::selectUser)
-    private val reactionsRepository = factory.createReactionRepository()
-    private val syncStateRepository = factory.createSyncStateRepository()
-
     internal suspend fun selectChannels(
         channelIds: List<String>,
         defaultConfig: Config,
@@ -251,5 +249,24 @@ internal class RepositoryHelper(
 
     internal suspend fun insertSyncState(newSyncState: SyncState) {
         syncStateRepository.insert(newSyncState)
+    }
+
+    internal companion object {
+        fun create(factory: RepositoryFactory, scope: CoroutineScope): RepositoryHelper {
+            val userRepository = factory.createUserRepository()
+            val getUser: suspend (userId: String) -> User = { userId ->
+                userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+            }
+            return RepositoryHelper(
+                userRepository = factory.createUserRepository(),
+                configsRepository = factory.createChannelConfigRepository(),
+                channelsRepository = factory.createChannelRepository(),
+                queryChannelsRepository = factory.createQueryChannelsRepository(),
+                messageRepository = factory.createMessageRepository(getUser),
+                reactionsRepository = factory.createReactionRepository(),
+                syncStateRepository = factory.createSyncStateRepository(),
+                scope = scope,
+            )
+        }
     }
 }
