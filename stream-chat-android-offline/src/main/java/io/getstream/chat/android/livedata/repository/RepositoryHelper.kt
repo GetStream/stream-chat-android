@@ -83,6 +83,19 @@ internal class RepositoryHelper(
         configsRepository.insert(configs)
     }
 
+    internal suspend fun storeStateForChannels(
+        configs: Collection<ChannelConfig>? = null,
+        users: List<User>,
+        channels: Collection<Channel>,
+        messages: List<Message>,
+        cacheForMessages: Boolean = false
+    ) {
+        configs?.let { insertConfigChannel(it) }
+        insertManyUsers(users)
+        insertChannels(channels)
+        insertMessages(messages, cacheForMessages)
+    }
+
     internal suspend fun insertConfigChannel(config: ChannelConfig) {
         configsRepository.insert(config)
     }
