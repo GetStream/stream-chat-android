@@ -779,14 +779,12 @@ internal class ChatDomainImpl internal constructor(
             messages.addAll(channel.messages)
         }
 
-        // store the channel configs
-        repos.insertConfigChannel(configs)
-        // store the users
-        repos.insertManyUsers(users.values.toList())
-        // store the channel data
-        repos.insertChannels(channelsResponse)
-        // store the messages
-        repos.messages.insert(messages)
+        repos.storeStateForChannels(
+            configs = configs,
+            users = users.values.toList(),
+            channels = channelsResponse,
+            messages = messages
+        )
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
