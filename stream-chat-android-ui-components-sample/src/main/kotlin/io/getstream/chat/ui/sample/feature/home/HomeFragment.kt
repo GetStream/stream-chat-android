@@ -17,6 +17,9 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
+import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
+import io.getstream.chat.ui.sample.application.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.setBadgeNumber
 import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
@@ -42,6 +45,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        parseNotificationData()
         setupBottomNavigation()
         setupNavigationDrawer()
         viewModel.state.observe(viewLifecycleOwner, ::renderState)
@@ -65,6 +69,18 @@ class HomeFragment : Fragment() {
             setUser(viewModel.currentUser)
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
+    }
+
+    private fun parseNotificationData() {
+        requireActivity().intent?.let {
+            if (it.hasExtra(EXTRA_CHANNEL_ID) && it.hasExtra(EXTRA_MESSAGE_ID) && it.hasExtra(EXTRA_CHANNEL_TYPE)) {
+                val channelType = it.getStringExtra(EXTRA_CHANNEL_TYPE)
+                val channelId = it.getStringExtra(EXTRA_CHANNEL_ID)
+                val cid = "$channelType:$channelId"
+                val messageId = it.getStringExtra(EXTRA_MESSAGE_ID)
+                findNavController().navigateSafely(HomeFragmentDirections.actionOpenChat(cid, messageId))
             }
         }
     }
