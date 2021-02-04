@@ -75,4 +75,9 @@ internal class ChannelRepository(
         channelCache.remove(cid)
         channelDao.setHidden(cid, hidden, hideMessagesBefore)
     }
+
+    internal suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
+        channelCache.remove(cid)
+        channelDao.setHidden(cid, hidden)
+    }
 }
