@@ -26,7 +26,7 @@ internal class RepositoryHelper(
     private val configsRepository = factory.createChannelConfigRepository()
     private val channelsRepository = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
-    private val messageRepository = factory.createMessageRepository()
+    private val messageRepository = factory.createMessageRepository(::selectUser)
     private val reactionsRepository = factory.createReactionRepository()
     private val syncStateRepository = factory.createSyncStateRepository()
 
@@ -43,7 +43,7 @@ internal class RepositoryHelper(
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
                 scope.async {
-                    cid to messageRepository.selectMessagesForChannel(cid, pagination, ::selectUser)
+                    cid to messageRepository.selectMessagesForChannel(cid, pagination)
                 }
             }.awaitAll().toMap()
         } else {
@@ -150,11 +150,11 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
-        return messageRepository.selectSyncNeeded(::selectUser)
+        return messageRepository.selectMessagesSyncNeeded()
     }
 
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
-        messageRepository.select(messageIds, ::selectUser)
+        messageRepository.selectMessages(messageIds)
 
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
@@ -196,11 +196,11 @@ internal class RepositoryHelper(
     suspend fun selectMessage(
         messageId: String,
     ): Message? {
-        return messageRepository.select(messageId, ::selectUser)
+        return messageRepository.selectMessage(messageId)
     }
 
     private suspend fun selectUser(userId: String): User =
-        userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
+        userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
 
     suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsRepository.selectById(ids)
@@ -221,17 +221,16 @@ internal class RepositoryHelper(
     suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
-        getUser: suspend (userId: String) -> User,
     ): List<Message> {
-        return messageRepository.selectMessagesForChannel(cid, pagination, getUser)
+        return messageRepository.selectMessagesForChannel(cid, pagination)
     }
 
     suspend fun insertMessage(message: Message, cache: Boolean = false) {
-        messageRepository.insert(message, cache)
+        messageRepository.insertMessage(message, cache)
     }
 
     suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
-        messageRepository.insert(messages, cache)
+        messageRepository.insertMessages(messages, cache)
     }
 
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
@@ -240,10 +239,6 @@ internal class RepositoryHelper(
 
     suspend fun deleteChannelMessage(message: Message) {
         messageRepository.deleteChannelMessage(message)
-    }
-
-    fun messageCacheSize(): Int {
-        return messageRepository.messageCache.size()
     }
 
     internal suspend fun insertReaction(reaction: Reaction) {
