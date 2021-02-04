@@ -138,12 +138,13 @@ internal class SendMessagesTest {
                 eq(channelController.channelType),
                 eq(channelController.channelId),
                 same(file),
-                anyOrNull()
+                anyOrNull(),
             ) doReturn TestCall(result)
             When calling chatClient.sendImage(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
-                same(file)
+                same(file),
+                anyOrNull(),
             ) doReturn TestCall(result)
         }
     }
@@ -155,12 +156,13 @@ internal class SendMessagesTest {
                 eq(channelController.channelType),
                 eq(channelController.channelId),
                 same(file),
-                anyOrNull()
+                anyOrNull(),
             ) doReturn TestCall(result)
             When calling chatClient.sendImage(
                 eq(channelController.channelType),
                 eq(channelController.channelId),
-                same(file)
+                same(file),
+                anyOrNull(),
             ) doReturn TestCall(result)
         }
     }
