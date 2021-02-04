@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
@@ -26,7 +27,6 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -35,6 +35,9 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -66,7 +69,9 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListe
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.message.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -265,10 +270,8 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-    private val galleryImageAttachmentDestination =
-        GalleryImageAttachmentDestination(
-            Message(), // Set before navigation
-            Attachment(), // Set before navigation
+    private val attachmentGalleryDestination =
+        AttachmentGalleryDestination(
             context,
             _attachmentReplyOptionHandler,
             _attachmentShowInChatOptionClickHandler,
@@ -278,15 +281,24 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            galleryImageAttachmentDestination.apply {
-                this.message = message
-                this.attachment = attachment
-            }
+            val attachmentGalleryItems = message.attachments
+                .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+                .map {
+                    AttachmentGalleryItem(
+                        attachment = it,
+                        user = message.user,
+                        createdAt = message.getCreatedAtOrThrow(),
+                        messageId = message.id,
+                        cid = message.cid,
+                        isMine = message.user.isCurrentUser()
+                    )
+                }
+            val attachmentIndex = message.attachments.indexOf(attachment)
+
+            attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
             ChatUI.instance()
                 .navigator
-                .navigate(
-                    galleryImageAttachmentDestination
-                )
+                .navigate(attachmentGalleryDestination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -518,13 +530,13 @@ public class MessageListView : ConstraintLayout {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         activity?.activityResultRegistry?.let { registry ->
-            galleryImageAttachmentDestination.register(registry)
+            attachmentGalleryDestination.register(registry)
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        galleryImageAttachmentDestination.unregister()
+        attachmentGalleryDestination.unregister()
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {

@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.ui.gallery.toAttachment
 
 /**
  * Binds [MessageListView] with [MessageListViewModel].
@@ -63,17 +64,17 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
 
-    view.setAttachmentReplyOptionClickHandler { attachmentData ->
-        onEvent(MessageListViewModel.Event.ReplyAttachment(attachmentData.cid, attachmentData.messageId))
+    view.setAttachmentReplyOptionClickHandler { result ->
+        onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))
     }
-    view.setAttachmentShowInChatOptionClickHandler { attachmentData ->
-        onEvent(MessageListViewModel.Event.ShowMessage(attachmentData.messageId))
+    view.setAttachmentShowInChatOptionClickHandler { result ->
+        onEvent(MessageListViewModel.Event.ShowMessage(result.messageId))
     }
-    view.setAttachmentDeleteOptionClickHandler { attachmentData ->
+    view.setAttachmentDeleteOptionClickHandler { result ->
         onEvent(
             MessageListViewModel.Event.RemoveAttachment(
-                attachmentData.messageId,
-                attachmentData.toAttachment()
+                result.messageId,
+                result.toAttachment()
             )
         )
     }

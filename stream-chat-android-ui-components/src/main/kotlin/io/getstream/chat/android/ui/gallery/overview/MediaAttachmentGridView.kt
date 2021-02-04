@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.utils.extensions.use
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -75,9 +76,9 @@ public class MediaAttachmentGridView : FrameLayout {
         }
     }
 
-    public fun setAttachments(attachments: List<UserMediaAttachment>) {
-        adapter.submitList(attachments)
-        setDateText(attachments)
+    public fun setAttachments(attachmentGalleryItems: List<AttachmentGalleryItem>) {
+        adapter.submitList(attachmentGalleryItems)
+        setDateText(attachmentGalleryItems)
     }
 
     public fun disablePagination() {
@@ -96,12 +97,12 @@ public class MediaAttachmentGridView : FrameLayout {
         loadMoreListener = listener
     }
 
-    public fun getAttachments(): List<UserMediaAttachment> {
+    public fun getAttachments(): List<AttachmentGalleryItem> {
         return adapter.currentList
     }
 
-    private fun setDateText(attachments: List<UserMediaAttachment>) {
-        val createdAt = attachments[dateScrollListener.lastVisibleItemPosition].createdAt
+    private fun setDateText(attachmentGalleryItems: List<AttachmentGalleryItem>) {
+        val createdAt = attachmentGalleryItems[dateScrollListener.lastVisibleItemPosition].createdAt
         if (createdAt != null) {
             binding.dateContainer.isVisible = true
             binding.dateTextView.text = dateFormat.format(createdAt)

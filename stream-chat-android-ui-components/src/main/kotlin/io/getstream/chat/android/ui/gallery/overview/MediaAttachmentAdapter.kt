@@ -9,11 +9,14 @@ import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 
 internal class MediaAttachmentAdapter(
     private val showUserAvatars: Boolean,
     private val mediaAttachmentClickListener: MediaAttachmentClickListener,
-) : ListAdapter<UserMediaAttachment, MediaAttachmentAdapter.MediaAttachmentViewHolder>(UserMediaAttachmentDiffCallback) {
+) : ListAdapter<AttachmentGalleryItem, MediaAttachmentAdapter.MediaAttachmentViewHolder>(
+    AttachmentGalleryItemDiffCallback
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
         return StreamUiItemMediaAttachmentBinding
@@ -37,13 +40,13 @@ internal class MediaAttachmentAdapter(
             }
         }
 
-        fun bind(userMediaAttachment: UserMediaAttachment) {
+        fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
             binding.mediaImageView.load(
-                data = userMediaAttachment.imageUrl,
-                placeholderResId = R.drawable.stream_placeholder
+                data = attachmentGalleryItem.attachment.imageUrl,
+                placeholderResId = R.drawable.stream_placeholder,
             )
 
-            val user = userMediaAttachment.user
+            val user = attachmentGalleryItem.user
             if (user != null && showUserAvatars) {
                 binding.avatarView.isVisible = true
                 binding.avatarView.setUserData(user)
@@ -57,13 +60,13 @@ internal class MediaAttachmentAdapter(
         fun onMediaAttachmentClick(position: Int)
     }
 
-    private object UserMediaAttachmentDiffCallback : DiffUtil.ItemCallback<UserMediaAttachment>() {
-        override fun areItemsTheSame(oldItem: UserMediaAttachment, newItem: UserMediaAttachment): Boolean {
-            return oldItem.imageUrl == newItem.imageUrl &&
+    private object AttachmentGalleryItemDiffCallback : DiffUtil.ItemCallback<AttachmentGalleryItem>() {
+        override fun areItemsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
+            return oldItem.attachment.imageUrl == newItem.attachment.imageUrl &&
                 oldItem.createdAt == newItem.createdAt
         }
 
-        override fun areContentsTheSame(oldItem: UserMediaAttachment, newItem: UserMediaAttachment): Boolean {
+        override fun areContentsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
             return oldItem == newItem
         }
     }

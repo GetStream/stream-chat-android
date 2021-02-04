@@ -161,10 +161,6 @@
         <attr name="streamUiReactionsBubbleBorderColorMine" format="color|reference" />
     </declare-styleable>
 
-    <declare-styleable name="AttachmentGallery">
-        <attr name="streamUiCountTextColor" format="color|reference" />
-    </declare-styleable>
-
     <declare-styleable name="AttachmentOptionsView">
         <attr name="streamUiIconsDefaultTint" format="color" />
         <attr name="streamUiReplyIcon" format="reference" />
