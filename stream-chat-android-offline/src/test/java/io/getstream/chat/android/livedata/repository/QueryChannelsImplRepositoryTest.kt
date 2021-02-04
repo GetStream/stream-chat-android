@@ -11,14 +11,14 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomainImpl.repos.queryChannels }
+    private val repo by lazy { chatDomainImpl.repos }
 
     @Test
     fun testInsertAndRead() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
-        repo.insert(queryChannelsSpec)
-        val fromDB = repo.selectByFilterAndQuerySort(queryChannelsSpec)
+        repo.queryInsert(queryChannelsSpec)
+        val fromDB = repo.querySelectByFilterAndQuerySort(queryChannelsSpec)
         Truth.assertThat(queryChannelsSpec).isEqualTo(fromDB)
     }
 
@@ -26,11 +26,11 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     fun testUpdate() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
-        repo.insert(queryChannelsSpec)
+        repo.queryInsert(queryChannelsSpec)
         queryChannelsSpec.cids = listOf("a", "b", "c", "d")
-        repo.insert(queryChannelsSpec)
+        repo.queryInsert(queryChannelsSpec)
 
-        val fromDB = repo.selectByFilterAndQuerySort(queryChannelsSpec)
+        val fromDB = repo.querySelectByFilterAndQuerySort(queryChannelsSpec)
         Truth.assertThat(fromDB).isEqualTo(queryChannelsSpec)
     }
 }

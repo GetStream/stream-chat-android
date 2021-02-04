@@ -15,9 +15,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.AttachmentEntity
-import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
-import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.MessageInnerEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -183,46 +180,6 @@ internal fun randomChannel(
     team = team,
     hidden = hidden,
     hiddenMessagesBefore = hiddenMessagesBefore
-)
-
-internal fun randomChannelEntity(
-    type: String = randomString(),
-    channelId: String = randomString(),
-    cooldown: Int = randomInt(),
-    cid: String = randomCID(),
-    createdByUserId: String = randomString(),
-    frozen: Boolean = randomBoolean(),
-    hidden: Boolean? = randomBoolean(),
-    hideMessagesBefore: Date? = randomDate(),
-    mutedTill: Date? = randomDate(),
-    members: MutableMap<String, MemberEntity> = mutableMapOf(),
-    reads: MutableMap<String, ChannelUserReadEntity> = mutableMapOf(),
-    lastMessageAt: Date? = randomDate(),
-    lastMessageId: String? = randomString(),
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    extraData: MutableMap<String, Any> = mutableMapOf(),
-    syncStatus: SyncStatus = SyncStatus.COMPLETED,
-): ChannelEntity = ChannelEntity(
-    type = type,
-    channelId = channelId,
-    cooldown = cooldown,
-    cid = cid,
-    createdByUserId = createdByUserId,
-    frozen = frozen,
-    hidden = hidden,
-    hideMessagesBefore = hideMessagesBefore,
-    mutedTill = mutedTill,
-    members = members,
-    reads = reads,
-    lastMessageAt = lastMessageAt,
-    lastMessageId = lastMessageId,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    deletedAt = deletedAt,
-    extraData = extraData,
-    syncStatus = syncStatus,
 )
 
 internal fun randomMessageEntity(
