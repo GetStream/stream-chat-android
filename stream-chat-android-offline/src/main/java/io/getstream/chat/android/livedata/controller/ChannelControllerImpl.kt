@@ -355,12 +355,11 @@ internal class ChannelControllerImpl(
         setHidden(true)
         val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
-            val channelEntity = domainImpl.repos.channels.select(cid)
-            channelEntity?.let {
+            domainImpl.repos.selectChannelWithoutMessages(cid)?.let {
                 it.hidden = true
                 if (clearHistory) {
                     val now = Date()
-                    it.hideMessagesBefore = now
+                    it.hiddenMessagesBefore = now
                     hideMessagesBefore = now
                     removeMessagesBefore(now)
                     domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
@@ -375,8 +374,7 @@ internal class ChannelControllerImpl(
         setHidden(false)
         val result = channelClient.show().execute()
         if (result.isSuccess) {
-            val channelEntity = domainImpl.repos.channels.select(cid)
-            channelEntity?.let {
+            domainImpl.repos.selectChannelWithoutMessages(cid)?.let {
                 it.hidden = false
                 domainImpl.repos.channels.insert(it)
             }
@@ -564,7 +562,7 @@ internal class ChannelControllerImpl(
                 }
             }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
-            domainImpl.repos.configs.insert(ChannelConfig(channelResponse.type, channelResponse.config))
+            domainImpl.repos.insertConfigChannel(ChannelConfig(channelResponse.type, channelResponse.config))
 
             domainImpl.storeStateForChannel(channelResponse)
         } else {
@@ -633,13 +631,7 @@ internal class ChannelControllerImpl(
 
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insert(newMessage)
-
-        val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
-        channelStateEntity?.let {
-            // update channel lastMessage at and lastMessageAt
-            it.updateLastMessage(messageEntity)
-            domainImpl.repos.channels.insert(it)
-        }
+        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
         return if (online) {
             // upload attachments

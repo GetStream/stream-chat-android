@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import android.util.Base64
 import androidx.annotation.CheckResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -64,6 +65,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 
@@ -212,13 +214,14 @@ public class ChatClient internal constructor(
         return api.sendFile(channelType, channelId, file, callback)
     }
 
+    @CheckResult
     public fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback,
-    ) {
-        api.sendImage(channelType, channelId, file, callback)
+        callback: ProgressCallback? = null,
+    ): Call<String> {
+        return api.sendImage(channelType, channelId, file, callback)
     }
 
     @CheckResult
@@ -232,15 +235,6 @@ public class ChatClient internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-    }
-
-    @CheckResult
-    public fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-    ): Call<String> {
-        return api.sendImage(channelType, channelId, file)
     }
 
     @CheckResult
@@ -1130,6 +1124,15 @@ public class ChatClient internal constructor(
 
     private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
         notifications.isValidRemoteMessage(remoteMessage)
+
+    public fun devToken(userId: String): String {
+        require(userId.isNotEmpty()) { "User id must not be empty" }
+        val header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
+        val devSignature = "devtoken"
+        val payload: String =
+            Base64.encodeToString("{\"user_id\":\"$userId\"}".toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        return "$header.$payload.$devSignature"
+    }
 
     public class Builder(private val apiKey: String, private val appContext: Context) {
 

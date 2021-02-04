@@ -20,7 +20,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
     fun watchSetsMessagesAndChannelOffline() = runBlocking {
         chatDomainImpl.setOffline()
         // add a message to local storage
-        chatDomainImpl.repos.users.insertUser(data.user1)
+        chatDomainImpl.repos.insertUser(data.user1)
         chatDomainImpl.repos.insertChannel(data.channel1)
         val message1 = data.createMessage()
         channelControllerImpl.sendMessage(message1)

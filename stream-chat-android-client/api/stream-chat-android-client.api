@@ -27,6 +27,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect ()V
 	public final fun disconnectSocket ()V
@@ -83,8 +84,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendEvent$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendFile$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)V
+	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
@@ -2658,11 +2659,6 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 
 public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {
 	public static final fun toProgressCallback (Lio/getstream/chat/android/client/uploader/ProgressTracker;)Lio/getstream/chat/android/client/utils/ProgressCallback;
-}
-
-public final class io/getstream/chat/android/client/utils/ChatUtils {
-	public static final field INSTANCE Lio/getstream/chat/android/client/utils/ChatUtils;
-	public static final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/utils/FilterObject {

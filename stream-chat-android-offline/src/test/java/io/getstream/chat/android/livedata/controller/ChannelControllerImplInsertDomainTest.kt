@@ -77,7 +77,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val message1 = data.createMessage()
         channelControllerImpl.sendMessage(message1)
         // get the message and channel state both live and offline versions
-        val roomChannel = chatDomainImpl.repos.channels.select(message1.cid)
+        val roomChannel = chatDomainImpl.repos.selectChannelWithoutMessages(message1.cid)
         val liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
@@ -127,7 +127,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val filter = Filters.eq("type", "messaging")
         val query = QueryChannelsSpec(filter, QuerySort())
         query.cids = listOf("messaging:123", "messaging:234")
-        chatDomainImpl.repos.queryChannels.insert(query)
+        chatDomainImpl.repos.queryInsert(query)
     }
 
     @Test
