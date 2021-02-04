@@ -225,7 +225,6 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }
@@ -455,8 +454,8 @@ internal class EventHandlerImpl(
         }
     }
 
-    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User) {
-        if (domainImpl.currentUser.id != user.id) {
+    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
+        if (user != null && domainImpl.currentUser.id != user.id) {
             ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             // for events of current user we keep "ownReactions" from the event
