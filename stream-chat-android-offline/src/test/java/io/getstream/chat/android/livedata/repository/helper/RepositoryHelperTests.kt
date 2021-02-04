@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
@@ -16,6 +17,7 @@ import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.Verify
+import org.amshove.kluent.VerifyNoInteractions
 import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
@@ -137,4 +139,49 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
                 }
             ) was called
         }
+
+    @Test
+    fun `Proves that correct methods are called in storeStateForChannels`() {
+        runBlockingTest {
+            val configList = listOf<ChannelConfig>(mock())
+            val userList = listOf(randomUser())
+            val channelList = listOf(randomChannel())
+            val messageList = listOf(randomMessage())
+
+            sut.storeStateForChannels(
+                configs = configList,
+                users = userList,
+                channels = channelList,
+                messages = messageList,
+                cacheForMessages = false
+            )
+
+            Verify on configs that configs.insert(configList) was called
+            Verify on users that users.insert(userList) was called
+            Verify on channels that channels.insertChannels(channelList) was called
+            Verify on messages that messages.insert(messageList, false) was called
+        }
+    }
+
+    @Test
+    fun `Proves that configs are not change if null is passed`() {
+        runBlockingTest {
+            val userList = listOf(randomUser())
+            val channelList = listOf(randomChannel())
+            val messageList = listOf(randomMessage())
+
+            sut.storeStateForChannels(
+                configs = null,
+                users = userList,
+                channels = channelList,
+                messages = messageList,
+                cacheForMessages = false
+            )
+
+            VerifyNoInteractions on configs
+            Verify on users that users.insert(userList) was called
+            Verify on channels that channels.insertChannels(channelList) was called
+            Verify on messages that messages.insert(messageList, false) was called
+        }
+    }
 }
