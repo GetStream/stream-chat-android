@@ -214,13 +214,14 @@ public class ChatClient internal constructor(
         return api.sendFile(channelType, channelId, file, callback)
     }
 
+    @CheckResult
     public fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
-        callback: ProgressCallback,
-    ) {
-        api.sendImage(channelType, channelId, file, callback)
+        callback: ProgressCallback? = null,
+    ): Call<String> {
+        return api.sendImage(channelType, channelId, file, callback)
     }
 
     @CheckResult
@@ -234,15 +235,6 @@ public class ChatClient internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-    }
-
-    @CheckResult
-    public fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-    ): Call<String> {
-        return api.sendImage(channelType, channelId, file)
     }
 
     @CheckResult
@@ -1137,7 +1129,8 @@ public class ChatClient internal constructor(
         require(userId.isNotEmpty()) { "User id must not be empty" }
         val header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
         val devSignature = "devtoken"
-        val payload: String = Base64.encodeToString("{\"user_id\":\"$userId\"}".toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        val payload: String =
+            Base64.encodeToString("{\"user_id\":\"$userId\"}".toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
         return "$header.$payload.$devSignature"
     }
 

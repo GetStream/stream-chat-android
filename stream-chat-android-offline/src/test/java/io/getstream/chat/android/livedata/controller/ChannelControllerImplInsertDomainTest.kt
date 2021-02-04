@@ -20,10 +20,10 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
     @Test
     fun reactionStorage() = runBlocking {
-        chatDomainImpl.repos.messages.insert(data.message1)
+        chatDomainImpl.repos.insertMessage(data.message1)
         val reaction = data.reaction1.copy()
         reaction.syncStatus = SyncStatus.SYNC_NEEDED
-        chatDomainImpl.repos.reactions.insert(reaction)
+        chatDomainImpl.repos.insertReaction(reaction)
         val results = chatDomainImpl.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
@@ -79,7 +79,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         // get the message and channel state both live and offline versions
         val roomChannel = chatDomainImpl.repos.selectChannelWithoutMessages(message1.cid)
         val liveChannel = channelControllerImpl.toChannel()
-        var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
+        var roomMessages = chatDomainImpl.repos.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         ) { data.userMap.getValue(it) }
@@ -102,7 +102,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         messages = chatDomainImpl.retryMessages()
         Truth.assertThat(messages.size).isEqualTo(1)
 
-        roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
+        roomMessages = chatDomainImpl.repos.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         ) { data.userMap.getValue(it) }
@@ -133,9 +133,9 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     @Test
     fun insertReaction() = runBlocking {
         // check DAO layer and converters
-        chatDomainImpl.repos.messages.insert(data.message1)
+        chatDomainImpl.repos.insertMessage(data.message1)
         val reaction = data.reaction1.copy()
-        chatDomainImpl.repos.reactions.insert(reaction)
+        chatDomainImpl.repos.insertReaction(reaction)
         val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessageByType(
             reaction.messageId,
             reaction.userId,

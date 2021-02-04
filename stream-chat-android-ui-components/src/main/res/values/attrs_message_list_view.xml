@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MessageListView">
+        <!-- Scroll button-->
+        <attr name="streamUiScrollButtonEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
+        <attr name="streamUiScrollButtonColor" format="color|reference" />
+        <attr name="streamUiScrollButtonRippleColor" format="color|reference" />
+        <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
+        <attr name="streamUiScrollButtonIcon" format="reference" />
+
+        <attr name="streamUiLoadMoreThreshold" format="integer" />
+        <attr name="streamUiNewMessagesBehaviour" format="enum">
+            <enum name="scroll_to_bottom" value="0" />
+            <enum name="count_new_messages" value="1" />
+        </attr>
+
+        <attr name="streamUiReplyOptionIcon" format="reference" />
+        <attr name="streamUiThreadReplyOptionIcon" format="reference" />
+        <attr name="streamUiRetryOptionIcon" format="reference" />
+        <attr name="streamUiCopyOptionIcon" format="reference" />
+        <attr name="streamUiEditOptionIcon" format="reference" />
+        <attr name="streamUiFlagOptionIcon" format="reference" />
+        <attr name="streamUiMuteOptionIcon" format="reference" />
+        <attr name="streamUiBlockOptionIcon" format="reference" />
+        <attr name="streamUiDeleteOptionIcon" format="reference" />
+        <attr name="streamUiMessageOptionIconColor" format="color" />
+        <attr name="streamUiCopyMessageActionEnabled" format="color" />
+        <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
+
+        <!-- Message text color -->
+        <attr name="streamUiMessageTextColorMine" format="color" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+
+        <!-- Message background color -->
+        <attr name="streamUiMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
+
+        <!-- Message link color -->
+        <attr name="streamUiMessageLinkColorMine" format="color" />
+        <attr name="streamUiMessageLinkColorTheirs" format="color" />
+    </declare-styleable>
+</resources>

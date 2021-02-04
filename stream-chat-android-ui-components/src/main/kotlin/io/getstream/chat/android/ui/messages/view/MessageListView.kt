@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import io.getstream.chat.android.chat.navigation.GalleryImageAttachmentDestination
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -36,6 +35,9 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemAdapter
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
@@ -67,7 +69,9 @@ import io.getstream.chat.android.ui.messages.view.MessageListView.UserClickListe
 import io.getstream.chat.android.ui.messages.view.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.options.message.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.isInThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -149,20 +153,19 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
-    private var confirmDeleteMessageHandler =
-        ConfirmDeleteMessageHandler { message, title, description, positiveText, negativeText, confirmCallback ->
-            AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(description)
-                .setPositiveButton(positiveText) { dialog, _ ->
-                    dialog.dismiss()
-                    confirmCallback()
-                }
-                .setNegativeButton(negativeText) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
+    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, confirmCallback ->
+        AlertDialog.Builder(context)
+            .setTitle(R.string.stream_ui_message_option_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_message_option_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_option_delete_positive_button) { dialog, _ ->
+                dialog.dismiss()
+                confirmCallback()
+            }
+            .setNegativeButton(R.string.stream_ui_message_option_delete_negative_button) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     private var _attachmentReplyOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentReplyOptionHandler {
@@ -237,10 +240,6 @@ public class MessageListView : ConstraintLayout {
                         setConfirmDeleteMessageClickHandler { message, callback ->
                             confirmDeleteMessageHandler.onConfirmDeleteMessage(
                                 message,
-                                messageOptionsConfiguration.deleteConfirmationTitle,
-                                messageOptionsConfiguration.deleteConfirmationMessage,
-                                messageOptionsConfiguration.deleteConfirmationPositiveButton,
-                                messageOptionsConfiguration.deleteConfirmationNegativeButton,
                                 callback::onConfirmDeleteMessage
                             )
                         }
@@ -272,10 +271,8 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-    private val galleryImageAttachmentDestination =
-        GalleryImageAttachmentDestination(
-            Message(), // Set before navigation
-            Attachment(), // Set before navigation
+    private val attachmentGalleryDestination =
+        AttachmentGalleryDestination(
             context,
             _attachmentReplyOptionHandler,
             _attachmentShowInChatOptionClickHandler,
@@ -285,15 +282,24 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            galleryImageAttachmentDestination.apply {
-                this.message = message
-                this.attachment = attachment
-            }
+            val attachmentGalleryItems = message.attachments
+                .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+                .map {
+                    AttachmentGalleryItem(
+                        attachment = it,
+                        user = message.user,
+                        createdAt = message.getCreatedAtOrThrow(),
+                        messageId = message.id,
+                        cid = message.cid,
+                        isMine = message.user.isCurrentUser()
+                    )
+                }
+            val attachmentIndex = message.attachments.indexOf(attachment)
+
+            attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
             ChatUI.instance()
                 .navigator
-                .navigate(
-                    galleryImageAttachmentDestination
-                )
+                .navigate(attachmentGalleryDestination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -446,15 +452,6 @@ public class MessageListView : ConstraintLayout {
             scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
 
-        tArray.getText(R.styleable.MessageListView_streamUiMessagesEmptyStateLabelText)
-            ?.let { emptyStateText ->
-                emptyStateView.let {
-                    if (it is TextView) {
-                        it.text = emptyStateText
-                    }
-                }
-            }
-
         configureMessageOptions(tArray)
         tArray.recycle()
     }
@@ -465,66 +462,46 @@ public class MessageListView : ConstraintLayout {
             ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        val replyText = tArray.getString(R.styleable.MessageListView_streamUiReplyOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_reply)
         val replyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiReplyOptionIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
-        val threadReplyText =
-            tArray.getString(R.styleable.MessageListView_streamUiThreadReplyOptionMessage)
-                ?: context.getString(R.string.stream_ui_message_option_thread_reply)
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
         )
 
-        val retryText =
-            tArray.getString(R.styleable.MessageListView_streamUiRetryOptionMessage)
-                ?: context.getString(R.string.stream_ui_message_option_retry)
         val retryIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiRetryOptionIcon,
             R.drawable.stream_ui_ic_send
         )
 
-        val copyText = tArray.getString(R.styleable.MessageListView_streamUiCopyOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_copy)
         val copyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiCopyOptionIcon,
             R.drawable.stream_ui_ic_copy
         )
 
-        val editText = tArray.getString(R.styleable.MessageListView_streamUiEditOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_edit)
         val editIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiEditOptionIcon,
             R.drawable.stream_ui_ic_edit
         )
 
-        val flagText = tArray.getString(R.styleable.MessageListView_streamUiFlagOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_flag)
         val flagIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiFlagOptionIcon,
             R.drawable.stream_ui_ic_flag
         )
 
-        val muteText = tArray.getString(R.styleable.MessageListView_streamUiMuteOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_mute)
         val muteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiMuteOptionIcon,
             R.drawable.stream_ui_ic_mute
         )
 
-        val blockText = tArray.getString(R.styleable.MessageListView_streamUiBlockOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_block_user)
         val blockIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiBlockOptionIcon,
             R.drawable.stream_ui_ic_user_block
         )
 
-        val deleteText = tArray.getString(R.styleable.MessageListView_streamUiDeleteOptionMessage)
-            ?: context.getString(R.string.stream_ui_message_option_delete_user)
         val deleteIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiDeleteOptionIcon,
             R.drawable.stream_ui_ic_delete
@@ -535,61 +512,32 @@ public class MessageListView : ConstraintLayout {
         val deleteConfirmationEnabled =
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
-        val deleteDialogTitle =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_title)
-
-        val deleteDialogMessage =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_confirmation_message)
-
-        val deleteDialogPositiveButton =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_positive_button)
-
-        val deleteDialogNegativeButton =
-            tArray.getString(R.styleable.MessageListView_streamUiDeleteConfirmationTitle)
-                ?: resources.getString(R.string.stream_ui_message_option_delete_negative_button)
-
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
-            replyText = replyText,
             replyIcon = replyIcon,
-            threadReplyText = threadReplyText,
             threadReplyIcon = threadReplyIcon,
-            retryText = retryText,
             retryIcon = retryIcon,
-            copyText = copyText,
             copyIcon = copyIcon,
-            editText = editText,
             editIcon = editIcon,
-            flagText = flagText,
             flagIcon = flagIcon,
-            muteText = muteText,
             muteIcon = muteIcon,
-            blockText = blockText,
             blockIcon = blockIcon,
-            deleteText = deleteText,
             deleteIcon = deleteIcon,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
-            deleteConfirmationTitle = deleteDialogTitle,
-            deleteConfirmationMessage = deleteDialogMessage,
-            deleteConfirmationPositiveButton = deleteDialogPositiveButton,
-            deleteConfirmationNegativeButton = deleteDialogNegativeButton,
         )
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         activity?.activityResultRegistry?.let { registry ->
-            galleryImageAttachmentDestination.register(registry)
+            attachmentGalleryDestination.register(registry)
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        galleryImageAttachmentDestination.unregister()
+        attachmentGalleryDestination.unregister()
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {
@@ -976,10 +924,6 @@ public class MessageListView : ConstraintLayout {
     public fun interface ConfirmDeleteMessageHandler {
         public fun onConfirmDeleteMessage(
             message: Message,
-            title: String,
-            description: String,
-            positiveText: String,
-            negativeText: String,
             confirmCallback: () -> Unit,
         )
     }

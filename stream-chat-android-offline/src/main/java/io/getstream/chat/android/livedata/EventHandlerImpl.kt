@@ -348,11 +348,9 @@ internal class EventHandlerImpl(
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
-                    val syncStateRepo = domainImpl.repos.syncState
-
-                    syncStateRepo.select(event.user.id)?.let { state ->
-                        if (state.markedAllReadAt == null || state.markedAllReadAt?.before(event.createdAt) == true) {
-                            syncStateRepo.insert(state.copy(markedAllReadAt = event.createdAt))
+                    domainImpl.repos.selectSyncState(event.user.id)?.let { state ->
+                        if (state.markedAllReadAt == null || state.markedAllReadAt.before(event.createdAt)) {
+                            domainImpl.repos.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
                         }
                     }
                 }
@@ -416,13 +414,13 @@ internal class EventHandlerImpl(
         for (event in events) {
             when (event) {
                 is NotificationChannelTruncatedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                 }
                 is ChannelTruncatedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                 }
                 is ChannelDeletedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.updateChannelByDeletedDate(event.cid, event.createdAt)
                 }
             }

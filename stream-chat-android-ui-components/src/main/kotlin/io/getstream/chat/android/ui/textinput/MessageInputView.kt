@@ -260,16 +260,6 @@ public class MessageInputView : ConstraintLayout {
                 )
             )
 
-            layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.MessageInputView_streamUiAttachButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
-            )
-
-            layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.MessageInputView_streamUiAttachButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
-            )
-
             setOnClickListener {
                 context.getFragmentManager()?.let {
                     AttachmentDialogFragment.newInstance()
@@ -304,16 +294,6 @@ public class MessageInputView : ConstraintLayout {
                         context.getColorCompat(R.color.stream_ui_grey_gainsboro)
                     )
                 )
-            )
-
-            layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.MessageInputView_streamUiLightningButtonWidth,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
-            )
-
-            layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.MessageInputView_streamUiLightningButtonHeight,
-                context.resources.getDimensionPixelSize(R.dimen.stream_ui_message_input_button_size)
             )
 
             setOnClickListener {
@@ -392,8 +372,6 @@ public class MessageInputView : ConstraintLayout {
                     context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
                 ).toFloat()
             )
-
-            typedArray.getText(R.styleable.MessageInputView_streamUiMessageInputHint)?.let(this::setHint)
 
             setInputFieldScrollBarEnabled(
                 typedArray.getBoolean(

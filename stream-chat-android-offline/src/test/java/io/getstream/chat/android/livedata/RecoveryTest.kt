@@ -44,7 +44,7 @@ internal class ConnectedRecoveryTest : BaseDomainTest2() {
         chatDomainImpl.channel(cid)
         chatDomainImpl.initJob.await()
         val syncState1 = chatDomainImpl.storeSyncState()
-        val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
+        val syncState2 = chatDomainImpl.repos.selectSyncState(data.user1.id)
         Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
     }
 

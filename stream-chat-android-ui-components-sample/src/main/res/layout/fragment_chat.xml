@@ -12,7 +12,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamUiMessagesHeaderThreadModeTitle="Thread Reply"
         />
 
     <io.getstream.chat.android.ui.messages.view.MessageListView
@@ -25,6 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
+        app:streamUiMessageBackgroundColorMine="@color/design_default_color_error"
         />
 
     <io.getstream.chat.android.ui.suggestions.SuggestionListView

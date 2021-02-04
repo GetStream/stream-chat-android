@@ -261,7 +261,7 @@ internal class ChatDomainImpl internal constructor(
             repos.loadChannelConfig()
 
             // load the current user from the db
-            val syncState = repos.syncState.select(currentUser.id) ?: SyncState(currentUser.id)
+            val syncState = repos.selectSyncState(currentUser.id) ?: SyncState(currentUser.id)
             // set active channels and recover
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
@@ -331,7 +331,7 @@ internal class ChatDomainImpl internal constructor(
                 activeQueryIds =
                     activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
             )
-            repos.syncState.insert(newSyncState)
+            repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
         }
 
@@ -728,9 +728,9 @@ internal class ChatDomainImpl internal constructor(
 
             if (result.isSuccess) {
                 // TODO: 1.1 image upload support
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.COMPLETED))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                repos.messages.insert(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
             }
         }
 
@@ -749,10 +749,10 @@ internal class ChatDomainImpl internal constructor(
 
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                repos.reactions.insert(reaction)
+                repos.insertReaction(reaction)
             } else if (result.error().isPermanent()) {
                 reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                repos.reactions.insert(reaction)
+                repos.insertReaction(reaction)
             }
         }
     }
@@ -779,14 +779,12 @@ internal class ChatDomainImpl internal constructor(
             messages.addAll(channel.messages)
         }
 
-        // store the channel configs
-        repos.insertConfigChannel(configs)
-        // store the users
-        repos.insertManyUsers(users.values.toList())
-        // store the channel data
-        repos.insertChannels(channelsResponse)
-        // store the messages
-        repos.messages.insert(messages)
+        repos.storeStateForChannels(
+            configs = configs,
+            users = users.values.toList(),
+            channels = channelsResponse,
+            messages = messages
+        )
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }

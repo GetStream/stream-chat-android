@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,6 +14,14 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
+
+    @Before
+    override fun setup() {
+        super.setup()
+        runBlocking {
+            chatDomainImpl.repos.insertManyUsers(data.userMap.values)
+        }
+    }
 
     @Test
     fun `verify that a missing channel config returns the default`() = runBlocking {
@@ -24,7 +33,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     fun `verify that a new message event is stored in room`() = runBlocking {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+        val message = chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNotNull()
     }
 
@@ -49,7 +58,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNotNull()
     }
 
@@ -65,7 +74,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -77,7 +86,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
         val message =
-            chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+            chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -90,7 +99,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =
-                chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id) { data.userMap[it]!! }
+                chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
             val channel = chatDomainImpl.repos.selectChannelWithoutMessages(data.channel1.cid)
             Truth.assertThat(message).isNull()
             Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
@@ -147,7 +156,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         Truth.assertThat(secondId).isEqualTo(messageId)
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent)
         // fetch the message
-        var message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
+        var message = chatDomainImpl.repos.selectMessage(messageId)!!
 
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(1)
@@ -160,7 +169,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
         // add a reaction from a different user, it should not go into own reaction
         chatDomainImpl.eventHandler.handleEvent(data.reactionEvent2)
-        message = chatDomainImpl.repos.messages.select(messageId) { data.userMap[it]!! }!!
+        message = chatDomainImpl.repos.selectMessage(messageId)!!
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
         Truth.assertThat(message.ownReactions.size).isEqualTo(1)

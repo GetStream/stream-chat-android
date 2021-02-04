@@ -19,7 +19,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     fun loadHidden() = runBlocking {
         val channel = data.channel1
         channel.hidden = true
-        chatDomainImpl.repos.channels.insert(channel)
+        chatDomainImpl.repos.insertChannel(channel)
         // setup the channel controller
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
@@ -33,7 +33,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         // insert the channel and queryChannelsResult
         val channel = data.channel1
         channel.hidden = true
-        chatDomainImpl.repos.channels.insert(channel)
+        chatDomainImpl.repos.insertChannel(channel)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))
         chatDomainImpl.repos.queryInsert(query)
 
@@ -78,7 +78,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         // add a message that should no longer be visible afterwards
-        chatDomainImpl.repos.messages.insert(data.message2Older)
+        chatDomainImpl.repos.insertMessage(data.message2Older)
         channelControllerImpl.handleEvent(data.newMessageEvent2)
         // keep history = false, so messages should go bye bye
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, false).execute()
