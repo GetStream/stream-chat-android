@@ -23,7 +23,7 @@ jobs:
           gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
           echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> $GITHUB_ENV
       - name: Assemble
-        run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
+        run: ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
