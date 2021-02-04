@@ -339,6 +339,11 @@ public class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem$Cr
 	public synthetic fun newArray (I)[Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentDialogFragment$sam$i$androidx_lifecycle_Observer$0 : androidx/lifecycle/Observer {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun onChanged (Ljava/lang/Object;)V
+}
+
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$Companion;
 	public fun <init> (Landroid/content/Context;)V
