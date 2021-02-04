@@ -21,7 +21,6 @@ jobs:
           gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
           echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
           gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
-          echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> $GITHUB_ENV
       - name: Assemble
         run: ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
       - name: Configure AWS credentials
@@ -31,4 +30,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Upload APK
-        run: aws s3 cp stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk s3://$AWS_S3_BUCKET --sse AES256
+        run: aws s3 cp stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk s3://${{ secrets.AWS_S3_BUCKET }} --sse AES256
