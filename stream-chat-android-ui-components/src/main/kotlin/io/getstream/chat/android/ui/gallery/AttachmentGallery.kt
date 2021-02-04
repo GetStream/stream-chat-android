@@ -45,8 +45,6 @@ public class AttachmentGallery : ConstraintLayout {
     private var countText: String = "%s - %s"
     private lateinit var adapter: AttachmentSlidePagerAdapter
 
-    private var imagesMenuTitle: String = ""
-
     private var imageList: List<UserMediaAttachment> = mutableListOf()
 
     private var isFullScreen = false
@@ -157,15 +155,10 @@ public class AttachmentGallery : ConstraintLayout {
 
     private fun configureAttributes(attributeSet: AttributeSet) {
         context.obtainStyledAttributes(attributeSet, R.styleable.AttachmentGallery).use { tArray ->
-            countText = tArray.getString(R.styleable.AttachmentGallery_streamUiCountText) ?: "%s - %s"
-
             tArray.getColor(
                 R.styleable.AttachmentGallery_streamUiCountTextColor,
                 ContextCompat.getColor(context, R.color.stream_ui_black)
             ).let(binding.photoCount::setTextColor)
-
-            imagesMenuTitle = tArray.getString(R.styleable.AttachmentGallery_streamUiImagesMenuTitle)
-                ?: context.getString(R.string.stream_ui_images_menu_default_title)
         }
     }
 
@@ -190,7 +183,7 @@ public class AttachmentGallery : ConstraintLayout {
     private fun configureImagesMenu() {
         binding.menuButton.setOnClickListener {
             context.getFragmentManager()?.let { fragmentManager ->
-                MediaAttachmentDialogFragment.newInstance(imagesMenuTitle, imageList)
+                MediaAttachmentDialogFragment.newInstance(imageList)
                     .apply {
                         setImageClickListener { position ->
                             binding.attachmentGallery.setCurrentItem(position, true)

@@ -59,10 +59,10 @@ internal class AttachmentOptionsView : FrameLayout {
     private fun init(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.AttachmentOptionsView).use { array ->
             readConfiguration(array).run {
-                binding.reply.configureListItem(replyText, replyIcon, iconsDefaultTint)
-                binding.showInChat.configureListItem(showInChatText, showInChatIcon, iconsDefaultTint)
-                binding.saveImage.configureListItem(saveImageText, saveImageIcon, iconsDefaultTint)
-                binding.delete.configureListItem(deleteText, deleteIcon, deleteIconTint, deleteTextTint)
+                binding.reply.configureListItem(replyIcon, iconsDefaultTint)
+                binding.showInChat.configureListItem(showInChatIcon, iconsDefaultTint)
+                binding.saveImage.configureListItem(saveImageIcon, iconsDefaultTint)
+                binding.delete.configureListItem(deleteIcon, deleteIconTint, deleteTextTint)
             }
         }
     }
@@ -77,32 +77,21 @@ internal class AttachmentOptionsView : FrameLayout {
             ContextCompat.getColor(context, R.color.stream_ui_grey)
         )
 
-        val replyText = array.getString(R.styleable.AttachmentOptionsView_streamUiReplyText)
-            ?: context.getString(R.string.stream_ui_attachment_option_reply)
         val replyIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiReplyIcon,
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
-        val showInChatText =
-            array.getString(R.styleable.AttachmentOptionsView_streamUiShowInChatText)
-                ?: context.getString(R.string.stream_ui_attachment_option_show_in_chat)
         val showInChatIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiShowInChatIcon,
             R.drawable.stream_ui_ic_show_in_chat
         )
 
-        val saveImageText =
-            array.getString(R.styleable.AttachmentOptionsView_streamUiSaveImageText)
-                ?: context.getString(R.string.stream_ui_attachment_option_save)
         val saveImageIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiSaveImageIcon,
             R.drawable.stream_ui_ic_download
         )
 
-        val deleteText =
-            array.getString(R.styleable.AttachmentOptionsView_streamUiDeleteText)
-                ?: context.getString(R.string.stream_ui_attachment_option_delete)
         val deleteIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiDeleteIcon,
             R.drawable.stream_ui_ic_delete
@@ -119,13 +108,9 @@ internal class AttachmentOptionsView : FrameLayout {
 
         return Configuration(
             iconsDefaultTint = iconsTint,
-            replyText = replyText,
             replyIcon = replyIcon,
             showInChatIcon = showInChatIcon,
-            showInChatText = showInChatText,
             saveImageIcon = saveImageIcon,
-            saveImageText = saveImageText,
-            deleteText = deleteText,
             deleteIcon = deleteIcon,
             deleteIconTint = deleteIconTint,
             deleteTextTint = deleteTextTint
@@ -134,16 +119,12 @@ internal class AttachmentOptionsView : FrameLayout {
 
     internal data class Configuration(
         val iconsDefaultTint: Int,
-        val replyText: String,
         val replyIcon: Int,
         val showInChatIcon: Int,
-        val showInChatText: String,
         val saveImageIcon: Int,
-        val saveImageText: String,
         val deleteIcon: Int,
         val deleteIconTint: Int,
         val deleteTextTint: Int,
-        val deleteText: String,
     ) : Serializable
 
     interface ReplyClickListener {
@@ -162,13 +143,11 @@ internal class AttachmentOptionsView : FrameLayout {
         fun onClick()
     }
 
-    private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int) {
-        this.text = text
+    private fun TextView.configureListItem(icon: Int, iconTint: Int) {
         this.setLeftDrawable(icon, iconTint)
     }
 
-    private fun TextView.configureListItem(text: String, icon: Int, iconTint: Int, textTint: Int) {
-        this.text = text
+    private fun TextView.configureListItem(icon: Int, iconTint: Int, textTint: Int) {
         this.setTextColor(textTint)
         this.setLeftDrawable(icon, iconTint)
     }

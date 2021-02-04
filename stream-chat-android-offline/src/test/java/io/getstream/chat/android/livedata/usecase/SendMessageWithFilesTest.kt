@@ -45,12 +45,13 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
                 same(file),
-                anyOrNull()
+                anyOrNull(),
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull(),
             ) doReturn TestCall(result)
         }
     }
@@ -62,12 +63,13 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
                 same(file),
-                anyOrNull()
+                anyOrNull(),
             ) doReturn TestCall(result)
             When calling clientMock.sendImage(
                 eq(channelControllerImpl.channelType),
                 eq(channelControllerImpl.channelId),
-                same(file)
+                same(file),
+                anyOrNull(),
             ) doReturn TestCall(result)
         }
     }

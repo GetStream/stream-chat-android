@@ -17,7 +17,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     @Before
     fun beforeEach() {
         runBlocking {
-            helper.messages.insert(data.message1)
+            helper.insertMessage(data.message1)
         }
     }
 

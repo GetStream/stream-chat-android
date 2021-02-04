@@ -30,7 +30,6 @@ public class MessagesHeaderView : ConstraintLayout {
     private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
 
     private var normalModeTitle: String? = null
-    private var threadModeTitle: String? = null
     private var normalModeSubTitle: String? = null
 
     private var threadMode = false
@@ -60,7 +59,6 @@ public class MessagesHeaderView : ConstraintLayout {
             configOfflineLabel(it)
             configSearchingForNetworkLabel(it)
             configOnlineLabel(it)
-            configThreadMode(it)
         }
     }
 
@@ -159,7 +157,7 @@ public class MessagesHeaderView : ConstraintLayout {
     }
 
     public fun setThreadMode() {
-        val title = threadModeTitle ?: context.getString(R.string.stream_ui_title_thread_reply)
+        val title = context.getString(R.string.stream_ui_title_thread_reply)
         val subTitleComplement = normalModeTitle
 
         binding.title.text = title
@@ -170,8 +168,6 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun configSearchingForNetworkLabel(attrs: TypedArray) {
         val textStyle = getSearchingForNetworkTextStyle(attrs)
         binding.searchingForNetworkText.apply {
-            text = attrs.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelText)
-                ?: context.getString(R.string.stream_ui_message_list_header_searching_for_network)
             setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
@@ -246,8 +242,6 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun configOfflineLabel(attrs: TypedArray) {
         val textStyle = getOfflineTextStyle(attrs)
         binding.offlineText.apply {
-            text = attrs.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelText)
-                ?: context.getString(R.string.stream_ui_message_list_header_offline)
             setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
@@ -256,10 +250,6 @@ public class MessagesHeaderView : ConstraintLayout {
             setTextSizePx(textStyle.size.toFloat())
             typeface = textStyle.font
         }
-    }
-
-    private fun configThreadMode(typedArray: TypedArray) {
-        threadModeTitle = typedArray.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderThreadModeTitle)
     }
 
     private fun getOfflineTextStyle(typedArray: TypedArray): TextStyle {
@@ -285,7 +275,7 @@ public class MessagesHeaderView : ConstraintLayout {
     private fun configOnlineLabel(attrs: TypedArray) {
         val textStyle = getOnlineTextStyle(attrs)
         binding.onlineLabel.apply {
-            text = attrs.getString(R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelText) ?: ""
+            text = ""
             setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
             typeface = textStyle.font
