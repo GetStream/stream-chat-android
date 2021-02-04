@@ -3,8 +3,6 @@ package io.getstream.chat.docs.java;
 import android.os.Handler;
 import android.os.Looper;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Member;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 
 import static io.getstream.chat.android.client.api.models.Pagination.LESS_THAN;
@@ -531,11 +528,10 @@ public class Channels {
             // Get list of muted channels when user is connected
             User user = new User();
             user.setId("user-id");
-            client.setUser(user, "token", new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
+            client.connectUser(user, "token").enqueue(result -> {
+                if (result.isSuccess()) {
                     // Mutes contains the list of channel mutes
-                    List<ChannelMute> mutes = data.getUser().getChannelMutes();
+                    List<ChannelMute> mutes = result.data().getUser().getChannelMutes();
                 }
             });
 

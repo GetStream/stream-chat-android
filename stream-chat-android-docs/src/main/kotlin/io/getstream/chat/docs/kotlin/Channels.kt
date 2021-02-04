@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.docs.StaticInstances.TAG
@@ -514,17 +513,14 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             }
 
             // Get list of muted channels when user is connected
-            client.setUser(
-                User("user-id"),
-                "token",
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user = data.user
+            client.connectUser(User("user-id"), "token")
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val user = result.data().user
                         // Mutes contains the list of channel mutes
                         val mutes: List<ChannelMute> = user.channelMutes
                     }
                 }
-            )
 
             // Get updates about muted channels
             client.subscribeFor<ChannelsMuteEvent> { event ->

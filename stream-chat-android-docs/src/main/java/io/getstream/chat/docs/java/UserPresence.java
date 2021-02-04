@@ -2,8 +2,6 @@ package io.getstream.chat.docs.java;
 
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,14 +11,11 @@ import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.api.models.WatchChannelRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -35,18 +30,14 @@ public class UserPresence {
         User user = new User();
         user.setId("user-id");
         user.setInvisible(true);
-        client.setUser(user, "{{ chat_user_token }}", new InitConnectionListener() {
-            @Override
-            public void onSuccess(@NotNull ConnectionData data) {
-                User user = data.getUser();
-                String connectionId = data.getConnectionId();
+        client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
+            if (result.isSuccess()) {
+                User userRes = result.data().getUser();
+                String connectionId = result.data().getConnectionId();
 
-                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-            }
-
-            @Override
-            public void onError(@NotNull ChatError error) {
-                Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+            } else {
+                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
             }
         });
     }
