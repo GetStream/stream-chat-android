@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
-import io.getstream.chat.android.livedata.repository.ChannelRepository
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -59,11 +58,7 @@ internal class SendMessagesTest {
     private val channelId: String = randomString()
     private lateinit var channelController: ChannelControllerImpl
 
-    private val channelsRepository: ChannelRepository = mock()
-
-    private val repos: RepositoryHelper = mock {
-        on(it.channels) doReturn channelsRepository
-    }
+    private val repos: RepositoryHelper = mock()
 
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
 

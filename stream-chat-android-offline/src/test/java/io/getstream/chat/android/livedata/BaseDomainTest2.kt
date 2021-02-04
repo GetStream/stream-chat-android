@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -84,6 +85,7 @@ internal open class BaseDomainTest2 {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
+    @CallSuper
     open fun setup() {
         clientMock = createClientMock()
         db = createRoomDb()
