@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import android.content.Context
 import android.os.Handler
 import android.util.Log
+import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -95,6 +96,7 @@ internal open class BaseDomainTest {
     }
 
     @Before
+    @CallSuper
     open fun setup() {
         client = createDisconnectedMockClient()
         setupChatDomain(client, false)
