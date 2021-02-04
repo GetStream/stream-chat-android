@@ -355,16 +355,14 @@ internal class ChannelControllerImpl(
         setHidden(true)
         val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
-            domainImpl.repos.selectChannelWithoutMessages(cid)?.let {
-                it.hidden = true
-                if (clearHistory) {
-                    val now = Date()
-                    it.hiddenMessagesBefore = now
-                    hideMessagesBefore = now
-                    removeMessagesBefore(now)
-                    domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                }
-                domainImpl.repos.channels.insert(it)
+            if (clearHistory) {
+                val now = Date()
+                hideMessagesBefore = now
+                removeMessagesBefore(now)
+                domainImpl.repos.deleteChannelMessagesBefore(cid, now)
+                domainImpl.repos.setHiddenForChannel(cid, true, now)
+            } else {
+                domainImpl.repos.setHiddenForChannel(cid, true)
             }
         }
         return result
@@ -374,10 +372,7 @@ internal class ChannelControllerImpl(
         setHidden(false)
         val result = channelClient.show().execute()
         if (result.isSuccess) {
-            domainImpl.repos.selectChannelWithoutMessages(cid)?.let {
-                it.hidden = false
-                domainImpl.repos.channels.insert(it)
-            }
+            domainImpl.repos.setHiddenForChannel(cid, false)
         }
         return result
     }

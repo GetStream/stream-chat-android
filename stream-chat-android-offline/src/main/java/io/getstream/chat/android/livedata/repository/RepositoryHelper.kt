@@ -23,7 +23,7 @@ internal class RepositoryHelper(
 ) {
     private val userRepository = factory.createUserRepository()
     private val configsRepository = factory.createChannelConfigRepository()
-    val channels = factory.createChannelRepository()
+    private val channels = factory.createChannelRepository()
     private val queryChannelsRepository = factory.createQueryChannelsRepository()
     private val messageRepository = factory.createMessageRepository()
     val reactions = factory.createReactionRepository()
@@ -61,6 +61,10 @@ internal class RepositoryHelper(
         } else {
             messages
         }
+    }
+
+    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean, hideMessagesBefore: Date? = null) {
+        channels.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
     }
 
     internal suspend fun updateCurrentUser(currentUser: User) {
@@ -173,11 +177,15 @@ internal class RepositoryHelper(
         userRepository.insert(channels.flatMap(Channel::users))
     }
 
-    suspend fun removeChannel(cid: String) {
+    internal suspend fun deleteChannel(cid: String) {
         channels.delete(cid)
     }
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> = channels.selectSyncNeeded(::selectUser, ::selectMessage)
+
+    suspend fun removeChannel(cid: String) {
+        channels.delete(cid)
+    }
 
     suspend fun selectMessage(
         messageId: String,
