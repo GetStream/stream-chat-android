@@ -52,7 +52,7 @@ task clean(type: Delete) {
 }
 
 gitVersioner {
-    def branches = ['develop', 'master']
+    def branches = ['develop', 'main']
     baseBranch branchName in branches ? branchName : branches[0]
     yearFactor 100
     formatter = { gitVersioner ->
