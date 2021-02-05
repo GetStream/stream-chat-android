@@ -82,7 +82,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         var roomMessages = chatDomainImpl.repos.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        ) { data.userMap.getValue(it) }
+        )
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -105,7 +105,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         roomMessages = chatDomainImpl.repos.selectMessagesForChannel(
             message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
-        ) { data.userMap.getValue(it) }
+        )
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
