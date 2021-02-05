@@ -2,8 +2,8 @@ package com.getstream.sdk.chat.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
 /**
