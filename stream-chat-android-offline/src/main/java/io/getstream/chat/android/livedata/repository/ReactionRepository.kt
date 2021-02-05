@@ -8,14 +8,14 @@ import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Date
 
 internal interface ReactionRepository {
-    suspend fun insert(reaction: Reaction)
+    suspend fun insertReaction(reaction: Reaction)
     suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
-    suspend fun selectUserReactionsToMessageByType(
+    suspend fun selectUserReactionToMessageByType(
         messageId: String,
         userId: String,
         type: String,
     ): Reaction?
-    suspend fun selectSyncNeeded(): List<Reaction>
+    suspend fun selectReactionsSyncNeeded(): List<Reaction>
     suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
@@ -30,7 +30,7 @@ internal class ReactionRepositoryImpl(
     private val getUser: suspend (userId: String) -> User,
 ) : ReactionRepository {
 
-    override suspend fun insert(reaction: Reaction) {
+    override suspend fun insertReaction(reaction: Reaction) {
         require(reaction.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
         require(reaction.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
         require(reaction.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
@@ -42,7 +42,7 @@ internal class ReactionRepositoryImpl(
         reactionDao.setDeleteAt(userId, messageId, deletedAt)
     }
 
-    override suspend fun selectUserReactionsToMessageByType(
+    override suspend fun selectUserReactionToMessageByType(
         messageId: String,
         userId: String,
         type: String,
@@ -50,7 +50,7 @@ internal class ReactionRepositoryImpl(
         return reactionDao.select(messageId, userId, type)?.toModel(getUser)
     }
 
-    override suspend fun selectSyncNeeded(): List<Reaction> {
+    override suspend fun selectReactionsSyncNeeded(): List<Reaction> {
         return reactionDao.selectSyncNeeded().map { it.toModel(getUser) }
     }
 

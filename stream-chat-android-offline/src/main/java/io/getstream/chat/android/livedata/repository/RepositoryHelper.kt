@@ -152,9 +152,9 @@ internal class RepositoryHelper private constructor(
         messageId: String,
         userId: String,
         type: String,
-    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type)
+    ) = reactionsRepository.selectUserReactionToMessageByType(messageId, userId, type)
 
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded()
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectReactionsSyncNeeded()
 
     suspend fun selectMessage(
         messageId: String,
@@ -198,7 +198,7 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun insertReaction(reaction: Reaction) {
-        reactionsRepository.insert(reaction)
+        reactionsRepository.insertReaction(reaction)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {
