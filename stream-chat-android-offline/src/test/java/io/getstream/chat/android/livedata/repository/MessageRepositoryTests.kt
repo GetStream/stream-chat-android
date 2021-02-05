@@ -24,19 +24,19 @@ internal class MessageRepositoryTests {
     @BeforeEach
     fun setup() {
         messageDao = mock()
-        sut = MessageRepository(messageDao)
+        sut = MessageRepository(messageDao, ::randomUser)
     }
 
     @Test
     fun `Given 2 messages in cache When select message entities Should return message from dao and cache`() = runBlockingTest {
         val cachedMessage1 = randomMessage(id = "id1")
         val cachedMessage2 = randomMessage(id = "id2")
-        sut.insert(listOf(cachedMessage1, cachedMessage2), true)
+        sut.insertMessages(listOf(cachedMessage1, cachedMessage2), true)
         val messageEntityFromDb1 = randomMessageEntity(id = "id3")
         val messageEntityFromDb2 = randomMessageEntity(id = "id4")
         When calling messageDao.select(listOf("id3", "id4")) doReturn listOf(messageEntityFromDb1, messageEntityFromDb2)
 
-        val result = sut.select(listOf("id1", "id2", "id3", "id4"), ::randomUser)
+        val result = sut.selectMessages(listOf("id1", "id2", "id3", "id4"))
 
         result.size shouldBeEqualTo 4
         result.any { it.id == "id1" } shouldBeEqualTo true

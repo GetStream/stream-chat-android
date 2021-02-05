@@ -19,7 +19,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     override fun setup() {
         super.setup()
         runBlocking {
-            chatDomainImpl.repos.insertManyUsers(data.userMap.values)
+            chatDomainImpl.repos.insertUsers(data.userMap.values)
         }
     }
 
@@ -113,7 +113,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `the current user information should be stored using users insertMe`() = runBlocking {
         data.user1.extraData = mutableMapOf("snack" to "icecream")
-        chatDomainImpl.repos.updateCurrentUser(data.user1)
+        chatDomainImpl.repos.insertCurrentUser(data.user1)
         val me = chatDomainImpl.repos.selectCurrentUser()
         Truth.assertThat(me).isNotNull()
         Truth.assertThat(me?.id).isEqualTo("broad-lake-3")

@@ -7,12 +7,14 @@ internal class RepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
 ) {
-    fun createUserRepository(): UserRepository = UserRepository(database.userDao(), currentUser, 100)
+    fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
     fun createChannelConfigRepository(): ChannelConfigRepository = ChannelConfigRepository(database.channelConfigDao())
     fun createChannelRepository(): ChannelRepository = ChannelRepository(database.channelStateDao(), 100)
 
     fun createQueryChannelsRepository(): QueryChannelsRepository = QueryChannelsRepository(database.queryChannelsQDao())
-    fun createMessageRepository(): MessageRepository = MessageRepository(database.messageDao(), 100)
+    fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
+        MessageRepository(database.messageDao(), getUser, 100)
+
     fun createReactionRepository(): ReactionRepository = ReactionRepository(database.reactionDao())
     fun createSyncStateRepository(): SyncStateRepository = SyncStateRepository(database.syncStateDao())
 }

@@ -18,17 +18,20 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
-internal class RepositoryHelper(
-    factory: RepositoryFactory,
+internal class RepositoryHelper private constructor(
+    private val userRepository: UserRepository,
+    private val configsRepository: ChannelConfigRepository,
+    private val channelsRepository: ChannelRepository,
+    private val queryChannelsRepository: QueryChannelsRepository,
+    private val messageRepository: MessageRepository,
+    private val reactionsRepository: ReactionRepository,
+    private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
-) {
-    private val userRepository = factory.createUserRepository()
-    private val configsRepository = factory.createChannelConfigRepository()
-    private val channelsRepository = factory.createChannelRepository()
-    private val queryChannelsRepository = factory.createQueryChannelsRepository()
-    private val messageRepository = factory.createMessageRepository()
-    private val reactionsRepository = factory.createReactionRepository()
-    private val syncStateRepository = factory.createSyncStateRepository()
+) : UserRepository by userRepository {
+
+    private val selectUser: suspend (userId: String) -> User = { userId ->
+        selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+    }
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
@@ -36,14 +39,14 @@ internal class RepositoryHelper(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.select(channelIds, ::selectUser, ::selectMessage)
+        val channels = channelsRepository.select(channelIds, selectUser, ::selectMessage)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
                 scope.async {
-                    cid to messageRepository.selectMessagesForChannel(cid, pagination, ::selectUser)
+                    cid to messageRepository.selectMessagesForChannel(cid, pagination)
                 }
             }.awaitAll().toMap()
         } else {
@@ -72,22 +75,6 @@ internal class RepositoryHelper(
         channelsRepository.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
     }
 
-    internal suspend fun updateCurrentUser(currentUser: User) {
-        userRepository.insertMe(currentUser)
-    }
-
-    internal suspend fun insertUser(user: User) {
-        userRepository.insertUser(user)
-    }
-
-    internal suspend fun insertManyUsers(users: Collection<User>) {
-        userRepository.insert(users)
-    }
-
-    internal suspend fun selectCurrentUser(): User? {
-        return userRepository.selectMe()
-    }
-
     internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
         configsRepository.insert(configs)
     }
@@ -100,7 +87,7 @@ internal class RepositoryHelper(
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertConfigChannel(it) }
-        insertManyUsers(users)
+        insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
     }
@@ -150,16 +137,16 @@ internal class RepositoryHelper(
     }
 
     internal suspend fun selectMessageSyncNeeded(): List<Message> {
-        return messageRepository.selectSyncNeeded(::selectUser)
+        return messageRepository.selectMessagesSyncNeeded()
     }
 
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
-        messageRepository.select(messageIds, ::selectUser)
+        messageRepository.selectMessages(messageIds)
 
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, ::selectUser)
+    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, selectUser)
 
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
         reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
@@ -169,9 +156,9 @@ internal class RepositoryHelper(
         messageId: String,
         userId: String,
         type: String,
-    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, ::selectUser)
+    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, selectUser)
 
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(::selectUser)
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(selectUser)
 
     suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -179,7 +166,7 @@ internal class RepositoryHelper(
 
     suspend fun insertChannels(channels: Collection<Channel>) {
         this.channelsRepository.insertChannels(channels)
-        userRepository.insert(channels.flatMap(Channel::users))
+        userRepository.insertUsers(channels.flatMap(Channel::users))
     }
 
     internal suspend fun deleteChannel(cid: String) {
@@ -187,7 +174,7 @@ internal class RepositoryHelper(
     }
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> =
-        channelsRepository.selectSyncNeeded(::selectUser, ::selectMessage)
+        channelsRepository.selectSyncNeeded(selectUser, ::selectMessage)
 
     suspend fun removeChannel(cid: String) {
         channelsRepository.delete(cid)
@@ -196,11 +183,8 @@ internal class RepositoryHelper(
     suspend fun selectMessage(
         messageId: String,
     ): Message? {
-        return messageRepository.select(messageId, ::selectUser)
+        return messageRepository.selectMessage(messageId)
     }
-
-    private suspend fun selectUser(userId: String): User =
-        userRepository.select(userId) ?: error("User with the userId: `$userId` has not been found")
 
     suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsRepository.selectById(ids)
@@ -215,23 +199,22 @@ internal class RepositoryHelper(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelsRepository.select(cid, ::selectUser, ::selectMessage)
+        return channelsRepository.select(cid, selectUser, ::selectMessage)
     }
 
     suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
-        getUser: suspend (userId: String) -> User,
     ): List<Message> {
-        return messageRepository.selectMessagesForChannel(cid, pagination, getUser)
+        return messageRepository.selectMessagesForChannel(cid, pagination)
     }
 
     suspend fun insertMessage(message: Message, cache: Boolean = false) {
-        messageRepository.insert(message, cache)
+        messageRepository.insertMessage(message, cache)
     }
 
     suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
-        messageRepository.insert(messages, cache)
+        messageRepository.insertMessages(messages, cache)
     }
 
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
@@ -240,10 +223,6 @@ internal class RepositoryHelper(
 
     suspend fun deleteChannelMessage(message: Message) {
         messageRepository.deleteChannelMessage(message)
-    }
-
-    fun messageCacheSize(): Int {
-        return messageRepository.messageCache.size()
     }
 
     internal suspend fun insertReaction(reaction: Reaction) {
@@ -256,5 +235,24 @@ internal class RepositoryHelper(
 
     internal suspend fun insertSyncState(newSyncState: SyncState) {
         syncStateRepository.insert(newSyncState)
+    }
+
+    internal companion object {
+        fun create(factory: RepositoryFactory, scope: CoroutineScope): RepositoryHelper {
+            val userRepository = factory.createUserRepository()
+            val getUser: suspend (userId: String) -> User = { userId ->
+                userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+            }
+            return RepositoryHelper(
+                userRepository = factory.createUserRepository(),
+                configsRepository = factory.createChannelConfigRepository(),
+                channelsRepository = factory.createChannelRepository(),
+                queryChannelsRepository = factory.createQueryChannelsRepository(),
+                messageRepository = factory.createMessageRepository(getUser),
+                reactionsRepository = factory.createReactionRepository(),
+                syncStateRepository = factory.createSyncStateRepository(),
+                scope = scope,
+            )
+        }
     }
 }
