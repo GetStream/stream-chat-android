@@ -1,10 +1,8 @@
 package io.getstream.chat.android.livedata.repository
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ReactionDao
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Date
@@ -18,23 +16,11 @@ internal class ReactionRepository(
 ) {
 
     internal suspend fun insert(reaction: Reaction) {
-        insert(listOf(reaction.toEntity()))
-    }
+        require(reaction.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
+        require(reaction.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
+        require(reaction.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
 
-    @VisibleForTesting
-    internal suspend fun insert(reactions: Collection<Reaction>) {
-        val entities = reactions.map(Reaction::toEntity)
-        insert(entities)
-    }
-
-    private suspend fun insert(reactionEntities: List<ReactionEntity>) {
-        for (reactionEntity in reactionEntities) {
-            require(reactionEntity.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
-            require(reactionEntity.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
-            require(reactionEntity.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
-        }
-
-        reactionDao.insert(reactionEntities)
+        reactionDao.insert(reaction.toEntity())
     }
 
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {

@@ -13,9 +13,6 @@ internal interface ReactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reactionEntity: ReactionEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(reactionEntities: List<ReactionEntity>)
-
     @Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.syncStatus IN (:syncStatus)")
     suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<ReactionEntity>
 
