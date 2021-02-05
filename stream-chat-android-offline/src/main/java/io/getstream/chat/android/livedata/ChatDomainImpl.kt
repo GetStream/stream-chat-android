@@ -147,6 +147,7 @@ internal class ChatDomainImpl internal constructor(
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(this)
 
+    @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
     /** if the client connection has been initialized */
@@ -253,7 +254,7 @@ internal class ChatDomainImpl internal constructor(
 
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
-        repos = RepositoryHelper(RepositoryFactory(database, user), scope)
+        repos = RepositoryHelper.create(factory = RepositoryFactory(database, user), scope = scope, defaultConfig = defaultConfig)
 
         // load channel configs from Room into memory
         initJob = scope.async {
@@ -316,7 +317,7 @@ internal class ChatDomainImpl internal constructor(
             throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser.id}. create a new chatdomain when connecting a different user.")
         }
         currentUser = me
-        repos.updateCurrentUser(me)
+        repos.insertCurrentUser(me)
         _mutedUsers.value = me.mutes
         setTotalUnreadCount(me.totalUnreadCount)
         setChannelUnreadCount(me.unreadChannels)
@@ -814,7 +815,7 @@ internal class ChatDomainImpl internal constructor(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest,
     ): List<Channel> {
-        return repos.selectChannels(channelIds, defaultConfig, pagination).applyPagination(pagination)
+        return repos.selectChannels(channelIds, pagination).applyPagination(pagination)
     }
 
     override fun clean() {

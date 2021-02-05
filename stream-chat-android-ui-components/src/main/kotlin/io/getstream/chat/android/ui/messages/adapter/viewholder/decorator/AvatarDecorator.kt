@@ -47,7 +47,10 @@ internal class AvatarDecorator : BaseDecorator() {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
         if (data.isTheirs && data.isTheirs && data.isBottomPosition()) {

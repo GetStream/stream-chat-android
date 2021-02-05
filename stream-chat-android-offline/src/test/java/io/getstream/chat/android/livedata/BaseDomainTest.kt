@@ -25,9 +25,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -190,12 +190,9 @@ internal open class BaseDomainTest {
                 Result(data.reaction1)
             )
         }
-        When calling client.setUser(any(), any<String>(), any()) doAnswer {
-            (it.arguments[2] as InitConnectionListener).onSuccess(
-                InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString())
-            )
+        When calling client.connectUser(any(), any<String>()) doAnswer {
+            TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
         }
-
         return client
     }
 
@@ -251,7 +248,7 @@ internal open class BaseDomainTest {
         )
 
         chatDomainImpl.repos.insertConfigChannel(ChannelConfig("messaging", data.config1))
-        chatDomainImpl.repos.insertManyUsers(data.userMap.values.toList())
+        chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 

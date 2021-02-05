@@ -13,15 +13,19 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.LinkAt
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.MaxPossibleWidthDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReactionsDecorator
 import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.ReplyDecorator
+import io.getstream.chat.android.ui.messages.adapter.viewholder.decorator.TextDecorator
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
 internal class MessageListItemDecoratorProvider(
     currentUser: User,
     dateFormatter: DateFormatter,
     isDirectMessage: Boolean,
+    style: MessageListItemStyle,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOf<Decorator>(
-        BackgroundDecorator(),
+        BackgroundDecorator(style),
+        TextDecorator(style),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),

@@ -4,11 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
@@ -47,20 +45,16 @@ class UserLoginViewModel : ViewModel() {
             name = user.name
         }
         initChatSdk(chatUser)
-        ChatClient.instance().setUser(
-            chatUser,
-            user.token,
-            object : InitConnectionListener() {
-                override fun onSuccess(data: ConnectionData) {
-                    logger.logD("User set successfully")
-                }
 
-                override fun onError(error: ChatError) {
-                    _events.postValue(Event(UiEvent.Error(error.message)))
-                    logger.logD("Failed to set user $error")
+        ChatClient.instance().connectUser(chatUser, user.token)
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    logger.logD("User set successfully")
+                } else {
+                    _events.postValue(Event(UiEvent.Error(result.error().message)))
+                    logger.logD("Failed to set user ${result.error()}")
                 }
             }
-        )
         if (cid != null) {
             _events.postValue(Event(UiEvent.RedirectToChannel(cid)))
         } else {

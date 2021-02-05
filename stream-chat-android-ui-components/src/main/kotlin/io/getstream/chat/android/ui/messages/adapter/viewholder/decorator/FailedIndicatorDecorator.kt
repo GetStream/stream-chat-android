@@ -54,7 +54,10 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupFailedIndicator(
         deliveryFailedIcon: ImageView,

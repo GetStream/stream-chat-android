@@ -27,5 +27,17 @@
         <attr name="streamUiMessageOptionIconColor" format="color" />
         <attr name="streamUiCopyMessageActionEnabled" format="color" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
+
+        <!-- Message text color -->
+        <attr name="streamUiMessageTextColorMine" format="color" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+
+        <!-- Message background color -->
+        <attr name="streamUiMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
+
+        <!-- Message link color -->
+        <attr name="streamUiMessageLinkColorMine" format="color" />
+        <attr name="streamUiMessageLinkColorTheirs" format="color" />
     </declare-styleable>
 </resources>

@@ -20,9 +20,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
@@ -151,10 +151,8 @@ internal open class BaseDomainTest2 {
                 Result(data.reaction1)
             )
         }
-        When calling client.setUser(any(), any<String>(), any()) doAnswer {
-            (it.arguments[2] as InitConnectionListener).onSuccess(
-                InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString())
-            )
+        When calling client.connectUser(any(), any<String>()) doAnswer {
+            TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
         }
 
         return client
@@ -185,10 +183,10 @@ internal open class BaseDomainTest2 {
             .buildImpl()
 
         // TODO: a chat domain without a user set should raise a clear error
-        client.setUser(
+        client.connectUser(
             data.user1,
             data.user1Token
-        )
+        ).enqueue()
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
 
@@ -211,7 +209,7 @@ internal open class BaseDomainTest2 {
         )
 
         chatDomainImpl.repos.insertConfigChannel(ChannelConfig("messaging", data.config1))
-        chatDomainImpl.repos.insertManyUsers(data.userMap.values.toList())
+        chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
 
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
 

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.repository.helper
 
 import androidx.annotation.CallSuper
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
@@ -44,12 +45,12 @@ internal open class BaseRepositoryHelperTest {
         val factory: RepositoryFactory = mock {
             on { createUserRepository() } doReturn users
             on { createChannelConfigRepository() } doReturn configs
-            on { createChannelRepository() } doReturn channels
+            on { createChannelRepository(any(), any()) } doReturn channels
             on { createQueryChannelsRepository() } doReturn queryChannels
-            on { createMessageRepository() } doReturn messages
+            on { createMessageRepository(any()) } doReturn messages
             on { createReactionRepository() } doReturn reactions
             on { createSyncStateRepository() } doReturn syncState
         }
-        sut = RepositoryHelper(factory, scope)
+        sut = RepositoryHelper.create(factory, scope, mock())
     }
 }

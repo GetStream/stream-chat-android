@@ -82,14 +82,13 @@ internal class FootnoteDecorator(
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-    ) =
-        setupFootnote(
-            viewHolder.binding.footnote,
-            viewHolder.binding.root,
-            viewHolder.binding.threadGuideline,
-            viewHolder.binding.messageContainer,
-            data,
-        )
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,

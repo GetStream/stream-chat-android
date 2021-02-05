@@ -71,8 +71,11 @@ public interface Call<T : Any> {
  *
  * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
  */
-public suspend fun <T : Any> Call<T>.await(): Result<T> =
-    suspendCancellableCoroutine { continuation ->
+public suspend fun <T : Any> Call<T>.await(): Result<T> {
+    if (this is CoroutineCall<T>) {
+        return this.suspendingTask.invoke()
+    }
+    return suspendCancellableCoroutine { continuation ->
         this.enqueue { result ->
             continuation.resume(result)
         }
@@ -81,6 +84,7 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> =
             this.cancel()
         }
     }
+}
 
 @InternalStreamChatApi
 public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {

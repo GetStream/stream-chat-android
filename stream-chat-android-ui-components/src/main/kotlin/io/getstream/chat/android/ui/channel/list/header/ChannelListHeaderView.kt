@@ -40,7 +40,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
-            configAddChannelButton(typedArray)
+            configActionButton(typedArray)
         }
     }
 
@@ -70,21 +70,21 @@ public class ChannelListHeaderView : ConstraintLayout {
         typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiOfflineProgressBarTint)
             ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
 
-    private fun configAddChannelButton(typedArray: TypedArray) {
-        binding.addChannelButton.apply {
-            val showAddChannelButton =
-                typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowAddChannelButton, true)
+    private fun configActionButton(typedArray: TypedArray) {
+        binding.actionButton.apply {
+            val showActionButton =
+                typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowActionButton, true)
 
-            isVisible = showAddChannelButton
-            isClickable = showAddChannelButton
+            isVisible = showActionButton
+            isClickable = showActionButton
 
-            imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonTint)
+            imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
-            val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiAddChannelButtonIcon)
+            val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiActionButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
             setImageDrawable(drawable)
             backgroundTintList =
-                typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiAddChannelBackgroundTint)
+                typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
                 ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
@@ -141,24 +141,19 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.onlineTextView.isVisible = false
     }
 
-    public fun hideTitle() {
-        binding.offlineTitleContainer.isVisible = false
-        binding.onlineTextView.isVisible = false
-    }
-
     public fun setOnUserAvatarClickListener(listener: UserAvatarClickListener) {
         binding.userAvatar.setOnClickListener { listener.onUserAvatarClick() }
     }
 
-    public fun setOnAddChannelButtonClickListener(listener: AddChannelButtonClickListener) {
-        binding.addChannelButton.setOnClickListener { listener.onAddChannelClick() }
+    public fun setOnActionButtonClickListener(listener: ActionButtonClickListener) {
+        binding.actionButton.setOnClickListener { listener.onClick() }
     }
 
     public fun interface UserAvatarClickListener {
         public fun onUserAvatarClick()
     }
 
-    public fun interface AddChannelButtonClickListener {
-        public fun onAddChannelClick()
+    public fun interface ActionButtonClickListener {
+        public fun onClick()
     }
 }

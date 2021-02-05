@@ -29,21 +29,21 @@ internal class UserRepositoryTests {
     @BeforeEach
     fun setup() {
         userDao = mock()
-        sut = UserRepository(userDao, currentUser)
+        sut = UserRepositoryImpl(userDao, currentUser)
     }
 
     @Test
     fun `When insert users Should insert to dao`() = runBlockingTest {
         val users = listOf(randomUser(), randomUser())
 
-        sut.insert(users)
+        sut.insertUsers(users)
 
         verify(userDao).insertMany(argThat { size == 2 })
     }
 
     @Test
     fun `When insert users If users list is empty Should never insert to dao`() = runBlockingTest {
-        sut.insert(emptyList())
+        sut.insertUsers(emptyList())
 
         verify(userDao, never()).insertMany(any())
     }
@@ -52,9 +52,9 @@ internal class UserRepositoryTests {
     fun `When select users If previously inserted them Should return users`() = runBlockingTest {
         val user1 = randomUser()
         val user2 = randomUser()
-        sut.insert(listOf(user1, user2))
+        sut.insertUsers(listOf(user1, user2))
 
-        val users = sut.select(listOf(user1.id, user2.id))
+        val users = sut.selectUsers(listOf(user1.id, user2.id))
 
         users shouldBeEqualTo listOf(user1, user2)
     }
@@ -65,7 +65,7 @@ internal class UserRepositoryTests {
         val userEntity2 = randomUserEntity(originalId = "id2")
         When calling userDao.select(listOf("id1", "id2")) doReturn listOf(userEntity1, userEntity2)
 
-        val result = sut.select(listOf("id1", "id2"))
+        val result = sut.selectUsers(listOf("id1", "id2"))
 
         result.size shouldBeEqualTo 2
         result.any { user -> user.id == "id1" } shouldBeEqualTo true
@@ -76,7 +76,7 @@ internal class UserRepositoryTests {
     fun `When insert me Should insert entity with me id to dao`() = runBlockingTest {
         val user = randomUser(id = "userId")
 
-        sut.insertMe(user)
+        sut.insertCurrentUser(user)
 
         verify(userDao).insert(argThat { id == "me" && originalId == "userId" })
     }
@@ -98,7 +98,7 @@ internal class UserRepositoryTests {
         val meEntity = randomUserEntity(id = "me", originalId = "userId")
         When calling userDao.select("me") doReturn meEntity
 
-        val result = sut.selectMe()
+        val result = sut.selectCurrentUser()
 
         result.shouldNotBeNull()
         result.id shouldBeEqualTo "userId"

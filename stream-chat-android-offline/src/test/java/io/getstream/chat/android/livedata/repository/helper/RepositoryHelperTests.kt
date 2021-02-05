@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.repository.helper
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -37,12 +36,12 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
             val user = randomUser(id = "userId")
-            When calling users.select("userId") doReturn user
+            When calling users.selectUser("userId") doReturn user
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.select(eq(listOf("cid1", "cid2")), any(), any()) doReturn listOf(channel1, channel2)
+            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
@@ -54,23 +53,23 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
-            When calling users.select("userId") doReturn user
+            When calling users.selectUser("userId") doReturn user
             val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
             val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
-            When calling messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest), any()) doReturn listOf(
+            When calling messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest)) doReturn listOf(
                 message1
             )
-            When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest), any()) doReturn listOf(
+            When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest)) doReturn listOf(
                 message2
             )
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.select(eq(listOf("cid1", "cid2")), any(), any()) doReturn listOf(
+            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(
                 channel1,
                 channelEntity2
             )
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
@@ -81,7 +80,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
     fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
-        When calling messages.select(eq(listOf("messageId1", "messageId2")), any()) doReturn listOf(message1, message2)
+        When calling messages.selectMessages(eq(listOf("messageId1", "messageId2"))) doReturn listOf(message1, message2)
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
@@ -103,8 +102,8 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
 
         sut.insertChannel(channel)
 
-        Verify on channels that channels.insertChannels(eq(listOf(channel))) was called
-        Verify on users that users.insert(
+        Verify on channels that channels.insertChannel(eq(channel)) was called
+        Verify on users that users.insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
                 listUser.size `should be equal to` 4
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser)
@@ -133,7 +132,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             sut.insertChannels(listOfChannels)
 
             Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
-            Verify on users that users.insert(
+            Verify on users that users.insertUsers(
                 com.nhaarman.mockitokotlin2.check { listUser ->
                     listUser `should contain same` listOfUser
                 }
@@ -157,9 +156,9 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             )
 
             Verify on configs that configs.insert(configList) was called
-            Verify on users that users.insert(userList) was called
+            Verify on users that users.insertUsers(userList) was called
             Verify on channels that channels.insertChannels(channelList) was called
-            Verify on messages that messages.insert(messageList, false) was called
+            Verify on messages that messages.insertMessages(messageList, false) was called
         }
     }
 
@@ -179,9 +178,9 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             )
 
             VerifyNoInteractions on configs
-            Verify on users that users.insert(userList) was called
+            Verify on users that users.insertUsers(userList) was called
             Verify on channels that channels.insertChannels(channelList) was called
-            Verify on messages that messages.insert(messageList, false) was called
+            Verify on messages that messages.insertMessages(messageList, false) was called
         }
     }
 }
