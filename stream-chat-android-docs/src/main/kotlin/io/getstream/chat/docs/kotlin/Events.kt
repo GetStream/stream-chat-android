@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
@@ -26,12 +25,12 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
      */
     inner class ListeningForEvents {
         fun listenSpecificChannelEvents() {
+            val channelClient = client.channel("messaging", "general")
+
             // Subscribe for new message events
-            val disposable: Disposable = channelClient
-                .subscribeFor<NewMessageEvent> { newMessageEvent ->
-                    // To get the message
-                    val message = newMessageEvent.message
-                }
+            val disposable: Disposable = channelClient.subscribeFor<NewMessageEvent> { newMessageEvent ->
+                val message = newMessageEvent.message
+            }
 
             // Dispose when you want to stop receiving events
             disposable.dispose()
@@ -40,8 +39,8 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
         fun listenAllChannelEvents() {
             val disposable: Disposable = channelClient.subscribe { event: ChatEvent ->
                 when (event) {
+                    // Check for specific event types
                     is NewMessageEvent -> {
-                        // To get the message
                         val message = event.message
                     }
                 }
@@ -75,7 +74,7 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
             client.subscribeFor(
                 ConnectedEvent::class,
                 ConnectingEvent::class,
-                DisconnectedEvent::class
+                DisconnectedEvent::class,
             ) { event ->
                 when (event) {
                     is ConnectedEvent -> {
@@ -97,31 +96,6 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
         fun stopListeningEvents() {
             val disposable: Disposable = client.subscribe { /* ... */ }
             disposable.dispose()
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/event_typing/?language=kotlin">Typing Events</a>
-     */
-    inner class TypingEvents {
-        fun sendTypingEvents() {
-            // Sends a typing.start event if it's been more than 3000 ms since the last event
-            channelClient.keystroke().enqueue()
-
-            // Sends an event typing.stop to all channel participants
-            channelClient.stopTyping().enqueue()
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/notification_events/?language=kotlin">Typing Events</a>
-     */
-    inner class NotificationEvents {
-        fun notificationEvents() {
-            // An example of how listen event when a user is added to a channel
-            channelClient.subscribeFor<NotificationAddedToChannelEvent> { notificationEvent ->
-                // Handle event
-            }
         }
     }
 }

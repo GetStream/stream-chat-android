@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
@@ -20,7 +19,6 @@ public class Events {
      * @see <a href="https://getstream.io/chat/docs/event_object/?language=java">Event Object</a>
      */
     class EventObject {
-
     }
 
     /**
@@ -29,12 +27,13 @@ public class Events {
     class ListeningForEvents {
 
         public void listenSpecificChannelEvents() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
             // Subscribe for new message events
-            Disposable disposable = client.subscribeForSingle(
-                    NewMessageEvent.class,
-                    (NewMessageEvent event) -> {
-                        // To get the message
-                        Message message = event.getMessage();
+            Disposable disposable = channelClient.subscribeFor(
+                    new Class[]{NewMessageEvent.class},
+                    (ChatEvent event) -> {
+                        Message message = ((NewMessageEvent) event).getMessage();
                     }
             );
 
@@ -44,8 +43,8 @@ public class Events {
 
         public void listenAllChannelEvents() {
             Disposable disposable = client.subscribe((ChatEvent event) -> {
+                // Check for specific event types
                 if (event instanceof NewMessageEvent) {
-                    // To get the message
                     Message message = ((NewMessageEvent) event).getMessage();
                 }
             });
@@ -103,34 +102,6 @@ public class Events {
                 /* ... */
             });
             disposable.dispose();
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/event_typing/?language=java">Typing Events</a>
-     */
-    class TypingEvents {
-        public void sendTypingEvent() {
-            // Sends a typing.start event if it's been more than 3000 ms since the last event
-            channelClient.keystroke().enqueue();
-
-            // Sends an event typing.stop to all channel participants
-            channelClient.stopTyping().enqueue();
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/notification_events/?language=java">Typing Events</a>
-     */
-    class NotificationEvents {
-        public void notificationEvents() {
-            // An example of how listen event when a user is added to a channel
-            channelClient.subscribeFor(
-                    new Class[]{NotificationAddedToChannelEvent.class},
-                    addedToChannelEvent -> {
-                        // Handle event
-                    }
-            );
         }
     }
 }
