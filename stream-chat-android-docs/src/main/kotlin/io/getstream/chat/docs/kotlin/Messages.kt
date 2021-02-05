@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.content.Context
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -14,6 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.docs.StaticInstances.TAG
+import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
 
@@ -145,6 +147,13 @@ class Messages(
                     }
                 }
             )
+        }
+
+        fun usingYourOwnCdn(apiKey: String, context: Context) {
+            // Set a custom FileUploader implementation when building your client
+            val client = ChatClient.Builder("{{ api_key }}", context)
+                .fileUploader(MyFileUploader())
+                .build()
         }
     }
 

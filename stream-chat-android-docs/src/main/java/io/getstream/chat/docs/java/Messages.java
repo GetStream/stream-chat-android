@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.java;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
+import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -153,6 +155,13 @@ public class Messages {
                     // You can render the uploading progress here
                 }
             });
+        }
+
+        public void usingYourOwnCdn(String apiKey, Context context) {
+            // Set a custom FileUploader implementation when building your client
+            ChatClient client = new ChatClient.Builder("{{ api_key }}", context)
+                    .fileUploader(new MyFileUploader())
+                    .build();
         }
     }
 
