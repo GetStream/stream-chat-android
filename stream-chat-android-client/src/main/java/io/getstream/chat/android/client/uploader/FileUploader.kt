@@ -9,8 +9,9 @@ import java.io.File
 public interface FileUploader {
 
     /**
-     * Sends file to given channel.
-     * Progress can be accessed via [callback]
+     * Uploads a file for the given channel. Progress can be accessed via [callback].
+     *
+     * @return The URL of the uploaded file, or null if the upload failed.
      */
     public fun sendFile(
         channelType: String,
@@ -18,24 +19,26 @@ public interface FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-        callback: ProgressCallback
+        callback: ProgressCallback,
     ): String?
 
     /**
-     * Sends file to given channel.
-     * @return File URL when image is sent successfully, null if sending image failed
+     * Uploads a file for the given channel.
+     *
+     * @return The URL of the uploaded file, or null if the upload failed.
      */
     public fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
         connectionId: String,
-        file: File
+        file: File,
     ): String?
 
     /**
-     * Sends image to given channel.
-     * Progress can be accessed via [callback]
+     * Uploads an image for the given channel. Progress can be accessed via [callback].
+     *
+     * @return The URL of the uploaded image, or null if the upload failed.
      */
     public fun sendImage(
         channelType: String,
@@ -43,40 +46,41 @@ public interface FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-        callback: ProgressCallback
+        callback: ProgressCallback,
     ): String?
 
     /**
-     * Sends image to given channel
-     * @return Image URL when image is sent successfully, null if sending image failed
+     * Uploads an image for the given channel.
+     *
+     * @return The URL of the uploaded image, or null if the upload failed.
      */
     public fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
         connectionId: String,
-        file: File
+        file: File,
     ): String?
 
     /**
-     * Deletes file represented by [url] from given channel
+     * Deletes the file represented by [url] from the given channel.
      */
     public fun deleteFile(
         channelType: String,
         channelId: String,
         userId: String,
         connectionId: String,
-        url: String
+        url: String,
     )
 
     /**
-     * Deletes image represented by [url] from given channel
+     * Deletes the image represented by [url] from the given channel.
      */
     public fun deleteImage(
         channelType: String,
         channelId: String,
         userId: String,
         connectionId: String,
-        url: String
+        url: String,
     )
 }
