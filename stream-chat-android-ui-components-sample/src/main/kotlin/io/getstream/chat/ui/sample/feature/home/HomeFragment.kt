@@ -16,6 +16,8 @@ import androidx.navigation.ui.setupWithNavController
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
+import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
@@ -30,6 +32,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeFragmentViewModel by viewModels()
+    private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 
     private lateinit var avatarView: AvatarView
     private lateinit var nameTextView: TextView
@@ -56,17 +59,10 @@ class HomeFragment : Fragment() {
             }
         )
         binding.channelListHeaderView.apply {
-            setOnAddChannelButtonClickListener {
+            channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
+            setOnActionButtonClickListener {
                 navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
             }
-            viewModel.online.observe(viewLifecycleOwner) { isOnline ->
-                if (isOnline) {
-                    showOnlineTitle()
-                } else {
-                    showOfflineTitle()
-                }
-            }
-            setUser(viewModel.currentUser)
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
