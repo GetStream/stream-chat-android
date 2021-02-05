@@ -230,7 +230,7 @@ public class ChannelClient internal constructor(
         eventType: Class<T>,
         listener: ChatEventListener<T>,
     ): Disposable {
-        return subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     private fun <T : ChatEvent> filterRelevantEvents(
