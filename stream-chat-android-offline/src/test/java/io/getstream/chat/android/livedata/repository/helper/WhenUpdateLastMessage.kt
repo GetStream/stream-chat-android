@@ -26,37 +26,37 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
 
     @Test
     fun `Given no channel in DB Should not do insert`() = runBlockingTest {
-        When calling channels.select(eq("cid")) doReturn null
+        When calling channels.selectChannel(eq("cid")) doReturn null
 
         sut.updateLastMessageForChannel("cid", randomMessage())
 
-        VerifyNotCalled on channels that channels.insert(any())
+        VerifyNotCalled on channels that channels.insertChannel(any())
     }
 
     @Test
     fun `Given channel without messages in DB Should insert channel with updated last message`() = runBlockingTest {
         val channel = randomChannel(messages = emptyList())
         val lastMessage = randomMessage(createdAt = Date())
-        When calling channels.select(eq("cid")) doReturn channel
+        When calling channels.selectChannel(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", lastMessage)
 
         channel.lastMessageAt `should be equal to` lastMessage.createdAt
         channel.lastMessage `should be equal to` lastMessage
-        Verify on channels that channels.insert(eq(channel)) was called
+        Verify on channels that channels.insertChannel(eq(channel)) was called
     }
 
     @Test
     fun `Given channel without lastMessageAt in DB Should insert channel with updated last message at`() = runBlockingTest {
         val channel = randomChannel(messages = listOf(randomMessage()), lastMessageAt = null)
         val lastMessage = randomMessage(createdAt = Date())
-        When calling channels.select(eq("cid")) doReturn channel
+        When calling channels.selectChannel(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", lastMessage)
 
         channel.lastMessageAt `should be equal to` lastMessage.createdAt
         channel.lastMessage `should be equal to` lastMessage
-        Verify on channels that channels.insert(argThat { lastMessageAt == lastMessage.createdAt }) was called
+        Verify on channels that channels.insertChannel(argThat { lastMessageAt == lastMessage.createdAt }) was called
     }
 
     @Test
@@ -66,13 +66,13 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
-        When calling channels.select(eq("cid")) doReturn channel
+        When calling channels.selectChannel(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", newLastMessage)
 
         channel.lastMessageAt `should be equal to` newLastMessage.createdAt
         channel.lastMessage `should be equal to` newLastMessage
-        Verify on channels that channels.insert(argThat { lastMessageAt == after }) was called
+        Verify on channels that channels.insertChannel(argThat { lastMessageAt == after }) was called
     }
 
     @Test
@@ -82,10 +82,10 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
-        When calling channels.select(eq("cid")) doReturn channel
+        When calling channels.selectChannel(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)
 
-        VerifyNotCalled on channels that channels.insert(any())
+        VerifyNotCalled on channels that channels.insertChannel(any())
     }
 }

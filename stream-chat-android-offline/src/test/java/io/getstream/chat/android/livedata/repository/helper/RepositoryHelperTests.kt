@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.repository.helper
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -40,7 +39,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             When calling users.selectUser("userId") doReturn user
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.select(eq(listOf("cid1", "cid2"))) doReturn listOf(channel1, channel2)
+            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(channel1, channel2)
 
             val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
@@ -65,7 +64,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             )
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.select(eq(listOf("cid1", "cid2"))) doReturn listOf(
+            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(
                 channel1,
                 channelEntity2
             )

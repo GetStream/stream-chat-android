@@ -39,7 +39,7 @@ internal class RepositoryHelper private constructor(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.select(channelIds)
+        val channels = channelsRepository.selectChannels(channelIds)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -110,7 +110,7 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
-        channelsRepository.setDeletedAt(cid, deletedAt)
+        channelsRepository.setChannelDeletedAt(cid, deletedAt)
     }
 
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
@@ -131,7 +131,7 @@ internal class RepositoryHelper private constructor(
                 channel.apply {
                     lastMessageAt = messageCreatedAt
                     messages = listOf(lastMessage)
-                }.also { channelsRepository.insert(it) }
+                }.also { channelsRepository.insertChannel(it) }
             }
         }
     }
@@ -170,14 +170,14 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun deleteChannel(cid: String) {
-        channelsRepository.delete(cid)
+        channelsRepository.deleteChannel(cid)
     }
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> =
-        channelsRepository.selectSyncNeeded()
+        channelsRepository.selectChannelsSyncNeeded()
 
     suspend fun removeChannel(cid: String) {
-        channelsRepository.delete(cid)
+        channelsRepository.deleteChannel(cid)
     }
 
     suspend fun selectMessage(
@@ -199,7 +199,7 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelsRepository.select(cid)
+        return channelsRepository.selectChannel(cid)
     }
 
     suspend fun selectMessagesForChannel(

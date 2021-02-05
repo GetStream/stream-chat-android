@@ -10,13 +10,13 @@ import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Date
 
 internal interface ChannelRepository {
-    suspend fun insert(channel: Channel)
+    suspend fun insertChannel(channel: Channel)
     suspend fun insertChannels(channels: Collection<Channel>)
-    suspend fun delete(cid: String)
-    suspend fun select(cid: String): Channel?
-    suspend fun select(channelCIDs: List<String>): List<Channel>
-    suspend fun selectSyncNeeded(): List<Channel>
-    suspend fun setDeletedAt(cid: String, deletedAt: Date)
+    suspend fun deleteChannel(cid: String)
+    suspend fun selectChannel(cid: String): Channel?
+    suspend fun selectChannels(channelCIDs: List<String>): List<Channel>
+    suspend fun selectChannelsSyncNeeded(): List<Channel>
+    suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
 }
@@ -30,7 +30,7 @@ internal class ChannelRepositoryImpl(
     // the channel cache is simple, just keeps the last several users in memory
     private val channelCache = LruCache<String, Channel>(cacheSize)
 
-    override suspend fun insert(channel: Channel) {
+    override suspend fun insertChannel(channel: Channel) {
         updateCache(listOf(channel))
         channelDao.insert(channel.toEntity())
     }
@@ -41,16 +41,16 @@ internal class ChannelRepositoryImpl(
         channelDao.insertMany(channels.map(Channel::toEntity))
     }
 
-    override suspend fun delete(cid: String) {
+    override suspend fun deleteChannel(cid: String) {
         channelCache.remove(cid)
         channelDao.delete(cid)
     }
 
-    override suspend fun select(cid: String): Channel? {
-        return select(listOf(cid)).getOrNull(0)
+    override suspend fun selectChannel(cid: String): Channel? {
+        return selectChannels(listOf(cid)).getOrNull(0)
     }
 
-    override suspend fun select(channelCIDs: List<String>): List<Channel> {
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
         val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
         val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
         val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()
@@ -59,11 +59,11 @@ internal class ChannelRepositoryImpl(
         return dbChannels
     }
 
-    override suspend fun selectSyncNeeded(): List<Channel> {
+    override suspend fun selectChannelsSyncNeeded(): List<Channel> {
         return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
     }
 
-    override suspend fun setDeletedAt(cid: String, deletedAt: Date) {
+    override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
         channelCache.remove(cid)
         channelDao.setDeletedAt(cid, deletedAt)
     }
