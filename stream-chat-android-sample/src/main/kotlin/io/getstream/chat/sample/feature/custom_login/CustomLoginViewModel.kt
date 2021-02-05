@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.application.FirebaseLogger
 import io.getstream.chat.sample.common.name
@@ -49,22 +47,19 @@ class CustomLoginViewModel : ViewModel() {
             image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
         )
         ChatClient.instance()
-            .setUser(
+            .connectUser(
                 chatUser,
-                loginCredentials.userToken,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        _state.postValue(State.RedirectToChannels)
-                        Timber.d("User set successfully")
-                        FirebaseLogger.userId = data.user.id
-                    }
-
-                    override fun onError(error: ChatError) {
-                        _state.postValue(State.Error(error.message))
-                        Timber.e("Failed to set user $error")
-                    }
+                loginCredentials.userToken
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    _state.postValue(State.RedirectToChannels)
+                    Timber.d("User set successfully")
+                    FirebaseLogger.userId = result.data().user.id
+                } else {
+                    _state.postValue(State.Error(result.error().message))
+                    Timber.e("Failed to set user ${result.error()}")
                 }
-            )
+            }
     }
 
     private fun getInvalidFields(credentials: LoginCredentials): List<ValidatedField> {
@@ -93,7 +88,7 @@ data class LoginCredentials(
     val apiKey: String,
     val userId: String,
     val userToken: String,
-    val userName: String
+    val userName: String,
 )
 
 enum class ValidatedField {

@@ -21,7 +21,7 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
         val user = User("user-id").apply {
             invisible = true
         }
-        client.setUser(user, "{{ chat_user_token }}")
+        client.connectUser(user, "{{ chat_user_token }}").enqueue()
     }
 
     /**

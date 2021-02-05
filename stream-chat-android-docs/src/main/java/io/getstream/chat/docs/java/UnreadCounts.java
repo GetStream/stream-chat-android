@@ -2,8 +2,6 @@ package io.getstream.chat.docs.java;
 
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.MarkAllReadEvent;
@@ -11,8 +9,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent;
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.socket.InitConnectionListener;
-import kotlin.Unit;
 
 import static io.getstream.chat.docs.StaticInstances.TAG;
 
@@ -27,12 +23,11 @@ public class UnreadCounts {
         public void getUnreadCount() {
             User user = new User();
             user.setId("user-id");
-            client.setUser(user, "{{ chat_user_token }}", new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    int unreadChannels = user.getUnreadChannels();
-                    int totalUnreadCount = user.getTotalUnreadCount();
+            client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    int unreadChannels = userRes.getUnreadChannels();
+                    int totalUnreadCount = userRes.getTotalUnreadCount();
                 }
             });
         }

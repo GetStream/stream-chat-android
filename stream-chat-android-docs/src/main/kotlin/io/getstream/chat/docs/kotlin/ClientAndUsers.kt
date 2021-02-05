@@ -5,10 +5,8 @@ import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.docs.StaticInstances.TAG
 import io.getstream.chat.docs.TokenService
@@ -41,22 +39,16 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
             // You can setup a user token in 2 ways.
             // 1. Setup the current user with a JWT token.
             val token = "{{ chat_user_token }}"
-            client.setUser(
-                user,
-                token,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user: User = data.user
-                        val connectionId: String = data.connectionId
+            client.connectUser(user, token).enqueue { result ->
+                if (result.isSuccess) {
+                    val user: User = result.data().user
+                    val connectionId: String = result.data().connectionId
 
-                        Log.i(TAG, "Connection ($connectionId) established for user $user")
-                    }
-
-                    override fun onError(error: ChatError) {
-                        Log.e(TAG, "There was an error $error", error.cause)
-                    }
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                } else {
+                    Log.e(TAG, "There was an error ${result.error()}", result.error().cause)
                 }
-            )
+            }
 
             // 2. Setup the current user with a TokenProvider
             val tokenProvider = object : TokenProvider {
@@ -64,22 +56,16 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
                 override fun loadToken(): String = yourTokenService.getToken(user)
             }
 
-            client.setUser(
-                user,
-                tokenProvider,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user: User = data.user
-                        val connectionId: String = data.connectionId
+            client.connectUser(user, tokenProvider).enqueue { result ->
+                if (result.isSuccess) {
+                    val user: User = result.data().user
+                    val connectionId: String = result.data().connectionId
 
-                        Log.i(TAG, "Connection ($connectionId) established for user $user")
-                    }
-
-                    override fun onError(error: ChatError) {
-                        Log.e(TAG, "There was an error $error", error.cause)
-                    }
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                } else {
+                    Log.e(TAG, "There was an error ${result.error()}", result.error().cause)
                 }
-            )
+            }
         }
 
         /**
@@ -101,22 +87,16 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         fun developmentToken() {
             val user: User = User("user-id")
             val token: String = client.devToken(user.id)
-            client.setUser(
-                user,
-                token,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user: User = data.user
-                        val connectionId: String = data.connectionId
+            client.connectUser(user, token).enqueue { result ->
+                if (result.isSuccess) {
+                    val user: User = result.data().user
+                    val connectionId: String = result.data().connectionId
 
-                        Log.i(TAG, "Connection ($connectionId) established for user $user")
-                    }
-
-                    override fun onError(error: ChatError) {
-                        Log.e(TAG, "There was an error $error", error.cause)
-                    }
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                } else {
+                    Log.e(TAG, "There was an error ${result.error()}", result.error().cause)
                 }
-            )
+            }
         }
 
         /**
@@ -130,22 +110,16 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
                 override fun loadToken(): String = yourTokenService.getToken(user)
             }
 
-            client.setUser(
-                user,
-                tokenProvider,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user: User = data.user
-                        val connectionId: String = data.connectionId
+            client.connectUser(user, tokenProvider).enqueue { result ->
+                if (result.isSuccess) {
+                    val user: User = result.data().user
+                    val connectionId: String = result.data().connectionId
 
-                        Log.i(TAG, "Connection ($connectionId) established for user $user")
-                    }
-
-                    override fun onError(error: ChatError) {
-                        Log.e(TAG, "There was an error $error", error.cause)
-                    }
+                    Log.i(TAG, "Connection ($connectionId) established for user $user")
+                } else {
+                    Log.e(TAG, "There was an error ${result.error()}", result.error().cause)
                 }
-            )
+            }
         }
     }
 
@@ -154,21 +128,15 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
      */
     inner class GuestUsers {
         fun guestUser() {
-            client.setGuestUser(
-                "user-id",
-                "name",
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val user = data.user
-                        val connectionId = data.connectionId
-                        Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user))
-                    }
-
-                    override fun onError(error: ChatError) {
-                        Log.e(TAG, String.format("There was an error %s", error, error.cause))
-                    }
+            client.connectGuestUser("user-id", "name").enqueue { result ->
+                if (result.isSuccess) {
+                    val user = result.data().user
+                    val connectionId = result.data().connectionId
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user))
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
                 }
-            )
+            }
         }
     }
 
@@ -177,7 +145,15 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
      */
     inner class AnonymousUsers {
         fun anonymousUser() {
-            client.setAnonymousUser()
+            client.connectAnonymousUser().enqueue { result ->
+                if (result.isSuccess) {
+                    val user = result.data().user
+                    val connectionId = result.data().connectionId
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user))
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error(), result.error().cause))
+                }
+            }
         }
     }
 
