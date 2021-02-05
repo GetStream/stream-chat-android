@@ -8,21 +8,17 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -126,31 +122,26 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         context: Context,
         user: User,
         token: String,
-        apiKey: String
+        apiKey: String,
     ): ChatClient {
-        return suspendCoroutine { continuation ->
-            val notificationConfig = syncModule.notificationConfigStore.get()
-            val notificationHandler = ChatNotificationHandler(context, notificationConfig)
+        val notificationConfig = syncModule.notificationConfigStore.get()
+        val notificationHandler = ChatNotificationHandler(context, notificationConfig)
 
-            val client = ChatClient.Builder(apiKey, context.applicationContext)
-                .notifications(notificationHandler)
-                .build()
+        val client = ChatClient.Builder(apiKey, context.applicationContext)
+            .notifications(notificationHandler)
+            .build()
 
-            client.setUser(
-                user,
-                token,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        continuation.resume(client)
-                    }
+        val result = client.connectUser(
+            user,
+            token
+        ).await()
 
-                    override fun onError(error: ChatError) {
-                        val cause = error.cause ?: IllegalStateException(error.message)
-                        continuation.resumeWithException(cause)
-                    }
-                }
-            )
+        if (result.isError) {
+            val error = result.error()
+            throw error.cause ?: IllegalStateException(error.message)
         }
+
+        return client
     }
 
     companion object {

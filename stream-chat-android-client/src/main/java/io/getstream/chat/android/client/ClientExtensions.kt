@@ -1,16 +1,8 @@
 package io.getstream.chat.android.client
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KClass
 
 /**
@@ -74,36 +66,3 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)
 }
-
-/**
- * Runs [ChatClient.setUser] in a suspending way.
- * Throws exceptions if errors occur during the call.
- */
-public suspend fun ChatClient.setUserAndAwait(
-    user: User,
-    token: String,
-): InitConnectionListener.ConnectionData = suspendCoroutine { cont ->
-    setUser(user, token, initConnectionListener(cont))
-}
-
-/**
- * Runs [ChatClient.setUser] in a suspending way.
- * Throws exceptions if errors occur during the call.
- */
-public suspend fun ChatClient.setUserAndAwait(
-    user: User,
-    tokenProvider: TokenProvider,
-): InitConnectionListener.ConnectionData = suspendCoroutine { cont ->
-    setUser(user, tokenProvider, initConnectionListener(cont))
-}
-
-private fun initConnectionListener(cont: Continuation<InitConnectionListener.ConnectionData>) =
-    object : InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            cont.resume(data)
-        }
-
-        override fun onError(error: ChatError) {
-            cont.resumeWithException(error.cause ?: RuntimeException(error.message))
-        }
-    }

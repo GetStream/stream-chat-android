@@ -81,7 +81,7 @@ internal class MockClientBuilder {
             tokenManager = FakeTokenManager(token),
         )
 
-        client.setUser(user, token)
+        client.connectUser(user, token).enqueue()
 
         socket.sendEvent(connectedEvent)
 

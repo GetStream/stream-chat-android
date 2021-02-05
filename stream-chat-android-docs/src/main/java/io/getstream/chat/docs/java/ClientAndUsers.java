@@ -12,10 +12,8 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.docs.TokenService;
@@ -55,18 +53,14 @@ public class ClientAndUsers {
             // You can setup a user token in 2 ways.
             // 1. Setup the current user with a JWT token.
             String token = "{{ chat_user_token }}";
-            client.setUser(user, token, new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectUser(user, token).enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
 
@@ -79,18 +73,14 @@ public class ClientAndUsers {
                 }
             };
 
-            client.setUser(user, tokenProvider, new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectUser(user, tokenProvider).enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
         }
@@ -115,18 +105,14 @@ public class ClientAndUsers {
             user.setId("user-id");
             String token = client.devToken(user.getId());
 
-            client.setUser(user, token, new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectUser(user, token).enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
         }
@@ -145,18 +131,14 @@ public class ClientAndUsers {
                 }
             };
 
-            client.setUser(user, tokenProvider, new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectUser(user, tokenProvider).enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error, error.getCause()));
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
         }
@@ -167,18 +149,14 @@ public class ClientAndUsers {
      */
     class GuestUsers {
         public void guestUser() {
-            client.setGuestUser("user-id", "name", new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectGuestUser("user-id", "name").enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
         }
@@ -189,18 +167,14 @@ public class ClientAndUsers {
      */
     class AnonymousUsers {
         public void anonymousUser() {
-            client.setAnonymousUser(new InitConnectionListener() {
-                @Override
-                public void onSuccess(@NotNull ConnectionData data) {
-                    User user = data.getUser();
-                    String connectionId = data.getConnectionId();
+            client.connectAnonymousUser().enqueue(result -> {
+                if (result.isSuccess()) {
+                    User userRes = result.data().getUser();
+                    String connectionId = result.data().getConnectionId();
 
-                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, user));
-                }
-
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
+                } else {
+                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
                 }
             });
         }

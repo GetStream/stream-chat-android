@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
-import io.getstream.chat.android.client.utils.TestInitListener
+import io.getstream.chat.android.client.utils.TestInitCallback
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
 import org.awaitility.Awaitility.await
 import org.junit.Before
@@ -31,13 +31,13 @@ internal class ClientInstrumentationTests {
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
     val userId = "bender"
     lateinit var context: Context
-    lateinit var setUserListener: TestInitListener
+    lateinit var initCallback: TestInitCallback
     lateinit var connectedEventConsumer: EventsConsumer
 
     @Before
     fun before() {
         context = getInstrumentation().targetContext
-        setUserListener = TestInitListener()
+        initCallback = TestInitCallback()
         connectedEventConsumer = EventsConsumer(listOf(ConnectedEvent::class.java))
     }
 
@@ -45,10 +45,10 @@ internal class ClientInstrumentationTests {
     fun successfulConnect() {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), token, setUserListener)
+            client.connectUser(User(userId), token).enqueue(initCallback)
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(5, SECONDS).until(initCallback::onSuccessIsCalled)
             await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
@@ -59,9 +59,9 @@ internal class ClientInstrumentationTests {
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), invalidToken, setUserListener)
+            client.connectUser(User(userId), invalidToken).enqueue(initCallback)
         }.andThen {
-            await().atMost(5, SECONDS).until(setUserListener::onErrorIsCalled)
+            await().atMost(5, SECONDS).until(initCallback::onErrorIsCalled)
         }
     }
 
@@ -70,7 +70,7 @@ internal class ClientInstrumentationTests {
     fun connectedEventDelivery() {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), token)
+            client.connectUser(User(userId), token).enqueue()
             client.subscribeForSingle<ConnectedEvent> {
                 client.subscribe(connectedEventConsumer::onEvent)
             }
@@ -83,10 +83,10 @@ internal class ClientInstrumentationTests {
     fun anonymousUserConnection() {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setAnonymousUser(setUserListener)
+            client.connectAnonymousUser().enqueue(initCallback)
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(5, SECONDS).until(initCallback::onSuccessIsCalled)
             await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
@@ -96,11 +96,11 @@ internal class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.getGuestToken("test-user-id", "Test name").enqueue {
-                client.setUser(it.data().user, it.data().token, setUserListener)
+                client.connectUser(it.data().user, it.data().token).enqueue(initCallback)
             }
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(50, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(50, SECONDS).until(initCallback::onSuccessIsCalled)
             await().atMost(50, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
@@ -111,7 +111,7 @@ internal class ClientInstrumentationTests {
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), token)
+            client.connectUser(User(userId), token).enqueue()
             client.subscribeForSingle<HealthEvent>(consumer::onEvent)
         }.andThen {
             await()

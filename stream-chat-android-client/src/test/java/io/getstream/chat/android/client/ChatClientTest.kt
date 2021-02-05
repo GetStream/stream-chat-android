@@ -57,8 +57,9 @@ internal class ChatClientTest {
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager("")
-        )
-            .apply { setUser(User(), "someToken") }
+        ).apply {
+            connectUser(User(), "someToken").enqueue()
+        }
         result = mutableListOf()
     }
 
