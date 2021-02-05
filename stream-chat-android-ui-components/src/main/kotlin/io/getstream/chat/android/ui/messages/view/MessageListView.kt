@@ -91,7 +91,7 @@ public class MessageListView : ConstraintLayout {
         private const val LOAD_MORE_THRESHOLD = 10
     }
 
-    private lateinit var style: MessageListViewStyle
+    private lateinit var messageListViewStyle: MessageListViewStyle
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
@@ -230,7 +230,8 @@ public class MessageListView : ConstraintLayout {
                         message,
                         messageOptionsConfiguration.copy(
                             threadEnabled = !adapter.isThread && !message.isInThread(),
-                        )
+                        ),
+                        messageListViewStyle.itemStyle,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -313,7 +314,7 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message)
+                MessageOptionsDialogFragment.newReactionOptionsInstance(message, messageListViewStyle.itemStyle)
                     .apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
@@ -417,7 +418,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
-        style = MessageListViewStyle(context, attrs)
+        messageListViewStyle = MessageListViewStyle(context, attrs)
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
@@ -434,13 +435,13 @@ public class MessageListView : ConstraintLayout {
         }
 
         with(binding.scrollToBottomButton) {
-            setUnreadBadgeEnabled(style.scrollButtonViewStyle.scrollButtonUnreadEnabled)
-            setButtonRippleColor(style.scrollButtonViewStyle.scrollButtonRippleColor)
-            setButtonIcon(style.scrollButtonViewStyle.scrollButtonIcon)
-            setButtonColor(style.scrollButtonViewStyle.scrollButtonColor)
-            setUnreadBadgeColor(style.scrollButtonViewStyle.scrollButtonBadgeColor)
+            setUnreadBadgeEnabled(messageListViewStyle.scrollButtonViewStyle.scrollButtonUnreadEnabled)
+            setButtonRippleColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonRippleColor)
+            setButtonIcon(messageListViewStyle.scrollButtonViewStyle.scrollButtonIcon)
+            setButtonColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonColor)
+            setUnreadBadgeColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeColor)
         }
-        scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
+        scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
             tArray.getInt(
@@ -587,8 +588,10 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             currentUser = currentUser,
             dateFormatter = messageDateFormatter,
-            isDirectMessage = channel.isDirectMessaging()
+            isDirectMessage = channel.isDirectMessaging(),
+            messageListViewStyle.itemStyle,
         )
+
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)

@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBindi
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class LinkAttachmentView : FrameLayout {
-    private val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
+    internal val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
         .inflate(context.inflater, this, true)
     private var previewUrl: String? = null
 
