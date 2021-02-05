@@ -12,7 +12,10 @@ import java.util.Date
 /**
  * We don't do any caching on reactions since usage is infrequent
  */
-internal class ReactionRepository(private val reactionDao: ReactionDao) {
+internal class ReactionRepository(
+    private val reactionDao: ReactionDao,
+    private val getUser: suspend (userId: String) -> User,
+) {
 
     internal suspend fun insert(reaction: Reaction) {
         insert(listOf(reaction.toEntity()))
@@ -42,19 +45,17 @@ internal class ReactionRepository(private val reactionDao: ReactionDao) {
         messageId: String,
         userId: String,
         type: String,
-        getUser: suspend (userId: String) -> User,
     ): Reaction? {
         return reactionDao.select(messageId, userId, type)?.toModel(getUser)
     }
 
-    internal suspend fun selectSyncNeeded(getUser: suspend (userId: String) -> User): List<Reaction> {
+    internal suspend fun selectSyncNeeded(): List<Reaction> {
         return reactionDao.selectSyncNeeded().map { it.toModel(getUser) }
     }
 
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-        getUser: suspend (userId: String) -> User,
     ): List<Reaction> {
         return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
             .map { it.toModel(getUser) }

@@ -30,10 +30,6 @@ internal class RepositoryHelper private constructor(
     private val defaultConfig: Config,
 ) : UserRepository by userRepository, ChannelRepository by channelsRepository {
 
-    private val selectUser: suspend (userId: String) -> User = { userId ->
-        requireNotNull(selectUser(userId)) { "User with the userId: `$userId` has not been found" }
-    }
-
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
     internal suspend fun selectChannels(
@@ -146,7 +142,7 @@ internal class RepositoryHelper private constructor(
     internal suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, selectUser)
+    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId)
 
     internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
         reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
@@ -156,9 +152,9 @@ internal class RepositoryHelper private constructor(
         messageId: String,
         userId: String,
         type: String,
-    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, selectUser)
+    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type)
 
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(selectUser)
+    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded()
 
     suspend fun selectMessage(
         messageId: String,
@@ -229,7 +225,7 @@ internal class RepositoryHelper private constructor(
                 channelsRepository = factory.createChannelRepository(getUser, getMessage),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
                 messageRepository = messageRepository,
-                reactionsRepository = factory.createReactionRepository(),
+                reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
