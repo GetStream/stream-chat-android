@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
@@ -31,7 +31,7 @@ class ChatFragment : Fragment() {
 
     private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid, args.messageId) }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
-    private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
+    private val headerViewModel: MessagesHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
+import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  * @param messageId: the id of the target message to displayed
  *
  * @see MessageListViewModel
- * @see ChannelHeaderViewModel
+ * @see MessagesHeaderViewModel
  * @see MessageInputViewModel
  */
 public class ChannelViewModelFactory @JvmOverloads constructor(
@@ -23,7 +23,7 @@ public class ChannelViewModelFactory @JvmOverloads constructor(
     ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
+        MessagesHeaderViewModel::class.java to { MessagesHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
         MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
     )
