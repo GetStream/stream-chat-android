@@ -225,7 +225,6 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message)
                 }
@@ -233,10 +232,10 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationInvitedEvent -> {
-                    batch.addUser(event.user)
+                    event.user?.let { batch.addUser(it) }
                 }
                 is NotificationInviteAcceptedEvent -> {
-                    batch.addUser(event.user)
+                    event.user?.let { batch.addUser(it) }
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
@@ -290,8 +289,11 @@ internal class EventHandlerImpl(
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.user.id, null) })
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        event.user?.let { user ->
+                            channel.setMember(user.id, null)
+                        }
+                        batch.addChannel(channel)
                     }
                 }
                 is ChannelUpdatedEvent -> {
@@ -455,8 +457,8 @@ internal class EventHandlerImpl(
         }
     }
 
-    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User) {
-        if (domainImpl.currentUser.id != user.id) {
+    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
+        if (user != null && domainImpl.currentUser.id != user.id) {
             ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             // for events of current user we keep "ownReactions" from the event
