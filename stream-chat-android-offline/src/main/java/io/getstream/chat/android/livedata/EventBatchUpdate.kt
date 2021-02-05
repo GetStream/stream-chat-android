@@ -102,8 +102,7 @@ internal class EventBatchUpdate private constructor(
             val messageMap: Map<String, Message> =
                 domainImpl.repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
             val channelMap: Map<String, Channel> =
-                domainImpl.repos.selectChannels(channelsToFetch.toList(), domainImpl.defaultConfig)
-                    .associateBy(Channel::cid)
+                domainImpl.repos.selectChannels(channelsToFetch.toList()).associateBy(Channel::cid)
             return EventBatchUpdate(
                 domainImpl,
                 channelMap.toMutableMap(),
