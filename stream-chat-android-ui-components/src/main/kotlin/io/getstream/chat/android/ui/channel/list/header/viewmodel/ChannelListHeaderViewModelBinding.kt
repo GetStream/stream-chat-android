@@ -12,7 +12,9 @@ import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 @JvmName("bind")
 public fun ChannelListHeaderViewModel.bindView(view: ChannelListHeaderView, lifecycleOwner: LifecycleOwner) {
     with(view) {
-        setUser(currentUser)
+        currentUser.observe(lifecycleOwner) { user ->
+            setUser(user)
+        }
         online.observe(lifecycleOwner) { isOnline ->
             if (isOnline) {
                 showOnlineTitle()
