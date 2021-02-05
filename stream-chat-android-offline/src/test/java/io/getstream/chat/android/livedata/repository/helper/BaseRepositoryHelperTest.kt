@@ -51,6 +51,6 @@ internal open class BaseRepositoryHelperTest {
             on { createReactionRepository() } doReturn reactions
             on { createSyncStateRepository() } doReturn syncState
         }
-        sut = RepositoryHelper.create(factory, scope)
+        sut = RepositoryHelper.create(factory, scope, mock())
     }
 }

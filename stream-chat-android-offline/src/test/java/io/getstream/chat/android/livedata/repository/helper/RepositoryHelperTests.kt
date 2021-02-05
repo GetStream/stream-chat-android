@@ -41,7 +41,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
             When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
@@ -69,7 +69,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
                 channelEntity2
             )
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
@@ -102,7 +102,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
 
         sut.insertChannel(channel)
 
-        Verify on channels that channels.insertChannels(eq(listOf(channel))) was called
+        Verify on channels that channels.insertChannel(eq(channel)) was called
         Verify on users that users.insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
                 listUser.size `should be equal to` 4

@@ -13,7 +13,7 @@ internal interface ChannelRepository {
     suspend fun insertChannel(channel: Channel)
     suspend fun insertChannels(channels: Collection<Channel>)
     suspend fun deleteChannel(cid: String)
-    suspend fun selectChannel(cid: String): Channel?
+    suspend fun selectChannelWithoutMessages(cid: String): Channel?
     suspend fun selectChannels(channelCIDs: List<String>): List<Channel>
     suspend fun selectChannelsSyncNeeded(): List<Channel>
     suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
@@ -46,7 +46,7 @@ internal class ChannelRepositoryImpl(
         channelDao.delete(cid)
     }
 
-    override suspend fun selectChannel(cid: String): Channel? {
+    override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return selectChannels(listOf(cid)).getOrNull(0)
     }
 
