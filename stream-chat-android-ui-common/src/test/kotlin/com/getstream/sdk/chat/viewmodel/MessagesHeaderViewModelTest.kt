@@ -75,7 +75,7 @@ internal class MessagesHeaderViewModelTest {
 
     /** [createAnyOtherUserOnlineInput] */
     @ParameterizedTest
-    @MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
+    @MethodSource("com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModelTest#createAnyOtherUserOnlineInput")
     fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
         whenever(channelController.members) doReturn MutableLiveData(members)
         val channelHeaderViewModel = MessagesHeaderViewModel(CID, chatDomain = chatDomain)
