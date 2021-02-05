@@ -1,12 +1,11 @@
 package io.getstream.chat.docs.java;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +24,6 @@ import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
-import static io.getstream.chat.docs.StaticInstances.TAG;
-
 public class Messages {
     private ChatClient client;
     private ChannelClient channelClient;
@@ -38,34 +35,36 @@ public class Messages {
      */
     class MessagesOverview {
         public void sendAMessage() {
-            // Create a message
+            ChannelClient channelClient = client.channel("messaging", "general");
             Message message = new Message();
-            message.setText("Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
-            message.getExtraData().put("anotherCustomField", 234);
+            message.setText("Josh, I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
 
-            // Add an image attachment to the message
-            Attachment attachment = new Attachment();
-            attachment.setType("image");
-            attachment.setImageUrl("https://bit.ly/2K74TaG");
-            attachment.setFallback("test image");
-            // Add some custom data to the attachment
-            attachment.getExtraData().put("myCustomField", 123);
-
-            message.getAttachments().add(attachment);
-
-            // Include the user id of the mentioned user
-            User user = new User();
-            user.setId("josh-id");
-            message.getMentionedUsers().add(user);
-
-            // Send the message to the channel
             channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message sentMessage = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
+        }
+
+        public void sendAComplexMessage() {
+            // Create an image attachment
+            Attachment attachment = new Attachment();
+            attachment.setType("image");
+            attachment.setImageUrl("https://bit.ly/2K74TaG");
+            attachment.setThumbUrl("https://bit.ly/2Uumxti");
+            attachment.getExtraData().put("myCustomField", 123);
+
+            // Create a message with the attachment and a user mention
+            Message message = new Message();
+            message.setText("@Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
+            message.getAttachments().add(attachment);
+            message.setMentionedUsersIds(Arrays.asList("josh-id"));
+            message.getExtraData().put("anotherCustomField", 234);
+
+            // Send the message to the channel
+            channelClient.sendMessage(message).enqueue(result -> { /* ... */ });
         }
 
         /**
@@ -76,7 +75,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     Message message = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
@@ -93,7 +92,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     Message updatedMessage = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
@@ -106,9 +105,18 @@ public class Messages {
                 if (result.isSuccess()) {
                     Message deletedMessage = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
+        }
+    }
+
+    class MessageFormat {
+        public void openGraphScraper() {
+            Message message = new Message();
+            message.setText("Check this bear out https://imgur.com/r/bears/4zmGbMN");
+
+            channelClient.sendMessage(message).enqueue(result -> { /* ... */ });
         }
     }
 
@@ -116,29 +124,31 @@ public class Messages {
      * @see <a href="https://getstream.io/chat/docs/file_uploads/?language=java">File Uploads</a>
      */
     class FileUploads {
+        File imageFile = new File("path");
+        File anyOtherFile = new File("path");
+
         public void fileUploads() {
-            File imageFile = new File("path");
-            File anyOtherFile = new File("path");
+            ChannelClient channelClient = client.channel("messaging", "general");
 
-            // Upload an image
-            channelClient.sendImage(imageFile, new ProgressCallback() {
-                @Override
-                public void onSuccess(@NotNull String file) {
-                    String fileUrl = file;
-                }
+            // Upload an image without detailed progress
+            channelClient.sendImage(imageFile).enqueue(result -> {
+                if (result.isSuccess()) {
+                    // Successful upload, you can now attach this image
+                    // to an message that you then send to a channel
+                    String imageUrl = result.data();
 
-                @Override
-                public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
-                }
+                    Attachment attachment = new Attachment();
+                    attachment.setType("image");
+                    attachment.setImageUrl(imageUrl);
 
-                @Override
-                public void onProgress(long progress) {
-                    // You can render the uploading progress here
+                    Message message = new Message();
+                    message.getAttachments().add(attachment);
+
+                    channelClient.sendMessage(message).enqueue(res -> { /* ... */ });
                 }
             });
 
-            // Upload a file
+            // Upload a file, monitoring for progress with a ProgressCallback
             channelClient.sendFile(anyOtherFile, new ProgressCallback() {
                 @Override
                 public void onSuccess(@NotNull String file) {
@@ -147,14 +157,14 @@ public class Messages {
 
                 @Override
                 public void onError(@NotNull ChatError error) {
-                    Log.e(TAG, String.format("There was an error %s", error), error.getCause());
+                    // Handle error
                 }
 
                 @Override
                 public void onProgress(long progress) {
                     // You can render the uploading progress here
                 }
-            });
+            }).enqueue(); // No callback passed to enqueue, as we'll get notified above anyway
         }
 
         public void usingYourOwnCdn(String apiKey, Context context) {
@@ -170,18 +180,21 @@ public class Messages {
      */
     class Reactions {
         public void sendAReaction() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            // Add reaction 'like' with a custom field
             Reaction reaction = new Reaction();
             reaction.setMessageId("message-id");
             reaction.setType("like");
             reaction.setScore(1);
+            reaction.getExtraData().put("customField", 1);
 
-            // Add reaction 'like'
-            boolean enforceUnique = false;
+            boolean enforceUnique = false; // Don't remove other existing reactions
             channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
 
@@ -191,7 +204,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     Reaction sentReaction = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
         }
@@ -205,7 +218,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     Message message = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
         }
@@ -221,49 +234,32 @@ public class Messages {
                 if (result.isSuccess()) {
                     List<Reaction> reactions = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
 
             // Get the second 10 reactions
             offset = 10;
-            channelClient.getReactions("message-id", offset, limit).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Reaction> reactions = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.getReactions("message-id", offset, limit)
+                    .enqueue(result -> { /* ... */ });
 
             // Get 10 reactions after particular reaction
             String reactionId = "reaction-id";
-            channelClient.getReactions("message-id", reactionId, limit).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Message> messages = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.getReactions("message-id", reactionId, limit)
+                    .enqueue(result -> { /* ... */ });
         }
 
         /**
          * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=java#cumulative-clap-reactions">Cumulative (Clap) Reactions</a>
          */
         public void cumulativeReactions() {
-            int score = 5;
             Reaction reaction = new Reaction();
             reaction.setMessageId("message-id");
             reaction.setType("like");
-            reaction.setScore(score);
-            boolean enforceUnique = false;
+            reaction.setScore(5);
 
-            channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Reaction sentReaction = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            boolean enforceUnique = false;
+            channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> { /* ... */ });
         }
     }
 
@@ -272,9 +268,8 @@ public class Messages {
      */
     class ThreadsAndReplies {
         public void startAThread() {
-            // Set the parent id to make sure a message shows up in a thread
             Message message = new Message();
-            message.setText("hello world");
+            message.setText("Hello there!");
             message.setParentId(parentMessage.getId());
 
             // Send the message to the channel
@@ -282,7 +277,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     Message sentMessage = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
@@ -297,18 +292,22 @@ public class Messages {
                 if (result.isSuccess()) {
                     List<Message> replies = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
 
             // Retrieve the 20 more messages before the message with id "42"
-            client.getRepliesMore(parentMessage.getId(), "42", limit).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Message> replies = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-            });
+            client.getRepliesMore(parentMessage.getId(), "42", limit).enqueue(result -> { /* ... */ });
+        }
+
+        Message originalMessage;
+
+        public void quoteMessage() {
+            Message message = new Message();
+            message.setText("This message quotes another message!");
+            message.setReplyMessageId(originalMessage.getId());
+
+            channelClient.sendMessage(message).enqueue(result -> { /* ... */ });
         }
     }
 
@@ -316,18 +315,15 @@ public class Messages {
      * @see <a href="https://getstream.io/chat/docs/silent_messages/?language=java">Silent Messages</a>
      */
     class SilentMessages {
+        User systemUser;
+
         public void silentMessage() {
             Message message = new Message();
-            message.setText("text-of-a-message");
+            message.setText("You and Jane are now matched!");
+            message.setUser(systemUser);
             message.setSilent(true);
 
-            channelClient.sendMessage(message).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message sentMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
-                }
-            });
+            channelClient.sendMessage(message).enqueue(result -> { /* ... */ });
         }
     }
 
@@ -338,11 +334,9 @@ public class Messages {
         public void searchMessages() {
             int offset = 0;
             int limit = 10;
-            String query = "supercalifragilisticexpialidocious";
-            ArrayList<String> searchUsersList = new ArrayList<>();
-            searchUsersList.add("john");
-            FilterObject channelFilter = Filters.in("members", searchUsersList);
-            FilterObject messageFilter = Filters.autocomplete("text", query);
+
+            FilterObject channelFilter = Filters.in("members", Arrays.asList("john"));
+            FilterObject messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious");
 
             client.searchMessages(
                     new SearchMessagesRequest(
@@ -355,10 +349,23 @@ public class Messages {
                 if (result.isSuccess()) {
                     List<Message> messages = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
+        }
 
+        public void searchMessagesWithAttachments() {
+            int offset = 0;
+            int limit = 10;
+            String type = "image";
+            channelClient.getMessagesWithAttachments(offset, limit, type).enqueue(result -> {
+                if (result.isSuccess()) {
+                    // These messages will contain at least one of the desired
+                    // type of attachment, but not necessarily all of their
+                    // attachments will have the specified type
+                    List<Message> messages = result.data();
+                }
+            });
         }
     }
 
@@ -373,63 +380,31 @@ public class Messages {
             Date pinExpirationDate = calendar.getTime();
 
             Message message = new Message();
-            message.setText("my-message");
+            message.setText("Hey punk");
             message.setPinned(true);
             message.setPinExpires(pinExpirationDate);
 
-            channelClient.sendMessage(message).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message sentMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.sendMessage(message).enqueue(result -> { /* ... */ });
 
             // Unpin message
-            channelClient.unpinMessage(message).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message unpinnedMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.unpinMessage(message).enqueue(result -> { /* ... */ });
 
             // Pin message for 120 seconds
-            channelClient.pinMessage(message, 120).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message pinnedMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.pinMessage(message, 120).enqueue(result -> { /* ... */ });
 
             // Change message expiration to 2077
-            channelClient.pinMessage(message, pinExpirationDate).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message pinnedMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.pinMessage(message, pinExpirationDate).enqueue(result -> { /* ... */ });
 
             // Remove expiration date from pinned message
-            channelClient.pinMessage(message, null).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Message pinnedMessage = result.data();
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
-                }
-            });
+            channelClient.pinMessage(message, null).enqueue(result -> { /* ... */ });
         }
 
         public void retrievePinnedMessages() {
-            int messagesLimit = 10;
-            QueryChannelRequest request = new QueryChannelRequest().withMessages(messagesLimit);
-            channelClient.query(request).enqueue(result -> {
+            channelClient.query(new QueryChannelRequest()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Message> pinnedMessages = result.data().getPinnedMessages();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
         }
@@ -445,7 +420,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     List<Message> pinnedMessages = result.data();
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()));
+                    // Handle result.error()
                 }
             });
         }
