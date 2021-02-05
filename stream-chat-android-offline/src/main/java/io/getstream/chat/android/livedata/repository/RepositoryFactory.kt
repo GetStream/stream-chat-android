@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDatabase
 
@@ -9,7 +10,11 @@ internal class RepositoryFactory(
 ) {
     fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
     fun createChannelConfigRepository(): ChannelConfigRepository = ChannelConfigRepository(database.channelConfigDao())
-    fun createChannelRepository(): ChannelRepository = ChannelRepository(database.channelStateDao(), 100)
+
+    fun createChannelRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): ChannelRepository = ChannelRepository(database.channelStateDao(), getUser, getMessage, 100)
 
     fun createQueryChannelsRepository(): QueryChannelsRepository = QueryChannelsRepository(database.queryChannelsQDao())
     fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =

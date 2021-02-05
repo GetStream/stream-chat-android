@@ -39,7 +39,7 @@ internal class RepositoryHelper private constructor(
         pagination: AnyChannelPaginationRequest? = null,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.select(channelIds, selectUser, ::selectMessage)
+        val channels = channelsRepository.select(channelIds)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -174,7 +174,7 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun selectChannelsSyncNeeded(): List<Channel> =
-        channelsRepository.selectSyncNeeded(selectUser, ::selectMessage)
+        channelsRepository.selectSyncNeeded()
 
     suspend fun removeChannel(cid: String) {
         channelsRepository.delete(cid)
@@ -199,7 +199,7 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelsRepository.select(cid, selectUser, ::selectMessage)
+        return channelsRepository.select(cid)
     }
 
     suspend fun selectMessagesForChannel(
@@ -243,12 +243,16 @@ internal class RepositoryHelper private constructor(
             val getUser: suspend (userId: String) -> User = { userId ->
                 userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
             }
+
+            val messageRepository = factory.createMessageRepository(getUser)
+            val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
+
             return RepositoryHelper(
                 userRepository = factory.createUserRepository(),
                 configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(),
+                channelsRepository = factory.createChannelRepository(getUser, getMessage),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
-                messageRepository = factory.createMessageRepository(getUser),
+                messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(),
                 syncStateRepository = factory.createSyncStateRepository(),
                 scope = scope,

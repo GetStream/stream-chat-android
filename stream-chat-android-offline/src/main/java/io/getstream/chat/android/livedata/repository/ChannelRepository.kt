@@ -11,6 +11,8 @@ import java.util.Date
 
 internal class ChannelRepository(
     private val channelDao: ChannelDao,
+    private val getUser: suspend (userId: String) -> User,
+    private val getMessage: suspend (messageId: String) -> Message?,
     cacheSize: Int = 100,
 ) {
     // the channel cache is simple, just keeps the last several users in memory
@@ -38,19 +40,11 @@ internal class ChannelRepository(
         channelDao.delete(cid)
     }
 
-    suspend fun select(
-        cid: String,
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): Channel? {
-        return select(listOf(cid), getUser, getMessage).getOrNull(0)
+    suspend fun select(cid: String): Channel? {
+        return select(listOf(cid)).getOrNull(0)
     }
 
-    suspend fun select(
-        channelCIDs: List<String>,
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): List<Channel> {
+    suspend fun select(channelCIDs: List<String>): List<Channel> {
         val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
         val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
         val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()
@@ -59,10 +53,7 @@ internal class ChannelRepository(
         return dbChannels
     }
 
-    internal suspend fun selectSyncNeeded(
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): List<Channel> {
+    internal suspend fun selectSyncNeeded(): List<Channel> {
         return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
     }
 

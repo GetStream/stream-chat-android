@@ -26,7 +26,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
 
     @Test
     fun `Given no channel in DB Should not do insert`() = runBlockingTest {
-        When calling channels.select(eq("cid"), any(), any()) doReturn null
+        When calling channels.select(eq("cid")) doReturn null
 
         sut.updateLastMessageForChannel("cid", randomMessage())
 
@@ -37,7 +37,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
     fun `Given channel without messages in DB Should insert channel with updated last message`() = runBlockingTest {
         val channel = randomChannel(messages = emptyList())
         val lastMessage = randomMessage(createdAt = Date())
-        When calling channels.select(eq("cid"), any(), any()) doReturn channel
+        When calling channels.select(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", lastMessage)
 
@@ -50,7 +50,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
     fun `Given channel without lastMessageAt in DB Should insert channel with updated last message at`() = runBlockingTest {
         val channel = randomChannel(messages = listOf(randomMessage()), lastMessageAt = null)
         val lastMessage = randomMessage(createdAt = Date())
-        When calling channels.select(eq("cid"), any(), any()) doReturn channel
+        When calling channels.select(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", lastMessage)
 
@@ -66,7 +66,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
-        When calling channels.select(eq("cid"), any(), any()) doReturn channel
+        When calling channels.select(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", newLastMessage)
 
@@ -82,7 +82,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
-        When calling channels.select(eq("cid"), any(), any()) doReturn channel
+        When calling channels.select(eq("cid")) doReturn channel
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)
 
