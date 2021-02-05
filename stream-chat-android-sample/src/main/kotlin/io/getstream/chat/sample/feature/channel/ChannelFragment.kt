@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.view.bindView
+import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
@@ -26,7 +26,7 @@ class ChannelFragment : Fragment() {
 
     private val messagesViewModel: MessageListViewModel by viewModels { viewModelFactory }
 
-    private val messagesHeaderViewModel: MessagesHeaderViewModel by viewModels { viewModelFactory }
+    private val channelHeaderViewModel: ChannelHeaderViewModel by viewModels { viewModelFactory }
 
     private val messageInputViewModel: MessageInputViewModel by viewModels { viewModelFactory }
 
@@ -86,7 +86,7 @@ class ChannelFragment : Fragment() {
     }
 
     private fun initHeaderViewModel() {
-        messagesHeaderViewModel.bindView(binding.channelHeaderView, viewLifecycleOwner)
+        channelHeaderViewModel.bindView(binding.channelHeaderView, viewLifecycleOwner)
     }
 
     private fun initMessagesViewModel() {

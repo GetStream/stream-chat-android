@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
+import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
@@ -30,7 +30,7 @@ class GroupChatInfoFragment : Fragment() {
 
     private val args: GroupChatInfoFragmentArgs by navArgs()
     private val viewModel: GroupChatInfoViewModel by viewModels { ChatViewModelFactory(args.cid) }
-    private val headerViewModel: MessagesHeaderViewModel by viewModels { ChannelViewModelFactory(args.cid) }
+    private val headerViewModel: ChannelHeaderViewModel by viewModels { ChannelViewModelFactory(args.cid) }
     private val adapter: GroupChatInfoAdapter = GroupChatInfoAdapter()
 
     private var _binding: FragmentGroupChatInfoBinding? = null

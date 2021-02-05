@@ -2,7 +2,7 @@ package io.getstream.chat.docs.kotlin
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel
+import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
@@ -31,7 +31,7 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: MessagesHeaderViewModel by viewModels()
+            val viewModel: ChannelHeaderViewModel by viewModels()
             // Bind it with MessagesHeaderView
             viewModel.bindView(messagesHeaderView, viewLifecycleOwner)
         }

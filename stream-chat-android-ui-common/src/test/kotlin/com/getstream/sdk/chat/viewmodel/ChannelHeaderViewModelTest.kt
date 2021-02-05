@@ -31,7 +31,7 @@ private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
 
 @ExtendWith(InstantTaskExecutorExtension::class)
-internal class MessagesHeaderViewModelTest {
+internal class ChannelHeaderViewModelTest {
 
     private val chatDomain: ChatDomain = mock()
     private val useCases: UseCaseHelper = mock()
@@ -55,7 +55,7 @@ internal class MessagesHeaderViewModelTest {
         val channel: Channel = mock()
         whenever(channelController.channelData) doReturn MutableLiveData(mock())
         whenever(channelController.toChannel()) doReturn channel
-        val channelHeaderViewModel = MessagesHeaderViewModel(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<Channel> = spy()
 
         channelHeaderViewModel.channelState.observeForever(mockObserver)
@@ -66,7 +66,7 @@ internal class MessagesHeaderViewModelTest {
     fun `Should notify about new members`() {
         val members = createMembers()
         whenever(channelController.members) doReturn MutableLiveData(members)
-        val channelHeaderViewModel = MessagesHeaderViewModel(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<List<Member>> = spy()
 
         channelHeaderViewModel.members.observeForever(mockObserver)
@@ -75,10 +75,10 @@ internal class MessagesHeaderViewModelTest {
 
     /** [createAnyOtherUserOnlineInput] */
     @ParameterizedTest
-    @MethodSource("com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModelTest#createAnyOtherUserOnlineInput")
+    @MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
     fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
         whenever(channelController.members) doReturn MutableLiveData(members)
-        val channelHeaderViewModel = MessagesHeaderViewModel(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<Boolean> = spy()
 
         channelHeaderViewModel.anyOtherUsersOnline.observeForever(mockObserver)

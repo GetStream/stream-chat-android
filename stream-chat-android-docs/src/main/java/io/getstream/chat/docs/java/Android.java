@@ -3,13 +3,13 @@ package io.getstream.chat.docs.java;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.MessagesHeaderViewModel;
+import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel;
 
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.messages.header.ChannelHeaderViewModelBinding;
 import io.getstream.chat.android.ui.messages.header.MessagesHeaderView;
-import io.getstream.chat.android.ui.messages.header.MessagesHeaderViewModelBinding;
 
 public class Android {
 
@@ -35,10 +35,10 @@ public class Android {
 
         public void bindingWithViewModel() {
             // Get ViewModel
-            MessagesHeaderViewModel viewModel =
-                    new ViewModelProvider(this).get(MessagesHeaderViewModel.class);
+            ChannelHeaderViewModel viewModel =
+                    new ViewModelProvider(this).get(ChannelHeaderViewModel.class);
             // Bind it with MessagesHeaderView
-            MessagesHeaderViewModelBinding
+            ChannelHeaderViewModelBinding
                     .bind(viewModel, messagesHeaderView, getViewLifecycleOwner());
         }
     }
