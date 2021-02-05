@@ -4,6 +4,10 @@
 -. `ChatUtils::devToken` is not accessible anymore, it has been moved to `ChatClient::devToken`
 
 ## stream-chat-android-client
+- **setUser deprecation**
+    - The `setUser`, `setGuestUser`, and `setAnonymousUser` methods on `ChatClient` are now deprecated.
+    - Prefer to use the `connectUser` (`connectGuestUser`, `connectAnonymousUser`) methods instead, which return `Call` objects.
+    - If you want the same async behaviour as with the old methods, use `client.setUser(user, token).enqueue { /* Handle result */ }`.
 - Add support for typing events in threads:
     - Add `parentId` to `TypingStartEvent` and `TypingStopEvent`
     - Add `parentId` to ``ChannelClient::keystroke` and `ChannelClient::stopTyping`
