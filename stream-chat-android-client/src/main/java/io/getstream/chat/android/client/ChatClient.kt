@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
@@ -51,7 +52,6 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ConnectionData
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenManager
@@ -148,7 +148,7 @@ public class ChatClient internal constructor(
                     object : InitConnectionListener() {
                         override fun onSuccess(data: ConnectionData) {
                             val connectionData =
-                                io.getstream.chat.android.client.socket.ConnectionData(data.user, data.connectionId)
+                                io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
                             callback.onResult(Result(connectionData))
                         }
 

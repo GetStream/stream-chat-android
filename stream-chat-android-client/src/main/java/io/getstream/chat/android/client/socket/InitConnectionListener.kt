@@ -17,5 +17,3 @@ public abstract class InitConnectionListener {
 
     public data class ConnectionData(val user: User, val connectionId: String)
 }
-
-public data class ConnectionData(val user: User, val connectionId: String)

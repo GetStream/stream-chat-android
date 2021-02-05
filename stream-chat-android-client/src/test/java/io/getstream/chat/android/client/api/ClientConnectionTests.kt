@@ -13,11 +13,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ConnectionData
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader

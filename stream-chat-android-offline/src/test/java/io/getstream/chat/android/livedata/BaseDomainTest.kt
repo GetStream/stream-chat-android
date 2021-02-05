@@ -25,9 +25,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.ConnectionData
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
