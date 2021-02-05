@@ -58,8 +58,8 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
         GlobalScope.launch(DispatcherProvider.IO) {
             val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
-            if (ChatDomain.isInitialized) {
-                performSync(ChatDomain.instance(), cid)
+            if (ChatDomain.isInitialized && ChatClient.isInitialized) {
+                performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
 
                 if (ChatClient.isInitialized) {
                     ChatClient.instance()
@@ -80,8 +80,8 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                         config.apiKey
                     )
                     val domain = initDomain(user, client)
-                    performSync(domain, cid)
-                    client.onMessageReceived(message)
+                    logger.logD("performing sync, config: $syncConfig")
+                    performSync(domain, cid, client, message)
                 }
             }
 
@@ -90,9 +90,19 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         }
     }
 
-    private fun performSync(domain: ChatDomain, cid: String) {
-        domain.apply {
-            useCases.replayEventsForActiveChannels(cid).execute()
+    private fun performSync(
+        domain: ChatDomain,
+        cid: String,
+        client: ChatClient,
+        message: RemoteMessage,
+    ) {
+        domain.useCases.replayEventsForActiveChannels(cid).enqueue {
+            if (it.isSuccess) {
+                logger.logD("sync success.")
+            } else {
+                logger.logD("sync failed")
+            }
+            client.onMessageReceived(message)
         }
     }
 
