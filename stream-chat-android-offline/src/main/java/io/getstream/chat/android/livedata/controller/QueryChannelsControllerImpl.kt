@@ -285,7 +285,7 @@ internal class QueryChannelsControllerImpl(
             queryChannelsSpec.cids = queryChannelsSpec.cids - cid
             domainImpl.repos.queryInsert(queryChannelsSpec)
             // Remove from channel repository
-            domainImpl.repos.removeChannel(cid)
+            domainImpl.repos.deleteChannel(cid)
 
             _channels.value = _channels.value.minus(cid)
         }

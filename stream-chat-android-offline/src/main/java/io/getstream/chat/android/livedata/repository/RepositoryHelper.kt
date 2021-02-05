@@ -27,19 +27,21 @@ internal class RepositoryHelper private constructor(
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
-) : UserRepository by userRepository {
+    private val defaultConfig: Config,
+) : UserRepository by userRepository, ChannelRepository by channelsRepository {
 
     private val selectUser: suspend (userId: String) -> User = { userId ->
-        selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+        requireNotNull(selectUser(userId)) { "User with the userId: `$userId` has not been found" }
     }
+
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
-        defaultConfig: Config,
-        pagination: AnyChannelPaginationRequest? = null,
+        pagination: AnyChannelPaginationRequest?,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.select(channelIds, selectUser, ::selectMessage)
+        val channels = channelsRepository.selectChannels(channelIds)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -67,12 +69,14 @@ internal class RepositoryHelper private constructor(
         }
     }
 
-    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean) {
-        channelsRepository.setHiddenForChannel(cid, isHidden)
+    override suspend fun insertChannel(channel: Channel) {
+        channelsRepository.insertChannel(channel)
+        userRepository.insertUsers(channel.let(Channel::users))
     }
 
-    internal suspend fun setHiddenForChannel(cid: String, isHidden: Boolean, hideMessagesBefore: Date) {
-        channelsRepository.setHiddenForChannel(cid, isHidden, hideMessagesBefore)
+    override suspend fun insertChannels(channels: Collection<Channel>) {
+        channelsRepository.insertChannels(channels)
+        userRepository.insertUsers(channels.flatMap(Channel::users))
     }
 
     internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
@@ -109,10 +113,6 @@ internal class RepositoryHelper private constructor(
         configsRepository.clearCache()
     }
 
-    internal suspend fun updateChannelByDeletedDate(cid: String, deletedAt: Date) {
-        channelsRepository.setDeletedAt(cid, deletedAt)
-    }
-
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
         selectChannelWithoutMessages(cid)?.also { channel ->
             val messageCreatedAt = checkNotNull(
@@ -131,7 +131,7 @@ internal class RepositoryHelper private constructor(
                 channel.apply {
                     lastMessageAt = messageCreatedAt
                     messages = listOf(lastMessage)
-                }.also { channelsRepository.insert(it) }
+                }.also { channelsRepository.insertChannel(it) }
             }
         }
     }
@@ -160,26 +160,6 @@ internal class RepositoryHelper private constructor(
 
     internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(selectUser)
 
-    suspend fun insertChannel(channel: Channel) {
-        insertChannels(listOf(channel))
-    }
-
-    suspend fun insertChannels(channels: Collection<Channel>) {
-        this.channelsRepository.insertChannels(channels)
-        userRepository.insertUsers(channels.flatMap(Channel::users))
-    }
-
-    internal suspend fun deleteChannel(cid: String) {
-        channelsRepository.delete(cid)
-    }
-
-    suspend fun selectChannelsSyncNeeded(): List<Channel> =
-        channelsRepository.selectSyncNeeded(selectUser, ::selectMessage)
-
-    suspend fun removeChannel(cid: String) {
-        channelsRepository.delete(cid)
-    }
-
     suspend fun selectMessage(
         messageId: String,
     ): Message? {
@@ -196,10 +176,6 @@ internal class RepositoryHelper private constructor(
 
     suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insert(queryChannelsSpec)
-    }
-
-    suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelsRepository.select(cid, selectUser, ::selectMessage)
     }
 
     suspend fun selectMessagesForChannel(
@@ -238,20 +214,25 @@ internal class RepositoryHelper private constructor(
     }
 
     internal companion object {
-        fun create(factory: RepositoryFactory, scope: CoroutineScope): RepositoryHelper {
+        fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryHelper {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
-                userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+                requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
             }
+
+            val messageRepository = factory.createMessageRepository(getUser)
+            val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
+
             return RepositoryHelper(
                 userRepository = factory.createUserRepository(),
                 configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(),
+                channelsRepository = factory.createChannelRepository(getUser, getMessage),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
-                messageRepository = factory.createMessageRepository(getUser),
+                messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(),
                 syncStateRepository = factory.createSyncStateRepository(),
                 scope = scope,
+                defaultConfig = defaultConfig,
             )
         }
     }
