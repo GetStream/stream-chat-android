@@ -59,13 +59,6 @@
                 />
 
             <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-                android:id="@+id/headerWithoutStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
-
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
                 android:id="@+id/headerWithoutUserAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamUiShowAddChannelButton="false"
+                app:streamUiShowActionButton="false"
                 />
 
             <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
@@ -86,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:streamUiShowAddChannelButton="false"
+                app:streamUiShowActionButton="false"
                 app:streamUiShowUserAvatar="false"
                 />
 
