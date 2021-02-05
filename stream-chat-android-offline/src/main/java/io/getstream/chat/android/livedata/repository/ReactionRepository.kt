@@ -10,11 +10,6 @@ import java.util.Date
 internal interface ReactionRepository {
     suspend fun insertReaction(reaction: Reaction)
     suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
-    suspend fun selectUserReactionToMessageByType(
-        messageId: String,
-        userId: String,
-        type: String,
-    ): Reaction?
     suspend fun selectReactionsSyncNeeded(): List<Reaction>
     suspend fun selectUserReactionsToMessage(
         messageId: String,
@@ -40,14 +35,6 @@ internal class ReactionRepositoryImpl(
 
     override suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
         reactionDao.setDeleteAt(userId, messageId, deletedAt)
-    }
-
-    override suspend fun selectUserReactionToMessageByType(
-        messageId: String,
-        userId: String,
-        type: String,
-    ): Reaction? {
-        return reactionDao.select(messageId, userId, type)?.toModel(getUser)
     }
 
     override suspend fun selectReactionsSyncNeeded(): List<Reaction> {

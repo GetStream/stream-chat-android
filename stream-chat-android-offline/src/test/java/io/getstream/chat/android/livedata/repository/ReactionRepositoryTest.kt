@@ -23,8 +23,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
     @Test
     fun testInsertAndRead() = runBlocking {
         helper.insertReaction(data.reaction1)
-        val reaction =
-            helper.selectUserReactionsToMessageByType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+        val reaction = helper.selectUserReactionsToMessage(data.reaction1.messageId, data.reaction1.user!!.id).first()
         Truth.assertThat(reaction).isEqualTo(data.reaction1)
     }
 
@@ -35,7 +34,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
             data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
         helper.insertReaction(data.reaction1)
         helper.insertReaction(reaction2)
-        var reactions = helper.selectReactionSyncNeeded()
+        var reactions = helper.selectReactionsSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(1)
         Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
@@ -43,7 +42,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         Truth.assertThat(reactions.size).isEqualTo(1)
         Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
-        reactions = helper.selectReactionSyncNeeded()
+        reactions = helper.selectReactionsSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(0)
     }
 
@@ -54,8 +53,7 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         helper.insertReaction(data.reaction1)
         helper.insertReaction(reaction1Updated)
 
-        val reaction =
-            helper.selectUserReactionsToMessageByType(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+        val reaction = helper.selectUserReactionsToMessage(data.reaction1.messageId, data.reaction1.user!!.id).first()
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
     }
 }

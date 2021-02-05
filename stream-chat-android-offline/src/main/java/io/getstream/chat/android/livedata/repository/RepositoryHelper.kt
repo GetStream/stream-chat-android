@@ -4,7 +4,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
@@ -28,7 +27,9 @@ internal class RepositoryHelper private constructor(
     private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
-) : UserRepository by userRepository, ChannelRepository by channelsRepository {
+) : UserRepository by userRepository,
+    ChannelRepository by channelsRepository,
+    ReactionRepository by reactionsRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -139,23 +140,6 @@ internal class RepositoryHelper private constructor(
     internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
         messageRepository.selectMessages(messageIds)
 
-    internal suspend fun selectUserReactionsToMessage(
-        messageId: String,
-        userId: String,
-    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId)
-
-    internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
-        reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
-
-    @VisibleForTesting
-    internal suspend fun selectUserReactionsToMessageByType(
-        messageId: String,
-        userId: String,
-        type: String,
-    ) = reactionsRepository.selectUserReactionToMessageByType(messageId, userId, type)
-
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectReactionsSyncNeeded()
-
     suspend fun selectMessage(
         messageId: String,
     ): Message? {
@@ -195,10 +179,6 @@ internal class RepositoryHelper private constructor(
 
     suspend fun deleteChannelMessage(message: Message) {
         messageRepository.deleteChannelMessage(message)
-    }
-
-    internal suspend fun insertReaction(reaction: Reaction) {
-        reactionsRepository.insertReaction(reaction)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {
