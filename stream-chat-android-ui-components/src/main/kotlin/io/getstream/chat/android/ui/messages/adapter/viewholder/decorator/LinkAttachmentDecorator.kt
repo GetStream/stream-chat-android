@@ -49,7 +49,10 @@ internal class LinkAttachmentDecorator : BaseDecorator() {
         decorate(viewHolder.binding.linkAttachmentView, data.message)
     }
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun decorate(linkAttachmentView: LinkAttachmentView, message: Message) {
         val linkAttachment = message.attachments.firstOrNull { it.hasLink() }

@@ -70,7 +70,10 @@ internal class ReactionsDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = Unit
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,

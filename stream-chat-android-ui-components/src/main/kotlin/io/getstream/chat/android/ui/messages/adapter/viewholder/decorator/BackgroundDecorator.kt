@@ -16,12 +16,13 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.hasLink
 import io.getstream.chat.android.ui.utils.extensions.hasText
 import io.getstream.chat.android.ui.utils.extensions.isReply
 
-internal class BackgroundDecorator : BaseDecorator() {
+internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecorator() {
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
@@ -48,7 +49,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
-        data
+        data,
     )
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
@@ -57,7 +58,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.mediaAttachmentsGroupView,
-        data
+        data,
     )
 
     override fun decorateOnlyFileAttachmentsMessage(
@@ -66,7 +67,7 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
-        data
+        data,
     )
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
@@ -75,10 +76,13 @@ internal class BackgroundDecorator : BaseDecorator() {
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
         viewHolder.binding.fileAttachmentsView,
-        data
+        data,
     )
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
         viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
@@ -115,7 +119,10 @@ internal class BackgroundDecorator : BaseDecorator() {
             .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_literal_transparent)) }
     }
 
-    private fun setDefaultBackgroundDrawable(view: View, data: MessageListItem.MessageItem) {
+    private fun setDefaultBackgroundDrawable(
+        view: View,
+        data: MessageListItem.MessageItem,
+    ) {
         val radius = DEFAULT_CORNER_RADIUS
         val bottomRightCorner = if (data.isMine && data.isBottomPosition()) 0f else radius
         val bottomLeftCorner = if (data.isMine.not() && data.isBottomPosition()) 0f else radius
@@ -126,22 +133,33 @@ internal class BackgroundDecorator : BaseDecorator() {
             val hasLink = data.message.attachments.any(Attachment::hasLink)
             if (data.isMine) {
                 paintStyle = Paint.Style.FILL
-                setTint(
-                    ContextCompat.getColor(
+                // for messages with links, we use a different background color than other messages by default.
+                // however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.
+                val backgroundTintColor = if (hasLink) {
+                    style.messageBackgroundColorMine ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                } else {
+                    style.messageBackgroundColorMine ?: ContextCompat.getColor(
                         view.context,
-                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_CURRENT_USER_BACKGROUND
+                        MESSAGE_CURRENT_USER_BACKGROUND
                     )
-                )
+                }
+
+                setTint(backgroundTintColor)
             } else {
                 paintStyle = Paint.Style.FILL_AND_STROKE
                 setStrokeTint(ContextCompat.getColor(view.context, MESSAGE_OTHER_STROKE_COLOR))
                 strokeWidth = DEFAULT_STROKE_WIDTH
-                setTint(
-                    ContextCompat.getColor(
+
+                val backgroundTintColor = if (hasLink) {
+                    style.messageBackgroundColorTheirs ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                } else {
+                    style.messageBackgroundColorTheirs ?: ContextCompat.getColor(
                         view.context,
-                        if (hasLink) MESSAGE_LINK_BACKGROUND else MESSAGE_OTHER_USER_BACKGROUND
+                        MESSAGE_OTHER_USER_BACKGROUND
                     )
-                )
+                }
+
+                setTint(backgroundTintColor)
             }
         }
     }

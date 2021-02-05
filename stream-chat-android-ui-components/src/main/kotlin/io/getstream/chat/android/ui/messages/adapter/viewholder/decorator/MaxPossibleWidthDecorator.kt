@@ -51,7 +51,10 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) {
+    override fun decorateGiphyMessage(
+        viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
 
