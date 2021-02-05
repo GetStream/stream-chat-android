@@ -213,20 +213,31 @@ public final class io/getstream/chat/android/ui/channel/list/header/ChannelListH
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun hideTitle ()V
-	public final fun setOnAddChannelButtonClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$AddChannelButtonClickListener;)V
+	public final fun setOnActionButtonClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$ActionButtonClickListener;)V
 	public final fun setOnUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
 	public final fun showOfflineTitle ()V
 	public final fun showOnlineTitle ()V
 }
 
-public abstract interface class io/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$AddChannelButtonClickListener {
-	public abstract fun onAddChannelClick ()V
+public abstract interface class io/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$ActionButtonClickListener {
+	public abstract fun onClick ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener {
 	public abstract fun onUserAvatarClick ()V
+}
+
+public final class io/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getOnline ()Landroidx/lifecycle/LiveData;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModel;Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelsViewModelBinding {

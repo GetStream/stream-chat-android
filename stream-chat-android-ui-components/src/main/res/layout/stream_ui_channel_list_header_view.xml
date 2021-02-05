@@ -30,7 +30,7 @@
         android:text="@string/stream_ui_channels_header_view_online_title"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintEnd_toStartOf="@id/addChannelButton"
+        app:layout_constraintEnd_toStartOf="@id/actionButton"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -44,7 +44,7 @@
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintEnd_toStartOf="@id/addChannelButton"
+        app:layout_constraintEnd_toStartOf="@id/actionButton"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible"
@@ -68,7 +68,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/addChannelButton"
+        android:id="@+id/actionButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
