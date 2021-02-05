@@ -30,7 +30,7 @@ internal class RepositoryHelper private constructor(
 ) : UserRepository by userRepository {
 
     private val selectUser: suspend (userId: String) -> User = { userId ->
-        selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+        requireNotNull(selectUser(userId)) { "User with the userId: `$userId` has not been found" }
     }
 
     internal suspend fun selectChannels(
@@ -241,7 +241,7 @@ internal class RepositoryHelper private constructor(
         fun create(factory: RepositoryFactory, scope: CoroutineScope): RepositoryHelper {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
-                userRepository.selectUser(userId) ?: error("User with the userId: `$userId` has not been found")
+                requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
             }
 
             val messageRepository = factory.createMessageRepository(getUser)
