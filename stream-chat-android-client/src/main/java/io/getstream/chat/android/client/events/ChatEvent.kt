@@ -229,6 +229,7 @@ public data class NotificationChannelTruncatedEvent(
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
+    val user: User?,
     val channel: Channel,
 ) : CidEvent()
 
@@ -238,6 +239,7 @@ public data class NotificationInviteAcceptedEvent(
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
+    val user: User?,
     val member: Member,
 ) : CidEvent()
 
@@ -247,6 +249,7 @@ public data class NotificationInvitedEvent(
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
+    val user: User?,
     val member: Member,
 ) : CidEvent()
 
@@ -293,6 +296,7 @@ public data class NotificationMutesUpdatedEvent(
 public data class NotificationRemovedFromChannelEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
+    val user: User?,
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,

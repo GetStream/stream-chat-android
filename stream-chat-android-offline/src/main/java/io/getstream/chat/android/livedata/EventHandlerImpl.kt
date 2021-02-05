@@ -232,10 +232,10 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationInvitedEvent -> {
-                    batch.addUser(event.user)
+                    event.user?.let { batch.addUser(it) }
                 }
                 is NotificationInviteAcceptedEvent -> {
-                    batch.addUser(event.user)
+                    event.user?.let { batch.addUser(it) }
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
@@ -289,8 +289,11 @@ internal class EventHandlerImpl(
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.user.id, null) })
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        event.user?.let { user ->
+                            channel.setMember(user.id, null)
+                        }
+                        batch.addChannel(channel)
                     }
                 }
                 is ChannelUpdatedEvent -> {

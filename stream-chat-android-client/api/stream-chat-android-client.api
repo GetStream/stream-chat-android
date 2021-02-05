@@ -1208,7 +1208,7 @@ public final class io/getstream/chat/android/client/events/NotificationChannelMu
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/NotificationChannelTruncatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
+public final class io/getstream/chat/android/client/events/NotificationChannelTruncatedEvent : io/getstream/chat/android/client/events/CidEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
@@ -1226,12 +1226,12 @@ public final class io/getstream/chat/android/client/events/NotificationChannelTr
 	public fun getCid ()Ljava/lang/String;
 	public fun getCreatedAt ()Ljava/util/Date;
 	public fun getType ()Ljava/lang/String;
-	public fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/NotificationInviteAcceptedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
+public final class io/getstream/chat/android/client/events/NotificationInviteAcceptedEvent : io/getstream/chat/android/client/events/CidEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Member;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
@@ -1249,12 +1249,12 @@ public final class io/getstream/chat/android/client/events/NotificationInviteAcc
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMember ()Lio/getstream/chat/android/client/models/Member;
 	public fun getType ()Ljava/lang/String;
-	public fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/NotificationInvitedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
+public final class io/getstream/chat/android/client/events/NotificationInvitedEvent : io/getstream/chat/android/client/events/CidEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Member;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
@@ -1272,7 +1272,7 @@ public final class io/getstream/chat/android/client/events/NotificationInvitedEv
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMember ()Lio/getstream/chat/android/client/models/Member;
 	public fun getType ()Ljava/lang/String;
-	public fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1348,7 +1348,7 @@ public final class io/getstream/chat/android/client/events/NotificationMutesUpda
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
+public final class io/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent : io/getstream/chat/android/client/events/CidEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
@@ -1364,7 +1364,7 @@ public final class io/getstream/chat/android/client/events/NotificationRemovedFr
 	public fun getCid ()Ljava/lang/String;
 	public fun getCreatedAt ()Ljava/util/Date;
 	public fun getType ()Ljava/lang/String;
-	public fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
