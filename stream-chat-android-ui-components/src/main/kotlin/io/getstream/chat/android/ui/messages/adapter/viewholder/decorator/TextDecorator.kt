@@ -1,69 +1,75 @@
 package io.getstream.chat.android.ui.messages.adapter.viewholder.decorator
 
-import android.widget.ImageView
-import androidx.core.view.isVisible
+import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.messages.adapter.viewholder.GiphyViewHolder
-import io.getstream.chat.android.ui.messages.adapter.viewholder.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 
-internal class FailedIndicatorDecorator : BaseDecorator() {
-
-    override fun decoratePlainTextMessage(
-        viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
-    }
+internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() {
 
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
     }
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.sentFiles::setTextColor)
     }
 
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
     }
 
     override fun decorateOnlyMediaAttachmentsMessage(
         viewHolder: OnlyMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
-    }
-
-    override fun decorateDeletedMessage(
-        viewHolder: MessageDeletedViewHolder,
-        data: MessageListItem.MessageItem,
     ) = Unit
+
+    override fun decoratePlainTextMessage(
+        viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        viewHolder.binding.apply {
+            getStyleTextColor(data.isMine)?.let { textColor ->
+                messageText.setTextColor(textColor)
+                // set title & description colors as well
+                linkAttachmentView.binding.apply {
+                    descriptionTextView.setTextColor(textColor)
+                    titleTextView.setTextColor(textColor)
+                }
+            }
+
+            getStyleLinkTextColor(data.isMine)?.let { linkTextColor ->
+                messageText.setLinkTextColor(linkTextColor)
+            }
+        }
+    }
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    private fun setupFailedIndicator(
-        deliveryFailedIcon: ImageView,
-        data: MessageListItem.MessageItem,
-    ) {
-        val isFailed = data.isMine && data.message.syncStatus == SyncStatus.FAILED_PERMANENTLY
-        deliveryFailedIcon.isVisible = isFailed
+    @ColorInt
+    private fun getStyleTextColor(isMine: Boolean): Int? {
+        return if (isMine) style.messageTextColorMine else style.messageTextColorTheirs
+    }
+
+    @ColorInt
+    private fun getStyleLinkTextColor(isMine: Boolean): Int? {
+        return if (isMine) style.messageLinkTextColorMine else style.messageLinkTextColorTheirs
     }
 }

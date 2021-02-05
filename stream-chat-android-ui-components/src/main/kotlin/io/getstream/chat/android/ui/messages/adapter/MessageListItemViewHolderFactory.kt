@@ -85,7 +85,11 @@ public open class MessageListItemViewHolderFactory {
     protected fun createPlainTextViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessagePlainTextViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return MessagePlainTextViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+        )
     }
 
     protected fun createPlainTextWithFileAttachmentsViewHolder(

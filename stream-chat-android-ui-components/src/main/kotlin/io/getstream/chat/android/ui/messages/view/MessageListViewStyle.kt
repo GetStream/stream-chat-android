@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
 internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
 
     internal val scrollButtonViewStyle: ScrollButtonViewStyle
+    internal val itemStyle: MessageListItemStyle
 
     init {
         context.obtainStyledAttributes(
@@ -17,8 +18,8 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
             R.styleable.MessageListView,
             0,
             0
-        ).use {
-            scrollButtonViewStyle = ScrollButtonViewStyle.Builder(it)
+        ).use { attributes ->
+            scrollButtonViewStyle = ScrollButtonViewStyle.Builder(attributes)
                 .scrollButtonEnabled(
                     R.styleable.MessageListView_streamUiScrollButtonEnabled,
                     true
@@ -43,6 +44,15 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                     R.styleable.MessageListView_streamUiScrollButtonIcon,
                     context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                 ).build()
+
+            itemStyle = MessageListItemStyle.Builder(attributes)
+                .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
+                .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
+                .messageTextColorMine(R.styleable.MessageListView_streamUiMessageTextColorMine)
+                .messageTextColorTheirs(R.styleable.MessageListView_streamUiMessageTextColorTheirs)
+                .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
+                .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
+                .build()
         }
     }
 }

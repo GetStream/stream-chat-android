@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyFileAttachme
 import io.getstream.chat.android.ui.messages.adapter.viewholder.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.messages.view.MessageListItemStyle
 import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -40,9 +41,15 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
+
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
     }
+
+    private val itemStyle by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListItemStyle
+    }
+
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
             message,
@@ -61,7 +68,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return StreamUiDialogMessageOptionsBinding.inflate(inflater, container, false)
             .apply { _binding = this }
@@ -133,7 +140,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider()
+                decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
             }
             .createViewHolder(
@@ -249,7 +256,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     internal fun interface ConfirmDeleteMessageClickHandler {
         fun onConfirmDeleteMessage(
             message: Message,
-            callback: ConfirmDeleteMessageCallback
+            callback: ConfirmDeleteMessageCallback,
         )
 
         fun interface ConfirmDeleteMessageCallback {
@@ -278,31 +285,36 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
+        private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
 
         var messageArg: Message? = null
 
         fun newReactionOptionsInstance(
-            message: Message
+            message: Message,
+            style: MessageListItemStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, null)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, null, style)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
-            configuration: MessageOptionsView.Configuration
+            configuration: MessageOptionsView.Configuration,
+            style: MessageListItemStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
             configuration: MessageOptionsView.Configuration?,
+            style: MessageListItemStyle,
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
                     ARG_OPTIONS_CONFIG to configuration,
+                    ARG_OPTIONS_ITEM_STYLE to style
                 )
                 // pass message via static field
                 messageArg = message
