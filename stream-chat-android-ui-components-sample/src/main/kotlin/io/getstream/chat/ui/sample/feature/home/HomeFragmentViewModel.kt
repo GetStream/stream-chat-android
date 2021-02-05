@@ -18,8 +18,6 @@ class HomeFragmentViewModel : ViewModel() {
 
     val state: LiveData<State> = _state
     val events: LiveData<Event<UiEvent>> = _events
-    val online: LiveData<Boolean> = chatDomain.online
-    val currentUser: User = chatDomain.currentUser
 
     init {
         _state.value = State(

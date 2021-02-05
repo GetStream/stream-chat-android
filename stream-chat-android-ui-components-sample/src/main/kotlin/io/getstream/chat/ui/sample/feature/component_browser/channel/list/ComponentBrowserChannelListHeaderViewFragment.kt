@@ -39,9 +39,6 @@ class ComponentBrowserChannelListHeaderViewFragment : Fragment() {
         binding.headerOfflineStatusWithoutProgress.setUser(randomUser())
         binding.headerOfflineStatusWithoutProgress.showOfflineTitle()
 
-        binding.headerWithoutStatus.setUser(randomUser())
-        binding.headerWithoutStatus.hideTitle()
-
         binding.headerWithoutUserAvatar.setUser(randomUser())
         binding.headerWithoutUserAvatar.showOfflineTitle()
 

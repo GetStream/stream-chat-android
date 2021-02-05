@@ -45,12 +45,12 @@ internal open class BaseRepositoryHelperTest {
         val factory: RepositoryFactory = mock {
             on { createUserRepository() } doReturn users
             on { createChannelConfigRepository() } doReturn configs
-            on { createChannelRepository() } doReturn channels
+            on { createChannelRepository(any(), any()) } doReturn channels
             on { createQueryChannelsRepository() } doReturn queryChannels
             on { createMessageRepository(any()) } doReturn messages
             on { createReactionRepository() } doReturn reactions
             on { createSyncStateRepository() } doReturn syncState
         }
-        sut = RepositoryHelper.create(factory, scope)
+        sut = RepositoryHelper.create(factory, scope, mock())
     }
 }

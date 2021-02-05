@@ -421,7 +421,7 @@ internal class EventHandlerImpl(
                 }
                 is ChannelDeletedEvent -> {
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
-                    domainImpl.repos.updateChannelByDeletedDate(event.cid, event.createdAt)
+                    domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
             }
         }
