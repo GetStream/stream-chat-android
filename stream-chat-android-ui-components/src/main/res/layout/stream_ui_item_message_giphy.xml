@@ -119,7 +119,7 @@
                 android:paddingBottom="16dp"
                 android:text="@string/stream_ui_cancel_label"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-                android:textColor="@color/stream_ui_grey"
+                android:textColor="@color/stream_ui_text_color_secondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/verticalDivider"
@@ -162,8 +162,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
-        app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         />
 

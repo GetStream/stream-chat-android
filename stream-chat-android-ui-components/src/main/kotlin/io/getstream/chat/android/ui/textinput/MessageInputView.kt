@@ -355,14 +355,14 @@ public class MessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.MessageInputView_streamUiMessageInputTextColor,
-                    context.getColorCompat(R.color.stream_ui_black)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
                 )
             )
 
             setHintTextColor(
                 typedArray.getColor(
                     R.styleable.MessageInputView_streamUiMessageInputHintTextColor,
-                    context.getColorCompat(R.color.stream_ui_grey)
+                    context.getColorCompat(R.color.stream_ui_text_color_hint)
                 )
             )
 

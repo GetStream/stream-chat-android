@@ -66,9 +66,11 @@
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
             android:text="@string/create_group"
+            android:textColor="@color/stream_ui_text_color_primary"
             android:textSize="@dimen/stream_ui_text_medium"
             android:textStyle="bold"
             />
+
     </LinearLayout>
 
     <TextView
@@ -79,7 +81,7 @@
         android:gravity="start|center_vertical"
         android:paddingHorizontal="8dp"
         android:text="@string/add_channel_user_list_title"
-        android:textColor="@color/stream_ui_grey"
+        android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +108,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="8dp"
         android:text="@string/add_channel_empty_users_title"
-        android:textColor="@color/stream_ui_grey"
+        android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_medium"
         android:visibility="visible"
         app:drawableTopCompat="@drawable/empty_user_search"
@@ -137,4 +139,5 @@
         app:streamUiSendButtonEnabled="false"
         tools:layout_height="56dp"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

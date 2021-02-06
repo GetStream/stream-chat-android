@@ -67,11 +67,11 @@
         android:layout_width="@dimen/stream_ui_message_input_button_size"
         android:layout_height="@dimen/stream_ui_message_input_button_size"
         android:layout_marginBottom="12dp"
+        android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/stream_ui_ic_attach"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="?selectableItemBackgroundBorderless"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -79,12 +79,12 @@
         android:layout_width="@dimen/stream_ui_message_input_button_size"
         android:layout_height="@dimen/stream_ui_message_input_button_size"
         android:layout_marginBottom="12dp"
+        android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/stream_ui_ic_command"
         android:tint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
-        android:background="?selectableItemBackgroundBorderless"
         />
 
     <io.getstream.chat.android.ui.textinput.MessageInputFieldView
@@ -134,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textColor="@color/stream_ui_grey"
+        android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageInputFieldView"

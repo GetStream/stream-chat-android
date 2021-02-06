@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
-        android:textColor="@color/stream_ui_grey"
+        android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
         android:textStyle="bold"
         />

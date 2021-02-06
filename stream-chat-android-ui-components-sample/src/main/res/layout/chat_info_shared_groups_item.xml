@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:textAppearance="@style/StreamUiTextAppearance.Body"
-        android:textColor="@color/stream_ui_grey"
+        android:textColor="@color/stream_ui_text_color_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/nameTextView"

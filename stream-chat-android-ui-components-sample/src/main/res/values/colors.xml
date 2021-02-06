@@ -12,8 +12,6 @@
     <color name="green">#00FF00</color>
     <color name="red">#FF0000</color>
 
-    <color name="login_text">@color/black</color>
-
     <color name="channels_shimmer_color">#CCCCCC</color>
 
     <color name="component_browser_sub_card">@color/stream_ui_white_snow</color>
