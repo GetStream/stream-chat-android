@@ -14,7 +14,7 @@ class Android {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/channel_list_header_view">Channel List Header View</a>
      */
-    inner class ChannelListHeader(private val channelListHeaderView: ChannelListHeaderView) : Fragment() {
+    public class ChannelListHeader(private val channelListHeaderView: ChannelListHeaderView) : Fragment() {
 
         fun bindingWithViewModel() {
             // Get ViewModel
@@ -27,7 +27,7 @@ class Android {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Messages Header View</a>
      */
-    inner class MessageListHeader(private val messagesHeaderView: MessagesHeaderView) : Fragment() {
+    public class MessageListHeader(private val messagesHeaderView: MessagesHeaderView) : Fragment() {
 
         fun bindingWithViewModel() {
             // Get ViewModel

@@ -16,7 +16,7 @@ public class Android {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/channel_list_header_view">Channel List Header View</a>
      */
-    class ChannelListHeader extends Fragment {
+    public class ChannelListHeader extends Fragment {
         ChannelListHeaderView channelListHeaderView;
 
         public void bindingWithViewModel() {
@@ -30,7 +30,7 @@ public class Android {
     /**
      * * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Messages Header View</a>
      */
-    class MessagesHeader extends Fragment {
+    public class MessagesHeader extends Fragment {
         MessagesHeaderView messagesHeaderView;
 
         public void bindingWithViewModel() {
