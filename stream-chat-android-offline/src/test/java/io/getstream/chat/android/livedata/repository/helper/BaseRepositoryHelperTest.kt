@@ -48,7 +48,7 @@ internal open class BaseRepositoryHelperTest {
             on { createChannelRepository(any(), any()) } doReturn channels
             on { createQueryChannelsRepository() } doReturn queryChannels
             on { createMessageRepository(any()) } doReturn messages
-            on { createReactionRepository() } doReturn reactions
+            on { createReactionRepository(any()) } doReturn reactions
             on { createSyncStateRepository() } doReturn syncState
         }
         sut = RepositoryHelper.create(factory, scope, mock())
