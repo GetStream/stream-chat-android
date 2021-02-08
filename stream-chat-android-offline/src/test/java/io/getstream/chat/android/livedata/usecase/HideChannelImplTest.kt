@@ -35,7 +35,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         channel.hidden = true
         chatDomainImpl.repos.insertChannel(channel)
         val query = QueryChannelsSpec(data.filter1, QuerySort(), listOf(data.channel1.cid))
-        chatDomainImpl.repos.queryInsert(query)
+        chatDomainImpl.repos.insertQueryChannels(query)
 
         // setup the query channel controller
         val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())

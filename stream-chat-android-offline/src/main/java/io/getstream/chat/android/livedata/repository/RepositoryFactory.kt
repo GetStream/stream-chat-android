@@ -9,19 +9,22 @@ internal class RepositoryFactory(
     private val currentUser: User,
 ) {
     fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
-    fun createChannelConfigRepository(): ChannelConfigRepository = ChannelConfigRepository(database.channelConfigDao())
+    fun createChannelConfigRepository(): ChannelConfigRepository =
+        ChannelConfigRepositoryImpl(database.channelConfigDao())
 
     fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository = ChannelRepositoryImpl(database.channelStateDao(), getUser, getMessage, 100)
 
-    fun createQueryChannelsRepository(): QueryChannelsRepository = QueryChannelsRepository(database.queryChannelsQDao())
+    fun createQueryChannelsRepository(): QueryChannelsRepository =
+        QueryChannelsRepositoryImpl(database.queryChannelsQDao())
+
     fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
         MessageRepositoryImpl(database.messageDao(), getUser, 100)
 
     fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         ReactionRepositoryImpl(database.reactionDao(), getUser)
 
-    fun createSyncStateRepository(): SyncStateRepository = SyncStateRepository(database.syncStateDao())
+    fun createSyncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
 }
