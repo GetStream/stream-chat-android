@@ -7,7 +7,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
-import androidx.room.Room
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -45,7 +44,6 @@ import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.repository.RepositoryFacadeBuilder
-import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
@@ -229,12 +227,6 @@ internal class ChatDomainImpl internal constructor(
         activeQueryMapImpl.clear()
     }
 
-    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
-        ChatDatabase.getDatabase(context, user.id)
-    } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
-    }
-
     private fun isTestRunner(): Boolean {
         return Build.FINGERPRINT.toLowerCase().contains("robolectric")
     }
@@ -244,12 +236,13 @@ internal class ChatDomainImpl internal constructor(
 
         currentUser = user
 
-        database = db ?: createDatabase(appContext, user, offlineEnabled)
-
         repos = RepositoryFacadeBuilder {
-            factory = RepositoryFactory(database, user)
-            coroutineScope = scope
-            defaultConfig = this@ChatDomainImpl.defaultConfig
+            context(appContext)
+            database(db)
+            currentUser(currentUser)
+            scope(scope)
+            defaultConfig(defaultConfig)
+            setOfflineEnabled(offlineEnabled)
         }
             .build()
 

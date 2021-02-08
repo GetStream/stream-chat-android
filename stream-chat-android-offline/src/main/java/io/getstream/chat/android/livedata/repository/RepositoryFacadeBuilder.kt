@@ -1,8 +1,11 @@
 package io.getstream.chat.android.livedata.repository
 
+import android.content.Context
+import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDatabase
 import kotlinx.coroutines.CoroutineScope
 
 internal class RepositoryFacadeBuilder {
@@ -12,14 +15,36 @@ internal class RepositoryFacadeBuilder {
         }
     }
 
-    var factory: RepositoryFactory? = null
-    var coroutineScope: CoroutineScope? = null
-    var defaultConfig: Config? = null
+    private var context: Context? = null
+    private var currentUser: User? = null
+    private var isOfflineEnabled: Boolean = false
+    private var database: ChatDatabase? = null
+    private var coroutineScope: CoroutineScope? = null
+    private var defaultConfig: Config? = null
+
+    fun context(context: Context): RepositoryFacadeBuilder = apply { this.context = context }
+    fun currentUser(user: User): RepositoryFacadeBuilder = apply { this.currentUser = user }
+    fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder = apply { this.isOfflineEnabled = isOfflineEnabled }
+    fun database(database: ChatDatabase?): RepositoryFacadeBuilder = apply { this.database = database }
+    fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
+    fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
+
+    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
+        ChatDatabase.getDatabase(context, user.id)
+    } else {
+        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
+    }
+
+    private fun getChatDatabase(): ChatDatabase {
+        return database ?: createDatabase(requireNotNull(context), requireNotNull(currentUser), isOfflineEnabled)
+    }
 
     fun build(): RepositoryFacade {
         val config = requireNotNull(defaultConfig)
-        val factory = requireNotNull(factory)
         val scope = requireNotNull(coroutineScope)
+        val user = requireNotNull(currentUser)
+
+        val factory = RepositoryFactory(getChatDatabase(), user)
 
         val userRepository = factory.createUserRepository()
         val getUser: suspend (userId: String) -> User = { userId ->
