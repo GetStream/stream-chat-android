@@ -27,6 +27,9 @@ public class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/search_input_view">Search Input View</a>
+     */
     class SearchInput extends Fragment {
         SearchInputView searchInputView;
 
@@ -48,6 +51,9 @@ public class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/search_result_list_view">Search Result List View</a>
+     */
     class SearchResultList extends Fragment {
         SearchInputView searchInputView;
         SearchResultListView searchResultListView;
@@ -56,7 +62,7 @@ public class Android {
             // Get ViewModel
             SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
             // Bind it with SearchResultListView
-            SearchViewModelBinding.bind(viewModel, searchResultListView, this);
+            SearchViewModelBinding.bind(viewModel, searchResultListView, getViewLifecycleOwner());
             // Notify ViewModel when search is triggered
             searchInputView.setSearchStartedListener(query -> {
                 viewModel.setQuery(query);

@@ -25,6 +25,9 @@ class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/search_input_view">Search Input View</a>
+     */
     class SearchInput : Fragment() {
         lateinit var searchInputView: SearchInputView
 
@@ -46,6 +49,9 @@ class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/search_result_list_view">Search Result List View</a>
+     */
     class SearchResultList : Fragment() {
         lateinit var searchInputView: SearchInputView
         lateinit var searchResultListView: SearchResultListView
@@ -54,7 +60,7 @@ class Android {
             // Get ViewModel
             val viewModel: SearchViewModel by viewModels()
             // Bind it with SearchResultListView
-            viewModel.bindView(searchResultListView, this)
+            viewModel.bindView(searchResultListView, viewLifecycleOwner)
             // Notify ViewModel when search is triggered
             searchInputView.setSearchStartedListener {
                 viewModel.setQuery(it)
