@@ -26,5 +26,5 @@ internal class RepositoryFactory(
     fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         ReactionRepositoryImpl(database.reactionDao(), getUser)
 
-    fun createSyncStateRepository(): SyncStateRepository = SyncStateRepository(database.syncStateDao())
+    fun createSyncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
 }
