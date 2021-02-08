@@ -11,11 +11,11 @@ internal interface ChannelConfigRepository {
     /**
      * Caches in memory data from DB.
      */
-    suspend fun cacheData()
-    fun clearCache()
-    fun select(channelType: String): ChannelConfig?
-    suspend fun insert(configs: Collection<ChannelConfig>)
-    suspend fun insert(config: ChannelConfig)
+    suspend fun cacheChannelConfigs()
+    fun clearChannelConfigsCache()
+    fun selectChannelConfig(channelType: String): ChannelConfig?
+    suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>)
+    suspend fun insertChannelConfig(config: ChannelConfig)
 }
 
 /**
@@ -25,20 +25,20 @@ internal interface ChannelConfigRepository {
 internal class ChannelConfigRepositoryImpl(private val channelConfigDao: ChannelConfigDao) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
 
-    override suspend fun cacheData() {
+    override suspend fun cacheChannelConfigs() {
         channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
             .associateBy(ChannelConfig::type)
     }
 
-    override fun clearCache() {
+    override fun clearChannelConfigsCache() {
         channelConfigs.clear()
     }
 
-    override fun select(channelType: String): ChannelConfig? {
+    override fun selectChannelConfig(channelType: String): ChannelConfig? {
         return channelConfigs[channelType]
     }
 
-    override suspend fun insert(configs: Collection<ChannelConfig>) {
+    override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         // update the local configs
         channelConfigs += configs.associateBy(ChannelConfig::type)
 
@@ -46,7 +46,7 @@ internal class ChannelConfigRepositoryImpl(private val channelConfigDao: Channel
         channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
     }
 
-    override suspend fun insert(config: ChannelConfig) {
+    override suspend fun insertChannelConfig(config: ChannelConfig) {
         channelConfigs += config.type to config
         channelConfigDao.insert(config.toEntity())
     }

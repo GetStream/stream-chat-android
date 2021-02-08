@@ -55,7 +55,7 @@ internal class RepositoryHelper private constructor(
 
     @VisibleForTesting
     internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = configsRepository.select(type)?.config ?: defaultConfig
+        config = configsRepository.selectChannelConfig(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinct()
@@ -75,7 +75,7 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
-        configsRepository.insert(configs)
+        configsRepository.insertChannelConfigs(configs)
     }
 
     internal suspend fun storeStateForChannels(
@@ -92,20 +92,20 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun insertConfigChannel(config: ChannelConfig) {
-        configsRepository.insert(config)
+        configsRepository.insertChannelConfig(config)
     }
 
     internal fun selectConfig(channelType: String): ChannelConfig? {
-        return configsRepository.select(channelType)
+        return configsRepository.selectChannelConfig(channelType)
     }
 
     internal suspend fun loadChannelConfig() {
-        configsRepository.cacheData()
+        configsRepository.cacheChannelConfigs()
     }
 
     @VisibleForTesting
     internal fun clearCache() {
-        configsRepository.clearCache()
+        configsRepository.clearChannelConfigsCache()
     }
 
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
