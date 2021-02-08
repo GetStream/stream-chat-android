@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
-internal class RepositoryFacade private constructor(
+internal class RepositoryFacade constructor(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -108,30 +108,6 @@ internal class RepositoryFacade private constructor(
                     messages = listOf(lastMessage)
                 }.also { channelsRepository.insertChannel(it) }
             }
-        }
-    }
-
-    internal companion object {
-        fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
-            val userRepository = factory.createUserRepository()
-            val getUser: suspend (userId: String) -> User = { userId ->
-                requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
-            }
-
-            val messageRepository = factory.createMessageRepository(getUser)
-            val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
-
-            return RepositoryFacade(
-                userRepository = factory.createUserRepository(),
-                configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(getUser, getMessage),
-                queryChannelsRepository = factory.createQueryChannelsRepository(),
-                messageRepository = messageRepository,
-                reactionsRepository = factory.createReactionRepository(getUser),
-                syncStateRepository = factory.createSyncStateRepository(),
-                scope = scope,
-                defaultConfig = defaultConfig,
-            )
         }
     }
 }
