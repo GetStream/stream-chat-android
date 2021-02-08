@@ -56,7 +56,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_media_empty_title"
-            android:textColor="@color/stream_ui_black"
+            android:textColor="@color/stream_ui_text_color_primary"
             android:textStyle="bold"
             app:drawableTopCompat="@drawable/ic_empty_shared_media"
             />
@@ -69,7 +69,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/chat_info_option_shared_media_empty_description"
-            android:textColor="@color/stream_ui_grey"
+            android:textColor="@color/stream_ui_text_color_secondary"
             android:textStyle="normal"
             />
     </LinearLayout>

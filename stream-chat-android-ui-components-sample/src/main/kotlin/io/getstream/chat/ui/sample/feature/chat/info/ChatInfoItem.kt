@@ -31,7 +31,7 @@ sealed class ChatInfoItem {
         open val tintResId: Int = R.color.stream_ui_grey
 
         @get:ColorRes
-        open val textColorResId: Int = R.color.stream_ui_black
+        open val textColorResId: Int = R.color.stream_ui_text_color_primary
 
         open val showRightArrow: Boolean = true
 

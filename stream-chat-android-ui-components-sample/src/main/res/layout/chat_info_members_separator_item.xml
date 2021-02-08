@@ -12,7 +12,7 @@
     android:gravity="start|center_vertical"
     android:paddingStart="18dp"
     android:singleLine="true"
-    android:textColor="@color/stream_ui_grey"
+    android:textColor="@color/stream_ui_text_color_secondary"
     android:textSize="@dimen/stream_ui_text_medium"
     app:drawableStartCompat="@drawable/ic_icon_down"
     app:drawableTint="@color/stream_ui_grey"

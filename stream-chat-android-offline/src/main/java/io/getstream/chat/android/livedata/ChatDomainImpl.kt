@@ -715,7 +715,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        val messages = repos.selectMessageSyncNeeded()
+        val messages = repos.selectMessagesSyncNeeded()
         for (message in messages) {
             val channelClient = client.channel(message.cid)
             // support sending, deleting and editing messages here
@@ -740,7 +740,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionSyncNeeded().onEach { reaction ->
+        return repos.selectReactionsSyncNeeded().onEach { reaction ->
             reaction.user = null
             val result = if (reaction.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).execute()
