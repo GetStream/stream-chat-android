@@ -49,19 +49,6 @@ public final class io/getstream/chat/android/livedata/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/ChatDatabase_Impl {
-	public static final field Companion Lio/getstream/chat/android/livedata/ChatDatabase$Companion;
-	public fun <init> ()V
-	public fun channelConfigDao ()Lio/getstream/chat/android/livedata/dao/ChannelConfigDao;
-	public fun channelStateDao ()Lio/getstream/chat/android/livedata/dao/ChannelDao;
-	public fun clearAllTables ()V
-	public fun messageDao ()Lio/getstream/chat/android/livedata/dao/MessageDao;
-	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/dao/QueryChannelsDao;
-	public fun reactionDao ()Lio/getstream/chat/android/livedata/dao/ReactionDao;
-	public fun syncStateDao ()Lio/getstream/chat/android/livedata/dao/SyncStateDao;
-	public fun userDao ()Lio/getstream/chat/android/livedata/dao/UserDao;
-}
-
 public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public static final field Companion Lio/getstream/chat/android/livedata/ChatDomain$Companion;
 	public abstract fun clean ()V
@@ -296,6 +283,19 @@ public final class io/getstream/chat/android/livedata/dao/UserDao_Impl : io/gets
 
 public final class io/getstream/chat/android/livedata/extensions/ClientExtensionsKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
+}
+
+public final class io/getstream/chat/android/livedata/repository/database/ChatDatabase_Impl {
+	public static final field Companion Lio/getstream/chat/android/livedata/repository/database/ChatDatabase$Companion;
+	public fun <init> ()V
+	public fun channelConfigDao ()Lio/getstream/chat/android/livedata/dao/ChannelConfigDao;
+	public fun channelStateDao ()Lio/getstream/chat/android/livedata/dao/ChannelDao;
+	public fun clearAllTables ()V
+	public fun messageDao ()Lio/getstream/chat/android/livedata/dao/MessageDao;
+	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/dao/QueryChannelsDao;
+	public fun reactionDao ()Lio/getstream/chat/android/livedata/dao/ReactionDao;
+	public fun syncStateDao ()Lio/getstream/chat/android/livedata/dao/SyncStateDao;
+	public fun userDao ()Lio/getstream/chat/android/livedata/dao/UserDao;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/CancelMessage {

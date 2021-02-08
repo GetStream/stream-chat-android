@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.converter
+package io.getstream.chat.android.livedata.repository.database.converter
 
 import androidx.room.TypeConverter
 import java.util.Date

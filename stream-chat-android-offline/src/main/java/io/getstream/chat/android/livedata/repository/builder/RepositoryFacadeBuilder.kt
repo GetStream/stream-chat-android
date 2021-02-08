@@ -1,11 +1,12 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.builder
 
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDatabase
+import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import kotlinx.coroutines.CoroutineScope
 
 internal class RepositoryFacadeBuilder {

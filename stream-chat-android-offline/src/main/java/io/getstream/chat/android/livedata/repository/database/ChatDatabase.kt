@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.repository.database
 
 import android.content.Context
 import androidx.room.Database
@@ -6,13 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.getstream.chat.android.livedata.converter.DateConverter
-import io.getstream.chat.android.livedata.converter.ExtraDataConverter
-import io.getstream.chat.android.livedata.converter.FilterObjectConverter
-import io.getstream.chat.android.livedata.converter.ListConverter
-import io.getstream.chat.android.livedata.converter.MapConverter
-import io.getstream.chat.android.livedata.converter.SetConverter
-import io.getstream.chat.android.livedata.converter.SyncStatusConverter
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.dao.MessageDao
@@ -30,6 +23,13 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
+import io.getstream.chat.android.livedata.repository.database.converter.DateConverter
+import io.getstream.chat.android.livedata.repository.database.converter.ExtraDataConverter
+import io.getstream.chat.android.livedata.repository.database.converter.FilterObjectConverter
+import io.getstream.chat.android.livedata.repository.database.converter.ListConverter
+import io.getstream.chat.android.livedata.repository.database.converter.MapConverter
+import io.getstream.chat.android.livedata.repository.database.converter.SetConverter
+import io.getstream.chat.android.livedata.repository.database.converter.SyncStatusConverter
 
 @Database(
     entities = [

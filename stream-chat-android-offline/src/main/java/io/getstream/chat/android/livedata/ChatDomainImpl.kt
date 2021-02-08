@@ -43,7 +43,8 @@ import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.livedata.repository.RepositoryFacadeBuilder
+import io.getstream.chat.android.livedata.repository.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest

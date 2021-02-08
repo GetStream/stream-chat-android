@@ -4,6 +4,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
+import io.getstream.chat.android.livedata.repository.database.converter.MapConverter
 import org.junit.Test
 
 internal class MapConverterTest : BaseTest() {

@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseTest
+import io.getstream.chat.android.livedata.repository.database.converter.SyncStatusConverter
 import org.junit.Test
 import org.junit.runner.RunWith
 

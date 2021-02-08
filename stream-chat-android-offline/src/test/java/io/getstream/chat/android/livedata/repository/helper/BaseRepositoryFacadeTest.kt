@@ -1,8 +1,6 @@
 package io.getstream.chat.android.livedata.repository.helper
 
 import androidx.annotation.CallSuper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.ChannelRepository
@@ -10,7 +8,6 @@ import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.ReactionRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.SyncStateRepository
 import io.getstream.chat.android.livedata.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,15 +39,17 @@ internal open class BaseRepositoryFacadeTest {
         messages = mock()
         reactions = mock()
         syncState = mock()
-        val factory: RepositoryFactory = mock {
-            on { createUserRepository() } doReturn users
-            on { createChannelConfigRepository() } doReturn configs
-            on { createChannelRepository(any(), any()) } doReturn channels
-            on { createQueryChannelsRepository() } doReturn queryChannels
-            on { createMessageRepository(any()) } doReturn messages
-            on { createReactionRepository(any()) } doReturn reactions
-            on { createSyncStateRepository() } doReturn syncState
-        }
-        sut = RepositoryFacade.create(factory, scope, mock())
+
+        sut = RepositoryFacade(
+            userRepository = users,
+            configsRepository = configs,
+            channelsRepository = channels,
+            queryChannelsRepository = queryChannels,
+            messageRepository = messages,
+            reactionsRepository = reactions,
+            syncStateRepository = syncState,
+            scope = scope,
+            defaultConfig = mock(),
+        )
     }
 }
