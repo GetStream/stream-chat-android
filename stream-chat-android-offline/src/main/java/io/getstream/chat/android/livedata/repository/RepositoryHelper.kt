@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +21,7 @@ internal class RepositoryHelper private constructor(
     queryChannelsRepository: QueryChannelsRepository,
     messageRepository: MessageRepository,
     reactionsRepository: ReactionRepository,
-    private val syncStateRepository: SyncStateRepository,
+    syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -30,7 +29,8 @@ internal class RepositoryHelper private constructor(
     ReactionRepository by reactionsRepository,
     MessageRepository by messageRepository,
     ChannelConfigRepository by configsRepository,
-    QueryChannelsRepository by queryChannelsRepository {
+    QueryChannelsRepository by queryChannelsRepository,
+    SyncStateRepository by syncStateRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -109,14 +109,6 @@ internal class RepositoryHelper private constructor(
                 }.also { channelsRepository.insertChannel(it) }
             }
         }
-    }
-
-    internal suspend fun selectSyncState(userId: String): SyncState? {
-        return syncStateRepository.select(userId)
-    }
-
-    internal suspend fun insertSyncState(newSyncState: SyncState) {
-        syncStateRepository.insert(newSyncState)
     }
 
     internal companion object {

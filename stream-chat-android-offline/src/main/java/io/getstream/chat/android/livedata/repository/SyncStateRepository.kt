@@ -6,16 +6,16 @@ import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 internal interface SyncStateRepository {
-    suspend fun insert(syncState: SyncState)
-    suspend fun select(userId: String): SyncState?
+    suspend fun insertSyncState(syncState: SyncState)
+    suspend fun selectSyncState(userId: String): SyncState?
 }
 
 internal class SyncStateRepositoryImpl(private val syncStateDao: SyncStateDao) : SyncStateRepository {
-    override suspend fun insert(syncState: SyncState) {
+    override suspend fun insertSyncState(syncState: SyncState) {
         syncStateDao.insert(syncState.toEntity())
     }
 
-    override suspend fun select(userId: String): SyncState? {
+    override suspend fun selectSyncState(userId: String): SyncState? {
         return syncStateDao.select(userId)?.toModel()
     }
 }
