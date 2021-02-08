@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Text -->
+    <color name="stream_ui_text_color_primary">@color/stream_ui_black</color>
+    <color name="stream_ui_text_color_secondary">@color/stream_ui_grey</color>
+    <color name="stream_ui_text_color_hint">@color/stream_ui_grey</color>
+
     <!-- Accents -->
     <color name="stream_ui_accent_blue">#005FFF</color>
     <color name="stream_ui_accent_red">#FF3742</color>
