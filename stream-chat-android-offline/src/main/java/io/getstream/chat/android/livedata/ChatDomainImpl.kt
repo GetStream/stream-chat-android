@@ -322,7 +322,7 @@ internal class ChatDomainImpl internal constructor(
         syncStateFlow.value?.let { _syncState ->
             val newSyncState = _syncState.copy(
                 activeChannelIds = activeChannelMapImpl.keys().toList(),
-                activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryChannelsSpec.id }
+                activeQueryIds = activeQueryMapImpl.values.map { it.queryChannelsSpec.id }
             )
             repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
