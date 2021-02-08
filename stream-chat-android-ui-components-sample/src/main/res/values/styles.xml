@@ -1,18 +1,13 @@
 <resources>
 
-    <style name="AppTheme" parent="StreamUiBaseStyle">
-        <item name="colorPrimary">@color/stream_color_primary</item>
-        <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
-    </style>
-
     <style name="LoginEditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">text</item>
         <item name="android:imeOptions">actionNext</item>
-        <item name="android:textColor">@color/stream_ui_black</item>
-        <item name="android:textColorHint">@color/grey_dark</item>
+        <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textColorHint">@color/stream_ui_text_color_hint</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
     </style>
@@ -27,6 +22,7 @@
         <item name="boxStrokeWidthFocused">0dp</item>
         <item name="boxBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="hintTextColor">@color/grey_dark</item>
+        <item name="android:textColor">@color/stream_ui_text_color_primary</item>
         <item name="errorTextColor">@color/stream_ui_accent_red</item>
         <item name="errorIconDrawable">@null</item>
         <item name="hintTextAppearance">@style/StreamUiTextAppearance.CaptionBold</item>

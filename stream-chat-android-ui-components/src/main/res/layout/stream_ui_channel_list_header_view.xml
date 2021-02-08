@@ -65,6 +65,7 @@
             android:layout_height="wrap_content"
             android:text="@string/stream_ui_channels_header_view_offline_title"
             />
+
     </LinearLayout>
 
     <ImageView
