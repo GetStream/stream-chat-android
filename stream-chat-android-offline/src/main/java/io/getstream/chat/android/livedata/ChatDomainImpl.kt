@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.parser.StreamGson
+import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -242,15 +244,6 @@ internal class ChatDomainImpl internal constructor(
 
         currentUser = user
 
-        if (backgroundSyncEnabled && !isTestRunner()) {
-            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken() ?: "")
-            if (config.isValid()) {
-                syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    put(config)
-                }
-            }
-        }
-
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
         repos = RepositoryHelper.create(factory = RepositoryFactory(database, user), scope = scope, defaultConfig = defaultConfig)
@@ -309,6 +302,7 @@ internal class ChatDomainImpl internal constructor(
                 }
             }
         }
+        storeBgSyncDataWhenUserConnects()
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -454,6 +448,28 @@ internal class ChatDomainImpl internal constructor(
 
     fun setTotalUnreadCount(newCount: Int) {
         _totalUnreadCount.value = newCount
+    }
+
+    private fun storeBgSyncDataWhenUserConnects() {
+        client.addSocketListener(
+            object : SocketListener() {
+                override fun onConnected(event: ConnectedEvent) {
+                    storeBgSyncData()
+                    client.removeSocketListener(this)
+                }
+            }
+        )
+    }
+
+    private fun storeBgSyncData() {
+        if (backgroundSyncEnabled && !isTestRunner()) {
+            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken() ?: "")
+            if (config.isValid()) {
+                syncModule.encryptedBackgroundSyncConfigStore.apply {
+                    put(config)
+                }
+            }
+        }
     }
 
     /**
