@@ -8,7 +8,6 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
@@ -35,14 +34,8 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
             syncConfig?.let {
                 val config = it
-                val user = User(id = config.userId)
                 GlobalScope.launch(DispatcherProvider.IO) {
-                    val client = initClient(
-                        this@OfflineSyncFirebaseMessagingService,
-                        user,
-                        config.userToken,
-                        config.apiKey
-                    )
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, config.apiKey)
                     client.onNewTokenReceived(token)
                 }
             }
@@ -60,31 +53,17 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
             if (ChatDomain.isInitialized && ChatClient.isInitialized) {
                 performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
-
-                if (ChatClient.isInitialized) {
-                    ChatClient.instance()
-                        .onMessageReceived(message)
-                }
-            }
-
-            if (ChatDomain.isInitialized.not() || ChatClient.isInitialized.not()) {
+            } else {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-
                 syncConfig?.let {
                     val config = it
                     val user = User(id = config.userId)
-                    val client = initClient(
-                        this@OfflineSyncFirebaseMessagingService,
-                        user,
-                        config.userToken,
-                        config.apiKey
-                    )
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, config.apiKey)
                     val domain = initDomain(user, client)
-                    logger.logD("performing sync, config: $syncConfig")
+                    logger.logD("Starting the sync, config: $syncConfig")
                     performSync(domain, cid, client, message)
                 }
             }
-
             stopForeground(true)
             stopSelf()
         }
@@ -128,30 +107,16 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         return ChatDomain.Builder(applicationContext, client, user).build()
     }
 
-    private suspend fun initClient(
+    private fun initClient(
         context: Context,
-        user: User,
-        token: String,
         apiKey: String,
     ): ChatClient {
         val notificationConfig = syncModule.notificationConfigStore.get()
         val notificationHandler = ChatNotificationHandler(context, notificationConfig)
 
-        val client = ChatClient.Builder(apiKey, context.applicationContext)
+        return ChatClient.Builder(apiKey, context.applicationContext)
             .notifications(notificationHandler)
             .build()
-
-        val result = client.connectUser(
-            user,
-            token
-        ).await()
-
-        if (result.isError) {
-            val error = result.error()
-            throw error.cause ?: IllegalStateException(error.message)
-        }
-
-        return client
     }
 
     companion object {
