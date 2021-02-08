@@ -111,16 +111,16 @@ class Android {
             val destination = AttachmentGalleryDestination(
                 requireContext(),
                 attachmentReplyOptionHandler = { resultItem ->
-                    //Handle reply
+                    // Handle reply
                 },
                 attachmentShowInChatOptionHandler = { resultItem ->
-                    //Handle show image in chat
+                    // Handle show image in chat
                 },
                 attachmentDownloadOptionHandler = { resultItem ->
-                    //Handle download image
+                    // Handle download image
                 },
                 attachmentDeleteOptionClickHandler = { resultItem ->
-                    //Handle delete image
+                    // Handle delete image
                 },
             )
 

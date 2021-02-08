@@ -124,16 +124,16 @@ public class Android {
             AttachmentGalleryDestination destination = new AttachmentGalleryDestination(
                     getContext(),
                     resultItem -> {
-                        //Handle reply
+                        // Handle reply
                     },
                     resultItem -> {
-                        //Handle show in chat
+                        // Handle show in chat
                     },
                     resultItem -> {
-                        //Handle download image
+                        // Handle download image
                     },
                     resultItem -> {
-                        //Handle delete image
+                        // Handle delete image
                     });
 
             List<AttachmentGalleryItem> attachmentGalleryItems = new ArrayList();
