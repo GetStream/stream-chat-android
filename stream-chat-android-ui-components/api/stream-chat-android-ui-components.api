@@ -664,7 +664,7 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter {
-	public abstract fun filter (Ljava/util/List;)Ljava/util/List;
+	public abstract fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageLongClickListener {
