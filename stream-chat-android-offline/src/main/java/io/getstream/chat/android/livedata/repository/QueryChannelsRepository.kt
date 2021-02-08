@@ -9,38 +9,35 @@ import io.getstream.chat.android.livedata.dao.QueryChannelsDao
 import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
-import java.util.Objects
 
-internal class QueryChannelsRepository(private val queryChannelsDao: QueryChannelsDao) {
-    suspend fun insert(queryChannelsSpec: QueryChannelsSpec) {
+internal interface QueryChannelsRepository {
+    suspend fun insert(queryChannelsSpec: QueryChannelsSpec)
+    suspend fun selectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec?
+    suspend fun selectById(id: String): QueryChannelsSpec?
+    suspend fun selectById(ids: List<String>): List<QueryChannelsSpec>
+}
+
+internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
+    override suspend fun insert(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    suspend fun selectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
-        return selectById(getId(queryChannelsSpec))
+    override suspend fun selectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
+        return selectById(queryChannelsSpec.id)
     }
 
-    suspend fun selectById(id: String): QueryChannelsSpec? {
+    override suspend fun selectById(id: String): QueryChannelsSpec? {
         return queryChannelsDao.select(id)?.let(::toModel)
     }
 
-    suspend fun selectById(ids: List<String>): List<QueryChannelsSpec> {
+    override suspend fun selectById(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsDao.select(ids).map(::toModel)
     }
 
-    suspend fun selectByFilterAndQuerySort(queries: List<QueryChannelsSpec>): List<QueryChannelsSpec> {
-        return selectById(queries.map(::getId))
-    }
-
     companion object {
-        // TODO consider how to make it private
-        internal fun getId(queryChannelsSpec: QueryChannelsSpec): String {
-            return (Objects.hash(queryChannelsSpec.filter.toMap()) + Objects.hash(queryChannelsSpec.sort.toDto())).toString()
-        }
-
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsWithSorts {
             val queryEntity =
-                QueryChannelsEntity(getId(queryChannelsSpec), queryChannelsSpec.filter, queryChannelsSpec.cids)
+                QueryChannelsEntity(queryChannelsSpec.id, queryChannelsSpec.filter, queryChannelsSpec.cids)
             val sortInnerEntities = queryChannelsSpec.sort.toList().map { (name, sortDirection) ->
                 ChannelSortInnerEntity(
                     name,
