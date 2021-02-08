@@ -41,14 +41,13 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         channelControllerImpl.upsertMessage(message1)
         // send the reaction while offline
         channelControllerImpl.sendReaction(reaction1, enforceUnique = false)
-        var reactionEntity =
-            chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, data.reaction1.type)
-        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+        var reactionFromDB = chatDomainImpl.repos.selectUserReactionsToMessage(message1.id, data.user1.id).first()
+        Truth.assertThat(reactionFromDB.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         chatDomainImpl.setOnline()
         val reactionEntities = chatDomainImpl.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
-        reactionEntity = chatDomainImpl.repos.selectUserReactionsToMessageByType(message1.id, data.user1.id, "like")
-        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.COMPLETED)
+        reactionFromDB = chatDomainImpl.repos.selectUserReactionsToMessage(message1.id, data.user1.id).first()
+        Truth.assertThat(reactionFromDB.syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }
 
     @Test
@@ -59,9 +58,8 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         channelControllerImpl.sendReaction(data.reaction1, enforceUnique = false)
         channelControllerImpl.deleteReaction(data.reaction1)
 
-        val reaction =
-            chatDomainImpl.repos.selectUserReactionsToMessageByType(data.message1.id, data.user1.id, data.reaction1.type)
-        Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+        val reaction = chatDomainImpl.repos.selectUserReactionsToMessage(data.message1.id, data.user1.id).first()
+        Truth.assertThat(reaction.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction.deletedAt).isNotNull()
 
         val reactions = chatDomainImpl.retryReactions()
@@ -136,13 +134,9 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         chatDomainImpl.repos.insertMessage(data.message1)
         val reaction = data.reaction1.copy()
         chatDomainImpl.repos.insertReaction(reaction)
-        val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessageByType(
-            reaction.messageId,
-            reaction.userId,
-            reaction.type
-        )
+        val reaction2 = chatDomainImpl.repos.selectUserReactionsToMessage(reaction.messageId, reaction.userId).first()
         Truth.assertThat(reaction2).isEqualTo(reaction)
-        Truth.assertThat(reaction2!!.extraData).isNotNull()
+        Truth.assertThat(reaction2.extraData).isNotNull()
     }
 
     @Test
