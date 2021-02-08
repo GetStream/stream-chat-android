@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
@@ -34,8 +35,10 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
             syncConfig?.let {
                 val config = it
+                val user = User(id = config.userId)
+                val userToken = config.userToken
                 GlobalScope.launch(DispatcherProvider.IO) {
-                    val client = initClient(this@OfflineSyncFirebaseMessagingService, config.apiKey)
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, user, userToken, config.apiKey)
                     client.onNewTokenReceived(token)
                 }
             }
@@ -58,7 +61,8 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                 syncConfig?.let {
                     val config = it
                     val user = User(id = config.userId)
-                    val client = initClient(this@OfflineSyncFirebaseMessagingService, config.apiKey)
+                    val token = config.userToken
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, user, token, config.apiKey)
                     val domain = initDomain(user, client)
                     logger.logD("Starting the sync, config: $syncConfig")
                     performSync(domain, cid, client, message)
@@ -107,16 +111,22 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         return ChatDomain.Builder(applicationContext, client, user).build()
     }
 
-    private fun initClient(
+    private suspend fun initClient(
         context: Context,
+        user: User,
+        userToken: String,
         apiKey: String,
     ): ChatClient {
         val notificationConfig = syncModule.notificationConfigStore.get()
         val notificationHandler = ChatNotificationHandler(context, notificationConfig)
 
-        return ChatClient.Builder(apiKey, context.applicationContext)
+        val client = ChatClient.Builder(apiKey, context.applicationContext)
             .notifications(notificationHandler)
             .build()
+
+        client.connectUser(user, userToken).await()
+
+        return client
     }
 
     companion object {
