@@ -14,32 +14,32 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
-        val config = repoHelper.selectConfig("messaging")
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        val config = repoHelper.selectChannelConfig("messaging")
         Truth.assertThat(config).isEqualTo(config)
     }
 
     @Test
     fun testLoadAndRead() = runBlocking {
-        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
-        repoHelper.clearCache()
-        var config = repoHelper.selectConfig("messaging")
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        repoHelper.clearChannelConfigsCache()
+        var config = repoHelper.selectChannelConfig("messaging")
         Truth.assertThat(config).isNull()
-        repoHelper.loadChannelConfig()
-        config = repoHelper.selectConfig("messaging")
+        repoHelper.cacheChannelConfigs()
+        config = repoHelper.selectChannelConfig("messaging")
         Truth.assertThat(config?.config).isEqualTo(data.config1)
     }
 
     @Test
     fun testUpdate() = runBlocking {
-        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
         data.config1.maxMessageLength = 200
-        repoHelper.insertConfigChannel(ChannelConfig("messaging", data.config1))
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
 
-        repoHelper.clearCache()
-        repoHelper.loadChannelConfig()
+        repoHelper.clearChannelConfigsCache()
+        repoHelper.cacheChannelConfigs()
 
-        val config = repoHelper.selectConfig("messaging")?.config
+        val config = repoHelper.selectChannelConfig("messaging")?.config
         Truth.assertThat(config).isEqualTo(data.config1)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }

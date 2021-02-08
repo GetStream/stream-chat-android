@@ -18,7 +18,7 @@ import kotlinx.coroutines.awaitAll
 
 internal class RepositoryHelper private constructor(
     userRepository: UserRepository,
-    private val configsRepository: ChannelConfigRepository,
+    configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
     private val queryChannelsRepository: QueryChannelsRepository,
     messageRepository: MessageRepository,
@@ -29,7 +29,8 @@ internal class RepositoryHelper private constructor(
 ) : UserRepository by userRepository,
     ChannelRepository by channelsRepository,
     ReactionRepository by reactionsRepository,
-    MessageRepository by messageRepository {
+    MessageRepository by messageRepository,
+    ChannelConfigRepository by configsRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -55,7 +56,7 @@ internal class RepositoryHelper private constructor(
 
     @VisibleForTesting
     internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = configsRepository.selectChannelConfig(type)?.config ?: defaultConfig
+        config = selectChannelConfig(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinct()
@@ -74,10 +75,6 @@ internal class RepositoryHelper private constructor(
         insertUsers(channels.flatMap(Channel::users))
     }
 
-    internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
-        configsRepository.insertChannelConfigs(configs)
-    }
-
     internal suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>? = null,
         users: List<User>,
@@ -85,27 +82,10 @@ internal class RepositoryHelper private constructor(
         messages: List<Message>,
         cacheForMessages: Boolean = false,
     ) {
-        configs?.let { insertConfigChannel(it) }
+        configs?.let { insertChannelConfigs(it) }
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
-    }
-
-    internal suspend fun insertConfigChannel(config: ChannelConfig) {
-        configsRepository.insertChannelConfig(config)
-    }
-
-    internal fun selectConfig(channelType: String): ChannelConfig? {
-        return configsRepository.selectChannelConfig(channelType)
-    }
-
-    internal suspend fun loadChannelConfig() {
-        configsRepository.cacheChannelConfigs()
-    }
-
-    @VisibleForTesting
-    internal fun clearCache() {
-        configsRepository.clearChannelConfigsCache()
     }
 
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
