@@ -31,6 +31,8 @@
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"
+        android:textColor="@color/stream_ui_text_color_primary"
+        android:textColorHint="@color/stream_ui_text_color_hint"
         android:textSize="@dimen/stream_ui_text_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearInputButton"

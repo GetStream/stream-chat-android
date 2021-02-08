@@ -3,6 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:text="@string/add_channel_empty_message_list_title"
-    android:textColor="@color/stream_ui_grey"
+    android:textColor="@color/stream_ui_text_color_secondary"
     android:textSize="@dimen/stream_ui_text_medium"
     />

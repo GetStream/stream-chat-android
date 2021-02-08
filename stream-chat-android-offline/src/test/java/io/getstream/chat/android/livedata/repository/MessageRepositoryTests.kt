@@ -24,7 +24,7 @@ internal class MessageRepositoryTests {
     @BeforeEach
     fun setup() {
         messageDao = mock()
-        sut = MessageRepository(messageDao, ::randomUser)
+        sut = MessageRepositoryImpl(messageDao, ::randomUser)
     }
 
     @Test

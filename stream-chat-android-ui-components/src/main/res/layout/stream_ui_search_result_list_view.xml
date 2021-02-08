@@ -20,6 +20,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="8dp"
             android:paddingBottom="5dp"
+            android:textColor="@color/stream_ui_text_color_primary"
             android:textSize="@dimen/stream_ui_text_small"
             tools:text="5 results"
             />
@@ -65,7 +66,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
-            android:textColor="@color/stream_ui_grey"
+            android:textColor="@color/stream_ui_text_color_secondary"
             tools:text="No result for 'query'"
             />
 

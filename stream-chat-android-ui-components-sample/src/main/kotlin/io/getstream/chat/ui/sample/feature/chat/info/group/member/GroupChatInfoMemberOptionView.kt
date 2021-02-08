@@ -48,7 +48,7 @@ class GroupChatInfoMemberOptionView : FrameLayout {
                 titleTextView.setTextColor(
                     typedArray.getColor(
                         R.styleable.GroupChatInfoMemberOptionView_optionTextColor,
-                        context.getColorFromRes(R.color.stream_ui_black),
+                        context.getColorFromRes(R.color.stream_ui_text_color_primary),
                     ),
                 )
             }
