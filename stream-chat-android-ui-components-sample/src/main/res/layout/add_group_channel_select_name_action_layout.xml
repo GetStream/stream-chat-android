@@ -25,4 +25,5 @@
         app:iconPadding="0dp"
         app:iconTint="@color/add_group_channel_check_color"
         />
+
 </FrameLayout>
