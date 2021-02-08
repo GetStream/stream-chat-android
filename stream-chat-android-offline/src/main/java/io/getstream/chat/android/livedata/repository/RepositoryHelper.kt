@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
@@ -110,18 +109,6 @@ internal class RepositoryHelper private constructor(
                 }.also { channelsRepository.insertChannel(it) }
             }
         }
-    }
-
-    suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
-        return selectById(ids)
-    }
-
-    suspend fun querySelectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
-        return selectByFilterAndQuerySort(queryChannelsSpec)
-    }
-
-    suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
-        return insert(queryChannelsSpec)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {

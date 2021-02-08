@@ -11,18 +11,18 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
 
 internal interface QueryChannelsRepository {
-    suspend fun insert(queryChannelsSpec: QueryChannelsSpec)
-    suspend fun selectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec?
+    suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
+    suspend fun selectQueryChannels(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec?
     suspend fun selectById(id: String): QueryChannelsSpec?
-    suspend fun selectById(ids: List<String>): List<QueryChannelsSpec>
+    suspend fun selectQueriesChannelsByIds(ids: List<String>): List<QueryChannelsSpec>
 }
 
 internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
-    override suspend fun insert(queryChannelsSpec: QueryChannelsSpec) {
+    override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    override suspend fun selectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
+    override suspend fun selectQueryChannels(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
         return selectById(queryChannelsSpec.id)
     }
 
@@ -30,7 +30,7 @@ internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryCh
         return queryChannelsDao.select(id)?.let(::toModel)
     }
 
-    override suspend fun selectById(ids: List<String>): List<QueryChannelsSpec> {
+    override suspend fun selectQueriesChannelsByIds(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsDao.select(ids).map(::toModel)
     }
 
