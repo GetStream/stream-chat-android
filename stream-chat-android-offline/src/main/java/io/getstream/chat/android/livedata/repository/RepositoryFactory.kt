@@ -9,7 +9,8 @@ internal class RepositoryFactory(
     private val currentUser: User,
 ) {
     fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
-    fun createChannelConfigRepository(): ChannelConfigRepository = ChannelConfigRepository(database.channelConfigDao())
+    fun createChannelConfigRepository(): ChannelConfigRepository =
+        ChannelConfigRepositoryImpl(database.channelConfigDao())
 
     fun createChannelRepository(
         getUser: suspend (userId: String) -> User,

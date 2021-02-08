@@ -100,7 +100,7 @@ internal class RepositoryHelper private constructor(
     }
 
     internal suspend fun loadChannelConfig() {
-        configsRepository.load()
+        configsRepository.cacheData()
     }
 
     @VisibleForTesting
