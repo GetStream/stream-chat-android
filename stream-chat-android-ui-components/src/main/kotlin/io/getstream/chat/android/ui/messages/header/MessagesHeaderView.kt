@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiMessagesHeaderViewBinding
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 
@@ -185,7 +186,7 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private fun reduceSubtitleState(
         typingUsers: List<User> = subtitleState.typingUsers,
-        onlineState: OnlineState = subtitleState.onlineState
+        onlineState: OnlineState = subtitleState.onlineState,
     ) {
         subtitleState = subtitleState.copy(
             typingUsers = typingUsers,
@@ -226,7 +227,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelColor,
-                ContextCompat.getColor(context, R.color.stream_ui_grey)
+                context.getColorCompat(R.color.stream_ui_text_color_secondary)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderSearchingForNetworkLabelFontAssets,
@@ -259,7 +260,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_grey)
+                context.getColorCompat(R.color.stream_ui_text_color_secondary)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderOfflineLabelFontAssets,
@@ -289,7 +290,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_grey)
+                context.getColorCompat(R.color.stream_ui_text_color_secondary)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderDefaultLabelFontAssets,
@@ -335,7 +336,7 @@ public class MessagesHeaderView : ConstraintLayout {
         )
             .color(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleTextColor,
-                ContextCompat.getColor(context, R.color.stream_ui_black)
+                context.getColorCompat(R.color.stream_ui_text_color_primary)
             )
             .font(
                 R.styleable.MessagesHeaderView_streamUiMessagesHeaderTitleFontAssets,
@@ -358,7 +359,7 @@ public class MessagesHeaderView : ConstraintLayout {
 
     private data class SubtitleState(
         val typingUsers: List<User>,
-        val onlineState: OnlineState
+        val onlineState: OnlineState,
     )
 
     private enum class OnlineState {

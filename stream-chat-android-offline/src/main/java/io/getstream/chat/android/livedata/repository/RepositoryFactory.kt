@@ -18,8 +18,10 @@ internal class RepositoryFactory(
 
     fun createQueryChannelsRepository(): QueryChannelsRepository = QueryChannelsRepository(database.queryChannelsQDao())
     fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
-        MessageRepository(database.messageDao(), getUser, 100)
+        MessageRepositoryImpl(database.messageDao(), getUser, 100)
 
-    fun createReactionRepository(): ReactionRepository = ReactionRepository(database.reactionDao())
+    fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+        ReactionRepositoryImpl(database.reactionDao(), getUser)
+
     fun createSyncStateRepository(): SyncStateRepository = SyncStateRepository(database.syncStateDao())
 }

@@ -31,5 +31,7 @@
         <include layout="@layout/channel_item_loading_view" />
 
         <include layout="@layout/channel_item_loading_view" />
+
     </LinearLayout>
+
 </com.facebook.shimmer.ShimmerFrameLayout>

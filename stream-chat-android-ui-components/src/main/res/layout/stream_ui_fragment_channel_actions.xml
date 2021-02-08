@@ -25,7 +25,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="64dp"
             android:singleLine="true"
-            android:textColor="@color/stream_ui_black"
+            android:textColor="@color/stream_ui_text_color_primary"
             android:textSize="@dimen/stream_ui_text_large"
             android:textStyle="bold"
             />
@@ -37,7 +37,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:singleLine="true"
-            android:textColor="@color/stream_ui_grey"
+            android:textColor="@color/stream_ui_text_color_secondary"
             android:textSize="@dimen/stream_ui_text_small"
             />
 
