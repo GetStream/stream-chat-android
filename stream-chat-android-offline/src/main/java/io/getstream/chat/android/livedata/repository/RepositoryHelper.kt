@@ -20,7 +20,7 @@ internal class RepositoryHelper private constructor(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
-    private val queryChannelsRepository: QueryChannelsRepository,
+    queryChannelsRepository: QueryChannelsRepository,
     messageRepository: MessageRepository,
     reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
@@ -30,7 +30,8 @@ internal class RepositoryHelper private constructor(
     ChannelRepository by channelsRepository,
     ReactionRepository by reactionsRepository,
     MessageRepository by messageRepository,
-    ChannelConfigRepository by configsRepository {
+    ChannelConfigRepository by configsRepository,
+    QueryChannelsRepository by queryChannelsRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -112,15 +113,15 @@ internal class RepositoryHelper private constructor(
     }
 
     suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
-        return queryChannelsRepository.selectById(ids)
+        return selectById(ids)
     }
 
     suspend fun querySelectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
-        return queryChannelsRepository.selectByFilterAndQuerySort(queryChannelsSpec)
+        return selectByFilterAndQuerySort(queryChannelsSpec)
     }
 
     suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
-        return queryChannelsRepository.insert(queryChannelsSpec)
+        return insert(queryChannelsSpec)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {
