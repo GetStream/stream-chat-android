@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
-internal class RepositoryHelper private constructor(
+internal class RepositoryFacade private constructor(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -112,7 +112,7 @@ internal class RepositoryHelper private constructor(
     }
 
     internal companion object {
-        fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryHelper {
+        fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
                 requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
@@ -121,7 +121,7 @@ internal class RepositoryHelper private constructor(
             val messageRepository = factory.createMessageRepository(getUser)
             val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
-            return RepositoryHelper(
+            return RepositoryFacade(
                 userRepository = factory.createUserRepository(),
                 configsRepository = factory.createChannelConfigRepository(),
                 channelsRepository = factory.createChannelRepository(getUser, getMessage),

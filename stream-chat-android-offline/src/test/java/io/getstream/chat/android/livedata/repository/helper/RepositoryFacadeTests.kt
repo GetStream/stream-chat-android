@@ -29,7 +29,7 @@ import org.amshove.kluent.was
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
+internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =

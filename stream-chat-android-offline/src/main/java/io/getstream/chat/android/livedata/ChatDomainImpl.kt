@@ -43,8 +43,8 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
+import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
-import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
@@ -211,7 +211,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    internal lateinit var repos: RepositoryHelper
+    internal lateinit var repos: RepositoryFacade
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal lateinit var initJob: Deferred<SyncState?>
 
@@ -246,7 +246,7 @@ internal class ChatDomainImpl internal constructor(
 
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
-        repos = RepositoryHelper.create(factory = RepositoryFactory(database, user), scope = scope, defaultConfig = defaultConfig)
+        repos = RepositoryFacade.create(factory = RepositoryFactory(database, user), scope = scope, defaultConfig = defaultConfig)
 
         // load channel configs from Room into memory
         initJob = scope.async {

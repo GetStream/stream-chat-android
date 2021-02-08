@@ -9,8 +9,8 @@ import io.getstream.chat.android.livedata.repository.ChannelRepository
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.ReactionRepository
+import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
-import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.repository.SyncStateRepository
 import io.getstream.chat.android.livedata.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +18,7 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.jupiter.api.BeforeEach
 
 @ExperimentalCoroutinesApi
-internal open class BaseRepositoryHelperTest {
+internal open class BaseRepositoryFacadeTest {
 
     protected lateinit var users: UserRepository
     protected lateinit var configs: ChannelConfigRepository
@@ -30,7 +30,7 @@ internal open class BaseRepositoryHelperTest {
 
     protected val scope = TestCoroutineScope()
 
-    protected lateinit var sut: RepositoryHelper
+    protected lateinit var sut: RepositoryFacade
 
     @CallSuper
     @BeforeEach
@@ -51,6 +51,6 @@ internal open class BaseRepositoryHelperTest {
             on { createReactionRepository(any()) } doReturn reactions
             on { createSyncStateRepository() } doReturn syncState
         }
-        sut = RepositoryHelper.create(factory, scope, mock())
+        sut = RepositoryFacade.create(factory, scope, mock())
     }
 }
