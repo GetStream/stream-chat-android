@@ -4,7 +4,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
@@ -16,23 +15,21 @@ import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import java.util.Date
 
 internal class RepositoryHelper private constructor(
-    private val userRepository: UserRepository,
+    userRepository: UserRepository,
     private val configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
     private val queryChannelsRepository: QueryChannelsRepository,
-    private val messageRepository: MessageRepository,
-    private val reactionsRepository: ReactionRepository,
+    messageRepository: MessageRepository,
+    reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
-) : UserRepository by userRepository, ChannelRepository by channelsRepository {
-
-    private val selectUser: suspend (userId: String) -> User = { userId ->
-        requireNotNull(selectUser(userId)) { "User with the userId: `$userId` has not been found" }
-    }
+) : UserRepository by userRepository,
+    ChannelRepository by channelsRepository,
+    ReactionRepository by reactionsRepository,
+    MessageRepository by messageRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -47,9 +44,7 @@ internal class RepositoryHelper private constructor(
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
-                scope.async {
-                    cid to messageRepository.selectMessagesForChannel(cid, pagination)
-                }
+                scope.async { cid to selectMessagesForChannel(cid, pagination) }
             }.awaitAll().toMap()
         } else {
             emptyMap()
@@ -71,12 +66,12 @@ internal class RepositoryHelper private constructor(
 
     override suspend fun insertChannel(channel: Channel) {
         channelsRepository.insertChannel(channel)
-        userRepository.insertUsers(channel.let(Channel::users))
+        insertUsers(channel.let(Channel::users))
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
         channelsRepository.insertChannels(channels)
-        userRepository.insertUsers(channels.flatMap(Channel::users))
+        insertUsers(channels.flatMap(Channel::users))
     }
 
     internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
@@ -136,36 +131,6 @@ internal class RepositoryHelper private constructor(
         }
     }
 
-    internal suspend fun selectMessageSyncNeeded(): List<Message> {
-        return messageRepository.selectMessagesSyncNeeded()
-    }
-
-    internal suspend fun selectMessages(messageIds: List<String>): List<Message> =
-        messageRepository.selectMessages(messageIds)
-
-    internal suspend fun selectUserReactionsToMessage(
-        messageId: String,
-        userId: String,
-    ): List<Reaction> = reactionsRepository.selectUserReactionsToMessage(messageId, userId, selectUser)
-
-    internal suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) =
-        reactionsRepository.updateReactionsForMessageByDeletedDate(userId, messageId, deletedAt)
-
-    @VisibleForTesting
-    internal suspend fun selectUserReactionsToMessageByType(
-        messageId: String,
-        userId: String,
-        type: String,
-    ) = reactionsRepository.selectUserReactionsToMessageByType(messageId, userId, type, selectUser)
-
-    internal suspend fun selectReactionSyncNeeded(): List<Reaction> = reactionsRepository.selectSyncNeeded(selectUser)
-
-    suspend fun selectMessage(
-        messageId: String,
-    ): Message? {
-        return messageRepository.selectMessage(messageId)
-    }
-
     suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
         return queryChannelsRepository.selectById(ids)
     }
@@ -176,33 +141,6 @@ internal class RepositoryHelper private constructor(
 
     suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insert(queryChannelsSpec)
-    }
-
-    suspend fun selectMessagesForChannel(
-        cid: String,
-        pagination: AnyChannelPaginationRequest?,
-    ): List<Message> {
-        return messageRepository.selectMessagesForChannel(cid, pagination)
-    }
-
-    suspend fun insertMessage(message: Message, cache: Boolean = false) {
-        messageRepository.insertMessage(message, cache)
-    }
-
-    suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
-        messageRepository.insertMessages(messages, cache)
-    }
-
-    suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
-        messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
-    }
-
-    suspend fun deleteChannelMessage(message: Message) {
-        messageRepository.deleteChannelMessage(message)
-    }
-
-    internal suspend fun insertReaction(reaction: Reaction) {
-        reactionsRepository.insert(reaction)
     }
 
     internal suspend fun selectSyncState(userId: String): SyncState? {
@@ -229,7 +167,7 @@ internal class RepositoryHelper private constructor(
                 channelsRepository = factory.createChannelRepository(getUser, getMessage),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
                 messageRepository = messageRepository,
-                reactionsRepository = factory.createReactionRepository(),
+                reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
