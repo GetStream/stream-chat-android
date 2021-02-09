@@ -1,12 +1,27 @@
 package io.getstream.chat.docs.kotlin
 
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
+import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.list.ChannelsView
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
@@ -27,6 +42,102 @@ class Android {
             val viewModel: ChannelListHeaderViewModel by viewModels()
             // Bind it with ChannelListHeaderView
             viewModel.bindView(channelListHeaderView, viewLifecycleOwner)
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/node/channels_view_new/">Channels View</a>
+     */
+    public class Channels(private val channelsView: ChannelsView) : Fragment() {
+
+        fun bindingWithViewModel() {
+            // Get ViewModel
+            val viewModel: ChannelsViewModel by viewModels {
+                ChannelsViewModelFactory(
+                    filter = Filters.and(
+                        Filters.eq("type", "messaging"),
+                        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+                    ),
+                    sort = ChannelsViewModel.DEFAULT_SORT,
+                    limit = 30,
+                )
+            }
+            // Bind it with ChannelsView
+            viewModel.bindView(channelsView, viewLifecycleOwner)
+        }
+
+        fun handlingChannelActions() {
+            channelsView.setChannelInfoClickListener { channel ->
+                // Handle Channel Info Click
+            }
+
+            channelsView.setUserClickListener { user ->
+                // Handle Member Click
+            }
+        }
+
+        fun handlingUserInteractions() {
+            channelsView.setChannelItemClickListener { channel ->
+                // Handle Channel Click
+            }
+
+            channelsView.setChannelLongClickListener { channel ->
+                // Handle Channel Click
+                true
+            }
+        }
+
+        fun customizingDefaultViews() {
+            // Create loading view and layout params
+            val loadingView = ProgressBar(context)
+            val layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+            channelsView.setEmptyStateView(loadingView, layoutParams)
+
+            // Create empty state view and use default layout params
+            val emptyStateView = TextView(context).apply {
+                text = "No channels available"
+            }
+            channelsView.setEmptyStateView(emptyStateView)
+
+            // Set custom item separator drawable
+            channelsView.setItemSeparator(R.drawable.stream_ui_divider)
+
+            // Add separator to the last item
+            channelsView.setShouldDrawItemSeparatorOnLastItem(true)
+        }
+
+        fun customViewHolderFactory() {
+            class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
+                override fun getItemViewType(item: ChannelListItem): Int {
+                    // Override together with createViewHolder() to introduce different view holder types
+                    return super.getItemViewType(item)
+                }
+
+                override fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
+                    // Override to create custom create view holder logic
+                    return super.createViewHolder(parentView, viewType)
+                }
+
+                override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+                    // Create custom channel view holder
+                    return super.createChannelViewHolder(parentView)
+                }
+
+                override fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+                    // Create custom loading more view holder
+                    return super.createLoadingMoreViewHolder(parentView)
+                }
+            }
+
+            // Create custom view holder factory
+            val customFactory = CustomChannelListItemViewHolderFactory()
+
+            // Set custom view holder factory
+            channelsView.setViewHolderFactory(customFactory)
         }
     }
 

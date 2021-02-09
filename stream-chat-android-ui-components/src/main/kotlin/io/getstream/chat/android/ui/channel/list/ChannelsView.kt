@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : FrameLayout(context, attrs, defStyleAttr) {
     private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
@@ -75,6 +75,7 @@ public class ChannelsView @JvmOverloads constructor(
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container ViewGroup.
      */
+    @JvmOverloads
     public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
         removeView(this.emptyStateView)
         this.emptyStateView = view
@@ -86,6 +87,7 @@ public class ChannelsView @JvmOverloads constructor(
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside its container ViewGroup.
      */
+    @JvmOverloads
     public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
         removeView(this.loadingView)
         this.loadingView = view
