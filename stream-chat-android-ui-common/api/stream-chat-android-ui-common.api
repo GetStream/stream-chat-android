@@ -115,6 +115,11 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$LoadingMoreInd
 }
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$MessageItem : com/getstream/sdk/chat/adapter/MessageListItem {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Z)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;Z)V
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZ)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
