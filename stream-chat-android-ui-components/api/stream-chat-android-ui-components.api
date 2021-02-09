@@ -707,19 +707,6 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListViewMod
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/messages/view/ScrollButtonView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setButtonColor (I)V
-	public final fun setButtonIcon (Landroid/graphics/drawable/Drawable;)V
-	public final fun setButtonRippleColor (I)V
-	public fun setOnClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setUnreadBadgeColor (I)V
-	public final fun setUnreadBadgeEnabled (Z)V
-	public final fun setUnreadCount (I)V
-}
-
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V

@@ -304,39 +304,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/scrollButtonViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/component_browser_sub_card"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/scrollButtonViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="ScrollButtonView"
-                android:textColor="@color/stream_ui_text_color_primary"
-                />
-
-            <io.getstream.chat.android.ui.messages.view.ScrollButtonView
-                android:id="@+id/scrollButtonView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:clickable="false"
-                android:focusable="false"
-                />
-
-        </LinearLayout>
-
     </LinearLayout>
 
 </ScrollView>
