@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
 
 @Entity(
     tableName = "attachment_inner_entity",

@@ -1,13 +1,9 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.message
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.dao.MessageDao
-import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.hasFilter
 import java.util.Date
@@ -83,7 +79,7 @@ internal class MessageRepositoryImpl(
 
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         if (messages.isEmpty()) return
-        val messagesToInsert = messages.flatMap(::allMessages)
+        val messagesToInsert = messages.flatMap(Companion::allMessages)
         for (message in messagesToInsert) {
             require(message.cid.isNotEmpty()) { "message.cid can not be empty" }
         }
@@ -119,6 +115,6 @@ internal class MessageRepositoryImpl(
         private const val DEFAULT_MESSAGE_LIMIT = 100
 
         private fun allMessages(message: Message): List<Message> =
-            listOf(message) + (message.replyTo?.let(::allMessages).orEmpty())
+            listOf(message) + (message.replyTo?.let(Companion::allMessages).orEmpty())
     }
 }

@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.dao.ChannelDao
-import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.dao.QueryChannelsDao
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.dao.SyncStateDao
@@ -18,7 +17,6 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.CommandInnerEntity
-import io.getstream.chat.android.livedata.entity.MessageInnerEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
@@ -30,6 +28,8 @@ import io.getstream.chat.android.livedata.repository.database.converter.ListConv
 import io.getstream.chat.android.livedata.repository.database.converter.MapConverter
 import io.getstream.chat.android.livedata.repository.database.converter.SetConverter
 import io.getstream.chat.android.livedata.repository.database.converter.SyncStatusConverter
+import io.getstream.chat.android.livedata.repository.domain.message.MessageDao
+import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
 
 @Database(
     entities = [

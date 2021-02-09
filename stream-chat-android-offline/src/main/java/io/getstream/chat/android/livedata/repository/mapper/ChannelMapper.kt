@@ -8,7 +8,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.repository.domain.message.MessageEntity
+import io.getstream.chat.android.livedata.repository.domain.message.toEntity
 import java.util.Date
 
 internal fun Channel.toEntity(): ChannelEntity {

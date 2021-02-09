@@ -6,8 +6,6 @@ import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.ChannelConfigRepositoryImpl
 import io.getstream.chat.android.livedata.repository.ChannelRepository
 import io.getstream.chat.android.livedata.repository.ChannelRepositoryImpl
-import io.getstream.chat.android.livedata.repository.MessageRepository
-import io.getstream.chat.android.livedata.repository.MessageRepositoryImpl
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepositoryImpl
 import io.getstream.chat.android.livedata.repository.ReactionRepository
@@ -17,6 +15,8 @@ import io.getstream.chat.android.livedata.repository.SyncStateRepositoryImpl
 import io.getstream.chat.android.livedata.repository.UserRepository
 import io.getstream.chat.android.livedata.repository.UserRepositoryImpl
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
+import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
+import io.getstream.chat.android.livedata.repository.domain.message.MessageRepositoryImpl
 
 internal class RepositoryFactory(
     private val database: ChatDatabase,

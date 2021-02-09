@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.entity
+package io.getstream.chat.android.livedata.repository.domain.message
 
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -6,6 +6,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.entity.AttachmentEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.util.Date
 
 internal data class MessageEntity(

@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
 import java.util.Date
 
 /**

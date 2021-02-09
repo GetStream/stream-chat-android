@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.dao
+package io.getstream.chat.android.livedata.repository.domain.message
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -7,8 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.AttachmentEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.entity.MessageInnerEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.util.Date
 

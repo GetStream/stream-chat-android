@@ -4,12 +4,12 @@ import androidx.annotation.CallSuper
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.ChannelRepository
-import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.ReactionRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.repository.SyncStateRepository
 import io.getstream.chat.android.livedata.repository.UserRepository
+import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.jupiter.api.BeforeEach
