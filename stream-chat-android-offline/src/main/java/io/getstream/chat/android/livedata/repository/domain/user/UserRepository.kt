@@ -1,9 +1,7 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.user
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.dao.UserDao
-import io.getstream.chat.android.livedata.entity.UserEntity
 
 internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)

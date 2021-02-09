@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.entity
+package io.getstream.chat.android.livedata.repository.domain.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
