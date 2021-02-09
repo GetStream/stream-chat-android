@@ -5,11 +5,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
@@ -18,18 +16,21 @@ import kotlinx.coroutines.awaitAll
 
 internal class RepositoryHelper private constructor(
     userRepository: UserRepository,
-    private val configsRepository: ChannelConfigRepository,
+    configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
-    private val queryChannelsRepository: QueryChannelsRepository,
+    queryChannelsRepository: QueryChannelsRepository,
     messageRepository: MessageRepository,
     reactionsRepository: ReactionRepository,
-    private val syncStateRepository: SyncStateRepository,
+    syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
     ChannelRepository by channelsRepository,
     ReactionRepository by reactionsRepository,
-    MessageRepository by messageRepository {
+    MessageRepository by messageRepository,
+    ChannelConfigRepository by configsRepository,
+    QueryChannelsRepository by queryChannelsRepository,
+    SyncStateRepository by syncStateRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
@@ -55,7 +56,7 @@ internal class RepositoryHelper private constructor(
 
     @VisibleForTesting
     internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = configsRepository.select(type)?.config ?: defaultConfig
+        config = selectChannelConfig(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinct()
@@ -74,10 +75,6 @@ internal class RepositoryHelper private constructor(
         insertUsers(channels.flatMap(Channel::users))
     }
 
-    internal suspend fun insertConfigChannel(configs: Collection<ChannelConfig>) {
-        configsRepository.insert(configs)
-    }
-
     internal suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>? = null,
         users: List<User>,
@@ -85,27 +82,10 @@ internal class RepositoryHelper private constructor(
         messages: List<Message>,
         cacheForMessages: Boolean = false,
     ) {
-        configs?.let { insertConfigChannel(it) }
+        configs?.let { insertChannelConfigs(it) }
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
-    }
-
-    internal suspend fun insertConfigChannel(config: ChannelConfig) {
-        configsRepository.insert(config)
-    }
-
-    internal fun selectConfig(channelType: String): ChannelConfig? {
-        return configsRepository.select(channelType)
-    }
-
-    internal suspend fun loadChannelConfig() {
-        configsRepository.load()
-    }
-
-    @VisibleForTesting
-    internal fun clearCache() {
-        configsRepository.clearCache()
     }
 
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
@@ -129,26 +109,6 @@ internal class RepositoryHelper private constructor(
                 }.also { channelsRepository.insertChannel(it) }
             }
         }
-    }
-
-    suspend fun querySelectById(ids: List<String>): List<QueryChannelsSpec> {
-        return queryChannelsRepository.selectById(ids)
-    }
-
-    suspend fun querySelectByFilterAndQuerySort(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
-        return queryChannelsRepository.selectByFilterAndQuerySort(queryChannelsSpec)
-    }
-
-    suspend fun queryInsert(queryChannelsSpec: QueryChannelsSpec) {
-        return queryChannelsRepository.insert(queryChannelsSpec)
-    }
-
-    internal suspend fun selectSyncState(userId: String): SyncState? {
-        return syncStateRepository.select(userId)
-    }
-
-    internal suspend fun insertSyncState(newSyncState: SyncState) {
-        syncStateRepository.insert(newSyncState)
     }
 
     internal companion object {

@@ -43,7 +43,6 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
-import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -252,7 +251,7 @@ internal class ChatDomainImpl internal constructor(
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
-            repos.loadChannelConfig()
+            repos.cacheChannelConfigs()
 
             // load the current user from the db
             val syncState = repos.selectSyncState(currentUser.id) ?: SyncState(currentUser.id)
@@ -260,7 +259,7 @@ internal class ChatDomainImpl internal constructor(
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
             // restore queries
-            repos.querySelectById(syncState.activeQueryIds)
+            repos.selectQueriesChannelsByIds(syncState.activeQueryIds)
                 .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
             // retrieve the last time the user marked all as read and handle it as an event
@@ -323,8 +322,7 @@ internal class ChatDomainImpl internal constructor(
         syncStateFlow.value?.let { _syncState ->
             val newSyncState = _syncState.copy(
                 activeChannelIds = activeChannelMapImpl.keys().toList(),
-                activeQueryIds =
-                    activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
+                activeQueryIds = activeQueryMapImpl.values.map { it.queryChannelsSpec.id }
             )
             repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
@@ -841,7 +839,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
-        return repos.selectConfig(channelType)?.config ?: defaultConfig
+        return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
     }
 
     companion object {

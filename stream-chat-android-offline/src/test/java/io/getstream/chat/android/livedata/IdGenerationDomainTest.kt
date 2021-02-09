@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -62,9 +61,9 @@ internal class IdGenerationDomainTest : BaseDomainTest() {
             QuerySort<Channel>().asc("name")
         )
         // verify that 1 and 2 are equal
-        Truth.assertThat(QueryChannelsRepository.getId(query2)).isEqualTo(QueryChannelsRepository.getId(query))
+        Truth.assertThat(query2.id).isEqualTo(query.id)
         // verify that 3 and 4 are not equal to 2
-        Truth.assertThat(QueryChannelsRepository.getId(query2)).isNotEqualTo(QueryChannelsRepository.getId(query3))
-        Truth.assertThat(QueryChannelsRepository.getId(query2)).isNotEqualTo(QueryChannelsRepository.getId(query4))
+        Truth.assertThat(query2.id).isNotEqualTo(query3.id)
+        Truth.assertThat(query2.id).isNotEqualTo(query4.id)
     }
 }
