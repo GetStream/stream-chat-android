@@ -11,6 +11,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
 import io.getstream.chat.android.ui.utils.UiUtils
+import io.getstream.chat.android.ui.utils.extensions.supportedLatestReactions
 
 @InternalStreamChatApi
 public class UserReactionsView : FrameLayout {
@@ -35,7 +36,7 @@ public class UserReactionsView : FrameLayout {
     }
 
     private fun bindTitle(message: Message) {
-        val reactionCount = message.latestReactions.size
+        val reactionCount = message.supportedLatestReactions.size
         binding.messageMembersTextView.text = context.resources.getQuantityString(
             R.plurals.stream_ui_user_reactions_title,
             reactionCount,
@@ -44,7 +45,7 @@ public class UserReactionsView : FrameLayout {
     }
 
     private fun bindReactionList(message: Message, currentUser: User) {
-        val userReactionItems = message.latestReactions.mapNotNull {
+        val userReactionItems = message.supportedLatestReactions.mapNotNull {
             val user = it.user
             val iconDrawableRes = UiUtils.getReactionIcon(it.type)
             if (user != null && iconDrawableRes != null) {
