@@ -410,38 +410,38 @@ public abstract interface class io/getstream/chat/android/ui/gallery/overview/Me
 	public abstract fun onLoadMore ()V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListView : android/widget/ViewFlipper {
+public final class io/getstream/chat/android/ui/mentions/MentionListView : android/widget/ViewFlipper {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener;)V
-	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener;)V
+	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/mentions/MentionListView$LoadMoreListener;)V
+	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionListView$MentionSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
 	public final fun showMessages (Ljava/util/List;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener {
+public abstract interface class io/getstream/chat/android/ui/mentions/MentionListView$LoadMoreListener {
 	public abstract fun onLoadMoreRequested ()V
 }
 
-public abstract interface class io/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener {
+public abstract interface class io/getstream/chat/android/ui/mentions/MentionListView$MentionSelectedListener {
 	public abstract fun onMentionSelected (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel : androidx/lifecycle/ViewModel {
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun loadMore ()V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel$State {
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModel$State {
 	public fun <init> (ZLjava/util/List;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Z
-	public final fun copy (ZLjava/util/List;Z)Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;
+	public final fun copy (ZLjava/util/List;Z)Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
 	public final fun getResults ()Ljava/util/List;
@@ -450,8 +450,8 @@ public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel$S
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModelBinding {
-	public static final fun bind (Lio/getstream/chat/android/ui/mentions/MentionsListViewModel;Lio/getstream/chat/android/ui/mentions/MentionsListView;Landroidx/lifecycle/LifecycleOwner;)V
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/mentions/MentionListViewModel;Lio/getstream/chat/android/ui/mentions/MentionListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/messagepreview/MessagePreviewView : android/widget/FrameLayout {

@@ -1,4 +1,4 @@
-@file:JvmName("MentionsListViewModelBinding")
+@file:JvmName("MentionListViewModelBinding")
 
 package io.getstream.chat.android.ui.mentions
 
@@ -6,11 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.livedata.utils.EventObserver
 
 /**
- * Binds [MentionsListView] with [MentionsListViewModel], updating the view's state
+ * Binds [MentionListView] with [MentionListViewModel], updating the view's state
  * based on data provided by the ViewModel.
  */
 @JvmName("bind")
-public fun MentionsListViewModel.bindView(view: MentionsListView, lifecycleOwner: LifecycleOwner) {
+public fun MentionListViewModel.bindView(view: MentionListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
         when {
             state.isLoading -> {
