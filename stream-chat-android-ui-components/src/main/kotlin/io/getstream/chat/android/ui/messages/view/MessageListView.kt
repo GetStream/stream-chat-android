@@ -662,7 +662,7 @@ public class MessageListView : ConstraintLayout {
         buffer.enqueueData(listItem)
     }
 
-    public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
+    public fun setMessageListItemFilter(messageListItemPredicate: MessageListItemPredicate) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
         this.messageListItemPredicate = messageListItemPredicate
     }
