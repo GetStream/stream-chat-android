@@ -1,13 +1,16 @@
-package io.getstream.chat.android.livedata.repository.mapper
+package io.getstream.chat.android.livedata.repository.domain.channel
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
-import io.getstream.chat.android.livedata.entity.MemberEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.member.toEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.member.toModel
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.toEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.toModel
 import io.getstream.chat.android.livedata.repository.domain.message.MessageEntity
 import io.getstream.chat.android.livedata.repository.domain.message.toEntity
 import java.util.Date

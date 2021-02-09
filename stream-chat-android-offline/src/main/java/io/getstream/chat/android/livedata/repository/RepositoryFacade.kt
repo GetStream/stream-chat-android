@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
+import io.getstream.chat.android.livedata.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
 import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsRepository

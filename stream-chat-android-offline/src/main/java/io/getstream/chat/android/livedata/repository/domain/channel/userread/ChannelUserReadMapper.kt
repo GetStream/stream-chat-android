@@ -1,8 +1,7 @@
-package io.getstream.chat.android.livedata.repository.mapper
+package io.getstream.chat.android.livedata.repository.domain.channel.userread
 
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 
 internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity = ChannelUserReadEntity(getUserId(), lastRead)
 

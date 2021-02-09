@@ -1,9 +1,11 @@
-package io.getstream.chat.android.livedata.entity
+package io.getstream.chat.android.livedata.repository.domain.channel
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
 import java.util.Date
 
 /**

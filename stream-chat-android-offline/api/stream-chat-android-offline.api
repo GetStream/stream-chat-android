@@ -208,19 +208,6 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Th
 	public abstract fun getThreadId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/dao/ChannelDao_Impl : io/getstream/chat/android/livedata/dao/ChannelDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun delete (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insert (Lio/getstream/chat/android/livedata/entity/ChannelEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setHidden (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setHidden (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/livedata/extensions/ClientExtensionsKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
@@ -229,13 +216,26 @@ public final class io/getstream/chat/android/livedata/repository/database/ChatDa
 	public static final field Companion Lio/getstream/chat/android/livedata/repository/database/ChatDatabase$Companion;
 	public fun <init> ()V
 	public fun channelConfigDao ()Lio/getstream/chat/android/livedata/repository/domain/channelconfig/ChannelConfigDao;
-	public fun channelStateDao ()Lio/getstream/chat/android/livedata/dao/ChannelDao;
+	public fun channelStateDao ()Lio/getstream/chat/android/livedata/repository/domain/channel/ChannelDao;
 	public fun clearAllTables ()V
 	public fun messageDao ()Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;
 	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/livedata/repository/domain/syncState/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/livedata/repository/domain/user/UserDao;
+}
+
+public final class io/getstream/chat/android/livedata/repository/domain/channel/ChannelDao_Impl : io/getstream/chat/android/livedata/repository/domain/channel/ChannelDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun delete (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lio/getstream/chat/android/livedata/repository/domain/channel/ChannelEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setHidden (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setHidden (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/livedata/repository/domain/channelconfig/ChannelConfigDao_Impl {

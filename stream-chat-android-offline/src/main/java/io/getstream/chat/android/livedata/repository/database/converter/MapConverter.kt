@@ -2,9 +2,9 @@ package io.getstream.chat.android.livedata.repository.database.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
-import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.gson
+import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
 
 internal class MapConverter {
     @TypeConverter

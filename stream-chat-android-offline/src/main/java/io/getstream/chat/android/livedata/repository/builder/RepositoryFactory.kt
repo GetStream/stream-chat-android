@@ -2,9 +2,9 @@ package io.getstream.chat.android.livedata.repository.builder
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.repository.ChannelRepository
-import io.getstream.chat.android.livedata.repository.ChannelRepositoryImpl
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
+import io.getstream.chat.android.livedata.repository.domain.channel.ChannelRepository
+import io.getstream.chat.android.livedata.repository.domain.channel.ChannelRepositoryImpl
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepositoryImpl
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
