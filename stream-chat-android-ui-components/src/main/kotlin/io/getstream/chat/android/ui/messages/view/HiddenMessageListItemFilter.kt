@@ -14,10 +14,7 @@ internal object HiddenMessageListItemFilter : MessageListView.MessageListItemFil
         item is MessageListItem.MessageItem && item.message.isGiphyEphemeral() && item.isTheirs
     }
 
-    override fun filter(messageListItems: List<MessageListItem>): List<MessageListItem> {
-        return messageListItems.asSequence()
-            .filterNot(theirDeletedMessagePredicate)
-            .filterNot(theirGiphyEphemeralMessagePredicate)
-            .toList()
+    override fun predicate(item: MessageListItem): Boolean {
+        return theirDeletedMessagePredicate.invoke(item).and(theirGiphyEphemeralMessagePredicate.invoke(item))
     }
 }
