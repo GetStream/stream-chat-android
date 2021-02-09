@@ -1,10 +1,6 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.channelconfig
 
-import io.getstream.chat.android.livedata.dao.ChannelConfigDao
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Collections
 
 internal interface ChannelConfigRepository {

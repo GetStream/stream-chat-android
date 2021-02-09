@@ -1,10 +1,7 @@
-package io.getstream.chat.android.livedata.repository.mapper
+package io.getstream.chat.android.livedata.repository.domain.channelconfig
 
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
-import io.getstream.chat.android.livedata.entity.CommandInnerEntity
 import io.getstream.chat.android.livedata.model.ChannelConfig
 
 internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity(

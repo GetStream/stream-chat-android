@@ -1,13 +1,10 @@
-package io.getstream.chat.android.livedata.dao
+package io.getstream.chat.android.livedata.repository.domain.channelconfig
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
-import io.getstream.chat.android.livedata.entity.CommandInnerEntity
 
 @Dao
 internal abstract class ChannelConfigDao {

@@ -208,12 +208,6 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Th
 	public abstract fun getThreadId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/dao/ChannelConfigDao_Impl {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun insert (Lio/getstream/chat/android/livedata/entity/ChannelConfigEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/livedata/dao/ChannelDao_Impl : io/getstream/chat/android/livedata/dao/ChannelDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun delete (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -234,7 +228,7 @@ public final class io/getstream/chat/android/livedata/extensions/ClientExtension
 public final class io/getstream/chat/android/livedata/repository/database/ChatDatabase_Impl {
 	public static final field Companion Lio/getstream/chat/android/livedata/repository/database/ChatDatabase$Companion;
 	public fun <init> ()V
-	public fun channelConfigDao ()Lio/getstream/chat/android/livedata/dao/ChannelConfigDao;
+	public fun channelConfigDao ()Lio/getstream/chat/android/livedata/repository/domain/channelconfig/ChannelConfigDao;
 	public fun channelStateDao ()Lio/getstream/chat/android/livedata/dao/ChannelDao;
 	public fun clearAllTables ()V
 	public fun messageDao ()Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;
@@ -242,6 +236,12 @@ public final class io/getstream/chat/android/livedata/repository/database/ChatDa
 	public fun reactionDao ()Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/livedata/repository/domain/syncState/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/livedata/repository/domain/user/UserDao;
+}
+
+public final class io/getstream/chat/android/livedata/repository/domain/channelconfig/ChannelConfigDao_Impl {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun insert (Lio/getstream/chat/android/livedata/repository/domain/channelconfig/ChannelConfigEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/livedata/repository/domain/message/MessageDao_Impl {

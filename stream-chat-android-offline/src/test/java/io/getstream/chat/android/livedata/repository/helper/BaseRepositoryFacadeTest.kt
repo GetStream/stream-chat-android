@@ -2,9 +2,9 @@ package io.getstream.chat.android.livedata.repository.helper
 
 import androidx.annotation.CallSuper
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.ChannelRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
 import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionRepository
