@@ -423,16 +423,6 @@ public final class io/getstream/chat/android/ui/mentions/MentionListViewModelBin
 	public static final fun bind (Lio/getstream/chat/android/ui/mentions/MentionListViewModel;Lio/getstream/chat/android/ui/mentions/MentionListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/messagepreview/MessagePreviewView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
-	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
-	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
-	public static synthetic fun setMessage$default (Lio/getstream/chat/android/ui/messagepreview/MessagePreviewView;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ILjava/lang/Object;)V
-}
-
 public abstract class io/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
 	public fun <init> (Landroid/view/View;)V
 	public abstract fun bindData (Lcom/getstream/sdk/chat/adapter/MessageListItem;Lio/getstream/chat/android/ui/messages/adapter/MessageListItemPayloadDiff;)V

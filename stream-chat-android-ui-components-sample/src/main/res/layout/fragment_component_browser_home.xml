@@ -182,34 +182,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/messagePreviewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/component_browser_sub_card"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/messagePreviewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="MessagePreviewView"
-                android:textColor="@color/stream_ui_text_color_primary"
-                />
-
-            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
-                android:id="@+id/messagePreviewView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/viewReactionsViewContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

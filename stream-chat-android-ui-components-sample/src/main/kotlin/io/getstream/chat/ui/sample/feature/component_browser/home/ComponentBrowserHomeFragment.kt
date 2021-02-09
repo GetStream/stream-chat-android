@@ -18,7 +18,6 @@ import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
-import java.util.Date
 
 @InternalStreamChatApi
 class ComponentBrowserHomeFragment : Fragment() {
@@ -54,7 +53,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
-        setupMessagePreviewView()
         setupViewReactionsView()
         setupEditReactionsView()
         setupUserReactionsView()
@@ -104,20 +102,6 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
-        }
-    }
-
-    private fun setupMessagePreviewView() {
-        binding.messagePreviewView.setMessage(
-            Message(
-                id = "",
-                user = randomUser(),
-                createdAt = Date(2020, 7, 15, 14, 22),
-                text = "Hello world, how are you doing?",
-            ),
-        )
-        binding.messagePreviewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment)
         }
     }
 
