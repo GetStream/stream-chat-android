@@ -71,8 +71,6 @@ allprojects {
 
                 // Remove when https://github.com/MarkusAmshove/Kluent/issues/190 is closed
                 includeGroup("org.amshove.kluent")
-
-                includeGroup("androidx.databinding")
             }
         }
         maven {
