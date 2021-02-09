@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.utils.extensions.isDeleted
 import io.getstream.chat.android.ui.utils.extensions.isGiphyEphemeral
 
-internal object HiddenMessageListItemFilter : MessageListView.MessageListItemFilter {
+internal object HiddenMessageListItemPredicate : MessageListView.MessageListItemPredicate {
 
     private val theirDeletedMessagePredicate: (MessageListItem) -> Boolean = { item ->
         item is MessageListItem.MessageItem && item.message.isDeleted() && item.isTheirs

@@ -201,7 +201,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private var messageListItemFilter: MessageListItemFilter = HiddenMessageListItemFilter
+    private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
 
     private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
 
@@ -662,14 +662,14 @@ public class MessageListView : ConstraintLayout {
         buffer.enqueueData(listItem)
     }
 
-    public fun setMessageListItemFilter(messageListItemFilter: MessageListItemFilter) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemFilter first" }
-        this.messageListItemFilter = messageListItemFilter
+    public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
+        this.messageListItemPredicate = messageListItemPredicate
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = listItem.items.filter(messageListItemFilter::predicate)
+            val filteredList = listItem.items.filter(messageListItemPredicate::predicate)
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
@@ -970,9 +970,10 @@ public class MessageListView : ConstraintLayout {
     //endregion
 
     /**
-     * Filter functional object that can filter MessageListItem before applying them to MessageListView.
+     * Predicate object with a filter condition for MessageListItem. Used to filter a list of MessageListItem
+     * before applying it to MessageListView.
      */
-    public fun interface MessageListItemFilter {
+    public fun interface MessageListItemPredicate {
         public fun predicate(item: MessageListItem): Boolean
     }
 
