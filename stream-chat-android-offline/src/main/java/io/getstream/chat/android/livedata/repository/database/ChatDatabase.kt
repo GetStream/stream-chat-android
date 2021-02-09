@@ -9,13 +9,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.dao.QueryChannelsDao
-import io.getstream.chat.android.livedata.dao.SyncStateDao
 import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.CommandInnerEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.repository.database.converter.DateConverter
 import io.getstream.chat.android.livedata.repository.database.converter.ExtraDataConverter
 import io.getstream.chat.android.livedata.repository.database.converter.FilterObjectConverter
@@ -28,6 +26,8 @@ import io.getstream.chat.android.livedata.repository.domain.message.MessageInner
 import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionDao
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
+import io.getstream.chat.android.livedata.repository.domain.syncState.SyncStateDao
+import io.getstream.chat.android.livedata.repository.domain.syncState.SyncStateEntity
 import io.getstream.chat.android.livedata.repository.domain.user.UserDao
 import io.getstream.chat.android.livedata.repository.domain.user.UserEntity
 

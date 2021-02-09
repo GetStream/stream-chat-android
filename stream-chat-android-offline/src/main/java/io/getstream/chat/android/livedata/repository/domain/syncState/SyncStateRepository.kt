@@ -1,9 +1,6 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.syncState
 
-import io.getstream.chat.android.livedata.dao.SyncStateDao
 import io.getstream.chat.android.livedata.model.SyncState
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 internal interface SyncStateRepository {
     suspend fun insertSyncState(syncState: SyncState)
