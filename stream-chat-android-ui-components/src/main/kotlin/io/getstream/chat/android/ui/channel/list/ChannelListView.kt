@@ -61,9 +61,9 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
+        context.obtainStyledAttributes(attrs, R.styleable.ChannelListView, 0, 0).use {
             it.getResourceId(
-                R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable,
+                R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable,
                 R.drawable.stream_ui_divider
             )
                 .let { separator ->

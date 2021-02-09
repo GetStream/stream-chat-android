@@ -2,6 +2,7 @@
 <resources>
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
+        <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
         <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
         <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
