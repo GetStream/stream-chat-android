@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.messages.reactions.ReactionItem
 import io.getstream.chat.android.ui.messages.reactions.ReactionsAdapter
 import io.getstream.chat.android.ui.utils.UiUtils
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
+import io.getstream.chat.android.ui.utils.extensions.supportedReactionCounts
 
 @InternalStreamChatApi
 public class ViewReactionsView : RecyclerView {
@@ -81,7 +82,7 @@ public class ViewReactionsView : RecyclerView {
     }
 
     private fun createReactionItems(message: Message): List<ReactionItem> {
-        return message.reactionCounts.keys
+        return message.supportedReactionCounts.keys
             .mapNotNull { type ->
                 UiUtils.getReactionIcon(type)?.let {
                     ReactionItem(
