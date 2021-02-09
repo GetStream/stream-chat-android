@@ -2,168 +2,287 @@ package io.getstream.chat.android.ui.channel.list
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.res.use
+import androidx.core.view.isVisible
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
-import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelLongClickListener
-import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.actions.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemAdapter
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainerImpl
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
-import io.getstream.chat.android.ui.utils.extensions.cast
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 
 public class ChannelListView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyle: Int = 0,
-) : RecyclerView(context, attrs, defStyle) {
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
+    private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
-    private val layoutManager: ScrollPauseLinearLayoutManager
-    private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
-    private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
+    private var emptyStateView: View = defaultEmptyStateView()
 
-    private var endReachedListener: EndReachedListener? = null
+    private var loadingView: View = defaultLoadingView()
 
-    private lateinit var viewHolderFactory: ChannelListItemViewHolderFactory
+    private val simpleChannelListView: SimpleChannelListView =
+        SimpleChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
 
-    private lateinit var adapter: ChannelListItemAdapter
+    // These listeners live here because they are only triggered via ChannelActionsDialogFragment and don't need
+    // to be passed to ViewHolders.
+    private var channelInfoListener: ChannelClickListener = ChannelClickListener.DEFAULT
 
-    internal val listenerContainer = ChannelListListenerContainerImpl()
-
-    private val style: ChannelListViewStyle
+    private var channelLeaveListener: ChannelClickListener = ChannelClickListener.DEFAULT
 
     init {
-        setHasFixedSize(true)
-        layoutManager = ScrollPauseLinearLayoutManager(context)
-        setLayoutManager(layoutManager)
-        setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
+        addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
-        style = ChannelListViewStyle(context, attrs)
-
-        addItemDecoration(dividerDecoration)
-    }
-
-    private fun requireAdapter(): ChannelListItemAdapter {
-        if (::adapter.isInitialized.not()) {
-            initAdapter()
-        }
-        return adapter
-    }
-
-    private fun initAdapter() {
-        // Create default ViewHolderFactory if needed
-        if (::viewHolderFactory.isInitialized.not()) {
-            viewHolderFactory = ChannelListItemViewHolderFactory()
+        emptyStateView.apply {
+            isVisible = false
+            addView(this, defaultChildLayoutParams)
         }
 
-        viewHolderFactory.setListenerContainer(this.listenerContainer)
-        viewHolderFactory.setStyle(style)
+        loadingView.apply {
+            isVisible = false
+            addView(loadingView, defaultChildLayoutParams)
+        }
 
-        adapter = ChannelListItemAdapter(viewHolderFactory)
+        configureDefaultMoreOptionsListener(context)
 
-        this.setAdapter(adapter)
+        parseAttrs(attrs)
     }
 
-    public fun setViewHolderFactory(viewHolderFactory: ChannelListItemViewHolderFactory) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set ChannelListItemViewHolderFactory first" }
-
-        this.viewHolderFactory = viewHolderFactory
+    private fun parseAttrs(attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
+            it.getResourceId(
+                R.styleable.ChannelsView_streamUiChannelsItemSeparatorDrawable,
+                R.drawable.stream_ui_divider
+            )
+                .let { separator ->
+                    simpleChannelListView.setItemSeparator(separator)
+                }
+        }
     }
 
-    public fun setChannelClickListener(listener: ChannelClickListener?) {
-        listenerContainer.channelClickListener = listener ?: ChannelClickListener.DEFAULT
+    /**
+     * @param view will be added to the view hierarchy of [ChannelListView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside its container ViewGroup.
+     */
+    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
+        removeView(this.emptyStateView)
+        this.emptyStateView = view
+        addView(emptyStateView, layoutParams)
     }
 
-    public fun setChannelLongClickListener(listener: ChannelLongClickListener?) {
-        listenerContainer.channelLongClickListener = listener ?: ChannelLongClickListener.DEFAULT
+    /**
+     * @param view will be added to the view hierarchy of [ChannelListView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside its container ViewGroup.
+     */
+    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
+        removeView(this.loadingView)
+        this.loadingView = view
+        addView(loadingView, layoutParams)
     }
 
-    public fun setUserClickListener(listener: UserClickListener?) {
-        listenerContainer.userClickListener = listener ?: UserClickListener.DEFAULT
-    }
-
-    public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
-        listenerContainer.deleteClickListener = listener ?: ChannelClickListener.DEFAULT
-    }
-
-    public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
-        listenerContainer.moreOptionsClickListener = listener ?: ChannelClickListener.DEFAULT
-    }
-
-    public fun setSwipeListener(listener: SwipeListener?) {
-        listenerContainer.swipeListener = listener ?: SwipeListener.DEFAULT
-    }
-
+    /**
+     * Uses the [drawableResource] as the separator for list items
+     *
+     * @param drawableResource the drawable used as a separator
+     */
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
-        dividerDecoration.drawableResource = drawableResource
+        simpleChannelListView.setItemSeparator(drawableResource)
     }
 
-    public fun setItemSeparatorHeight(height: Int) {
-        dividerDecoration.drawableHeight = height
+    public fun setItemSeparatorHeight(dp: Int) {
+        simpleChannelListView.setItemSeparatorHeight(dp.dpToPx())
     }
 
     public fun setShouldDrawItemSeparatorOnLastItem(shouldDrawOnLastItem: Boolean) {
-        dividerDecoration.drawOnLastItem = shouldDrawOnLastItem
+        simpleChannelListView.setShouldDrawItemSeparatorOnLastItem(shouldDrawOnLastItem)
+    }
+
+    /**
+     * Allows clients to set a custom implementation of [BaseChannelViewHolderFactory]
+     *
+     * @param factory the custom factory to be used when generating item view holders
+     */
+    public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
+        simpleChannelListView.setViewHolderFactory(factory)
+    }
+
+    /**
+     * Allows clients to set a click listener for all channel list items
+     *
+     * @param listener the callback to be invoked on channel item click
+     */
+    public fun setChannelItemClickListener(listener: ChannelClickListener?) {
+        simpleChannelListView.setChannelClickListener(listener)
+    }
+
+    /**
+     * Allows clients to set a long-click listener for all channel list items
+     *
+     * @param listener the callback to be invoked on channel long click
+     */
+    public fun setChannelLongClickListener(listener: ChannelLongClickListener?) {
+        simpleChannelListView.setChannelLongClickListener(listener)
+    }
+
+    /**
+     * Allows clients to set a click listener to be notified of user click events
+     *
+     * @param listener the listener to be invoked when a user click event occurs
+     */
+    public fun setUserClickListener(listener: UserClickListener?) {
+        simpleChannelListView.setUserClickListener(listener)
+    }
+
+    /**
+     * Allows clients to set a click listener to be notified of delete clicks via channel actions
+     * or view holder swipe menu
+     *
+     * @param listener - the callback to be invoked when delete is clicked
+     */
+    public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
+        simpleChannelListView.setChannelDeleteClickListener(listener)
+    }
+
+    /**
+     * Allows clients to set a click listener to be notified of "more options" clicks in ViewHolder items
+     *
+     * @param listener - the callback to be invoked when "more options" is clicked
+     */
+    public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
+        simpleChannelListView.setMoreOptionsClickListener(listener)
+    }
+
+    /**
+     * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu
+     *
+     * @param listener - the callback to be invoked when "channel info" is clicked
+     */
+    public fun setChannelInfoClickListener(listener: ChannelClickListener?) {
+        channelInfoListener = listener ?: ChannelClickListener.DEFAULT
+    }
+
+    /**
+     * Allows a client to set a click listener to be notified of "leave channel" clicks in the "more options" menu
+     *
+     * @param listener - the callback to be invoked when "leave channel" is clicked
+     */
+    public fun setChannelLeaveClickListener(listener: ChannelClickListener?) {
+        channelLeaveListener = listener ?: ChannelClickListener.DEFAULT
+    }
+
+    /**
+     * Allows a client to set a swipe listener to be notified of swipe details in order to take action
+     *
+     * @param listener - the set of functions to be invoked during a swipe's lifecycle
+     */
+    public fun setSwipeListener(listener: SwipeListener?) {
+        simpleChannelListView.setSwipeListener(listener)
     }
 
     public fun setOnEndReachedListener(listener: EndReachedListener?) {
-        endReachedListener = listener
-        observeListEndRegion()
-    }
-
-    private fun observeListEndRegion() {
-        addOnScrollListener(scrollListener)
-    }
-
-    public fun setPaginationEnabled(enabled: Boolean) {
-        scrollListener.setPaginationEnabled(enabled)
+        simpleChannelListView.setOnEndReachedListener(listener)
     }
 
     public fun setChannels(channels: List<ChannelListItem>) {
-        requireAdapter().submitList(channels)
+        simpleChannelListView.setChannels(channels)
     }
 
-    public fun showLoadingMore(show: Boolean) {
-        requireAdapter().let { adapter ->
-            val currentList = adapter.currentList
-            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
-            val showLoadingMore = show && !loadingMore
-            val hideLoadingMore = !show && loadingMore
+    public fun hideLoadingView() {
+        this.loadingView.isVisible = false
+    }
 
-            val updatedList = when {
-                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
+    public fun showLoadingView() {
+        this.loadingView.isVisible = true
+    }
 
-                // we should never have more than one loading item, but just in case
-                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.ChannelItem::class.java)
+    public fun showLoadingMore() {
+        this.simpleChannelListView.showLoadingMore(true)
+    }
 
-                else -> currentList
-            }
+    public fun hideLoadingMore() {
+        this.simpleChannelListView.showLoadingMore(false)
+    }
 
-            adapter.submitList(updatedList) {
-                if (showLoadingMore) {
-                    layoutManager.scrollToPosition(updatedList.size - 1)
-                }
-            }
-        }
+    public fun showEmptyStateView() {
+        this.emptyStateView.isVisible = true
+    }
+
+    public fun hideEmptyStateView() {
+        this.emptyStateView.isVisible = false
+    }
+
+    public fun setPaginationEnabled(enabled: Boolean) {
+        simpleChannelListView.setPaginationEnabled(enabled)
     }
 
     public fun hasChannels(): Boolean {
-        return requireAdapter().itemCount > 0
+        return simpleChannelListView.hasChannels()
     }
 
-    internal fun getChannel(cid: String): Channel = adapter.getChannel(cid)
+    private companion object {
+        private val defaultChildLayoutParams: LayoutParams by lazy {
+            LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+        }
+    }
 
-    public override fun onVisibilityChanged(view: View, visibility: Int) {
-        super.onVisibilityChanged(view, visibility)
-        if (visibility == View.VISIBLE && ::adapter.isInitialized) {
-            adapter.notifyDataSetChanged()
+    private fun defaultLoadingView(): View = ProgressBar(context)
+
+    private fun defaultEmptyStateView(): View = TextView(context).apply {
+        setText(R.string.stream_ui_channels_empty_state_label)
+    }
+
+    private fun configureDefaultMoreOptionsListener(
+        context: Context,
+    ) {
+        setMoreOptionsClickListener { channel ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                ChannelActionsDialogFragment
+                    .newInstance(channel.cid, !channel.isDirectMessaging())
+                    .apply {
+                        channelActionListener = object : ChannelActionsDialogFragment.ChannelActionListener {
+                            override fun onDeleteConversationClicked(cid: String) {
+                                simpleChannelListView.listenerContainer.deleteClickListener.onClick(
+                                    simpleChannelListView.getChannel(cid)
+                                )
+                            }
+
+                            override fun onLeaveChannelClicked(cid: String) {
+                                channelLeaveListener.onClick(
+                                    simpleChannelListView.getChannel(cid)
+                                )
+                            }
+
+                            override fun onMemberSelected(member: Member) {
+                                simpleChannelListView.listenerContainer.userClickListener.onClick(member.user)
+                            }
+
+                            override fun onChannelInfoSelected(cid: String) {
+                                channelInfoListener.onClick(
+                                    simpleChannelListView.getChannel(cid)
+                                )
+                            }
+                        }
+                    }
+                    .show(fragmentManager, null)
+            }
         }
     }
 
@@ -204,24 +323,6 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface EndReachedListener {
         public fun onEndReached()
-    }
-
-    private inner class EndReachedScrollListener : OnScrollListener() {
-        private var enabled = false
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            if (SCROLL_STATE_IDLE == newState) {
-                val linearLayoutManager = getLayoutManager()?.cast<LinearLayoutManager>()
-                val lastVisiblePosition = linearLayoutManager?.findLastVisibleItemPosition()
-                val reachedTheEnd = requireAdapter().itemCount - 1 == lastVisiblePosition
-                if (reachedTheEnd && enabled) {
-                    endReachedListener?.onEndReached()
-                }
-            }
-        }
-
-        fun setPaginationEnabled(enabled: Boolean) {
-            this.enabled = enabled
-        }
     }
 
     public interface SwipeListener {
