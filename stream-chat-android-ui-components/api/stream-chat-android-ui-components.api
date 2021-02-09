@@ -589,7 +589,7 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListView : 
 	public final fun setMessageDeleteHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageDeleteHandler;)V
 	public final fun setMessageEditHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageEditHandler;)V
 	public final fun setMessageFlagHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageFlagHandler;)V
-	public final fun setMessageListItemFilter (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter;)V
+	public final fun setMessageListItemPredicate (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemPredicate;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageLongClickListener;)V
 	public final fun setMessageReactionHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReactionHandler;)V
 	public final fun setMessageReplyHandler (Lio/getstream/chat/android/ui/messages/view/MessageListView$MessageReplyHandler;)V
@@ -664,7 +664,7 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 	public abstract fun onMessageFlag (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemFilter {
+public abstract interface class io/getstream/chat/android/ui/messages/view/MessageListView$MessageListItemPredicate {
 	public abstract fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
 }
 
