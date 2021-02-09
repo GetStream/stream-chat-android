@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.MessageList.header
+package io.getstream.chat.android.ui.messages.header
 
 import android.annotation.SuppressLint
 import android.content.Context

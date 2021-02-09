@@ -434,11 +434,6 @@
             />
 
         <action
-            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView"
-            app:destination="@id/componentBrowserMessageInputFieldViewFragment"
-            />
-
-        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment"
             app:destination="@id/componentBrowserMessageReplyViewFragment"
             />
@@ -585,12 +580,6 @@
         android:id="@+id/componentBrowserScrollButtonViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.ScrollButtonViewComponentBrowserFragment"
         android:label="ComponentBrowserScrollButtonViewFragment"
-        />
-
-    <fragment
-        android:id="@+id/componentBrowserMessageInputFieldViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.textinput.ComponentBrowserMessageInputFieldViewFragment"
-        android:label="ComponentBrowserMessageInputFieldViewFragment"
         />
 
     <fragment

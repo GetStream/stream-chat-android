@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:streamUiMessagesHeaderShowUserAvatar="false"
+        app:streamUiMessageListHeaderShowUserAvatar="false"
         tools:layout_height="56dp"
         >
 

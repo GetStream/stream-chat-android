@@ -10,13 +10,11 @@ import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.textinput.MessageInputFieldView
 import io.getstream.chat.android.ui.utils.ReactionType
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomCommand
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
@@ -63,7 +61,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupMessageList()
         setupTypingIndicator()
         setupScrollButtonView()
-        setupMessageInputFieldView()
         setupMessageReplyView()
     }
 
@@ -180,13 +177,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.scrollButtonView.setUnreadCount(11)
         binding.scrollButtonViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserScrollButtonView)
-        }
-    }
-
-    private fun setupMessageInputFieldView() {
-        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.CommandMode(randomCommand())
-        binding.messageInputFieldViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView)
         }
     }
 

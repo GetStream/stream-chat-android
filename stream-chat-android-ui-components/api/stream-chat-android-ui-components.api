@@ -5,37 +5,6 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/ui/MessageList/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun hideAvatar ()V
-	public final fun hideBackButtonBadge ()V
-	public final fun hideSubtitle ()V
-	public final fun hideTitle ()V
-	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun setAvatar (Lio/getstream/chat/android/client/models/User;)V
-	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setNormalMode ()V
-	public final fun setOnlineStateSubtitle (Ljava/lang/String;)V
-	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setThreadMode ()V
-	public final fun setThreadSubtitle (Ljava/lang/String;)V
-	public final fun setTitle (Ljava/lang/String;)V
-	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener;)V
-	public final fun showBackButtonBadge (Ljava/lang/String;)V
-	public final fun showOfflineStateLabel ()V
-	public final fun showOnlineStateSubtitle ()V
-	public final fun showSearchingForNetworkLabel ()V
-	public final fun showTypingStateLabel (Ljava/util/List;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/MessageList/header/MessageListHeaderView$OnClickListener {
-	public abstract fun onClick ()V
-}
-
 public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/appcompat/widget/AppCompatImageView {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarView$Companion;
 	public static final field MAX_AVATAR_SECTIONS I
@@ -548,7 +517,38 @@ public final class io/getstream/chat/android/ui/messages/adapter/view/MessageRep
 }
 
 public final class io/getstream/chat/android/ui/messages/header/ChannelHeaderViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/MessageList/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun hideAvatar ()V
+	public final fun hideBackButtonBadge ()V
+	public final fun hideSubtitle ()V
+	public final fun hideTitle ()V
+	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun setAvatar (Lio/getstream/chat/android/client/models/User;)V
+	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setNormalMode ()V
+	public final fun setOnlineStateSubtitle (Ljava/lang/String;)V
+	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setThreadMode ()V
+	public final fun setThreadSubtitle (Ljava/lang/String;)V
+	public final fun setTitle (Ljava/lang/String;)V
+	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun showBackButtonBadge (Ljava/lang/String;)V
+	public final fun showOfflineStateLabel ()V
+	public final fun showOnlineStateSubtitle ()V
+	public final fun showSearchingForNetworkLabel ()V
+	public final fun showTypingStateLabel (Ljava/util/List;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener {
+	public abstract fun onClick ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/reactions/ReactionClickListener {
@@ -855,103 +855,6 @@ public final class io/getstream/chat/android/ui/suggestions/SuggestionListView$S
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions$MentionSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions$MentionSuggestions;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUsers ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun autoCompleteCommand (Lio/getstream/chat/android/client/models/Command;)V
-	public final fun autoCompleteUser (Lio/getstream/chat/android/client/models/User;)V
-	public final fun clearContent ()V
-	public final fun getAttachedFiles ()Ljava/util/List;
-	public final fun getMessageText ()Ljava/lang/String;
-	public final fun getMode ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
-	public final fun hasAttachments ()Z
-	public final fun hasContent ()Z
-	public final fun hasText ()Z
-	public final fun isMaxMessageLengthExceeded ()Z
-	public final fun onEdit (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onReply (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onReplyDismissed ()V
-	public final fun setContentChangeListener (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener;)V
-	public final fun setHint (Ljava/lang/CharSequence;)V
-	public final fun setHintTextColor (I)V
-	public final fun setInputFieldScrollBarEnabled (Z)V
-	public final fun setInputFieldScrollbarFadingEnabled (Z)V
-	public final fun setMaxMessageLength (I)V
-	public final fun setMessageText (Ljava/lang/String;)V
-	public final fun setMode (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
-	public final fun setTextColor (I)V
-	public final fun setTextSizePx (F)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener {
-	public abstract fun onMessageTextChanged (Ljava/lang/String;)V
-	public abstract fun onModeChanged (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
-	public abstract fun onSelectedAttachmentsChanged (Ljava/util/List;)V
-}
-
-public abstract class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Command;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Command;
-	public final fun copy (Lio/getstream/chat/android/client/models/Command;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;Lio/getstream/chat/android/client/models/Command;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCommand ()Lio/getstream/chat/android/client/models/Command;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOldMessage ()Lio/getstream/chat/android/client/models/Message;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MessageMode;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getRepliedMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
