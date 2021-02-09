@@ -3,6 +3,7 @@
 ## stream-chat-android
 
 ## stream-chat-android-client
+- Fix `ConcurrentModificationException` on our `NetworkStateProvider`
 
 ## stream-chat-android-offline
 
