@@ -15,6 +15,6 @@ internal object HiddenMessageListItemPredicate : MessageListView.MessageListItem
     }
 
     override fun predicate(item: MessageListItem): Boolean {
-        return theirDeletedMessagePredicate(item).not() || theirGiphyEphemeralMessagePredicate(item).not()
+        return theirDeletedMessagePredicate(item).not() && theirGiphyEphemeralMessagePredicate(item).not()
     }
 }
