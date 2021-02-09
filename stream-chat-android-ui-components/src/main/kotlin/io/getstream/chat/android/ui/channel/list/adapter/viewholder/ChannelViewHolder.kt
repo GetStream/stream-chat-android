@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.extensions.getUsers
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
@@ -171,7 +172,12 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
-        avatarView.setChannelData(channel)
+        val otherUsers = channel.getUsers()
+        if (otherUsers.size == 1) {
+            avatarView.setUserData(otherUsers.first())
+        } else {
+            avatarView.setChannelData(channel)
+        }
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(
