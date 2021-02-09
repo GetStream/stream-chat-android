@@ -1,14 +1,10 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.queryChannels
 
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.descByName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.dao.QueryChannelsDao
-import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
 
 internal interface QueryChannelsRepository {
     suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
@@ -27,11 +23,11 @@ internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryCh
     }
 
     override suspend fun selectById(id: String): QueryChannelsSpec? {
-        return queryChannelsDao.select(id)?.let(::toModel)
+        return queryChannelsDao.select(id)?.let(Companion::toModel)
     }
 
     override suspend fun selectQueriesChannelsByIds(ids: List<String>): List<QueryChannelsSpec> {
-        return queryChannelsDao.select(ids).map(::toModel)
+        return queryChannelsDao.select(ids).map(Companion::toModel)
     }
 
     companion object {
@@ -51,7 +47,7 @@ internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryCh
         private fun toModel(queryWithSort: QueryChannelsWithSorts): QueryChannelsSpec =
             QueryChannelsSpec(
                 queryWithSort.query.filter,
-                queryWithSort.sortInnerEntities.let(::restoreQuerySort),
+                queryWithSort.sortInnerEntities.let(Companion::restoreQuerySort),
                 queryWithSort.query.cids
             )
 

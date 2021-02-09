@@ -1,13 +1,10 @@
-package io.getstream.chat.android.livedata.dao
+package io.getstream.chat.android.livedata.repository.domain.queryChannels
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
 
 @Dao
 internal interface QueryChannelsDao {

@@ -227,16 +227,6 @@ public final class io/getstream/chat/android/livedata/dao/ChannelDao_Impl : io/g
 	public fun setHidden (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/livedata/dao/QueryChannelsDao_Impl : io/getstream/chat/android/livedata/dao/QueryChannelsDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteSortEntitiesFor (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insert (Lio/getstream/chat/android/livedata/entity/QueryChannelsEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insert (Lio/getstream/chat/android/livedata/entity/QueryChannelsWithSorts;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/livedata/extensions/ClientExtensionsKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
@@ -248,7 +238,7 @@ public final class io/getstream/chat/android/livedata/repository/database/ChatDa
 	public fun channelStateDao ()Lio/getstream/chat/android/livedata/dao/ChannelDao;
 	public fun clearAllTables ()V
 	public fun messageDao ()Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;
-	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/dao/QueryChannelsDao;
+	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/livedata/repository/domain/syncState/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/livedata/repository/domain/user/UserDao;
@@ -274,6 +264,16 @@ public final class io/getstream/chat/android/livedata/repository/domain/message/
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun selectSyncNeeded$default (Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao_Impl : io/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deleteSortEntitiesFor (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsWithSorts;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao_Impl : io/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao {

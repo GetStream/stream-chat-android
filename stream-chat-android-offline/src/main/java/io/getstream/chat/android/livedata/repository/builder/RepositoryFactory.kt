@@ -6,11 +6,11 @@ import io.getstream.chat.android.livedata.repository.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.ChannelConfigRepositoryImpl
 import io.getstream.chat.android.livedata.repository.ChannelRepository
 import io.getstream.chat.android.livedata.repository.ChannelRepositoryImpl
-import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
-import io.getstream.chat.android.livedata.repository.QueryChannelsRepositoryImpl
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepositoryImpl
+import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsRepository
+import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsRepositoryImpl
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionRepository
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionRepositoryImpl
 import io.getstream.chat.android.livedata.repository.domain.syncState.SyncStateRepository

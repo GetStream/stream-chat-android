@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.entity
+package io.getstream.chat.android.livedata.repository.domain.queryChannels
 
 import androidx.room.Embedded
 import androidx.room.Entity
