@@ -6,9 +6,11 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.dao.UserDao
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.randomUserEntity
+import io.getstream.chat.android.livedata.repository.domain.user.UserDao
+import io.getstream.chat.android.livedata.repository.domain.user.UserRepository
+import io.getstream.chat.android.livedata.repository.domain.user.UserRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When

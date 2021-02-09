@@ -2,8 +2,9 @@ package io.getstream.chat.android.livedata.converter
 
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
-import io.getstream.chat.android.livedata.entity.MemberEntity
+import io.getstream.chat.android.livedata.repository.database.converter.MapConverter
+import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
 import org.junit.Test
 
 internal class MapConverterTest : BaseTest() {

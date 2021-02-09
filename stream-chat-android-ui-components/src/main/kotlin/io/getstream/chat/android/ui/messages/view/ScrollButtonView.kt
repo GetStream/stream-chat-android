@@ -10,7 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 
-public class ScrollButtonView : FrameLayout {
+internal class ScrollButtonView : FrameLayout {
 
     private val binding: StreamUiScrollButtonViewBinding =
         StreamUiScrollButtonViewBinding.inflate(LayoutInflater.from(context), this)
@@ -20,33 +20,33 @@ public class ScrollButtonView : FrameLayout {
     private var unreadCount: Int = 0
     private var isVisible: Boolean = false
 
-    public constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context)
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
     )
 
-    public fun setUnreadBadgeEnabled(enabled: Boolean) {
+    fun setUnreadBadgeEnabled(enabled: Boolean) {
         this.unreadBadgeEnabled = enabled
     }
 
-    public fun setButtonRippleColor(@ColorInt color: Int) {
+    fun setButtonRippleColor(@ColorInt color: Int) {
         binding.scrollActionButton.rippleColor = color
     }
 
-    public fun setButtonIcon(icon: Drawable?) {
+    fun setButtonIcon(icon: Drawable?) {
         binding.scrollActionButton.setImageDrawable(icon)
     }
 
-    public fun setButtonColor(@ColorInt color: Int) {
+    fun setButtonColor(@ColorInt color: Int) {
         binding.scrollActionButton.backgroundTintList = ColorStateList.valueOf(color)
     }
 
-    public fun setUnreadBadgeColor(@ColorInt color: Int) {
+    fun setUnreadBadgeColor(@ColorInt color: Int) {
         binding.unreadCountTextView.backgroundTintList = ColorStateList.valueOf(color)
     }
 
@@ -54,7 +54,7 @@ public class ScrollButtonView : FrameLayout {
         binding.scrollActionButton.setOnClickListener(listener)
     }
 
-    public fun setUnreadCount(unreadCount: Int) {
+    fun setUnreadCount(unreadCount: Int) {
         if (unreadBadgeEnabled) {
             setUnreadCountValue(unreadCount)
             setUnreadCountTextViewVisible(unreadCount > 0)

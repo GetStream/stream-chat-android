@@ -64,7 +64,6 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
@@ -611,8 +610,6 @@ internal class ChannelControllerImpl(
             }
         }
 
-        // TODO remove usage of MessageEntity
-        val messageEntity = newMessage.toEntity()
         if (hasAttachments) {
             uploadStatusMessage = newMessage
         }

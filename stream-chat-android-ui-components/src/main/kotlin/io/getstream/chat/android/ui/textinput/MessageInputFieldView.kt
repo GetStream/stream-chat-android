@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import java.io.File
 import kotlin.properties.Delegates
 
-public class MessageInputFieldView : FrameLayout {
+internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
         StreamUiMessageInputFieldBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -39,11 +39,11 @@ public class MessageInputFieldView : FrameLayout {
     private var contentChangeListener: ContentChangeListener? = null
     private var maxMessageLength: Int = Integer.MAX_VALUE
 
-    public var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
+    var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
     }
 
-    public var messageText: String
+    var messageText: String
         get() {
             val text = binding.messageEditText.text?.toString() ?: String.EMPTY
             mode.let {
@@ -69,11 +69,11 @@ public class MessageInputFieldView : FrameLayout {
             binding.messageEditText.hint = hint
         }
 
-    public constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context)
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -100,68 +100,64 @@ public class MessageInputFieldView : FrameLayout {
         }
     }
 
-    public fun setContentChangeListener(contentChangeListener: ContentChangeListener) {
+    fun setContentChangeListener(contentChangeListener: ContentChangeListener) {
         this.contentChangeListener = contentChangeListener
     }
 
-    public fun setTextColor(@ColorInt color: Int) {
+    fun setTextColor(@ColorInt color: Int) {
         binding.messageEditText.setTextColor(color)
     }
 
-    public fun setHintTextColor(@ColorInt color: Int) {
+    fun setHintTextColor(@ColorInt color: Int) {
         binding.messageEditText.setHintTextColor(color)
     }
 
-    public fun setTextSizePx(@Px size: Float) {
+    fun setTextSizePx(@Px size: Float) {
         binding.messageEditText.setTextSizePx(size)
     }
 
-    public fun setHint(hint: CharSequence?) {
-        normalModeHint = hint
-    }
-
-    public fun setInputFieldScrollBarEnabled(enabled: Boolean) {
+    fun setInputFieldScrollBarEnabled(enabled: Boolean) {
         binding.messageEditText.isVerticalScrollBarEnabled = enabled
     }
 
-    public fun setInputFieldScrollbarFadingEnabled(enabled: Boolean) {
+    fun setInputFieldScrollbarFadingEnabled(enabled: Boolean) {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
     }
 
-    public fun autoCompleteCommand(command: Command) {
+    fun autoCompleteCommand(command: Command) {
         messageText = "/${command.name} "
         mode = Mode.CommandMode(command)
     }
 
-    public fun autoCompleteUser(user: User) {
+    fun autoCompleteUser(user: User) {
         messageText = "${messageText.substringBeforeLast("@")}@${user.name} "
     }
 
-    public fun getAttachedFiles(): List<File> {
+    fun getAttachedFiles(): List<File> {
         return selectedAttachments.map {
             storageHelper.getCachedFileFromUri(context, it)
         }
     }
 
-    public fun setMaxMessageLength(maxMessageLength: Int) {
+    fun setMaxMessageLength(maxMessageLength: Int) {
         this.maxMessageLength = maxMessageLength
     }
 
-    public fun isMaxMessageLengthExceeded(): Boolean {
+    fun isMaxMessageLengthExceeded(): Boolean {
         return messageText.length > maxMessageLength
     }
 
-    public fun onReply(replyMessage: Message) {
+    fun onReply(replyMessage: Message) {
         mode = Mode.ReplyMessageMode(replyMessage)
     }
 
-    public fun onReplyDismissed() {
+    fun onReplyDismissed() {
         if (mode is Mode.ReplyMessageMode) {
             mode = Mode.MessageMode
         }
     }
 
-    public fun onEdit(edit: Message) {
+    fun onEdit(edit: Message) {
         mode = Mode.EditMessageMode(edit)
     }
 
@@ -254,16 +250,16 @@ public class MessageInputFieldView : FrameLayout {
         binding.clearCommandButton.isVisible = true
     }
 
-    public fun clearContent() {
+    fun clearContent() {
         clearSelectedAttachments()
         binding.messageEditText.setText(String.EMPTY)
     }
 
-    public fun hasText(): Boolean = messageText.isNotBlank()
+    private fun hasText(): Boolean = messageText.isNotBlank()
 
-    public fun hasAttachments(): Boolean = selectedAttachments.isNotEmpty()
+    fun hasAttachments(): Boolean = selectedAttachments.isNotEmpty()
 
-    public fun hasContent(): Boolean = hasText() || hasAttachments()
+    fun hasContent(): Boolean = hasText() || hasAttachments()
 
     private fun onMessageTextChanged() {
         configInputEditTextError()
@@ -294,18 +290,18 @@ public class MessageInputFieldView : FrameLayout {
         mode = Mode.MessageMode
     }
 
-    public interface ContentChangeListener {
-        public fun onMessageTextChanged(messageText: String)
-        public fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>)
-        public fun onModeChanged(mode: Mode)
+    interface ContentChangeListener {
+        fun onMessageTextChanged(messageText: String)
+        fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>)
+        fun onModeChanged(mode: Mode)
     }
 
-    public sealed class Mode {
-        public object MessageMode : Mode()
-        public data class EditMessageMode(val oldMessage: Message) : Mode()
-        public data class CommandMode(val command: Command) : Mode()
-        public data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
-        public data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
-        public data class ReplyMessageMode(val repliedMessage: Message) : Mode()
+    sealed class Mode {
+        object MessageMode : Mode()
+        data class EditMessageMode(val oldMessage: Message) : Mode()
+        data class CommandMode(val command: Command) : Mode()
+        data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+        data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+        data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
 }
