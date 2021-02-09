@@ -183,7 +183,7 @@ public class MessageListView : ConstraintLayout {
         AttachmentGalleryActivity.AttachmentShowInChatOptionHandler { realListener().onClick(it) }
     }
 
-    private val _attachmentDownloadOptionHandler by ListenerDelegate(
+    private var _attachmentDownloadOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentDownloadOptionHandler { attachmentData ->
             DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
         }
@@ -851,6 +851,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
         this._attachmentShowInChatOptionClickHandler = handler
+    }
+
+    public fun setDownloadOptionHandler(handler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler) {
+        this._attachmentDownloadOptionHandler = handler
     }
 
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
