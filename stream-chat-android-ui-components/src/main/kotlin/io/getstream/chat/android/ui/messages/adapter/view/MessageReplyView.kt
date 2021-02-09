@@ -24,20 +24,20 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
-public class MessageReplyView : FrameLayout {
+internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
         StreamUiMessageReplyViewBinding.inflate(LayoutInflater.from(context), this, true)
     private var ellipsize = false
 
-    public constructor(context: Context) : super(context) {
+    constructor(context: Context) : super(context) {
         init(context, null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(context, attrs)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -51,7 +51,7 @@ public class MessageReplyView : FrameLayout {
         }
     }
 
-    public fun setMessage(message: Message, isMine: Boolean) {
+    fun setMessage(message: Message, isMine: Boolean) {
         setUserAvatar(message)
         setAvatarPosition(isMine)
         setReplyBackground(message, isMine)

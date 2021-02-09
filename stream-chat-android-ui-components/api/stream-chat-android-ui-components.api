@@ -15,19 +15,27 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
 }
 
-public final class io/getstream/chat/android/ui/channel/list/ChannelListView : androidx/recyclerview/widget/RecyclerView {
+public final class io/getstream/chat/android/ui/channel/list/ChannelListView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun hasChannels ()Z
-	public fun onVisibilityChanged (Landroid/view/View;I)V
-	public final fun setChannelClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
+	public final fun hideEmptyStateView ()V
+	public final fun hideLoadingMore ()V
+	public final fun hideLoadingView ()V
 	public final fun setChannelDeleteClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
+	public final fun setChannelInfoClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
+	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
+	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
+	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
+	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setItemSeparator (I)V
 	public final fun setItemSeparatorHeight (I)V
+	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
+	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMoreOptionsClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setOnEndReachedListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$EndReachedListener;)V
 	public final fun setPaginationEnabled (Z)V
@@ -35,7 +43,9 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setSwipeListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;)V
 	public final fun setViewHolderFactory (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory;)V
-	public final fun showLoadingMore (Z)V
+	public final fun showEmptyStateView ()V
+	public final fun showLoadingMore ()V
+	public final fun showLoadingView ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener {
@@ -92,39 +102,6 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyl
 	public final fun getChannelTitleTextSize ()F
 	public final fun getLastMessageDateTextSize ()F
 	public final fun getLastMessageSize ()F
-}
-
-public final class io/getstream/chat/android/ui/channel/list/ChannelsView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun hasChannels ()Z
-	public final fun hideEmptyStateView ()V
-	public final fun hideLoadingMore ()V
-	public final fun hideLoadingView ()V
-	public final fun setChannelDeleteClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
-	public final fun setChannelInfoClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
-	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
-	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
-	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
-	public final fun setChannels (Ljava/util/List;)V
-	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
-	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelsView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
-	public final fun setItemSeparator (I)V
-	public final fun setItemSeparatorHeight (I)V
-	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
-	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/channel/list/ChannelsView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
-	public final fun setMoreOptionsClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
-	public final fun setOnEndReachedListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$EndReachedListener;)V
-	public final fun setPaginationEnabled (Z)V
-	public final fun setShouldDrawItemSeparatorOnLastItem (Z)V
-	public final fun setSwipeListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
-	public final fun setUserClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;)V
-	public final fun setViewHolderFactory (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory;)V
-	public final fun showEmptyStateView ()V
-	public final fun showLoadingMore ()V
-	public final fun showLoadingView ()V
 }
 
 public abstract class io/getstream/chat/android/ui/channel/list/adapter/ChannelListItem {
@@ -241,7 +218,7 @@ public final class io/getstream/chat/android/ui/channel/list/header/viewmodel/Ch
 }
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelsViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel;Lio/getstream/chat/android/ui/channel/list/ChannelsView;Landroidx/lifecycle/LifecycleOwner;)V
+	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel;Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
@@ -379,38 +356,38 @@ public abstract interface class io/getstream/chat/android/ui/gallery/overview/Me
 	public abstract fun onLoadMore ()V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListView : android/widget/ViewFlipper {
+public final class io/getstream/chat/android/ui/mentions/MentionListView : android/widget/ViewFlipper {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener;)V
-	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener;)V
+	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/mentions/MentionListView$LoadMoreListener;)V
+	public final fun setMentionSelectedListener (Lio/getstream/chat/android/ui/mentions/MentionListView$MentionSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
 	public final fun showMessages (Ljava/util/List;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/mentions/MentionsListView$LoadMoreListener {
+public abstract interface class io/getstream/chat/android/ui/mentions/MentionListView$LoadMoreListener {
 	public abstract fun onLoadMoreRequested ()V
 }
 
-public abstract interface class io/getstream/chat/android/ui/mentions/MentionsListView$MentionSelectedListener {
+public abstract interface class io/getstream/chat/android/ui/mentions/MentionListView$MentionSelectedListener {
 	public abstract fun onMentionSelected (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel : androidx/lifecycle/ViewModel {
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun loadMore ()V
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel$State {
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModel$State {
 	public fun <init> (ZLjava/util/List;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Z
-	public final fun copy (ZLjava/util/List;Z)Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/mentions/MentionsListViewModel$State;
+	public final fun copy (ZLjava/util/List;Z)Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/mentions/MentionListViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
 	public final fun getResults ()Ljava/util/List;
@@ -419,18 +396,8 @@ public final class io/getstream/chat/android/ui/mentions/MentionsListViewModel$S
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/mentions/MentionsListViewModelBinding {
-	public static final fun bind (Lio/getstream/chat/android/ui/mentions/MentionsListViewModel;Lio/getstream/chat/android/ui/mentions/MentionsListView;Landroidx/lifecycle/LifecycleOwner;)V
-}
-
-public final class io/getstream/chat/android/ui/messagepreview/MessagePreviewView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
-	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
-	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
-	public static synthetic fun setMessage$default (Lio/getstream/chat/android/ui/messagepreview/MessagePreviewView;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ILjava/lang/Object;)V
+public final class io/getstream/chat/android/ui/mentions/MentionListViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/mentions/MentionListViewModel;Lio/getstream/chat/android/ui/mentions/MentionListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public abstract class io/getstream/chat/android/ui/messages/adapter/BaseMessageItemViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
@@ -509,18 +476,11 @@ public abstract interface class io/getstream/chat/android/ui/messages/adapter/Me
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener;
 }
 
-public final class io/getstream/chat/android/ui/messages/adapter/view/MessageReplyView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;Z)V
-}
-
 public final class io/getstream/chat/android/ui/messages/header/ChannelHeaderViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/messages/header/MessagesHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
+public final class io/getstream/chat/android/ui/messages/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
@@ -530,16 +490,16 @@ public final class io/getstream/chat/android/ui/messages/header/MessagesHeaderVi
 	public final fun hideTitle ()V
 	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setAvatar (Lio/getstream/chat/android/client/models/User;)V
-	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener;)V
-	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener;)V
+	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
 	public final fun setNormalMode ()V
 	public final fun setOnlineStateSubtitle (Ljava/lang/String;)V
-	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener;)V
-	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener;)V
+	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
 	public final fun setThreadMode ()V
 	public final fun setThreadSubtitle (Ljava/lang/String;)V
 	public final fun setTitle (Ljava/lang/String;)V
-	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener;)V
+	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
 	public final fun showBackButtonBadge (Ljava/lang/String;)V
 	public final fun showOfflineStateLabel ()V
 	public final fun showOnlineStateSubtitle ()V
@@ -547,7 +507,7 @@ public final class io/getstream/chat/android/ui/messages/header/MessagesHeaderVi
 	public final fun showTypingStateLabel (Ljava/util/List;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/messages/header/MessagesHeaderView$OnClickListener {
+public abstract interface class io/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener {
 	public abstract fun onClick ()V
 }
 
@@ -724,34 +684,6 @@ public final class io/getstream/chat/android/ui/messages/view/MessageListViewMod
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/messages/view/ScrollButtonView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setButtonColor (I)V
-	public final fun setButtonIcon (Landroid/graphics/drawable/Drawable;)V
-	public final fun setButtonRippleColor (I)V
-	public fun setOnClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setUnreadBadgeColor (I)V
-	public final fun setUnreadBadgeEnabled (Z)V
-	public final fun setUnreadCount (I)V
-}
-
-public final class io/getstream/chat/android/ui/options/message/MessageOptionsView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setBlockUserListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setCopyListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setDeleteMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setEditMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setFlagMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setMuteUserListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setReplyListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setRetryListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setThreadListener (Lkotlin/jvm/functions/Function0;)V
-}
-
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -855,103 +787,6 @@ public final class io/getstream/chat/android/ui/suggestions/SuggestionListView$S
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions$MentionSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestions/SuggestionListView$Suggestions$MentionSuggestions;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUsers ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun autoCompleteCommand (Lio/getstream/chat/android/client/models/Command;)V
-	public final fun autoCompleteUser (Lio/getstream/chat/android/client/models/User;)V
-	public final fun clearContent ()V
-	public final fun getAttachedFiles ()Ljava/util/List;
-	public final fun getMessageText ()Ljava/lang/String;
-	public final fun getMode ()Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;
-	public final fun hasAttachments ()Z
-	public final fun hasContent ()Z
-	public final fun hasText ()Z
-	public final fun isMaxMessageLengthExceeded ()Z
-	public final fun onEdit (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onReply (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onReplyDismissed ()V
-	public final fun setContentChangeListener (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener;)V
-	public final fun setHint (Ljava/lang/CharSequence;)V
-	public final fun setHintTextColor (I)V
-	public final fun setInputFieldScrollBarEnabled (Z)V
-	public final fun setInputFieldScrollbarFadingEnabled (Z)V
-	public final fun setMaxMessageLength (I)V
-	public final fun setMessageText (Ljava/lang/String;)V
-	public final fun setMode (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
-	public final fun setTextColor (I)V
-	public final fun setTextSizePx (F)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/textinput/MessageInputFieldView$ContentChangeListener {
-	public abstract fun onMessageTextChanged (Ljava/lang/String;)V
-	public abstract fun onModeChanged (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode;)V
-	public abstract fun onSelectedAttachmentsChanged (Ljava/util/List;)V
-}
-
-public abstract class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Command;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Command;
-	public final fun copy (Lio/getstream/chat/android/client/models/Command;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;Lio/getstream/chat/android/client/models/Command;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$CommandMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCommand ()Lio/getstream/chat/android/client/models/Command;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$EditMessageMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOldMessage ()Lio/getstream/chat/android/client/models/Message;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$FileAttachmentMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MediaAttachmentMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$MessageMode;
-}
-
-public final class io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode : io/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/textinput/MessageInputFieldView$Mode$ReplyMessageMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getRepliedMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

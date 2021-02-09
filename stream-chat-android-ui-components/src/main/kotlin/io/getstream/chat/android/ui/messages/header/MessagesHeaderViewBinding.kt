@@ -9,11 +9,11 @@ import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
 
 /**
- * Binds [MessagesHeaderView] with [ChannelHeaderViewModel], updating the view's state
+ * Binds [MessageListHeaderView] with [ChannelHeaderViewModel], updating the view's state
  * based on data provided by the ViewModel.
  */
 @JvmName("bind")
-public fun ChannelHeaderViewModel.bindView(view: MessagesHeaderView, lifecycle: LifecycleOwner) {
+public fun ChannelHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
         view.setTitle(it.getDisplayName(view.context))
         view.setOnlineStateSubtitle(it.getOnlineStateSubtitle(view.context))

@@ -15,7 +15,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBindin
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.singletonList
 
-public class MessagePreviewView : FrameLayout {
+internal class MessagePreviewView : FrameLayout {
 
     private val binding = StreamUiMessagePreviewItemBinding.inflate(context.inflater, this, true)
 
@@ -25,7 +25,7 @@ public class MessagePreviewView : FrameLayout {
      * The formatter used to display the time/date for the message.
      * If not set explicitly, a default implementation will be used.
      */
-    public var dateFormatter: DateFormatter
+    var dateFormatter: DateFormatter
         set(value) {
             _dateFormatter = value
         }
@@ -36,15 +36,15 @@ public class MessagePreviewView : FrameLayout {
             return _dateFormatter!!
         }
 
-    public constructor(context: Context) : super(context) {
+    constructor(context: Context) : super(context) {
         init(null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -60,7 +60,7 @@ public class MessagePreviewView : FrameLayout {
         attrs ?: return
     }
 
-    public fun setMessage(message: Message, currentUserMention: String? = null) {
+    fun setMessage(message: Message, currentUserMention: String? = null) {
         binding.avatarView.setUserData(message.user)
         binding.senderNameLabel.text = formatChannelName(message)
         binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
