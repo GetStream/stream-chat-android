@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.ChatUI
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.utils.ReactionType
@@ -59,7 +58,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupMessageList()
         setupTypingIndicator()
         setupScrollButtonView()
-        setupMessageReplyView()
     }
 
     private fun setupMessageList() {
@@ -161,19 +159,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.scrollButtonView.setUnreadCount(11)
         binding.scrollButtonViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserScrollButtonView)
-        }
-    }
-
-    private fun setupMessageReplyView() {
-        binding.messageReplyView.setMessage(
-            Message(
-                text = "Lorem ipsum dolor",
-                user = randomUser()
-            ),
-            true
-        )
-        binding.messageReplyViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment)
         }
     }
 }

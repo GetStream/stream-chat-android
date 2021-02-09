@@ -499,13 +499,6 @@ public abstract interface class io/getstream/chat/android/ui/messages/adapter/Me
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener;
 }
 
-public final class io/getstream/chat/android/ui/messages/adapter/view/MessageReplyView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;Z)V
-}
-
 public final class io/getstream/chat/android/ui/messages/header/ChannelHeaderViewModelBinding {
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
 }

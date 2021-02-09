@@ -337,38 +337,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/messageReplyViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/messageReplyViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="MessageReplyView"
-                />
-
-            <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
-                android:id="@+id/messageReplyView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:clickable="false"
-                android:focusable="false"
-                />
-
-        </LinearLayout>
-
     </LinearLayout>
 
 </ScrollView>
