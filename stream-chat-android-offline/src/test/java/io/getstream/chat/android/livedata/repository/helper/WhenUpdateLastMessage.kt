@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class WhenUpdateLastMessage : BaseRepositoryHelperTest() {
+internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given no channel in DB Should not do insert`() = runBlockingTest {

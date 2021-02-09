@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.converter
 
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
+import io.getstream.chat.android.livedata.repository.database.converter.SetConverter
 import org.junit.Test
 
 internal class SetConverterTest : BaseTest() {
