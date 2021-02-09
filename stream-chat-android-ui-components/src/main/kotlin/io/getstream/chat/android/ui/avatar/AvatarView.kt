@@ -49,6 +49,7 @@ public class AvatarView : AppCompatImageView {
             data = Avatar.ChannelAvatar(channel, avatarStyle),
             transformation = Circle,
         )
+        isOnline = false
     }
 
     public fun setUserData(user: User) {
