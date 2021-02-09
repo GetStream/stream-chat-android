@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel;
@@ -23,10 +24,15 @@ import io.getstream.chat.android.ui.channel.list.ChannelsView;
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelsViewModelBinding;
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.messages.header.ChannelHeaderViewModelBinding;
 import io.getstream.chat.android.ui.messages.header.MessagesHeaderView;
 import io.getstream.chat.android.ui.textinput.MessageInputView;
@@ -58,7 +64,7 @@ public class Android {
     /**
      * @see <a href="https://getstream.io/chat/docs/node/channels_view_new/">Channels View</a>
      */
-    public class Channels extends Fragment {
+    class Channels extends Fragment {
 
         ChannelsView channelsView;
 
@@ -232,6 +238,35 @@ public class Android {
             searchInputView.setSearchStartedListener(query -> {
                 viewModel.setQuery(query);
             });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/attachmentgallery">Attachment Gallery Activity</a>
+     */
+    class AttachmentGalleryActivity extends Fragment {
+        public void navigateTo() {
+            AttachmentGalleryDestination destination = new AttachmentGalleryDestination(
+                    getContext(),
+                    resultItem -> {
+                        // Handle reply
+                    },
+                    resultItem -> {
+                        // Handle show in chat
+                    },
+                    resultItem -> {
+                        // Handle download image
+                    },
+                    resultItem -> {
+                        // Handle delete image
+                    });
+
+            List<AttachmentGalleryItem> attachmentGalleryItems = new ArrayList();
+
+            destination.register(getActivity().getActivityResultRegistry());
+            destination.setData(attachmentGalleryItems, 0);
+
+            ChatUI.instance().getNavigator().navigate(destination);
         }
     }
 }

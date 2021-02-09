@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
@@ -22,6 +23,8 @@ import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
@@ -48,7 +51,7 @@ class Android {
     /**
      * @see <a href="https://getstream.io/chat/docs/node/channels_view_new/">Channels View</a>
      */
-    public class Channels(private val channelsView: ChannelsView) : Fragment() {
+    class Channels(private val channelsView: ChannelsView) : Fragment() {
 
         fun bindingWithViewModel() {
             // Get ViewModel
@@ -207,6 +210,36 @@ class Android {
             searchInputView.setSearchStartedListener {
                 viewModel.setQuery(it)
             }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/attachmentgallery">Attachment Gallery Activity</a>
+     */
+    class AttachmentGalleryActivity : Fragment() {
+
+        fun navigateTo() {
+            val destination = AttachmentGalleryDestination(
+                requireContext(),
+                attachmentReplyOptionHandler = { resultItem ->
+                    // Handle reply
+                },
+                attachmentShowInChatOptionHandler = { resultItem ->
+                    // Handle show image in chat
+                },
+                attachmentDownloadOptionHandler = { resultItem ->
+                    // Handle download image
+                },
+                attachmentDeleteOptionClickHandler = { resultItem ->
+                    // Handle delete image
+                },
+            )
+
+            activity?.activityResultRegistry?.let(destination::register)
+            val attachmentGalleryItems: List<AttachmentGalleryItem> = listOf()
+            destination.setData(attachmentGalleryItems, 0)
+
+            ChatUI.instance().navigator.navigate(destination)
         }
     }
 }
