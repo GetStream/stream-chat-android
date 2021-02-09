@@ -5,12 +5,12 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import io.getstream.chat.android.ui.MessageList.header.MessageListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.SearchResultListView

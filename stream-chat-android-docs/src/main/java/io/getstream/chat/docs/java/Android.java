@@ -11,13 +11,13 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.getstream.chat.android.ui.MessageList.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.messages.header.ChannelHeaderViewModelBinding;
+import io.getstream.chat.android.ui.messages.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.textinput.MessageInputView;
 import io.getstream.chat.android.ui.textinput.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
@@ -58,7 +58,7 @@ public class Android {
     }
 
     /**
-     * * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Messages Header View</a>
+     * * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Message List Header View</a>
      */
     class MessageListHeader extends Fragment {
         MessageListHeaderView messageListHeaderView;
