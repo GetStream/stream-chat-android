@@ -693,7 +693,7 @@ internal class ChannelControllerImpl(
     private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
         val processedMessage: Message = result.data()
         processedMessage.apply {
-            enrichWithCid(cid)
+            enrichWithCid(this@ChannelControllerImpl.cid)
             syncStatus = SyncStatus.COMPLETED
             domainImpl.repos.insertMessage(this)
         }
