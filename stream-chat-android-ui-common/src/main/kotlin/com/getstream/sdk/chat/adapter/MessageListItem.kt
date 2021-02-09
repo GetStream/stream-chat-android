@@ -35,7 +35,7 @@ public sealed class MessageListItem {
         val date: Date,
     ) : MessageListItem()
 
-    public data class MessageItem(
+    public data class MessageItem @JvmOverloads constructor(
         val message: Message,
         val positions: List<Position> = listOf(),
         val isMine: Boolean = false,
