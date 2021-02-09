@@ -11,10 +11,10 @@ import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUiMentionsListViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
-public class MentionsListView : ViewFlipper {
+public class MentionListView : ViewFlipper {
 
     private companion object {
         private const val LOAD_MORE_THRESHOLD = 10
@@ -26,7 +26,7 @@ public class MentionsListView : ViewFlipper {
         const val LOADING = 2
     }
 
-    private val binding = StreamUiMentionsListViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = StreamUiMentionListViewBinding.inflate(LayoutInflater.from(context), this)
 
     public constructor(context: Context) : super(context) {
         init(null)
@@ -36,7 +36,7 @@ public class MentionsListView : ViewFlipper {
         init(attrs)
     }
 
-    private val adapter = MentionsListAdapter(context, ChatDomain.instance())
+    private val adapter = MentionListAdapter(context, ChatDomain.instance())
 
     private var loadMoreListener: LoadMoreListener? = null
 
@@ -47,9 +47,9 @@ public class MentionsListView : ViewFlipper {
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
 
-        binding.mentionsListRecyclerView.apply {
+        binding.mentionListRecyclerView.apply {
             setHasFixedSize(true)
-            adapter = this@MentionsListView.adapter
+            adapter = this@MentionListView.adapter
             addItemDecoration(
                 DividerItemDecoration(
                     context,

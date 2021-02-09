@@ -4,12 +4,12 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import io.getstream.chat.android.ui.channel.list.ChannelsView
+import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 
 @JvmName("bind")
 public fun ChannelsViewModel.bindView(
-    view: ChannelsView,
+    view: ChannelListView,
     lifecycle: LifecycleOwner
 ) {
     state.observe(lifecycle) { channelState ->

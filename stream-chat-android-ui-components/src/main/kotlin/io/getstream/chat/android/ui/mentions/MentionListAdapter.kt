@@ -10,13 +10,13 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
-import io.getstream.chat.android.ui.mentions.MentionsListAdapter.MessagePreviewViewHolder
-import io.getstream.chat.android.ui.mentions.MentionsListView.MentionSelectedListener
+import io.getstream.chat.android.ui.mentions.MentionListAdapter.MessagePreviewViewHolder
+import io.getstream.chat.android.ui.mentions.MentionListView.MentionSelectedListener
 import io.getstream.chat.android.ui.messagepreview.MessagePreviewView
 import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.context
 
-internal class MentionsListAdapter(
+internal class MentionListAdapter(
     context: Context,
     private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
