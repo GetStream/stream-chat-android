@@ -5,12 +5,12 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import io.getstream.chat.android.ui.MessageList.header.MessageListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.SearchResultListView
@@ -47,15 +47,15 @@ class Android {
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Messages Header View</a>
+     * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Message List Header View</a>
      */
-    class MessageListHeader(private val messagesHeaderView: MessagesHeaderView) : Fragment() {
+    class MessageListHeader(private val messageListHeaderView: MessageListHeaderView) : Fragment() {
 
         fun bindingWithViewModel() {
             // Get ViewModel
             val viewModel: ChannelHeaderViewModel by viewModels()
             // Bind it with MessagesHeaderView
-            viewModel.bindView(messagesHeaderView, viewLifecycleOwner)
+            viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
         }
     }
 

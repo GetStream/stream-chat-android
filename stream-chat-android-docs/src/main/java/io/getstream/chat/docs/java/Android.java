@@ -11,13 +11,13 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.getstream.chat.android.ui.MessageList.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.messages.header.ChannelHeaderViewModelBinding;
-import io.getstream.chat.android.ui.messages.header.MessagesHeaderView;
 import io.getstream.chat.android.ui.textinput.MessageInputView;
 import io.getstream.chat.android.ui.textinput.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
@@ -60,8 +60,8 @@ public class Android {
     /**
      * * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Messages Header View</a>
      */
-    class MessagesHeader extends Fragment {
-        MessagesHeaderView messagesHeaderView;
+    class MessageListHeader extends Fragment {
+        MessageListHeaderView messageListHeaderView;
 
         public void bindingWithViewModel() {
             // Get ViewModel
@@ -69,7 +69,7 @@ public class Android {
                     new ViewModelProvider(this).get(ChannelHeaderViewModel.class);
             // Bind it with MessagesHeaderView
             ChannelHeaderViewModelBinding
-                    .bind(viewModel, messagesHeaderView, getViewLifecycleOwner());
+                    .bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
         }
     }
 

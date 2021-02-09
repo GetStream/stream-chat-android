@@ -102,7 +102,7 @@
                 />
 
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessageListHeaderView
                 android:id="@+id/messagesHeaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

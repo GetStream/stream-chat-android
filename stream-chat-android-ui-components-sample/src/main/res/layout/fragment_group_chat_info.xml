@@ -7,7 +7,7 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+    <io.getstream.chat.android.ui.messages.header.MessageListHeaderView
         android:id="@+id/headerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-    </io.getstream.chat.android.ui.messages.header.MessagesHeaderView>
+    </io.getstream.chat.android.ui.messages.header.MessageListHeaderView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/optionsRecyclerView"
