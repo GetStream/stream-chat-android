@@ -155,7 +155,7 @@ internal class RepositoryHelperTests : BaseRepositoryHelperTest() {
                 cacheForMessages = false
             )
 
-            Verify on configs that configs.insert(configList) was called
+            Verify on configs that configs.insertChannelConfigs(configList) was called
             Verify on users that users.insertUsers(userList) was called
             Verify on channels that channels.insertChannels(channelList) was called
             Verify on messages that messages.insertMessages(messageList, false) was called

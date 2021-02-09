@@ -208,7 +208,7 @@ internal open class BaseDomainTest2 {
             }
         )
 
-        chatDomainImpl.repos.insertConfigChannel(ChannelConfig("messaging", data.config1))
+        chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
 
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)

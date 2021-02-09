@@ -17,8 +17,8 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     fun testInsertAndRead() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
-        repo.queryInsert(queryChannelsSpec)
-        val fromDB = repo.querySelectByFilterAndQuerySort(queryChannelsSpec)
+        repo.insertQueryChannels(queryChannelsSpec)
+        val fromDB = repo.selectQueryChannels(queryChannelsSpec)
         Truth.assertThat(queryChannelsSpec).isEqualTo(fromDB)
     }
 
@@ -26,11 +26,11 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     fun testUpdate() = runBlocking {
         val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
         queryChannelsSpec.cids = listOf("a", "b", "c")
-        repo.queryInsert(queryChannelsSpec)
+        repo.insertQueryChannels(queryChannelsSpec)
         queryChannelsSpec.cids = listOf("a", "b", "c", "d")
-        repo.queryInsert(queryChannelsSpec)
+        repo.insertQueryChannels(queryChannelsSpec)
 
-        val fromDB = repo.querySelectByFilterAndQuerySort(queryChannelsSpec)
+        val fromDB = repo.selectQueryChannels(queryChannelsSpec)
         Truth.assertThat(fromDB).isEqualTo(queryChannelsSpec)
     }
 }

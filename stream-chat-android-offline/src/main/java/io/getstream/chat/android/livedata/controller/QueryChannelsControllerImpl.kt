@@ -170,7 +170,7 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val query = domainImpl.repos.querySelectByFilterAndQuerySort(queryChannelsSpec)
+        val query = domainImpl.repos.selectQueryChannels(queryChannelsSpec)
             ?: return null
 
         return domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
@@ -193,10 +193,10 @@ internal class QueryChannelsControllerImpl(
             }
             // first things first, store the configs
             val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-            domainImpl.repos.insertConfigChannel(channelConfigs)
+            domainImpl.repos.insertChannelConfigs(channelConfigs)
             logger.logI("api call returned ${channelsResponse.size} channels")
             updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
-            domainImpl.repos.queryInsert(queryChannelsSpec)
+            domainImpl.repos.insertQueryChannels(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
         } else {
             logger.logI("Query with filter $filter failed, marking it as recovery needed")
@@ -283,7 +283,7 @@ internal class QueryChannelsControllerImpl(
         // Remove from queryChannelsSpec
         if (queryChannelsSpec.cids.contains(cid)) {
             queryChannelsSpec.cids = queryChannelsSpec.cids - cid
-            domainImpl.repos.queryInsert(queryChannelsSpec)
+            domainImpl.repos.insertQueryChannels(queryChannelsSpec)
             // Remove from channel repository
             domainImpl.repos.deleteChannel(cid)
 

@@ -36,13 +36,9 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             syncConfig?.let {
                 val config = it
                 val user = User(id = config.userId)
+                val userToken = config.userToken
                 GlobalScope.launch(DispatcherProvider.IO) {
-                    val client = initClient(
-                        this@OfflineSyncFirebaseMessagingService,
-                        user,
-                        config.userToken,
-                        config.apiKey
-                    )
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, user, userToken, config.apiKey)
                     client.onNewTokenReceived(token)
                 }
             }
@@ -58,41 +54,39 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
         GlobalScope.launch(DispatcherProvider.IO) {
             val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
-            if (ChatDomain.isInitialized) {
-                performSync(ChatDomain.instance(), cid)
-
-                if (ChatClient.isInitialized) {
-                    ChatClient.instance()
-                        .onMessageReceived(message)
-                }
-            }
-
-            if (ChatDomain.isInitialized.not() || ChatClient.isInitialized.not()) {
+            if (ChatDomain.isInitialized && ChatClient.isInitialized) {
+                logger.logD("Starting the sync")
+                performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
+            } else {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-
                 syncConfig?.let {
                     val config = it
                     val user = User(id = config.userId)
-                    val client = initClient(
-                        this@OfflineSyncFirebaseMessagingService,
-                        user,
-                        config.userToken,
-                        config.apiKey
-                    )
+                    val token = config.userToken
+                    val client = initClient(this@OfflineSyncFirebaseMessagingService, user, token, config.apiKey)
                     val domain = initDomain(user, client)
-                    performSync(domain, cid)
-                    client.onMessageReceived(message)
+                    logger.logD("Starting the sync, config: $syncConfig")
+                    performSync(domain, cid, client, message)
                 }
             }
-
             stopForeground(true)
             stopSelf()
         }
     }
 
-    private fun performSync(domain: ChatDomain, cid: String) {
-        domain.apply {
-            useCases.replayEventsForActiveChannels(cid).execute()
+    private fun performSync(
+        domain: ChatDomain,
+        cid: String,
+        client: ChatClient,
+        message: RemoteMessage,
+    ) {
+        domain.useCases.replayEventsForActiveChannels(cid).enqueue {
+            if (it.isSuccess) {
+                logger.logD("Sync success.")
+            } else {
+                logger.logD("Sync failed.")
+            }
+            client.onMessageReceived(message)
         }
     }
 
@@ -121,7 +115,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     private suspend fun initClient(
         context: Context,
         user: User,
-        token: String,
+        userToken: String,
         apiKey: String,
     ): ChatClient {
         val notificationConfig = syncModule.notificationConfigStore.get()
@@ -131,15 +125,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             .notifications(notificationHandler)
             .build()
 
-        val result = client.connectUser(
-            user,
-            token
-        ).await()
-
-        if (result.isError) {
-            val error = result.error()
-            throw error.cause ?: IllegalStateException(error.message)
-        }
+        client.connectUser(user, userToken).await()
 
         return client
     }
