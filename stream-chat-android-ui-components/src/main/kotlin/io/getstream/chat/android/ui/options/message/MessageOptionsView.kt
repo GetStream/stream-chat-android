@@ -13,16 +13,16 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBindin
 import io.getstream.chat.android.ui.utils.extensions.setLeftDrawable
 import java.io.Serializable
 
-public class MessageOptionsView : FrameLayout {
+internal class MessageOptionsView : FrameLayout {
 
     private val binding: StreamUiMessageOptionsViewBinding =
         StreamUiMessageOptionsViewBinding.inflate(context.inflater, this, true)
 
-    public constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context)
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -122,55 +122,55 @@ public class MessageOptionsView : FrameLayout {
         val deleteConfirmationEnabled: Boolean,
     ) : Serializable
 
-    public fun setReplyListener(onReplyListener: () -> Unit) {
+    fun setReplyListener(onReplyListener: () -> Unit) {
         binding.replyTV.setOnClickListener {
             onReplyListener()
         }
     }
 
-    public fun setThreadListener(onThreadReply: () -> Unit) {
+    fun setThreadListener(onThreadReply: () -> Unit) {
         binding.threadReplyTV.setOnClickListener {
             onThreadReply()
         }
     }
 
-    public fun setRetryListener(onRetry: () -> Unit) {
+    fun setRetryListener(onRetry: () -> Unit) {
         binding.retryTV.setOnClickListener {
             onRetry()
         }
     }
 
-    public fun setCopyListener(onCopy: () -> Unit) {
+    fun setCopyListener(onCopy: () -> Unit) {
         binding.copyTV.setOnClickListener {
             onCopy()
         }
     }
 
-    public fun setEditMessageListener(onEdit: () -> Unit) {
+    fun setEditMessageListener(onEdit: () -> Unit) {
         binding.editTV.setOnClickListener {
             onEdit()
         }
     }
 
-    public fun setFlagMessageListener(onFlag: () -> Unit) {
+    fun setFlagMessageListener(onFlag: () -> Unit) {
         binding.flagTV.setOnClickListener {
             onFlag()
         }
     }
 
-    public fun setDeleteMessageListener(onDelete: () -> Unit) {
+    fun setDeleteMessageListener(onDelete: () -> Unit) {
         binding.deleteTV.setOnClickListener {
             onDelete()
         }
     }
 
-    public fun setMuteUserListener(onMute: () -> Unit) {
+    fun setMuteUserListener(onMute: () -> Unit) {
         binding.muteTV.setOnClickListener {
             onMute()
         }
     }
 
-    public fun setBlockUserListener(onBlock: () -> Unit) {
+    fun setBlockUserListener(onBlock: () -> Unit) {
         binding.blockTV.setOnClickListener {
             onBlock()
         }

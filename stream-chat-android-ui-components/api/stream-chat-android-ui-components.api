@@ -720,21 +720,6 @@ public final class io/getstream/chat/android/ui/messages/view/ScrollButtonView :
 	public final fun setUnreadCount (I)V
 }
 
-public final class io/getstream/chat/android/ui/options/message/MessageOptionsView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun setBlockUserListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setCopyListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setDeleteMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setEditMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setFlagMessageListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setMuteUserListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setReplyListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setRetryListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setThreadListener (Lkotlin/jvm/functions/Function0;)V
-}
-
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
