@@ -1,8 +1,11 @@
 package io.getstream.chat.docs.kotlin
 
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
@@ -11,13 +14,20 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
+import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.SearchResultListView
 import io.getstream.chat.android.ui.search.SearchViewModel
 import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.android.ui.textinput.MessageInputView
 import io.getstream.chat.android.ui.textinput.bindView
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
+import org.threeten.bp.format.DateTimeFormatter
 
 class Android {
 
@@ -129,6 +139,69 @@ class Android {
             destination.setData(attachmentGalleryItems, 0)
 
             ChatUI.instance().navigator.navigate(destination)
+        }
+    }
+
+    class MessageListViewDocs : Fragment() {
+        lateinit var messageListView: MessageListView
+
+        fun emptyState() {
+            //When there's no results, show empty state
+            messageListView.showEmptyStateView()
+        }
+
+        fun loadingView() {
+            //When loading information, show loading view
+            messageListView.showLoadingView()
+        }
+
+        fun viewHolderFactory() {
+            val newViewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactoryExtended()
+
+            messageListView.setMessageViewHolderFactory(newViewHolderFactory)
+        }
+
+        fun messageClick() {
+            messageListView.setMessageClickListener { message ->
+                // Handle message click
+            }
+        }
+
+        fun messageLongClick() {
+            messageListView.setMessageLongClickListener { message ->
+                // Handle message long click
+            }
+        }
+
+        fun dateFormatter() {
+            messageListView.setMessageDateFormatter(object : DateFormatter {
+                override fun formatDate(localDateTime: LocalDateTime?): String {
+                    // Provide a way to format Date
+                    return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
+                }
+
+                override fun formatTime(localTime: LocalTime?): String {
+                    // Provide a way to format Time.
+                    return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                }
+            })
+        }
+
+        fun customMessagesFilter() {
+            messageListView.setMessageListItemPredicate() { messageList ->
+                // Boolean logic here
+                true
+            }
+        }
+    }
+
+    class MessageListItemViewHolderFactoryExtended : MessageListItemViewHolderFactory() {
+        override fun createViewHolder(
+            parentView: ViewGroup,
+            viewType: Int,
+        ): BaseMessageItemViewHolder<out MessageListItem> {
+            //create a new type of view holder here, if needed
+            return super.createViewHolder(parentView, viewType)
         }
     }
 }
