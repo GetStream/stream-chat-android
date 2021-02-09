@@ -3,11 +3,11 @@ package io.getstream.chat.android.livedata.repository.domain.message
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.AttachmentEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.toEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.toModel
 import io.getstream.chat.android.livedata.repository.domain.reaction.toEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.toModel
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,

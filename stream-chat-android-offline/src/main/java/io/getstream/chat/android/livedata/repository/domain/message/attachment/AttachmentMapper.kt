@@ -1,12 +1,10 @@
-package io.getstream.chat.android.livedata.repository.mapper
+package io.getstream.chat.android.livedata.repository.domain.message.attachment
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.livedata.entity.AttachmentEntity
-import io.getstream.chat.android.livedata.entity.UploadStateEntity
-import io.getstream.chat.android.livedata.entity.UploadStateEntity.Companion.UPLOAD_STATE_FAILED
-import io.getstream.chat.android.livedata.entity.UploadStateEntity.Companion.UPLOAD_STATE_IN_PROGRESS
-import io.getstream.chat.android.livedata.entity.UploadStateEntity.Companion.UPLOAD_STATE_SUCCESS
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_FAILED
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_IN_PROGRESS
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_SUCCESS
 import java.io.File
 
 internal fun Attachment.toEntity(messageId: String): AttachmentEntity = AttachmentEntity(

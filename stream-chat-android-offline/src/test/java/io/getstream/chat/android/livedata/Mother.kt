@@ -14,10 +14,10 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.entity.AttachmentEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import io.getstream.chat.android.livedata.repository.domain.message.MessageEntity
 import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean

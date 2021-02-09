@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.entity.AttachmentEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
 import java.util.Date
 

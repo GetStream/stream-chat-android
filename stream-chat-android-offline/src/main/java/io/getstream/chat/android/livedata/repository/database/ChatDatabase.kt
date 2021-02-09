@@ -11,7 +11,6 @@ import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.dao.QueryChannelsDao
 import io.getstream.chat.android.livedata.dao.SyncStateDao
 import io.getstream.chat.android.livedata.dao.UserDao
-import io.getstream.chat.android.livedata.entity.AttachmentEntity
 import io.getstream.chat.android.livedata.entity.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
@@ -28,6 +27,7 @@ import io.getstream.chat.android.livedata.repository.database.converter.SetConve
 import io.getstream.chat.android.livedata.repository.database.converter.SyncStatusConverter
 import io.getstream.chat.android.livedata.repository.domain.message.MessageDao
 import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
+import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionDao
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
 
