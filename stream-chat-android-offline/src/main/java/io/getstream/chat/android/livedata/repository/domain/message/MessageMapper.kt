@@ -4,6 +4,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.AttachmentEntity
+import io.getstream.chat.android.livedata.repository.domain.reaction.toEntity
+import io.getstream.chat.android.livedata.repository.domain.reaction.toModel
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 

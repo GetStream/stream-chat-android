@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.ChannelDao
-import io.getstream.chat.android.livedata.repository.domain.message.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Date

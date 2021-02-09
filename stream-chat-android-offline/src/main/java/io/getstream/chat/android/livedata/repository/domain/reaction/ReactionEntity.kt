@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.entity
+package io.getstream.chat.android.livedata.repository.domain.reaction
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

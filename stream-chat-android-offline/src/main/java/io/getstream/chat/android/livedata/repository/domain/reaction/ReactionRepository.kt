@@ -1,10 +1,7 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.livedata.repository.domain.reaction
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.dao.ReactionDao
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
-import io.getstream.chat.android.livedata.repository.mapper.toModel
 import java.util.Date
 
 internal interface ReactionRepository {

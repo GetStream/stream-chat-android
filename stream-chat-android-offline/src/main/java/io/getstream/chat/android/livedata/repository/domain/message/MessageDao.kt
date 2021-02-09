@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.AttachmentEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
 import java.util.Date
 
 @Dao

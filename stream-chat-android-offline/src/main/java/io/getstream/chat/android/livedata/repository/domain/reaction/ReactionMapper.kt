@@ -1,8 +1,7 @@
-package io.getstream.chat.android.livedata.repository.mapper
+package io.getstream.chat.android.livedata.repository.domain.reaction
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 internal fun Reaction.toEntity(): ReactionEntity = ReactionEntity(
     messageId = messageId,

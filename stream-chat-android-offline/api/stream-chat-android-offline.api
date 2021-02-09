@@ -237,14 +237,6 @@ public final class io/getstream/chat/android/livedata/dao/QueryChannelsDao_Impl 
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/livedata/dao/ReactionDao_Impl : io/getstream/chat/android/livedata/dao/ReactionDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun insert (Lio/getstream/chat/android/livedata/entity/ReactionEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectUserReactionsToMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setDeleteAt (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/livedata/dao/SyncStateDao_Impl : io/getstream/chat/android/livedata/dao/SyncStateDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun insert (Lio/getstream/chat/android/livedata/entity/SyncStateEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -271,7 +263,7 @@ public final class io/getstream/chat/android/livedata/repository/database/ChatDa
 	public fun clearAllTables ()V
 	public fun messageDao ()Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;
 	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/dao/QueryChannelsDao;
-	public fun reactionDao ()Lio/getstream/chat/android/livedata/dao/ReactionDao;
+	public fun reactionDao ()Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/livedata/dao/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/livedata/dao/UserDao;
 }
@@ -296,6 +288,14 @@ public final class io/getstream/chat/android/livedata/repository/domain/message/
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun selectSyncNeeded$default (Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao_Impl : io/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun insert (Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectUserReactionsToMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setDeleteAt (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/CancelMessage {

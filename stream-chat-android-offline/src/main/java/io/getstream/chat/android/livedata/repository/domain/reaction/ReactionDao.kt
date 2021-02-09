@@ -1,11 +1,10 @@
-package io.getstream.chat.android.livedata.dao
+package io.getstream.chat.android.livedata.repository.domain.reaction
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.util.Date
 
 @Dao
