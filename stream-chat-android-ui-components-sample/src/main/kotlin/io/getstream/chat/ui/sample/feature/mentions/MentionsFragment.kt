@@ -8,7 +8,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import io.getstream.chat.android.ui.mentions.MentionsListViewModel
+import io.getstream.chat.android.ui.mentions.MentionListViewModel
 import io.getstream.chat.android.ui.mentions.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -17,7 +17,7 @@ import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class MentionsFragment : Fragment() {
 
-    private val viewModel: MentionsListViewModel by viewModels()
+    private val viewModel: MentionListViewModel by viewModels()
 
     private var _binding: FragmentMentionsBinding? = null
     private val binding get() = _binding!!

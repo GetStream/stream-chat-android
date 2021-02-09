@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+    <io.getstream.chat.android.ui.messages.header.MessageListHeaderView
         android:id="@+id/messagesHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

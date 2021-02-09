@@ -26,7 +26,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <io.getstream.chat.android.ui.channel.list.ChannelsView
+    <io.getstream.chat.android.ui.channel.list.ChannelListView
         android:id="@+id/channelsView"
         android:layout_width="0dp"
         android:layout_height="0dp"

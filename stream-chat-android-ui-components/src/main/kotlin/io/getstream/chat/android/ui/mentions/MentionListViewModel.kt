@@ -16,7 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-public class MentionsListViewModel : ViewModel() {
+public class MentionListViewModel : ViewModel() {
 
     public data class State(
         val canLoadMore: Boolean,
@@ -47,7 +47,7 @@ public class MentionsListViewModel : ViewModel() {
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = ChatLogger.get("MentionsListViewModel")
+    private val logger = ChatLogger.get("MentionListViewModel")
 
     init {
         scope.launch {

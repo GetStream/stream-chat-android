@@ -102,7 +102,7 @@
                 />
 
 
-            <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+            <io.getstream.chat.android.ui.messages.header.MessageListHeaderView
                 android:id="@+id/messagesHeaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -179,34 +179,6 @@
                 android:textColor="@color/stream_ui_text_color_primary"
                 />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/messagePreviewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/component_browser_sub_card"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/messagePreviewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="MessagePreviewView"
-                android:textColor="@color/stream_ui_text_color_primary"
-                />
-
-            <io.getstream.chat.android.ui.messagepreview.MessagePreviewView
-                android:id="@+id/messagePreviewView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
         </LinearLayout>
 
         <LinearLayout
@@ -323,104 +295,6 @@
 
             <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
                 android:id="@+id/userReactionsView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:clickable="false"
-                android:focusable="false"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/scrollButtonViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/component_browser_sub_card"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/scrollButtonViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="ScrollButtonView"
-                android:textColor="@color/stream_ui_text_color_primary"
-                />
-
-            <io.getstream.chat.android.ui.messages.view.ScrollButtonView
-                android:id="@+id/scrollButtonView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:clickable="false"
-                android:focusable="false"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/messageInputFieldViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/component_browser_sub_card"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/messageInputFieldViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="MessageInputFieldView"
-                android:textColor="@color/stream_ui_text_color_primary"
-                />
-
-            <io.getstream.chat.android.ui.textinput.MessageInputFieldView
-                android:id="@+id/messageInputFieldView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:clickable="false"
-                android:focusable="false"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/messageReplyViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/shape_component_browser_item_background"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:id="@+id/messageReplyViewLabel"
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="MessageReplyView"
-                />
-
-            <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
-                android:id="@+id/messageReplyView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
