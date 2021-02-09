@@ -669,7 +669,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = messageListItemFilter.filter(listItem.items)
+            val filteredList = listItem.items.filter(messageListItemFilter::predicate)
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
@@ -973,7 +973,7 @@ public class MessageListView : ConstraintLayout {
      * Filter functional object that can filter MessageListItem before applying them to MessageListView.
      */
     public fun interface MessageListItemFilter {
-        public fun filter(messageListItems: List<MessageListItem>): List<MessageListItem>
+        public fun predicate(item: MessageListItem): Boolean
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {
