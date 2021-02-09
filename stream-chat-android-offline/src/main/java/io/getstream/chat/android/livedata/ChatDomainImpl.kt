@@ -7,7 +7,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
-import androidx.room.Room
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -43,8 +42,9 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.model.SyncState
-import io.getstream.chat.android.livedata.repository.RepositoryFactory
-import io.getstream.chat.android.livedata.repository.RepositoryHelper
+import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.livedata.repository.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
@@ -68,7 +68,6 @@ import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 private const val MESSAGE_LIMIT = 30
@@ -211,7 +210,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    internal lateinit var repos: RepositoryHelper
+    internal lateinit var repos: RepositoryFacade
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal lateinit var initJob: Deferred<SyncState?>
 
@@ -229,12 +228,6 @@ internal class ChatDomainImpl internal constructor(
         activeQueryMapImpl.clear()
     }
 
-    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
-        ChatDatabase.getDatabase(context, user.id)
-    } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
-    }
-
     private fun isTestRunner(): Boolean {
         return Build.FINGERPRINT.toLowerCase().contains("robolectric")
     }
@@ -244,9 +237,15 @@ internal class ChatDomainImpl internal constructor(
 
         currentUser = user
 
-        database = db ?: createDatabase(appContext, user, offlineEnabled)
-
-        repos = RepositoryHelper.create(factory = RepositoryFactory(database, user), scope = scope, defaultConfig = defaultConfig)
+        repos = RepositoryFacadeBuilder {
+            context(appContext)
+            database(db)
+            currentUser(currentUser)
+            scope(scope)
+            defaultConfig(defaultConfig)
+            setOfflineEnabled(offlineEnabled)
+        }
+            .build()
 
         // load channel configs from Room into memory
         initJob = scope.async {

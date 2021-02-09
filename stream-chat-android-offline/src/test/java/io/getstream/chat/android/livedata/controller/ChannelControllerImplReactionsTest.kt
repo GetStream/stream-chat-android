@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.addMyReaction
-import io.getstream.chat.android.livedata.repository.RepositoryHelper
+import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.getOrAwaitValue
@@ -134,7 +134,7 @@ internal class ChannelControllerImplReactionsTest {
     private class Fixture(scope: CoroutineScope, user: User) {
         private val chatClient: ChatClient = mock()
         private val chatDomainImpl: ChatDomainImpl = mock()
-        private val repos: RepositoryHelper = mock()
+        private val repos: RepositoryFacade = mock()
         private val channelControllerImpl: ChannelControllerImpl
 
         init {
