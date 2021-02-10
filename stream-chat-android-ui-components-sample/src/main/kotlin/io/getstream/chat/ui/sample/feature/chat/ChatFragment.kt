@@ -155,7 +155,14 @@ class ChatFragment : Fragment() {
                 when (it) {
                     is MessageListViewModel.State.Loading -> Unit
                     is MessageListViewModel.State.Result -> Unit
-                    is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
+                    is MessageListViewModel.State.NavigateUp -> {
+                        val navigationHappened = findNavController().navigateUp()
+
+                        if (!navigationHappened) {
+                            findNavController()
+                                .navigateSafely(ChatFragmentDirections.actionChatFragmentToHomeFragment())
+                        }
+                    }
                 }
             }
         }
