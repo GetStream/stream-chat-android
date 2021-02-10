@@ -565,7 +565,6 @@ public final class io/getstream/chat/android/ui/messages/header/MessageListHeade
 	public final fun hideSubtitle ()V
 	public final fun hideTitle ()V
 	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun setAvatar (Lio/getstream/chat/android/client/models/User;)V
 	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
 	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener;)V
 	public final fun setNormalMode ()V

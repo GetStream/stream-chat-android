@@ -3,7 +3,6 @@
 package io.getstream.chat.android.ui.messages.header
 
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
@@ -17,13 +16,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
     channelState.observe(lifecycle) {
         view.setTitle(it.getDisplayName(view.context))
         view.setOnlineStateSubtitle(it.getOnlineStateSubtitle(view.context))
-
-        val otherUsers = it.getUsers()
-        if (otherUsers.size == 1) {
-            view.setAvatar(user = otherUsers.first())
-        } else {
-            view.setAvatar(channel = it)
-        }
+        view.setAvatar(it)
     }
     online.observe(lifecycle) { isOnline ->
         if (isOnline) {

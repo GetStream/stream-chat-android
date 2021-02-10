@@ -63,13 +63,8 @@ public class MessageListHeaderView : ConstraintLayout {
         }
     }
 
-    @JvmOverloads
     public fun setAvatar(channel: Channel) {
         binding.avatar.setChannelData(channel)
-    }
-
-    public fun setAvatar(user: User) {
-        binding.avatar.setUserData(user)
     }
 
     public fun setTitle(title: String?) {
