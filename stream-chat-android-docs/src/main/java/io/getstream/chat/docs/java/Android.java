@@ -14,15 +14,15 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
-import io.getstream.chat.android.ui.messages.header.MessageListHeaderView;
-import io.getstream.chat.android.ui.messages.header.MessageListHeaderViewModelBinding;
-import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel;
+import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
+import io.getstream.chat.android.ui.message.input.MessageInputViewModelBinding;
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
-import io.getstream.chat.android.ui.search.SearchResultListView;
-import io.getstream.chat.android.ui.search.SearchViewModel;
-import io.getstream.chat.android.ui.search.SearchViewModelBinding;
-import io.getstream.chat.android.ui.textinput.MessageInputView;
-import io.getstream.chat.android.ui.textinput.MessageInputViewModelBinding;
+import io.getstream.chat.android.ui.search.list.SearchResultListView;
+import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
+import io.getstream.chat.android.ui.message.input.MessageInputView;
+import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 
 public class Android {
 

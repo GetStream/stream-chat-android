@@ -14,11 +14,11 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.messages.header.bindView
-import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.messages.view.bindView
-import io.getstream.chat.android.ui.messages.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment

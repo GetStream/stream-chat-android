@@ -45,7 +45,7 @@
             />
     </FrameLayout>
 
-    <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
         android:id="@+id/messageReplyView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
