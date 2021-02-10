@@ -101,6 +101,8 @@ dependencies {
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
-    testImplementation Dependencies.truth
     testImplementation Dependencies.burst
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.truth
 }

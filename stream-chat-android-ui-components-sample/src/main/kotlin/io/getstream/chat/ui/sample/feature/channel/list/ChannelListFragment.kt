@@ -13,9 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
+import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.search.SearchViewModel
 import io.getstream.chat.android.ui.search.bindView
 import io.getstream.chat.ui.sample.R
@@ -26,7 +26,7 @@ import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
 
-    private val viewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
+    private val viewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
     private val searchViewModel: SearchViewModel by viewModels()
 
     private var _binding: FragmentChannelsBinding? = null
