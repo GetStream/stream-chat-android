@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view.channels
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
@@ -13,6 +14,7 @@ import com.getstream.sdk.chat.view.ReadStateStyle
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 
 public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
+
     @LayoutRes
     public val channelPreviewLayout: Int
     public val channelTitleText: TextStyle
@@ -23,6 +25,8 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public val lastMessageDateUnreadText: TextStyle
     public var avatarStyle: AvatarStyle
     public val readStateStyle: ReadStateStyle
+    public val itemSeparatorDrawable: Drawable?
+
     private val resources = context.resources
 
     private var channelWithoutNameText = ""
@@ -208,5 +212,14 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
 
             recycle()
         }
+
+        val parentAttrs = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.ChannelsView,
+            0,
+            0
+        )
+        itemSeparatorDrawable = parentAttrs.getDrawable(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable)
+        parentAttrs.recycle()
     }
 }
