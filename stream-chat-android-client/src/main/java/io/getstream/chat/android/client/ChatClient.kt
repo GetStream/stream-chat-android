@@ -242,6 +242,27 @@ public class ChatClient internal constructor(
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
+    /**
+     * Initializes [ChatClient] for a specific user and a given [userToken].
+     * Caution: This method doesn't establish connection to the web socket, you should use [connectUser] instead.
+     *
+     * This method initializes [ChatClient] to allow the use of Stream REST API client.
+     * Moreover, it warms up the connection, and sets up notifications.
+     *
+     * @param user the user to set
+     * @param userToken the user token
+     */
+    public fun setUserWithoutConnecting(user: User, userToken: String) {
+        if (isUserSet()) {
+            return
+        }
+        clientStateService.onSetUser(user)
+        config.isAnonymous = false
+        tokenManager.setTokenProvider(ImmediateTokenProvider(userToken))
+        warmUp()
+        notifications.onSetUser()
+    }
+
     private fun notifySetUser(user: User) {
         preSetUserListeners.forEach { it(user) }
     }
@@ -1207,7 +1228,7 @@ public class ChatClient internal constructor(
     }
 
     private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
-        return if (clientStateService.state !is ClientState.Idle) {
+        return if (isUserSet()) {
             logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
             listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
             false
@@ -1215,6 +1236,8 @@ public class ChatClient internal constructor(
             true
         }
     }
+
+    private fun isUserSet() = clientStateService.state !is ClientState.Idle
 
     private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
         notifications.isValidRemoteMessage(remoteMessage)
