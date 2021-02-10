@@ -476,10 +476,6 @@ public abstract interface class io/getstream/chat/android/ui/messages/adapter/Me
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/messages/view/MessageListView$UserClickListener;
 }
 
-public final class io/getstream/chat/android/ui/messages/header/ChannelHeaderViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
-}
-
 public final class io/getstream/chat/android/ui/messages/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -509,6 +505,15 @@ public final class io/getstream/chat/android/ui/messages/header/MessageListHeade
 
 public abstract interface class io/getstream/chat/android/ui/messages/header/MessageListHeaderView$OnClickListener {
 	public abstract fun onClick ()V
+}
+
+public final class io/getstream/chat/android/ui/messages/header/MessageListHeaderViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/messages/header/viewmodel/MessageListHeaderViewModel;Lio/getstream/chat/android/ui/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/header/viewmodel/MessageListHeaderViewModel : com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderViewModel {
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/messages/reactions/ReactionClickListener {
@@ -682,6 +687,13 @@ public abstract interface class io/getstream/chat/android/ui/messages/view/Messa
 
 public final class io/getstream/chat/android/ui/messages/view/MessageListViewModelBinding {
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/messages/view/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/messages/viewmodel/factory/MessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {

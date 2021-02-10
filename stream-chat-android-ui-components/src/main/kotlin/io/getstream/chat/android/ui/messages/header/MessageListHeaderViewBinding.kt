@@ -1,19 +1,19 @@
-@file:JvmName("ChannelHeaderViewModelBinding")
+@file:JvmName("MessageListHeaderViewModelBinding")
 
 package io.getstream.chat.android.ui.messages.header
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.utils.extensions.getUsers
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.utils.extensions.getOnlineStateSubtitle
 
 /**
- * Binds [MessageListHeaderView] with [ChannelHeaderViewModel], updating the view's state
+ * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state
  * based on data provided by the ViewModel.
  */
 @JvmName("bind")
-public fun ChannelHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
+public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
         view.setTitle(it.getDisplayName(view.context))
         view.setOnlineStateSubtitle(it.getOnlineStateSubtitle(view.context))
