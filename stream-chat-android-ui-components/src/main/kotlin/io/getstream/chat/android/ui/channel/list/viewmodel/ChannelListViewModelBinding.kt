@@ -1,30 +1,29 @@
-@file:JvmName("ChannelsViewModelBinding")
+@file:JvmName("ChannelListViewModelBinding")
 
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 
 @JvmName("bind")
-public fun ChannelsViewModel.bindView(
+public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycle: LifecycleOwner
 ) {
     state.observe(lifecycle) { channelState ->
         when (channelState) {
-            is ChannelsViewModel.State.NoChannelsAvailable -> {
+            is ChannelListViewModel.State.NoChannelsAvailable -> {
                 view.showEmptyStateView()
                 view.hideLoadingView()
             }
-            is ChannelsViewModel.State.Loading -> {
+            is ChannelListViewModel.State.Loading -> {
                 view.hideEmptyStateView()
                 if (!view.hasChannels()) {
                     view.showLoadingView()
                 }
             }
-            is ChannelsViewModel.State.Result -> {
+            is ChannelListViewModel.State.Result -> {
                 channelState
                     .channels
                     .map(ChannelListItem::ChannelItem)
@@ -47,6 +46,6 @@ public fun ChannelsViewModel.bindView(
     }
 
     view.setOnEndReachedListener {
-        onEvent(ChannelsViewModel.Event.ReachedEndOfList)
+        onAction(ChannelListViewModel.Action.ReachedEndOfList)
     }
 }

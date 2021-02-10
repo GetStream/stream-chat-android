@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.messages.header.bindView
+import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.messages.view.bindView
+import io.getstream.chat.android.ui.messages.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.android.ui.textinput.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatPreviewBinding
@@ -71,13 +71,13 @@ class ChatPreviewFragment : Fragment() {
     }
 
     private fun initializeChatPreview(cid: String) {
-        val factory = ChannelViewModelFactory(cid)
-        val channelHeaderViewModel = factory.create(ChannelHeaderViewModel::class.java)
+        val factory = MessageListViewModelFactory(cid)
+        val messageListHeaderViewModel = factory.create(MessageListHeaderViewModel::class.java)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
         val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
 
         binding.messagesHeaderView.apply {
-            channelHeaderViewModel.bindView(this, viewLifecycleOwner)
+            messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
             setAvatarClickListener {
                 navigateToChatInfo()
