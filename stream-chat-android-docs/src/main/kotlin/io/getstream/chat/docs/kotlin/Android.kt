@@ -14,10 +14,9 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.MessageListView
 import io.getstream.chat.android.ui.messages.view.bindView
@@ -148,12 +147,12 @@ class Android {
         lateinit var messageListView: MessageListView
 
         fun emptyState() {
-            //When there's no results, show empty state
+            // When there's no results, show empty state
             messageListView.showEmptyStateView()
         }
 
         fun loadingView() {
-            //When loading information, show loading view
+            // When loading information, show loading view
             messageListView.showLoadingView()
         }
 
@@ -175,17 +174,19 @@ class Android {
         }
 
         fun dateFormatter() {
-            messageListView.setMessageDateFormatter(object : DateFormatter {
-                override fun formatDate(localDateTime: LocalDateTime?): String {
-                    // Provide a way to format Date
-                    return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
-                }
+            messageListView.setMessageDateFormatter(
+                object : DateFormatter {
+                    override fun formatDate(localDateTime: LocalDateTime?): String {
+                        // Provide a way to format Date
+                        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
+                    }
 
-                override fun formatTime(localTime: LocalTime?): String {
-                    // Provide a way to format Time.
-                    return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                    override fun formatTime(localTime: LocalTime?): String {
+                        // Provide a way to format Time.
+                        return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                    }
                 }
-            })
+            )
         }
 
         fun customMessagesFilter() {
