@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
 public interface QueryMembers {
@@ -33,11 +34,17 @@ internal class QueryMembersImpl(private val domainImpl: ChatDomainImpl) : QueryM
         members: List<Member>,
     ): Call<List<Member>> {
         return CoroutineCall(domainImpl.scope) {
-            domainImpl
-                .client
-                .channel(channelType, channelId)
-                .queryMembers(offset, limit, filter, sort, members)
-                .execute()
+            if (domainImpl.isOffline() && domainImpl.offlineEnabled) {
+                val offlineMembers: List<Member> =
+                    domainImpl.channel(channelType, channelId).members.value ?: emptyList()
+                Result(offlineMembers)
+            } else {
+                domainImpl
+                    .client
+                    .channel(channelType, channelId)
+                    .queryMembers(offset, limit, filter, sort, members)
+                    .execute()
+            }
         }
     }
 }

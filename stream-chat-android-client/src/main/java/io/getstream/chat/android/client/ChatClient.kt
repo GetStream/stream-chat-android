@@ -349,7 +349,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member> = DEFAULT_SORT,
+        sort: QuerySort<Member> = QuerySort.desc("created_at"),
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
