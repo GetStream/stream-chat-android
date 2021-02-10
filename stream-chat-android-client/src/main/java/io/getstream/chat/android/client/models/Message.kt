@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
-public data class Message @JvmOverloads constructor(
+public data class Message(
     var id: String = "",
     var cid: String = "",
     var text: String = "",
