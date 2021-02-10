@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessagesHeaderViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
@@ -52,29 +53,33 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
         binding.headerOnlineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomUser(isOnline = true))
+            val channel = randomChannel().apply {
+                cid = "messaging:!members-p28xtFuiwKzLG4IgCFCN0v1WQSwTGH0ZcnINefSxdS4"
+                members = listOf(Member(user = randomUser(isOnline = true)))
+            }
+            setAvatar(channel)
         }
         binding.headerOfflineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomUser(isOnline = false))
+            setAvatar(randomChannel(listOf(randomMember())))
         }
         binding.headerSearchingForNetwork.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomUser(isOnline = false))
+            setAvatar(randomChannel(listOf(randomMember())))
             showSearchingForNetworkLabel()
         }
         binding.headerDeviceOffline.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomUser(isOnline = false))
+            setAvatar(randomChannel(listOf(randomMember())))
             showOfflineStateLabel()
         }
         binding.headerTypingSubtitle.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            setAvatar(randomUser(isOnline = false))
+            setAvatar(randomChannel(listOf(randomMember())))
             showTypingStateLabel(randomUsers(3))
         }
     }
