@@ -8,6 +8,8 @@ public object UiUtils {
 
     private val reactionTypes: Map<String, Int> = ReactionType.values()
         .associate { it.type to it.iconRes }
+    private val supportedReactionTypes = ReactionType.values()
+        .map { it.type }
 
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
         ModelType.attach_mime_pdf to R.drawable.stream_ui_ic_file_pdf,
@@ -48,6 +50,10 @@ public object UiUtils {
     internal fun getReactionIcon(type: String): Int? {
         return reactionTypes[type]
     }
+
+    internal fun isReactionTypeSupported(type: String): Boolean {
+        return supportedReactionTypes.contains(type)
+    }
 }
 
 public enum class ReactionType(
@@ -55,8 +61,8 @@ public enum class ReactionType(
     @DrawableRes public val iconRes: Int,
 ) {
     LOVE("love", R.drawable.stream_ui_ic_reaction_love),
-    THUMBS_UP("thumbs_up", R.drawable.stream_ui_ic_reaction_thumbs_up),
-    THUMBS_DOWN("thumbs_down", R.drawable.stream_ui_ic_reaction_thumbs_down),
-    LOL("lol", R.drawable.stream_ui_ic_reaction_lol),
-    WUT("wut", R.drawable.stream_ui_ic_reaction_wut);
+    THUMBS_UP("like", R.drawable.stream_ui_ic_reaction_thumbs_up),
+    THUMBS_DOWN("sad", R.drawable.stream_ui_ic_reaction_thumbs_down),
+    LOL("haha", R.drawable.stream_ui_ic_reaction_lol),
+    WUT("wow", R.drawable.stream_ui_ic_reaction_wut);
 }

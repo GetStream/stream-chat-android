@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithFil
 import io.getstream.chat.android.ui.messages.adapter.viewholder.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.hasReactions
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
 
 internal class ReactionsDecorator : BaseDecorator() {
@@ -82,7 +83,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         reactionsView: ViewReactionsView,
         data: MessageListItem.MessageItem,
     ) {
-        if (data.message.latestReactions.isNotEmpty()) {
+        if (data.message.hasReactions()) {
             reactionsView.isVisible = true
             reactionsSpace.isVisible = true
 

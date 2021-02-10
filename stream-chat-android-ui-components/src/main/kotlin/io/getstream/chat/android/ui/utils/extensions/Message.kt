@@ -2,9 +2,11 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.ModelType
+import io.getstream.chat.android.ui.utils.UiUtils
 import java.util.Date
 
 internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: Boolean = false): String? =
@@ -42,8 +44,30 @@ public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull
 }
 
 public fun Message.hasSingleReaction(): Boolean {
-    return reactionCounts.size == 1
+    return supportedReactionCounts.size == 1
 }
+
+public fun Message.hasReactions(): Boolean {
+    return supportedReactionCounts.isNotEmpty()
+}
+
+public val Message.supportedLatestReactions: List<Reaction>
+    get() {
+        return if (latestReactions.isEmpty()) {
+            latestReactions
+        } else {
+            latestReactions.filter { UiUtils.isReactionTypeSupported(it.type) }
+        }
+    }
+
+public val Message.supportedReactionCounts: Map<String, Int>
+    get() {
+        return if (reactionCounts.isEmpty()) {
+            reactionCounts
+        } else {
+            reactionCounts.filterKeys { UiUtils.isReactionTypeSupported(it) }
+        }
+    }
 
 public fun Message.isReply(): Boolean = replyTo != null
 

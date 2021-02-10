@@ -594,6 +594,7 @@ public final class com/getstream/sdk/chat/view/channels/ChannelListViewStyle {
 	public final fun getChannelTitleText ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun getChannelTitleUnreadText ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun getChannelWithoutNameText ()Ljava/lang/String;
+	public final fun getItemSeparatorDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getLastMessage ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun getLastMessageDateText ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun getLastMessageDateUnreadText ()Lcom/getstream/sdk/chat/style/TextStyle;
