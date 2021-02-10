@@ -8,7 +8,6 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
@@ -112,7 +111,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         return ChatDomain.Builder(applicationContext, client, user).build()
     }
 
-    private suspend fun initClient(
+    private fun initClient(
         context: Context,
         user: User,
         userToken: String,
@@ -125,7 +124,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             .notifications(notificationHandler)
             .build()
 
-        client.connectUser(user, userToken).await()
+        client.setUserWithoutConnecting(user, userToken)
 
         return client
     }
