@@ -77,7 +77,8 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
             style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
         }.build()
 
-        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)?.let { channelWithoutNameText = it }
+        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)
+            ?.let { channelWithoutNameText = it }
 
         lastMessage = TextStyle.Builder(attributes).apply {
             size(
@@ -133,7 +134,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
                 resources.getDimensionPixelSize(R.dimen.stream_channel_item_message_date)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageDateTextColor,
+                R.styleable.ChannelListView_streamLastMessageDateUnreadTextColor,
                 ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
             )
             font(
