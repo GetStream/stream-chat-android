@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui
 
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.positiveRandomInt
@@ -45,3 +46,18 @@ internal fun createUser(
     channelMutes,
     extraData
 )
+
+internal fun createMember(
+    user: User = createUser(),
+    role: String = randomString(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    isInvited: Boolean = randomBoolean(),
+    inviteAcceptedAt: Date? = randomDate(),
+    inviteRejectedAt: Date? = randomDate()
+): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+
+internal fun createMembers(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Member = { createMember() }
+): List<Member> = List(size, creationFunction)

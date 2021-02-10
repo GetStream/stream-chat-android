@@ -1,10 +1,7 @@
-package com.getstream.sdk.chat.viewmodel
+package io.getstream.chat.android.ui.messages.header.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.getstream.sdk.chat.createMember
-import com.getstream.sdk.chat.createMembers
-import com.getstream.sdk.chat.createUser
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -20,6 +17,9 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.ui.createMember
+import io.getstream.chat.android.ui.createMembers
+import io.getstream.chat.android.ui.createUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,10 +30,8 @@ import org.junit.jupiter.params.provider.MethodSource
 private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
 
-internal class BaseMessageListHeaderViewModelImpl(cid: String, chatDomain: ChatDomain) : BaseMessageListHeaderViewModel(cid, chatDomain)
-
 @ExtendWith(InstantTaskExecutorExtension::class)
-internal class BaseMessageListHeaderViewModelTest {
+internal class MessageListHeaderViewModelTest {
 
     private val chatDomain: ChatDomain = mock()
     private val useCases: UseCaseHelper = mock()
@@ -57,7 +55,7 @@ internal class BaseMessageListHeaderViewModelTest {
         val channel: Channel = mock()
         whenever(channelController.channelData) doReturn MutableLiveData(mock())
         whenever(channelController.toChannel()) doReturn channel
-        val channelHeaderViewModel = BaseMessageListHeaderViewModelImpl(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = MessageListHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<Channel> = spy()
 
         channelHeaderViewModel.channelState.observeForever(mockObserver)
@@ -68,7 +66,7 @@ internal class BaseMessageListHeaderViewModelTest {
     fun `Should notify about new members`() {
         val members = createMembers()
         whenever(channelController.members) doReturn MutableLiveData(members)
-        val channelHeaderViewModel = BaseMessageListHeaderViewModelImpl(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = MessageListHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<List<Member>> = spy()
 
         channelHeaderViewModel.members.observeForever(mockObserver)
@@ -77,10 +75,10 @@ internal class BaseMessageListHeaderViewModelTest {
 
     /** [createAnyOtherUserOnlineInput] */
     @ParameterizedTest
-    @MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
+    @MethodSource("io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModelTest#createAnyOtherUserOnlineInput")
     fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
         whenever(channelController.members) doReturn MutableLiveData(members)
-        val channelHeaderViewModel = BaseMessageListHeaderViewModelImpl(CID, chatDomain = chatDomain)
+        val channelHeaderViewModel = MessageListHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<Boolean> = spy()
 
         channelHeaderViewModel.anyOtherUsersOnline.observeForever(mockObserver)
