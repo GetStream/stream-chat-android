@@ -1,12 +1,23 @@
 package io.getstream.chat.docs.java;
 
+import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.ChatUI;
+import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel;
 
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +27,11 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
+import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder;
+import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory;
 import io.getstream.chat.android.ui.messages.header.ChannelHeaderViewModelBinding;
+import io.getstream.chat.android.ui.messages.view.MessageListView;
+import io.getstream.chat.android.ui.messages.view.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.messages.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.textinput.MessageInputView;
 import io.getstream.chat.android.ui.textinput.MessageInputViewModelBinding;
@@ -142,6 +157,76 @@ public class Android {
             destination.setData(attachmentGalleryItems, 0);
 
             ChatUI.instance().getNavigator().navigate(destination);
+        }
+    }
+
+    class MessageListViewDocs extends Fragment {
+        MessageListView messageListView;
+
+        public void emptyState() {
+            messageListView.showEmptyStateView();
+        }
+
+        public void loadingView() {
+            //When loading information, show loading view
+            messageListView.showLoadingView();
+        }
+
+        public void viewHolderFactory() {
+            MessageListItemViewHolderFactory factory =
+                    new MessageListItemViewHolderFactoryExtended();
+            messageListView.setMessageViewHolderFactory(factory);
+        }
+
+        public void messageClick() {
+            messageListView.setMessageClickListener(message -> {
+                // Handle message click
+            });
+        }
+
+        public void messageLongClick() {
+            messageListView.setMessageLongClickListener(message -> {
+                // Handle message long click
+            });
+        }
+
+        public void dateFormatter() {
+            messageListView.setMessageDateFormatter(new DateFormatter() {
+                @NotNull
+                @Override
+                public String formatDate(@Nullable LocalDateTime localDateTime) {
+                    return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime);
+                }
+
+                @NotNull
+                @Override
+                public String formatTime(@Nullable LocalTime localTime) {
+                    return DateTimeFormatter.ofPattern("HH:mm").format(localTime);
+                }
+            });
+        }
+
+        public void customMessagesFilter() {
+            messageListView.setMessageListItemPredicate(messageList -> {
+                // Boolean logic here
+                return true;
+            });
+        }
+
+        public void bindWithViewModel() {
+            MessageListViewModel viewModel =
+                    new ViewModelProvider(this).get(MessageListViewModel.class);
+
+            MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
+        }
+
+        class MessageListItemViewHolderFactoryExtended extends MessageListItemViewHolderFactory {
+            @NotNull
+            @Override
+            public BaseMessageItemViewHolder<? extends MessageListItem> createViewHolder(@NotNull ViewGroup parentView, int viewType) {
+                // Create a new type of view holder here, if needed
+                return super.createViewHolder(parentView, viewType);
+            }
         }
     }
 }
