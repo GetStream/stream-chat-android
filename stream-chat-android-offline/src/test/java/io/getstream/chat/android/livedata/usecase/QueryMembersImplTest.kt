@@ -72,7 +72,7 @@ internal class QueryMembersImplTest : BaseConnectedMockedTest() {
         chatDomainImpl.setOffline()
         val channel = data.channel4 // has > 1 members
         val channelController = chatDomainImpl.channel(channel.cid)
-        channelController.updateLiveDataFromChannel(channel)
+        channelController.updateLiveDataFromChannel(channel) // make sure controller has data
         val expectedMembers = channelController.members.getOrAwaitValue()
 
         val result = chatDomain
@@ -84,6 +84,7 @@ internal class QueryMembersImplTest : BaseConnectedMockedTest() {
 
         assertSuccess(result)
 
+        // verify we never call through to client when offline
         verify(client, never()).queryMembers(any(), any(), any(), any(), any(), any(), any())
 
         val actualUserIds = result.data().map { it.getUserId() }
