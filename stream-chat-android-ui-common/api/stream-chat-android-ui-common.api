@@ -1973,12 +1973,6 @@ public final class com/getstream/sdk/chat/view/messages/MessageListItemWrapper {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel : com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderViewModel {
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
 public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
@@ -2071,13 +2065,6 @@ public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$S
 	public final fun getChannels ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/factory/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/factory/ChannelsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
