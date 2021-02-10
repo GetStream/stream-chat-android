@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.network
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
@@ -30,6 +31,8 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     @Volatile
     private var listeners: List<NetworkStateListener> = listOf()
 
+    private var isRegistered: AtomicBoolean = AtomicBoolean(false)
+
     fun isConnected(): Boolean {
         isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
         return isConnected
@@ -38,11 +41,12 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     fun subscribe(listener: NetworkStateListener) {
         listeners = listeners + listener
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+        isRegistered.set(true)
     }
 
     fun unsubscribe(listener: NetworkStateListener) {
         listeners = (listeners - listener).also {
-            if (it.isEmpty()) {
+            if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
                 connectivityManager.unregisterNetworkCallback(callback)
             }
         }
