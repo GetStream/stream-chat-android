@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
@@ -19,6 +20,7 @@ import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFa
 import io.getstream.chat.android.ui.messages.header.MessagesHeaderView
 import io.getstream.chat.android.ui.messages.header.bindView
 import io.getstream.chat.android.ui.messages.view.MessageListView
+import io.getstream.chat.android.ui.messages.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.SearchResultListView
 import io.getstream.chat.android.ui.search.SearchViewModel
@@ -157,7 +159,6 @@ class Android {
 
         fun viewHolderFactory() {
             val newViewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactoryExtended()
-
             messageListView.setMessageViewHolderFactory(newViewHolderFactory)
         }
 
@@ -188,10 +189,15 @@ class Android {
         }
 
         fun customMessagesFilter() {
-            messageListView.setMessageListItemPredicate() { messageList ->
+            messageListView.setMessageListItemPredicate { messageList ->
                 // Boolean logic here
                 true
             }
+        }
+
+        fun bindWithViewModel() {
+            val viewModel: MessageListViewModel by viewModels()
+            viewModel.bindView(messageListView, viewLifecycleOwner)
         }
     }
 
@@ -200,7 +206,7 @@ class Android {
             parentView: ViewGroup,
             viewType: Int,
         ): BaseMessageItemViewHolder<out MessageListItem> {
-            //create a new type of view holder here, if needed
+            // Create a new type of view holder here, if needed
             return super.createViewHolder(parentView, viewType)
         }
     }
