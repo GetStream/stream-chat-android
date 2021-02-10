@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view.channels
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
@@ -13,6 +14,7 @@ import com.getstream.sdk.chat.view.ReadStateStyle
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 
 public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
+
     @LayoutRes
     public val channelPreviewLayout: Int
     public val channelTitleText: TextStyle
@@ -23,6 +25,8 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public val lastMessageDateUnreadText: TextStyle
     public var avatarStyle: AvatarStyle
     public val readStateStyle: ReadStateStyle
+    public val itemSeparatorDrawable: Drawable?
+
     private val resources = context.resources
 
     private var channelWithoutNameText = ""
@@ -77,7 +81,8 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
             style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
         }.build()
 
-        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)?.let { channelWithoutNameText = it }
+        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)
+            ?.let { channelWithoutNameText = it }
 
         lastMessage = TextStyle.Builder(attributes).apply {
             size(
@@ -133,7 +138,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
                 resources.getDimensionPixelSize(R.dimen.stream_channel_item_message_date)
             )
             color(
-                R.styleable.ChannelListView_streamLastMessageDateTextColor,
+                R.styleable.ChannelListView_streamLastMessageDateUnreadTextColor,
                 ContextCompat.getColor(context, R.color.stream_channel_item_text_color)
             )
             font(
@@ -207,5 +212,14 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
 
             recycle()
         }
+
+        val parentAttrs = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.ChannelsView,
+            0,
+            0
+        )
+        itemSeparatorDrawable = parentAttrs.getDrawable(R.styleable.ChannelsView_streamChannelsItemSeparatorDrawable)
+        parentAttrs.recycle()
     }
 }

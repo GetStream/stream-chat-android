@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.adapter;
 
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 
 import io.getstream.chat.android.client.models.Channel;
@@ -32,10 +35,17 @@ public class ChannelViewHolderFactory {
         // inflate the layout specified in the style
         View v = LayoutInflater.from(parent.getContext()).inflate(style.getChannelPreviewLayout(), parent, false);
 
+        ImageView separator = v.findViewById(R.id.iv_separator);
+        if (separator != null) {
+            final Drawable itemSeparatorDrawable = style.getItemSeparatorDrawable();
+            if (itemSeparatorDrawable != null) {
+                separator.setImageDrawable(itemSeparatorDrawable);
+            }
+        }
+
         // configure the viewholder
         ChannelListItemViewHolder holder = new ChannelListItemViewHolder(v);
         configureHolder(holder, adapter);
-        // return..
 
         return holder;
     }
