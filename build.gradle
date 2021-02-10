@@ -5,17 +5,17 @@ apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: 'io.codearte.nexus-staging'
 apply plugin: 'binary-compatibility-validator'
+apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
-
-        jcenter() {
+        maven {
+            url 'https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev'
             content {
-                // Remove when https://github.com/Kotlin/dokka/issues/41 is closed
-                includeGroup("org.jetbrains.dokka")
+                includeGroup('org.jetbrains.dokka')
             }
         }
     }
@@ -52,9 +52,6 @@ allprojects {
                 // Remove when https://github.com/facebook/flipper/issues/1775 is closed
                 includeGroup("com.facebook.flipper")
 
-                // Remove when https://github.com/Kotlin/dokka/issues/41 is closed
-                includeGroup("org.jetbrains.dokka")
-
                 includeModule("net.yslibrary.keyboardvisibilityevent", "keyboardvisibilityevent")
                 includeModule("me.relex", "photodraweeview")
                 // https://youtrack.jetbrains.com/issue/IDEA-261387
@@ -81,6 +78,12 @@ allprojects {
 
                 // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
                 includeModule("com.github.mrmike", "ok2curl")
+            }
+        }
+        maven {
+            url 'https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev'
+            content {
+                includeGroup('org.jetbrains.dokka')
             }
         }
     }
