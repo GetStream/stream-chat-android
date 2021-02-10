@@ -2,15 +2,21 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.spy
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.Verify
 import org.amshove.kluent.When
 import org.amshove.kluent.any
+import org.amshove.kluent.called
 import org.amshove.kluent.calling
+import org.amshove.kluent.on
 import org.amshove.kluent.shouldContainSame
+import org.amshove.kluent.that
+import org.amshove.kluent.was
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -26,15 +32,18 @@ internal class QueryMembersImplTest : BaseConnectedMockedTest() {
     fun queryMembers(): Unit = runBlocking {
 
         val channel = data.channel4 // has > 1 members
-        val channelClient = ChannelClient(channel.type, channel.id, client)
+        val channelClientSpy = spy(ChannelClient(channel.type, channel.id, client))
 
-        // don't use the default mocked ChannelClient instance - we want a real one to invoke
-        // our mocked client queryMembers method.
-        When calling client.channel(any(), any()) doReturn channelClient
+        // don't use the default mocked ChannelClient instance - we want a real one to call through
+        // to our mocked client
+        When calling client.channel(any(), any()) doReturn channelClientSpy
 
-        // mock query members for the client
-        val queryMembersFunction = client.queryMembers(any(), any(), any(), any(), any(), any(), any())
-        When calling queryMembersFunction doReturn TestCall(Result(channel.members))
+        // mock query members result for the client method
+        When calling client.queryMembers(any(), any(), any(), any(), any(), any(), any()) doReturn TestCall(
+            Result(
+                channel.members
+            )
+        )
 
         val result = chatDomain
             .useCases
@@ -42,6 +51,9 @@ internal class QueryMembersImplTest : BaseConnectedMockedTest() {
             .execute()
 
         assertSuccess(result)
+
+        Verify on client that client.queryMembers(any(), any(), any(), any(), any(), any(), any()) was called
+        Verify on channelClientSpy that channelClientSpy.queryMembers(any(), any(), any(), any(), any()) was called
 
         val actualUserIds = result.data().map { it.getUserId() }
         val expectedUserIds = channel.members.map { it.getUserId() }
