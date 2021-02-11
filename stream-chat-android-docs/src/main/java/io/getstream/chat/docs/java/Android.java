@@ -1,28 +1,49 @@
 package io.getstream.chat.docs.java;
 
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.client.utils.FilterObject;
+import io.getstream.chat.android.livedata.ChatDomain;
+import io.getstream.chat.android.ui.channel.list.ChannelListView;
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory;
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
+import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
+import io.getstream.chat.android.ui.message.input.MessageInputView;
+import io.getstream.chat.android.ui.message.input.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
-import io.getstream.chat.android.ui.message.input.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
-import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
+import io.getstream.chat.docs.R;
+
+import static java.util.Collections.singletonList;
 
 public class Android {
 
@@ -37,6 +58,111 @@ public class Android {
             ChannelListHeaderViewModel viewModel = new ViewModelProvider(this).get(ChannelListHeaderViewModel.class);
             // Bind it with ChannelListHeaderView
             ChannelListHeaderViewModelBinding.bind(viewModel, channelListHeaderView, getViewLifecycleOwner());
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/node/channels_view_new/">Channel List View</a>
+     */
+    class ChannelList extends Fragment {
+
+        ChannelListView channelListView;
+
+        public void bindingWithViewModel() {
+            // Get ViewModel
+            FilterObject filter = Filters.and(
+                    Filters.eq("type", "messaging"),
+                    Filters.in("members", singletonList(ChatDomain.instance().getCurrentUser().getId()))
+            );
+            int limit = 30;
+
+            ChannelListViewModelFactory factory = new ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT, limit);
+            ChannelListViewModel viewModel = new ViewModelProvider(this, factory)
+                    .get(ChannelListViewModel.class);
+
+            // Bind it with ChannelListView
+            ChannelListViewModelBinding.bind(viewModel, channelListView, getViewLifecycleOwner());
+        }
+
+        public void handlingChannelActions() {
+            channelListView.setChannelInfoClickListener((channel) -> {
+                // Handle Channel Info Click
+            });
+
+            channelListView.setUserClickListener((user) -> {
+                // Handle Member Click
+            });
+        }
+
+        public void handlingUserInteractions() {
+            channelListView.setChannelItemClickListener((channel) -> {
+                // Handle Channel Click
+            });
+
+            channelListView.setChannelLongClickListener((channel) -> {
+                // Handle Channel Long Click
+                return true;
+            });
+        }
+
+        public void customizingDefaultViews() {
+            // Create loading view and layout params
+            ProgressBar loadingView = new ProgressBar(getContext());
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER
+            );
+            channelListView.setEmptyStateView(loadingView, layoutParams);
+
+            // Create empty state view and use default layout params
+            TextView emptyStateView = new TextView(getContext());
+            emptyStateView.setText("No channels available");
+            channelListView.setEmptyStateView(emptyStateView);
+
+
+            // Set custom item separator drawable
+            channelListView.setItemSeparator(R.drawable.stream_ui_divider);
+
+            // Add separator to the last item
+            channelListView.setShouldDrawItemSeparatorOnLastItem(true);
+        }
+
+        public void customViewHolderFactory() {
+            class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
+                @Override
+                public int getItemViewType(@NotNull ChannelListItem item) {
+                    // Override together with createViewHolder() to introduce different view holder types
+                    return super.getItemViewType(item);
+                }
+
+                @NotNull
+                @Override
+                public BaseChannelListItemViewHolder createViewHolder(@NotNull ViewGroup parentView, int viewType) {
+                    // Override to create custom create view holder logic
+                    return super.createViewHolder(parentView, viewType);
+                }
+
+                @NotNull
+                @Override
+                protected BaseChannelListItemViewHolder createChannelViewHolder(@NotNull ViewGroup parentView) {
+                    // Create custom channel view holder
+                    return super.createChannelViewHolder(parentView);
+                }
+
+                @NotNull
+                @Override
+                protected BaseChannelListItemViewHolder createLoadingMoreViewHolder(@NotNull ViewGroup parentView) {
+                    // Create custom loading more view holder
+                    return super.createLoadingMoreViewHolder(parentView);
+                }
+            }
+
+            // Create custom view holder factory
+            CustomChannelListItemViewHolderFactory customFactory = new CustomChannelListItemViewHolderFactory();
+
+            // Set custom view holder factory
+            channelListView.setViewHolderFactory(customFactory);
         }
     }
 
@@ -57,7 +183,7 @@ public class Android {
     }
 
     /**
-     * * @see <a href="https://getstream.io/chat/docs/android/messages_header_view">Message List Header View</a>
+     * * @see <a href="https://getstream.io/chat/docs/android/message_list_header_view">Message List Header View</a>
      */
     class MessageListHeader extends Fragment {
         MessageListHeaderView messageListHeaderView;
@@ -66,7 +192,7 @@ public class Android {
             // Get ViewModel
             MessageListHeaderViewModel viewModel =
                     new ViewModelProvider(this).get(MessageListHeaderViewModel.class);
-            // Bind it with MessagesHeaderView
+            // Bind it with MessageListHeaderView
             MessageListHeaderViewModelBinding
                     .bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
         }
