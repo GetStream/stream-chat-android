@@ -6,6 +6,7 @@
 
 ## stream-chat-android-client
 - Fix `ConcurrentModificationException` on our `NetworkStateProvider`
+- Introduce ChatClient::setUserWithoutConnecting function
 
 ## stream-chat-android-offline
 
