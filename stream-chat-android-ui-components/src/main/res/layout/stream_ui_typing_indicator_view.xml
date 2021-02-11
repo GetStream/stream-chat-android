@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:alpha="0.9"
-    android:background="@color/stream_ui_white_snow"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="8dp"
@@ -17,8 +15,8 @@
         android:layout_height="18dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_speed="4"
         app:lottie_rawRes="@raw/stream_ui_typing_dots"
+        app:lottie_speed="4"
         />
 
     <TextView
