@@ -18,7 +18,7 @@ public interface QueryMembers {
         offset: Int = 0,
         limit: Int = 0,
         filter: FilterObject = FilterObject(),
-        sort: QuerySort<Member> = QuerySort<Member>().desc("created_at"),
+        sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
         members: List<Member> = emptyList(),
     ): Call<List<Member>>
 }
