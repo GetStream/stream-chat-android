@@ -6,7 +6,6 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
@@ -14,21 +13,22 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.messages.adapter.BaseMessageItemViewHolder
-import io.getstream.chat.android.ui.messages.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
-import io.getstream.chat.android.ui.messages.header.bindView
-import io.getstream.chat.android.ui.messages.view.MessageListView
-import io.getstream.chat.android.ui.messages.view.bindView
+import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
-import io.getstream.chat.android.ui.search.SearchResultListView
-import io.getstream.chat.android.ui.search.SearchViewModel
-import io.getstream.chat.android.ui.search.bindView
-import io.getstream.chat.android.ui.textinput.MessageInputView
-import io.getstream.chat.android.ui.textinput.bindView
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import io.getstream.chat.android.ui.search.list.SearchResultListView
+import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
+import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 
 class Android {
 
@@ -64,7 +64,7 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: ChannelHeaderViewModel by viewModels()
+            val viewModel: MessageListHeaderViewModel by viewModels()
             // Bind it with MessagesHeaderView
             viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
         }

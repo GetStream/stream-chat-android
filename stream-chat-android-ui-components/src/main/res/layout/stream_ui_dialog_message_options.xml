@@ -14,7 +14,7 @@
         android:paddingVertical="@dimen/stream_ui_spacing_medium"
         >
 
-        <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
+        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
             android:id="@+id/editReactionsView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
             />
 
-        <io.getstream.chat.android.ui.options.message.MessageOptionsView
+        <io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
             android:id="@+id/messageOptionsView"
             android:layout_width="264dp"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             android:visibility="gone"
             />
 
-        <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
+        <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
             android:id="@+id/userReactionsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
