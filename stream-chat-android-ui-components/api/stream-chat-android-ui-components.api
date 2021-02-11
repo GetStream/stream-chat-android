@@ -238,10 +238,6 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 }
 
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked;
-}
-
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList;
 }

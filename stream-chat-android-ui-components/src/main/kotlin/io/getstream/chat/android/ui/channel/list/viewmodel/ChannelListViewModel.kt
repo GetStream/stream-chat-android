@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.isDraft
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -75,10 +74,6 @@ public class ChannelListViewModel(
     public fun onAction(action: Action) {
         when (action) {
             is Action.ReachedEndOfList -> requestMoreChannels()
-            is Action.LogoutClicked -> {
-                ChatClient.instance().disconnect()
-                stateMerger.postValue(State.NavigateToLoginScreen)
-            }
         }.exhaustive
     }
 
@@ -120,7 +115,6 @@ public class ChannelListViewModel(
 
     public sealed class Action {
         public object ReachedEndOfList : Action()
-        public object LogoutClicked : Action()
     }
 
     public companion object {
