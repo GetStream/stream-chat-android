@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     >
 
-    <io.getstream.chat.android.ui.messages.adapter.view.GapView
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             >
 
-            <io.getstream.chat.android.ui.messages.adapter.view.MediaAttachmentView
+            <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
                 android:id="@+id/mediaAttachmentView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

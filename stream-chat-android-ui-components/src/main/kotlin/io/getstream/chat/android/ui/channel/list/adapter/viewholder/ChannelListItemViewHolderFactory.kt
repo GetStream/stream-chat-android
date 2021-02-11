@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemViewType
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelListLoadingMoreViewHolder
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
 
 public open class ChannelListItemViewHolderFactory {
 

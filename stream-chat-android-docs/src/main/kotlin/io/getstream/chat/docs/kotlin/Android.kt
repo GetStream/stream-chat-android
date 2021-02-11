@@ -3,21 +3,21 @@ package io.getstream.chat.docs.kotlin
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.messages.header.MessageListHeaderView
-import io.getstream.chat.android.ui.messages.header.bindView
+import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
-import io.getstream.chat.android.ui.search.SearchResultListView
-import io.getstream.chat.android.ui.search.SearchViewModel
-import io.getstream.chat.android.ui.search.bindView
-import io.getstream.chat.android.ui.textinput.MessageInputView
-import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.android.ui.search.list.SearchResultListView
+import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
+import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 
 class Android {
 
@@ -53,7 +53,7 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: ChannelHeaderViewModel by viewModels()
+            val viewModel: MessageListHeaderViewModel by viewModels()
             // Bind it with MessagesHeaderView
             viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
         }
