@@ -6,8 +6,10 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
@@ -143,6 +145,9 @@ class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_list_view_new">Message List View</a>
+     */
     class MessageListViewDocs : Fragment() {
         lateinit var messageListView: MessageListView
 
@@ -199,6 +204,17 @@ class Android {
         fun bindWithViewModel() {
             val viewModel: MessageListViewModel by viewModels()
             viewModel.bindView(messageListView, viewLifecycleOwner)
+        }
+
+        fun displayNewMessage() {
+            val messageItem = MessageListItem.MessageItem(
+                message = Message(text = "Lorem ipsum dolor"),
+                positions = listOf(MessageListItem.Position.TOP),
+                isMine = true
+            )
+
+            val messageItemListWrapper = MessageListItemWrapper(listOf(messageItem))
+            messageListView.displayNewMessages(messageItemListWrapper)
         }
     }
 

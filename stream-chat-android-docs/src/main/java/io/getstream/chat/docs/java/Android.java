@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.utils.DateFormatter;
 
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
@@ -19,8 +20,10 @@ import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
@@ -160,6 +163,9 @@ public class Android {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_list_view_new">Message List View</a>
+     */
     class MessageListViewDocs extends Fragment {
         MessageListView messageListView;
 
@@ -218,6 +224,20 @@ public class Android {
                     new ViewModelProvider(this).get(MessageListViewModel.class);
 
             MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
+        }
+
+        public void displayNewMessage() {
+            Message message = new Message();
+            message.setText("Lorem ipsum dolor");
+            MessageListItem.MessageItem messageItem = new MessageListItem.MessageItem(
+                    message, new ArrayList<>(), true, new ArrayList<>(), false, false
+            );
+
+            MessageListItemWrapper messageWrapper = new MessageListItemWrapper(
+                    Collections.singletonList(messageItem), false, false, false
+            );
+
+            messageListView.displayNewMessages(messageWrapper);
         }
 
         class MessageListItemViewHolderFactoryExtended extends MessageListItemViewHolderFactory {
