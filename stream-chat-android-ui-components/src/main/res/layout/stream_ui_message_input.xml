@@ -87,7 +87,7 @@
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
         />
 
-    <io.getstream.chat.android.ui.textinput.MessageInputFieldView
+    <io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
         android:id="@+id/messageInputFieldView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

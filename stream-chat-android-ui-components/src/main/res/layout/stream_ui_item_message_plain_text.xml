@@ -8,7 +8,7 @@
     android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.messages.adapter.view.GapView
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -54,7 +54,7 @@
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
 
-        <io.getstream.chat.android.ui.messages.adapter.view.MessageReplyView
+        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
             android:id="@+id/replyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             tools:text="@tools:sample/lorem"
             />
 
-        <io.getstream.chat.android.ui.messages.adapter.view.LinkAttachmentView
+        <io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
             android:id="@+id/linkAttachmentView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
+    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/messageContainer"/>
 
-    <io.getstream.chat.android.ui.messages.adapter.view.FootnoteView
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -13,9 +13,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.messages.header.bindView
-import io.getstream.chat.android.ui.messages.header.viewmodel.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.messages.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
