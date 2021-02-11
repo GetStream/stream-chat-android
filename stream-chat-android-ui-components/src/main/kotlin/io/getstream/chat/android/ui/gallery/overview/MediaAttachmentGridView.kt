@@ -12,9 +12,10 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentAdapter
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale

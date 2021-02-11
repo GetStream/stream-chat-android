@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
+import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryRepository
 
 public class AttachmentGalleryDestination(
     context: Context,

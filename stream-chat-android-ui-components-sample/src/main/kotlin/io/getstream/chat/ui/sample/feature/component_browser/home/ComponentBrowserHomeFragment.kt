@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.utils.ReactionType
+import io.getstream.chat.android.ui.common.ReactionType
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
