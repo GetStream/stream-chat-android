@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.messages.view.bindView
-import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -50,7 +50,7 @@ class AddChannelFragment : Fragment() {
     }
 
     private fun initializeChannel(cid: String) {
-        val factory = ChannelViewModelFactory(cid)
+        val factory = MessageListViewModelFactory(cid)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
         val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
         binding.addChannelView.apply {

@@ -102,7 +102,7 @@
                 />
 
 
-            <io.getstream.chat.android.ui.messages.header.MessageListHeaderView
+            <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
                 android:id="@+id/messagesHeaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 android:textColor="@color/stream_ui_text_color_primary"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.view.ViewReactionsView
+            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
                 android:textColor="@color/stream_ui_text_color_primary"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.edit.EditReactionsView
+            <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
                 android:id="@+id/editReactionsView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -293,7 +293,7 @@
                 android:textColor="@color/stream_ui_text_color_primary"
                 />
 
-            <io.getstream.chat.android.ui.messages.reactions.user.UserReactionsView
+            <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
                 android:id="@+id/userReactionsView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

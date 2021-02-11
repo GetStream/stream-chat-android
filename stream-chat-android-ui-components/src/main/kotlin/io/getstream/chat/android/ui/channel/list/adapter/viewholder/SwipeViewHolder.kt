@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 

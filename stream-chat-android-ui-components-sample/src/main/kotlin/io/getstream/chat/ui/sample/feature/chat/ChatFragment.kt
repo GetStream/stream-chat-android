@@ -9,16 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.messages.header.bindView
-import io.getstream.chat.android.ui.messages.view.bindView
-import io.getstream.chat.android.ui.textinput.bindView
+import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -29,9 +29,9 @@ class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
 
-    private val factory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(args.cid, args.messageId) }
+    private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(args.cid, args.messageId) }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
-    private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
+    private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
@@ -155,7 +155,14 @@ class ChatFragment : Fragment() {
                 when (it) {
                     is MessageListViewModel.State.Loading -> Unit
                     is MessageListViewModel.State.Result -> Unit
-                    is MessageListViewModel.State.NavigateUp -> findNavController().navigateUp()
+                    is MessageListViewModel.State.NavigateUp -> {
+                        val navigationHappened = findNavController().navigateUp()
+
+                        if (!navigationHappened) {
+                            findNavController()
+                                .navigateSafely(ChatFragmentDirections.actionChatFragmentToHomeFragment())
+                        }
+                    }
                 }
             }
         }

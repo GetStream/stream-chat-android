@@ -1768,6 +1768,7 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
 	public static synthetic fun getUsers$default (Lio/getstream/chat/android/client/models/Channel;ZILjava/lang/Object;)Ljava/util/List;
+	public static final fun isDraft (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
@@ -1973,20 +1974,6 @@ public final class com/getstream/sdk/chat/view/messages/MessageListItemWrapper {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/ChannelHeaderViewModel : androidx/lifecycle/ViewModel {
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
-	public final fun getAnyOtherUsersOnline ()Landroidx/lifecycle/LiveData;
-	public final fun getChannelState ()Landroidx/lifecycle/LiveData;
-	public final fun getMembers ()Landroidx/lifecycle/LiveData;
-	public final fun getOnline ()Landroidx/lifecycle/LiveData;
-	public final fun getTypingUsers ()Landroidx/lifecycle/LiveData;
-	public final fun setActiveThread (Landroidx/lifecycle/LiveData;)V
-	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
-}
-
 public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
@@ -2008,93 +1995,6 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public static synthetic fun sendMessageWithAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun stopTyping ()V
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel : androidx/lifecycle/ViewModel {
-	public static final field Companion Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Companion;
-	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)V
-	public synthetic fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;
-	public final fun getState ()Landroidx/lifecycle/LiveData;
-	public final fun getTypingEvents ()Landroidx/lifecycle/LiveData;
-	public final fun hideChannel (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun leaveChannel (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun markAllRead ()V
-	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event;)V
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Companion {
-}
-
-public abstract class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event {
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event$LogoutClicked : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event$LogoutClicked;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event$ReachedEndOfList : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$Event$ReachedEndOfList;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$PaginationState {
-	public fun <init> ()V
-	public fun <init> (ZZ)V
-	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Z
-	public final fun component2 ()Z
-	public final fun copy (ZZ)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$PaginationState;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$PaginationState;ZZILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$PaginationState;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getEndOfChannels ()Z
-	public final fun getLoadingMore ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Loading : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Loading;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$NavigateToLoginScreen : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$NavigateToLoginScreen;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$NoChannelsAvailable : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$NoChannelsAvailable;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Result : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Result;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Result;Ljava/util/List;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Result;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannels ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/factory/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/factory/ChannelsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/utils/FilterObject;)V
-	public fun <init> (Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
-	public fun <init> (Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLiveDataKt {
