@@ -30,10 +30,12 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
+	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setItemSeparator (I)V
 	public final fun setItemSeparatorHeight (I)V
+	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMoreOptionsClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
