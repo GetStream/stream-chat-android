@@ -24,7 +24,7 @@ internal fun Channel.getLastMessage(): Message? =
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
         .filter { !it.silent }
-        .filter { !it.shadowed }
+        .filter { it.user.isCurrentUser() || !it.shadowed }
         .filter { it.type == ModelType.message_regular }
         .maxByOrNull { it.getCreatedAtOrThrow() }
 
