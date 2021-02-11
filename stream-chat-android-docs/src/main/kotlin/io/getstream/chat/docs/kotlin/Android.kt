@@ -8,9 +8,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.ChatUI
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -27,13 +32,20 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
+import org.threeten.bp.format.DateTimeFormatter
 
 class Android {
 
@@ -241,6 +253,89 @@ class Android {
             destination.setData(attachmentGalleryItems, 0)
 
             ChatUI.instance().navigator.navigate(destination)
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_list_view_new">Message List View</a>
+     */
+    class MessageListViewDocs : Fragment() {
+        lateinit var messageListView: MessageListView
+
+        fun emptyState() {
+            // When there's no results, show empty state
+            messageListView.showEmptyStateView()
+        }
+
+        fun loadingView() {
+            // When loading information, show loading view
+            messageListView.showLoadingView()
+        }
+
+        fun viewHolderFactory() {
+            val newViewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactoryExtended()
+            messageListView.setMessageViewHolderFactory(newViewHolderFactory)
+        }
+
+        fun messageClick() {
+            messageListView.setMessageClickListener { message ->
+                // Handle message click
+            }
+        }
+
+        fun messageLongClick() {
+            messageListView.setMessageLongClickListener { message ->
+                // Handle message long click
+            }
+        }
+
+        fun dateFormatter() {
+            messageListView.setMessageDateFormatter(
+                object : DateFormatter {
+                    override fun formatDate(localDateTime: LocalDateTime?): String {
+                        // Provide a way to format Date
+                        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
+                    }
+
+                    override fun formatTime(localTime: LocalTime?): String {
+                        // Provide a way to format Time.
+                        return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                    }
+                }
+            )
+        }
+
+        fun customMessagesFilter() {
+            messageListView.setMessageListItemPredicate { messageList ->
+                // Boolean logic here
+                true
+            }
+        }
+
+        fun bindWithViewModel() {
+            val viewModel: MessageListViewModel by viewModels()
+            viewModel.bindView(messageListView, viewLifecycleOwner)
+        }
+
+        fun displayNewMessage() {
+            val messageItem = MessageListItem.MessageItem(
+                message = Message(text = "Lorem ipsum dolor"),
+                positions = listOf(MessageListItem.Position.TOP),
+                isMine = true
+            )
+
+            val messageItemListWrapper = MessageListItemWrapper(listOf(messageItem))
+            messageListView.displayNewMessages(messageItemListWrapper)
+        }
+    }
+
+    class MessageListItemViewHolderFactoryExtended : MessageListItemViewHolderFactory() {
+        override fun createViewHolder(
+            parentView: ViewGroup,
+            viewType: Int,
+        ): BaseMessageItemViewHolder<out MessageListItem> {
+            // Create a new type of view holder here, if needed
+            return super.createViewHolder(parentView, viewType)
         }
     }
 }
