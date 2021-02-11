@@ -52,7 +52,6 @@ allprojects {
                 // Remove when https://github.com/facebook/flipper/issues/1775 is closed
                 includeGroup("com.facebook.flipper")
 
-                includeModule("net.yslibrary.keyboardvisibilityevent", "keyboardvisibilityevent")
                 includeModule("me.relex", "photodraweeview")
                 // https://youtrack.jetbrains.com/issue/IDEA-261387
                 includeModule("org.jetbrains.trove4j", "trove4j")
