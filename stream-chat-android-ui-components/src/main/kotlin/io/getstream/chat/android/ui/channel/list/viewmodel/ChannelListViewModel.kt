@@ -33,7 +33,7 @@ public class ChannelListViewModel(
         Filters.ne("draft", true)
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
-    private val limit: Int = 30
+    private val limit: Int = 30,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -44,18 +44,25 @@ public class ChannelListViewModel(
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
     init {
-        stateMerger.value = State.Loading
+        stateMerger.value = INITIAL_STATE
         chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+            val currentState = stateMerger.value!!
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
                 stateMerger.addSource(
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading -> State.Loading
-                            is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
-                            is QueryChannelsController.ChannelsState.Result ->
-                                State.Result(channelState.channels.filterNot { it.hidden == true || it.isDraft })
+                            is QueryChannelsController.ChannelsState.Loading,
+                            -> currentState.copy(isLoading = true)
+                            is QueryChannelsController.ChannelsState.OfflineNoResults -> currentState.copy(
+                                isLoading = false,
+                                channels = emptyList(),
+                            )
+                            is QueryChannelsController.ChannelsState.Result -> currentState.copy(
+                                isLoading = false,
+                                channels = channelState.channels.filterNot { it.hidden == true || it.isDraft },
+                            )
                         }
                     }
                 ) { state -> stateMerger.value = state }
@@ -66,7 +73,10 @@ public class ChannelListViewModel(
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
             } else {
-                stateMerger.postValue(State.NoChannelsAvailable)
+                stateMerger.value = currentState.copy(
+                    isLoading = false,
+                    channels = emptyList(),
+                )
             }
         }
     }
@@ -101,16 +111,11 @@ public class ChannelListViewModel(
         paginationStateMerger.value = reducer(paginationStateMerger.value ?: PaginationState())
     }
 
-    public sealed class State {
-        public object Loading : State()
-        public data class Result(val channels: List<Channel>) : State()
-        public object NoChannelsAvailable : State()
-        public object NavigateToLoginScreen : State()
-    }
+    public data class State(val isLoading: Boolean, val channels: List<Channel>)
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
-        val endOfChannels: Boolean = false
+        val endOfChannels: Boolean = false,
     )
 
     public sealed class Action {
@@ -120,5 +125,7 @@ public class ChannelListViewModel(
     public companion object {
         @JvmField
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
+
+        private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
     }
 }
