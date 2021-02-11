@@ -31,7 +31,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     @Volatile
     private var listeners: List<NetworkStateListener> = listOf()
 
-    private var isRegistered: AtomicBoolean = AtomicBoolean(false)
+    private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
     fun isConnected(): Boolean {
         isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
