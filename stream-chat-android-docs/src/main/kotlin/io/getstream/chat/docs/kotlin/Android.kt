@@ -23,12 +23,12 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
+import org.threeten.bp.format.DateTimeFormatter
 
 class Android {
 
