@@ -39,8 +39,8 @@ public class ChannelsView @JvmOverloads constructor(
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
-            it.getText(R.styleable.ChannelsView_streamChannelsEmptyStateLabelText)?.let { emptyStateText ->
+        context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use { attrs ->
+            attrs.getText(R.styleable.ChannelsView_streamChannelsEmptyStateLabelText)?.let { emptyStateText ->
                 emptyStateView.apply {
                     if (this is TextView) {
                         text = emptyStateText

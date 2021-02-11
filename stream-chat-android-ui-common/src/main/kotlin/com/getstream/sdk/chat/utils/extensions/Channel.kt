@@ -5,7 +5,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 
-internal val Channel.isDraft: Boolean
+@InternalStreamChatApi
+public val Channel.isDraft: Boolean
     get() = getExtraValue("draft", false)
 
 @InternalStreamChatApi
@@ -21,6 +22,11 @@ public fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
                 else -> users
             }
         }
+
+@InternalStreamChatApi
+public fun Channel.isDistinctChannel(): Boolean {
+    return cid.contains("!members")
+}
 
 private fun List<User>.withoutCurrentUser(): List<User> {
     return if (ChatDomain.isInitialized) {

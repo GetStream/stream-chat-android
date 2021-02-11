@@ -7,20 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.ChatUI
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.textinput.MessageInputFieldView
-import io.getstream.chat.android.ui.utils.ReactionType
+import io.getstream.chat.android.ui.common.ReactionType
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
-import io.getstream.chat.ui.sample.feature.component_browser.utils.randomCommand
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
-import java.util.Date
 
 @InternalStreamChatApi
 class ComponentBrowserHomeFragment : Fragment() {
@@ -56,15 +52,11 @@ class ComponentBrowserHomeFragment : Fragment() {
         setupChannelsHeaderView()
         setupMessagesHeaderView()
         setupSearchView()
-        setupMessagePreviewView()
         setupViewReactionsView()
         setupEditReactionsView()
         setupUserReactionsView()
         setupMessageList()
         setupTypingIndicator()
-        setupScrollButtonView()
-        setupMessageInputFieldView()
-        setupMessageReplyView()
     }
 
     private fun setupMessageList() {
@@ -107,20 +99,6 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
-        }
-    }
-
-    private fun setupMessagePreviewView() {
-        binding.messagePreviewView.setMessage(
-            Message(
-                id = "",
-                user = randomUser(),
-                createdAt = Date(2020, 7, 15, 14, 22),
-                text = "Hello world, how are you doing?",
-            ),
-        )
-        binding.messagePreviewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment)
         }
     }
 
@@ -173,33 +151,6 @@ class ComponentBrowserHomeFragment : Fragment() {
         )
         binding.userReactionsViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)
-        }
-    }
-
-    private fun setupScrollButtonView() {
-        binding.scrollButtonView.setUnreadCount(11)
-        binding.scrollButtonViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserScrollButtonView)
-        }
-    }
-
-    private fun setupMessageInputFieldView() {
-        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.CommandMode(randomCommand())
-        binding.messageInputFieldViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView)
-        }
-    }
-
-    private fun setupMessageReplyView() {
-        binding.messageReplyView.setMessage(
-            Message(
-                text = "Lorem ipsum dolor",
-                user = randomUser()
-            ),
-            true
-        )
-        binding.messageReplyViewContainer.setOnClickListener {
-            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment)
         }
     }
 }

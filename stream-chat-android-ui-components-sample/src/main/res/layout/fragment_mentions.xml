@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.mentions.MentionsListView
+    <io.getstream.chat.android.ui.mention.list.MentionListView
         android:id="@+id/mentionsListView"
         android:layout_width="0dp"
         android:layout_height="0dp"

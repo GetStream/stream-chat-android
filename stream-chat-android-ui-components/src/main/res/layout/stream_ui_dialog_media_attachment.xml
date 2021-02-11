@@ -1,51 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
 
-    <ImageView
-        android:id="@+id/closeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
-        android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/stream_ui_ic_close"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_black"
-        tools:ignore="ContentDescription"
-        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        >
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stream_ui_gallery_overview_title"
-        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarGuideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        <ImageView
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/stream_ui_ic_close"
+            app:tint="@color/stream_ui_black"
+            tools:ignore="ContentDescription"
+            />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/toolbarGuideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="40dp"
-        />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/stream_ui_gallery_overview_title"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            />
+
+    </FrameLayout>
 
     <io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView
         android:id="@+id/mediaAttachmentGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/toolbarGuideline"
         app:streamUiShowUserAvatars="true"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

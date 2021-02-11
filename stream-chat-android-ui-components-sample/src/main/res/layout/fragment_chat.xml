@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.messages.header.MessagesHeaderView
+    <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
         android:id="@+id/messagesHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <io.getstream.chat.android.ui.messages.view.MessageListView
+    <io.getstream.chat.android.ui.message.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
         />
 
-    <io.getstream.chat.android.ui.suggestions.SuggestionListView
+    <io.getstream.chat.android.ui.suggestion.list.SuggestionListView
         android:id="@+id/suggestionListView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <io.getstream.chat.android.ui.textinput.MessageInputView
+    <io.getstream.chat.android.ui.message.input.MessageInputView
         android:id="@+id/messageInputView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

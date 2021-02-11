@@ -12,7 +12,7 @@ import org.amshove.kluent.calling
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class WhenEnrichChannel : BaseRepositoryHelperTest() {
+internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given a channel config in repo Should update channel by config from repo`() {

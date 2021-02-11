@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.ViewFlipper"
+    >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mentionListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="15"
+        tools:listitem="@layout/stream_ui_item_mention"
+        />
+
+    <LinearLayout
+        android:id="@+id/emptyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="40dp"
+        >
+
+        <ImageView
+            android:id="@+id/emptyImage"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:src="@drawable/stream_ui_ic_mentions_empty"
+            app:tint="@color/stream_ui_grey_gainsboro"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/emptyLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/stream_ui_mentions_list_empty"
+            android:textAppearance="@style/StreamUiTextAppearance.Body"
+            android:textColor="@color/stream_ui_text_color_secondary"
+            />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+
+</merge>

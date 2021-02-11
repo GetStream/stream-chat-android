@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.converter
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
+import io.getstream.chat.android.livedata.repository.database.converter.DateConverter
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date

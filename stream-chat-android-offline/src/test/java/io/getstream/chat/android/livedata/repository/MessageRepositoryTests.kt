@@ -2,10 +2,12 @@ package io.getstream.chat.android.livedata.repository
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageEntity
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.livedata.repository.domain.message.MessageDao
+import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
+import io.getstream.chat.android.livedata.repository.domain.message.MessageRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When

@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.ui.utils.extensions.isCurrentUserOwnerOrAdmin
+import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
 class ChatInfoViewModel(

@@ -64,7 +64,6 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.repository.mapper.toEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
@@ -86,6 +85,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.regex.Pattern
 import kotlin.collections.set
 import kotlin.math.max
 
@@ -610,8 +610,6 @@ internal class ChannelControllerImpl(
             }
         }
 
-        // TODO remove usage of MessageEntity
-        val messageEntity = newMessage.toEntity()
         if (hasAttachments) {
             uploadStatusMessage = newMessage
         }
@@ -692,7 +690,7 @@ internal class ChannelControllerImpl(
     private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
         val processedMessage: Message = result.data()
         processedMessage.apply {
-            enrichWithCid(cid)
+            enrichWithCid(this@ChannelControllerImpl.cid)
             syncStatus = SyncStatus.COMPLETED
             domainImpl.repos.insertMessage(this)
         }
@@ -725,7 +723,7 @@ internal class ChannelControllerImpl(
             attachment.uploadState is Attachment.UploadState.InProgress
         }
 
-        return if (message.text.startsWith("/") || (hasAttachments && hasAttachmentsToUpload)) {
+        return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
             "ephemeral"
         } else {
             "regular"
@@ -1529,5 +1527,6 @@ internal class ChannelControllerImpl(
         private const val TYPE_IMAGE = "image"
         private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
     }
 }

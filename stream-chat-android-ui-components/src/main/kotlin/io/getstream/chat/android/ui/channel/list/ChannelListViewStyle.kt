@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.extensions.internal.use
 
 public class ChannelListViewStyle internal constructor(context: Context, attrs: AttributeSet?) {
     @Px

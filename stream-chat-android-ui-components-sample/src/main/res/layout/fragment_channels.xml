@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <io.getstream.chat.android.ui.channel.list.ChannelsView
+    <io.getstream.chat.android.ui.channel.list.ChannelListView
         android:id="@+id/channelsView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/searchInputView"
         />
 
-    <io.getstream.chat.android.ui.search.SearchResultListView
+    <io.getstream.chat.android.ui.search.list.SearchResultListView
         android:id="@+id/searchResultListView"
         android:layout_width="0dp"
         android:layout_height="0dp"

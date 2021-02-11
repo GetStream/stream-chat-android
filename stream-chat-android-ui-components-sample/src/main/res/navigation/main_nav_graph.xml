@@ -408,10 +408,6 @@
             app:destination="@id/componentBrowserMessageListBrowserFragment"
             />
         <action
-            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessagePreviewViewFragment"
-            app:destination="@id/componentBrowserMessagePreviewViewFragment"
-            />
-        <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment"
             app:destination="@id/componentBrowserViewReactionsFragment"
             />
@@ -426,21 +422,6 @@
         <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment"
             app:destination="@id/componentBrowserUserReactionsFragment"
-            />
-
-        <action
-            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserScrollButtonView"
-            app:destination="@id/componentBrowserScrollButtonViewFragment"
-            />
-
-        <action
-            android:id="@+id/action_componentBrowserMessageList_to_componentBrowserMessageInputFieldView"
-            app:destination="@id/componentBrowserMessageInputFieldViewFragment"
-            />
-
-        <action
-            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserMessageReplyViewFragment"
-            app:destination="@id/componentBrowserMessageReplyViewFragment"
             />
     </fragment>
 
@@ -466,12 +447,6 @@
         android:id="@+id/componentBrowserMessagesHeaderFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
-        />
-
-    <fragment
-        android:id="@+id/componentBrowserMessagePreviewViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messagepreview.ComponentBrowserMessagePreviewFragment"
-        android:label="ComponentBrowserMessagePreviewView"
         />
 
     <fragment
@@ -582,27 +557,9 @@
         />
 
     <fragment
-        android:id="@+id/componentBrowserScrollButtonViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.ScrollButtonViewComponentBrowserFragment"
-        android:label="ComponentBrowserScrollButtonViewFragment"
-        />
-
-    <fragment
-        android:id="@+id/componentBrowserMessageInputFieldViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.textinput.ComponentBrowserMessageInputFieldViewFragment"
-        android:label="ComponentBrowserMessageInputFieldViewFragment"
-        />
-
-    <fragment
         android:id="@+id/componentBrowserOnlyFileAttachmentsMessagesFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyFileAttachmentsMessagesFragment"
-        />
-
-    <fragment
-        android:id="@+id/componentBrowserMessageReplyViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageReplyViewComponentBrowserFragment"
-        android:label="ComponentBrowserMessageReplyViewFragment"
         />
 
     <fragment

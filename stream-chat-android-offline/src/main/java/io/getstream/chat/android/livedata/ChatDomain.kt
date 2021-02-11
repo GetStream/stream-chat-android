@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper

@@ -349,8 +349,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             type = reactionType
             score = 1
         }
-        val currentUserId = ChatDomain.instance().currentUser.id
-        if (message.latestReactions.any { it.type == reactionType && it.user?.id == currentUserId }) {
+        if (message.ownReactions.any { it.type == reactionType }) {
             domain.useCases.deleteReaction(cid, reaction).enqueue()
         } else {
             domain.useCases.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue()

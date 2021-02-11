@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--MessageListHeaderView-->
+    <declare-styleable name="MessageListHeaderView" parent="AvatarView">
+        <attr name="streamUiMessageListHeaderShowUserAvatar" format="boolean" />
+
+        <attr name="streamUiMessageListHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageListHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamUiMessageListHeaderTitleTextFont" format="reference" />
+        <attr name="streamUiMessageListHeaderTitleFontAssets" format="string" />
+        <attr name="streamUiMessageListHeaderTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageListHeaderOfflineLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageListHeaderOfflineLabelTextColor" format="color|reference" />
+        <attr name="streamUiMessageListHeaderOfflineLabelTextFont" format="reference" />
+        <attr name="streamUiMessageListHeaderOfflineLabelFontAssets" format="string" />
+        <attr name="streamUiMessageListHeaderOfflineLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageListHeaderSearchingForNetworkLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageListHeaderSearchingForNetworkLabelColor" format="color|reference" />
+        <attr name="streamUiMessageListHeaderSearchingForNetworkLabelTextFont" format="reference" />
+        <attr name="streamUiMessageListHeaderSearchingForNetworkLabelFontAssets" format="string" />
+        <attr name="streamUiMessageListHeaderSearchingForNetworkLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar" format="boolean" />
+        <attr name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
+
+        <attr name="streamUiMessageListHeaderShowBackButton" format="boolean" />
+        <attr name="streamUiMessageListHeaderShowBackButtonBadge" format="boolean" />
+        <attr name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor" format="color" />
+
+        <attr name="streamUiMessageListHeaderDefaultLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageListHeaderDefaultLabelTextColor" format="color|reference" />
+        <attr name="streamUiMessageListHeaderDefaultLabelTextFont" format="reference" />
+        <attr name="streamUiMessageListHeaderDefaultLabelFontAssets" format="string" />
+        <attr name="streamUiMessageListHeaderDefaultLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

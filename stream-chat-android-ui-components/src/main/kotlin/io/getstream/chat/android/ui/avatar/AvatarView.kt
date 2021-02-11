@@ -8,8 +8,12 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.getUsers
+import com.getstream.sdk.chat.utils.extensions.isDistinctChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.avatar.internal.Avatar
+import io.getstream.chat.android.ui.avatar.internal.AvatarStyle
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -45,10 +49,16 @@ public class AvatarView : AppCompatImageView {
     }
 
     public fun setChannelData(channel: Channel) {
-        load(
-            data = Avatar.ChannelAvatar(channel, avatarStyle),
-            transformation = Circle,
-        )
+        val otherUsers = channel.getUsers()
+        if (channel.isDistinctChannel() && otherUsers.size == 1) {
+            setUserData(otherUsers.first())
+        } else {
+            load(
+                data = Avatar.ChannelAvatar(channel, avatarStyle),
+                transformation = Circle,
+            )
+            isOnline = false
+        }
     }
 
     public fun setUserData(user: User) {
