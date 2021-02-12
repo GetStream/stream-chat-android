@@ -312,6 +312,10 @@ class Android {
             }
         }
 
+        fun setNewMessageBehaviour() {
+            messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
+        }
+
         fun bindWithViewModel() {
             val viewModel: MessageListViewModel by viewModels()
             viewModel.bindView(messageListView, viewLifecycleOwner)

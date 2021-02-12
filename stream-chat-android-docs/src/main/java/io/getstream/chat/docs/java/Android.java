@@ -345,6 +345,12 @@ public class Android {
             });
         }
 
+        public void setNewMessageBehaviour() {
+            messageListView.setNewMessagesBehaviour(
+                    MessageListView.NewMessagesBehaviour.COUNT_UPDATE
+            );
+        }
+
         public void bindWithViewModel() {
             MessageListViewModel viewModel =
                     new ViewModelProvider(this).get(MessageListViewModel.class);
