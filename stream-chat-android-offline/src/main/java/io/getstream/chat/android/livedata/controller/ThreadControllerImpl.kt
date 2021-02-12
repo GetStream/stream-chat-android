@@ -8,10 +8,10 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.extensions.wasCreatedAfterOrAt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import wasCreatedAfterOrAt
 
 /**
  * The ThreadControllerImpl sets up a few convenient livedata objects for working with threads
