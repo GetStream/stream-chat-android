@@ -45,12 +45,17 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
                     querySort = USERS_QUERY_SORT,
                     presence = true
                 )
-            ).execute()
+            ).execute().also { result ->
+                if (result.isSuccess && result.data().isNotEmpty()) {
+                    chatDomainImpl.repos.insertUsers(result.data())
+                }
+            }
         }
     }
 
     internal companion object {
         private val USERS_QUERY_SORT = QuerySort.asc(User::name)
+
         @VisibleForTesting
         internal const val FIELD_NAME = "name"
         private const val FIELD_ID = "id"
