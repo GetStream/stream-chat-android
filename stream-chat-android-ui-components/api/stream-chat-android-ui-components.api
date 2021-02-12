@@ -30,10 +30,12 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
+	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setItemSeparator (I)V
 	public final fun setItemSeparatorHeight (I)V
+	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMoreOptionsClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
@@ -236,10 +238,6 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 }
 
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked;
-}
-
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList;
 }
@@ -262,29 +260,16 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Loading : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Loading;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NavigateToLoginScreen : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NavigateToLoginScreen;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NoChannelsAvailable : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NoChannelsAvailable;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
+	public fun <init> (ZLjava/util/List;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ZLjava/util/List;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;ZLjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannels ()Ljava/util/List;
 	public fun hashCode ()I
+	public final fun isLoading ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

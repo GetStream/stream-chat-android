@@ -12,24 +12,18 @@ public fun ChannelListViewModel.bindView(
     lifecycle: LifecycleOwner
 ) {
     state.observe(lifecycle) { channelState ->
-        when (channelState) {
-            is ChannelListViewModel.State.NoChannelsAvailable -> {
+        if (channelState.isLoading) {
+            view.hideEmptyStateView()
+            view.showLoadingView()
+        } else {
+            view.hideLoadingView()
+            if (channelState.channels.isEmpty()) {
                 view.showEmptyStateView()
-                view.hideLoadingView()
-            }
-            is ChannelListViewModel.State.Loading -> {
-                view.hideEmptyStateView()
-                if (!view.hasChannels()) {
-                    view.showLoadingView()
-                }
-            }
-            is ChannelListViewModel.State.Result -> {
+            } else {
                 channelState
                     .channels
                     .map(ChannelListItem::ChannelItem)
                     .let(view::setChannels)
-
-                view.hideLoadingView()
                 view.hideEmptyStateView()
             }
         }
