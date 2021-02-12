@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.java;
 
+import android.util.Log;
 import android.view.ViewGroup;
 
 import android.view.Gravity;
@@ -294,6 +295,8 @@ public class Android {
      */
     class MessageListViewDocs extends Fragment {
         MessageListView messageListView;
+        private final MessageListViewModel viewModel =
+                new ViewModelProvider(this).get(MessageListViewModel.class);
 
         public void emptyState() {
             messageListView.showEmptyStateView();
@@ -349,6 +352,16 @@ public class Android {
             messageListView.setNewMessagesBehaviour(
                     MessageListView.NewMessagesBehaviour.COUNT_UPDATE
             );
+        }
+
+        public void setEndRegionReachedHandler() {
+            messageListView.setEndRegionReachedHandler(() -> {
+                // Handle pagination and include new logic
+
+                // Option to log the event and use the viewModel
+                viewModel.onEvent(MessageListViewModel.Event.EndRegionReached.INSTANCE);
+                Log.e("LogTag","On load more");
+            });
         }
 
         public void bindWithViewModel() {
