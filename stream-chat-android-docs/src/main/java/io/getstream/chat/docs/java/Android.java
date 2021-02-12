@@ -360,7 +360,7 @@ public class Android {
 
                 // Option to log the event and use the viewModel
                 viewModel.onEvent(MessageListViewModel.Event.EndRegionReached.INSTANCE);
-                Log.e("LogTag","On load more");
+                Log.e("LogTag", "On load more");
             });
         }
 
