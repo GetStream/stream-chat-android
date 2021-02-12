@@ -32,8 +32,8 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
                 defaultUsersQueryFilter
             } else {
                 Filters.and(
-                    Filters.autocomplete("name", querySearch),
-                    Filters.ne("id", chatDomainImpl.currentUser.id)
+                    Filters.autocomplete(FIELD_NAME, querySearch),
+                    Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
                 )
             }
 
@@ -49,7 +49,10 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
         }
     }
 
-    private companion object {
+    internal companion object {
         private val USERS_QUERY_SORT = QuerySort.asc(User::name)
+        @VisibleForTesting
+        internal const val FIELD_NAME = "name"
+        private const val FIELD_ID = "id"
     }
 }
