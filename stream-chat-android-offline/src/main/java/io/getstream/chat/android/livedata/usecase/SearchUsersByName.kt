@@ -30,30 +30,34 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
     public operator fun invoke(querySearch: String, offset: Int, userLimit: Int): Call<List<User>> {
         return CoroutineCall(chatDomainImpl.scope) {
             if (chatDomainImpl.isOnline()) {
-                val filter = if (querySearch.isEmpty()) {
-                    defaultUsersQueryFilter
-                } else {
-                    Filters.and(
-                        Filters.autocomplete(FIELD_NAME, querySearch),
-                        Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
-                    )
-                }
-
-                chatDomainImpl.client.queryUsers(
-                    QueryUsersRequest(
-                        filter = filter,
-                        offset = offset,
-                        limit = userLimit,
-                        querySort = USERS_QUERY_SORT,
-                        presence = true
-                    )
-                ).execute().also { result ->
-                    if (result.isSuccess && result.data().isNotEmpty()) {
-                        chatDomainImpl.repos.insertUsers(result.data())
-                    }
-                }
+                performOnlineSearch(querySearch, offset, userLimit)
             } else {
                 Result(emptyList())
+            }
+        }
+    }
+
+    private suspend fun performOnlineSearch(querySearch: String, offset: Int, userLimit: Int): Result<List<User>> {
+        val filter = if (querySearch.isEmpty()) {
+            defaultUsersQueryFilter
+        } else {
+            Filters.and(
+                Filters.autocomplete(FIELD_NAME, querySearch),
+                Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
+            )
+        }
+
+        return chatDomainImpl.client.queryUsers(
+            QueryUsersRequest(
+                filter = filter,
+                offset = offset,
+                limit = userLimit,
+                querySort = USERS_QUERY_SORT,
+                presence = true
+            )
+        ).execute().also { result ->
+            if (result.isSuccess && result.data().isNotEmpty()) {
+                chatDomainImpl.repos.insertUsers(result.data())
             }
         }
     }
