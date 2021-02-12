@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.TestCall
@@ -43,6 +44,21 @@ internal class SearchUsersByNameTests {
         verify(chatClient).queryUsers(
             argThat {
                 filter == sut.defaultUsersQueryFilter
+            }
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun `Given nonempty search string Should perform search query with autocomplete filter`() {
+        When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
+
+        sut(querySearch = "searchString", randomInt(), randomInt()).execute()
+
+        verify(chatClient).queryUsers(
+            argThat {
+                val filterMap = filter.data[Filters.KEY_AND] as ArrayList<Map<String, Map<String, String>>>
+                filterMap.first()[SearchUsersByName.FIELD_NAME]!![Filters.KEY_AUTOCOMPLETE] == "searchString"
             }
         )
     }

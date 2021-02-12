@@ -17,19 +17,19 @@ import io.getstream.chat.android.client.utils.FilterObject
  */
 public object Filters {
 
-    internal const val KEY_EXIST = "\$exists"
-    internal const val KEY_CONTAINS = "\$contains"
-    internal const val KEY_AND = "\$and"
-    internal const val KEY_OR = "\$or"
-    internal const val KEY_NOR = "\$nor"
-    internal const val KEY_NE = "\$ne"
-    internal const val KEY_GREATER_THAN = "\$gt"
-    internal const val KEY_GREATER_THAN_OR_EQUALS = "\$gte"
-    internal const val KEY_LESS_THAN = "\$lt"
-    internal const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
-    internal const val KEY_IN = "\$in"
-    internal const val KEY_NOT_IN = "\$nin"
-    internal const val KEY_AUTOCOMPLETE = "\$autocomplete"
+    public const val KEY_EXIST: String = "\$exists"
+    public const val KEY_CONTAINS: String = "\$contains"
+    public const val KEY_AND: String = "\$and"
+    public const val KEY_OR: String = "\$or"
+    public const val KEY_NOR: String = "\$nor"
+    public const val KEY_NE: String = "\$ne"
+    public const val KEY_GREATER_THAN: String = "\$gt"
+    public const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
+    public const val KEY_LESS_THAN: String = "\$lt"
+    public const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
+    public const val KEY_IN: String = "\$in"
+    public const val KEY_NOT_IN: String = "\$nin"
+    public const val KEY_AUTOCOMPLETE: String = "\$autocomplete"
 
     @JvmStatic
     public fun exists(value: Any): FilterObject {
