@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHold
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
@@ -164,9 +165,27 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: MessageInputViewModel by viewModels()
-            // Bind it with ChannelListHeaderView
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageInputViewModel by viewModels { factory }
+            // Bind it with MessageInputView
             viewModel.bindView(messageInputView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageInputView.setOnSendButtonClickListener {
+                // Handle send button click
+            }
+            messageInputView.setTypingListener(
+                object : MessageInputView.TypingListener {
+                    override fun onKeystroke() {
+                        // Handle keystroke case
+                    }
+
+                    override fun onStopTyping() {
+                        // Handle stop typing case
+                    }
+                }
+            )
         }
     }
 

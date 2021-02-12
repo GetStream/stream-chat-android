@@ -55,6 +55,7 @@ import io.getstream.chat.android.ui.message.input.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
 import io.getstream.chat.android.ui.message.view.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
@@ -193,11 +194,29 @@ public class Android {
 
         public void bindingWithViewModel() {
             // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageInputViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageInputViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageInputViewModel.class);
             // Bind it with MessageInputView
             MessageInputViewModelBinding
                     .bind(viewModel, messageInputView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageInputView.setOnSendButtonClickListener(() -> {
+                // Handle send button click
+            });
+            messageInputView.setTypingListener(new MessageInputView.TypingListener() {
+                @Override
+                public void onKeystroke() {
+                    // Handle send button click
+                }
+
+                @Override
+                public void onStopTyping() {
+                    // Handle stop typing case
+                }
+            });
         }
     }
 
