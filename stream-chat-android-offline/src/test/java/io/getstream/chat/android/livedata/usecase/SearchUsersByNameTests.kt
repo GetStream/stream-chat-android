@@ -43,8 +43,9 @@ internal class SearchUsersByNameTests {
     }
 
     @Test
-    fun `Given empty search string Should perform search query with default filter`() {
+    fun `Given empty search string and online state Should perform search query with default filter`() {
         When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
+        When calling chatDomainImpl.isOnline() doReturn true
 
         sut(querySearch = "", randomInt(), randomInt()).execute()
 
@@ -57,8 +58,9 @@ internal class SearchUsersByNameTests {
 
     @Suppress("UNCHECKED_CAST")
     @Test
-    fun `Given nonempty search string Should perform search query with autocomplete filter`() {
+    fun `Given nonempty search string and online state Should perform search query with autocomplete filter`() {
         When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
+        When calling chatDomainImpl.isOnline() doReturn true
 
         sut(querySearch = "searchString", randomInt(), randomInt()).execute()
 
@@ -71,8 +73,9 @@ internal class SearchUsersByNameTests {
     }
 
     @Test
-    fun `Given nonempty search result Should save result list to DB`() = runBlockingTest {
+    fun `Given nonempty search result and online state Should save result list to DB`() = runBlockingTest {
         When calling chatClient.queryUsers(any()) doReturn TestCall(Result(listOf(randomUser(), randomUser())))
+        When calling chatDomainImpl.isOnline() doReturn true
 
         sut(querySearch = "searchString", randomInt(), randomInt()).execute()
 
@@ -80,11 +83,13 @@ internal class SearchUsersByNameTests {
     }
 
     @Test
-    fun `Given empty search result Should not save to DB`() = runBlockingTest {
+    fun `Given empty search result and online state Should not save to DB`() = runBlockingTest {
         When calling chatClient.queryUsers(any()) doReturn TestCall(Result(emptyList()))
+        When calling chatDomainImpl.isOnline() doReturn true
 
         sut(querySearch = "searchString", randomInt(), randomInt()).execute()
 
+        verify(chatClient).queryUsers(any())
         verify(repositoryFacade, never()).insertUsers(any())
     }
 }
