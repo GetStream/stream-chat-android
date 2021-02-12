@@ -213,8 +213,7 @@ internal class EventHandlerImpl(
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    batch.addMessageData(event.cid, event.message)
-                    batch.incrementUnreadCountIfNecessary(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
@@ -229,8 +228,7 @@ internal class EventHandlerImpl(
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    batch.addMessageData(event.cid, event.message)
-                    batch.incrementUnreadCountIfNecessary(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
                 is NotificationAddedToChannelEvent -> {
                     batch.addChannel(event.channel)
