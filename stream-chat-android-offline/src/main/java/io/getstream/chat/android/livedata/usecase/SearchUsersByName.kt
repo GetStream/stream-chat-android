@@ -1,6 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
-import io.getstream.chat.android.client.ChatClient
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
@@ -12,7 +12,8 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 
 public class SearchUsersByName internal constructor(private val chatDomainImpl: ChatDomainImpl) {
 
-    private val usersQueryFilter by lazy {
+    @VisibleForTesting
+    internal val defaultUsersQueryFilter by lazy {
         Filters.and(
             Filters.ne("name", ""),
             Filters.ne("id", chatDomainImpl.currentUser.id)
@@ -28,7 +29,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
     public operator fun invoke(querySearch: String, offset: Int, userLimit: Int): Call<List<User>> {
         return CoroutineCall(chatDomainImpl.scope) {
             val filter = if (querySearch.isEmpty()) {
-                usersQueryFilter
+                defaultUsersQueryFilter
             } else {
                 Filters.and(
                     Filters.autocomplete("name", querySearch),
@@ -36,7 +37,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
                 )
             }
 
-            ChatClient.instance().queryUsers(
+            chatDomainImpl.client.queryUsers(
                 QueryUsersRequest(
                     filter = filter,
                     offset = offset,
