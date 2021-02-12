@@ -342,8 +342,35 @@ class Android {
         }
 
         fun bindWithViewModel() {
-            val viewModel: MessageListViewModel by viewModels()
+            // Get ViewModel
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageListViewModel by viewModels { factory }
+            // Bind it with MessageListView
             viewModel.bindView(messageListView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageListView.setMessageClickListener { message ->
+                // Handle click on message
+            }
+            messageListView.setMessageLongClickListener { message ->
+                // Handle long click on message
+            }
+            messageListView.setAttachmentClickListener { message, attachment ->
+                // Handle long click on attachment
+            }
+        }
+
+        fun handlers() {
+            messageListView.setMessageEditHandler { message ->
+                // Handle edit message
+            }
+            messageListView.setMessageDeleteHandler { message ->
+                // Handle delete message
+            }
+            messageListView.setAttachmentDownloadHandler { attachment ->
+                // Handle attachment download
+            }
         }
 
         fun displayNewMessage() {

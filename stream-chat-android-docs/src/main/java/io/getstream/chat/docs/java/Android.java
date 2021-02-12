@@ -375,10 +375,37 @@ public class Android {
         }
 
         public void bindWithViewModel() {
+            // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageListViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageListViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageListViewModel.class);
 
+            // Bind it with MessageListView
             MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageListView.setMessageClickListener((message) -> {
+                // Handle click on message
+            });
+            messageListView.setMessageLongClickListener((message) -> {
+                // Handle long click on message
+            });
+            messageListView.setAttachmentClickListener((message, attachment) -> {
+                // Handle click on attachment
+            });
+        }
+
+        public void handlers() {
+            messageListView.setMessageEditHandler((message) -> {
+                // Handle edit message
+            });
+            messageListView.setMessageDeleteHandler((message) -> {
+                // Handle delete message
+            });
+            messageListView.setAttachmentDownloadHandler((attachment) -> {
+                // Handle attachment download
+            });
         }
 
         public void displayNewMessage() {
