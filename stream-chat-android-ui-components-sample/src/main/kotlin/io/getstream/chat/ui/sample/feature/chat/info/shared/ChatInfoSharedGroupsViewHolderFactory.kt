@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.utils.extensions.getDisplayName
+import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedGroupsItemBinding
 

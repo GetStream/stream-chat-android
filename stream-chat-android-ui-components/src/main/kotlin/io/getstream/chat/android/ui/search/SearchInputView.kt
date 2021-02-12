@@ -11,8 +11,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
-import io.getstream.chat.android.ui.utils.Debouncer
 
 public class SearchInputView : FrameLayout {
 
