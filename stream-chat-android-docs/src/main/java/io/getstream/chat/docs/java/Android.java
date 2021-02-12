@@ -228,11 +228,21 @@ public class Android {
 
         public void bindingWithViewModel() {
             // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageListHeaderViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageListHeaderViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageListHeaderViewModel.class);
             // Bind it with MessageListHeaderView
             MessageListHeaderViewModelBinding
                     .bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageListHeaderView.setAvatarClickListener(() -> {
+                // Handle avatar click
+            });
+            messageListHeaderView.setTitleClickListener(() -> {
+                // Handle title click
+            });
         }
     }
 

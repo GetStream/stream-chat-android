@@ -196,9 +196,19 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: MessageListHeaderViewModel by viewModels()
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageListHeaderViewModel by viewModels { factory }
             // Bind it with MessageListHeaderView
             viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageListHeaderView.setAvatarClickListener {
+                // Handle avatar click
+            }
+            messageListHeaderView.setTitleClickListener {
+                // Handle title click
+            }
         }
     }
 
