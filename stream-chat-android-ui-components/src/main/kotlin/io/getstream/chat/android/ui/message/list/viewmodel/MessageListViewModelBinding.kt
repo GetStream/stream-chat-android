@@ -1,6 +1,6 @@
 @file:JvmName("MessageListViewModelBinding")
 
-package io.getstream.chat.android.ui.message.view
+package io.getstream.chat.android.ui.message.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
