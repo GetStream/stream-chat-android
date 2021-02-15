@@ -175,6 +175,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         style.inputBackgroundText.apply(binding.tvUploadCamera)
         binding.rvMedia.layoutManager = gridLayoutManager
         binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
+        binding.rvSuggestions.background = style.suggestionsBackground
     }
 
     private fun configOnClickListener() {
@@ -414,7 +415,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     }
 
     internal fun showAttachmentsMenu() {
-        binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
+        binding.root.background = style.attachmentsMenuBackground
         binding.clTitle.visibility = View.VISIBLE
         binding.btnClose.visibility = View.VISIBLE
         binding.clAddFile.visibility = View.GONE
