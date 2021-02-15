@@ -179,6 +179,9 @@
         <attr name="streamInputScrollbarFadingEnabled" format="boolean" />
 
         <attr name="streamSendAlsoToChannel" format="color|reference" />
+
+        <!-- Attachments Menu -->
+        <attr name="streamInputAttachmentsMenuBackground" format="reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">

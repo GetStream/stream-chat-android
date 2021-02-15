@@ -51,13 +51,16 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     private var inputSelectedBackground: Drawable? = null
     private var inputEditBackground: Drawable? = null
 
+    // Attachment menu
+    lateinit var attachmentsMenuBackground: Drawable
+
     val avatarStyle: AvatarStyle
 
     private fun getSelector(
         @ColorInt normalColor: Int,
         @ColorInt pressedColor: Int,
         @ColorInt disabledColor: Int,
-        @DrawableRes shape: Int
+        @DrawableRes shape: Int,
     ): Drawable? {
         return ContextCompat.getDrawable(context, shape)?.let { drawable ->
             val drawableCompat = DrawableCompat.wrap(drawable).mutate()
@@ -203,10 +206,21 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
             }.build()
 
             inputScrollbarEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarEnabled, false)
-            inputScrollbarFadingEnabled = getBoolean(R.styleable.MessageInputView_streamInputScrollbarFadingEnabled, false)
+            inputScrollbarFadingEnabled =
+                getBoolean(R.styleable.MessageInputView_streamInputScrollbarFadingEnabled, false)
 
-            context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer))?.let { inputBackground = it }
-            context.getDrawable(getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select))?.let { inputSelectedBackground = it }
+            context.getDrawable(
+                getResourceId(
+                    R.styleable.MessageInputView_streamInputBackground,
+                    R.drawable.stream_round_message_composer
+                )
+            )?.let { inputBackground = it }
+            context.getDrawable(
+                getResourceId(
+                    R.styleable.MessageInputView_streamInputSelectedBackground,
+                    R.drawable.stream_round_message_composer_select
+                )
+            )?.let { inputSelectedBackground = it }
             context.getDrawable(
                 getResourceId(
                     R.styleable.MessageInputView_streamInputEditBackground,
@@ -229,6 +243,15 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                 )
                 style(R.styleable.MessageInputView_streamInputBackgroundTextStyle, Typeface.NORMAL)
             }.build()
+
+            // Attachments menu
+            ContextCompat.getDrawable(
+                context,
+                getResourceId(
+                    R.styleable.MessageInputView_streamInputAttachmentsMenuBackground,
+                    R.drawable.stream_round_thread_toolbar
+                )
+            )?.let { attachmentsMenuBackground = it }
 
             // Avatar
             avatarStyle = AvatarStyle.Builder(this, context)

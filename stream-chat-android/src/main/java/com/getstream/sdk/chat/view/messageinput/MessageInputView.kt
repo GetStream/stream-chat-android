@@ -414,7 +414,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     }
 
     internal fun showAttachmentsMenu() {
-        binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
+        binding.root.background = style.attachmentsMenuBackground
         binding.clTitle.visibility = View.VISIBLE
         binding.btnClose.visibility = View.VISIBLE
         binding.clAddFile.visibility = View.GONE
