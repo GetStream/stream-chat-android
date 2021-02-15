@@ -63,7 +63,7 @@ public interface ChannelController {
     public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
 
     @CheckResult
-    public fun unBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
+    public fun unBanUser(targetId: String): Call<Unit>
 
     @CheckResult
     public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
