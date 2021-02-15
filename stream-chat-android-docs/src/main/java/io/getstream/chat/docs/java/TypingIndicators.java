@@ -3,7 +3,6 @@ package io.getstream.chat.docs.java;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.TypingStartEvent;
 import io.getstream.chat.android.client.events.TypingStopEvent;
-import kotlin.Unit;
 
 public class TypingIndicators {
     private ChannelClient channelClient;

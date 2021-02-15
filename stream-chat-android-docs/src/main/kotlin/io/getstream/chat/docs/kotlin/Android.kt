@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -31,15 +32,15 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.input.bindView
+import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.message.view.bindView
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
@@ -289,7 +290,8 @@ class Android {
      * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_list_view_new">Message List View</a>
      */
     class MessageListViewDocs : Fragment() {
-        lateinit var messageListView: MessageListView
+        private lateinit var messageListView: MessageListView
+        private val viewModel: MessageListViewModel by viewModels()
 
         fun emptyState() {
             // When there's no results, show empty state
@@ -338,6 +340,20 @@ class Android {
             messageListView.setMessageListItemPredicate { messageList ->
                 // Boolean logic here
                 true
+            }
+        }
+
+        fun setNewMessageBehaviour() {
+            messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
+        }
+
+        fun setEndRegionReachedHandler() {
+            messageListView.setEndRegionReachedHandler {
+                // Handle pagination and include new logic
+
+                // Option to log the event and use the viewModel
+                viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
+                Log.e("LogTag", "On load more")
             }
         }
 

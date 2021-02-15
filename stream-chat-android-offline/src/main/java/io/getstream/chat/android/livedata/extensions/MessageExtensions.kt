@@ -1,3 +1,5 @@
+package io.getstream.chat.android.livedata.extensions
+
 import io.getstream.chat.android.client.models.Message
 import java.util.Date
 
