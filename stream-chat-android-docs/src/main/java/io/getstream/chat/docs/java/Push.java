@@ -1,14 +1,14 @@
 package io.getstream.chat.docs.java;
 
 import android.content.Context;
-import android.util.Log;
+
+import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.models.Device;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.docs.R;
-
-import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class Push {
     private Context context;
@@ -27,7 +27,7 @@ public class Push {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
@@ -71,7 +71,7 @@ public class Push {
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java">Device</a>
      */
-    class Device {
+    class Device_ {
 
         /**
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#register-a-device">Register a Device</a>
@@ -81,7 +81,7 @@ public class Push {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
@@ -94,7 +94,17 @@ public class Push {
                 if (result.isSuccess()) {
                     // Device was successfully unregistered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void listDevices() {
+            client.getDevices().enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Device> devices = result.data();
+                } else {
+                    // Handle result.error()
                 }
             });
         }
