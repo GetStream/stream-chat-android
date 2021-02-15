@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import android.view.Gravity;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,8 +25,6 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,15 +45,15 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelB
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
+import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory;
 import io.getstream.chat.android.ui.message.input.MessageInputView;
-import io.getstream.chat.android.ui.message.input.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
-import io.getstream.chat.android.ui.message.view.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
