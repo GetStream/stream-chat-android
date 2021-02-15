@@ -54,6 +54,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
 import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
@@ -191,11 +192,29 @@ public class Android {
 
         public void bindingWithViewModel() {
             // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageInputViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageInputViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageInputViewModel.class);
             // Bind it with MessageInputView
             MessageInputViewModelBinding
                     .bind(viewModel, messageInputView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageInputView.setOnSendButtonClickListener(() -> {
+                // Handle send button click
+            });
+            messageInputView.setTypingListener(new MessageInputView.TypingListener() {
+                @Override
+                public void onKeystroke() {
+                    // Handle send button click
+                }
+
+                @Override
+                public void onStopTyping() {
+                    // Handle stop typing case
+                }
+            });
         }
     }
 
@@ -207,11 +226,21 @@ public class Android {
 
         public void bindingWithViewModel() {
             // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageListHeaderViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageListHeaderViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageListHeaderViewModel.class);
             // Bind it with MessageListHeaderView
             MessageListHeaderViewModelBinding
                     .bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageListHeaderView.setAvatarClickListener(() -> {
+                // Handle avatar click
+            });
+            messageListHeaderView.setTitleClickListener(() -> {
+                // Handle title click
+            });
         }
     }
 
@@ -362,10 +391,37 @@ public class Android {
         }
 
         public void bindWithViewModel() {
+            // Get ViewModel
+            MessageListViewModelFactory factory = new MessageListViewModelFactory("channelType:channelId");
             MessageListViewModel viewModel =
-                    new ViewModelProvider(this).get(MessageListViewModel.class);
+                    new ViewModelProvider(this, factory).get(MessageListViewModel.class);
 
+            // Bind it with MessageListView
             MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
+        }
+
+        public void handlingUserInteractions() {
+            messageListView.setMessageClickListener((message) -> {
+                // Handle click on message
+            });
+            messageListView.setMessageLongClickListener((message) -> {
+                // Handle long click on message
+            });
+            messageListView.setAttachmentClickListener((message, attachment) -> {
+                // Handle click on attachment
+            });
+        }
+
+        public void handlers() {
+            messageListView.setMessageEditHandler((message) -> {
+                // Handle edit message
+            });
+            messageListView.setMessageDeleteHandler((message) -> {
+                // Handle delete message
+            });
+            messageListView.setAttachmentDownloadHandler((attachment) -> {
+                // Handle attachment download
+            });
         }
 
         public void displayNewMessage() {

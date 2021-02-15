@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.R
@@ -80,6 +81,7 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
     public val readStateStyle: ReadStateStyle
 
     // MessageMoreActionDialog
+    public val messageActionButtonsBackground: Drawable?
     public val startThreadMessageActionEnabled: Boolean
     public val copyMessageActionEnabled: Boolean
     public val flagMessageActionEnabled: Boolean
@@ -560,6 +562,8 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
             a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1)
         isUserNameShow = a.getBoolean(R.styleable.MessageListView_streamUserNameShow, true)
         isMessageDateShow = a.getBoolean(R.styleable.MessageListView_streamMessageDateShow, true)
+
+        messageActionButtonsBackground = a.getDrawable(R.styleable.MessageListView_streamMessageActionButtonsBackground)
 
         startThreadMessageActionEnabled = a.getBoolean(
             R.styleable.MessageListView_streamStartThreadMessageActionEnabled,
