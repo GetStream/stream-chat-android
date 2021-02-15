@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
+import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
@@ -165,9 +166,27 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: MessageInputViewModel by viewModels()
-            // Bind it with ChannelListHeaderView
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageInputViewModel by viewModels { factory }
+            // Bind it with MessageInputView
             viewModel.bindView(messageInputView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageInputView.setOnSendButtonClickListener {
+                // Handle send button click
+            }
+            messageInputView.setTypingListener(
+                object : MessageInputView.TypingListener {
+                    override fun onKeystroke() {
+                        // Handle keystroke case
+                    }
+
+                    override fun onStopTyping() {
+                        // Handle stop typing case
+                    }
+                }
+            )
         }
     }
 
@@ -178,9 +197,19 @@ class Android {
 
         fun bindingWithViewModel() {
             // Get ViewModel
-            val viewModel: MessageListHeaderViewModel by viewModels()
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageListHeaderViewModel by viewModels { factory }
             // Bind it with MessageListHeaderView
             viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageListHeaderView.setAvatarClickListener {
+                // Handle avatar click
+            }
+            messageListHeaderView.setTitleClickListener {
+                // Handle title click
+            }
         }
     }
 
@@ -329,8 +358,35 @@ class Android {
         }
 
         fun bindWithViewModel() {
-            val viewModel: MessageListViewModel by viewModels()
+            // Get ViewModel
+            val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+            val viewModel: MessageListViewModel by viewModels { factory }
+            // Bind it with MessageListView
             viewModel.bindView(messageListView, viewLifecycleOwner)
+        }
+
+        fun handlingUserInteractions() {
+            messageListView.setMessageClickListener { message ->
+                // Handle click on message
+            }
+            messageListView.setMessageLongClickListener { message ->
+                // Handle long click on message
+            }
+            messageListView.setAttachmentClickListener { message, attachment ->
+                // Handle long click on attachment
+            }
+        }
+
+        fun handlers() {
+            messageListView.setMessageEditHandler { message ->
+                // Handle edit message
+            }
+            messageListView.setMessageDeleteHandler { message ->
+                // Handle delete message
+            }
+            messageListView.setAttachmentDownloadHandler { attachment ->
+                // Handle attachment download
+            }
         }
 
         fun displayNewMessage() {
