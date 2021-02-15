@@ -258,6 +258,7 @@ public class ChatClient internal constructor(
      * @param user the user to set
      * @param userToken the user token
      */
+    @InternalStreamChatApi
     public fun setUserWithoutConnecting(user: User, userToken: String) {
         if (isUserSet()) {
             return
