@@ -361,7 +361,7 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    override fun unBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
+    override fun unBanUser(targetId: String): Call<Unit> {
         return client.unBanUser(
             targetId = targetId,
             channelType = channelType,

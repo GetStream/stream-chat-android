@@ -9,6 +9,7 @@
 - Add `streamMessageActionButtonsBackground` attributes to `MessageListView`
 
 ## stream-chat-android-client
+- Remove unused `reason` and `timeout` parameters from `ChannelClient::unBanUser` method
 
 ## stream-chat-android-offline
 
