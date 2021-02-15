@@ -13,6 +13,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -49,7 +50,7 @@ internal class SearchUsersByNameTests {
         When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
         When calling chatDomainImpl.isOnline() doReturn true
 
-        sut(querySearch = "", randomInt(), randomInt()).execute()
+        sut(querySearch = "", offset = randomInt(), userLimit = randomInt(), userPresence = randomBoolean()).execute()
 
         verify(chatClient).queryUsers(
             argThat {
@@ -64,10 +65,11 @@ internal class SearchUsersByNameTests {
         When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
         When calling chatDomainImpl.isOnline() doReturn true
 
-        sut(querySearch = "searchString", randomInt(), randomInt()).execute()
+        sut(querySearch = "searchString", offset = randomInt(), userLimit = randomInt(), userPresence = true).execute()
 
         verify(chatClient).queryUsers(
             argThat {
+                presence `should be equal to` true
                 val filterMap = filter.data[Filters.KEY_AND] as ArrayList<Map<String, Map<String, String>>>
                 filterMap.first()[SearchUsersByName.FIELD_NAME]!![Filters.KEY_AUTOCOMPLETE] == "searchString"
             }
@@ -79,7 +81,12 @@ internal class SearchUsersByNameTests {
         When calling chatClient.queryUsers(any()) doReturn TestCall(Result(listOf(randomUser(), randomUser())))
         When calling chatDomainImpl.isOnline() doReturn true
 
-        sut(querySearch = "searchString", randomInt(), randomInt()).execute()
+        sut(
+            querySearch = "searchString",
+            offset = randomInt(),
+            userLimit = randomInt(),
+            userPresence = randomBoolean()
+        ).execute()
 
         verify(repositoryFacade).insertUsers(argThat { size == 2 })
     }
@@ -89,7 +96,12 @@ internal class SearchUsersByNameTests {
         When calling chatClient.queryUsers(any()) doReturn TestCall(Result(emptyList()))
         When calling chatDomainImpl.isOnline() doReturn true
 
-        sut(querySearch = "searchString", randomInt(), randomInt()).execute()
+        sut(
+            querySearch = "searchString",
+            offset = randomInt(),
+            userLimit = randomInt(),
+            userPresence = randomBoolean()
+        ).execute()
 
         verify(chatClient).queryUsers(any())
         verify(repositoryFacade, never()).insertUsers(any())
@@ -101,7 +113,12 @@ internal class SearchUsersByNameTests {
         val dbUsers = listOf(randomUser(), randomUser())
         When calling repositoryFacade.selectAllUsers(any(), any()) doReturn dbUsers
 
-        val result = sut(querySearch = "", randomInt(), randomInt()).execute()
+        val result = sut(
+            querySearch = "",
+            offset = randomInt(),
+            userLimit = randomInt(),
+            userPresence = randomBoolean()
+        ).execute()
 
         verify(repositoryFacade).selectAllUsers(any(), any())
         result.data() `should be equal to` dbUsers
@@ -113,7 +130,12 @@ internal class SearchUsersByNameTests {
         val dbUsers = listOf(randomUser(), randomUser())
         When calling repositoryFacade.selectUsersLikeName(any(), any(), any()) doReturn dbUsers
 
-        val result = sut(querySearch = "querySearch", randomInt(), randomInt()).execute()
+        val result = sut(
+            querySearch = "querySearch",
+            offset = randomInt(),
+            userLimit = randomInt(),
+            userPresence = randomBoolean()
+        ).execute()
 
         verify(repositoryFacade).selectUsersLikeName(eq("querySearch"), any(), any())
         result.data() `should be equal to` dbUsers

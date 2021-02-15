@@ -11,12 +11,16 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
+/**
+ * Use case for searching users by string-autocomplete filter. Performs online request if connected or local searching
+ * in DB otherwise.
+ */
 public class SearchUsersByName internal constructor(private val chatDomainImpl: ChatDomainImpl) {
 
     @VisibleForTesting
     internal val defaultUsersQueryFilter by lazy {
         Filters.and(
-            Filters.ne(FIELD_NAME", ""),
+            Filters.ne(FIELD_NAME, ""),
             Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
         )
     }
@@ -26,11 +30,19 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
      * in local database.
      *
      * @param querySearch Search string used as autocomplete.
+     * @param offset Offset for paginated requests.
+     * @param userLimit The page size in the request.
+     * @param userPresence Presence flag to obtain additional info such as last active date.
      */
-    public operator fun invoke(querySearch: String, offset: Int, userLimit: Int): Call<List<User>> {
+    public operator fun invoke(
+        querySearch: String,
+        offset: Int,
+        userLimit: Int,
+        userPresence: Boolean
+    ): Call<List<User>> {
         return CoroutineCall(chatDomainImpl.scope) {
             if (chatDomainImpl.isOnline()) {
-                performOnlineSearch(querySearch, offset, userLimit)
+                performOnlineSearch(querySearch, offset, userLimit, userPresence)
             } else {
                 performOfflineSearch(querySearch, offset, userLimit)
             }
@@ -45,7 +57,12 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
         }
     }
 
-    private suspend fun performOnlineSearch(querySearch: String, offset: Int, userLimit: Int): Result<List<User>> {
+    private suspend fun performOnlineSearch(
+        querySearch: String,
+        offset: Int,
+        userLimit: Int,
+        userPresence: Boolean,
+    ): Result<List<User>> {
         val filter = if (querySearch.isEmpty()) {
             defaultUsersQueryFilter
         } else {
@@ -61,7 +78,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
                 offset = offset,
                 limit = userLimit,
                 querySort = USERS_QUERY_SORT,
-                presence = true
+                presence = userPresence
             )
         ).execute().also { result ->
             if (result.isSuccess && result.data().isNotEmpty()) {
