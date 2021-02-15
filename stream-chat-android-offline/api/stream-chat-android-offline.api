@@ -296,6 +296,8 @@ public final class io/getstream/chat/android/livedata/repository/domain/user/Use
 	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectAllUser (II)Ljava/util/List;
+	public fun selectUsersLikeName (Ljava/lang/String;II)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/CancelMessage {
@@ -398,6 +400,11 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/Repla
 	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
+public final class io/getstream/chat/android/livedata/usecase/SearchUsersByName {
+	public static final field Companion Lio/getstream/chat/android/livedata/usecase/SearchUsersByName$Companion;
+	public final fun invoke (Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
+}
+
 public abstract interface class io/getstream/chat/android/livedata/usecase/SendGiphy {
 	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
@@ -474,6 +481,7 @@ public final class io/getstream/chat/android/livedata/usecase/UseCaseHelper {
 	public final fun getQueryChannels ()Lio/getstream/chat/android/livedata/usecase/QueryChannels;
 	public final fun getQueryChannelsLoadMore ()Lio/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore;
 	public final fun getReplayEventsForActiveChannels ()Lio/getstream/chat/android/livedata/usecase/ReplayEventsForActiveChannels;
+	public final fun getSearchUsersByName ()Lio/getstream/chat/android/livedata/usecase/SearchUsersByName;
 	public final fun getSendGiphy ()Lio/getstream/chat/android/livedata/usecase/SendGiphy;
 	public final fun getSendMessage ()Lio/getstream/chat/android/livedata/usecase/SendMessage;
 	public final fun getSendMessageWithAttachments ()Lio/getstream/chat/android/livedata/usecase/SendMessageWithAttachments;
