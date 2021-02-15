@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
@@ -17,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.any
 import org.amshove.kluent.calling
 import org.junit.jupiter.api.BeforeEach
@@ -91,5 +93,29 @@ internal class SearchUsersByNameTests {
 
         verify(chatClient).queryUsers(any())
         verify(repositoryFacade, never()).insertUsers(any())
+    }
+
+    @Test
+    fun `Given empty search result and offline state Should fetch all users from DB`() = runBlockingTest {
+        When calling chatDomainImpl.isOnline() doReturn false
+        val dbUsers = listOf(randomUser(), randomUser())
+        When calling repositoryFacade.selectAllUser(any(), any()) doReturn dbUsers
+
+        val result = sut(querySearch = "", randomInt(), randomInt()).execute()
+
+        verify(repositoryFacade).selectAllUser(any(), any())
+        result.data() `should be equal to` dbUsers
+    }
+
+    @Test
+    fun `Given nonempty search result and offline state Should fetch all users from DB`() = runBlockingTest {
+        When calling chatDomainImpl.isOnline() doReturn false
+        val dbUsers = listOf(randomUser(), randomUser())
+        When calling repositoryFacade.selectUsersLikeName(any(), any(), any()) doReturn dbUsers
+
+        val result = sut(querySearch = "querySearch", randomInt(), randomInt()).execute()
+
+        verify(repositoryFacade).selectUsersLikeName(eq("querySearch"), any(), any())
+        result.data() `should be equal to` dbUsers
     }
 }
