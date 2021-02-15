@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
     android:background="@drawable/stream_ui_foreground_channel_list"
-    android:backgroundTintMode="src_in"
     android:backgroundTint="@color/stream_ui_white_snow"
+    android:backgroundTintMode="src_in"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
@@ -79,6 +79,7 @@
         android:id="@+id/unread_count_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/stream_ui_shape_badge_background"
         android:fontFamily="sans-serif-medium"
@@ -88,7 +89,7 @@
         android:textColor="@color/stream_ui_literal_white"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@+id/last_message_time_label"
-        app:layout_constraintEnd_toEndOf="@+id/last_message_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:text="99"
         />
 
