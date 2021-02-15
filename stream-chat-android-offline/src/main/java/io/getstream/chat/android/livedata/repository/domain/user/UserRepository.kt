@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.repository.domain.user
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 
 internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)
@@ -11,12 +12,14 @@ internal interface UserRepository {
     suspend fun selectUser(userId: String): User?
     suspend fun selectUsers(userIds: List<String>): List<User>
     suspend fun selectUserMap(userIds: List<String>): Map<String, User>
+    suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
+    suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 }
 
 internal class UserRepositoryImpl(
     private val userDao: UserDao,
     private val currentUser: User,
-    cacheSize: Int = 100
+    cacheSize: Int = 100,
 ) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
@@ -64,9 +67,18 @@ internal class UserRepositoryImpl(
     override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
         selectUsers(userIds).associateBy(User::id) + (currentUser.id to currentUser)
 
+    override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> {
+        return userDao.selectAllUser(limit, offset).map(::toModel)
+    }
+
+    override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> {
+        return userDao.selectUsersLikeName("$searchString%", limit, offset).map(::toModel)
+    }
+
     private fun toEntity(user: User): UserEntity = with(user) {
         UserEntity(
             id = id,
+            name = name,
             originalId = id,
             role = role,
             createdAt = createdAt,
