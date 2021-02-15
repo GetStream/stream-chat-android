@@ -63,11 +63,11 @@ import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
+import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
 import io.getstream.chat.android.livedata.extensions.wasCreatedBeforeOrAt
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -1027,15 +1027,6 @@ internal class ChannelControllerImpl(
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
         _messages.value = newMessages
-        updateUnreadCount()
-    }
-
-    private fun updateUnreadCount() {
-        _unreadCount.value = computeUnreadCount(
-            currentUser = domainImpl.currentUser,
-            read = _read.value,
-            messages = _messages.value.values.toList()
-        )
     }
 
     private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
@@ -1113,6 +1104,7 @@ internal class ChannelControllerImpl(
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
+                incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
             is MessageUpdatedEvent -> {
@@ -1125,6 +1117,7 @@ internal class ChannelControllerImpl(
             }
             is NotificationMessageNewEvent -> {
                 upsertEventMessage(event.message)
+                incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
                 event.watcherCount?.let { setWatcherCount(it) }
             }
@@ -1283,36 +1276,12 @@ internal class ChannelControllerImpl(
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     private fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserId = domainImpl.currentUser.id
         val previousUserIdToReadMap = _reads.value
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
-        /*
-        It's possible that the data coming back from the online channel query has a last read date that's before
-        what we've last pushed to the UI. We want to ignore this, as it will cause an unread state to show in the
-        channel list.
-         */
-
-        incomingUserIdToReadMap[currentUserId]?.let { incomingRead ->
-            // the previous last Read date that is most current
-            val previousLastRead =
-                _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
-
-            // Use AFTER to determine if the incoming read is more current.
-            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-            val incomingReadMoreCurrent =
-                previousLastRead == null || incomingRead.lastRead?.after(previousLastRead) == true
-
-            if (!incomingReadMoreCurrent) {
-                // if the previous Read was more current, replace the item in the update map
-                incomingUserIdToReadMap[currentUserId] =
-                    ChannelUserRead(domainImpl.currentUser, previousLastRead)
-                return@let // no need to post the incoming read value to the UI if it isn't newer
-            }
-
-            _read.value = incomingRead
-
-            updateUnreadCount()
+        incomingUserIdToReadMap[domainImpl.currentUser.id]?.let {
+            _read.value = it
+            _unreadCount.value = it.unreadMessages
         }
 
         // always post the newly updated map
@@ -1374,6 +1343,18 @@ internal class ChannelControllerImpl(
 
     private fun setWatchers(watchers: List<User>) {
         _watchers.value = (_watchers.value + watchers.associateBy { it.id })
+    }
+
+    private fun incrementUnreadCountIfNecessary(message: Message) {
+        val currentUserId = domainImpl.currentUser.id
+        if (message.shouldIncrementUnreadCount(currentUserId)) {
+            val newUnreadCount = _unreadCount.value + 1
+            _unreadCount.value = newUnreadCount
+            _read.value = _read.value?.copy(unreadMessages = newUnreadCount)
+            _reads.value = _reads.value.apply {
+                this[currentUserId]?.unreadMessages = newUnreadCount
+            }
+        }
     }
 
     suspend fun editMessage(message: Message): Result<Message> {

@@ -3,6 +3,8 @@ package io.getstream.chat.android.livedata
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.incrementUnreadCount
+import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.updateLastMessage
 import io.getstream.chat.android.livedata.extensions.users
 
@@ -32,9 +34,16 @@ internal class EventBatchUpdate private constructor(
     private val userMap: MutableMap<String, User>
 ) {
 
-    fun addMessageData(cid: String, message: Message) {
+    fun addMessageData(cid: String, message: Message, isNewMessage: Boolean = false) {
         addMessage(message)
-        getCurrentChannel(cid)?.also { channel -> channel.updateLastMessage(message) }
+        getCurrentChannel(cid)?.also { channel ->
+            channel.updateLastMessage(message)
+
+            val currentUserId = domainImpl.currentUser.id
+            if (isNewMessage && message.shouldIncrementUnreadCount(currentUserId)) {
+                channel.incrementUnreadCount(currentUserId)
+            }
+        }
     }
 
     fun addChannel(channel: Channel) {

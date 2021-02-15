@@ -5,6 +5,8 @@
     - For the full list of dependency version changes, see [this PR](https://github.com/GetStream/stream-chat-android/pull/1383)
 
 ## stream-chat-android
+- Add `streamInputAttachmentsMenuBackground` and `streamInputSuggestionsBackground` attributes to `MessageInputView`
+- Add `streamMessageActionButtonsBackground` attributes to `MessageListView`
 
 ## stream-chat-android-client
 - Fix `ConcurrentModificationException` on our `NetworkStateProvider`
