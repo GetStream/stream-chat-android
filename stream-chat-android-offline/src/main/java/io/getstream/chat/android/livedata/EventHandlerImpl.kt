@@ -62,7 +62,9 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
+import io.getstream.chat.android.livedata.extensions.incrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.setMember
+import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
 
@@ -211,7 +213,7 @@ internal class EventHandlerImpl(
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    batch.addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
@@ -226,7 +228,7 @@ internal class EventHandlerImpl(
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    batch.addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
                 is NotificationAddedToChannelEvent -> {
                     batch.addChannel(event.channel)
@@ -425,6 +427,15 @@ internal class EventHandlerImpl(
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+            }
+        }
+    }
+
+    private fun EventBatchUpdate.incrementUnreadCountIfNecessary(cid: String, message: Message) {
+        val currentUserId = domainImpl.currentUser.id
+        getCurrentChannel(cid)?.let {
+            if (message.shouldIncrementUnreadCount(currentUserId)) {
+                addChannel(it.apply { incrementUnreadCount(currentUserId) })
             }
         }
     }

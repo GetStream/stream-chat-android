@@ -53,6 +53,15 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
     }
 }
 
+internal fun Channel.incrementUnreadCount(currentUserId: String) {
+    read.firstOrNull { it.user.id == currentUserId }
+        ?.let { it.unreadMessages++ }
+}
+
+internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {
+    return user.id != currentUserId && !silent && !shadowed
+}
+
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
 
