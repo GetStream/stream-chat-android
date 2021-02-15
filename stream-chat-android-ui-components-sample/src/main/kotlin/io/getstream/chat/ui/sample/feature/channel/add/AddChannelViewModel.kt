@@ -5,31 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class AddChannelViewModel : ViewModel() {
 
-    private val currentUserId: String = ChatDomain.instance().currentUser.id
+    private val chatDomain = ChatDomain.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
     val state: LiveData<State> = _state
     val paginationState: LiveData<PaginationState> = _paginationState
-    private val usersQueryFilter =
-        Filters.and(Filters.ne("name", ""), Filters.ne("id", currentUserId))
 
     private var channelClient: ChannelClient? = null
     private var searchQuery: String = ""
     private var offset: Int = 0
+    private var latestSearchCall: Call<List<User>>? = null
 
     init {
         requestUsers(isRequestingMore = false)
@@ -48,28 +43,12 @@ class AddChannelViewModel : ViewModel() {
         if (!isRequestingMore) {
             _state.value = State.Loading
         }
-        viewModelScope.coroutineContext.cancelChildren()
-        viewModelScope.launch(Dispatchers.IO) {
-            val filter = if (searchQuery.isEmpty()) {
-                usersQueryFilter
-            } else {
-                Filters.and(Filters.autocomplete("name", searchQuery), Filters.ne("id", currentUserId))
-            }
-            val result = ChatClient.instance().queryUsers(
-                QueryUsersRequest(
-                    filter = filter,
-                    offset = offset,
-                    limit = USERS_LIMIT,
-                    querySort = USERS_QUERY_SORT,
-                    presence = true
-                )
-            ).execute()
-
-            if (result.isSuccess && isActive) {
+        latestSearchCall?.cancel()
+        latestSearchCall = chatDomain.useCases.searchUsersByName.invoke(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall?.enqueue { result ->
+            if (result.isSuccess) {
                 val users = result.data()
-                _state.postValue(
-                    if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users)
-                )
+                _state.postValue(if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users))
                 updatePaginationData(users)
             }
         }
@@ -94,7 +73,7 @@ class AddChannelViewModel : ViewModel() {
             val result = ChatClient.instance()
                 .createChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
-                    members = members.map { it.id } + currentUserId,
+                    members = members.map { it.id } + chatDomain.currentUser.id,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).execute()
             if (result.isSuccess) {
@@ -124,7 +103,6 @@ class AddChannelViewModel : ViewModel() {
     companion object {
         private const val USERS_LIMIT = 30
         private const val CHANNEL_MESSAGING_TYPE = "messaging"
-        private val USERS_QUERY_SORT = QuerySort<User>().asc("name")
     }
 
     sealed class State {
@@ -144,6 +122,6 @@ class AddChannelViewModel : ViewModel() {
 
     data class PaginationState(
         val loadingMore: Boolean = false,
-        val endReached: Boolean = false
+        val endReached: Boolean = false,
     )
 }

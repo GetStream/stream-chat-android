@@ -5,6 +5,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public object PerformanceUtils {
+    @Volatile
     private var tasks: Map<String, TaskEntry> = emptyMap()
 
     public fun startTask(taskName: String) {
@@ -50,17 +51,25 @@ public object PerformanceUtils {
 
     public fun <T> task(taskName: String, task: () -> T): T {
         synchronized(taskName) {
+            val count = tasks[taskName]?.count ?: 0
             val startTime = System.currentTimeMillis()
             return task().also {
-                doMeasureAndUpdateResult(taskName, TaskEntry(name = taskName, lastStart = startTime))
+                doMeasureAndUpdateResult(
+                    taskName,
+                    TaskEntry(name = taskName, lastStart = startTime, count = count)
+                )
             }
         }
     }
 
     public suspend fun <T> suspendTask(taskName: String, task: suspend () -> T): T {
+        val count = tasks[taskName]?.count ?: 0
         val startTime = System.currentTimeMillis()
         return task().also {
-            doMeasureAndUpdateResult(taskName, TaskEntry(name = taskName, lastStart = startTime))
+            doMeasureAndUpdateResult(
+                taskName,
+                TaskEntry(name = taskName, lastStart = startTime, count = count)
+            )
         }
     }
 
@@ -72,6 +81,6 @@ public object PerformanceUtils {
         val name: String,
         val count: Int = 0,
         val sumDuration: Double = 0.0,
-        val lastStart: Long?
+        val lastStart: Long?,
     )
 }
