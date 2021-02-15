@@ -19,7 +19,7 @@ internal interface UserRepository {
 internal class UserRepositoryImpl(
     private val userDao: UserDao,
     private val currentUser: User,
-    cacheSize: Int = 100
+    cacheSize: Int = 100,
 ) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)

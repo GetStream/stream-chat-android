@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.repository.domain.user
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
@@ -18,6 +19,7 @@ internal data class UserEntity(
     @PrimaryKey val id: String,
     /** used for storing the current user */
     val originalId: String = "",
+    @ColumnInfo(index = true)
     val name: String,
     /** the user's role */
     val role: String = "",
