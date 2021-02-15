@@ -296,6 +296,7 @@ public final class io/getstream/chat/android/livedata/repository/domain/user/Use
 	public fun insertMany (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectAllUser (I)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/CancelMessage {

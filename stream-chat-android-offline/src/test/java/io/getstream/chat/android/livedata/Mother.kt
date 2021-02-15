@@ -73,6 +73,7 @@ internal fun randomUser(
 
 internal fun randomUserEntity(
     id: String = randomString(),
+    name: String = randomString(),
     originalId: String = randomString(),
     role: String = randomString(),
     createdAt: Date? = null,
@@ -82,7 +83,7 @@ internal fun randomUserEntity(
     banned: Boolean = randomBoolean(),
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
-): UserEntity = UserEntity(id, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+): UserEntity = UserEntity(id, name, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 internal fun randomMessage(
     id: String = randomString(),

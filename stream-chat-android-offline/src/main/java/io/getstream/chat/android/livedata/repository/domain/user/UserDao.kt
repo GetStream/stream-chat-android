@@ -14,15 +14,12 @@ internal interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(userEntity: UserEntity)
 
-    @Query(
-        "SELECT * FROM stream_chat_user " +
-            "WHERE stream_chat_user.id IN (:ids)"
-    )
+    @Query("SELECT * FROM stream_chat_user WHERE stream_chat_user.id IN (:ids)")
     suspend fun select(ids: List<String>): List<UserEntity>
 
-    @Query(
-        "SELECT * FROM stream_chat_user " +
-            "WHERE stream_chat_user.id IN (:id)"
-    )
+    @Query("SELECT * FROM stream_chat_user WHERE stream_chat_user.id IN (:id)")
     suspend fun select(id: String): UserEntity?
+
+    @Query("SELECT * FROM stream_chat_user ORDER BY name ASC LIMIT :limit")
+    fun selectAllUser(limit: Int): List<UserEntity>
 }

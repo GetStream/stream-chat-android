@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.repository.domain.user
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 
 internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)
@@ -11,6 +12,7 @@ internal interface UserRepository {
     suspend fun selectUser(userId: String): User?
     suspend fun selectUsers(userIds: List<String>): List<User>
     suspend fun selectUserMap(userIds: List<String>): Map<String, User>
+    suspend fun selectAllUser(limit: Int): List<User>
 }
 
 internal class UserRepositoryImpl(
@@ -64,9 +66,14 @@ internal class UserRepositoryImpl(
     override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
         selectUsers(userIds).associateBy(User::id) + (currentUser.id to currentUser)
 
+    override suspend fun selectAllUser(limit: Int): List<User> {
+        return userDao.selectAllUser(limit).map(::toModel)
+    }
+
     private fun toEntity(user: User): UserEntity = with(user) {
         UserEntity(
             id = id,
+            name = name,
             originalId = id,
             role = role,
             createdAt = createdAt,

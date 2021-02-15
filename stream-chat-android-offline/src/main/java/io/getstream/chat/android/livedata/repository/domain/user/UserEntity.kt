@@ -18,6 +18,7 @@ internal data class UserEntity(
     @PrimaryKey val id: String,
     /** used for storing the current user */
     val originalId: String = "",
+    val name: String,
     /** the user's role */
     val role: String = "",
     /** when the user was created */
