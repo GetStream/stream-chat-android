@@ -17,7 +17,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
     internal val defaultUsersQueryFilter by lazy {
         Filters.and(
             Filters.ne(FIELD_NAME", ""),
-            Filters.ne("id", chatDomainImpl.currentUser.id)
+            Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
         )
     }
 
