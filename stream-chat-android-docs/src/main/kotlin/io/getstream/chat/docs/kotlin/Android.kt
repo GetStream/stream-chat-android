@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -260,7 +261,8 @@ class Android {
      * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_list_view_new">Message List View</a>
      */
     class MessageListViewDocs : Fragment() {
-        lateinit var messageListView: MessageListView
+        private lateinit var messageListView: MessageListView
+        private val viewModel: MessageListViewModel by viewModels()
 
         fun emptyState() {
             // When there's no results, show empty state
@@ -309,6 +311,20 @@ class Android {
             messageListView.setMessageListItemPredicate { messageList ->
                 // Boolean logic here
                 true
+            }
+        }
+
+        fun setNewMessageBehaviour() {
+            messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
+        }
+
+        fun setEndRegionReachedHandler() {
+            messageListView.setEndRegionReachedHandler {
+                // Handle pagination and include new logic
+
+                // Option to log the event and use the viewModel
+                viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
+                Log.e("LogTag", "On load more")
             }
         }
 
