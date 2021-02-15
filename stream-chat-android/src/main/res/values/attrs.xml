@@ -392,6 +392,7 @@
         <attr name="streamMessagesEmptyStateLabelText" format="string" />
 
         <!-- MessageMoreActionDialog -->
+        <attr name="streamMessageActionButtonsBackground" format="reference" />
         <attr name="streamStartThreadMessageActionEnabled" format="boolean" />
         <attr name="streamCopyMessageActionEnabled" format="boolean" />
         <attr name="streamFlagMessageActionEnabled" format="boolean" />
