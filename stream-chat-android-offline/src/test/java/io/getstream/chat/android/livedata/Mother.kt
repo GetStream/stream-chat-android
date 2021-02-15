@@ -73,8 +73,8 @@ internal fun randomUser(
 
 internal fun randomUserEntity(
     id: String = randomString(),
-    name: String = randomString(),
     originalId: String = randomString(),
+    name: String = randomString(),
     role: String = randomString(),
     createdAt: Date? = null,
     updatedAt: Date? = null,
