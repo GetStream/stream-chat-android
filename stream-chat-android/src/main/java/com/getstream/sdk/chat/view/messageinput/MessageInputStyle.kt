@@ -54,6 +54,9 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     // Attachment menu
     lateinit var attachmentsMenuBackground: Drawable
 
+    // Suggestions
+    lateinit var suggestionsBackground: Drawable
+
     val avatarStyle: AvatarStyle
 
     private fun getSelector(
@@ -252,6 +255,15 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                     R.drawable.stream_round_thread_toolbar
                 )
             )?.let { attachmentsMenuBackground = it }
+
+            // Suggestions
+            ContextCompat.getDrawable(
+                context,
+                getResourceId(
+                    R.styleable.MessageInputView_streamInputSuggestionsBackground,
+                    R.drawable.stream_round_thread_toolbar
+                )
+            )?.let { suggestionsBackground = it }
 
             // Avatar
             avatarStyle = AvatarStyle.Builder(this, context)

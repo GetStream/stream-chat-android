@@ -182,6 +182,9 @@
 
         <!-- Attachments Menu -->
         <attr name="streamInputAttachmentsMenuBackground" format="reference" />
+
+        <!-- Suggestions -->
+        <attr name="streamInputSuggestionsBackground" format="reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">

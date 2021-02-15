@@ -175,6 +175,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         style.inputBackgroundText.apply(binding.tvUploadCamera)
         binding.rvMedia.layoutManager = gridLayoutManager
         binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
+        binding.rvSuggestions.background = style.suggestionsBackground
     }
 
     private fun configOnClickListener() {
