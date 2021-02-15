@@ -1,6 +1,12 @@
-# Feb 5th, 2021 - 4.5.3
-## Common changes for all artifacts
+# Feb 11th, 2021 - 4.5.4
+## stream-chat-android
+- Fix `streamLastMessageDateUnreadTextColor` attribute not being used in ChannelListView
+- Fix `streamChannelsItemSeparatorDrawable` attribute not being parsed
 
+## stream-chat-android-client
+- Fix `ConcurrentModificationException` on our `NetworkStateProvider`
+
+# Feb 5th, 2021 - 4.5.3
 ## stream-chat-android
 -. `ChatUtils::devToken` is not accessible anymore, it has been moved to `ChatClient::devToken`
 

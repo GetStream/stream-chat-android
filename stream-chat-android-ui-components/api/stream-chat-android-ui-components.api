@@ -238,10 +238,6 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 }
 
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$LogoutClicked;
-}
-
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList;
 }
@@ -264,29 +260,16 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Loading : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Loading;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NavigateToLoginScreen : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NavigateToLoginScreen;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NoChannelsAvailable : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$NoChannelsAvailable;
-}
-
-public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State$Result;
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State {
+	public fun <init> (ZLjava/util/List;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ZLjava/util/List;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;ZLjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannels ()Ljava/util/List;
 	public fun hashCode ()I
+	public final fun isLoading ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -626,7 +609,7 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 	public abstract fun onStopTyping ()V
 }
 
-public final class io/getstream/chat/android/ui/message/input/MessageInputViewModelBinding {
+public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageInputViewModelBinding {
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
@@ -914,15 +897,15 @@ public abstract interface class io/getstream/chat/android/ui/message/list/reacti
 	public abstract fun onReactionClick (Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding {
+	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
 public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
-}
-
-public final class io/getstream/chat/android/ui/message/view/MessageListViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {

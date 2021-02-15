@@ -151,7 +151,7 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
             )
             attachmentCloseButtonBackground =
                 getDrawable(R.styleable.MessageInputView_streamAttachmentCloseButtonBackground)
-                ?: ContextCompat.getDrawable(context, R.drawable.stream_button_close)
+                    ?: ContextCompat.getDrawable(context, R.drawable.stream_button_close)
 
             // Send Button
             inputButtonIcon = getResourceId(R.styleable.MessageInputView_streamInputButtonIcon, -1)

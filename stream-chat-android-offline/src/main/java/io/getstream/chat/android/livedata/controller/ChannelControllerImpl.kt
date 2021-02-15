@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import NEVER
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
@@ -58,11 +57,14 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
+import io.getstream.chat.android.livedata.extensions.NEVER
 import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
+import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
+import io.getstream.chat.android.livedata.extensions.wasCreatedBeforeOrAt
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
@@ -78,8 +80,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import wasCreatedAfter
-import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date

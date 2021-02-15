@@ -38,7 +38,7 @@ internal class ChannelListViewModelTest {
         viewModel.state.observeForever(mockObserver)
 
         // then
-        verify(mockObserver).onChanged(ChannelListViewModel.State.Result(mockChannels))
+        verify(mockObserver).onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class ChannelListViewModelTest {
         viewModel.state.observeForever(mockObserver)
 
         // then
-        verify(mockObserver).onChanged(ChannelListViewModel.State.NoChannelsAvailable)
+        verify(mockObserver).onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class ChannelListViewModelTest {
         viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
 
         // then
-        val result = mockObserver.lastObservedValue.shouldBeInstanceOf<ChannelListViewModel.State.Result>()
+        val result = mockObserver.lastObservedValue.shouldBeInstanceOf<ChannelListViewModel.State>()
         result.channels shouldBeEqualTo mockChannels + moreChannels
         verify(queryChannelsLoadMore).invoke(any(), eq(ChannelListViewModel.DEFAULT_SORT), any(), any())
     }

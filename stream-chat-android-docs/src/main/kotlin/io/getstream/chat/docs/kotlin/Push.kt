@@ -1,11 +1,10 @@
 package io.getstream.chat.docs.kotlin
 
 import android.content.Context
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.docs.StaticInstances.TAG
 
 class Push(val context: Context, val client: ChatClient) {
 
@@ -22,7 +21,7 @@ class Push(val context: Context, val client: ChatClient) {
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    // Handle result.error()
                 }
             }
         }
@@ -34,7 +33,7 @@ class Push(val context: Context, val client: ChatClient) {
             val notificationsConfig = NotificationConfig(
                 firebaseMessageIdKey = "message_id",
                 firebaseChannelIdKey = "channel_id",
-                firebaseChannelTypeKey = "channel_type"
+                firebaseChannelTypeKey = "channel_type",
             )
 
             ChatClient.Builder("{{ api_key }}", context)
@@ -46,7 +45,7 @@ class Push(val context: Context, val client: ChatClient) {
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin">Device</a>
      */
-    inner class Device {
+    inner class Device_ {
 
         /**
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
@@ -56,7 +55,7 @@ class Push(val context: Context, val client: ChatClient) {
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    // Handle result.error()
                 }
             }
         }
@@ -69,7 +68,17 @@ class Push(val context: Context, val client: ChatClient) {
                 if (result.isSuccess) {
                     // Device was successfully unregistered
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    // Handle result.error()
+                }
+            }
+        }
+
+        fun listDevices() {
+            client.getDevices().enqueue { result ->
+                if (result.isSuccess) {
+                    val devices: List<Device> = result.data()
+                } else {
+                    // Handle result.error()
                 }
             }
         }
