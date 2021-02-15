@@ -99,11 +99,11 @@ internal class SearchUsersByNameTests {
     fun `Given empty search result and offline state Should fetch all users from DB`() = runBlockingTest {
         When calling chatDomainImpl.isOnline() doReturn false
         val dbUsers = listOf(randomUser(), randomUser())
-        When calling repositoryFacade.selectAllUser(any(), any()) doReturn dbUsers
+        When calling repositoryFacade.selectAllUsers(any(), any()) doReturn dbUsers
 
         val result = sut(querySearch = "", randomInt(), randomInt()).execute()
 
-        verify(repositoryFacade).selectAllUser(any(), any())
+        verify(repositoryFacade).selectAllUsers(any(), any())
         result.data() `should be equal to` dbUsers
     }
 
