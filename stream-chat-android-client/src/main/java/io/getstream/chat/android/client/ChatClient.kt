@@ -211,18 +211,24 @@ public class ChatClient internal constructor(
         if (!ensureUserNotSet(listener)) {
             return
         }
-        clientStateService.onSetUser(user)
-        // fire a handler here that the chatDomain and chatUI can use
-        notifySetUser(user)
+        initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
-        config.isAnonymous = false
-        tokenManager.setTokenProvider(tokenProvider)
-
-        warmUp()
-        notifications.onSetUser()
         getTokenAndConnect {
             socket.connect(user)
         }
+    }
+
+    private fun initializeClientWithUser(
+        user: User,
+        tokenProvider: TokenProvider,
+    ) {
+        clientStateService.onSetUser(user)
+        // fire a handler here that the chatDomain and chatUI can use
+        notifySetUser(user)
+        config.isAnonymous = false
+        tokenManager.setTokenProvider(tokenProvider)
+        warmUp()
+        notifications.onSetUser()
     }
 
     /**
@@ -256,11 +262,7 @@ public class ChatClient internal constructor(
         if (isUserSet()) {
             return
         }
-        clientStateService.onSetUser(user)
-        config.isAnonymous = false
-        tokenManager.setTokenProvider(ImmediateTokenProvider(userToken))
-        warmUp()
-        notifications.onSetUser()
+        initializeClientWithUser(user, ImmediateTokenProvider(userToken))
     }
 
     private fun notifySetUser(user: User) {
