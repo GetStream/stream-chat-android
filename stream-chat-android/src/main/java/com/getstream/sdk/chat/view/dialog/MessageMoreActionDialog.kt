@@ -51,6 +51,9 @@ public class MessageMoreActionDialog(
 
     private fun setupMessageActions() {
         val binding = StreamDialogMessageMoreactionBinding.inflate(context.inflater)
+        style.messageActionButtonsBackground?.let { actionButtonsBackground ->
+            binding.messageActionButtons.background = actionButtonsBackground
+        }
         setContentView(binding.root)
         setCanceledOnTouchOutside(true)
         binding.startThreadButton.isVisible = canThreadOnMessage()
