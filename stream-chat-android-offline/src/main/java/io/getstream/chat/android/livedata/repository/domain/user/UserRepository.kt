@@ -12,7 +12,8 @@ internal interface UserRepository {
     suspend fun selectUser(userId: String): User?
     suspend fun selectUsers(userIds: List<String>): List<User>
     suspend fun selectUserMap(userIds: List<String>): Map<String, User>
-    suspend fun selectAllUser(limit: Int): List<User>
+    suspend fun selectAllUser(limit: Int, offset: Int): List<User>
+    suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 }
 
 internal class UserRepositoryImpl(
@@ -66,8 +67,12 @@ internal class UserRepositoryImpl(
     override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
         selectUsers(userIds).associateBy(User::id) + (currentUser.id to currentUser)
 
-    override suspend fun selectAllUser(limit: Int): List<User> {
-        return userDao.selectAllUser(limit).map(::toModel)
+    override suspend fun selectAllUser(limit: Int, offset: Int): List<User> {
+        return userDao.selectAllUser(limit, offset).map(::toModel)
+    }
+
+    override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> {
+        return userDao.selectUsersLikeName("$searchString%", limit, offset).map(::toModel)
     }
 
     private fun toEntity(user: User): UserEntity = with(user) {

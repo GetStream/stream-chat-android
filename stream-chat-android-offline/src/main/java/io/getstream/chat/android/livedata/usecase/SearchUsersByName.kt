@@ -39,9 +39,9 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
 
     private suspend fun performOfflineSearch(querySearch: String, offset: Int, userLimit: Int): Result<List<User>> {
         return if (querySearch.isEmpty()) {
-            Result(chatDomainImpl.repos.selectAllUser(userLimit))
+            Result(chatDomainImpl.repos.selectAllUser(userLimit, offset))
         } else {
-            Result(emptyList())
+            Result(chatDomainImpl.repos.selectUsersLikeName(querySearch, userLimit, offset))
         }
     }
 

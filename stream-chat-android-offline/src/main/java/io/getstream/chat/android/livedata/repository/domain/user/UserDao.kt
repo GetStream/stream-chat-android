@@ -20,6 +20,9 @@ internal interface UserDao {
     @Query("SELECT * FROM stream_chat_user WHERE stream_chat_user.id IN (:id)")
     suspend fun select(id: String): UserEntity?
 
-    @Query("SELECT * FROM stream_chat_user ORDER BY name ASC LIMIT :limit")
-    fun selectAllUser(limit: Int): List<UserEntity>
+    @Query("SELECT * FROM stream_chat_user ORDER BY name ASC LIMIT :limit OFFSET :offset")
+    fun selectAllUser(limit: Int, offset: Int): List<UserEntity>
+
+    @Query("SELECT * FROM stream_chat_user WHERE name LIKE :searchString ORDER BY name ASC LIMIT :limit OFFSET :offset")
+    fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<UserEntity>
 }
