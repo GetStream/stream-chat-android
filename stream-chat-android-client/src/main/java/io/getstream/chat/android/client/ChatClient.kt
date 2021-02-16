@@ -1260,7 +1260,7 @@ public class ChatClient internal constructor(
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
-        private var logLevel = ChatLogLevel.ALL
+        private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler =
