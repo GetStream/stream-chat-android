@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -19,7 +20,14 @@ import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-public class StreamOfflineSyncFirebaseServiceDelegate(private val service: Service) {
+/**
+ * A delegate class which can be used in [com.google.firebase.messaging.FirebaseMessagingService] in case the app uses
+ * multiple push notifications backend services.
+ *
+ * If the app uses Stream service as its only push notifications provider, the [OfflineSyncFirebaseMessagingService]
+ * class can be used as the  out-of-the box implementation instead of [StreamOfflineSyncCloudMessageDelegate] methods.
+ */
+public class StreamOfflineSyncCloudMessageDelegate(private val service: Service) {
 
     private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingServiceDelegate")
 
@@ -27,6 +35,14 @@ public class StreamOfflineSyncFirebaseServiceDelegate(private val service: Servi
     private val notificationConfig: NotificationConfig by lazy { syncModule.notificationConfigStore.get() }
     private val firebaseMessageParser: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(notificationConfig) }
 
+    /**
+     * Should be called from [FirebaseMessagingService.onNewToken] function.
+     * It registers the Firebase token at Stream backend service. It's required by the backend to send
+     * push notifications via Firebase.
+     *
+     * @param token the token delivered by Firebase service to [com.google.firebase.messaging.FirebaseMessagingService]
+     * registered at your app.
+     */
     public fun onNewToken(token: String) {
         if (ChatClient.isInitialized) {
             ChatClient.instance().onNewTokenReceived(token)
@@ -44,6 +60,14 @@ public class StreamOfflineSyncFirebaseServiceDelegate(private val service: Servi
         }
     }
 
+    /**
+     * Should be called from [FirebaseMessagingService.onMessageReceived] function. It parses the [message],
+     * and starts the background sync operation proceeded with notification displaying.
+     * In case the [message] is not delivered from the Stream push notification provider no operation is executed.
+     *
+     * @param message the [RemoteMessage] delivered to [com.google.firebase.messaging.FirebaseMessagingService]
+     * registered at your app.
+     */
     public fun onMessageReceived(message: RemoteMessage) {
         if (!ChatClient.isValidRemoteMessage(message, notificationConfig)) {
             return

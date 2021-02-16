@@ -5,8 +5,8 @@ import com.google.firebase.messaging.RemoteMessage
 
 internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val syncServiceDelegate: StreamOfflineSyncFirebaseServiceDelegate =
-        StreamOfflineSyncFirebaseServiceDelegate(this)
+    private val syncServiceDelegate: StreamOfflineSyncCloudMessageDelegate =
+        StreamOfflineSyncCloudMessageDelegate(this)
 
     override fun onNewToken(token: String) {
         syncServiceDelegate.onNewToken(token)

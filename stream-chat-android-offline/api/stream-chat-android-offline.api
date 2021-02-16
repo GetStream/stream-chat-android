@@ -300,7 +300,7 @@ public final class io/getstream/chat/android/livedata/repository/domain/user/Use
 	public fun selectUsersLikeName (Ljava/lang/String;II)Ljava/util/List;
 }
 
-public final class io/getstream/chat/android/livedata/service/sync/StreamOfflineSyncFirebaseServiceDelegate {
+public final class io/getstream/chat/android/livedata/service/sync/StreamOfflineSyncCloudMessageDelegate {
 	public fun <init> (Landroid/app/Service;)V
 	public final fun onMessageReceived (Lcom/google/firebase/messaging/RemoteMessage;)V
 	public final fun onNewToken (Ljava/lang/String;)V
