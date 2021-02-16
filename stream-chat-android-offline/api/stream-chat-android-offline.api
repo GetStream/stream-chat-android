@@ -302,6 +302,7 @@ public final class io/getstream/chat/android/livedata/repository/domain/user/Use
 
 public final class io/getstream/chat/android/livedata/service/sync/StreamOfflineSyncCloudMessageDelegate {
 	public fun <init> (Landroid/app/Service;)V
+	public final fun isStreamMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 	public final fun onMessageReceived (Lcom/google/firebase/messaging/RemoteMessage;)V
 	public final fun onNewToken (Ljava/lang/String;)V
 }

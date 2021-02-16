@@ -69,7 +69,7 @@ public class StreamOfflineSyncCloudMessageDelegate(private val service: Service)
      * registered at your app.
      */
     public fun onMessageReceived(message: RemoteMessage) {
-        if (!ChatClient.isValidRemoteMessage(message, notificationConfig)) {
+        if (!isStreamMessage(message)) {
             return
         }
         createSyncNotificationChannel()
@@ -94,6 +94,17 @@ public class StreamOfflineSyncCloudMessageDelegate(private val service: Service)
             }
         }
         service.stopForeground(true)
+    }
+
+    /**
+     * A method to check if the cloud message is sent from Stream backend service.
+     *
+     * @param message instance of [RemoteMessage] delivered at [FirebaseMessagingService]
+     *
+     * @return true if the message is sent from Stream backend, false otherwise.
+     */
+    public fun isStreamMessage(message: RemoteMessage): Boolean {
+        return ChatClient.isValidRemoteMessage(message, notificationConfig)
     }
 
     private fun performSync(
