@@ -6,6 +6,6 @@
 - Introduce ChatClient::setUserWithoutConnecting function
 
 ## stream-chat-android-offline
-- Introduce `StreamOfflineSyncCloudMessageDelegate` class
+- Introduce `PushMessageSyncHandler` class
 
 ## stream-chat-android-ui-common
