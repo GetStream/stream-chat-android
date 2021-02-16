@@ -25,9 +25,9 @@ import kotlinx.coroutines.launch
  * multiple push notifications backend services.
  *
  * If the app uses Stream service as its only push notifications provider, the [OfflineSyncFirebaseMessagingService]
- * class can be used as the  out-of-the box implementation instead of [StreamOfflineSyncCloudMessageDelegate] methods.
+ * class can be used as the  out-of-the box implementation instead of [PushMessageSyncHandler] methods.
  */
-public class StreamOfflineSyncCloudMessageDelegate(private val service: Service) {
+public class PushMessageSyncHandler(private val service: Service) {
 
     private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingServiceDelegate")
 
