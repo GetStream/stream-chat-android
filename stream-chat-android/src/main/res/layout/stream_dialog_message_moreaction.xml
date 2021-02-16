@@ -53,6 +53,7 @@
             >
 
             <ImageView
+                android:id="@+id/startThreadButtonImageView"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_reply"
@@ -64,12 +65,13 @@
                 />
 
             <TextView
-                style="@style/text"
+                android:id="@+id/startThreadButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/stream_more_action_start_thread"
-                android:textColor="#8A000000"
+                android:textColor="@color/stream_black_54"
+                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -84,6 +86,7 @@
             >
 
             <ImageView
+                android:id="@+id/copyMessageButtonImageView"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_copy"
@@ -95,12 +98,13 @@
                 />
 
             <TextView
-                style="@style/text"
+                android:id="@+id/copyMessageButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/stream_more_action_copy"
-                android:textColor="#8A000000"
+                android:textColor="@color/stream_black_54"
+                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -115,6 +119,7 @@
             >
 
             <ImageView
+                android:id="@+id/flagMessageButtonImageView"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_flag"
@@ -126,12 +131,13 @@
                 />
 
             <TextView
-                style="@style/text"
+                android:id="@+id/flagMessageButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/stream_more_action_flag"
-                android:textColor="#8A000000"
+                android:textColor="@color/stream_black_54"
+                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -146,6 +152,7 @@
             >
 
             <ImageView
+                android:id="@+id/editMessageButtonImageView"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_edit"
@@ -157,12 +164,13 @@
                 />
 
             <TextView
-                style="@style/text"
+                android:id="@+id/editMessageButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/stream_more_action_edit"
-                android:textColor="#8A000000"
+                android:textColor="@color/stream_black_54"
+                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -177,6 +185,7 @@
             >
 
             <ImageView
+                android:id="@+id/deleteMessageButtonImageView"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_delete"
@@ -188,12 +197,13 @@
                 />
 
             <TextView
-                style="@style/text"
+                android:id="@+id/deleteMessageButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/stream_more_action_delete"
-                android:textColor="#8A000000"
+                android:textColor="@color/stream_black_54"
+                android:textSize="15sp"
                 />
         </LinearLayout>
     </LinearLayout>
