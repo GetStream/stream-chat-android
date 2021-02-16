@@ -3,6 +3,7 @@
 ## stream-chat-android
 
 ## stream-chat-android-client
+- Introduce ChatClient::setUserWithoutConnecting function
 
 ## stream-chat-android-offline
 
