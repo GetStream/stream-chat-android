@@ -55,7 +55,7 @@ public interface Chat {
         public var markdown: ChatMarkdown = ChatMarkdownImpl(context)
         public var offlineEnabled: Boolean = false
         public var notificationHandler: ChatNotificationHandler = ChatNotificationHandler(context)
-        public var chatLogLevel: ChatLogLevel = ChatLogLevel.ALL
+        public var chatLogLevel: ChatLogLevel = ChatLogLevel.NOTHING
         public var chatLoggerHandler: ChatLoggerHandler? = null
         public var fileUploader: FileUploader? = null
 
