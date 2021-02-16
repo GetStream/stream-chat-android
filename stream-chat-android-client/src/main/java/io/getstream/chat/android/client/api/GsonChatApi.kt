@@ -374,14 +374,24 @@ internal class GsonChatApi(
         channelId: String,
         query: QueryChannelRequest,
     ): Call<Channel> {
-        return retrofitApi.queryChannel(
-            channelType,
-            channelId,
-            apiKey,
-            userId,
-            connectionId,
-            query
-        ).map(::flattenChannel)
+        return if (channelId.isEmpty()) {
+            retrofitApi.queryChannel(
+                channelType,
+                apiKey,
+                userId,
+                connectionId,
+                query
+            )
+        } else {
+            retrofitApi.queryChannel(
+                channelType,
+                channelId,
+                apiKey,
+                userId,
+                connectionId,
+                query
+            )
+        }.map(::flattenChannel)
     }
 
     override fun updateChannel(
