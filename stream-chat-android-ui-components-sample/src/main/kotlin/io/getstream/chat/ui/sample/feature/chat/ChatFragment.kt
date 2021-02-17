@@ -119,7 +119,7 @@ class ChatFragment : Fragment() {
                         messageInputViewModel.setActiveThread(it.parentMessage)
                     }
                     is MessageListViewModel.Mode.Normal -> {
-                        headerViewModel.setActiveThread(null)
+                        headerViewModel.resetThread()
                         messageInputViewModel.resetThread()
                     }
                 }
