@@ -21,8 +21,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 /**
- * A delegate class which can be used in [com.google.firebase.messaging.FirebaseMessagingService] in case the app uses
- * multiple push notifications backend services.
+ * A class which can be used in [com.google.firebase.messaging.FirebaseMessagingService] in case the app uses
+ * multiple push notifications backend services. It's responsible for registering the device's Firebase token on Stream
+ * backend, executing data sync, and showing notification about the new messages obtained during the sync.
  *
  * If the app uses Stream service as its only push notifications provider, the [OfflineSyncFirebaseMessagingService]
  * class can be used as the  out-of-the box implementation instead of [PushMessageSyncHandler] methods.
