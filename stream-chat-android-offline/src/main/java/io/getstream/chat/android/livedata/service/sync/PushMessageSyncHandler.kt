@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.os.Build
+import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -69,6 +70,7 @@ public class PushMessageSyncHandler(private val service: Service) {
      * @param message the [RemoteMessage] delivered to [com.google.firebase.messaging.FirebaseMessagingService]
      * registered at your app.
      */
+    @WorkerThread
     public fun onMessageReceived(message: RemoteMessage) {
         if (!isStreamMessage(message)) {
             return
@@ -114,14 +116,13 @@ public class PushMessageSyncHandler(private val service: Service) {
         client: ChatClient,
         message: RemoteMessage,
     ) {
-        domain.useCases.replayEventsForActiveChannels(cid).enqueue {
-            if (it.isSuccess) {
-                logger.logD("Sync success.")
-            } else {
-                logger.logD("Sync failed.")
-            }
-            client.onMessageReceived(message)
+        val result = domain.useCases.replayEventsForActiveChannels(cid).execute()
+        if (result.isSuccess) {
+            logger.logD("Sync success.")
+        } else {
+            logger.logD("Sync failed.")
         }
+        client.onMessageReceived(message)
     }
 
     private fun startForegroundExecution(smallIcon: Int) {
