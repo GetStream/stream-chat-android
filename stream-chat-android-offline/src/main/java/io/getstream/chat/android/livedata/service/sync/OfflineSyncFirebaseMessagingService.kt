@@ -5,15 +5,15 @@ import com.google.firebase.messaging.RemoteMessage
 
 internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val syncServiceDelegate: PushMessageSyncHandler =
+    private val pushDataSyncHandler: PushMessageSyncHandler =
         PushMessageSyncHandler(this)
 
     override fun onNewToken(token: String) {
-        syncServiceDelegate.onNewToken(token)
+        pushDataSyncHandler.onNewToken(token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        syncServiceDelegate.onMessageReceived(message)
+        pushDataSyncHandler.onMessageReceived(message)
         stopSelf()
     }
 }
