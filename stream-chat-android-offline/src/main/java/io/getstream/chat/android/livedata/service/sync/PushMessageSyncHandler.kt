@@ -15,10 +15,7 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 /**
  * A class which can be used in [com.google.firebase.messaging.FirebaseMessagingService] in case the app uses
@@ -53,10 +50,8 @@ public class PushMessageSyncHandler(private val service: Service) {
                 val config = it
                 val user = User(id = config.userId)
                 val userToken = config.userToken
-                GlobalScope.launch(DispatcherProvider.IO) {
-                    val client = initClient(service, user, userToken, config.apiKey)
-                    client.onNewTokenReceived(token)
-                }
+                val client = initClient(service, user, userToken, config.apiKey)
+                client.onNewTokenReceived(token)
             }
         }
     }
