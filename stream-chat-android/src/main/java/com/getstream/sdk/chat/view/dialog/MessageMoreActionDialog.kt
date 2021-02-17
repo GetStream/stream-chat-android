@@ -31,7 +31,7 @@ public class MessageMoreActionDialog(
     private val onMessageEditHandler: (message: Message) -> Unit,
     private val onMessageDeleteHandler: (message: Message) -> Unit,
     private val onStartThreadHandler: (message: Message) -> Unit,
-    private val onMessageFlagHandler: (message: Message) -> Unit
+    private val onMessageFlagHandler: (message: Message) -> Unit,
 ) : Dialog(context, R.style.DialogTheme) {
 
     init {
@@ -50,7 +50,11 @@ public class MessageMoreActionDialog(
     }
 
     private fun setupMessageActions() {
-        val binding = StreamDialogMessageMoreactionBinding.inflate(context.inflater)
+        val binding = StreamDialogMessageMoreactionBinding.inflate(context.inflater).also {
+            applyButtonsTextStyle(it)
+            applyButtonsIconTint(it)
+        }
+
         style.messageActionButtonsBackground?.let { actionButtonsBackground ->
             binding.messageActionButtons.background = actionButtonsBackground
         }
@@ -115,6 +119,30 @@ public class MessageMoreActionDialog(
                     clipboard.setPrimaryClip(clip)
                     dismiss()
                 }
+            }
+        }
+    }
+
+    private fun applyButtonsTextStyle(binding: StreamDialogMessageMoreactionBinding) {
+        style.messageActionButtonsTextStyle.let { textStyle ->
+            binding.apply {
+                textStyle.apply(startThreadButtonTextView)
+                textStyle.apply(copyMessageButtonTextView)
+                textStyle.apply(flagMessageButtonTextView)
+                textStyle.apply(editMessageButtonTextView)
+                textStyle.apply(deleteMessageButtonTextView)
+            }
+        }
+    }
+
+    private fun applyButtonsIconTint(binding: StreamDialogMessageMoreactionBinding) {
+        style.messageActionButtonsIconTint.let { tint ->
+            binding.apply {
+                startThreadButtonImageView.imageTintList = tint
+                copyMessageButtonImageView.imageTintList = tint
+                flagMessageButtonImageView.imageTintList = tint
+                editMessageButtonImageView.imageTintList = tint
+                deleteMessageButtonImageView.imageTintList = tint
             }
         }
     }

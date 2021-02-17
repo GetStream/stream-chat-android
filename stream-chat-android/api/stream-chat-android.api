@@ -493,6 +493,8 @@ public final class com/getstream/sdk/chat/view/MessageListViewStyle {
 	public final fun getEditMessageActionEnabled ()Z
 	public final fun getFlagMessageActionEnabled ()Z
 	public final fun getMessageActionButtonsBackground ()Landroid/graphics/drawable/Drawable;
+	public final fun getMessageActionButtonsIconTint ()Landroid/content/res/ColorStateList;
+	public final fun getMessageActionButtonsTextStyle ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun getMessageBackgroundColor (Z)I
 	public final fun getMessageBorderColor (Z)I
 	public final fun getMessageBorderWidth (Z)I
