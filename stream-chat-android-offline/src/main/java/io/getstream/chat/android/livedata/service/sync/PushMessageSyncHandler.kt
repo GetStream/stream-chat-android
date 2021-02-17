@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
  */
 public class PushMessageSyncHandler(private val service: Service) {
 
-    private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingServiceDelegate")
+    private val logger = ChatLogger.get("PushMessageSyncHandler")
 
     private val syncModule by lazy { SyncProvider(service) }
     private val notificationConfig: NotificationConfig by lazy { syncModule.notificationConfigStore.get() }
