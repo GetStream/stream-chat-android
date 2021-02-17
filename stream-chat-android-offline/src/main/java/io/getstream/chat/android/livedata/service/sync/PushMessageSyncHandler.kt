@@ -92,8 +92,8 @@ public class PushMessageSyncHandler(private val service: Service) {
                     performSync(domain, cid, client, message)
                 }
             }
+            service.stopForeground(true)
         }
-        service.stopForeground(true)
     }
 
     /**
