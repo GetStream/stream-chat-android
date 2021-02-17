@@ -410,4 +410,44 @@ class Android {
             return super.createViewHolder(parentView, viewType)
         }
     }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/combining_view_models">Combining Views and View Models</a>
+     */
+    class CombiningViewsAndViewModels : Fragment() {
+        lateinit var messageListView: MessageListView
+        lateinit var messageListHeaderView: MessageListHeaderView
+        lateinit var messageListViewModel: MessageListViewModel
+        lateinit var messageListHeaderViewModel: MessageListHeaderViewModel
+        lateinit var messageInputViewModel: MessageInputViewModel
+
+        fun handlingThreads() {
+            messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
+                when (mode) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        // Handle entering thread mode
+                        messageListHeaderViewModel.setActiveThread(mode.parentMessage)
+                        messageInputViewModel.setActiveThread(mode.parentMessage)
+                    }
+                    MessageListViewModel.Mode.Normal -> {
+                        // Handle leaving thread mode
+                        messageListHeaderViewModel.resetThread()
+                        messageInputViewModel.resetThread()
+                    }
+                }
+            }
+        }
+
+        fun editingMessage() {
+            messageListView.setMessageEditHandler { message ->
+                messageInputViewModel.editMessage.postValue(message)
+            }
+        }
+
+        fun handlingBackButtonClicks() {
+            messageListHeaderView.setBackButtonClickListener {
+                messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+            }
+        }
+    }
 }

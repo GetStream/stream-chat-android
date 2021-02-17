@@ -447,4 +447,42 @@ public class Android {
             }
         }
     }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/combining_view_models">Combining Views and View Models</a>
+     */
+    class CombiningViewsAndViewModels extends Fragment {
+        MessageListView messageListView;
+        MessageListHeaderView messageListHeaderView;
+        MessageListViewModel messageListViewModel;
+        MessageListHeaderViewModel messageListHeaderViewModel;
+        MessageInputViewModel messageInputViewModel;
+
+        public void handlingThreads() {
+            messageListViewModel.getMode().observe(getViewLifecycleOwner(), (mode) -> {
+                if (mode instanceof MessageListViewModel.Mode.Thread) {
+                    // Handle entering thread mode
+                    Message parentMessage = ((MessageListViewModel.Mode.Thread) mode).getParentMessage();
+                    messageListHeaderViewModel.setActiveThread(parentMessage);
+                    messageInputViewModel.setActiveThread(parentMessage);
+                } else if (mode instanceof MessageListViewModel.Mode.Normal) {
+                    // Handle leaving thread mode
+                    messageListHeaderViewModel.resetThread();
+                    messageInputViewModel.resetThread();
+                }
+            });
+        }
+
+        public void editingMessage() {
+            messageListView.setMessageEditHandler((message) -> {
+                messageInputViewModel.getEditMessage().postValue(message);
+            });
+        }
+
+        public void handlingBackButtonClicks() {
+            messageListHeaderView.setBackButtonClickListener(() -> {
+                messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
+            });
+        }
+    }
 }
