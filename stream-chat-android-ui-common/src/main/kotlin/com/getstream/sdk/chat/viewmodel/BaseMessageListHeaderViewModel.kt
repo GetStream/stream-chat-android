@@ -53,7 +53,11 @@ public abstract class BaseMessageListHeaderViewModel constructor(
         }
     }
 
-    public fun setActiveThread(message: Message?) {
+    public fun setActiveThread(message: Message) {
         _activeThread.postValue(message)
+    }
+
+    public fun resetThread() {
+        _activeThread.postValue(null)
     }
 }
