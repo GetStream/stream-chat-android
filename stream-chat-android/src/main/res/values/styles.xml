@@ -40,6 +40,12 @@
         <item name="android:textColor">@color/stream_black</item>
     </style>
 
+    <style name="StreamMessageActionButtonText">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/stream_black_54</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
     <style name="text_single_line">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/stream_black</item>

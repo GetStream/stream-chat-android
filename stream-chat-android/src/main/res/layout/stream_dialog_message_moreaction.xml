@@ -66,12 +66,10 @@
 
             <TextView
                 android:id="@+id/startThreadButtonTextView"
+                style="@style/StreamMessageActionButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:text="@string/stream_more_action_start_thread"
-                android:textColor="@color/stream_black_54"
-                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -99,12 +97,10 @@
 
             <TextView
                 android:id="@+id/copyMessageButtonTextView"
+                style="@style/StreamMessageActionButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:text="@string/stream_more_action_copy"
-                android:textColor="@color/stream_black_54"
-                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -132,12 +128,10 @@
 
             <TextView
                 android:id="@+id/flagMessageButtonTextView"
+                style="@style/StreamMessageActionButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:text="@string/stream_more_action_flag"
-                android:textColor="@color/stream_black_54"
-                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -165,12 +159,10 @@
 
             <TextView
                 android:id="@+id/editMessageButtonTextView"
+                style="@style/StreamMessageActionButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:text="@string/stream_more_action_edit"
-                android:textColor="@color/stream_black_54"
-                android:textSize="15sp"
                 />
         </LinearLayout>
 
@@ -198,12 +190,10 @@
 
             <TextView
                 android:id="@+id/deleteMessageButtonTextView"
+                style="@style/StreamMessageActionButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:text="@string/stream_more_action_delete"
-                android:textColor="@color/stream_black_54"
-                android:textSize="15sp"
                 />
         </LinearLayout>
     </LinearLayout>
