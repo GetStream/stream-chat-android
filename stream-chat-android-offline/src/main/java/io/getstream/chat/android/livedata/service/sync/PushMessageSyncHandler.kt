@@ -62,9 +62,14 @@ public class PushMessageSyncHandler(private val service: Service) {
     }
 
     /**
-     * Should be called from [FirebaseMessagingService.onMessageReceived] function. It parses the [message],
-     * and starts the background sync operation proceeded with notification displaying.
-     * In case the [message] is not delivered from the Stream push notification provider no operation is executed.
+     * This method should be called from [FirebaseMessagingService.onMessageReceived] function. It parses the [message],
+     * and starts the sync operation (synchronously), proceeded with notification displaying.
+     *
+     * In order to perform the sync, the service is switched into foreground, and the foreground notification is
+     * displayed to inform about the foreground execution. Afterwards, the service switches back to background execution
+     * and a new notification is displayed informing about the new messages / events obtained during the sync.
+     *
+     * In case the [message] was not delivered from the Stream push notification provider no operation is executed.
      *
      * @param message the [RemoteMessage] delivered to [com.google.firebase.messaging.FirebaseMessagingService]
      * registered at your app.
@@ -74,31 +79,31 @@ public class PushMessageSyncHandler(private val service: Service) {
             return
         }
         createSyncNotificationChannel()
-        showForegroundNotification(notificationConfig.smallIcon)
+        startForegroundExecution(notificationConfig.smallIcon)
 
-        GlobalScope.launch(DispatcherProvider.IO) {
-            val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
-            if (ChatDomain.isInitialized && ChatClient.isInitialized) {
-                logger.logD("Starting the sync")
-                performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
-            } else {
-                val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-                syncConfig?.let {
-                    val config = it
-                    val user = User(id = config.userId)
-                    val token = config.userToken
-                    val client = initClient(service, user, token, config.apiKey)
-                    val domain = initDomain(user, client)
-                    logger.logD("Starting the sync, config: $syncConfig")
-                    performSync(domain, cid, client, message)
-                }
+        val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
+        if (ChatDomain.isInitialized && ChatClient.isInitialized) {
+            logger.logD("Starting the sync")
+            performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
+        } else {
+            val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
+            syncConfig?.let {
+                val config = it
+                val user = User(id = config.userId)
+                val token = config.userToken
+                val client = initClient(service, user, token, config.apiKey)
+                val domain = initDomain(user, client)
+
+                logger.logD("Starting the sync, config: $syncConfig")
+
+                performSync(domain, cid, client, message)
             }
             service.stopForeground(true)
         }
     }
 
     /**
-     * A method to check if the cloud message is sent from Stream backend service.
+     * Checks if the cloud message is sent from the Stream backend service.
      *
      * @param message instance of [RemoteMessage] delivered at [FirebaseMessagingService]
      *
@@ -124,7 +129,7 @@ public class PushMessageSyncHandler(private val service: Service) {
         }
     }
 
-    private fun showForegroundNotification(smallIcon: Int) {
+    private fun startForegroundExecution(smallIcon: Int) {
         NotificationCompat.Builder(service, CHANNEL_ID)
             .setAutoCancel(true)
             .setSmallIcon(smallIcon)
