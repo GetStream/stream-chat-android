@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
     android:background="@drawable/stream_ui_foreground_channel_list"
-    android:backgroundTint="@color/stream_ui_white_snow"
-    android:backgroundTintMode="src_in"
     >
 
     <io.getstream.chat.android.ui.avatar.AvatarView
