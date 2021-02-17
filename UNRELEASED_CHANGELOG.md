@@ -8,6 +8,7 @@
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
+- Handle disconect event during pending token state
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class
