@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textColor="@color/stream_ui_white"
+            android:textColor="@color/stream_ui_literal_white"
             android:textSize="26sp"
             tools:text="+9"
             />
