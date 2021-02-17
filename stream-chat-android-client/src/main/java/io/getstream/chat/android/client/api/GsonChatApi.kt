@@ -374,11 +374,6 @@ internal class GsonChatApi(
         channelId: String,
         query: QueryChannelRequest,
     ): Call<Channel> {
-
-        if (connectionId.isEmpty()) {
-            return noConnectionIdError()
-        }
-
         return if (channelId.isEmpty()) {
             retrofitApi.queryChannel(
                 channelType,

@@ -18,13 +18,13 @@ public abstract class BaseMessageListHeaderViewModel constructor(
     private val chatDomain: ChatDomain,
 ) : ViewModel() {
 
-    private var _activeThread = MutableLiveData<Message?>()
+    private val _activeThread = MutableLiveData<Message?>()
     private val _members = MediatorLiveData<List<Member>>()
     private val _channelState = MediatorLiveData<Channel>()
     private val _anyOtherUsersOnline = MediatorLiveData<Boolean>()
     private val _typingUsers = MediatorLiveData<List<User>>()
 
-    public var activeThread: LiveData<Message?> = _activeThread
+    public val activeThread: LiveData<Message?> = _activeThread
     public val members: LiveData<List<Member>> = _members
     public val channelState: LiveData<Channel> = _channelState
     public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline

@@ -112,7 +112,6 @@ internal class ChatNotifications private constructor(
         getChannel.zipWith(getMessage).enqueue { result ->
             if (result.isSuccess) {
                 val (channel, message) = result.data()
-
                 handler.getDataLoadListener()?.onLoadSuccess(channel, message)
                 onRequiredDataLoaded(channel, message)
             } else {

@@ -84,6 +84,7 @@
     <dimen name="stream_reaction_margin">8dp</dimen>
 
     <dimen name="stream_message_date_margin_start">5dp</dimen>
+    <dimen name="stream_message_action_buttons_text_size">15sp</dimen>
     <!--Attachment Item-->
     <dimen name="stream_attach_image_height">200dp</dimen>
     <dimen name="stream_attach_file_height">50dp</dimen>
