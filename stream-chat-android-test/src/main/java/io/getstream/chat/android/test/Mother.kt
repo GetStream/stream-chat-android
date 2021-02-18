@@ -38,9 +38,9 @@ public fun randomFiles(
 public fun randomDate(): Date = Date(randomLong())
 
 public fun createDate(
-    year: Int,
-    month: Int,
-    date: Int,
+    year: Int = positiveRandomInt(),
+    month: Int = positiveRandomInt(),
+    date: Int = positiveRandomInt(),
     hourOfDay: Int = 0,
     minute: Int = 0,
     seconds: Int = 0

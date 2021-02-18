@@ -84,6 +84,16 @@ internal class ClientStateServiceTests {
     }
 
     @Test
+    fun `Given user pending without token state When disconnected Should stay on the same state`() {
+        val sut = Fixture().givenUserAuthorizationPendingWithoutTokenState().please()
+        val expectedState = sut.state
+
+        sut.onDisconnected()
+
+        sut.state shouldBeEqualTo expectedState
+    }
+
+    @Test
     fun `Given user pending with token state When connected Should move to user connected state`() {
         val user = Mother.randomUser()
         val sut = Fixture().givenUserAuthorizationPendingWithTokenState("token").please()
@@ -180,6 +190,16 @@ internal class ClientStateServiceTests {
         sut.onDisconnectRequested()
 
         sut.state shouldBeEqualTo ClientState.Idle
+    }
+
+    @Test
+    fun `Given anonymous pending without token state When disconnected Should stay on the same state`() {
+        val sut = Fixture().givenAnonymousPendingWithoutTokenState().please()
+        val expectedState = sut.state
+
+        sut.onDisconnected()
+
+        sut.state shouldBeEqualTo expectedState
     }
 
     @Test

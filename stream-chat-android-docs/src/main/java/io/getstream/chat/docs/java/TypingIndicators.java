@@ -15,8 +15,7 @@ public class TypingIndicators {
         channelClient.keystroke().enqueue();
 
         // Sends a typing.start event for a particular thread
-        String threadId = "threadId";
-        channelClient.keystroke(threadId).enqueue();
+        channelClient.keystroke("threadId").enqueue();
 
         // Sends the typing.stop event
         channelClient.stopTyping().enqueue();

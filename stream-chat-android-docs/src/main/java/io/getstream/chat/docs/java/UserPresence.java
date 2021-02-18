@@ -1,7 +1,5 @@
 package io.getstream.chat.docs.java;
 
-import android.util.Log;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,8 +15,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 
-import static io.getstream.chat.docs.StaticInstances.TAG;
-
 public class UserPresence {
     private ChatClient client;
     private ChannelClient channelClient;
@@ -33,11 +29,8 @@ public class UserPresence {
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
             if (result.isSuccess()) {
                 User userRes = result.data().getUser();
-                String connectionId = result.data().getConnectionId();
-
-                Log.i(TAG, String.format("Connection (%s) established for user %s", connectionId, userRes));
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                // Handle result.error()
             }
         });
     }
@@ -47,8 +40,9 @@ public class UserPresence {
      */
     public void listeningPresenceChanges() {
         // You need to be watching some channels/queries to be able to get presence events.
-        // There are multiple ways of doing so:
-        // 1. Watch a channel for presence event
+        // Here are three different ways of doing that:
+
+        // 1. Watch a single channel with presence = true set
         WatchChannelRequest watchRequest = new WatchChannelRequest();
         watchRequest.setPresence(true);
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
@@ -56,15 +50,18 @@ public class UserPresence {
             if (result.isSuccess()) {
                 Channel channel = result.data();
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                // Handle result.error()
             }
         });
 
         // 2. Query some channels with presence events
         int channelsOffset = 0;
         int channelsLimit = 10;
-        FilterObject channelsFilter = Filters.in("members", "john", "jack").put("type", "messaging");
-        QuerySort channelsSort = new QuerySort();
+        FilterObject channelsFilter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.in("members", Arrays.asList("john", "jack"))
+        );
+        QuerySort<Channel> channelsSort = new QuerySort<>();
         int messageLimit = 0;
         int memberLimit = 0;
         QueryChannelsRequest channelsRequest = new QueryChannelsRequest(
@@ -79,11 +76,11 @@ public class UserPresence {
             if (result.isSuccess()) {
                 List<Channel> channels = result.data();
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                // Handle result.error()
             }
         });
 
-        // 3. Query some users for presence event
+        // 3. Query some users with presence = true set
         int usersOffset = 0;
         int usersLimit = 2;
         FilterObject usersFilter = Filters.in("id", Arrays.asList("john", "jack"));
@@ -93,7 +90,7 @@ public class UserPresence {
             if (result.isSuccess()) {
                 List<User> users = result.data();
             } else {
-                Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                // Handle result.error()
             }
         });
 
