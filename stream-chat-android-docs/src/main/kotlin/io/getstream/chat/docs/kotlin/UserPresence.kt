@@ -1,16 +1,16 @@
 package io.getstream.chat.docs.kotlin
 
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.docs.StaticInstances
 
 class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
 
@@ -18,10 +18,17 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=kotlin#invisible">Invisible</a>
      */
     fun invisible() {
-        val user = User("user-id").apply {
-            invisible = true
+        val user = User(
+            id = "user-id",
+            invisible = true,
+        )
+        client.connectUser(user, "{{ chat_user_token }}").enqueue { result ->
+            if (result.isSuccess) {
+                val user: ConnectionData = result.data()
+            } else {
+                // Handle result.error()
+            }
         }
-        client.connectUser(user, "{{ chat_user_token }}").enqueue()
     }
 
     /**
@@ -29,51 +36,56 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
      */
     fun listeningPresenceChanges() {
         // You need to be watching some channels/queries to be able to get presence events.
-        // There are multiple ways of doing so:
-        // 1. Watch a channel for presence event
+        // Here are three different ways of doing that:
+
+        // 1. Watch a single channel with presence = true set
         val watchRequest = WatchChannelRequest().apply {
-            presence = true
             data["members"] = listOf("john", "jack")
-        }
-        channelClient.watch(watchRequest).enqueue {
-            if (it.isSuccess) {
-                val channel = it.data()
-            } else {
-                Log.e(StaticInstances.TAG, String.format("There was an error %s", it.error(), it.error().cause))
-            }
-        }
-
-        // 2. Query some channels with presence events
-        val channelsOffset = 0
-        val channelsLimit = 10
-        val channelsFilter = Filters.`in`("members", "john", "jack").put("type", "messaging")
-        val channelsRequest = QueryChannelsRequest(channelsFilter, channelsOffset, channelsLimit).apply {
             presence = true
         }
-        client.queryChannels(channelsRequest).enqueue {
-            if (it.isSuccess) {
-                val channels = it.data()
+        channelClient.watch(watchRequest).enqueue { result ->
+            if (result.isSuccess) {
+                val channel: Channel = result.data()
             } else {
-                Log.e(StaticInstances.TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                // Handle result.error()
             }
         }
 
-        // 3. Query some users for presence event
-        val usersOffset = 0
-        val usersLimit = 2
-        val usersFilter = Filters.`in`("id", listOf("john", "jack"))
-        val usersQuery = QueryUsersRequest(usersFilter, usersOffset, usersLimit).apply {
+        // 2. Query some channels with presence = true set
+        val channelsRequest = QueryChannelsRequest(
+            filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf("john", "jack")),
+            ),
+            offset = 0,
+            limit = 10,
+        ).apply {
             presence = true
         }
-        client.queryUsers(usersQuery).enqueue {
-            if (it.isSuccess) {
-                val users = it.data()
+        client.queryChannels(channelsRequest).enqueue { result ->
+            if (result.isSuccess) {
+                val channels: List<Channel> = result.data()
             } else {
-                Log.e(StaticInstances.TAG, String.format("There was an error %s", it.error(), it.error().cause))
+                // Handle result.error()
             }
         }
 
-        // Finally, Subscribe to events
+        // 3. Query some users with presence = true set
+        val usersQuery = QueryUsersRequest(
+            filter = Filters.`in`("id", listOf("john", "jack")),
+            offset = 0,
+            limit = 2,
+            presence = true,
+        )
+        client.queryUsers(usersQuery).enqueue { result ->
+            if (result.isSuccess) {
+                val users: List<User> = result.data()
+            } else {
+                // Handle result.error()
+            }
+        }
+
+        // Finally, subscribe to presence to events
         client.subscribeFor<UserPresenceChangedEvent> { event ->
             // Handle change
         }
