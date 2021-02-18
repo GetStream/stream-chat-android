@@ -75,11 +75,10 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
-public class ChannelClient @InternalStreamChatApi constructor(
+public class ChannelClient internal constructor(
     override val channelType: String,
     override val channelId: String,
     private val client: ChatClient,
