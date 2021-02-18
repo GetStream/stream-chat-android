@@ -59,6 +59,7 @@ public class MessageInputView : ConstraintLayout {
     private var iconEnabledSendButtonDrawable: Drawable? = null
     private var sendAlsoToChannelCheckBoxEnabled: Boolean = true
     private var isSendButtonEnabled: Boolean = true
+    private var isLightningButtonEnabled: Boolean = true
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -169,6 +170,7 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController = SuggestionListController(suggestionListView) {
             binding.commandsButton.isSelected = false
         }
+        refreshControlsState()
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
@@ -273,7 +275,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configLightningButton(typedArray: TypedArray) {
         binding.commandsButton.run {
-            isVisible =
+            isLightningButtonEnabled =
                 typedArray.getBoolean(R.styleable.MessageInputView_streamUiLightningButtonEnabled, true)
 
             typedArray.getDrawable(R.styleable.MessageInputView_streamUiLightningButtonIcon)
@@ -458,12 +460,12 @@ public class MessageInputView : ConstraintLayout {
     private fun refreshControlsState() {
         val isCommandMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
         val hasContent = binding.messageInputFieldView.hasContent()
-        val maxLMessageLengthExceeded = binding.messageInputFieldView.isMaxMessageLengthExceeded()
+        val maxMessageLengthExceeded = binding.messageInputFieldView.isMaxMessageLengthExceeded()
 
         binding.attachmentsButton.isVisible = !isCommandMode
-        binding.commandsButton.isVisible = !isCommandMode
+        binding.commandsButton.isVisible = !isCommandMode && suggestionListController != null && isLightningButtonEnabled
         binding.commandsButton.isEnabled = !hasContent
-        setSendMessageButtonEnabled(hasContent && !maxLMessageLengthExceeded)
+        setSendMessageButtonEnabled(hasContent && !maxMessageLengthExceeded)
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {

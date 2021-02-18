@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -22,7 +23,6 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import java.io.File
-import java.time.Instant
 import java.util.Date
 
 internal fun randomUser(
@@ -192,7 +192,9 @@ internal fun createMessage(
     silent = silent
 )
 
-internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
+internal fun randomSyncStatus(
+    filterNot: (SyncStatus) -> Boolean = { false }
+): SyncStatus = SyncStatus.values().filterNot(filterNot).random()
 
 internal fun createMessageList(
     size: Int = 10,
@@ -201,9 +203,14 @@ internal fun createMessageList(
 
 internal fun createChannelUserRead(
     user: User = createUser(),
-    lastReadDate: Date = Date.from(Instant.now()),
-    unreadMessages: Int = 0
+    lastReadDate: Date = createDate(),
+    unreadMessages: Int = randomInt()
 ) = ChannelUserRead(user, lastReadDate, unreadMessages)
+
+internal fun createChannelUserReads(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> ChannelUserRead = { createChannelUserRead() }
+): List<ChannelUserRead> = List(size, creationFunction)
 
 internal fun createCommand(
     name: String = randomString(),
@@ -216,7 +223,9 @@ internal fun createCommands(size: Int = 10): List<Command> = List(size) { create
 
 internal fun createMessageItem(
     message: Message = createMessage(),
-    positions: List<MessageListItem.Position> = listOf(),
+    positions: List<MessageListItem.Position> = createPositions(),
     isMine: Boolean = randomBoolean(),
-    messageReadBy: MutableList<ChannelUserRead> = mutableListOf()
+    messageReadBy: List<ChannelUserRead> = createChannelUserReads()
 ): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)
+
+internal fun createPositions(size: Int = 10): List<MessageListItem.Position> = List(size) { MessageListItem.Position.values().random() }
