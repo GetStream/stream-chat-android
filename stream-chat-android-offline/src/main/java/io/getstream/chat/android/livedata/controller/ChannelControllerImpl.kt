@@ -1276,12 +1276,31 @@ internal class ChannelControllerImpl(
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     private fun updateReads(reads: List<ChannelUserRead>) {
+        val currentUserId = domainImpl.currentUser.id
         val previousUserIdToReadMap = _reads.value
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
+        /**
+         * It's possible that the data coming back from the online channel query has a last read date that's
+         * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
+         * to show in the channel list.
+         */
+
         incomingUserIdToReadMap[domainImpl.currentUser.id]?.let {
-            _read.value = it
-            _unreadCount.value = it.unreadMessages
+            // the previous last Read date that is most current
+            val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+
+            // Use AFTER to determine if the incoming read is more current.
+            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+            val incomingReadMoreCurrent = previousLastRead == null || it.lastRead?.after(previousLastRead) == true
+
+            if (incomingReadMoreCurrent) {
+                _read.value = it
+                _unreadCount.value = it.unreadMessages
+            } else {
+                // if the previous Read was more current, replace the item in the update map
+                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
+            }
         }
 
         // always post the newly updated map
