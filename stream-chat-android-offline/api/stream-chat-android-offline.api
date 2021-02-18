@@ -219,7 +219,7 @@ public final class io/getstream/chat/android/livedata/repository/database/ChatDa
 	public fun channelStateDao ()Lio/getstream/chat/android/livedata/repository/domain/channel/ChannelDao;
 	public fun clearAllTables ()V
 	public fun messageDao ()Lio/getstream/chat/android/livedata/repository/domain/message/MessageDao;
-	public fun queryChannelsQDao ()Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao;
+	public fun queryChannelsDao ()Lio/getstream/chat/android/livedata/repository/domain/queryChannels/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/livedata/repository/domain/reaction/ReactionDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/livedata/repository/domain/syncState/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/livedata/repository/domain/user/UserDao;
@@ -403,12 +403,9 @@ public final class io/getstream/chat/android/livedata/usecase/QueryChannelsLoadM
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore;Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/livedata/usecase/QueryMembers {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/livedata/usecase/QueryMembers$DefaultImpls {
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryMembers;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/livedata/usecase/QueryMembers {
+	public final fun invoke (Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryMembers;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/ReplayEventsForActiveChannels {
