@@ -3,13 +3,30 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
+/**
+ * UseCase for querying members of a channel
+ *
+ * @property domainImpl instance of a ChatDomain
+ */
 public class QueryMembers internal constructor(private val domainImpl: ChatDomainImpl) {
 
+    /**
+     * Obtains an executable coroutine call for querying members
+     *
+     * @param cid CID of the Channel whose members we are querying
+     * @param offset indicates how many items to exclude from the start of the result
+     * @param limit indicates the maximum allowed number of items in the result
+     * @param filter applied to online queries for advanced selection criteria
+     * @param sort the sort criteria applied to the result
+     * @param members
+     * @return
+     */
     public operator fun invoke(
         cid: String,
         offset: Int = 0,
@@ -39,7 +56,7 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         val result = domainImpl.client
             .channel(cid)
             .queryMembers(offset, limit, filter, sort, members)
-            .execute()
+            .await()
 
         if (result.isSuccess) {
             domainImpl.repos.updateMembersForChannel(cid, result.data())
@@ -55,17 +72,17 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         limit: Int,
     ): Result<List<Member>> {
         // retrieve from database
+        val clampedOffset = offset.coerceAtLeast(0)
+        val clampedLimit = limit.coerceAtLeast(0)
         val membersFromDatabase = domainImpl
             .repos
             .selectMembersForChannel(cid)
             .sortedWith(sort.comparator)
-            .drop(offset.coerceAtLeast(0))
-            .let { afterDrop ->
-                limit.coerceAtLeast(0).let { clampedLimit ->
-                    if (clampedLimit > 0) {
-                        afterDrop.take(clampedLimit)
-                    } else afterDrop
-                }
+            .drop(clampedOffset)
+            .let { members ->
+                if (clampedLimit > 0) {
+                    members.take(clampedLimit)
+                } else members
             }
 
         return Result(membersFromDatabase)
