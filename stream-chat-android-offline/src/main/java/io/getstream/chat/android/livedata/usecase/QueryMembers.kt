@@ -19,7 +19,7 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return CoroutineCall(domainImpl.scope) {
-            if (domainImpl.isOffline() && domainImpl.offlineEnabled) {
+            if (domainImpl.isOffline()) {
                 queryMembersOffline(cid, sort, offset, limit)
             } else {
                 queryMembersOnline(cid, offset, limit, filter, sort, members)
@@ -35,11 +35,10 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         sort: QuerySort<Member>,
         members: List<Member>,
     ): Result<List<Member>> {
-        val cidComponents = cid.split(':')
 
-        val result = domainImpl
-            .client
-            .queryMembers(cidComponents[0], cidComponents[1], offset, limit, filter, sort, members)
+        val result = domainImpl.client
+            .channel(cid)
+            .queryMembers(offset, limit, filter, sort, members)
             .execute()
 
         if (result.isSuccess) {
@@ -59,17 +58,15 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         val membersFromDatabase = domainImpl
             .repos
             .selectMembersForChannel(cid)
-            .takeIf { it.isNotEmpty() }
-            ?.let { members ->
-                members
-                    .sortedWith(sort.comparator)
-                    .drop(offset)
-                    .let { afterDrop ->
-                        if (limit > 0) {
-                            afterDrop.take(limit)
-                        } else afterDrop
-                    }
-            } ?: emptyList()
+            .sortedWith(sort.comparator)
+            .drop(offset.coerceAtLeast(0))
+            .let { afterDrop ->
+                limit.coerceAtLeast(0).let { clampedLimit ->
+                    if (clampedLimit > 0) {
+                        afterDrop.take(clampedLimit)
+                    } else afterDrop
+                }
+            }
 
         return Result(membersFromDatabase)
     }
