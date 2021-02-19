@@ -89,5 +89,6 @@ dependencies {
     implementation Dependencies.constraintLayout
     implementation Dependencies.fragmentKtx
     implementation Dependencies.kotlinStdLib
+    implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
 }

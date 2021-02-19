@@ -19,3 +19,4 @@
     - If we're offline, it pulls members from the database for the given channel
 
 ## stream-chat-android-ui-common
+- Fix `CaptureMediaContract` chooser on Android API 21
