@@ -59,6 +59,7 @@ import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
 
 import static java.util.Collections.singletonList;
@@ -483,6 +484,18 @@ public class Android {
             messageListHeaderView.setBackButtonClickListener(() -> {
                 messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
             });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/suggestion_list_view">Suggestion List View</a>
+     */
+    public class SuggestionList extends Fragment {
+        MessageInputView messageInputView;
+        SuggestionListView suggestionListView;
+
+        public void connectingSuggestionListViewWithMessageInputView() {
+            messageInputView.setSuggestionListView(suggestionListView);
         }
     }
 }
