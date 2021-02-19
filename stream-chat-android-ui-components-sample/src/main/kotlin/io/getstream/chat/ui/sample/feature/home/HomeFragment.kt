@@ -76,6 +76,9 @@ class HomeFragment : Fragment() {
                 val channelId = it.getStringExtra(EXTRA_CHANNEL_ID)
                 val cid = "$channelType:$channelId"
                 val messageId = it.getStringExtra(EXTRA_MESSAGE_ID)
+
+                requireActivity().intent = null
+
                 findNavController().navigateSafely(HomeFragmentDirections.actionOpenChat(cid, messageId))
             }
         }

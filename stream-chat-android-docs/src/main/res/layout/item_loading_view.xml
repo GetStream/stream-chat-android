@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    >
+
+    <View
+        android:id="@+id/avatarPlaceholder"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/shape_shimmer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <View
+        android:id="@+id/titlePlaceholder"
+        android:layout_width="80dp"
+        android:layout_height="16dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_shimmer"
+        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
+        app:layout_constraintTop_toTopOf="@id/avatarPlaceholder"
+        />
+
+    <View
+        android:id="@+id/subtitlePlaceholder"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/shape_shimmer"
+        app:layout_constraintBottom_toBottomOf="@id/avatarPlaceholder"
+        app:layout_constraintEnd_toStartOf="@+id/datePlaceholder"
+        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
+        />
+
+    <View
+        android:id="@+id/datePlaceholder"
+        android:layout_width="40dp"
+        android:layout_height="16dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_shimmer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/subtitlePlaceholder"
+        app:layout_constraintTop_toTopOf="@id/subtitlePlaceholder"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_shimmer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
