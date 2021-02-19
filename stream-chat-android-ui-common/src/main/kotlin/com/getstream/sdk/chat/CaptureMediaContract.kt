@@ -34,11 +34,13 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
                 videoFile = it
                 createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
             }
-        return Intent.createChooser(Intent(), context.getString(R.string.stream_input_camera_title))
+        val intents = takePictureIntents + recordVideoIntents
+        val initialIntent = intents.lastOrNull() ?: Intent()
+        return Intent.createChooser(initialIntent, context.getString(R.string.stream_input_camera_title))
             .apply {
                 putExtra(
                     Intent.EXTRA_INITIAL_INTENTS,
-                    (takePictureIntents + recordVideoIntents).toTypedArray()
+                    (intents - initialIntent).toTypedArray()
                 )
             }
     }
