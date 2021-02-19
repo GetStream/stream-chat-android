@@ -12,6 +12,11 @@ import io.getstream.chat.ui.sample.R
 
 class ChatInitializer(private val context: Context) {
 
+    init {
+        // ChatUI must be initialized before any io.getstream.chat UI component is rendered
+        val ui = ChatUI.Builder(context).build()
+    }
+
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String, user: User? = null) {
         val notificationConfig =
@@ -32,8 +37,6 @@ class ChatInitializer(private val context: Context) {
         val domain = ChatDomain.Builder(client, user, context)
             .offlineEnabled()
             .build()
-
-        val ui = ChatUI.Builder(context).build()
     }
 
     fun isUserSet(): Boolean {
