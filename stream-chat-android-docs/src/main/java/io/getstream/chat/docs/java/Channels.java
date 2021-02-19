@@ -515,9 +515,10 @@ public class Channels {
         /**
          * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#channel-mute">Channel Mute</a>
          */
-        // TODO code in this method doesn't match the CMS, review it
         public void channelMute() {
-            client.muteChannel("channel-type", "channel-id").enqueue(result -> {
+            // Mute a channel
+            ChannelClient channelClient = client.channel("messaging", "general");
+            channelClient.mute().enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is muted
                 } else {
@@ -530,7 +531,7 @@ public class Channels {
             user.setId("user-id");
             client.connectUser(user, "token").enqueue(result -> {
                 if (result.isSuccess()) {
-                    // Mutes contains the list of channel mutes
+                    // Result contains the list of channel mutes
                     List<ChannelMute> mutes = result.data().getUser().getChannelMutes();
                 }
             });
