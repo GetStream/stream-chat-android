@@ -15,3 +15,4 @@
 - Introduce `PushMessageSyncHandler` class
 
 ## stream-chat-android-ui-common
+- Fix `CaptureMediaContract` chooser on Android API 21
