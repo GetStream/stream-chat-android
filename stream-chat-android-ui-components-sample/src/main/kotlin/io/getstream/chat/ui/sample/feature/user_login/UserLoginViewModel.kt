@@ -21,10 +21,10 @@ class UserLoginViewModel : ViewModel() {
     val state: LiveData<State> = _state
     val events: LiveData<Event<UiEvent>> = _events
 
-    fun init(cid: String?) {
+    fun init() {
         val user = App.instance.userRepository.getUser()
         if (user != SampleUser.None) {
-            authenticateUser(user, cid)
+            authenticateUser(user)
         } else {
             _state.postValue(State.AvailableUsers(AppConfig.availableUsers))
         }
@@ -37,7 +37,7 @@ class UserLoginViewModel : ViewModel() {
         }
     }
 
-    private fun authenticateUser(user: SampleUser, cid: String? = null) {
+    private fun authenticateUser(user: SampleUser) {
         App.instance.userRepository.setUser(user)
         val chatUser = ChatUser().apply {
             id = user.id
@@ -55,11 +55,7 @@ class UserLoginViewModel : ViewModel() {
                     logger.logD("Failed to set user ${result.error()}")
                 }
             }
-        if (cid != null) {
-            _events.postValue(Event(UiEvent.RedirectToChannel(cid)))
-        } else {
-            _events.postValue(Event(UiEvent.RedirectToChannels))
-        }
+        _events.postValue(Event(UiEvent.RedirectToChannels))
     }
 
     /**
