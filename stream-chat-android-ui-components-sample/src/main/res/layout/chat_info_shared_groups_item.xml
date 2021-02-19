@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/nameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:ellipsize="end"
@@ -28,9 +28,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/membersCountTextView"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Gebruiker, Usuario, Benutzer"
+        tools:text="Gebruiker, Usuario, Benutzer, User, Gebruiker, Usuario, Benutzer, User"
         />
 
     <TextView
