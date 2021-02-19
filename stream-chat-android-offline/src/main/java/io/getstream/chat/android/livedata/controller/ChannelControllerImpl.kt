@@ -59,6 +59,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.extensions.NEVER
 import io.getstream.chat.android.livedata.extensions.addMyReaction
+import io.getstream.chat.android.livedata.extensions.inOffsetWith
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.isVideoMimetype
@@ -1292,7 +1293,8 @@ internal class ChannelControllerImpl(
 
             // Use AFTER to determine if the incoming read is more current.
             // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-            val incomingReadMoreCurrent = previousLastRead == null || it.lastRead?.after(previousLastRead) == true
+            val incomingReadMoreCurrent = previousLastRead == null ||
+                it.lastRead?.inOffsetWith(previousLastRead, OFFSET_EVENT_TIME) == true
 
             if (incomingReadMoreCurrent) {
                 _read.value = it
@@ -1528,5 +1530,6 @@ internal class ChannelControllerImpl(
         private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+        private const val OFFSET_EVENT_TIME = 5L
     }
 }
