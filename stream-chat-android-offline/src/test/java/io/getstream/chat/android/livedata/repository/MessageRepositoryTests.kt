@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.repository
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageEntity
 import io.getstream.chat.android.livedata.randomUser
@@ -10,8 +11,6 @@ import io.getstream.chat.android.livedata.repository.domain.message.MessageRepos
 import io.getstream.chat.android.livedata.repository.domain.message.MessageRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +35,7 @@ internal class MessageRepositoryTests {
         sut.insertMessages(listOf(cachedMessage1, cachedMessage2), true)
         val messageEntityFromDb1 = randomMessageEntity(id = "id3")
         val messageEntityFromDb2 = randomMessageEntity(id = "id4")
-        When calling messageDao.select(listOf("id3", "id4")) doReturn listOf(messageEntityFromDb1, messageEntityFromDb2)
+        whenever(messageDao.select(listOf("id3", "id4"))) doReturn listOf(messageEntityFromDb1, messageEntityFromDb2)
 
         val result = sut.selectMessages(listOf("id1", "id2", "id3", "id4"))
 

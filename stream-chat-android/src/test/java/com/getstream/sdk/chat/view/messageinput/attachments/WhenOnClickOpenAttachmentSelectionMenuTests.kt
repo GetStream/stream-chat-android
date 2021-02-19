@@ -1,11 +1,10 @@
 package com.getstream.sdk.chat.view.messageinput.attachments
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import org.amshove.kluent.When
-import org.amshove.kluent.any
-import org.amshove.kluent.calling
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.jupiter.api.Test
 
 internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsControllerTests() {
@@ -18,7 +17,7 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
     @Test
     fun `If camera permission is granted Should hide permissions`() {
-        When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn true
+        whenever(permissionHelper.isGrantedCameraPermissions(any())) doReturn true
 
         sut.onClickOpenAttachmentSelectionMenu()
 
@@ -28,8 +27,8 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
     @Test
     fun `If storage permission is granted and camera permission is not Should show camera permissions and hide media`() {
-        When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn false
-        When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
+        whenever(permissionHelper.isGrantedCameraPermissions(any())) doReturn false
+        whenever(permissionHelper.isGrantedStoragePermissions(any())) doReturn true
 
         sut.onClickOpenAttachmentSelectionMenu()
 
@@ -39,9 +38,9 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
     @Test
     fun `If neither storage permission nor camera permission is granted Should show all permissions`() {
-        When calling view.context doReturn mock()
-        When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn false
-        When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn false
+        whenever(view.context) doReturn mock()
+        whenever(permissionHelper.isGrantedCameraPermissions(any())) doReturn false
+        whenever(permissionHelper.isGrantedStoragePermissions(any())) doReturn false
 
         sut.onClickOpenAttachmentSelectionMenu()
 

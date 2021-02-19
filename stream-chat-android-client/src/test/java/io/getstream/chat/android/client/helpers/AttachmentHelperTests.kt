@@ -2,10 +2,9 @@ package io.getstream.chat.android.client.helpers
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.SystemTimeProvider
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -66,7 +65,7 @@ internal class AttachmentHelperTests {
     fun `When has valid image url if attachment url is valid with Expires and timestamp is greater than current time Should return true`() {
         val currentTime = 1000L
         val timeStamp = currentTime + 100L
-        When calling timeProvider.provideCurrentTimeInSeconds() doReturn currentTime
+        whenever(timeProvider.provideCurrentTimeInSeconds()) doReturn currentTime
         val attachment =
             Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
@@ -79,7 +78,7 @@ internal class AttachmentHelperTests {
     fun `When has valid image url if attachment url is valid with Expires and timestamp is less than current time Should return false`() {
         val currentTime = 1000L
         val timeStamp = currentTime - 100L
-        When calling timeProvider.provideCurrentTimeInSeconds() doReturn currentTime
+        whenever(timeProvider.provideCurrentTimeInSeconds()) doReturn currentTime
         val attachment =
             Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 

@@ -4,12 +4,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.randomString
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,7 +39,7 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should start connecting to socket when connecting and network connectivity exists`() {
-        When calling networkStateProvider.isConnected() doReturn true
+        whenever(networkStateProvider.isConnected()) doReturn true
 
         socketService.userConnect(randomString(), randomString(), randomUser())
 
@@ -49,8 +48,8 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should start connecting to socket when connecting was called and connection was recovered`() {
-        When calling networkStateProvider.isConnected() doReturn false
-        When calling networkStateProvider.subscribe(any()) doAnswer {
+        whenever(networkStateProvider.isConnected()) doReturn false
+        whenever(networkStateProvider.subscribe(any())) doAnswer {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
@@ -61,7 +60,7 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
-        When calling networkStateProvider.isConnected() doReturn false
+        whenever(networkStateProvider.isConnected()) doReturn false
 
         socketService.userConnect(randomString(), randomString(), randomUser())
 
@@ -70,7 +69,7 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should start connecting to socket when connecting with anymous user and network connectivity exists`() {
-        When calling networkStateProvider.isConnected() doReturn true
+        whenever(networkStateProvider.isConnected()) doReturn true
 
         socketService.anonymousConnect(randomString(), randomString())
 
@@ -79,8 +78,8 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should start connecting to socket when connecting with anymous user  was called and connection was recovered`() {
-        When calling networkStateProvider.isConnected() doReturn false
-        When calling networkStateProvider.subscribe(any()) doAnswer {
+        whenever(networkStateProvider.isConnected()) doReturn false
+        whenever(networkStateProvider.subscribe(any())) doAnswer {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
@@ -91,7 +90,7 @@ internal class ChatSocketServiceImplTest {
 
     @Test
     fun `Should not start connecting to socket when connecting with anymous user  and there is no network connectivity`() {
-        When calling networkStateProvider.isConnected() doReturn false
+        whenever(networkStateProvider.isConnected()) doReturn false
 
         socketService.anonymousConnect(randomString(), randomString())
 

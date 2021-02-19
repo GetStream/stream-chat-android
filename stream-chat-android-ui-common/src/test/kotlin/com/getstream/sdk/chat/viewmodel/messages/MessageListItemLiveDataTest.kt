@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -17,7 +18,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
-import org.amshove.kluent.any
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
@@ -164,7 +164,7 @@ internal class MessageListItemLiveDataTest {
         val items = messageListItemLd.getOrAwaitValue().items
         for (item in items) {
             if (item is MessageListItem.MessageItem) {
-                val messageItem = item as MessageListItem.MessageItem
+                val messageItem = item
                 topMessages.addAll(messageItem.positions)
             }
         }
