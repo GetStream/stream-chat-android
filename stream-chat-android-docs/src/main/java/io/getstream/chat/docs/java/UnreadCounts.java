@@ -1,7 +1,5 @@
 package io.getstream.chat.docs.java;
 
-import android.util.Log;
-
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.MarkAllReadEvent;
@@ -9,8 +7,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent;
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
 import io.getstream.chat.android.client.models.User;
-
-import static io.getstream.chat.docs.StaticInstances.TAG;
 
 public class UnreadCounts {
     private ChatClient client;
@@ -20,7 +16,7 @@ public class UnreadCounts {
      * @see <a href="https://getstream.io/chat/docs/unread/?language=java">Unread</a>
      */
     class Unread {
-        public void getUnreadCount() {
+        public void userConnect() {
             User user = new User();
             user.setId("user-id");
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
@@ -37,12 +33,12 @@ public class UnreadCounts {
                 if (result.isSuccess()) {
                     // Messages in the channel marked as read
                 } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().getCause());
+                    // Handle result.error()
                 }
             });
         }
 
-        public void listeningReadEvents() {
+        public void listenToReadEvents() {
             channelClient.subscribeFor(
                     new Class[]{
                             NewMessageEvent.class,
