@@ -1,7 +1,6 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
@@ -11,11 +10,6 @@ import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
 
 class ChatInitializer(private val context: Context) {
-
-    init {
-        // ChatUI must be initialized before any io.getstream.chat UI component is rendered
-        val ui = ChatUI.Builder(context).build()
-    }
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String, user: User? = null) {
