@@ -12,6 +12,7 @@
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
 - Handle disconnect event during pending token state
+- Remove unneeded user data when creating WS Connection
 - Using `User#unreadCount` is now an error - use `totalUnreadCount` instead
 - Using `ChannelController` is now an error - use `ChannelClient` instead
 - Using `Pagination#get` is now an error - use `toString` instead
