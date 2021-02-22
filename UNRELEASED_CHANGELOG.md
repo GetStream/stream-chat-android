@@ -7,6 +7,7 @@
 - Add `ChannelHeaderViewModel::resetThread` method and make `ChannelHeaderViewModel::setActiveThread` message parameter non-nullable
 - Fix ReadIndicator state
 - Use proper color values on Dialog Theme
+- Increase touchable area on the button to remove an attachment
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
