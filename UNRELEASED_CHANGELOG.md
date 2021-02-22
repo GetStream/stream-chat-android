@@ -16,6 +16,7 @@
 - Using `ChannelController` is now an error - use `ChannelClient` instead
 - Using `Pagination#get` is now an error - use `toString` instead
 - Using the old event APIs is now an error - see the [migration guide](https://github.com/GetStream/stream-chat-android/wiki/Migration-guide:-ChatObserver-and-events()-APIs) for more info
+- Using `ChatClient#flag` is now an error - use `flagUser` instead
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class

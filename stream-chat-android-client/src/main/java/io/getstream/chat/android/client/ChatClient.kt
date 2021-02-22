@@ -1031,7 +1031,8 @@ public class ChatClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "We are going to replace with flagUser()",
-        replaceWith = ReplaceWith("this.flagUser(userId)")
+        replaceWith = ReplaceWith("this.flagUser(userId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun flag(userId: String): Call<Flag> = flagUser(userId)
 
