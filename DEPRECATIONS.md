@@ -15,7 +15,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `Chat` interface<br/>*ui-common* | 2020.10.27<br/>4.4.1 | 2021.02.22<br/>4.5.6 | 2021.04.22 ⌛ | Use `ChatUI` instead |
 | `Pagination#get`<br/>*client* | - | 2020.10.12<br/>4.3.0 | 2021.02.22<br/>4.5.6 | Use `toString` instead |
 | `MessageListView#setViewHolderFactory`<br/>*ui (old)* | 2020.10.15<br/>4.3.1 | 2021.02.22<br/>4.5.6 | 2021.04.22 ⌛ | Use the more explicit `setMessageViewHolderFactory` method instead |
-| `MessageListItemAdapter#replaceEntities`<br/>*ui (old)* | - | 2020.10.05<br/>4.3.0 | 2021.02.22 ⌛ | Use `submitList` instead | 
+| `MessageListItemAdapter#replaceEntities`<br/>*ui (old)* | - | 2020.10.05<br/>4.3.0 | 2021.02.22<br/>4.5.6 | Use `submitList` instead | 
 | `ChatObservable` based event APIs (`events()`)<br/>*client* | 2020.09.18 | 2021.02.22 ⌛ | 2021.04.22 ⌛ | Replace with direct `subscribe` calls on `ChatClient` and `ChannelClient`, see [migration guide](https://github.com/GetStream/stream-chat-android/wiki/Migration-guide:-ChatObserver-and-events()-APIs) |
 | `SendMessageWithAttachments` use case <br/>*offline* | 2020.09.30<br/>4.3.0 | 2021.02.22 ⌛ | 2021.04.22 ⌛ | - |
 | `ChatClient#flag(userId)`<br/>*client* | 2020.07.28 | 2021.02.22 ⌛ | 2021.03.22 ⌛ | Use the more explicit `flagUser` method instead |

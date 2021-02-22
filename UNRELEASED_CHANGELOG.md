@@ -7,6 +7,7 @@
 - Add `ChannelHeaderViewModel::resetThread` method and make `ChannelHeaderViewModel::setActiveThread` message parameter non-nullable
 - Fix ReadIndicator state
 - Using `MessageListView#setViewHolderFactory` is now an error - use `setMessageViewHolderFactory` instead
+- Removed `MessageListItemAdapter#replaceEntities` - use `submitList` method instead
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
