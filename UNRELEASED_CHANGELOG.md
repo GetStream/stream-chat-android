@@ -9,10 +9,15 @@
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
-- Handle disconect event during pending token state
+- Handle disconnect event during pending token state
+- Remove unneeded user data when creating WS Connection
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class
+
+- Add UseCase for querying members (`chatDomain.useCases.queryMembers(..., ...).execute()`).
+    - If we're online, it executes a remote call through the ChatClient
+    - If we're offline, it pulls members from the database for the given channel
 
 ## stream-chat-android-ui-common
 - Fix `CaptureMediaContract` chooser on Android API 21

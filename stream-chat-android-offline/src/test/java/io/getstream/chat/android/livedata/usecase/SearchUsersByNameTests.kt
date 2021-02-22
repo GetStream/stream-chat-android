@@ -1,11 +1,13 @@
 package io.getstream.chat.android.livedata.usecase
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
@@ -18,10 +20,7 @@ import io.getstream.chat.android.test.randomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.any
-import org.amshove.kluent.calling
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -47,8 +46,8 @@ internal class SearchUsersByNameTests {
 
     @Test
     fun `Given empty search string and online state Should perform search query with default filter`() {
-        When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
-        When calling chatDomainImpl.isOnline() doReturn true
+        whenever(chatClient.queryUsers(any())) doReturn TestCall(mock())
+        whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(querySearch = "", offset = randomInt(), userLimit = randomInt(), userPresence = randomBoolean()).execute()
 
@@ -62,8 +61,8 @@ internal class SearchUsersByNameTests {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun `Given nonempty search string and online state Should perform search query with autocomplete filter`() {
-        When calling chatClient.queryUsers(any()) doReturn TestCall(mock())
-        When calling chatDomainImpl.isOnline() doReturn true
+        whenever(chatClient.queryUsers(any())) doReturn TestCall(mock())
+        whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(querySearch = "searchString", offset = randomInt(), userLimit = randomInt(), userPresence = true).execute()
 
@@ -78,8 +77,8 @@ internal class SearchUsersByNameTests {
 
     @Test
     fun `Given nonempty search result and online state Should save result list to DB`() = runBlockingTest {
-        When calling chatClient.queryUsers(any()) doReturn TestCall(Result(listOf(randomUser(), randomUser())))
-        When calling chatDomainImpl.isOnline() doReturn true
+        whenever(chatClient.queryUsers(any())) doReturn TestCall(Result(listOf(randomUser(), randomUser())))
+        whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(
             querySearch = "searchString",
@@ -93,8 +92,8 @@ internal class SearchUsersByNameTests {
 
     @Test
     fun `Given empty search result and online state Should not save to DB`() = runBlockingTest {
-        When calling chatClient.queryUsers(any()) doReturn TestCall(Result(emptyList()))
-        When calling chatDomainImpl.isOnline() doReturn true
+        whenever(chatClient.queryUsers(any())) doReturn TestCall(Result(emptyList()))
+        whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(
             querySearch = "searchString",
@@ -109,9 +108,9 @@ internal class SearchUsersByNameTests {
 
     @Test
     fun `Given empty search result and offline state Should fetch all users from DB`() = runBlockingTest {
-        When calling chatDomainImpl.isOnline() doReturn false
+        whenever(chatDomainImpl.isOnline()) doReturn false
         val dbUsers = listOf(randomUser(), randomUser())
-        When calling repositoryFacade.selectAllUsers(any(), any()) doReturn dbUsers
+        whenever(repositoryFacade.selectAllUsers(any(), any())) doReturn dbUsers
 
         val result = sut(
             querySearch = "",
@@ -126,9 +125,9 @@ internal class SearchUsersByNameTests {
 
     @Test
     fun `Given nonempty search result and offline state Should fetch all users from DB`() = runBlockingTest {
-        When calling chatDomainImpl.isOnline() doReturn false
+        whenever(chatDomainImpl.isOnline()) doReturn false
         val dbUsers = listOf(randomUser(), randomUser())
-        When calling repositoryFacade.selectUsersLikeName(any(), any(), any()) doReturn dbUsers
+        whenever(repositoryFacade.selectUsersLikeName(any(), any(), any())) doReturn dbUsers
 
         val result = sut(
             querySearch = "querySearch",
