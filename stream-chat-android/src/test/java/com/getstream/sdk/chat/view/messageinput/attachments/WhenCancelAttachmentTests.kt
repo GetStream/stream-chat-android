@@ -25,7 +25,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), false)
 
         sut.selectedAttachments.contains(attachment) shouldBeEqualTo false
     }
@@ -39,7 +39,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), true)
 
         verify(selectedMediaAttachmentAdapter).removeAttachment(attachment)
     }
@@ -53,7 +53,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), true)
 
         verify(totalMediaAttachmentAdapter).unselectAttachment(attachment)
     }
@@ -67,7 +67,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .please()
         reset(selectedFileAttachmentAdapter)
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), false)
 
         verify(selectedFileAttachmentAdapter).setAttachments(argThat { !contains(attachment) })
     }
