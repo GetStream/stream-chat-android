@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
+import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
@@ -16,6 +17,7 @@ internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
+    private val markdown: ChatMarkdown,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.inflater,
@@ -50,7 +52,7 @@ internal class MessagePlainTextViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = messageText,
                 longClickTarget = root,
-                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
+                onLinkClicked = listeners.linkClickListener::onLinkClick
             )
         }
     }
@@ -59,7 +61,7 @@ internal class MessagePlainTextViewHolder(
         super.bindData(data, diff)
 
         with(binding) {
-            messageText.text = data.message.text
+            markdown.setText(messageText, data.message.text)
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 horizontalBias = if (data.isTheirs) 0f else 1f
             }
