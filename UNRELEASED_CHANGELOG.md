@@ -8,6 +8,8 @@
 - Fix ReadIndicator state
 - Using `MessageListView#setViewHolderFactory` is now an error - use `setMessageViewHolderFactory` instead
 - Removed `MessageListItemAdapter#replaceEntities` - use `submitList` method instead
+- Use proper color values on Dialog Theme
+- Increase touchable area on the button to remove an attachment
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
