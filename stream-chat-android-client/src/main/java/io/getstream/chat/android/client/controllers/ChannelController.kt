@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.controllers
 
 import androidx.annotation.CheckResult
@@ -21,7 +23,8 @@ import java.io.File
 
 @Deprecated(
     message = "The ChannelController has been replaced by ChannelClient",
-    replaceWith = ReplaceWith("ChannelClient")
+    replaceWith = ReplaceWith("ChannelClient"),
+    level = DeprecationLevel.ERROR,
 )
 public interface ChannelController {
 
@@ -115,8 +118,9 @@ public interface ChannelController {
 
     @Deprecated(
         message = "Use subscribe() on the controller directly instead",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
+    @Suppress("DEPRECATION_ERROR")
     public fun events(): ChatObservable
 
     public fun subscribe(listener: (ChatEvent) -> Unit): Disposable
