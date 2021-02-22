@@ -854,6 +854,11 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
+	public abstract fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
+	public abstract fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
+}
+
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
