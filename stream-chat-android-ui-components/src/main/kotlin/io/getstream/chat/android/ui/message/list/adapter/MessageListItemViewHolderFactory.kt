@@ -2,6 +2,8 @@ package io.getstream.chat.android.ui.message.list.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import com.getstream.sdk.chat.ChatMarkdown
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
@@ -36,6 +38,8 @@ public open class MessageListItemViewHolderFactory {
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
     }
+
+    private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].
@@ -90,19 +94,30 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
+            markdown
         )
     }
 
     protected fun createPlainTextWithFileAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return PlainTextWithFileAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return PlainTextWithFileAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            markdown
+        )
     }
 
     protected fun createPlainTextWithMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return PlainTextWithMediaAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return PlainTextWithMediaAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            markdown
+        )
     }
 
     protected fun createMediaAttachmentsViewHolder(

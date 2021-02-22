@@ -11,6 +11,7 @@
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
 - Handle disconnect event during pending token state
+- Remove unneeded user data when creating WS Connection
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class
