@@ -79,7 +79,6 @@ class UserLoginViewModel : ViewModel() {
     sealed class UiEvent {
         object RedirectToChannels : UiEvent()
         object RedirectToComponentBrowser : UiEvent()
-        data class RedirectToChannel(val cid: String) : UiEvent()
         data class Error(val errorMessage: String?) : UiEvent()
     }
 }
