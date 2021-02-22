@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.errors.ChatError
@@ -11,7 +13,10 @@ import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 import java.util.Date
 
-@Deprecated("Use the subscribe methods on ChatClient or ChannelController directly instead")
+@Deprecated(
+    message = "Use the subscribe methods on ChatClient or ChannelController directly instead",
+    level = DeprecationLevel.ERROR,
+)
 internal class ChatObservableImpl(private val service: ChatSocketService) : ChatObservable {
 
     private val subscriptions = mutableListOf<Subscription>()

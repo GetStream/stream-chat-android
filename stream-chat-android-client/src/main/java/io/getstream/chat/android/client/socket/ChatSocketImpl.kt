@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.models.User
