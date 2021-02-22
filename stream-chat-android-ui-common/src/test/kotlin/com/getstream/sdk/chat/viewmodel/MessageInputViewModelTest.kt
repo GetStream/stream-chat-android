@@ -6,11 +6,14 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createMessage
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
@@ -28,14 +31,6 @@ import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomCID
-import org.amshove.kluent.Verify
-import org.amshove.kluent.When
-import org.amshove.kluent.any
-import org.amshove.kluent.called
-import org.amshove.kluent.calling
-import org.amshove.kluent.on
-import org.amshove.kluent.that
-import org.amshove.kluent.was
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -60,31 +55,31 @@ internal class MessageInputViewModelTest {
 
     @BeforeEach
     fun setup() {
-        When calling chatDomain.useCases doReturn useCases
-        When calling useCases.watchChannel doReturn watchChannel
-        When calling useCases.sendMessage doReturn sendMessage
-        When calling useCases.sendMessageWithAttachments doReturn sendMessageWithAttachments
-        When calling useCases.editMessage doReturn editMessage
-        When calling useCases.keystroke doReturn keystroke
-        When calling useCases.stopTyping doReturn stopTyping
-        When calling watchChannel(eq(CID), eq(0)) doReturn channelControllerCall
-        When calling channelControllerResult.isSuccess doReturn true
-        When calling channelControllerResult.data() doReturn channelController
-        When calling channelController.toChannel() doReturn channel
-        When calling editMessage(any()) doReturn mock()
-        When calling keystroke(eq(CID), anyOrNull()) doReturn mock()
-        When calling stopTyping(eq(CID), anyOrNull()) doReturn mock()
+        whenever(chatDomain.useCases) doReturn useCases
+        whenever(useCases.watchChannel) doReturn watchChannel
+        whenever(useCases.sendMessage) doReturn sendMessage
+        whenever(useCases.sendMessageWithAttachments) doReturn sendMessageWithAttachments
+        whenever(useCases.editMessage) doReturn editMessage
+        whenever(useCases.keystroke) doReturn keystroke
+        whenever(useCases.stopTyping) doReturn stopTyping
+        whenever(watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
+        whenever(channelControllerResult.isSuccess) doReturn true
+        whenever(channelControllerResult.data()) doReturn channelController
+        whenever(channelController.toChannel()) doReturn channel
+        whenever(editMessage(any())) doReturn mock()
+        whenever(keystroke(eq(CID), anyOrNull())) doReturn mock()
+        whenever(stopTyping(eq(CID), anyOrNull())) doReturn mock()
     }
 
     @Test
     fun `Should show members`() {
         val members = createMembers()
-        When calling channelController.members doReturn MutableLiveData(members)
+        whenever(channelController.members) doReturn MutableLiveData(members)
         val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
         val mockObserver: Observer<List<Member>> = spy()
         messageInputViewModel.members.observeForever(mockObserver)
 
-        Verify on mockObserver that mockObserver.onChanged(eq(members)) was called
+        verify(mockObserver).onChanged(eq(members))
     }
 
     @Test
@@ -93,7 +88,7 @@ internal class MessageInputViewModelTest {
         val mockObserver: Observer<List<Command>> = spy()
         messageInputViewModel.commands.observeForever(mockObserver)
 
-        Verify on mockObserver that mockObserver.onChanged(eq(commands)) was called
+        verify(mockObserver).onChanged(eq(commands))
     }
 
     @Test
@@ -103,7 +98,7 @@ internal class MessageInputViewModelTest {
 
         messageInputViewModel.editMessage(message)
 
-        Verify on stopTyping that stopTyping(eq(CID), anyOrNull()) was called
-        Verify on editMessage that editMessage(eq(message)) was called
+        verify(stopTyping).invoke(eq(CID), anyOrNull())
+        verify(editMessage).invoke(eq(message))
     }
 }

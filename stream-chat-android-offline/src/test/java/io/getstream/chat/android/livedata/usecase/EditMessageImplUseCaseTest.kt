@@ -4,13 +4,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit
@@ -23,7 +22,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         // TODO: this test is slow for unknown reasons
         val originalMessage = data.createMessage()
 
-        When calling channelClientMock.sendMessage(any()) doReturn TestCall(Result(originalMessage))
+        whenever(channelClientMock.sendMessage(any())) doReturn TestCall(Result(originalMessage))
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
@@ -34,7 +33,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
 
-        When calling clientMock.updateMessage(any()) doReturn TestCall(Result(updatedMessage))
+        whenever(clientMock.updateMessage(any())) doReturn TestCall(Result(updatedMessage))
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
