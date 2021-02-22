@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.models.User
@@ -8,7 +10,7 @@ internal interface ChatSocket {
     fun connectAnonymously()
     @Deprecated(
         message = "Use addListener and removeListener directly instead (or the subscribe methods of ChatClient)",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     fun events(): ChatObservable
     fun addListener(listener: SocketListener)

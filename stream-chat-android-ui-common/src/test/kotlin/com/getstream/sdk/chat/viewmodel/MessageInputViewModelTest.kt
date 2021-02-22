@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.MutableLiveData
@@ -43,6 +45,7 @@ internal class MessageInputViewModelTest {
     private val useCases: UseCaseHelper = mock()
     private val watchChannel: WatchChannel = mock()
     private val sendMessage: SendMessage = mock()
+    @Suppress("DEPRECATION_ERROR")
     private val sendMessageWithAttachments: SendMessageWithAttachments = mock()
     private val editMessage: EditMessage = mock()
     private val keystroke: Keystroke = mock()

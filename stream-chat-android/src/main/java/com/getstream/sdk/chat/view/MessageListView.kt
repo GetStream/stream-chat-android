@@ -539,7 +539,7 @@ public class MessageListView : ConstraintLayout {
      */
     @Deprecated(
         message = "Use the more explicit setMessageViewHolderFactory method instead.",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
     )
     public fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
