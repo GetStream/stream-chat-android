@@ -29,8 +29,6 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -126,17 +124,21 @@ internal class SendMessagesTest {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(ChatError())
-            When calling chatClient.sendFile(
-                eq(channelController.channelType),
-                eq(channelController.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                chatClient.sendFile(
+                    eq(channelController.channelType),
+                    eq(channelController.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
-            When calling chatClient.sendImage(
-                eq(channelController.channelType),
-                eq(channelController.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                chatClient.sendImage(
+                    eq(channelController.channelType),
+                    eq(channelController.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
         }
     }
@@ -144,17 +146,21 @@ internal class SendMessagesTest {
     private fun mockFileUploadsSuccess(files: List<File>) {
         for (file in files) {
             val result = Result<String>("file")
-            When calling chatClient.sendFile(
-                eq(channelController.channelType),
-                eq(channelController.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                chatClient.sendFile(
+                    eq(channelController.channelType),
+                    eq(channelController.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
-            When calling chatClient.sendImage(
-                eq(channelController.channelType),
-                eq(channelController.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                chatClient.sendImage(
+                    eq(channelController.channelType),
+                    eq(channelController.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
         }
     }

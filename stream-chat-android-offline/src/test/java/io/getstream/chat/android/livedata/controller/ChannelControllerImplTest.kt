@@ -6,6 +6,8 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
@@ -21,17 +23,10 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.Verify
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be`
-import org.amshove.kluent.called
-import org.amshove.kluent.calling
-import org.amshove.kluent.on
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
-import org.amshove.kluent.that
-import org.amshove.kluent.was
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,68 +52,68 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
     fun `Should return successful result when sending an image`(): Unit = runBlocking {
         val file = File(randomString())
         val expectedResult = Result(randomString())
-        When calling call.execute() doReturn expectedResult
-        When calling chatClient.sendImage(channelType, channelId, file) doReturn call
+        whenever(call.execute()) doReturn expectedResult
+        whenever(chatClient.sendImage(channelType, channelId, file)) doReturn call
 
         val result = channelController.sendImage(file)
 
         result `should be` expectedResult
-        Verify on chatClient that chatClient.sendImage(
+        verify(chatClient).sendImage(
             eq(channelType),
             eq(channelId),
             eq(file)
-        ) was called
+        )
     }
 
     @Test
     fun `Should return successful result when sending a file`(): Unit = runBlocking {
         val file = File(randomString())
         val expectedResult = Result(randomString())
-        When calling call.execute() doReturn expectedResult
-        When calling chatClient.sendFile(channelType, channelId, file) doReturn call
+        whenever(call.execute()) doReturn expectedResult
+        whenever(chatClient.sendFile(channelType, channelId, file)) doReturn call
 
         val result = channelController.sendFile(file)
 
         result `should be` expectedResult
-        Verify on chatClient that chatClient.sendFile(
+        verify(chatClient).sendFile(
             eq(channelType),
             eq(channelId),
             eq(file)
-        ) was called
+        )
     }
 
     @Test
     fun `Should return failure result when sending an image`() = runBlocking {
         val file = File(randomString())
         val expectedResult = Result<String>(ChatError(randomString()))
-        When calling call.execute() doReturn expectedResult
-        When calling chatClient.sendImage(channelType, channelId, file) doReturn call
+        whenever(call.execute()) doReturn expectedResult
+        whenever(chatClient.sendImage(channelType, channelId, file)) doReturn call
 
         val result = channelController.sendImage(file)
 
         result `should be` expectedResult
-        Verify on chatClient that chatClient.sendImage(
+        verify(chatClient).sendImage(
             eq(channelType),
             eq(channelId),
             eq(file)
-        ) was called
+        )
     }
 
     @Test
     fun `Should return failure result when sending a file`(): Unit = runBlocking {
         val file = File(randomString())
         val expectedResult = Result<String>(ChatError(randomString()))
-        When calling call.execute() doReturn expectedResult
-        When calling chatClient.sendFile(channelType, channelId, file) doReturn call
+        whenever(call.execute()) doReturn expectedResult
+        whenever(chatClient.sendFile(channelType, channelId, file)) doReturn call
 
         val result = channelController.sendFile(file)
 
         result `should be` expectedResult
-        Verify on chatClient that chatClient.sendFile(
+        verify(chatClient).sendFile(
             eq(channelType),
             eq(channelId),
             eq(file)
-        ) was called
+        )
     }
 
     @Test
@@ -181,13 +176,13 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     @Test
     fun `Should include hidden property in the toChannel method`(): Unit = runBlocking {
-        When calling chatClient.hideChannel(any(), any(), any()) doReturn TestCall(Result(Unit))
+        whenever(chatClient.hideChannel(any(), any(), any())) doReturn TestCall(Result(Unit))
 
         channelController.toChannel().hidden shouldBeEqualTo false
     }
 
     private fun givenMockedFileUploads(result: Result<String>) {
-        When calling chatClient.sendImage(any(), any(), any()) doReturn TestCall(result)
-        When calling chatClient.sendFile(any(), any(), any()) doReturn TestCall(result)
+        whenever(chatClient.sendImage(any(), any(), any())) doReturn TestCall(result)
+        whenever(chatClient.sendFile(any(), any(), any())) doReturn TestCall(result)
     }
 }
