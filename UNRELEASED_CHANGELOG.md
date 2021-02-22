@@ -10,6 +10,7 @@
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
 - Handle disconnect event during pending token state
+- Using `User#unreadCount` is now an error - use `totalUnreadCount` instead
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class

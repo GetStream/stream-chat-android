@@ -54,7 +54,8 @@ public data class User(
     @SerializedName("unread_count")
     @Deprecated(
         message = "This property is deprecated, it value could be wrong and will be removed in a future version",
-        replaceWith = ReplaceWith("this.totalUnreadCount")
+        replaceWith = ReplaceWith("this.totalUnreadCount"),
+        level = DeprecationLevel.ERROR,
     )
     var unreadCount: Int = 0,
 
