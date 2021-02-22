@@ -23,7 +23,6 @@ internal class StreamAttachmentViewFactory : AttachmentViewFactory {
         return when {
             attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
-                showAttachments(attachments)
             }
             attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS

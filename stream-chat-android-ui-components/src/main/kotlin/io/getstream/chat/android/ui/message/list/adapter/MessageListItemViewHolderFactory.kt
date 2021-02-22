@@ -125,7 +125,12 @@ public open class MessageListItemViewHolderFactory(
     protected fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return OnlyMediaAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return OnlyMediaAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            attachmentViewFactory
+        )
     }
 
     protected fun createAttachmentsViewHolder(

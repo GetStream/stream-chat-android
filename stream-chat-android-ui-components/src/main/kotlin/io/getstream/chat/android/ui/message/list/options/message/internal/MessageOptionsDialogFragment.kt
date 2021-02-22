@@ -234,7 +234,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         when (val viewHolder = viewHolder) {
             is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
             is PlainTextWithMediaAttachmentsViewHolder -> viewHolder.binding.mediaAttachmentsGroupView
-            is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.mediaAttachmentsGroupView
+            is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
             is OnlyFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
             is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.fileAttachmentsView
             else -> null
