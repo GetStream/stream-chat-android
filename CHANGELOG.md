@@ -1,3 +1,45 @@
+# Feb 22th, 2021 - 4.6.0
+# New UI-Components Artifact
+A new UI-Components artifact has been created with a new design of all our components.
+This new artifact is available on MavenCentral and can imported by adding the following dependency:
+```
+implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
+```
+
+## stream-chat-android
+- Add `streamMessageActionButtonsTextSize`, `streamMessageActionButtonsTextColor`, `streamMessageActionButtonsTextFont`,
+ `streamMessageActionButtonsTextFontAssets`, `streamMessageActionButtonsTextStyle`, `streamMessageActionButtonsIconTint`
+ attributes to `MessageListView`
+- Add `ChannelHeaderViewModel::resetThread` method and make `ChannelHeaderViewModel::setActiveThread` message parameter non-nullable
+- Fix ReadIndicator state
+- Using `MessageListView#setViewHolderFactory` is now an error - use `setMessageViewHolderFactory` instead
+- Removed `MessageListItemAdapter#replaceEntities` - use `submitList` method instead
+- Use proper color values on Dialog Theme
+- Increase touchable area on the button to remove an attachment
+
+## stream-chat-android-client
+- Introduce ChatClient::setUserWithoutConnecting function
+- Handle disconnect event during pending token state
+- Remove unneeded user data when creating WS Connection
+- Using `User#unreadCount` is now an error - use `totalUnreadCount` instead
+- Using `ChannelController` is now an error - use `ChannelClient` instead
+- Using `Pagination#get` is now an error - use `toString` instead
+- Using the old event APIs is now an error - see the [migration guide](https://github.com/GetStream/stream-chat-android/wiki/Migration-guide:-ChatObserver-and-events()-APIs) for more info
+- Using `ChatClient#flag` is now an error - use `flagUser` instead
+
+## stream-chat-android-offline
+- Introduce `PushMessageSyncHandler` class
+
+- Add UseCase for querying members (`chatDomain.useCases.queryMembers(..., ...).execute()`).
+    - If we're online, it executes a remote call through the ChatClient
+    - If we're offline, it pulls members from the database for the given channel
+- Mark the `SendMessageWithAttachmentsImpl` use case an error
+
+## stream-chat-android-ui-common
+- Fix `CaptureMediaContract` chooser on Android API 21
+- Using `ChatUI(client, domain, context)` now an error - use simpler constructor instead
+- Using the `Chat` interface now an error - use `ChatUI` instead
+
 # Feb 15th, 2021 - 4.5.5
 ## Common changes for all artifacts
 - Updated project dependencies
