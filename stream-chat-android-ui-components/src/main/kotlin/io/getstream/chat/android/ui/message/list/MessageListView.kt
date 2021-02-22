@@ -71,6 +71,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListListenerContainerImpl
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.internal.StreamAttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.internal.MessageListViewStyle
@@ -156,7 +158,7 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
 
-    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { message, confirmCallback ->
+    private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
             .setTitle(R.string.stream_ui_message_option_delete_confirmation_title)
             .setMessage(R.string.stream_ui_message_option_delete_confirmation_message)
@@ -354,6 +356,7 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
+    private lateinit var attachmentViewFactory: AttachmentViewFactory
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -583,9 +586,13 @@ public class MessageListView : ConstraintLayout {
             messageDateFormatter = DateFormatter.from(context)
         }
 
+        if (::attachmentViewFactory.isInitialized.not()) {
+            attachmentViewFactory = StreamAttachmentViewFactory()
+        }
+
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(attachmentViewFactory)
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -668,6 +675,11 @@ public class MessageListView : ConstraintLayout {
     public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
         this.messageListItemPredicate = messageListItemPredicate
+    }
+
+    public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
+        this.attachmentViewFactory = attachmentViewFactory
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {

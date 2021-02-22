@@ -15,6 +15,8 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseM
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -23,7 +25,8 @@ import kotlinx.coroutines.launch
 internal class OnlyFileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listeners: MessageListListenerContainer,
+    private val listeners: MessageListListenerContainer,
+    private val attachmentViewFactory: AttachmentViewFactory,
     internal val binding: StreamUiItemMessageFileAttachmentsBinding =
         StreamUiItemMessageFileAttachmentsBinding.inflate(
             parent.inflater,
@@ -45,19 +48,9 @@ internal class OnlyFileAttachmentsViewHolder(
             reactionsView.setReactionClickListener {
                 listeners.reactionViewClickListener.onReactionViewClick(data.message)
             }
-            fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
-                listeners.attachmentClickListener.onAttachmentClick(data.message, it)
-            }
-            fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
-                listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-            }
-
             root.setOnLongClickListener {
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
-            }
-            fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
-                listeners.messageLongClickListener.onMessageLongClick(data.message)
             }
         }
     }
@@ -65,7 +58,20 @@ internal class OnlyFileAttachmentsViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        binding.fileAttachmentsView.setAttachments(data.message.attachments)
+        val attachmentView = attachmentViewFactory.createAttachmentsView(data.message.attachments, context)
+        binding.attachmentsContainer.removeAllViews()
+        binding.attachmentsContainer.addView(attachmentView)
+        (attachmentView as? FileAttachmentsView)?.also { fileAttachmentsView ->
+            fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
+            }
+            fileAttachmentsView.attachmentClickListener = AttachmentClickListener {
+                listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+            }
+            fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
+                listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+            }
+        }
 
         val uploadIdList: List<String> = data.message
             .attachments

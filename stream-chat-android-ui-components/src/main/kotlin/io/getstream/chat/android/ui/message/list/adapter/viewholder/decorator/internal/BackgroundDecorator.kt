@@ -66,7 +66,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
         data: MessageListItem.MessageItem,
     ) = decorateAttachmentsAndBackground(
         viewHolder.binding.backgroundView,
-        viewHolder.binding.fileAttachmentsView,
+        viewHolder.binding.attachmentsContainer,
         data,
     )
 
