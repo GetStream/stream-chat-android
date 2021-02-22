@@ -18,7 +18,10 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.uploader.FileUploader
 
-@Deprecated(message = "The Chat interface has been replaced by ChatUI. Have a look at the updated Android tutorial for details.")
+@Deprecated(
+    message = "The Chat interface has been replaced by ChatUI. Have a look at the updated Android tutorial for details.",
+    level = DeprecationLevel.ERROR,
+)
 public interface Chat {
     public val navigator: ChatNavigator
     public val strings: ChatStrings
@@ -43,7 +46,7 @@ public interface Chat {
     public fun setUser(
         user: User,
         token: String,
-        callbacks: InitConnectionListener = object : InitConnectionListener() {}
+        callbacks: InitConnectionListener = object : InitConnectionListener() {},
     )
 
     public fun disconnect()
@@ -59,6 +62,7 @@ public interface Chat {
         public var chatLoggerHandler: ChatLoggerHandler? = null
         public var fileUploader: FileUploader? = null
 
+        @Suppress("DEPRECATION_ERROR")
         public fun build(): Chat = ChatImpl(
             ChatFontsImpl(style, context),
             ChatStringsImpl(context),
@@ -77,6 +81,7 @@ public interface Chat {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     public companion object {
         private var instance: Chat? = null
 
@@ -84,7 +89,7 @@ public interface Chat {
         @Deprecated(
             message = "Use Chat.instance() instead",
             replaceWith = ReplaceWith("Chat.instance()"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR,
         )
         public fun getInstance(): Chat = instance
             ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
