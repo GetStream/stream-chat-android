@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.extensions.uploadId
@@ -26,6 +27,7 @@ internal class PlainTextWithFileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
+    private val markdown: ChatMarkdown,
     internal val binding: StreamUiItemMessagePlainTextWithFileAttachmentsBinding =
         StreamUiItemMessagePlainTextWithFileAttachmentsBinding.inflate(
             parent.inflater,
@@ -79,7 +81,7 @@ internal class PlainTextWithFileAttachmentsViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        binding.messageText.text = data.message.text
+        markdown.setText(binding.messageText, data.message.text)
         binding.fileAttachmentsView.setAttachments(
             data.message
                 .attachments
