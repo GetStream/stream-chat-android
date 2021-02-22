@@ -3,6 +3,9 @@ package io.getstream.chat.android.livedata.repository.helper
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -15,17 +18,9 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.Verify
-import org.amshove.kluent.VerifyNoInteractions
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
-import org.amshove.kluent.called
-import org.amshove.kluent.calling
-import org.amshove.kluent.on
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.that
-import org.amshove.kluent.was
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
@@ -36,10 +31,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
             val user = randomUser(id = "userId")
-            When calling users.selectUser("userId") doReturn user
+            whenever(users.selectUser("userId")) doReturn user
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(channel1, channel2)
+            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(channel1, channel2)
 
             val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
@@ -53,18 +48,18 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
-            When calling users.selectUser("userId") doReturn user
+            whenever(users.selectUser("userId")) doReturn user
             val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
             val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
-            When calling messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest)) doReturn listOf(
+            whenever(messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest))) doReturn listOf(
                 message1
             )
-            When calling messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest)) doReturn listOf(
+            whenever(messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest))) doReturn listOf(
                 message2
             )
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            When calling channels.selectChannels(eq(listOf("cid1", "cid2"))) doReturn listOf(
+            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(
                 channel1,
                 channelEntity2
             )
@@ -80,7 +75,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
-        When calling messages.selectMessages(eq(listOf("messageId1", "messageId2"))) doReturn listOf(message1, message2)
+        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")))) doReturn listOf(message1, message2)
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
@@ -102,13 +97,13 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         sut.insertChannel(channel)
 
-        Verify on channels that channels.insertChannel(eq(channel)) was called
-        Verify on users that users.insertUsers(
+        verify(channels).insertChannel(eq(channel))
+        verify(users).insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
                 listUser.size `should be equal to` 4
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser)
             }
-        ) was called
+        )
     }
 
     @Test
@@ -131,12 +126,12 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             sut.insertChannels(listOfChannels)
 
-            Verify on channels that channels.insertChannels(eq(listOfChannels)) was called
-            Verify on users that users.insertUsers(
+            verify(channels).insertChannels(eq(listOfChannels))
+            verify(users).insertUsers(
                 com.nhaarman.mockitokotlin2.check { listUser ->
                     listUser `should contain same` listOfUser
                 }
-            ) was called
+            )
         }
 
     @Test
@@ -155,10 +150,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 cacheForMessages = false
             )
 
-            Verify on configs that configs.insertChannelConfigs(configList) was called
-            Verify on users that users.insertUsers(userList) was called
-            Verify on channels that channels.insertChannels(channelList) was called
-            Verify on messages that messages.insertMessages(messageList, false) was called
+            verify(configs).insertChannelConfigs(configList)
+            verify(users).insertUsers(userList)
+            verify(channels).insertChannels(channelList)
+            verify(messages).insertMessages(messageList, false)
         }
     }
 
@@ -177,10 +172,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 cacheForMessages = false
             )
 
-            VerifyNoInteractions on configs
-            Verify on users that users.insertUsers(userList) was called
-            Verify on channels that channels.insertChannels(channelList) was called
-            Verify on messages that messages.insertMessages(messageList, false) was called
+            verifyZeroInteractions(configs)
+            verify(users).insertUsers(userList)
+            verify(channels).insertChannels(channelList)
+            verify(messages).insertMessages(messageList, false)
         }
     }
 }

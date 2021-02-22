@@ -55,7 +55,7 @@ internal class SocketFactory(
 
     private fun buildUserDetailJson(user: User): String {
         val data = mapOf(
-            "user_details" to user,
+            "user_details" to user.reduceUserDetails(),
             "user_id" to user.id,
             "server_determines_connection_id" to true,
             "X-STREAM-CLIENT" to ChatClient.instance().getVersion()
@@ -70,4 +70,10 @@ internal class SocketFactory(
          */
         private const val ANONYMOUS_USER_ID = "anon"
     }
+
+    private fun User.reduceUserDetails() = this.copy(
+        devices = emptyList(),
+        mutes = emptyList(),
+        channelMutes = emptyList()
+    )
 }

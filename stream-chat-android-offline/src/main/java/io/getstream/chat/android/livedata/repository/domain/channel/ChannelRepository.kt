@@ -2,8 +2,11 @@ package io.getstream.chat.android.livedata.repository.domain.channel
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.repository.domain.channel.member.toEntity
+import io.getstream.chat.android.livedata.repository.domain.channel.member.toModel
 import java.util.Date
 
 internal interface ChannelRepository {
@@ -16,6 +19,8 @@ internal interface ChannelRepository {
     suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
+    suspend fun selectMembersForChannel(cid: String): List<Member>
+    suspend fun updateMembersForChannel(cid: String, members: List<Member>)
 }
 
 internal class ChannelRepositoryImpl(
@@ -73,6 +78,23 @@ internal class ChannelRepositoryImpl(
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
         channelCache.remove(cid)
         channelDao.setHidden(cid, hidden)
+    }
+
+    // Allows us to avoid enriching channel just to select members
+    override suspend fun selectMembersForChannel(cid: String): List<Member> {
+        return channelDao.select(cid)?.members?.values?.map { it.toModel(getUser) } ?: emptyList()
+    }
+
+    override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
+        members
+            .map { it.toEntity() }
+            .associateBy { it.userId }
+            .let { memberMap ->
+                channelDao.select(cid)?.copy(members = memberMap)
+            }
+            ?.let { updatedChannel ->
+                channelDao.insert(updatedChannel)
+            }
     }
 
     private fun updateCache(channels: Collection<Channel>) {

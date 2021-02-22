@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.controller
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
@@ -10,8 +11,6 @@ import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestObserver
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
@@ -30,7 +29,7 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
             queryChannelsController.channels.observeForever(observer)
             val channel1 = data.channel1.copy(lastMessageAt = Date(10000L))
             val channel2 = data.channel2.copy(lastMessageAt = Date(20000L))
-            When calling client.queryChannels(any()) doReturn TestCall(Result(listOf(channel1, channel2)))
+            whenever(client.queryChannels(any())) doReturn TestCall(Result(listOf(channel1, channel2)))
 
             // 1. Query channels and check that live data emits a proper sorted list.
             queryChannelsController.query()

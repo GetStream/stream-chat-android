@@ -58,7 +58,7 @@ import io.getstream.chat.android.livedata.repository.domain.user.UserEntity
     DateConverter::class
 )
 internal abstract class ChatDatabase : RoomDatabase() {
-    abstract fun queryChannelsQDao(): QueryChannelsDao
+    abstract fun queryChannelsDao(): QueryChannelsDao
     abstract fun userDao(): UserDao
     abstract fun reactionDao(): ReactionDao
     abstract fun messageDao(): MessageDao
