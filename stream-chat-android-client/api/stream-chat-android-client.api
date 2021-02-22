@@ -75,7 +75,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun reconnectSocket ()V
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
