@@ -37,6 +37,7 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Ignore
+@Suppress("DEPRECATION_ERROR")
 internal class SendMessageWithAttachmentsImplTest {
 
     val channelController: ChannelControllerImpl = mock()
