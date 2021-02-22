@@ -20,3 +20,4 @@
 
 ## stream-chat-android-ui-common
 - Fix `CaptureMediaContract` chooser on Android API 21
+- Using `ChatUI(client, domain, context)` now an error - use simpler constructor instead
