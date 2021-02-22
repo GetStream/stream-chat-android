@@ -12,6 +12,7 @@
 - Handle disconnect event during pending token state
 - Using `User#unreadCount` is now an error - use `totalUnreadCount` instead
 - Using `ChannelController` is now an error - use `ChannelClient` instead
+- Using `Pagination#get` is now an error - use `toString` instead
 
 ## stream-chat-android-offline
 - Introduce `PushMessageSyncHandler` class
