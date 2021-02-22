@@ -82,7 +82,6 @@
         android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/stream_ui_ic_command"
-        android:tint="@color/stream_ui_grey"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
