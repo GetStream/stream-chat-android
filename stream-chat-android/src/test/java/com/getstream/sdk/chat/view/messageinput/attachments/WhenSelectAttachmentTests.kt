@@ -7,15 +7,14 @@ import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.test.randomLong
-import org.amshove.kluent.When
-import org.amshove.kluent.any
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
@@ -180,16 +179,18 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         private val attachmentsController = this@WhenSelectAttachmentTests.sut
 
         fun givenMediaAttachmentsState(totalMediaAttachments: List<AttachmentMetaData>): Fixture {
-            When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
-            When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
+            whenever(storageHelper.getMediaAttachments(any())) doReturn totalMediaAttachments
+            whenever(permissionHelper.isGrantedStoragePermissions(any())) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
             return this
         }
 
         fun givenAttachmentsFromUriState(fileAttachments: List<AttachmentMetaData>): Fixture {
-            When calling storageHelper.getAttachmentsFromUriList(
-                any(),
-                any()
+            whenever(
+                storageHelper.getAttachmentsFromUriList(
+                    any(),
+                    any()
+                )
             ) doReturn fileAttachments
             return this
         }

@@ -1,14 +1,13 @@
 package io.getstream.chat.android.livedata.repository.helper
 
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.calling
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
@@ -20,7 +19,7 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val channel = randomChannel(type = "channelType")
             val defaultConfig = Config(name = "default")
             val config = Config(name = "forChannel")
-            When calling configs.selectChannelConfig("channelType") doReturn ChannelConfig("channelType", config)
+            whenever(configs.selectChannelConfig("channelType")) doReturn ChannelConfig("channelType", config)
 
             channel.enrichChannel(emptyMap(), defaultConfig)
 
@@ -33,7 +32,7 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
         sut.run {
             val channel = randomChannel(type = "channelType")
             val defaultConfig = Config(name = "default")
-            When calling configs.selectChannelConfig("channelType") doReturn null
+            whenever(configs.selectChannelConfig("channelType")) doReturn null
 
             channel.enrichChannel(emptyMap(), defaultConfig)
 

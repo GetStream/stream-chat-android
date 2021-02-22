@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.same
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
@@ -16,10 +17,8 @@ import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.When
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.`with message`
-import org.amshove.kluent.calling
 import org.amshove.kluent.invoking
 import org.junit.Before
 import org.junit.Test
@@ -41,17 +40,21 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploads(files: List<File>) {
         for (file in files) {
             val result = Result(file.absolutePath)
-            When calling clientMock.sendFile(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                clientMock.sendFile(
+                    eq(channelControllerImpl.channelType),
+                    eq(channelControllerImpl.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
-            When calling clientMock.sendImage(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                clientMock.sendImage(
+                    eq(channelControllerImpl.channelType),
+                    eq(channelControllerImpl.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
         }
     }
@@ -59,17 +62,21 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(file.toChatError())
-            When calling clientMock.sendFile(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                clientMock.sendFile(
+                    eq(channelControllerImpl.channelType),
+                    eq(channelControllerImpl.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
-            When calling clientMock.sendImage(
-                eq(channelControllerImpl.channelType),
-                eq(channelControllerImpl.channelId),
-                same(file),
-                anyOrNull(),
+            whenever(
+                clientMock.sendImage(
+                    eq(channelControllerImpl.channelType),
+                    eq(channelControllerImpl.channelId),
+                    same(file),
+                    anyOrNull(),
+                )
             ) doReturn TestCall(result)
         }
     }
@@ -90,7 +97,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
         )
         val files: List<File> = message.attachments.map { it.upload!! }
 
-        When calling channelClientMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
+        whenever(channelClientMock.sendMessage(argThat { id === message.id })) doReturn TestCall(expectedResult)
 
         mockFileUploads(files)
 
@@ -168,7 +175,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
         )
         val files: List<File> = message.attachments.map { it.upload!! }
 
-        When calling channelClientMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
+        whenever(channelClientMock.sendMessage(argThat { id === message.id })) doReturn TestCall(expectedResult)
 
         mockFileUploadsFailure(files)
 

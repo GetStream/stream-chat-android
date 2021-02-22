@@ -1,10 +1,12 @@
 package io.getstream.chat.android.livedata.repository
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.randomUserEntity
@@ -13,9 +15,6 @@ import io.getstream.chat.android.livedata.repository.domain.user.UserRepository
 import io.getstream.chat.android.livedata.repository.domain.user.UserRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.When
-import org.amshove.kluent.any
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
@@ -62,17 +61,18 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When select users If previously not insert And dao contains such users Should return users`() = runBlockingTest {
-        val userEntity1 = randomUserEntity(originalId = "id1")
-        val userEntity2 = randomUserEntity(originalId = "id2")
-        When calling userDao.select(listOf("id1", "id2")) doReturn listOf(userEntity1, userEntity2)
+    fun `When select users If previously not insert And dao contains such users Should return users`() =
+        runBlockingTest {
+            val userEntity1 = randomUserEntity(originalId = "id1")
+            val userEntity2 = randomUserEntity(originalId = "id2")
+            whenever(userDao.select(listOf("id1", "id2"))) doReturn listOf(userEntity1, userEntity2)
 
-        val result = sut.selectUsers(listOf("id1", "id2"))
+            val result = sut.selectUsers(listOf("id1", "id2"))
 
-        result.size shouldBeEqualTo 2
-        result.any { user -> user.id == "id1" } shouldBeEqualTo true
-        result.any { user -> user.id == "id2" } shouldBeEqualTo true
-    }
+            result.size shouldBeEqualTo 2
+            result.any { user -> user.id == "id1" } shouldBeEqualTo true
+            result.any { user -> user.id == "id2" } shouldBeEqualTo true
+        }
 
     @Test
     fun `When insert me Should insert entity with me id to dao`() = runBlockingTest {
@@ -84,21 +84,22 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When select user map If current user is not null Should return users from dao and current user`() = runBlockingTest {
-        val userEntity = randomUserEntity(originalId = "userId")
-        When calling userDao.select(listOf("userId")) doReturn listOf(userEntity)
+    fun `When select user map If current user is not null Should return users from dao and current user`() =
+        runBlockingTest {
+            val userEntity = randomUserEntity(originalId = "userId")
+            whenever(userDao.select(listOf("userId"))) doReturn listOf(userEntity)
 
-        val result = sut.selectUserMap(listOf("userId"))
+            val result = sut.selectUserMap(listOf("userId"))
 
-        result.size shouldBeEqualTo 2
-        result["userId"].shouldNotBeNull()
-        result["currentUserId"] shouldBeEqualTo currentUser
-    }
+            result.size shouldBeEqualTo 2
+            result["userId"].shouldNotBeNull()
+            result["currentUserId"] shouldBeEqualTo currentUser
+        }
 
     @Test
     fun `When select me If dao contains user with me as Id Should return such user`() = runBlockingTest {
         val meEntity = randomUserEntity(id = "me", originalId = "userId")
-        When calling userDao.select("me") doReturn meEntity
+        whenever(userDao.select("me")) doReturn meEntity
 
         val result = sut.selectCurrentUser()
 
