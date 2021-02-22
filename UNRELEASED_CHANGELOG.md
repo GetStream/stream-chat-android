@@ -6,6 +6,7 @@
  attributes to `MessageListView`
 - Add `ChannelHeaderViewModel::resetThread` method and make `ChannelHeaderViewModel::setActiveThread` message parameter non-nullable
 - Fix ReadIndicator state
+- Use proper color values on Dialog Theme
 
 ## stream-chat-android-client
 - Introduce ChatClient::setUserWithoutConnecting function
