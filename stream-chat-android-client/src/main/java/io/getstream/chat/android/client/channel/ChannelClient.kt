@@ -95,7 +95,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     override fun create(extraData: Map<String, Any>): Call<Channel> {
-        return client.createChannel(channelType, channelId, emptyList())
+        return client.createChannel(channelType, channelId, extraData)
     }
 
     override fun events(): ChatObservable {
