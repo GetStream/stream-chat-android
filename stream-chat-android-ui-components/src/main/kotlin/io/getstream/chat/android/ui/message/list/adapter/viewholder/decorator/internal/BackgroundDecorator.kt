@@ -9,10 +9,8 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
-import io.getstream.chat.android.ui.common.extensions.isReply
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
@@ -77,30 +75,6 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
             0f,
             0f
         )
-    }
-
-    private fun decorateAttachmentsAndBackground(
-        background: View,
-        attachmentView: View,
-        data: MessageListItem.MessageItem,
-    ) {
-        setDefaultBackgroundDrawable(background, data)
-
-        val topLeftCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
-        val topRightCorner = if (data.message.isReply()) 0f else DEFAULT_CORNER_RADIUS
-        val bottomRightCorner =
-            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
-        val bottomLeftCorner =
-            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else DEFAULT_CORNER_RADIUS
-
-        attachmentView.background = ShapeAppearanceModel.builder()
-            .setTopLeftCornerSize(topLeftCorner)
-            .setTopRightCornerSize(topRightCorner)
-            .setBottomRightCornerSize(bottomRightCorner)
-            .setBottomLeftCornerSize(bottomLeftCorner)
-            .build()
-            .let(::MaterialShapeDrawable)
-            .apply { setTint(ContextCompat.getColor(attachmentView.context, R.color.stream_ui_literal_transparent)) }
     }
 
     private fun setDefaultBackgroundDrawable(
