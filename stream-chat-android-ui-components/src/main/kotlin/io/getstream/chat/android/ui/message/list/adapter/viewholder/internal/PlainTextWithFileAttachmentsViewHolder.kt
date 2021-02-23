@@ -97,12 +97,12 @@ internal class PlainTextWithFileAttachmentsViewHolder(
     private fun setupAttachments(data: MessageListItem.MessageItem) {
         binding.attachmentsContainer.removeAllViews()
 
-        val fileAttachments = data.message.attachments.filterNot(Attachment::hasLink)
-        val fileAttachmentView = attachmentViewFactory.createAttachmentsView(fileAttachments, context)
+        val attachments = data.message.attachments.filterNot(Attachment::hasLink)
+        val fileAttachmentView = attachmentViewFactory.createAttachmentsView(attachments, context)
         binding.attachmentsContainer.addView(fileAttachmentView)
         (fileAttachmentView as? FileAttachmentsView)?.run {
             setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-            setAttachments(fileAttachments)
+            setAttachments(attachments)
             attachmentLongClickListener = AttachmentLongClickListener {
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
             }

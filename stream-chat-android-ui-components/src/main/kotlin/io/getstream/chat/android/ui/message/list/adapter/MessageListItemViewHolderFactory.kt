@@ -119,7 +119,8 @@ public open class MessageListItemViewHolderFactory(
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown
+            markdown,
+            attachmentViewFactory
         )
     }
 

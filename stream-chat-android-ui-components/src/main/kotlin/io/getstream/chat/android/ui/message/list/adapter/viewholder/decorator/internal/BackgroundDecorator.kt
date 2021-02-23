@@ -51,11 +51,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
     override fun decoratePlainTextWithMediaAttachmentsMessage(
         viewHolder: PlainTextWithMediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) = decorateAttachmentsAndBackground(
-        viewHolder.binding.backgroundView,
-        viewHolder.binding.mediaAttachmentsGroupView,
-        data,
-    )
+    ) = setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,

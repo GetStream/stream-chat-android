@@ -60,8 +60,8 @@ internal class OnlyMediaAttachmentsViewHolder(
                 mediaAttachmentsGroupView.attachmentClickListener = AttachmentClickListener {
                     listeners.attachmentClickListener.onAttachmentClick(data.message, it)
                 }
-                mediaAttachmentsGroupView.showAttachments(data.message.attachments)
                 mediaAttachmentsGroupView.setupBackground(data)
+                mediaAttachmentsGroupView.showAttachments(data.message.attachments)
             }
         }
     }
