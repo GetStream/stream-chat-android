@@ -139,10 +139,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory(StreamAttachmentViewFactory())
+        viewHolder = MessageListItemViewHolderFactory()
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
+                setAttachmentViewFactory(StreamAttachmentViewFactory())
             }
             .createViewHolder(
                 binding.messageContainer,

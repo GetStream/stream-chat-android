@@ -592,7 +592,7 @@ public class MessageListView : ConstraintLayout {
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(attachmentViewFactory)
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -603,6 +603,7 @@ public class MessageListView : ConstraintLayout {
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
+        messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
