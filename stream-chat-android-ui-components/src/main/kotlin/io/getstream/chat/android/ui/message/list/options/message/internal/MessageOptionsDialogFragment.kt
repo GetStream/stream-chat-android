@@ -236,7 +236,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             is PlainTextWithMediaAttachmentsViewHolder -> viewHolder.binding.mediaAttachmentsGroupView
             is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
             is OnlyFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
-            is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.fileAttachmentsView
+            is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {

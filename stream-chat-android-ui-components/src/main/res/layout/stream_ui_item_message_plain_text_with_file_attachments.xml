@@ -64,25 +64,7 @@
         app:layout_constraintTop_toBottomOf="@id/replyView"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
-        >
-
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
-            android:id="@+id/fileAttachmentsView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            />
-
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
-            android:id="@+id/linkAttachmentView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/stream_ui_spacing_small"
-            android:visibility="gone"
-            tools:visibility="visible"
-            />
-
-    </LinearLayout>
+        />
 
     <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
         android:id="@+id/reactionsView"

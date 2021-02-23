@@ -20,9 +20,7 @@ internal class LinkAttachmentDecorator : BaseDecorator() {
     override fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        decorate(viewHolder.binding.linkAttachmentView, data.message)
-    }
+    ) = Unit
 
     override fun decorateOnlyFileAttachmentsMessage(
         viewHolder: OnlyFileAttachmentsViewHolder,
