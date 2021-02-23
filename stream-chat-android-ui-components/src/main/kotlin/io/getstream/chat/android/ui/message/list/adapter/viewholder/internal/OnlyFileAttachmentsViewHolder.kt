@@ -71,6 +71,7 @@ internal class OnlyFileAttachmentsViewHolder(
             fileAttachmentsView.attachmentDownloadClickListener = AttachmentDownloadClickListener {
                 listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
             }
+            fileAttachmentsView.setAttachments(data.message.attachments)
         }
 
         val uploadIdList: List<String> = data.message

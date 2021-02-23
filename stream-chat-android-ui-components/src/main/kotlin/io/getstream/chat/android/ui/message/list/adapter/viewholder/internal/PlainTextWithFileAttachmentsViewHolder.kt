@@ -102,7 +102,6 @@ internal class PlainTextWithFileAttachmentsViewHolder(
         binding.attachmentsContainer.addView(fileAttachmentView)
         (fileAttachmentView as? FileAttachmentsView)?.run {
             setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-            setAttachments(attachments)
             attachmentLongClickListener = AttachmentLongClickListener {
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
             }
@@ -112,6 +111,7 @@ internal class PlainTextWithFileAttachmentsViewHolder(
             attachmentDownloadClickListener = AttachmentDownloadClickListener {
                 listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
             }
+            setAttachments(attachments)
         }
 
         val linkAttachment = data.message.attachments.firstOrNull(Attachment::hasLink)
