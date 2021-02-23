@@ -7,12 +7,15 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDto
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
+import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 
 internal class MoshiChatApi(
@@ -20,6 +23,7 @@ internal class MoshiChatApi(
     private val legacyApiDelegate: ChatApi,
     private val messageApi: MessageApi,
     private val deviceApi: DeviceApi,
+    private val moderationApi: ModerationApi,
 ) : ChatApi by legacyApiDelegate {
 
     val logger = ChatLogger.get("MoshiChatApi")
@@ -147,6 +151,50 @@ internal class MoshiChatApi(
             userId = userId,
             connectionId = connectionId,
         ).map { response -> response.devices.map(DeviceDto::toDomain) }
+    }
+
+    override fun muteCurrentUser(): Call<Mute> {
+        return muteUser(userId)
+    }
+
+    override fun unmuteCurrentUser(): Call<Unit> {
+        return unmuteUser(userId)
+    }
+
+    override fun muteUser(userId: String): Call<Mute> {
+        return moderationApi.muteUser(
+            apiKey = apiKey,
+            userId = this.userId,
+            connectionId = connectionId,
+            body = MuteUserRequest(userId, this.userId)
+        ).map { response -> response.mute.toDomain() }
+    }
+
+    override fun unmuteUser(userId: String): Call<Unit> {
+        return moderationApi.unMuteUser(
+            apiKey = apiKey,
+            userId = this.userId,
+            connectionId = this.connectionId,
+            body = MuteUserRequest(userId, this.userId)
+        ).toUnitCall()
+    }
+
+    override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
+        return moderationApi.muteChannel(
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            body = MuteChannelRequest("$channelType:$channelId")
+        ).toUnitCall()
+    }
+
+    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return moderationApi.unMuteChannel(
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            body = MuteChannelRequest("$channelType:$channelId")
+        ).toUnitCall()
     }
 
     private fun Call<*>.toUnitCall() = map {}
