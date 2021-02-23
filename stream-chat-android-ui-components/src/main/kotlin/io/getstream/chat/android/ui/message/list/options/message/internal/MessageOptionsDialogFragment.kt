@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListListenerContainerImpl
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.internal.StreamAttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
@@ -143,7 +143,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
-                setAttachmentViewFactory(StreamAttachmentViewFactory())
+                setAttachmentViewFactory(AttachmentViewFactory())
             }
             .createViewHolder(
                 binding.messageContainer,

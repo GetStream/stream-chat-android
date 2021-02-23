@@ -823,6 +823,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 	protected final fun createPlainTextWithMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun getAttachmentViewFactory ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;
 	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;
 }
@@ -855,9 +856,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
-	public abstract fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
-	public abstract fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
+public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
+	public fun <init> ()V
+	public fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
+	public fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {

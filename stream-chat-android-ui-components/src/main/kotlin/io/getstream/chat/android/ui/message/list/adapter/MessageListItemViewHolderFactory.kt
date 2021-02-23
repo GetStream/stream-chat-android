@@ -35,7 +35,8 @@ public open class MessageListItemViewHolderFactory {
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
 
-    private lateinit var attachmentViewFactory: AttachmentViewFactory
+    protected lateinit var attachmentViewFactory: AttachmentViewFactory
+        private set
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer

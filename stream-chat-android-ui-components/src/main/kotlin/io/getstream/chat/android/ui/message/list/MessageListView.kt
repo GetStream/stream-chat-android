@@ -73,7 +73,6 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.internal.StreamAttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.internal.MessageListViewStyle
@@ -588,7 +587,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         if (::attachmentViewFactory.isInitialized.not()) {
-            attachmentViewFactory = StreamAttachmentViewFactory()
+            attachmentViewFactory = AttachmentViewFactory()
         }
 
         // Create default ViewHolderFactory if needed
