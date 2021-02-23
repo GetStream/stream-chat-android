@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.activity
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.view.EndlessScrollListener
@@ -285,19 +286,19 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            val attachmentGalleryItems = message.attachments
-                .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
-                .map {
-                    AttachmentGalleryItem(
-                        attachment = it,
-                        user = message.user,
-                        createdAt = message.getCreatedAtOrThrow(),
-                        messageId = message.id,
-                        cid = message.cid,
-                        isMine = message.user.isCurrentUser()
-                    )
-                }
-            val attachmentIndex = message.attachments.indexOf(attachment)
+            val filteredAttachments = message.attachments
+                .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+            val attachmentGalleryItems = filteredAttachments.map {
+                AttachmentGalleryItem(
+                    attachment = it,
+                    user = message.user,
+                    createdAt = message.getCreatedAtOrThrow(),
+                    messageId = message.id,
+                    cid = message.cid,
+                    isMine = message.user.isCurrentUser()
+                )
+            }
+            val attachmentIndex = filteredAttachments.indexOf(attachment)
 
             attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
             ChatUI.instance()
