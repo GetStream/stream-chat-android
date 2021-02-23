@@ -12,6 +12,7 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -133,7 +134,7 @@ internal class MessageReplyView : FrameLayout {
         } else {
             when (attachment.type) {
                 ModelType.attach_file -> showFileTypeLogo(attachment.mimeType)
-                ModelType.attach_image -> showAttachmentThumb(attachment.thumbUrl ?: attachment.imageUrl)
+                ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
                 ModelType.attach_giphy,
                 ModelType.attach_video -> showAttachmentThumb(attachment.thumbUrl)
                 else -> showAttachmentThumb(attachment.image)

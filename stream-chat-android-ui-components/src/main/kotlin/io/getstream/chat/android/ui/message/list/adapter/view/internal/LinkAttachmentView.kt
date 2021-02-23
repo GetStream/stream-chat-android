@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
@@ -49,10 +50,9 @@ internal class LinkAttachmentView : FrameLayout {
             binding.labelContainer.isVisible = false
         }
 
-        val previewUrl = attachment.thumbUrl ?: attachment.imageUrl
-        if (previewUrl != null) {
+        if (attachment.imagePreviewUrl != null) {
             binding.linkPreviewImageView.load(
-                data = previewUrl,
+                data = attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_picture_placeholder,
                 onStart = { binding.progressBar.isVisible = true },
                 onComplete = { binding.progressBar.isVisible = false },

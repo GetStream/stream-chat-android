@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -37,15 +38,9 @@ internal class MediaAttachmentView : ConstraintLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    )
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.thumbUrl ?: attachment.imageUrl ?: attachment.ogUrl ?: return
+        val url = attachment.imagePreviewUrl ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)

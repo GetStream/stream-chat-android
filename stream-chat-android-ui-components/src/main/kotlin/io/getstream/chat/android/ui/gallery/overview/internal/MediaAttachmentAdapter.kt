@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
@@ -42,7 +43,7 @@ internal class MediaAttachmentAdapter(
 
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
             binding.mediaImageView.load(
-                data = attachmentGalleryItem.attachment.imageUrl,
+                data = attachmentGalleryItem.attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_placeholder,
             )
 
@@ -62,7 +63,7 @@ internal class MediaAttachmentAdapter(
 
     private object AttachmentGalleryItemDiffCallback : DiffUtil.ItemCallback<AttachmentGalleryItem>() {
         override fun areItemsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
-            return oldItem.attachment.imageUrl == newItem.attachment.imageUrl &&
+            return oldItem.attachment.imagePreviewUrl == newItem.attachment.imagePreviewUrl &&
                 oldItem.createdAt == newItem.createdAt
         }
 
