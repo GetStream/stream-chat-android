@@ -172,6 +172,8 @@ class ChatFragment : Fragment() {
                     confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
                 }.show(parentFragmentManager, null)
         }
+
+        binding.messageListView.setAttachmentViewFactory(ImgurAttachmentFactory())
     }
 
     private fun shouldShowDateSeparator(calendar: Calendar, previousMessage: Message, message: Message): Boolean {
