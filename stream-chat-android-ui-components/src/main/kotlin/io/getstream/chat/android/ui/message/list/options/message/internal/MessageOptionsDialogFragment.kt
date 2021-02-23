@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListListenerContainerImpl
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
@@ -142,6 +143,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
+                setAttachmentViewFactory(AttachmentViewFactory())
             }
             .createViewHolder(
                 binding.messageContainer,
@@ -232,10 +234,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         when (val viewHolder = viewHolder) {
             is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
-            is PlainTextWithMediaAttachmentsViewHolder -> viewHolder.binding.mediaAttachmentsGroupView
-            is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.mediaAttachmentsGroupView
-            is OnlyFileAttachmentsViewHolder -> viewHolder.binding.fileAttachmentsView
-            is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.fileAttachmentsView
+            is PlainTextWithMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
+            is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
+            is OnlyFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
+            is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {

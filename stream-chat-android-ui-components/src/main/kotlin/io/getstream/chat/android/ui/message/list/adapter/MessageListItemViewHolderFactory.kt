@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -29,14 +30,20 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Pla
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 
 public open class MessageListItemViewHolderFactory {
-
     internal lateinit var decoratorProvider: DecoratorProvider
 
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
 
+    protected lateinit var attachmentViewFactory: AttachmentViewFactory
+        private set
+
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
+    }
+
+    internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
+        this.attachmentViewFactory = attachmentViewFactory
     }
 
     private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
@@ -94,7 +101,8 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown
+            markdown,
+            attachmentViewFactory
         )
     }
 
@@ -105,7 +113,8 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown
+            markdown,
+            attachmentViewFactory
         )
     }
 
@@ -116,20 +125,31 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown
+            markdown,
+            attachmentViewFactory
         )
     }
 
     protected fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return OnlyMediaAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return OnlyMediaAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            attachmentViewFactory
+        )
     }
 
     protected fun createAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return OnlyFileAttachmentsViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return OnlyFileAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            attachmentViewFactory
+        )
     }
 
     protected fun createThreadSeparatorViewHolder(

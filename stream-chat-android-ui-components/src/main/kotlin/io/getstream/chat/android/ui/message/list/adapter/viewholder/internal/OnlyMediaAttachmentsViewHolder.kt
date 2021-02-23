@@ -10,12 +10,15 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseM
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper.isMedia
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 
 internal class OnlyMediaAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listeners: MessageListListenerContainer,
+    private val listeners: MessageListListenerContainer,
+    private val attachmentViewFactory: AttachmentViewFactory,
     internal val binding: StreamUiItemMessageMediaAttachmentsBinding =
         StreamUiItemMessageMediaAttachmentsBinding.inflate(
             parent.inflater,
@@ -29,9 +32,6 @@ internal class OnlyMediaAttachmentsViewHolder(
             root.setOnClickListener {
                 listeners.messageClickListener.onMessageClick(data.message)
             }
-            mediaAttachmentsGroupView.attachmentClickListener = AttachmentClickListener {
-                listeners.attachmentClickListener.onAttachmentClick(data.message, it)
-            }
             reactionsView.setReactionClickListener {
                 listeners.reactionViewClickListener.onReactionViewClick(data.message)
             }
@@ -43,9 +43,6 @@ internal class OnlyMediaAttachmentsViewHolder(
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
             }
-            mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
-                listeners.messageLongClickListener.onMessageLongClick(data.message)
-            }
         }
     }
 
@@ -53,7 +50,19 @@ internal class OnlyMediaAttachmentsViewHolder(
         super.bindData(data, diff)
 
         if (data.message.attachments.isMedia()) {
-            binding.mediaAttachmentsGroupView.showAttachments(data.message.attachments)
+            val attachmentView = attachmentViewFactory.createAttachmentsView(data.message.attachments, context)
+            binding.attachmentsContainer.removeAllViews()
+            binding.attachmentsContainer.addView(attachmentView)
+            (attachmentView as? MediaAttachmentsGroupView)?.also { mediaAttachmentsGroupView ->
+                mediaAttachmentsGroupView.attachmentLongClickListener = AttachmentLongClickListener {
+                    listeners.messageLongClickListener.onMessageLongClick(data.message)
+                }
+                mediaAttachmentsGroupView.attachmentClickListener = AttachmentClickListener {
+                    listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+                }
+                mediaAttachmentsGroupView.setupBackground(data)
+                mediaAttachmentsGroupView.showAttachments(data.message.attachments)
+            }
         }
     }
 }

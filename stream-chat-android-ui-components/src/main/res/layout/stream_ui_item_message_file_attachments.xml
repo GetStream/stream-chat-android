@@ -32,9 +32,9 @@
         android:id="@+id/backgroundView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/fileAttachmentsView"
-        app:layout_constraintEnd_toEndOf="@id/fileAttachmentsView"
-        app:layout_constraintStart_toStartOf="@id/fileAttachmentsView"
+        app:layout_constraintBottom_toBottomOf="@id/attachmentsContainer"
+        app:layout_constraintEnd_toEndOf="@id/attachmentsContainer"
+        app:layout_constraintStart_toStartOf="@id/attachmentsContainer"
         app:layout_constraintTop_toTopOf="@id/replyView"
         />
 
@@ -46,15 +46,15 @@
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintLeft_toLeftOf="@id/fileAttachmentsView"
-        app:layout_constraintRight_toRightOf="@id/fileAttachmentsView"
+        app:layout_constraintLeft_toLeftOf="@id/attachmentsContainer"
+        app:layout_constraintRight_toRightOf="@id/attachmentsContainer"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         tools:streamUiEllipsize="false"
         tools:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
-        android:id="@+id/fileAttachmentsView"
+    <FrameLayout
+        android:id="@+id/attachmentsContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
@@ -93,7 +93,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@id/fileAttachmentsView"
+        app:layout_constraintBottom_toBottomOf="@id/attachmentsContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -105,7 +105,7 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toBottomOf="@+id/fileAttachmentsView"
+        app:layout_constraintTop_toBottomOf="@id/attachmentsContainer"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
@@ -128,8 +128,8 @@
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/fileAttachmentsView"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintBottom_toBottomOf="@id/attachmentsContainer"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
         app:tint="@color/stream_ui_accent_red"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
