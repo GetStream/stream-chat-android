@@ -4,7 +4,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.LinkAttachmentDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.MaxPossibleWidthDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
@@ -15,8 +14,7 @@ internal class MessageOptionsDecoratorProvider(style: MessageListItemStyle) : De
         BackgroundDecorator(style),
         TextDecorator(style),
         MaxPossibleWidthDecorator(),
-        AvatarDecorator(),
-        LinkAttachmentDecorator()
+        AvatarDecorator()
     )
 
     override val decorators: List<Decorator> = messageOptionsDecorators

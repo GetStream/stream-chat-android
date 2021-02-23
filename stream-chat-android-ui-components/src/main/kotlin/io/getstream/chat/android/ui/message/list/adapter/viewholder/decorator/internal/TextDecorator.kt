@@ -45,11 +45,6 @@ internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() 
         viewHolder.binding.apply {
             getStyleTextColor(data.isMine)?.let { textColor ->
                 messageText.setTextColor(textColor)
-                // set title & description colors as well
-                linkAttachmentView.binding.apply {
-                    descriptionTextView.setTextColor(textColor)
-                    titleTextView.setTextColor(textColor)
-                }
             }
 
             getStyleLinkTextColor(data.isMine)?.let { linkTextColor ->
