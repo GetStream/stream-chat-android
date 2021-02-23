@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/stream_ui_spacing_small"
+    android:paddingEnd="@dimen/stream_ui_spacing_small"
+    >
+
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+        android:id="@+id/gapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Space
+        android:id="@+id/reactionsSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/backgroundView"
+        app:layout_constraintStart_toStartOf="@id/backgroundView"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        />
+
+    <View
+        android:id="@+id/backgroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintEnd_toEndOf="@id/attachmentsContainer"
+        app:layout_constraintStart_toStartOf="@id/attachmentsContainer"
+        app:layout_constraintTop_toTopOf="@id/replyView"
+        />
+
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+        android:id="@+id/replyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toLeftOf="@id/backgroundView"
+        app:layout_constraintRight_toRightOf="@id/backgroundView"
+        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
+        tools:visibility="visible"
+        />
+
+    <LinearLayout
+        android:id="@+id/attachmentsContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/deliveryFailedIcon"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/replyView"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+        />
+
+    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+        />
+
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:gravity="start"
+        android:hyphenationFrequency="normal"
+        android:lineHeight="16sp"
+        android:paddingLeft="@dimen/stream_ui_spacing_medium"
+        android:paddingTop="@dimen/stream_ui_spacing_small"
+        android:paddingRight="@dimen/stream_ui_spacing_medium"
+        android:paddingBottom="@dimen/stream_ui_spacing_small"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
+        android:textColor="@color/stream_ui_text_color_primary"
+        android:textColorLink="@color/stream_ui_accent_blue"
+        app:layout_constraintEnd_toEndOf="@id/attachmentsContainer"
+        app:layout_constraintStart_toStartOf="@id/attachmentsContainer"
+        app:layout_constraintTop_toBottomOf="@id/attachmentsContainer"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamUiMessageListAvatarStyle"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <Space
+        android:id="@+id/threadGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/attachmentsContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
+        android:id="@+id/footnote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@+id/messageText"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+        />
+
+    <ImageView
+        android:id="@+id/deliveryFailedIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/stream_ui_ic_warning"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/attachmentsContainer"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:tint="@color/stream_ui_accent_red"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_begin="20dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_end="20dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
