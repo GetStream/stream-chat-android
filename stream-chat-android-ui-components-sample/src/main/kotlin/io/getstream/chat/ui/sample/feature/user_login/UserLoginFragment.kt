@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentUserLoginBinding
@@ -41,7 +39,7 @@ class UserLoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViews()
         observeStateAndEvents()
-        viewModel.init(getNotificationChannelId())
+        viewModel.init()
     }
 
     override fun onDestroyView() {
@@ -88,26 +86,11 @@ class UserLoginFragment : Fragment() {
                     is UserLoginViewModel.UiEvent.RedirectToChannels -> {
                         navigateSafely(R.id.action_userLoginFragment_to_homeFragment)
                     }
-                    is UserLoginViewModel.UiEvent.RedirectToChannel -> {
-                        navigateSafely(UserLoginFragmentDirections.actionUserLoginFragmentToChannelFragment(it.cid))
-                    }
                     is UserLoginViewModel.UiEvent.Error -> {
                         showToast(it.errorMessage ?: getString(R.string.backend_error_info))
                     }
                 }
             }
         )
-    }
-
-    private fun getNotificationChannelId(): String? {
-        return activity?.intent?.let {
-            val channelId = it.getStringExtra(EXTRA_CHANNEL_ID)
-            val channelType = it.getStringExtra(EXTRA_CHANNEL_TYPE)
-            if (!channelId.isNullOrBlank() && !channelType.isNullOrBlank()) {
-                "$channelType:$channelId"
-            } else {
-                null
-            }
-        }
     }
 }

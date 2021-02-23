@@ -1,7 +1,6 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
@@ -32,8 +31,6 @@ class ChatInitializer(private val context: Context) {
         val domain = ChatDomain.Builder(client, user, context)
             .offlineEnabled()
             .build()
-
-        val ui = ChatUI.Builder(context).build()
     }
 
     fun isUserSet(): Boolean {
