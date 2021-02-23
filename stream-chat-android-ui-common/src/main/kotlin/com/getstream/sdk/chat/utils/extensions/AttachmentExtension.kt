@@ -7,3 +7,6 @@ import io.getstream.chat.android.client.models.Attachment
 public fun Attachment.getDisplayableName(): String? {
     return StringUtils.removeTimePrefix(title ?: name, StorageHelper.TIME_FORMAT)
 }
+
+public val Attachment.imagePreviewUrl: String?
+    get() = thumbUrl ?: imageUrl
