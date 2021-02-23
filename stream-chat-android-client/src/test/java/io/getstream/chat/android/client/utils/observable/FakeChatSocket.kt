@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 
+@Suppress("DEPRECATION_ERROR")
 internal class FakeChatSocket : ChatSocket {
 
     private val listeners = mutableSetOf<SocketListener>()

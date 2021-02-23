@@ -108,6 +108,7 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
     /**
      * Send a message with attachments.
      */
+    @Suppress("DEPRECATION_ERROR")
     public val sendMessageWithAttachments: SendMessageWithAttachments = SendMessageWithAttachmentsImpl(chatDomainImpl)
 
     /**

@@ -34,6 +34,7 @@ import kotlinx.coroutines.GlobalScope;
 
 import static io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION;
 
+@Deprecated
 class ChatImpl implements Chat {
     private final ChatNavigationHandler navigationHandler;
     private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);

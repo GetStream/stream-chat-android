@@ -35,12 +35,12 @@ internal class FileAttachmentSelectedAdapter(
         binding.tvFileTitle.text = attachment.title
         binding.ivLargeFileMark.visibility = View.INVISIBLE
         binding.ivSelectMark.isVisible = false
-        binding.tvClose.visibility = View.INVISIBLE
+        binding.ivClose.visibility = View.INVISIBLE
         binding.progressBar.isVisible = false
         binding.tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
         if (!localAttach) return
-        binding.tvClose.isVisible = true
-        binding.tvClose.setOnClickListener { cancelListener(attachment) }
+        binding.ivClose.isVisible = true
+        binding.ivClose.setOnClickListener { cancelListener(attachment) }
     }
 
     fun setAttachments(attachments: List<AttachmentMetaData>) {

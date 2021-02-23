@@ -71,10 +71,11 @@ internal class AttachmentsController(
     @VisibleForTesting
     internal fun cancelAttachment(
         attachment: AttachmentMetaData,
-        messageInputType: MessageInputType?
+        messageInputType: MessageInputType?,
+        isMediaAttachment: Boolean,
     ) {
         selectedAttachments = selectedAttachments - attachment
-        removeAttachmentFromAdapters(attachment)
+        removeAttachmentFromAdapters(attachment, isMediaAttachment)
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)
@@ -101,8 +102,8 @@ internal class AttachmentsController(
         fillTotalMediaAttachmentsView(messageInputType)
     }
 
-    private fun removeAttachmentFromAdapters(attachment: AttachmentMetaData) {
-        if (isMediaAttachment(attachment)) {
+    private fun removeAttachmentFromAdapters(attachment: AttachmentMetaData, isMediaAttachment: Boolean) {
+        if (isMediaAttachment) {
             selectedMediaAttachmentAdapter.removeAttachment(attachment)
             totalMediaAttachmentAdapter.unselectAttachment(attachment)
         } else {
@@ -127,7 +128,7 @@ internal class AttachmentsController(
         selectedAttachments = selectedAttachments.filter(isMediaAttachment).toSet()
         selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
         selectedMediaAttachmentAdapter.cancelListener =
-            { attachment -> cancelAttachment(attachment, messageInputType) }
+            { attachment -> cancelAttachment(attachment, messageInputType, true) }
         view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
         selectedFileAttachmentAdapter.clear()
     }
@@ -135,7 +136,7 @@ internal class AttachmentsController(
     private fun setSelectedFileAttachmentAdapter() {
         selectedAttachments = selectedAttachments.filter(isFileAttachment).toSet()
         selectedFileAttachmentAdapter.cancelListener =
-            { attachment -> cancelAttachment(attachment, null) }
+            { attachment -> cancelAttachment(attachment, null, false) }
         view.showSelectedFileAttachments(selectedFileAttachmentAdapter)
         selectedMediaAttachmentAdapter.clear()
     }
@@ -154,7 +155,7 @@ internal class AttachmentsController(
     ) {
         attachment.isSelected = false
         selectedAttachments = selectedAttachments - attachment
-        removeAttachmentFromAdapters(attachment)
+        removeAttachmentFromAdapters(attachment, true)
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)

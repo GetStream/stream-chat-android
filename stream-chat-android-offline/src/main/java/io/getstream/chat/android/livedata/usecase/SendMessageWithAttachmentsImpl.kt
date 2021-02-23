@@ -13,11 +13,15 @@ import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
 
+@Deprecated(
+    message = "Use sendMessage() and attachment.upload instead of this useCase",
+    level = DeprecationLevel.ERROR,
+)
 public interface SendMessageWithAttachments {
 
     @Deprecated(
         message = "Use sendMessage() and attachment.upload instead of this useCase",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public operator fun invoke(
@@ -28,6 +32,7 @@ public interface SendMessageWithAttachments {
     ): Call<Message>
 }
 
+@Suppress("DEPRECATION_ERROR")
 internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) :
     SendMessageWithAttachments {
     override fun invoke(

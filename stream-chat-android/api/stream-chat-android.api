@@ -183,7 +183,6 @@ public final class com/getstream/sdk/chat/adapter/MessageListItemAdapter : andro
 	public fun onBindViewHolder (Lcom/getstream/sdk/chat/adapter/viewholder/message/BaseMessageListItemViewHolder;ILjava/util/List;)V
 	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lcom/getstream/sdk/chat/adapter/viewholder/message/BaseMessageListItemViewHolder;
-	public final fun replaceEntities (Ljava/util/List;)V
 	public final fun setThread (Z)V
 }
 

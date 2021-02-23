@@ -2,7 +2,11 @@ package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.events.ChatEvent
 
-@Deprecated("Use the subscribe methods on ChatClient or ChannelController directly instead of events()")
+@Deprecated(
+    "Use the subscribe methods on ChatClient or ChannelController directly instead of events()",
+    level = DeprecationLevel.ERROR,
+)
+@Suppress("DEPRECATION_ERROR")
 public class Subscription(
     private val observable: ChatObservable,
     private var listener: ((ChatEvent) -> Unit)?,
