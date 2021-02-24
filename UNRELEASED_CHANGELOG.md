@@ -9,3 +9,4 @@
 ## stream-chat-android-ui-common
 
 ## stream-chat-android-ui-components
+- Introduced `AttachmentViewFactory` as a factory for custom attachment views/custom link view

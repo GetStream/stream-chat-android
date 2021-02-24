@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.StreamFileProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -88,7 +89,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupGalleryAdapter() {
         adapter = AttachmentGalleryPagerAdapter(
             fragmentActivity = this,
-            imageList = attachmentGalleryItems.map { it.attachment.imageUrl!! },
+            imageList = attachmentGalleryItems.map { it.attachment.imagePreviewUrl!! },
             imageClickListener = {
                 isFullScreen = !isFullScreen
                 if (isFullScreen) enterFullScreenMode() else exitFullScreenMode()

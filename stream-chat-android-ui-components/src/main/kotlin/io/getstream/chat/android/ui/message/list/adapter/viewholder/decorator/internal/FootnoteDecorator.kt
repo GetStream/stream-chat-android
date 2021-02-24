@@ -53,7 +53,7 @@ internal class FootnoteDecorator(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
-        viewHolder.binding.fileAttachmentsView,
+        viewHolder.binding.attachmentsContainer,
         data,
     )
 
@@ -75,7 +75,7 @@ internal class FootnoteDecorator(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
-        viewHolder.binding.mediaAttachmentsGroupView,
+        viewHolder.binding.attachmentsContainer,
         data,
     )
 

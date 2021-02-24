@@ -7,17 +7,24 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.horizontalChainInParent
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.getstream.sdk.chat.utils.extensions.verticalChainInParent
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
+import io.getstream.chat.android.ui.common.extensions.isReply
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -189,6 +196,24 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             it.attachmentClickListener = attachmentClickListener
             it.attachmentLongClickListener = attachmentLongClickListener
         }
+    }
+
+    fun setupBackground(data: MessageListItem.MessageItem) {
+        val topLeftCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
+        val topRightCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
+        val bottomRightCorner =
+            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
+        val bottomLeftCorner =
+            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
+
+        background = ShapeAppearanceModel.builder()
+            .setTopLeftCornerSize(topLeftCorner)
+            .setTopRightCornerSize(topRightCorner)
+            .setBottomRightCornerSize(bottomRightCorner)
+            .setBottomLeftCornerSize(bottomLeftCorner)
+            .build()
+            .let(::MaterialShapeDrawable)
+            .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }
     }
 
     private sealed class State {

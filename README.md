@@ -21,6 +21,7 @@ This is the official Android SDK for [Stream Chat](https://getstream.io/chat), a
 * [Documentation (Java)](https://getstream.io/chat/docs/android/?language=java)
 * [API docs (Dokka)](https://getstream.github.io/stream-chat-android/)
 * [Sample app](/stream-chat-android-ui-components-sample)
+* [Wiki (Cookbooks/Docs)](https://github.com/GetStream/stream-chat-android/wiki)
 
 ## Java/Kotlin Chat Tutorial
 

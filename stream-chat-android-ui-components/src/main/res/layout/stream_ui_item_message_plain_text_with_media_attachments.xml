@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -64,26 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/replyView"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
-        >
-
-
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
-            android:id="@+id/mediaAttachmentsGroupView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="1dp"
-            />
-
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
-            android:id="@+id/linkAttachmentView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/stream_ui_spacing_small"
-            android:visibility="gone"
-            tools:visibility="visible"
-            />
-
-    </LinearLayout>
+        />
 
     <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
         android:id="@+id/reactionsView"
