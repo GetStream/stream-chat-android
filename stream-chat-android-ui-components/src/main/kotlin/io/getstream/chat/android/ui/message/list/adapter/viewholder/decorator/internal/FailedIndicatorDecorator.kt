@@ -11,8 +11,15 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Onl
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class FailedIndicatorDecorator : BaseDecorator() {
+    override fun decorateTextAndAttachmentsMessage(
+        viewHolder: TextAndAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+    }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,

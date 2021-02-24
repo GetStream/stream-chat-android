@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Onl
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal abstract class BaseDecorator : Decorator {
 
@@ -24,6 +25,7 @@ internal abstract class BaseDecorator : Decorator {
         when (viewHolder) {
             is MessageDeletedViewHolder -> decorateDeletedMessage(viewHolder, data)
             is MessagePlainTextViewHolder -> decoratePlainTextMessage(viewHolder, data)
+            is TextAndAttachmentsViewHolder -> decorateTextAndAttachmentsMessage(viewHolder, data)
             is OnlyMediaAttachmentsViewHolder -> decorateOnlyMediaAttachmentsMessage(viewHolder, data)
             is PlainTextWithMediaAttachmentsViewHolder -> decoratePlainTextWithMediaAttachmentsMessage(viewHolder, data)
             is OnlyFileAttachmentsViewHolder -> decorateOnlyFileAttachmentsMessage(viewHolder, data)
@@ -33,6 +35,11 @@ internal abstract class BaseDecorator : Decorator {
             else -> Unit
         }.exhaustive
     }
+
+    abstract fun decorateTextAndAttachmentsMessage(
+        viewHolder: TextAndAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    )
 
     protected abstract fun decoratePlainTextWithFileAttachmentsMessage(
         viewHolder: PlainTextWithFileAttachmentsViewHolder,

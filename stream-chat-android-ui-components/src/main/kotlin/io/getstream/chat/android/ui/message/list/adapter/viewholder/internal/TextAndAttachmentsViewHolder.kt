@@ -28,7 +28,7 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewFactory: AttachmentViewFactory,
-    private val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater),
+    internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {

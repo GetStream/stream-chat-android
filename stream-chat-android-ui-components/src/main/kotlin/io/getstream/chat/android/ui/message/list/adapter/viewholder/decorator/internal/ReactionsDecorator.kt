@@ -17,9 +17,17 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Onl
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
 
 internal class ReactionsDecorator : BaseDecorator() {
+
+    override fun decorateTextAndAttachmentsMessage(
+        viewHolder: TextAndAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
+    }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
