@@ -90,6 +90,7 @@ public data class Message(
     @InternalStreamChatApi
     var channelInfo: ChannelInfo? = null,
 
+    @IgnoreSerialisation
     @SerializedName("quoted_message")
     var replyTo: Message? = null,
 
