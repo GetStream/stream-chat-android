@@ -1,10 +1,11 @@
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.UserDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.models.User
 
-internal fun User.toDto(): UserDto =
-    UserDto(
+internal fun User.toDto(): UpstreamUserDto =
+    UpstreamUserDto(
         banned = banned,
         id = id,
         invisible = invisible,
@@ -12,7 +13,7 @@ internal fun User.toDto(): UserDto =
         extraData = extraData,
     )
 
-internal fun UserDto.toDomain(): User =
+internal fun DownstreamUserDto.toDomain(): User =
     User(
         banned = banned,
         id = id,

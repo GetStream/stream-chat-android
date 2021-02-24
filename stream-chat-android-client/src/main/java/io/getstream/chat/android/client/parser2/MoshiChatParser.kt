@@ -3,6 +3,14 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -14,8 +22,10 @@ internal class MoshiChatParser : ChatParser {
             .add(DownstreamMessageDtoAdapter)
             .add(UpstreamMessageDtoAdapter)
             .add(AttachmentDtoAdapter)
-            .add(ReactionDtoAdapter)
-            .add(UserDtoAdapter)
+            .add(DownstreamReactionDtoAdapter)
+            .add(UpstreamReactionDtoAdapter)
+            .add(DownstreamUserDtoAdapter)
+            .add(UpstreamUserDtoAdapter)
             .build()
     }
 
