@@ -27,7 +27,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setDefaultBackgroundDrawable(viewHolder.binding.backgroundView, data)
+        setDefaultBackgroundDrawable(viewHolder.binding.messageContainer, data)
     }
 
     override fun decorateDeletedMessage(

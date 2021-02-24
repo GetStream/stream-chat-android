@@ -26,7 +26,7 @@ internal class ReactionsDecorator : BaseDecorator() {
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
-        setupReactionsView(root, backgroundView, reactionsSpace, reactionsView, data)
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
     }
 
     override fun decoratePlainTextMessage(

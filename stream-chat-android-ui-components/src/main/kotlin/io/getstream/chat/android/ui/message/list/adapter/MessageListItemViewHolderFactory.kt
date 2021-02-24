@@ -5,15 +5,12 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
@@ -23,10 +20,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Dat
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 
 public open class MessageListItemViewHolderFactory {
@@ -70,16 +64,23 @@ public open class MessageListItemViewHolderFactory {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            PLAIN_TEXT_WITH_FILE_ATTACHMENTS -> createPlainTextWithFileAttachmentsViewHolder(parentView)
-            PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS -> createPlainTextWithMediaAttachmentsViewHolder(parentView)
-            MEDIA_ATTACHMENTS -> createMediaAttachmentsViewHolder(parentView)
-            ATTACHMENTS -> createAttachmentsViewHolder(parentView)
+            TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
             LOADING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
+    }
+
+    private fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
+        return TextAndAttachmentsViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            markdown,
+            attachmentViewFactory
+        )
     }
 
     protected fun createDateDividerViewHolder(
@@ -102,52 +103,6 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
-            attachmentViewFactory
-        )
-    }
-
-    protected fun createPlainTextWithFileAttachmentsViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return PlainTextWithFileAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
-            markdown,
-            attachmentViewFactory
-        )
-    }
-
-    protected fun createPlainTextWithMediaAttachmentsViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return PlainTextWithMediaAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
-            markdown,
-            attachmentViewFactory
-        )
-    }
-
-    protected fun createMediaAttachmentsViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return OnlyMediaAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
-            attachmentViewFactory
-        )
-    }
-
-    protected fun createAttachmentsViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return OnlyFileAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
             attachmentViewFactory
         )
     }

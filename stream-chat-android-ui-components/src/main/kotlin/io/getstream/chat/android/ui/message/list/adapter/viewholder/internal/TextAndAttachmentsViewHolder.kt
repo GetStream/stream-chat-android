@@ -1,12 +1,18 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
@@ -28,7 +34,7 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewFactory: AttachmentViewFactory,
-    internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater),
+    internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater, parent, false),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
@@ -36,8 +42,12 @@ internal class TextAndAttachmentsViewHolder(
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         markdown.setText(binding.messageText, data.message.text)
+        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            horizontalBias = if (data.isTheirs) 0f else 1f
+        }
 
         setupAttachment(data)
+        applyMaxPossibleWidth(binding.root, binding.messageContainer, data.message)
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
@@ -45,11 +55,14 @@ internal class TextAndAttachmentsViewHolder(
 
         val (links, attachments) = data.message.attachments.partition(Attachment::hasLink)
 
-        val attachmentView = attachmentViewFactory.createAttachmentsView(attachments, context)
-        binding.attachmentsContainer.addView(attachmentView)
-
-        (attachmentView as? MediaAttachmentsGroupView)?.also { setupMediaAttachmentView(it, attachments) }
-        (attachmentView as? FileAttachmentsView)?.also { setupFileAttachmentsView(it, attachments) }
+        if (attachments.isNotEmpty()) {
+            val attachmentView = attachmentViewFactory.createAttachmentsView(attachments, context)
+            binding.attachmentsContainer.addView(attachmentView)
+            when (attachmentView) {
+                is MediaAttachmentsGroupView -> setupMediaAttachmentView(attachmentView, attachments)
+                is FileAttachmentsView -> setupFileAttachmentsView(attachmentView, attachments)
+            }
+        }
 
         links.firstOrNull()?.also(::setupLinkView)
     }
@@ -93,6 +106,22 @@ internal class TextAndAttachmentsViewHolder(
                 listeners.linkClickListener.onLinkClick(url)
             }
             setLongClickTarget(binding.root)
+        }
+    }
+
+    private fun applyMaxPossibleWidth(root: ConstraintLayout, messageContainer: View, message: Message) {
+        val hasLink = message.attachments.any { it.hasLink() }
+        val layoutWidth = messageContainer.layoutParams.width
+        if (hasLink && layoutWidth == ConstraintSet.WRAP_CONTENT) {
+            root.updateConstraints {
+                constrainWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT)
+                constrainDefaultWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT_SPREAD)
+            }
+        } else if (!hasLink && layoutWidth == ConstraintSet.MATCH_CONSTRAINT) {
+            root.updateConstraints {
+                constrainWidth(messageContainer.id, ConstraintSet.WRAP_CONTENT)
+                constrainDefaultWidth(messageContainer.id, ConstraintSet.MATCH_CONSTRAINT_WRAP)
+            }
         }
     }
 
