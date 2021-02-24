@@ -120,7 +120,8 @@ internal class QueryChannelsControllerImpl(
         } else if (event is NotificationMessageNewEvent) {
             // It is necessary to add the channel only if it is not already present
             val channel = event.channel
-            if (newChannelEventFilter(channel, filter)) {
+
+            if (!queryChannelsSpec.cids.contains(channel.cid) && newChannelEventFilter(channel, filter)) {
                 val channelControllerImpl = domainImpl.channel(channel)
                 channelControllerImpl.updateLiveDataFromChannel(channel)
             }
