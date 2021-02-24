@@ -1,3 +1,8 @@
+# ???, 2021 - 4.6.1
+## stream-chat-android-ui-components
+- Updated project dependencies
+    - PhotoView 2.3.0 (androidx)
+
 # Feb 22th, 2021 - 4.6.0
 # New UI-Components Artifact
 A new UI-Components artifact has been created with a new design of all our components.
