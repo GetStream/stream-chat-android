@@ -117,7 +117,7 @@ internal class QueryChannelsControllerImpl(
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
-        }  else if (event is NotificationMessageNewEvent) {
+        } else if (event is NotificationMessageNewEvent) {
             // It is necessary to add the channel only if it is not already present
             val channel = event.channel
             if (newChannelEventFilter(channel, filter)) {
