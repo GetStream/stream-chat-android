@@ -8,7 +8,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -115,6 +117,9 @@ internal class QueryChannelsControllerImpl(
     internal suspend fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
+            addChannelIfFilterMatches(event.channel)
+        }  else if (event is NotificationMessageNewEvent) {
+            // It is necessary to add the channel only if it is not already present
             addChannelIfFilterMatches(event.channel)
         }
 
