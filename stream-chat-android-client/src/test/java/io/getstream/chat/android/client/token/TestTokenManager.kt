@@ -1,12 +1,18 @@
 package io.getstream.chat.android.client.token
 
-import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.Awaitility.await
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.TimeUnit.SECONDS
 
 internal class TestTokenManager {
+
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     val token = "token"
     private lateinit var manager: TokenManager
@@ -17,111 +23,111 @@ internal class TestTokenManager {
     }
 
     @Test
-    fun basic() {
-
+    fun `Should return a valid token when the default immediate token provider is used`() {
         manager.setTokenProvider(FakeTokenProvider(token))
 
-        val listenerA = CallListener()
-        val listenerB = CallListener()
+        val listener = CallListener()
 
-        manager.loadAsync {
-            listenerA.called(it.data())
-        }
-        manager.loadAsync {
-            listenerB.called(it.data())
+        manager.loadAsyncAndRetry {
+            listener.called(it.data())
         }
 
-        await().atMost(2, SECONDS).until { listenerA.isCalledWith(token) }
-        await().atMost(2, SECONDS).until { listenerB.isCalledWith(token) }
-
-        await().atMost(2, SECONDS).until { manager.hasTokenProvider() }
-        await().atMost(2, SECONDS).until { manager.hasToken() }
-        await().atMost(2, SECONDS).until { manager.getToken() == token }
+        listener.data shouldBeEqualTo token
+        manager.hasTokenProvider() shouldBeEqualTo true
+        manager.hasToken() shouldBeEqualTo true
+        manager.getToken() shouldBeEqualTo token
     }
 
     @Test
-    fun async() {
-
+    fun `Should return a valid token when custom token provider is used`() {
         manager.setTokenProvider(
             object : TokenProvider {
                 override fun loadToken(): String {
-                    Thread {
-                        Thread.sleep(1000)
-                    }.start()
+                    Thread.sleep(1000)
                     return token
                 }
             }
         )
+        manager.loadAsyncAndRetry()
 
-        manager.loadAsync()
-
-        await().atMost(2, SECONDS).until { manager.hasTokenProvider() }
-        await().atMost(2, SECONDS).until { manager.hasToken() }
-        await().atMost(2, SECONDS).until { manager.getToken() == token }
+        manager.hasTokenProvider() shouldBeEqualTo true
+        manager.hasToken() shouldBeEqualTo true
+        manager.getToken() shouldBeEqualTo token
     }
 
     @Test
-    fun error() {
-
-        val listener = CallListener()
-        val error = RuntimeException()
-
+    fun `Should return an error when token is fetched with an exception`() = testCoroutines.scope.runBlockingTest {
         manager.setTokenProvider(
             object : TokenProvider {
                 override fun loadToken(): String {
-                    throw error
+                    throw RuntimeException()
                 }
             }
         )
 
-        manager.loadAsync {
-            listener.called(it.error().cause!!)
+        val listener = CallListener()
+
+        manager.loadAsyncAndRetry {
+            listener.called(it.error())
         }
 
-        await().atMost(2, SECONDS).until { !manager.hasToken() }
-        await().atMost(2, SECONDS).until { listener.isCalledWith(error) }
+        // handle the retry delay
+        advanceUntilIdle()
+
+        manager.hasToken() shouldBeEqualTo false
+        listener.data shouldBeInstanceOf ChatError::class
     }
 
     @Test
-    fun expire() {
+    fun `Should return a valid token when token is fetched after unsuccessful attempt`() {
+        testCoroutines.scope.runBlockingTest {
+            manager.setTokenProvider(
+                object : TokenProvider {
+                    var attempts = 0
+                    override fun loadToken(): String {
+                        if (++attempts < 3) {
+                            throw RuntimeException()
+                        } else {
+                            return token
+                        }
+                    }
+                }
+            )
 
+            val listener = CallListener()
+
+            manager.loadAsyncAndRetry {
+                listener.called(it.data())
+            }
+
+            // handle the retry delay
+            advanceUntilIdle()
+
+            manager.hasToken() shouldBeEqualTo true
+            listener.data shouldBeEqualTo token
+        }
+    }
+
+    @Test
+    fun `Should invalidate existing token when expire token is called`() {
         val tokenA = "token-a"
         val tokenB = "token-b"
 
         manager.setTokenProvider(FakeTokenProvider(tokenA, tokenB))
-
-        manager.loadAsync()
-
-        await().atMost(2, SECONDS).until { manager.getToken() == tokenA }
-
+        manager.loadAsyncAndRetry()
+        manager.getToken() shouldBeEqualTo tokenA
         manager.expireToken()
-
-        assertThat(manager.hasToken()).isFalse()
-
-        manager.loadAsync()
-
-        await().atMost(2, SECONDS).until { manager.getToken() == tokenB }
+        manager.hasToken() shouldBeEqualTo false
+        manager.loadAsyncAndRetry()
+        manager.getToken() shouldBeEqualTo tokenB
     }
 
     class CallListener {
 
-        var called = false
         var data: Any? = null
-
-        fun called() {
-            this.called = true
-        }
 
         fun called(data: Any) {
             this.data = data
-        }
-
-        fun isCalled(): Boolean {
-            return called
-        }
-
-        fun isCalledWith(data: Any): Boolean {
-            return this.data == data
         }
     }
 }

@@ -692,6 +692,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+        tokenManager.shutdown()
 
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
@@ -1221,13 +1222,13 @@ public class ChatClient internal constructor(
     }
 
     private fun getTokenAndConnect(connect: () -> Unit) {
-        tokenManager.loadAsync {
+        tokenManager.loadAsyncAndRetry {
             if (it.isSuccess) {
                 clientStateService.onTokenReceived(it.data())
+                connect()
             } else {
-                clientStateService.onTokenReceived("")
+                logger.logE("Unable to load user token")
             }
-            connect()
         }
     }
 

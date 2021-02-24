@@ -3,17 +3,16 @@ package io.getstream.chat.android.client.token
 import io.getstream.chat.android.client.utils.Result
 
 internal class FakeTokenManager(val tkn: String) : TokenManager {
-    override fun loadAsync(listener: (Result<String>) -> Unit) {
+    override fun loadAsyncAndRetry(listener: (Result<String>) -> Unit) {
         listener(Result(tkn))
     }
 
-    override fun loadAsync() {
-    }
-
-    override fun loadSync() {
+    override fun loadSync(): String {
+        return tkn
     }
 
     override fun expireToken() {
+        // empty
     }
 
     override fun setTokenProvider(provider: TokenProvider) {
@@ -29,5 +28,9 @@ internal class FakeTokenManager(val tkn: String) : TokenManager {
 
     override fun hasTokenProvider(): Boolean {
         return true
+    }
+
+    override fun shutdown() {
+        // empty
     }
 }
