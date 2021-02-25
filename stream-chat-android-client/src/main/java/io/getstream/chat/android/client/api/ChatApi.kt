@@ -74,7 +74,20 @@ internal interface ChatApi {
     fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     @CheckResult
-    fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean): Call<Reaction>
+    fun sendReaction(
+        messageId: String,
+        reactionType: String,
+        enforceUnique: Boolean,
+    ): Call<Reaction> {
+        return sendReaction(
+            reaction = Reaction(
+                messageId = messageId,
+                type = reactionType,
+                score = 0
+            ),
+            enforceUnique = enforceUnique
+        )
+    }
 
     @CheckResult
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
