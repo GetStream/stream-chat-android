@@ -1,13 +1,12 @@
-package io.getstream.chat.android.client.parser2
+package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.UserDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
-internal object DtoTestData {
+internal object MessageDtoTestData {
 
     @Language("JSON")
     val downstreamJson =
@@ -32,12 +31,7 @@ internal object DtoTestData {
           "thread_participants" : [],
           "type": "",
           "updated_at": "2020-06-10T11:04:31.588Z",
-          "user": {
-            "id": "",
-            "role": "",
-            "invisible": false,
-            "banned": false
-          },
+          "user": ${UserDtoTestData.downstreamJson},
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -60,13 +54,7 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            extraData = emptyMap()
-        ),
+        user = UserDtoTestData.downstreamUser,
         silent = false,
         shadowed = false,
         created_at = Date(1591787071000),
@@ -131,12 +119,7 @@ internal object DtoTestData {
           "thread_participants" : [],
           "type": "",
           "updated_at": "2020-06-10T11:04:31.588Z",
-          "user": {
-            "id": "",
-            "role": "",
-            "invisible": false,
-            "banned": false
-          }
+          "user": ${UserDtoTestData.downstreamJson}
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -145,13 +128,7 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            extraData = emptyMap()
-        ),
+        user = UserDtoTestData.downstreamUser,
         silent = false,
         shadowed = false,
         created_at = Date(1591787071000),
@@ -196,7 +173,9 @@ internal object DtoTestData {
             "banned": false,
             "id": "",
             "invisible": false,
-            "role": ""
+            "role": "",
+            "devices": [],
+            "teams": []
           },
           "extraData": {
             "key1": "value1",
@@ -220,11 +199,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto(
+        user = UpstreamUserDto(
             banned = false,
             id = "",
             invisible = false,
             role = "",
+            devices = emptyList(),
+            teams = emptyList(),
             extraData = emptyMap()
         ),
         silent = false,
@@ -275,7 +256,9 @@ internal object DtoTestData {
             "banned": false,
             "id": "",
             "invisible": false,
-            "role": ""
+            "role": "",
+            "devices": [],
+            "teams": []
           }
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
@@ -285,11 +268,13 @@ internal object DtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UserDto(
+        user = UpstreamUserDto(
             banned = false,
             id = "",
             invisible = false,
             role = "",
+            devices = emptyList(),
+            teams = emptyList(),
             extraData = emptyMap()
         ),
         silent = false,
@@ -306,78 +291,4 @@ internal object DtoTestData {
         pinned_at = null,
         pin_expires = null,
     )
-
-    @Language("JSON")
-    val reactionJson =
-        """{
-          "message_id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "score": 0,
-          "type": "like",
-          "user": {
-            "banned": false,
-            "id": "",
-            "invisible": false,
-            "role": ""
-          },
-          "user_id": "",
-          "extraData": {
-            "key1": true
-          },
-          "customKey1": "customVal1"
-        }
-        """.withoutWhitespace()
-    val reaction = ReactionDto(
-        message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "like",
-        score = 0,
-        user = UserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            extraData = emptyMap()
-        ),
-        user_id = "",
-        created_at = null,
-        updated_at = null,
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "key1" to true,
-            ),
-            "customKey1" to "customVal1",
-        ),
-    )
-
-    @Language("JSON")
-    val reactionJsonWithoutExtraData =
-        """{
-          "message_id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "score": 0,
-          "type": "like",
-          "user": {
-            "banned": false,
-            "id": "",
-            "invisible": false,
-            "role": ""
-          },
-          "user_id": ""
-        }""".withoutWhitespace()
-    val reactionWithoutExtraData = ReactionDto(
-        message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "like",
-        score = 0,
-        user = UserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            extraData = emptyMap()
-        ),
-        user_id = "",
-        created_at = null,
-        updated_at = null,
-        extraData = emptyMap(),
-    )
-
-    private fun String.withoutWhitespace() = filterNot(Char::isWhitespace)
 }
