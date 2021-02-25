@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonClass
 import java.util.Date
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.ReactionDtoAdapter] for
+ * See [io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter] for
  * special [extraData] handling.
  */
 @JsonClass(generateAdapter = true)
@@ -21,7 +21,7 @@ internal data class UpstreamReactionDto(
 )
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.ReactionDtoAdapter] for
+ * See [io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter] for
  * special [extraData] handling.
  */
 @JsonClass(generateAdapter = true)

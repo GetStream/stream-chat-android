@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.Device
 import java.util.Date
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for
+ * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for
  * special [extraData] handling.
  */
 @JsonClass(generateAdapter = true)
@@ -21,7 +21,7 @@ internal data class UpstreamUserDto(
 )
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter] for
+ * See [io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter] for
  * special [extraData] handling.
  */
 @JsonClass(generateAdapter = true)
