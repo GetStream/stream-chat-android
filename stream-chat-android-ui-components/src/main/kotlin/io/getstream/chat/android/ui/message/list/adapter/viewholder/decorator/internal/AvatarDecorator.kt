@@ -6,10 +6,6 @@ import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class AvatarDecorator : BaseDecorator() {
@@ -20,36 +16,8 @@ internal class AvatarDecorator : BaseDecorator() {
         setupAvatar(viewHolder.binding.avatarView, data)
     }
 
-    override fun decorateOnlyMediaAttachmentsMessage(
-        viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
-    }
-
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
-    }
-
-    override fun decoratePlainTextWithMediaAttachmentsMessage(
-        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
-    }
-
-    override fun decorateOnlyFileAttachmentsMessage(
-        viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
-    }
-
-    override fun decoratePlainTextWithFileAttachmentsMessage(
-        viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         setupAvatar(viewHolder.binding.avatarView, data)

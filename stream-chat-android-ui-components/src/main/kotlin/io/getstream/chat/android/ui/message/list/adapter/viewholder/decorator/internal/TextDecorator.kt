@@ -4,10 +4,6 @@ import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
@@ -26,32 +22,6 @@ internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() 
             }
         }
     }
-
-    override fun decoratePlainTextWithFileAttachmentsMessage(
-        viewHolder: PlainTextWithFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
-    }
-
-    override fun decorateOnlyFileAttachmentsMessage(
-        viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        getStyleTextColor(data.isMine)?.let(viewHolder.binding.sentFiles::setTextColor)
-    }
-
-    override fun decoratePlainTextWithMediaAttachmentsMessage(
-        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        getStyleTextColor(data.isMine)?.let(viewHolder.binding.messageText::setTextColor)
-    }
-
-    override fun decorateOnlyMediaAttachmentsMessage(
-        viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) = Unit
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
