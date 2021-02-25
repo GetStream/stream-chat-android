@@ -40,12 +40,11 @@
 
     <LinearLayout
         android:id="@+id/messageContainer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
