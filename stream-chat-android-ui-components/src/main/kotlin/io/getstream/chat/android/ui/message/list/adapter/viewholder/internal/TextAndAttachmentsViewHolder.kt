@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttac
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
@@ -29,7 +30,12 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewFactory: AttachmentViewFactory,
-    internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater, parent, false),
+    private val style: MessageListItemStyle,
+    internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
+        parent.inflater,
+        parent,
+        false
+    ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     init {
@@ -96,30 +102,32 @@ internal class TextAndAttachmentsViewHolder(
         showAttachments(attachments)
     }
 
-    private fun setupFileAttachmentsView(fileAttachmentsView: FileAttachmentsView, attachments: List<Attachment>) = fileAttachmentsView.run {
-        setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-        attachmentLongClickListener = AttachmentLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(data.message)
+    private fun setupFileAttachmentsView(fileAttachmentsView: FileAttachmentsView, attachments: List<Attachment>) =
+        fileAttachmentsView.run {
+            setPadding(FILE_ATTACHMENT_VIEW_PADDING)
+            attachmentLongClickListener = AttachmentLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
+            }
+            attachmentClickListener = AttachmentClickListener {
+                listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+            }
+            attachmentDownloadClickListener = AttachmentDownloadClickListener {
+                listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+            }
+            setAttachments(attachments)
         }
-        attachmentClickListener = AttachmentClickListener {
-            listeners.attachmentClickListener.onAttachmentClick(data.message, it)
-        }
-        attachmentDownloadClickListener = AttachmentDownloadClickListener {
-            listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-        }
-        setAttachments(attachments)
-    }
 
     private fun setupLinkView(linkAttachment: Attachment) {
         val linkAttachmentView = attachmentViewFactory.createLinkAttachmentView(linkAttachment, context)
         binding.attachmentsContainer.addView(linkAttachmentView)
         (linkAttachmentView as? LinkAttachmentView)?.run {
             setPadding(LINK_VIEW_PADDING)
-            showLinkAttachment(linkAttachment)
             setLinkPreviewClickListener { url ->
                 listeners.linkClickListener.onLinkClick(url)
             }
             setLongClickTarget(binding.root)
+            style.getStyleTextColor(data.isMine)?.also(::setTextColor)
+            showLinkAttachment(linkAttachment)
         }
     }
 

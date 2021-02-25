@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
@@ -15,7 +16,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 
 internal class LinkAttachmentView : FrameLayout {
-    internal val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
+    private val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
         .inflate(context.inflater, this, true)
     private var previewUrl: String? = null
 
@@ -61,6 +62,13 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.linkPreviewImageView.isVisible = false
             binding.progressBar.isVisible = false
+        }
+    }
+
+    internal fun setTextColor(@ColorInt textColor: Int) {
+        binding.apply {
+            descriptionTextView.setTextColor(textColor)
+            titleTextView.setTextColor(textColor)
         }
     }
 

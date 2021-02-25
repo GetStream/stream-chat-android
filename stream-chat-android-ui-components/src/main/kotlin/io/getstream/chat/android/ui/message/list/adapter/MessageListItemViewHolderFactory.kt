@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
+import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
@@ -32,12 +33,18 @@ public open class MessageListItemViewHolderFactory {
     protected lateinit var attachmentViewFactory: AttachmentViewFactory
         private set
 
+    private lateinit var style: MessageListItemStyle
+
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
     }
 
     internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         this.attachmentViewFactory = attachmentViewFactory
+    }
+
+    internal fun setMessageListItemStyle(style: MessageListItemStyle) {
+        this.style = style
     }
 
     private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
@@ -79,7 +86,8 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
-            attachmentViewFactory
+            attachmentViewFactory,
+            style
         )
     }
 
