@@ -530,7 +530,6 @@ class Android {
                         val channel = result.data()
                     }
                 }
-
         }
 
         fun sendMessage() {
@@ -590,13 +589,12 @@ class Android {
             // LiveData objects to observe
             val totalUnreadCount = chatDomain.useCases.getTotalUnreadCount().execute().data()
             val unreadChannelCount = chatDomain.useCases.getUnreadChannelCount().execute().data()
-
         }
 
         fun messagesFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.getThread(cid = "cid", parentId =  "parentId").enqueue { result ->
+            chatDomain.useCases.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
                 if (result.isSuccess) {
                     val threadController = result.data()
 
@@ -611,7 +609,7 @@ class Android {
         fun loadMoreFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.threadLoadMore.invoke(cid = "cid", parentId =  "parentId", messageLimit = 1)
+            chatDomain.useCases.threadLoadMore.invoke(cid = "cid", parentId = "parentId", messageLimit = 1)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val messages: List<Message> = result.data()
