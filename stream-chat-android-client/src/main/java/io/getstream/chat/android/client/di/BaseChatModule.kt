@@ -15,7 +15,9 @@ import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api2.DeviceApi
 import io.getstream.chat.android.client.api2.MessageApi
+import io.getstream.chat.android.client.api2.ModerationApi
 import io.getstream.chat.android.client.api2.MoshiApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -175,6 +177,8 @@ internal open class BaseChatModule(
                 chatConfig.apiKey,
                 gsonChatApi,
                 buildRetrofitApi<MessageApi>(),
+                buildRetrofitApi<DeviceApi>(),
+                buildRetrofitApi<ModerationApi>(),
             )
         } else {
             gsonChatApi
