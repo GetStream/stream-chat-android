@@ -216,9 +216,7 @@ public class ChatClient internal constructor(
         }
         initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
-        getTokenAndConnect {
-            socket.connect(user)
-        }
+        socket.connect(user)
     }
 
     private fun initializeClientWithUser(
@@ -290,9 +288,7 @@ public class ChatClient internal constructor(
         }
         config.isAnonymous = true
         warmUp()
-        getTokenAndConnect {
-            socket.connectAnonymously()
-        }
+        socket.connectAnonymously()
     }
 
     @CheckResult
@@ -1130,7 +1126,13 @@ public class ChatClient internal constructor(
     }
 
     public fun getCurrentToken(): String? {
-        return runCatching { clientStateService.state.tokenOrError() }.getOrNull()
+        return runCatching {
+            when (clientStateService.state) {
+                is ClientState.User.Authorized,
+                is ClientState.Anonymous.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                else -> null
+            }
+        }.getOrNull()
     }
 
     public fun isSocketConnected(): Boolean {
@@ -1219,17 +1221,6 @@ public class ChatClient internal constructor(
             connectionListener?.onError(error)
         }
         connectionListener = null
-    }
-
-    private fun getTokenAndConnect(connect: () -> Unit) {
-        tokenManager.loadAsyncAndRetry {
-            if (it.isSuccess) {
-                clientStateService.onTokenReceived(it.data())
-                connect()
-            } else {
-                logger.logE("Unable to load user token")
-            }
-        }
     }
 
     private fun warmUp() {
