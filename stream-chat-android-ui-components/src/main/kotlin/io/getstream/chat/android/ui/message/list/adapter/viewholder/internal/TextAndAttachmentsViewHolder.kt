@@ -6,9 +6,12 @@ import androidx.core.view.setPadding
 import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
+import io.getstream.chat.android.ui.common.internal.AttachmentUtils
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -23,6 +26,9 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
@@ -37,6 +43,8 @@ internal class TextAndAttachmentsViewHolder(
         false
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    private var scope: CoroutineScope? = null
 
     init {
         binding.run {
@@ -68,6 +76,7 @@ internal class TextAndAttachmentsViewHolder(
         markdown.setText(binding.messageText, data.message.text)
 
         setupAttachment(data)
+        setupUploads(data)
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
@@ -128,6 +137,36 @@ internal class TextAndAttachmentsViewHolder(
             setLongClickTarget(binding.root)
             style.getStyleTextColor(data.isMine)?.also(::setTextColor)
             showLinkAttachment(linkAttachment)
+        }
+    }
+
+    private fun clearScope() {
+        scope?.cancel()
+        scope = null
+    }
+
+    override fun unbind() {
+        super.unbind()
+        clearScope()
+    }
+
+    private fun setupUploads(data: MessageListItem.MessageItem) {
+        val uploadIdList: List<String> = data.message.attachments
+            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
+            .mapNotNull(Attachment::uploadId)
+
+        val needUpload = uploadIdList.isNotEmpty()
+
+        if (needUpload) {
+            clearScope()
+            val scope = CoroutineScope(DispatcherProvider.Main)
+            this.scope = scope
+
+            scope.launch {
+                AttachmentUtils.trackFilesSent(context, uploadIdList, binding.sentFiles)
+            }
+        } else {
+            binding.sentFiles.isVisible = false
         }
     }
 
