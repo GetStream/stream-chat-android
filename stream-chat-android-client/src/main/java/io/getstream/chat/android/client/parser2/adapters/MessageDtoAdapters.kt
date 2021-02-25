@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.parser2
+package io.getstream.chat.android.client.parser2.adapters
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter

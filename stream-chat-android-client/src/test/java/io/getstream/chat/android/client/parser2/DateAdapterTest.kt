@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
