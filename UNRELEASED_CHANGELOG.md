@@ -5,6 +5,7 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
+- Deprecated `ChatDomain::disconnect`
 
 ## stream-chat-android-ui-common
 
