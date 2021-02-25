@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
@@ -98,7 +98,7 @@ internal class MoshiChatApi(
             connectionId = connectionId,
             offset = offset,
             limit = limit,
-        ).map { response -> response.reactions.map(ReactionDto::toDomain) }
+        ).map { response -> response.reactions.map(DownstreamReactionDto::toDomain) }
     }
 
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
