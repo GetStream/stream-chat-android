@@ -67,7 +67,7 @@ internal class TokenManagerImpl : TokenManager {
     }
 
     private suspend fun runAndRetry(): String {
-        var attempt = 0
+        var attempt = 1
         var token: String = EMPTY_TOKEN
 
         while (attempt < ATTEMPT_COUNT) {
@@ -75,7 +75,7 @@ internal class TokenManagerImpl : TokenManager {
             if (token != EMPTY_TOKEN) {
                 break
             } else {
-                delay(RETRY_DELAY_MILLIS)
+                delay(attempt * RETRY_DELAY_MILLIS)
                 attempt += 1
             }
         }
