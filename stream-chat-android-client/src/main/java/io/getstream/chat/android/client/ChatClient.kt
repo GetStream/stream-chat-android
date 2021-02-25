@@ -117,6 +117,7 @@ public class ChatClient internal constructor(
                     clientStateService.onConnected(user, connectionId)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
+                    notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
                     clientStateService.onDisconnected()
@@ -230,7 +231,6 @@ public class ChatClient internal constructor(
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
-        notifications.onSetUser()
     }
 
     /**
