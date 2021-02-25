@@ -5,7 +5,7 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
-- Deprecated `ChatDomain::disconnect`
+- Deprecated `ChatDomain::disconnect`, use disconnect on ChatClient instead, it will make the disconnection on ChatDomain too.
 
 ## stream-chat-android-ui-common
 
