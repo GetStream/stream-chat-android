@@ -38,35 +38,28 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                     )
                 }
             }
-            else -> {
-                // Unsupported action
-            }
         }
         cancelNotification(context, intent?.getIntExtra(KEY_NOTIFICATION_ID, 0))
     }
 
     private fun markAsRead(messageId: String?, channelId: String?, channelType: String?) {
+        if (!ChatClient.isInitialized) return
+
         if (messageId.isNullOrBlank() || channelId.isNullOrBlank() || channelType.isNullOrBlank()) {
-            // Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
 
-        ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue { result ->
-            if (result.isSuccess) {
-                // Log.i(TAG, "Channel marked as read")
-            } else {
-                // Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
-            }
-        }
+        ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue()
     }
 
     private fun replyText(
         channelId: String?,
         type: String?,
-        messageChars: CharSequence?
+        messageChars: CharSequence?,
     ) {
+        if (!ChatClient.isInitialized) return
+
         if (channelId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank()) {
-            // Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
 
@@ -76,13 +69,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             message = Message().apply {
                 text = messageChars.toString()
             }
-        ).enqueue { result ->
-            if (result.isSuccess) {
-                // Log.i(TAG, "Channel marked as read")
-            } else {
-                // Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
-            }
-        }
+        ).enqueue()
     }
 
     private fun cancelNotification(
