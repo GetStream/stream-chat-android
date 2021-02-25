@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.models.Device
 import java.util.Date
 
 /**
@@ -14,8 +13,8 @@ internal data class UpstreamUserDto(
     val id: String,
     val invisible: Boolean,
     val role: String,
-    val devices: List<Device> = mutableListOf(),
-    val teams: List<String> = listOf(),
+    val devices: List<DeviceDto>,
+    val teams: List<String>,
 
     val extraData: Map<String, Any>,
 )
@@ -40,7 +39,7 @@ internal data class DownstreamUserDto(
     val unread_count: Int,
     val mutes: List<DownstreamMuteDto>,
     val teams: List<String>,
-    val channel_mutes: List<DownstreamChannelMute>,
+    val channel_mutes: List<DownstreamChannelMuteDto>,
 
     val extraData: Map<String, Any>,
 )
