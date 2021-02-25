@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
+import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -30,6 +31,29 @@ internal class TextAndAttachmentsViewHolder(
     private val attachmentViewFactory: AttachmentViewFactory,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(parent.inflater, parent, false),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    init {
+        binding.run {
+            root.setOnClickListener {
+                listeners.messageClickListener.onMessageClick(data.message)
+            }
+            reactionsView.setReactionClickListener {
+                listeners.reactionViewClickListener.onReactionViewClick(data.message)
+            }
+            footnote.setOnThreadClickListener {
+                listeners.threadClickListener.onThreadClick(data.message)
+            }
+            root.setOnLongClickListener {
+                listeners.messageLongClickListener.onMessageLongClick(data.message)
+                true
+            }
+            LongClickFriendlyLinkMovementMethod.set(
+                textView = messageText,
+                longClickTarget = root,
+                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
+            )
+        }
+    }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
