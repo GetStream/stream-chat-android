@@ -166,7 +166,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = this.userId,
             connectionId = connectionId,
-            body = MuteUserRequest(userId, this.userId)
+            body = MuteUserRequest(userId, this.userId),
         ).map { response -> response.mute.toDomain() }
     }
 
@@ -175,7 +175,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = this.userId,
             connectionId = this.connectionId,
-            body = MuteUserRequest(userId, this.userId)
+            body = MuteUserRequest(userId, this.userId),
         ).toUnitCall()
     }
 
@@ -184,7 +184,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId")
+            body = MuteChannelRequest("$channelType:$channelId"),
         ).toUnitCall()
     }
 
@@ -193,7 +193,7 @@ internal class MoshiChatApi(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId")
+            body = MuteChannelRequest("$channelType:$channelId"),
         ).toUnitCall()
     }
 
