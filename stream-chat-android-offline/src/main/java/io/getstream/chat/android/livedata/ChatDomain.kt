@@ -100,24 +100,33 @@ public interface ChatDomain {
         private val appContext: Context,
         private val client: ChatClient,
     ) {
+        private var user: User? = null
+
+        public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         @Deprecated(
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
-        public constructor(appContext: Context, client: ChatClient, user: User?) : this(appContext, client)
+        public constructor(appContext: Context, client: ChatClient, user: User?) : this(appContext, client) {
+            this.user = user
+        }
 
         @Deprecated(
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
-        public constructor(client: ChatClient, appContext: Context, user: User?) : this(appContext, client)
+        public constructor(client: ChatClient, appContext: Context, user: User?) : this(appContext, client) {
+            this.user = user
+        }
 
         @Deprecated(
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
-        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client)
+        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client) {
+            this.user = user
+        }
 
         private var database: ChatDatabase? = null
 
@@ -190,7 +199,7 @@ public interface ChatDomain {
             val handler = Handler(Looper.getMainLooper())
             return ChatDomainImpl(
                 client,
-                null,
+                user,
                 database,
                 handler,
                 storageEnabled,
