@@ -4,5 +4,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class HideChannelRequest(
-    val clearHistory: Boolean,
+    val clear_history: Boolean,
 )
