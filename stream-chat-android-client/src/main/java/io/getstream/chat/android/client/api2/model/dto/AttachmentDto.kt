@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 
 /**
- * See [io.getstream.chat.android.client.parser2.AttachmentDtoAdapter] for
+ * See [io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter] for
  * special [extraData] handling.
  */
 @JsonClass(generateAdapter = true)
