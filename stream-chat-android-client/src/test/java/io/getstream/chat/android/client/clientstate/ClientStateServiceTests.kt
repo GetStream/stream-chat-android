@@ -45,38 +45,28 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given Idle state When set user Should move to state user pending without token`() {
+    fun `Given Idle state When set user Should move to state user pending`() {
         val sut = Fixture().please()
         val user = Mother.randomUser()
 
         sut.onSetUser(user)
 
-        sut.state shouldBeInstanceOf ClientState.User.Pending.WithoutToken::class
-        (sut.state as ClientState.User.Pending.WithoutToken).user shouldBeEqualTo user
+        sut.state shouldBeInstanceOf ClientState.User.Pending::class
+        (sut.state as ClientState.User.Pending).user shouldBeEqualTo user
     }
 
     @Test
-    fun `Given Idle state When set anonymous user Should move to state anonymous pending without token`() {
+    fun `Given Idle state When set anonymous user Should move to state anonymous`() {
         val sut = Fixture().please()
 
         sut.onSetAnonymousUser()
 
-        sut.state shouldBeEqualTo ClientState.Anonymous.Pending.WithoutToken
+        sut.state shouldBeEqualTo ClientState.Anonymous.Pending
     }
 
     @Test
-    fun `Given user pending without token state When token received Should move to state user pending with token`() {
-        val sut = Fixture().givenUserAuthorizationPendingWithoutTokenState().please()
-
-        sut.onTokenReceived("someToken")
-
-        sut.state shouldBeInstanceOf ClientState.User.Pending.WithToken::class
-        (sut.state as ClientState.User.Pending.WithToken).token shouldBeEqualTo "someToken"
-    }
-
-    @Test
-    fun `Given user pending without token state When disconnected requested Should move to Idle state`() {
-        val sut = Fixture().givenUserAuthorizationPendingWithoutTokenState().please()
+    fun `Given user pending state When disconnected requested Should move to Idle state`() {
+        val sut = Fixture().givenUserAuthorizationPendingState().please()
 
         sut.onDisconnectRequested()
 
@@ -84,8 +74,8 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given user pending without token state When disconnected Should stay on the same state`() {
-        val sut = Fixture().givenUserAuthorizationPendingWithoutTokenState().please()
+    fun `Given user pending state When disconnected Should stay on the same state`() {
+        val sut = Fixture().givenUserAuthorizationPendingState().please()
         val expectedState = sut.state
 
         sut.onDisconnected()
@@ -94,15 +84,14 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given user pending with token state When connected Should move to user connected state`() {
+    fun `Given user pending state When connected Should move to user connected state`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenUserAuthorizationPendingWithTokenState("token").please()
+        val sut = Fixture().givenUserAuthorizationPendingState().please()
 
         sut.onConnected(user, "connectionId")
 
         sut.state shouldBeInstanceOf ClientState.User.Authorized.Connected::class
         val connectedState = sut.state as ClientState.User.Authorized.Connected
-        connectedState.token shouldBeEqualTo "token"
         connectedState.user shouldBeEqualTo user
         connectedState.connectionId shouldBeEqualTo "connectionId"
     }
@@ -110,21 +99,20 @@ internal class ClientStateServiceTests {
     @Test
     fun `Given user connected state When disconnected Should move to disconnected state`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenUserConnectedState(user, "token", "connectionId").please()
+        val sut = Fixture().givenUserConnectedState(user, "connectionId").please()
 
         sut.onDisconnected()
 
         sut.state shouldBeInstanceOf ClientState.User.Authorized.Disconnected::class
         val state = sut.state as ClientState.User.Authorized.Disconnected
         state.connectionId shouldBeEqualTo "connectionId"
-        state.token shouldBeEqualTo "token"
         state.user shouldBeEqualTo user
     }
 
     @Test
     fun `Given user connected state When disconnect requested Should move to idle state`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenUserConnectedState(user, "token", "connectionId").please()
+        val sut = Fixture().givenUserConnectedState(user, "connectionId").please()
 
         sut.onDisconnectRequested()
 
@@ -143,7 +131,7 @@ internal class ClientStateServiceTests {
     @Test
     fun `Given user disconnected state When disconnected Should stay in the same state`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenUserDisconnectedState(user, "token", "connectionId").please()
+        val sut = Fixture().givenUserDisconnectedState(user, "connectionId").please()
         val expectedState = sut.state
 
         sut.onDisconnected()
@@ -174,18 +162,8 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given anonymous pending without token state When token received Should move to state anonymous pending with token`() {
-        val sut = Fixture().givenAnonymousPendingWithoutTokenState().please()
-
-        sut.onTokenReceived("someToken")
-
-        sut.state shouldBeInstanceOf ClientState.Anonymous.Pending.WithToken::class
-        (sut.state as ClientState.Anonymous.Pending.WithToken).token shouldBeEqualTo "someToken"
-    }
-
-    @Test
-    fun `Given anonymous pending without token state When disconnected requested Should move to Idle state`() {
-        val sut = Fixture().givenAnonymousPendingWithoutTokenState().please()
+    fun `Given anonymous pending state When disconnected requested Should move to Idle state`() {
+        val sut = Fixture().givenAnonymousPendingState().please()
 
         sut.onDisconnectRequested()
 
@@ -193,8 +171,8 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given anonymous pending without token state When disconnected Should stay on the same state`() {
-        val sut = Fixture().givenAnonymousPendingWithoutTokenState().please()
+    fun `Given anonymous pending state When disconnected Should stay on the same state`() {
+        val sut = Fixture().givenAnonymousPendingState().please()
         val expectedState = sut.state
 
         sut.onDisconnected()
@@ -203,15 +181,14 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given anonymous pending with token state When connected Should move to state anonymous user connected`() {
+    fun `Given anonymous pending state When connected Should move to state anonymous user connected`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenAnonymousPendingWithTokenState("token").please()
+        val sut = Fixture().givenAnonymousPendingState().please()
 
         sut.onConnected(user, "connectionId")
 
         sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Connected::class
         val connectedState = sut.state as ClientState.Anonymous.Authorized.Connected
-        connectedState.token shouldBeEqualTo "token"
         connectedState.connectionId shouldBeEqualTo "connectionId"
         connectedState.anonymousUser shouldBeEqualTo user
     }
@@ -219,7 +196,7 @@ internal class ClientStateServiceTests {
     @Test
     fun `Given anonymous user connected When disconnected Should move to state anonymous user disconnected`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenAnonymousUserConnectedState(user, "token", "connectionId").please()
+        val sut = Fixture().givenAnonymousUserConnectedState(user, "connectionId").please()
 
         sut.onDisconnected()
 
@@ -227,7 +204,6 @@ internal class ClientStateServiceTests {
         val disconnectedState = sut.state as ClientState.Anonymous.Authorized.Disconnected
         disconnectedState.anonymousUser shouldBeEqualTo user
         disconnectedState.connectionId shouldBeEqualTo "connectionId"
-        disconnectedState.token shouldBeEqualTo "token"
     }
 
     @Test
@@ -270,20 +246,19 @@ internal class ClientStateServiceTests {
     @Test
     fun `Given anonymous user disconnected state When connected requested Should move to state anonymous user connected`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenAnonymousUserDisconnectedState(token = "token").please()
+        val sut = Fixture().givenAnonymousUserDisconnectedState().please()
 
         sut.onConnected(user, "someConnectionId")
 
         sut.state shouldBeInstanceOf ClientState.Anonymous.Authorized.Connected::class
         val connectedState = sut.state as ClientState.Anonymous.Authorized.Connected
-        connectedState.token shouldBeEqualTo "token"
         connectedState.connectionId shouldBeEqualTo "someConnectionId"
         connectedState.anonymousUser shouldBeEqualTo user
     }
 
     @Test
-    fun `Given user pending with token state When disconnect requested Should move to idle state`() {
-        val sut = Fixture().givenUserAuthorizationPendingWithTokenState(token = "token").please()
+    fun `Given user pending state When disconnect requested Should move to idle state`() {
+        val sut = Fixture().givenUserAuthorizationPendingState().please()
 
         sut.onDisconnectRequested()
 
@@ -291,8 +266,8 @@ internal class ClientStateServiceTests {
     }
 
     @Test
-    fun `Given anonymous user pending with token state When disconnect requested Should move to idle state`() {
-        val sut = Fixture().givenAnonymousPendingWithTokenState(token = "token").please()
+    fun `Given anonymous user pending state When disconnect requested Should move to idle state`() {
+        val sut = Fixture().givenAnonymousPendingState().please()
 
         sut.onDisconnectRequested()
 
@@ -304,64 +279,48 @@ internal class ClientStateServiceTests {
 
         fun please() = clientStateService
 
-        fun givenUserAuthorizationPendingWithoutTokenState(user: User = Mother.randomUser()): Fixture {
+        fun givenUserAuthorizationPendingState(user: User = Mother.randomUser()): Fixture {
             clientStateService.onSetUser(user)
-            return this
-        }
-
-        fun givenUserAuthorizationPendingWithTokenState(token: String): Fixture {
-            givenUserAuthorizationPendingWithoutTokenState()
-            clientStateService.onTokenReceived(token)
             return this
         }
 
         fun givenUserConnectedState(
             user: User = Mother.randomUser(),
-            token: String = randomString(),
-            connectionId: String = randomString()
+            connectionId: String = randomString(),
         ): Fixture {
-            givenUserAuthorizationPendingWithTokenState(token)
+            givenUserAuthorizationPendingState()
             clientStateService.onConnected(user, connectionId)
             return this
         }
 
         fun givenUserDisconnectedState(
             user: User = Mother.randomUser(),
-            token: String = randomString(),
-            connectionId: String = randomString()
+            connectionId: String = randomString(),
         ): Fixture {
-            givenUserConnectedState(user, token, connectionId)
+            givenUserConnectedState(user, connectionId)
             clientStateService.onDisconnected()
             return this
         }
 
-        fun givenAnonymousPendingWithoutTokenState(): Fixture {
+        fun givenAnonymousPendingState(): Fixture {
             clientStateService.onSetAnonymousUser()
-            return this
-        }
-
-        fun givenAnonymousPendingWithTokenState(token: String = randomString()): Fixture {
-            givenAnonymousPendingWithoutTokenState()
-            clientStateService.onTokenReceived(token)
             return this
         }
 
         fun givenAnonymousUserConnectedState(
             anonymousUser: User = Mother.randomUser(),
-            token: String = randomString(),
-            connectionId: String = randomString()
+            connectionId: String = randomString(),
         ): Fixture {
-            givenAnonymousPendingWithTokenState(token)
+            givenAnonymousPendingState()
             clientStateService.onConnected(anonymousUser, connectionId)
             return this
         }
 
         fun givenAnonymousUserDisconnectedState(
             anonymousUser: User = Mother.randomUser(),
-            token: String = randomString(),
-            connectionId: String = randomString()
+            connectionId: String = randomString(),
         ): Fixture {
-            givenAnonymousUserConnectedState(anonymousUser, token, connectionId)
+            givenAnonymousUserConnectedState(anonymousUser, connectionId)
             clientStateService.onDisconnected()
             return this
         }
