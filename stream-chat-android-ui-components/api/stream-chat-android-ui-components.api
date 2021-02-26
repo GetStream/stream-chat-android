@@ -852,8 +852,9 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
 	public fun <init> ()V
-	public fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
-	public fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
+	public fun createAttachmentViews (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Lkotlin/Pair;
+	protected final fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
+	protected final fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
@@ -893,6 +894,19 @@ public final class io/getstream/chat/android/ui/message/list/header/viewmodel/Me
 
 public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModelBinding {
 	public static final fun bind (Lio/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel;Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/message/list/internal/MessageListItemStyle : java/io/Serializable {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle$Companion;
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMessageBackgroundColorMine ()Ljava/lang/Integer;
+	public final fun getMessageBackgroundColorTheirs ()Ljava/lang/Integer;
+	public final fun getMessageLinkTextColorMine ()Ljava/lang/Integer;
+	public final fun getMessageLinkTextColorTheirs ()Ljava/lang/Integer;
+	public final fun getMessageTextColorMine ()Ljava/lang/Integer;
+	public final fun getMessageTextColorTheirs ()Ljava/lang/Integer;
+	public final fun getStyleLinkTextColor (Z)Ljava/lang/Integer;
+	public final fun getStyleTextColor (Z)Ljava/lang/Integer;
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/reactions/ReactionClickListener {
