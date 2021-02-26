@@ -14,6 +14,16 @@ internal class MessageListItemStyle private constructor(
     @ColorInt val messageLinkTextColorTheirs: Int?,
 ) : Serializable {
 
+    @ColorInt
+    internal fun getStyleTextColor(isMine: Boolean): Int? {
+        return if (isMine) messageTextColorMine else messageTextColorTheirs
+    }
+
+    @ColorInt
+    internal fun getStyleLinkTextColor(isMine: Boolean): Int? {
+        return if (isMine) messageLinkTextColorMine else messageLinkTextColorTheirs
+    }
+
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
     }

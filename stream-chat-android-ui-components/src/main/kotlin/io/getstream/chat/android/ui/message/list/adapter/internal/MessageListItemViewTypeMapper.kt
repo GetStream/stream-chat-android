@@ -1,20 +1,13 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.common.extensions.internal.hasLink
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_FILE_ATTACHMENTS
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 
@@ -36,23 +29,8 @@ internal object MessageListItemViewTypeMapper {
         return when {
             messageItem.message.deletedAt != null -> MESSAGE_DELETED
             messageItem.message.isGiphyEphemeral() -> GIPHY
-            messageItem.message.isMediaWithText() -> PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS
-            messageItem.message.isFileWithText() -> PLAIN_TEXT_WITH_FILE_ATTACHMENTS
-            messageItem.message.attachments.isMedia() -> MEDIA_ATTACHMENTS
-            messageItem.message.attachments.isAttachmentWithoutLinks() -> ATTACHMENTS
+            messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }
-
-    internal fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all { it.isMedia() && it.hasLink().not() }
-
-    private fun Collection<Attachment>.isMediaOrLink(): Boolean = isNotEmpty() && all { it.isMedia() || it.hasLink() }
-
-    private fun Message.isMediaWithText(): Boolean {
-        return text.isNotEmpty() && attachments.isMediaOrLink() && attachments.any { it.hasLink().not() }
-    }
-
-    private fun Message.isFileWithText(): Boolean = text.isNotEmpty() && attachments.any { it.hasLink().not() }
-
-    private fun Collection<Attachment>.isAttachmentWithoutLinks(): Boolean = isNotEmpty() && all { it.hasLink().not() }
 }

@@ -5,42 +5,16 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class MaxPossibleWidthDecorator : BaseDecorator() {
-    override fun decorateOnlyMediaAttachmentsMessage(
-        viewHolder: OnlyMediaAttachmentsViewHolder,
+    override fun decorateTextAndAttachmentsMessage(
+        viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
-    }
+    ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
-    }
-
-    override fun decoratePlainTextWithMediaAttachmentsMessage(
-        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
-    }
-
-    override fun decorateOnlyFileAttachmentsMessage(
-        viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
-    }
-
-    override fun decoratePlainTextWithFileAttachmentsMessage(
-        viewHolder: PlainTextWithFileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
