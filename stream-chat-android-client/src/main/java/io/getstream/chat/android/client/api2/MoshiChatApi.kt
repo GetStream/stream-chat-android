@@ -4,18 +4,25 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -33,6 +40,7 @@ internal class MoshiChatApi(
     private val legacyApiDelegate: ChatApi,
     private val fileUploader: FileUploader,
     private val messageApi: MessageApi,
+    private val channelApi: ChannelApi,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val coroutineScope: CoroutineScope = GlobalScope,
@@ -354,6 +362,51 @@ internal class MoshiChatApi(
             channelType = channelType,
             shadow = shadow,
         ).toUnitCall()
+    }
+
+    override fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int,
+    ): Call<Channel> = updateCooldown(
+        channelType = channelType,
+        channelId = channelId,
+        cooldownTimeInSeconds = cooldownTimeInSeconds,
+    )
+
+    override fun disableSlowMode(
+        channelType: String,
+        channelId: String,
+    ): Call<Channel> = updateCooldown(
+        channelType = channelType,
+        channelId = channelId,
+        cooldownTimeInSeconds = 0,
+    )
+
+    private fun updateCooldown(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int,
+    ): Call<Channel> {
+        return channelApi.updateCooldown(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = UpdateCooldownRequest(cooldownTimeInSeconds),
+        ).map(this::flattenChannel)
+    }
+
+    private fun flattenChannel(response: ChannelResponse): Channel {
+        return response.channel.toDomain().apply {
+            watcherCount = response.watcher_count
+            read = response.read.map(DownstreamChannelUserRead::toDomain)
+            members = response.members.map(DownstreamMemberDto::toDomain)
+            messages = response.messages.map { it.toDomain().enrichWithCid(cid) }
+            watchers = response.watchers.map(DownstreamUserDto::toDomain)
+            hidden = response.hidden
+            hiddenMessagesBefore = response.hide_messages_before
+        }
     }
 
     private fun Call<*>.toUnitCall() = map {}
