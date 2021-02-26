@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,19 +13,8 @@
         android:id="@+id/gapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
-        style="@style/StreamUiMessageListAvatarStyle"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/marginStart"
-        tools:src="@tools:sample/avatars"
         />
 
     <Space
@@ -39,14 +29,22 @@
         app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 
-    <LinearLayout
-        android:id="@+id/messageContainer"
+    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+        android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+        />
+
+    <LinearLayout
+        android:id="@+id/messageContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:orientation="vertical"
-        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
@@ -62,11 +60,19 @@
             android:visibility="gone"
             />
 
+        <LinearLayout
+            android:id="@+id/attachmentsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            />
+
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:gravity="start"
             android:hyphenationFrequency="normal"
             android:lineHeight="16sp"
             android:paddingLeft="@dimen/stream_ui_spacing_medium"
@@ -74,19 +80,20 @@
             android:paddingRight="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
-            android:textColorLink="@color/stream_ui_accent_blue"
-            tools:text="@tools:sample/lorem"
-            />
+            android:textColor="@color/stream_ui_text_color_primary"
+            android:textColorLink="@color/stream_ui_accent_blue"/>
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-        android:id="@+id/reactionsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
-        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamUiMessageListAvatarStyle"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
         />
 
     <Space
@@ -105,9 +112,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintTop_toBottomOf="@id/messageContainer"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+        />
+
+    <TextView
+        android:id="@+id/sentFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:textColor="@color/stream_ui_text_color_primary"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@+id/footnote"
         app:layout_goneMarginEnd="0dp"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />

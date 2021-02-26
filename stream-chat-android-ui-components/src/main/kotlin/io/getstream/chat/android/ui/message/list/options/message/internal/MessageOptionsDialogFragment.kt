@@ -25,10 +25,7 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 import java.io.Serializable
 
@@ -144,6 +141,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
+                setMessageListItemStyle(itemStyle)
             }
             .createViewHolder(
                 binding.messageContainer,
@@ -234,10 +232,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         when (val viewHolder = viewHolder) {
             is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
-            is PlainTextWithMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
-            is OnlyMediaAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
-            is OnlyFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
-            is PlainTextWithFileAttachmentsViewHolder -> viewHolder.binding.attachmentsContainer
+            is TextAndAttachmentsViewHolder -> viewHolder.binding.messageContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
