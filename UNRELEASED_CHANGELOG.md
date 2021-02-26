@@ -1,17 +1,77 @@
 ## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Warning
+
+### ❌ Removed
+
 
 ## stream-chat-android
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Warning
+
+### ❌ Removed
+
 
 ## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Warning
+
+### ❌ Removed
+
 
 ## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Warning
 - Deprecated `ChatDomain::disconnect`, use disconnect on ChatClient instead, it will make the disconnection on ChatDomain too.
 
+### ❌ Removed
+
+
 ## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Warning
+
+### ❌ Removed
+
 
 ## stream-chat-android-ui-components
-- Introduced `AttachmentViewFactory` as a factory for custom attachment views/custom link view
+### 🐞 Fixed
+
+### ⬆️ Improved
 - Updated PhotoView to version 2.3.0
+
+### ✅ Added
+- Introduced `AttachmentViewFactory` as a factory for custom attachment views/custom link view
 - Introduced `TextAndAttachmentsViewHolder` for any combination of attachment content and text
-- Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`, 
+
+### ⚠️ Warning
+
+### ❌ Removed
+- Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`,
   `PlainTextWithMediaAttachmentsViewHolder` and `PlainTextWithFileAttachmentsViewHolder`
+
