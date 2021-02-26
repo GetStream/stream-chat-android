@@ -190,6 +190,7 @@ public interface ChatDomain {
             val handler = Handler(Looper.getMainLooper())
             return ChatDomainImpl(
                 client,
+                null,
                 database,
                 handler,
                 storageEnabled,
