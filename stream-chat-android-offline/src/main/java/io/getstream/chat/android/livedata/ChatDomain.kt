@@ -116,14 +116,6 @@ public interface ChatDomain {
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
-        public constructor(client: ChatClient, appContext: Context, user: User?) : this(appContext, client) {
-            this.user = user
-        }
-
-        @Deprecated(
-            message = "Use constructor without user",
-            replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
-        )
         public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client) {
             this.user = user
         }
