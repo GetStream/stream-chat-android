@@ -817,6 +817,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createTextAndAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun getAttachmentViewFactory ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;

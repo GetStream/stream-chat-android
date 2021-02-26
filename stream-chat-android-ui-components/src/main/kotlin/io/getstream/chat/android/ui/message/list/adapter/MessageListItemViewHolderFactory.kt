@@ -80,7 +80,7 @@ public open class MessageListItemViewHolderFactory {
         }
     }
 
-    private fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
+    protected fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
         return TextAndAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
