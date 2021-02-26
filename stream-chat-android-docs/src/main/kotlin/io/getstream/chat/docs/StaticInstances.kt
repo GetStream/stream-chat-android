@@ -1,5 +1,6 @@
 package io.getstream.chat.docs
 
+import android.app.Activity
 import io.getstream.chat.android.client.models.User
 
 object StaticInstances {
@@ -9,3 +10,5 @@ object StaticInstances {
 object TokenService {
     fun getToken(user: User): String = ""
 }
+
+object MainActivity : Activity()

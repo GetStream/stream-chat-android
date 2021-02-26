@@ -91,4 +91,5 @@ dependencies {
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
+    implementation Dependencies.firebaseMessaging
 }
