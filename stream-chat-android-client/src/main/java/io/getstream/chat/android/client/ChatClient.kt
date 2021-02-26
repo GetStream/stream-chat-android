@@ -61,7 +61,7 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.ImmediateTokenProvider
+import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -176,7 +176,7 @@ public class ChatClient internal constructor(
         replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })")
     )
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
-        setUser(user, ImmediateTokenProvider(token), listener)
+        setUser(user, ConstantTokenProvider(token), listener)
     }
 
     /**
@@ -186,7 +186,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ImmediateTokenProvider(token))
+        return connectUser(user, ConstantTokenProvider(token))
     }
 
     /**
@@ -263,7 +263,7 @@ public class ChatClient internal constructor(
         if (isUserSet()) {
             return
         }
-        initializeClientWithUser(user, ImmediateTokenProvider(userToken))
+        initializeClientWithUser(user, ConstantTokenProvider(userToken))
     }
 
     private fun notifySetUser(user: User) {
@@ -688,8 +688,6 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
-        tokenManager.shutdown()
-
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             clientStateService.state.userOrError().let { user ->
@@ -1128,8 +1126,8 @@ public class ChatClient internal constructor(
     public fun getCurrentToken(): String? {
         return runCatching {
             when (clientStateService.state) {
-                is ClientState.User.Authorized,
-                is ClientState.Anonymous.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                is ClientState.User.Pending,
+                is ClientState.User.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()
