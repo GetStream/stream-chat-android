@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -299,6 +301,59 @@ internal class MoshiChatApi(
             )
             Result(Unit)
         }
+    }
+
+    override fun flagUser(userId: String): Call<Flag> =
+        flag(mutableMapOf("target_user_id" to userId))
+
+    override fun flagMessage(messageId: String): Call<Flag> =
+        flag(mutableMapOf("target_message_id" to messageId))
+
+    private fun flag(body: MutableMap<String, String>): Call<Flag> {
+        return moderationApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { response -> response.flag.toDomain() }
+    }
+
+    override fun banUser(
+        targetId: String,
+        timeout: Int?,
+        reason: String?,
+        channelType: String,
+        channelId: String,
+        shadow: Boolean,
+    ): Call<Unit> {
+        return moderationApi.banUser(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = BanUserRequest(
+                target_user_id = targetId,
+                timeout = timeout,
+                reason = reason,
+                type = channelType,
+                id = channelId,
+                shadow = shadow,
+            )
+        ).toUnitCall()
+    }
+
+    override fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        shadow: Boolean,
+    ): Call<Unit> {
+        return moderationApi.unBanUser(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            targetUserId = targetId,
+            channelId = channelId,
+            channelType = channelType,
+            shadow = shadow,
+        ).toUnitCall()
     }
 
     private fun Call<*>.toUnitCall() = map {}

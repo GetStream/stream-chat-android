@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
 import io.getstream.chat.android.client.api.models.ChannelResponse
-import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.GetSyncHistory
 import io.getstream.chat.android.client.api.models.GuestUserRequest
 import io.getstream.chat.android.client.api.models.HideChannelRequest
@@ -621,7 +620,7 @@ internal class GsonChatApi(
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse> {
+    ): Call<Unit> {
         return retrofitApi.banUser(
             apiKey = apiKey,
             connectionId = connectionId,
@@ -633,7 +632,7 @@ internal class GsonChatApi(
                 channelId = channelId,
                 shadow = shadow,
             )
-        )
+        ).map { Unit }
     }
 
     override fun unBanUser(
@@ -641,7 +640,7 @@ internal class GsonChatApi(
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse> {
+    ): Call<Unit> {
         return retrofitApi.unBanUser(
             apiKey = apiKey,
             connectionId = connectionId,
@@ -649,7 +648,7 @@ internal class GsonChatApi(
             channelId = channelId,
             channelType = channelType,
             shadow = shadow,
-        )
+        ).map { Unit }
     }
 
     override fun sendEvent(
