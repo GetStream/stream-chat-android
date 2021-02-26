@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.R
@@ -476,12 +475,8 @@ class Android {
     class AndroidOffline : Fragment() {
 
         fun initializeChatDomain() {
-            val user = User("jlahey")
-            user.extraData["image"] = "https://bit.ly/321RmWb"
-            user.extraData["name"] = "Jim Lahey"
-
             val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
-            val chatDomain = ChatDomain.Builder(requireContext(), chatClient, user)
+            val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
                 .offlineEnabled()
                 .userPresenceEnabled()
                 .build()

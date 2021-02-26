@@ -521,18 +521,12 @@ public class Android {
     public class AndroidOffline extends Fragment {
 
         public void initializeChatDomain() {
-            User user = new User();
-            user.setId("jlahey");
-            user.putExtraValue("image", "https://bit.ly/321RmWb");
-            user.putExtraValue("name", "Jim Lahey");
-
             ChatClient chatClient =
                     new ChatClient.Builder("apiKey", requireContext()).build();
-            ChatDomain chatDomain = new ChatDomain.Builder(requireContext(), chatClient, user)
+            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
                     .offlineEnabled()
                     .userPresenceEnabled()
                     .build();
-
         }
 
         public void getChatDomainInstance() {
@@ -572,7 +566,6 @@ public class Android {
                             channelController.getTyping();
                         }
                     });
-
         }
 
         public void loadMoreMessages() {
@@ -584,7 +577,6 @@ public class Android {
                             Channel channel = result.data();
                         }
                     });
-
         }
 
         public void sendMessage() {
@@ -598,7 +590,6 @@ public class Android {
                             Message message1 = result.data();
                         }
                     });
-
         }
 
         public void queryChannels() {
@@ -627,7 +618,6 @@ public class Android {
                             controller.getEndOfChannels();
                         }
                     });
-
         }
 
         public void loadMoreFromChannel() {
@@ -693,7 +683,6 @@ public class Android {
                             final List<Message> messages = result.data();
                         }
                     });
-
         }
     }
 }
