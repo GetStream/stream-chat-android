@@ -86,6 +86,7 @@ public interface ChatDomain {
     /** a helper object which lists all the initialized use cases for the chat domain */
     public val useCases: UseCaseHelper
 
+    @Deprecated("Disconnecting from ChatClient will automatically disconnect from ChatDomain")
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
