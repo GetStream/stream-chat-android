@@ -17,7 +17,7 @@ class Setup {
             .logLevel(ChatLogLevel.ALL)
             .build()
 
-        val domain = ChatDomain.Builder(client, applicationContext)
+        val domain = ChatDomain.Builder(applicationContext, client)
             .offlineEnabled()
             .build()
 
