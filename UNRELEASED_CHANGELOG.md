@@ -6,6 +6,7 @@
 
 ## stream-chat-android-offline
 - Deprecated `ChatDomain::disconnect`, use disconnect on ChatClient instead, it will make the disconnection on ChatDomain too.
+- Deprecated constructors for `ChatDomain.Builder` with the `User` type parameter, use constructor with `Context` and `ChatClient` instead.
 
 ## stream-chat-android-ui-common
 

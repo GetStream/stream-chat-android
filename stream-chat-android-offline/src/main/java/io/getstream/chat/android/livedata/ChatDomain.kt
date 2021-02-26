@@ -97,14 +97,28 @@ public interface ChatDomain {
     public fun getVersion(): String
 
     public data class Builder(
-        private var appContext: Context,
-        private var client: ChatClient,
-        private var user: User? = null
+        private val appContext: Context,
+        private val client: ChatClient,
     ) {
+        private var user: User? = null
 
-        public constructor(client: ChatClient, appContext: Context) : this(appContext, client, null)
+        public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
-        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
+        @Deprecated(
+            message = "Use constructor without user",
+            replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
+        )
+        public constructor(appContext: Context, client: ChatClient, user: User?) : this(appContext, client) {
+            this.user = user
+        }
+
+        @Deprecated(
+            message = "Use constructor without user",
+            replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
+        )
+        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client) {
+            this.user = user
+        }
 
         private var database: ChatDatabase? = null
 
@@ -175,7 +189,17 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
+            return ChatDomainImpl(
+                client,
+                user,
+                database,
+                handler,
+                storageEnabled,
+                recoveryEnabled,
+                userPresence,
+                backgroundSyncEnabled,
+                appContext
+            )
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
