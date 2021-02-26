@@ -163,7 +163,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelId,
                 mock.apiKey,
                 mock.connectionId,
-                HideChannelRequest()
+                HideChannelRequest(true)
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
@@ -181,7 +181,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelId,
                 mock.apiKey,
                 mock.connectionId,
-                HideChannelRequest()
+                HideChannelRequest(true)
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
 
