@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
@@ -913,7 +912,8 @@ public class ChatClient internal constructor(
         api.updateChannel(
             channelType,
             channelId,
-            UpdateChannelRequest(channelExtraData, updateMessage)
+            channelExtraData,
+            updateMessage,
         )
 
     @CheckResult

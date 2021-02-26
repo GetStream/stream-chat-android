@@ -8,12 +8,19 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
+import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.Call
@@ -397,6 +404,137 @@ internal class MoshiChatApi(
         ).map(this::flattenChannel)
     }
 
+    override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
+        return channelApi.stopWatching(
+            channelType,
+            channelId,
+            apiKey,
+            connectionId,
+            emptyMap(),
+        ).toUnitCall()
+    }
+
+    override fun updateChannel(
+        channelType: String,
+        channelId: String,
+        extraData: Map<String, Any>,
+        updateMessage: Message?,
+    ): Call<Channel> {
+        return channelApi.updateChannel(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = UpdateChannelRequest(extraData, updateMessage?.toDto()),
+        ).map(this::flattenChannel)
+    }
+
+    override fun showChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> {
+        return channelApi.showChannel(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = emptyMap(),
+        ).toUnitCall()
+    }
+
+    override fun hideChannel(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ): Call<Unit> {
+        return channelApi.hideChannel(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = HideChannelRequest(clearHistory),
+        ).toUnitCall()
+    }
+
+    override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
+        return channelApi.rejectInvite(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = RejectInviteRequest(),
+        ).map(this::flattenChannel)
+    }
+
+    override fun acceptInvite(
+        channelType: String,
+        channelId: String,
+        message: String?,
+    ): Call<Channel> {
+        return channelApi.acceptInvite(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+            body = AcceptInviteRequest.create(userId = userId, message = message),
+        ).map(this::flattenChannel)
+    }
+
+    override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
+        return channelApi.deleteChannel(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            clientID = connectionId,
+        ).map(this::flattenChannel)
+    }
+
+    override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
+        return channelApi.markRead(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            request = MarkReadRequest(messageId),
+        ).toUnitCall()
+    }
+
+    override fun markAllRead(): Call<Unit> {
+        return channelApi.markAllRead(
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+        ).toUnitCall()
+    }
+
+    override fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+    ): Call<Channel> {
+        return channelApi.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = AddMembersRequest(members),
+        ).map(this::flattenChannel)
+    }
+
+    override fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+    ): Call<Channel> {
+        return channelApi.removeMembers(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = RemoveMembersRequest(members),
+        ).map(this::flattenChannel)
+    }
     private fun flattenChannel(response: ChannelResponse): Channel {
         return response.channel.toDomain().apply {
             watcherCount = response.watcher_count
