@@ -36,7 +36,7 @@ public class AndroidIntroduction {
                 .logLevel(ChatLogLevel.ALL)
                 .build();
         // Step 2 - Set up the domain for offline storage
-        ChatDomain domain = new ChatDomain.Builder(client, applicationContext)
+        ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
                 // Enable offline support
                 .offlineEnabled()
                 .build();
