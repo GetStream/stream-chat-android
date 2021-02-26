@@ -176,6 +176,7 @@ internal open class BaseChatModule(
             MoshiChatApi(
                 chatConfig.apiKey,
                 gsonChatApi,
+                fileUploader ?: defaultFileUploader,
                 buildRetrofitApi<MessageApi>(),
                 buildRetrofitApi<DeviceApi>(),
                 buildRetrofitApi<ModerationApi>(),
