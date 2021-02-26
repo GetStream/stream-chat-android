@@ -56,12 +56,12 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -176,7 +176,7 @@ public class ChatClient internal constructor(
         replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })")
     )
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
-        setUser(user, ImmediateTokenProvider(token), listener)
+        setUser(user, ConstantTokenProvider(token), listener)
     }
 
     /**
@@ -186,7 +186,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ImmediateTokenProvider(token))
+        return connectUser(user, ConstantTokenProvider(token))
     }
 
     /**
@@ -216,9 +216,7 @@ public class ChatClient internal constructor(
         }
         initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
-        getTokenAndConnect {
-            socket.connect(user)
-        }
+        socket.connect(user)
     }
 
     private fun initializeClientWithUser(
@@ -265,7 +263,7 @@ public class ChatClient internal constructor(
         if (isUserSet()) {
             return
         }
-        initializeClientWithUser(user, ImmediateTokenProvider(userToken))
+        initializeClientWithUser(user, ConstantTokenProvider(userToken))
     }
 
     private fun notifySetUser(user: User) {
@@ -290,9 +288,7 @@ public class ChatClient internal constructor(
         }
         config.isAnonymous = true
         warmUp()
-        getTokenAndConnect {
-            socket.connectAnonymously()
-        }
+        socket.connectAnonymously()
     }
 
     @CheckResult
@@ -692,7 +688,6 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
-
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             clientStateService.state.userOrError().let { user ->
@@ -1129,7 +1124,13 @@ public class ChatClient internal constructor(
     }
 
     public fun getCurrentToken(): String? {
-        return runCatching { clientStateService.state.tokenOrError() }.getOrNull()
+        return runCatching {
+            when (clientStateService.state) {
+                is ClientState.User.Pending,
+                is ClientState.User.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                else -> null
+            }
+        }.getOrNull()
     }
 
     public fun isSocketConnected(): Boolean {
@@ -1218,17 +1219,6 @@ public class ChatClient internal constructor(
             connectionListener?.onError(error)
         }
         connectionListener = null
-    }
-
-    private fun getTokenAndConnect(connect: () -> Unit) {
-        tokenManager.loadAsync {
-            if (it.isSuccess) {
-                clientStateService.onTokenReceived(it.data())
-            } else {
-                clientStateService.onTokenReceived("")
-            }
-            connect()
-        }
     }
 
     private fun warmUp() {

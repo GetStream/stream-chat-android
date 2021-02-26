@@ -12,17 +12,23 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 internal class ChatSocketServiceImpl private constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
-    private val networkStateProvider: NetworkStateProvider
+    private val networkStateProvider: NetworkStateProvider,
 ) : ChatSocketService {
     private val logger = ChatLogger.get("SocketService")
     private var connectionConf: ConnectionConf = ConnectionConf.None
     private var socket: Socket? = null
+    private var socketConnectionJob: Job? = null
     private val listeners = mutableListOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
@@ -37,7 +43,7 @@ internal class ChatSocketServiceImpl private constructor(
     )
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
-            if (state == State.Disconnected || state == State.NetworkDisconnected) {
+            if (state == State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
                 logger.logI("network connected, reconnecting socket")
                 reconnect(connectionConf)
             }
@@ -50,7 +56,7 @@ internal class ChatSocketServiceImpl private constructor(
 
     @VisibleForTesting
     internal var state: State by Delegates.observable(
-        State.Disconnected as State,
+        State.DisconnectedTemporarily as State,
         { _, oldState, newState ->
             if (oldState != newState) {
                 logger.logI("updateState: ${newState.javaClass.simpleName}")
@@ -64,17 +70,17 @@ internal class ChatSocketServiceImpl private constructor(
                         callListeners { it.onConnected(newState.event) }
                     }
                     is State.NetworkDisconnected -> {
-                        releaseSocket()
+                        shutdownSocketConnection()
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
                     }
-                    is State.Disconnected -> {
-                        releaseSocket()
+                    is State.DisconnectedTemporarily -> {
+                        shutdownSocketConnection()
                         healthMonitor.onDisconnected()
                         callListeners { it.onDisconnected() }
                     }
                     is State.DisconnectedPermanently -> {
-                        releaseSocket()
+                        shutdownSocketConnection()
                         connectionConf = ConnectionConf.None
                         networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
@@ -94,31 +100,29 @@ internal class ChatSocketServiceImpl private constructor(
         }
     }
 
-    private fun onChatNetworkError(error: ChatNetworkError) = when (error.streamCode) {
-        ChatErrorCode.PARSER_ERROR.code,
-        ChatErrorCode.CANT_PARSE_CONNECTION_EVENT.code,
-        ChatErrorCode.CANT_PARSE_EVENT.code,
-        ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code,
-        ChatErrorCode.NO_ERROR_BODY.code -> {
-            // Nothing to do on that case
-        }
-        ChatErrorCode.TOKEN_EXPIRED.code -> {
+    private fun onChatNetworkError(error: ChatNetworkError) {
+        if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
             tokenManager.expireToken()
-            tokenManager.loadSync()
-            state = State.Disconnected
         }
-        ChatErrorCode.UNDEFINED_TOKEN.code,
-        ChatErrorCode.INVALID_TOKEN.code,
-        ChatErrorCode.API_KEY_NOT_FOUND.code -> {
-            state = State.DisconnectedPermanently
-        }
-        ChatErrorCode.NETWORK_FAILED.code,
-        ChatErrorCode.SOCKET_CLOSED.code,
-        ChatErrorCode.SOCKET_FAILURE.code -> {
-            state = State.Disconnected
-        }
-        else -> {
-            state = State.Disconnected
+
+        when (error.streamCode) {
+            ChatErrorCode.PARSER_ERROR.code,
+            ChatErrorCode.CANT_PARSE_CONNECTION_EVENT.code,
+            ChatErrorCode.CANT_PARSE_EVENT.code,
+            ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code,
+            ChatErrorCode.NO_ERROR_BODY.code,
+            -> {
+                // Nothing to do on that case
+            }
+            ChatErrorCode.UNDEFINED_TOKEN.code,
+            ChatErrorCode.INVALID_TOKEN.code,
+            ChatErrorCode.API_KEY_NOT_FOUND.code,
+            -> {
+                state = State.DisconnectedPermanently
+            }
+            else -> {
+                state = State.DisconnectedTemporarily
+            }
         }
     }
 
@@ -144,7 +148,7 @@ internal class ChatSocketServiceImpl private constructor(
         logger.logI("connect")
         this.connectionConf = connectionConf
         if (networkStateProvider.isConnected()) {
-            state = State.Disconnected
+            state = State.DisconnectedTemporarily
             setupSocket(connectionConf)
         } else {
             state = State.NetworkDisconnected
@@ -170,28 +174,36 @@ internal class ChatSocketServiceImpl private constructor(
     }
 
     private fun reconnect(connectionConf: ConnectionConf) {
-        releaseSocket()
+        shutdownSocketConnection()
         setupSocket(connectionConf)
     }
 
     private fun setupSocket(connectionConf: ConnectionConf) {
         logger.logI("setupSocket")
-        when (connectionConf) {
-            is ConnectionConf.None -> {
-                state = State.DisconnectedPermanently
-            }
-            is ConnectionConf.AnonymousConnectionConf -> {
-                state = State.Connecting
-                socket = socketFactory.createAnonymousSocket(connectionConf.endpoint, connectionConf.apiKey)
-            }
-            is ConnectionConf.UserConnectionConf -> {
-                state = State.Connecting
-                socket = socketFactory.createNormalSocket(connectionConf.endpoint, connectionConf.apiKey, connectionConf.user)
-            }
-        }.exhaustive
+        with(connectionConf) {
+            when (this) {
+                is ConnectionConf.None -> {
+                    state = State.DisconnectedPermanently
+                }
+                is ConnectionConf.AnonymousConnectionConf -> {
+                    state = State.Connecting
+                    socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
+                }
+                is ConnectionConf.UserConnectionConf -> {
+                    state = State.Connecting
+                    socketConnectionJob = GlobalScope.launch(DispatcherProvider.IO) {
+                        tokenManager.ensureTokenLoaded()
+                        withContext(DispatcherProvider.Main) {
+                            socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
+                        }
+                    }
+                }
+            }.exhaustive
+        }
     }
 
-    private fun releaseSocket() {
+    private fun shutdownSocketConnection() {
+        socketConnectionJob?.cancel()
         socket?.close(1000, "Connection close by client")
         socket = null
     }
@@ -215,7 +227,7 @@ internal class ChatSocketServiceImpl private constructor(
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
         object NetworkDisconnected : State()
-        object Disconnected : State()
+        object DisconnectedTemporarily : State()
         object DisconnectedPermanently : State()
     }
 
@@ -224,7 +236,7 @@ internal class ChatSocketServiceImpl private constructor(
             tokenManager: TokenManager,
             socketFactory: SocketFactory,
             eventsParser: EventsParser,
-            networkStateProvider: NetworkStateProvider
+            networkStateProvider: NetworkStateProvider,
         ): ChatSocketServiceImpl {
             return ChatSocketServiceImpl(tokenManager, socketFactory, networkStateProvider)
                 .also { eventsParser.setSocketService(it) }

@@ -11,33 +11,25 @@ import okhttp3.Response
 internal class TokenAuthInterceptor internal constructor(
     private val tokenManager: TokenManager,
     private val parser: ChatParser,
-    private val isAnonymous: () -> Boolean
+    private val isAnonymous: () -> Boolean,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-
         if (isAnonymous()) {
             return chain.proceed(chain.request())
         } else {
-
-            val hasTokenProvider = tokenManager.hasTokenProvider()
-            val hasToken = tokenManager.hasToken()
-
-            if (!hasTokenProvider) {
+            if (!tokenManager.hasTokenProvider()) {
                 val description = ChatErrorCode.UNDEFINED_TOKEN.description
                 val code = ChatErrorCode.UNDEFINED_TOKEN.code
                 throw ChatRequestError(description, code, -1)
             }
 
-            if (!hasToken) {
-                tokenManager.loadSync()
-            }
+            tokenManager.ensureTokenLoaded()
 
             val request: Request = addTokenHeader(chain.request())
             var response: Response = chain.proceed(request)
 
             if (!response.isSuccessful) {
-
                 val err = parser.toError(response)
                 if (err.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
                     tokenManager.expireToken()
