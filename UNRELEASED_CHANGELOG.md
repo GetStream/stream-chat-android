@@ -5,7 +5,7 @@
 
 ### ✅ Added
 
-### ⚠️ Warning
+### ⚠️ Changed
 
 ### ❌ Removed
 
@@ -17,7 +17,7 @@
 
 ### ✅ Added
 
-### ⚠️ Warning
+### ⚠️ Changed
 
 ### ❌ Removed
 
@@ -29,7 +29,7 @@
 
 ### ✅ Added
 
-### ⚠️ Warning
+### ⚠️ Changed
 
 ### ❌ Removed
 
@@ -41,7 +41,7 @@
 
 ### ✅ Added
 
-### ⚠️ Warning
+### ⚠️ Changed
 - Deprecated `ChatDomain::disconnect`, use disconnect on ChatClient instead, it will make the disconnection on ChatDomain too.
 
 ### ❌ Removed
@@ -54,7 +54,7 @@
 
 ### ✅ Added
 
-### ⚠️ Warning
+### ⚠️ Changed
 
 ### ❌ Removed
 
@@ -69,7 +69,7 @@
 - Introduced `AttachmentViewFactory` as a factory for custom attachment views/custom link view
 - Introduced `TextAndAttachmentsViewHolder` for any combination of attachment content and text
 
-### ⚠️ Warning
+### ⚠️ Changed
 
 ### ❌ Removed
 - Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`,
