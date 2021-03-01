@@ -48,7 +48,7 @@ class Push(val context: Context, val client: ChatClient) {
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Redirection from notification to app
+     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app
      </a>
      */
     class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :

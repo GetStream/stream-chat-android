@@ -5,7 +5,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.livedata.service.sync.PushMessageSyncHandler
 
 /**
- * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Handling notifications from multiple backend services</a>
+ * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
  */
 class CustomFirebaseMessagingService : FirebaseMessagingService() {
     private val pushDataSyncHandler: PushMessageSyncHandler =
