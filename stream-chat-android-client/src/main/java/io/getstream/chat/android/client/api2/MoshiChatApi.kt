@@ -6,12 +6,15 @@ import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
@@ -20,9 +23,12 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
+import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
@@ -32,24 +38,30 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
+import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import java.io.File
+import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 internal class MoshiChatApi(
     private val apiKey: String,
     private val legacyApiDelegate: ChatApi,
     private val fileUploader: FileUploader,
+    private val userApi: UserApi,
+    private val guestApi: GuestApi,
     private val messageApi: MessageApi,
     private val channelApi: ChannelApi,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
+    private val generalApi: GeneralApi,
     private val coroutineScope: CoroutineScope = GlobalScope,
 ) : ChatApi by legacyApiDelegate {
 
@@ -535,6 +547,7 @@ internal class MoshiChatApi(
             body = RemoveMembersRequest(members),
         ).map(this::flattenChannel)
     }
+
     private fun flattenChannel(response: ChannelResponse): Channel {
         return response.channel.toDomain().apply {
             watcherCount = response.watcher_count
@@ -545,6 +558,74 @@ internal class MoshiChatApi(
             hidden = response.hidden
             hiddenMessagesBefore = response.hide_messages_before
         }
+    }
+
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
+        return messageApi.getReplies(
+            messageId = messageId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            limit = limit,
+        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+    }
+
+    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
+        return messageApi.getRepliesMore(
+            messageId = messageId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            limit = limit,
+            firstId = firstId,
+        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+    }
+
+    override fun sendAction(request: DomainSendActionRequest): Call<Message> {
+        return messageApi.sendAction(
+            messageId = request.messageId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            request = SendActionRequest(
+                channel_id = request.channelId,
+                message_id = request.messageId,
+                type = request.type,
+                form_data = request.formData,
+            ),
+        ).map { response -> response.message.toDomain() }
+    }
+
+    override fun updateUsers(users: List<User>): Call<List<User>> {
+        val map: Map<String, UpstreamUserDto> = users.associateBy({ it.id }, User::toDto)
+        return userApi.updateUsers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = UpdateUsersRequest(map),
+        ).map { response ->
+            response.users.values.map(DownstreamUserDto::toDomain)
+        }
+    }
+
+    override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
+        return guestApi.getGuestUser(
+            apiKey = apiKey,
+            body = GuestUserRequest.create(userId, userName),
+        ).map { response -> GuestUser(response.user.toDomain(), response.access_token) }
+    }
+
+    override fun translate(messageId: String, language: String): Call<Message> {
+        return messageApi.translate(
+            messageId = messageId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            request = TranslateMessageRequest(language),
+        ).map { response -> response.message.toDomain() }
+    }
+
+    override fun warmUp() {
+        generalApi.warmUp().enqueue()
     }
 
     private fun Call<*>.toUnitCall() = map {}

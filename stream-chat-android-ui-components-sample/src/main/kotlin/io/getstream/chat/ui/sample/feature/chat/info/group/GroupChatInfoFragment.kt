@@ -24,6 +24,7 @@ import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
 import io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.autoScrollToTop
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
 class GroupChatInfoFragment : Fragment() {
@@ -51,6 +52,7 @@ class GroupChatInfoFragment : Fragment() {
             requireActivity().onBackPressed()
         }
         binding.optionsRecyclerView.adapter = adapter
+        binding.optionsRecyclerView.autoScrollToTop()
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
         if (!isDistinctChannel()) {
             binding.addChannelButton.apply {

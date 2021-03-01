@@ -14,29 +14,15 @@ ext {
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-common'
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
-
+apply from: "${rootDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
 
 android {
-    compileSdkVersion Configuration.compileSdkVersion
-
     defaultConfig {
-        minSdkVersion Configuration.minSdkVersion
-        targetSdkVersion Configuration.targetSdkVersion
-        versionName Configuration.versionName
-
         vectorDrawables.useSupportLibrary = true
     }
 
     resourcePrefix 'stream_'
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 
     testOptions {
         unitTests {
