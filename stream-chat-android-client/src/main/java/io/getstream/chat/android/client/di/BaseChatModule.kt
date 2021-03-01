@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.DeviceApi
 import io.getstream.chat.android.client.api2.MessageApi
 import io.getstream.chat.android.client.api2.ModerationApi
@@ -176,7 +177,9 @@ internal open class BaseChatModule(
             MoshiChatApi(
                 chatConfig.apiKey,
                 gsonChatApi,
+                fileUploader ?: defaultFileUploader,
                 buildRetrofitApi<MessageApi>(),
+                buildRetrofitApi<ChannelApi>(),
                 buildRetrofitApi<DeviceApi>(),
                 buildRetrofitApi<ModerationApi>(),
             )

@@ -813,14 +813,11 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 
 public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory {
 	public fun <init> ()V
-	protected final fun createAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createPlainTextWithFileAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createPlainTextWithMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createTextAndAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun getAttachmentViewFactory ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;
@@ -829,16 +826,13 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType {
-	public static final field ATTACHMENTS I
 	public static final field DATE_DIVIDER I
 	public static final field GIPHY I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType;
 	public static final field LOADING_INDICATOR I
-	public static final field MEDIA_ATTACHMENTS I
 	public static final field MESSAGE_DELETED I
 	public static final field PLAIN_TEXT I
-	public static final field PLAIN_TEXT_WITH_FILE_ATTACHMENTS I
-	public static final field PLAIN_TEXT_WITH_MEDIA_ATTACHMENTS I
+	public static final field TEXT_AND_ATTACHMENTS I
 	public static final field THREAD_SEPARATOR I
 	public static final field TYPING_INDICATOR I
 }
