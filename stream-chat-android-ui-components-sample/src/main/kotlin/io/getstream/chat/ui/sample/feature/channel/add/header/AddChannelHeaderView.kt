@@ -60,6 +60,9 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
             }
             isVisible = members.isNotEmpty()
         }
+        if (query.isNotEmpty()) {
+            binding.inputEditText.setText("")
+        }
     }
 
     override fun showInput() {
