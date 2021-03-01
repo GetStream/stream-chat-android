@@ -1106,7 +1106,10 @@ internal class ChannelControllerImpl(
                 setHidden(false)
             }
             is MessageUpdatedEvent -> {
-                upsertEventMessage(event.message)
+                event.message.apply {
+                    replyTo = _messages.value[replyMessageId]
+                }.let(::upsertEventMessage)
+
                 setHidden(false)
             }
             is MessageDeletedEvent -> {
