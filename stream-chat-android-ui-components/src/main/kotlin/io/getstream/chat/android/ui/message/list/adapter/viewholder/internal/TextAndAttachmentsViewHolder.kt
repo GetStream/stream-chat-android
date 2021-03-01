@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.internal.AttachmentUtils
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
@@ -72,21 +71,9 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        binding.attachmentsContainer.removeAllViews()
-
-        val (attachmentView, linkAttachmentView) = attachmentViewFactory.createAttachmentViews(
-            data,
-            listeners,
-            style,
-            binding.root
-        )
-
-        if (attachmentView != null) {
-            binding.attachmentsContainer.addView(attachmentView)
-        }
-
-        if (linkAttachmentView != null) {
-            binding.attachmentsContainer.addView(linkAttachmentView)
+        with(binding.attachmentsContainer) {
+            removeAllViews()
+            addView(attachmentViewFactory.createAttachmentViews(data, listeners, style, binding.root))
         }
     }
 
@@ -118,11 +105,5 @@ internal class TextAndAttachmentsViewHolder(
         } else {
             binding.sentFiles.isVisible = false
         }
-    }
-
-    private companion object {
-        private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
-        private val LINK_VIEW_PADDING = 8.dpToPx()
-        private val FILE_ATTACHMENT_VIEW_PADDING = 4.dpToPx()
     }
 }

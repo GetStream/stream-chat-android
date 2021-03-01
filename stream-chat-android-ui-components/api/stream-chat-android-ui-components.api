@@ -852,7 +852,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
 	public fun <init> ()V
-	public fun createAttachmentViews (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Lkotlin/Pair;
+	public fun createAttachmentViews (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 	protected final fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
 	protected final fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
 }

@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
@@ -24,29 +25,38 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
  */
 public open class AttachmentViewFactory {
 
+    /**
+     * Create a content view for particular collection of attachments. If the collection contains only link attachment
+     * then it creates a link content attachment view, if the collection contains attachments without links then it
+     * creates a content view for the list of attachments, otherwise it creates a content view with both links and list
+     * contents views.
+     *
+     * @param data [MessageListItem.MessageItem] with particular data for the message list.
+     * @param listeners [MessageListListenerContainer] with listeners for the message list.
+     * @param style [MessageListItemStyle] style container with text colors params for the message list.
+     * @param parent [View] of VH's root where such attachment content view is supposed to be placed.
+     */
     public open fun createAttachmentViews(
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer,
         style: MessageListItemStyle,
         parent: View,
-    ): Pair<View?, View?> {
-        require(data.message.attachments.isNotEmpty()) { "Can't create content view for empty attachments" }
+    ): View {
         val (links, attachments) = data.message.attachments.partition(Attachment::hasLink)
 
-        val firstView = if (attachments.isNotEmpty()) {
-            val attachmentView = createAttachmentsView(attachments, parent.context)
-            when (attachmentView) {
-                is MediaAttachmentsGroupView -> setupMediaAttachmentView(attachmentView, attachments, listeners, data)
-                is FileAttachmentsView -> setupFileAttachmentsView(attachmentView, attachments, listeners, data.message)
-            }
-            attachmentView
-        } else {
-            null
+        return when {
+            links.isNotEmpty() && attachments.isNotEmpty() -> createLinkAndAttachmentsContent(
+                attachments,
+                links.first(),
+                data,
+                listeners,
+                style,
+                parent
+            )
+            links.isNotEmpty() -> createLinkView(links.first(), data.isMine, listeners, style, parent)
+            attachments.isNotEmpty() -> createAndSetupAttachmentsView(data, listeners, attachments, parent)
+            else -> error("Can't create content view for the empty attachments collection")
         }
-
-        val linkView = links.firstOrNull()?.let { setupLinkView(it, data.isMine, listeners, style, parent) }
-
-        return firstView to linkView
     }
 
     /**
@@ -77,6 +87,35 @@ public open class AttachmentViewFactory {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
             }
             else -> error("Unsupported case for attachment view factory!")
+        }
+    }
+
+    private fun createLinkAndAttachmentsContent(
+        attachments: List<Attachment>,
+        linkAttachment: Attachment,
+        data: MessageListItem.MessageItem,
+        listeners: MessageListListenerContainer,
+        style: MessageListItemStyle,
+        parent: View,
+    ): View {
+        return LinearLayout(parent.context).apply {
+            layoutParams = DEFAULT_LAYOUT_PARAMS
+            addView(createAndSetupAttachmentsView(data, listeners, attachments, parent))
+            addView(createLinkView(linkAttachment, data.isMine, listeners, style, parent))
+        }
+    }
+
+    private fun createAndSetupAttachmentsView(
+        data: MessageListItem.MessageItem,
+        listeners: MessageListListenerContainer,
+        attachments: List<Attachment>,
+        parent: View,
+    ): View {
+        return createAttachmentsView(attachments, parent.context).also {
+            when (it) {
+                is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
+                is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
+            }
         }
     }
 
@@ -116,7 +155,7 @@ public open class AttachmentViewFactory {
         setAttachments(attachments)
     }
 
-    private fun setupLinkView(
+    private fun createLinkView(
         linkAttachment: Attachment,
         isMine: Boolean,
         listeners: MessageListListenerContainer,
@@ -137,9 +176,7 @@ public open class AttachmentViewFactory {
     }
 
     private companion object {
-
-        private fun Collection<Attachment>.isMedia(): Boolean =
-            isNotEmpty() && all { it.isMedia() && it.hasLink().not() }
+        private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)
 
         private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
         private val LINK_VIEW_PADDING = 8.dpToPx()
