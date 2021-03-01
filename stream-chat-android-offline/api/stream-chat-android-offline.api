@@ -208,7 +208,7 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Th
 	public abstract fun getThreadId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/extensions/ClientExtensionsKt {
+public final class io/getstream/chat/android/livedata/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
