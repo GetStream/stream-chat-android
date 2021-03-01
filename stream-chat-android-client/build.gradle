@@ -16,14 +16,12 @@ ext {
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
+
 
 android {
-    compileSdkVersion Configuration.compileSdkVersion
     defaultConfig {
-        minSdkVersion Configuration.minSdkVersion
-        targetSdkVersion Configuration.targetSdkVersion
-        versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'STREAM_CHAT_VERSION', "\"$version\""
@@ -41,14 +39,6 @@ android {
     }
 
     resourcePrefix 'stream_'
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 
     lintOptions {
         xmlReport false
