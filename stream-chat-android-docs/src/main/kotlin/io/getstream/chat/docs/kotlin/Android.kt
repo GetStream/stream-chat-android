@@ -15,9 +15,14 @@ import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
@@ -461,6 +466,150 @@ class Android {
 
         fun connectingSuggestionListViewWithMessageInputView() {
             messageInputView.setSuggestionListView(suggestionListView)
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/android_offline/?language=kotlin">Android Offline</a>
+     */
+    class AndroidOffline : Fragment() {
+
+        fun initializeChatDomain() {
+            val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
+            val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
+                .offlineEnabled()
+                .userPresenceEnabled()
+                .build()
+        }
+
+        fun getChatDomainInstance() {
+            val chatDomain = ChatDomain.instance()
+        }
+
+        fun customizeRetryPolicy() {
+            val chatDomain = ChatDomain.instance()
+
+            chatDomain.retryPolicy = object : RetryPolicy {
+                override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
+                    return attempt < 3
+                }
+
+                override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
+                    return 1000 * attempt
+                }
+            }
+        }
+
+        fun watchChannel() {
+            val chatDomain = ChatDomain.instance()
+
+            chatDomain.useCases.watchChannel(cid = "messaging:123", messageLimit = 0)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val channelController = result.data()
+
+                        // LiveData objects to observe
+                        channelController.messages
+                        channelController.reads
+                        channelController.typing
+                    }
+                }
+        }
+
+        fun loadMoreMessages() {
+            val chatDomain = ChatDomain.instance()
+
+            chatDomain.useCases.loadOlderMessages.invoke("messaging:123", 10)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    }
+                }
+        }
+
+        fun sendMessage() {
+            val chatDomain = ChatDomain.instance()
+            val message = Message(text = "Hello world")
+
+            chatDomain.useCases.sendMessage.invoke(message)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val message = result.data()
+                    }
+                }
+        }
+
+        fun queryChannels() {
+            val chatDomain = ChatDomain.instance()
+            val members = listOf("thierry")
+            val filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", members),
+            )
+            val sort = QuerySort<Channel>()
+
+            chatDomain.useCases.queryChannels(filter, sort)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val queryChannelsController = result.data()
+
+                        // LiveData objects to observe
+                        queryChannelsController.channels
+                        queryChannelsController.loading
+                        queryChannelsController.endOfChannels
+                    }
+                }
+        }
+
+        fun loadMoreFromChannel() {
+            val chatDomain = ChatDomain.instance()
+            val members = listOf("thierry")
+            val filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", members),
+            )
+            val sort = QuerySort<Channel>()
+
+            chatDomain.useCases.queryChannelsLoadMore.invoke(filter, sort)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val channels: List<Channel> = result.data()
+                    }
+                }
+        }
+
+        fun unreadCount() {
+            val chatDomain = ChatDomain.instance()
+
+            // LiveData objects to observe
+            val totalUnreadCount = chatDomain.useCases.getTotalUnreadCount().execute().data()
+            val unreadChannelCount = chatDomain.useCases.getUnreadChannelCount().execute().data()
+        }
+
+        fun messagesFromThread() {
+            val chatDomain = ChatDomain.instance()
+
+            chatDomain.useCases.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
+                if (result.isSuccess) {
+                    val threadController = result.data()
+
+                    // LiveData objects to observe
+                    threadController.messages
+                    threadController.loadingOlderMessages
+                    threadController.endOfOlderMessages
+                }
+            }
+        }
+
+        fun loadMoreFromThread() {
+            val chatDomain = ChatDomain.instance()
+
+            chatDomain.useCases.threadLoadMore.invoke(cid = "cid", parentId = "parentId", messageLimit = 1)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val messages: List<Message> = result.data()
+                    }
+                }
         }
     }
 }
