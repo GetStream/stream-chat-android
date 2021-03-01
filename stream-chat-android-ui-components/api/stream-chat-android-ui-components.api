@@ -852,9 +852,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
 	public fun <init> ()V
-	public fun createAttachmentViews (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
-	protected final fun createAttachmentsView (Ljava/util/List;Landroid/content/Context;)Landroid/view/View;
-	protected final fun createLinkAttachmentView (Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)Landroid/view/View;
+	public fun createAttachmentView (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
+	protected final fun createAttachmentsContent (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Ljava/util/List;Landroid/view/View;)Landroid/view/View;
+	protected final fun createLinkAndAttachmentsContent (Ljava/util/List;Lio/getstream/chat/android/client/models/Attachment;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
+	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {

@@ -21,7 +21,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 /**
- * Factory for creating content views for links attachments and other types of attachments.
+ * Factory for creating a content view for links attachments and other types of attachments.
  */
 public open class AttachmentViewFactory {
 
@@ -31,12 +31,14 @@ public open class AttachmentViewFactory {
      * creates a content view for the list of attachments, otherwise it creates a content view with both links and list
      * contents views.
      *
-     * @param data [MessageListItem.MessageItem] with particular data for the message list.
+     * @param data [MessageListItem.MessageItem] with particular data and attachments for the message list.
      * @param listeners [MessageListListenerContainer] with listeners for the message list.
      * @param style [MessageListItemStyle] style container with text colors params for the message list.
      * @param parent [View] of VH's root where such attachment content view is supposed to be placed.
+     *
+     * @return [View] as content view for passed attachments.
      */
-    public open fun createAttachmentViews(
+    public open fun createAttachmentView(
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer,
         style: MessageListItemStyle,
@@ -53,8 +55,8 @@ public open class AttachmentViewFactory {
                 style,
                 parent
             )
-            links.isNotEmpty() -> createLinkView(links.first(), data.isMine, listeners, style, parent)
-            attachments.isNotEmpty() -> createAndSetupAttachmentsView(data, listeners, attachments, parent)
+            links.isNotEmpty() -> createLinkContent(links.first(), data.isMine, listeners, style, parent)
+            attachments.isNotEmpty() -> createAttachmentsContent(data, listeners, attachments, parent)
             else -> error("Can't create content view for the empty attachments collection")
         }
     }
@@ -63,49 +65,40 @@ public open class AttachmentViewFactory {
      * Creates a content view for the link attachment type.
      *
      * @param linkAttachment Attachment representing some link.
-     * @param context Context related to parent view.
+     * @param isMine Message's flag marking mine/their message.
+     * @param listeners [MessageListListenerContainer] with listeners for the message list.
+     * @param style [MessageListItemStyle] style container with text colors params for the message list.
+     * @param parent [View] of VH's root where such attachment content view is supposed to be placed.
      */
-    protected fun createLinkAttachmentView(linkAttachment: Attachment, context: Context): View {
-        require(linkAttachment.hasLink()) { "Can create link view only for attachments with link" }
-        return LinkAttachmentView(context).apply {
-            layoutParams = DEFAULT_LAYOUT_PARAMS
+    protected fun createLinkContent(
+        linkAttachment: Attachment,
+        isMine: Boolean,
+        listeners: MessageListListenerContainer,
+        style: MessageListItemStyle,
+        parent: View,
+    ): View {
+        val linkAttachmentView = createLinkAttachmentView(linkAttachment, parent.context)
+        (linkAttachmentView as? LinkAttachmentView)?.run {
+            setPadding(LINK_VIEW_PADDING)
+            setLinkPreviewClickListener { url ->
+                listeners.linkClickListener.onLinkClick(url)
+            }
+            setLongClickTarget(parent)
+            style.getStyleTextColor(isMine)?.also(::setTextColor)
+            showLinkAttachment(linkAttachment)
         }
+        return linkAttachmentView
     }
 
     /**
      * Creates a content view for general attachments.
      *
+     * @param data [MessageListItem.MessageItem] representing a message from the message list.
+     * @param listeners [MessageListListenerContainer] with listeners for the message list.
      * @param attachments List of attachments. Resulting view should represents this list.
-     * @param context Context related to parent view.
+     * @param parent [View] of VH's root where such attachment content view is supposed to be placed.
      */
-    protected fun createAttachmentsView(attachments: List<Attachment>, context: Context): View {
-        return when {
-            attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
-                layoutParams = DEFAULT_LAYOUT_PARAMS
-            }
-            attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
-                layoutParams = DEFAULT_LAYOUT_PARAMS
-            }
-            else -> error("Unsupported case for attachment view factory!")
-        }
-    }
-
-    private fun createLinkAndAttachmentsContent(
-        attachments: List<Attachment>,
-        linkAttachment: Attachment,
-        data: MessageListItem.MessageItem,
-        listeners: MessageListListenerContainer,
-        style: MessageListItemStyle,
-        parent: View,
-    ): View {
-        return LinearLayout(parent.context).apply {
-            layoutParams = DEFAULT_LAYOUT_PARAMS
-            addView(createAndSetupAttachmentsView(data, listeners, attachments, parent))
-            addView(createLinkView(linkAttachment, data.isMine, listeners, style, parent))
-        }
-    }
-
-    private fun createAndSetupAttachmentsView(
+    protected fun createAttachmentsContent(
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer,
         attachments: List<Attachment>,
@@ -116,6 +109,50 @@ public open class AttachmentViewFactory {
                 is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
                 is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
+        }
+    }
+
+    /**
+     * Directly creates a content view for both [attachments] and [linkAttachment].
+     *
+     * @param attachments List of attachments. Resulting view should represents this list.
+     * @param linkAttachment Attachment representing some link.
+     * @param data [MessageListItem.MessageItem] representing a message from the message list.
+     * @param listeners [MessageListListenerContainer] with listeners for the message list.
+     * @param style [MessageListItemStyle] style container with text colors params for the message list.
+     * @param parent [View] of VH's root where such attachment content view is supposed to be placed.
+     */
+    protected fun createLinkAndAttachmentsContent(
+        attachments: List<Attachment>,
+        linkAttachment: Attachment,
+        data: MessageListItem.MessageItem,
+        listeners: MessageListListenerContainer,
+        style: MessageListItemStyle,
+        parent: View,
+    ): View {
+        return LinearLayout(parent.context).apply {
+            layoutParams = DEFAULT_LAYOUT_PARAMS
+            addView(createAttachmentsContent(data, listeners, attachments, parent))
+            addView(createLinkContent(linkAttachment, data.isMine, listeners, style, parent))
+        }
+    }
+
+    private fun createLinkAttachmentView(linkAttachment: Attachment, context: Context): View {
+        require(linkAttachment.hasLink()) { "Can create link view only for attachments with link" }
+        return LinkAttachmentView(context).apply {
+            layoutParams = DEFAULT_LAYOUT_PARAMS
+        }
+    }
+
+    private fun createAttachmentsView(attachments: List<Attachment>, context: Context): View {
+        return when {
+            attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
+                layoutParams = DEFAULT_LAYOUT_PARAMS
+            }
+            attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
+                layoutParams = DEFAULT_LAYOUT_PARAMS
+            }
+            else -> error("Unsupported case for attachment view factory!")
         }
     }
 
@@ -153,26 +190,6 @@ public open class AttachmentViewFactory {
             listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
         }
         setAttachments(attachments)
-    }
-
-    private fun createLinkView(
-        linkAttachment: Attachment,
-        isMine: Boolean,
-        listeners: MessageListListenerContainer,
-        style: MessageListItemStyle,
-        parent: View,
-    ): View {
-        val linkAttachmentView = createLinkAttachmentView(linkAttachment, parent.context)
-        (linkAttachmentView as? LinkAttachmentView)?.run {
-            setPadding(LINK_VIEW_PADDING)
-            setLinkPreviewClickListener { url ->
-                listeners.linkClickListener.onLinkClick(url)
-            }
-            setLongClickTarget(parent)
-            style.getStyleTextColor(isMine)?.also(::setTextColor)
-            showLinkAttachment(linkAttachment)
-        }
-        return linkAttachmentView
     }
 
     private companion object {

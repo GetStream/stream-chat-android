@@ -73,7 +73,7 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(attachmentViewFactory.createAttachmentViews(data, listeners, style, binding.root))
+            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
         }
     }
 
