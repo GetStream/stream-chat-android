@@ -858,6 +858,14 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory$sam$i$io_getstream_chat_android_ui_message_list_adapter_view_internal_LinkAttachmentView_LinkPreviewClickListener$0 : io/getstream/chat/android/ui/message/list/adapter/view/internal/LinkAttachmentView$LinkPreviewClickListener, kotlin/jvm/internal/FunctionAdapter {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFunctionDelegate ()Lkotlin/Function;
+	public fun hashCode ()I
+	public final synthetic fun onLinkPreviewClick (Ljava/lang/String;)V
+}
+
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V

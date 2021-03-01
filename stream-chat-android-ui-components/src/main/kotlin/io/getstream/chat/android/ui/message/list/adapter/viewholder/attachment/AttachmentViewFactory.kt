@@ -80,9 +80,7 @@ public open class AttachmentViewFactory {
         val linkAttachmentView = createLinkAttachmentView(linkAttachment, parent.context)
         (linkAttachmentView as? LinkAttachmentView)?.run {
             setPadding(LINK_VIEW_PADDING)
-            setLinkPreviewClickListener { url ->
-                listeners.linkClickListener.onLinkClick(url)
-            }
+            setLinkPreviewClickListener(listeners.linkClickListener::onLinkClick)
             setLongClickTarget(parent)
             style.getStyleTextColor(isMine)?.also(::setTextColor)
             showLinkAttachment(linkAttachment)
