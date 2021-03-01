@@ -5,22 +5,22 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 import java.io.Serializable
 
-internal class MessageListItemStyle private constructor(
-    @ColorInt val messageBackgroundColorMine: Int?,
-    @ColorInt val messageBackgroundColorTheirs: Int?,
-    @ColorInt val messageTextColorMine: Int?,
-    @ColorInt val messageTextColorTheirs: Int?,
-    @ColorInt val messageLinkTextColorMine: Int?,
-    @ColorInt val messageLinkTextColorTheirs: Int?,
+public class MessageListItemStyle private constructor(
+    @ColorInt public val messageBackgroundColorMine: Int?,
+    @ColorInt public val messageBackgroundColorTheirs: Int?,
+    @ColorInt public val messageTextColorMine: Int?,
+    @ColorInt public val messageTextColorTheirs: Int?,
+    @ColorInt public val messageLinkTextColorMine: Int?,
+    @ColorInt public val messageLinkTextColorTheirs: Int?,
 ) : Serializable {
 
     @ColorInt
-    internal fun getStyleTextColor(isMine: Boolean): Int? {
+    public fun getStyleTextColor(isMine: Boolean): Int? {
         return if (isMine) messageTextColorMine else messageTextColorTheirs
     }
 
     @ColorInt
-    internal fun getStyleLinkTextColor(isMine: Boolean): Int? {
+    public fun getStyleLinkTextColor(isMine: Boolean): Int? {
         return if (isMine) messageLinkTextColorMine else messageLinkTextColorTheirs
     }
 
