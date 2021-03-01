@@ -132,6 +132,7 @@ public open class AttachmentViewFactory {
     ): View {
         return LinearLayout(parent.context).apply {
             layoutParams = DEFAULT_LAYOUT_PARAMS
+            orientation = LinearLayout.VERTICAL
             addView(createAttachmentsContent(data, listeners, attachments, parent))
             addView(createLinkContent(linkAttachment, data.isMine, listeners, style, parent))
         }
