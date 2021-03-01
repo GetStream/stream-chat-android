@@ -14,7 +14,7 @@ import io.getstream.chat.ui.sample.databinding.ListItemAttachmentImgurBinding
 
 class ImgurAttachmentFactory : AttachmentViewFactory() {
 
-    override fun createAttachmentViews(
+    override fun createAttachmentView(
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer,
         style: MessageListItemStyle,
@@ -23,7 +23,7 @@ class ImgurAttachmentFactory : AttachmentViewFactory() {
         val imgurAttachment = data.message.attachments.firstOrNull { it.isImgurAttachment() }
         return when {
             imgurAttachment != null -> createImgurAttachment(imgurAttachment, parent.context)
-            else -> super.createAttachmentViews(data, listeners, style, parent)
+            else -> super.createAttachmentView(data, listeners, style, parent)
         }
     }
 
