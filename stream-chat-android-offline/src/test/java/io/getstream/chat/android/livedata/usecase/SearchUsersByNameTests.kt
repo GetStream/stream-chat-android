@@ -9,7 +9,9 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.api.models.AndFilterObject
+import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
+import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomUser
@@ -65,12 +67,15 @@ internal class SearchUsersByNameTests {
         whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(querySearch = "searchString", offset = randomInt(), userLimit = randomInt(), userPresence = true).execute()
-
         verify(chatClient).queryUsers(
-            argThat {
-                presence `should be equal to` true
-                val filterMap = filter.data[Filters.KEY_AND] as ArrayList<Map<String, Map<String, String>>>
-                filterMap.first()[SearchUsersByName.FIELD_NAME]!![Filters.KEY_AUTOCOMPLETE] == "searchString"
+            com.nhaarman.mockitokotlin2.check {
+                it.presence `should be equal to` true
+                it.filter `should be equal to` AndFilterObject(
+                    setOf(
+                        NotEqualsFilterObject("id", chatDomainImpl.currentUser.id),
+                        AutocompleteFilterObject(SearchUsersByName.FIELD_NAME, "searchString"),
+                    )
+                )
             }
         )
     }

@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.request
 
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.utils.FilterObject
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
     val originalRequest = this

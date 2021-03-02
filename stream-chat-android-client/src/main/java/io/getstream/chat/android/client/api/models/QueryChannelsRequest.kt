@@ -3,10 +3,9 @@ package io.getstream.chat.android.client.api.models
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import io.getstream.chat.android.client.utils.FilterObject
 
 public class QueryChannelsRequest(
-    @IgnoreSerialisation public val filter: FilterObject,
+    @SerializedName("filter_conditions") public val filter: FilterObject,
     public var offset: Int,
     public var limit: Int,
     @IgnoreSerialisation public val querySort: QuerySort<Channel> = QuerySort(),
@@ -19,7 +18,6 @@ public class QueryChannelsRequest(
     override var presence: Boolean = false
 
     public val sort: List<Map<String, Any>> = querySort.toDto()
-    public val filter_conditions: Map<String, Any> = filter.toMap()
 
     public fun withMessages(limit: Int): QueryChannelsRequest {
         messageLimit = limit

@@ -3,6 +3,7 @@ package io.getstream.chat.docs.java;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -11,7 +12,6 @@ import io.getstream.chat.android.client.models.Flag;
 import io.getstream.chat.android.client.models.Member;
 import io.getstream.chat.android.client.models.Mute;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 
 import static java.util.Collections.emptyList;
 

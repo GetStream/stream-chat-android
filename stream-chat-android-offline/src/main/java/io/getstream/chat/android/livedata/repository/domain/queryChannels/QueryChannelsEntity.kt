@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.api.models.FilterObject
 
 @Entity(tableName = "stream_channel_query")
 internal data class QueryChannelsEntity(

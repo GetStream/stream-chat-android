@@ -1,16 +1,12 @@
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import io.getstream.chat.android.client.utils.FilterObject
+import com.google.gson.annotations.SerializedName
 
 public data class SearchMessagesRequest(
     val offset: Int,
     val limit: Int,
-    @IgnoreSerialisation
+    @SerializedName("filter_conditions")
     val channelFilter: FilterObject,
-    @IgnoreSerialisation
+    @SerializedName("message_filter_conditions")
     val messageFilter: FilterObject
-) {
-    val filter_conditions: HashMap<String, Any> = channelFilter.toMap()
-    val message_filter_conditions: HashMap<String, Any> = messageFilter.toMap()
-}
+)

@@ -8,11 +8,12 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomUser
@@ -37,7 +38,7 @@ internal class QueryMembersTest {
     private val channelType = "test"
     private val channelId = "channel"
     private val channel = Channel(cid = "$channelType:$channelId", type = channelType, id = channelId)
-    private val filter = FilterObject()
+    private val filter: FilterObject = NeutralFilterObject
     private val sort = QuerySort.desc(Member::createdAt)
     private var onlineUsers = listOf(
         randomUser(),

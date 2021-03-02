@@ -1,11 +1,11 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import io.getstream.chat.android.client.utils.FilterObject
 
 public data class QueryUsersRequest @JvmOverloads constructor(
-    @IgnoreSerialisation
+    @SerializedName("filter_conditions")
     var filter: FilterObject,
     val offset: Int,
     val limit: Int,
@@ -14,5 +14,4 @@ public data class QueryUsersRequest @JvmOverloads constructor(
     var presence: Boolean = false
 ) {
     val sort: List<Map<String, Any>> = querySort.toDto()
-    val filter_conditions: Map<String, Any> = filter.toMap()
 }

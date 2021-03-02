@@ -22,9 +22,9 @@ internal class FilterObjectConverterTest : BaseTest() {
     // @Ignore("Filter object decoding/encoding is not entirely ok")
     fun testEncoding() {
         val converter = FilterObjectConverter()
-        val output = converter.objectToString(data.filter1)
+        val output = converter.objectToString(FilterObject())
         val converted = converter.stringToObject(output)
-        Truth.assertThat(converted.toMap()).isEqualTo(data.filter1.toMap())
-        Truth.assertThat(converted).isEqualTo(data.filter1)
+        Truth.assertThat(converted.toMap()).isEqualTo(FilterObject().toMap())
+        Truth.assertThat(converted).isEqualTo(FilterObject())
     }
 }

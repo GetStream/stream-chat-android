@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
 /**
