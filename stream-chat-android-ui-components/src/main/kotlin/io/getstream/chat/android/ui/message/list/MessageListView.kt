@@ -363,7 +363,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        parseAttr(context, attrs)
         init(context, attrs)
     }
 
@@ -372,11 +371,12 @@ public class MessageListView : ConstraintLayout {
         attrs,
         defStyle
     ) {
-        parseAttr(context, attrs)
         init(context, attrs)
     }
 
     private fun init(context: Context, attr: AttributeSet?) {
+        messageListViewStyle = MessageListViewStyle(context, attr)
+
         binding = StreamUiMessageListViewBinding.inflate(context.inflater, this, true)
 
         initRecyclerView()
@@ -421,10 +421,6 @@ public class MessageListView : ConstraintLayout {
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }
-    }
-
-    private fun parseAttr(context: Context, attrs: AttributeSet?) {
-        messageListViewStyle = MessageListViewStyle(context, attrs)
     }
 
     private fun configureAttributes(attributeSet: AttributeSet) {
