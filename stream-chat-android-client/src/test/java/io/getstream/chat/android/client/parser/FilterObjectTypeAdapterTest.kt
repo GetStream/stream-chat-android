@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonWriter
 import io.getstream.chat.android.client.api.models.AndFilterObject
 import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
+import io.getstream.chat.android.client.api.models.DistinctFilterObject
 import io.getstream.chat.android.client.api.models.EqualsFilterObject
 import io.getstream.chat.android.client.api.models.ExistsFilterObject
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -263,6 +264,12 @@ internal class FilterObjectTypeAdapterTest {
                     )
                 }
             },
+            List(positiveRandomInt(20)) { randomString() }.let { memberIds ->
+                Arguments.of(
+                    DistinctFilterObject(memberIds),
+                    "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}"
+                )
+            }
         )
     }
 }

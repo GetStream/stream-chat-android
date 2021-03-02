@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonWriter
 import io.getstream.chat.android.client.api.models.AndFilterObject
 import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
+import io.getstream.chat.android.client.api.models.DistinctFilterObject
 import io.getstream.chat.android.client.api.models.EqualsFilterObject
 import io.getstream.chat.android.client.api.models.ExistsFilterObject
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -50,5 +51,6 @@ private fun FilterObject.toMap(): Map<*, *> = when (this) {
     is InFilterObject -> mapOf(this.fieldName to mapOf("\$in" to this.values))
     is NotInFilterObject -> mapOf(this.fieldName to mapOf("\$nin" to this.values))
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf("\$autocomplete" to this.value))
+    is DistinctFilterObject -> mapOf("distinct" to true, "members" to this.membeerIds)
     is NeutralFilterObject -> emptyMap<String, String>()
 }

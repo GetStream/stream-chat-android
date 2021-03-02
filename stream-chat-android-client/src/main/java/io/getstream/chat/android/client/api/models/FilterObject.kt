@@ -32,4 +32,6 @@ public data class InFilterObject(val fieldName: String, val values: List<Any>) :
 
 public data class NotInFilterObject(val fieldName: String, val values: List<Any>) : FilterObject()
 
+public data class DistinctFilterObject(val membeerIds: List<String>) : FilterObject()
+
 public object NeutralFilterObject : FilterObject()
