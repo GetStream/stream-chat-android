@@ -2893,23 +2893,6 @@ public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {
 	public static final fun toProgressCallback (Lio/getstream/chat/android/client/uploader/ProgressTracker;)Lio/getstream/chat/android/client/utils/ProgressCallback;
 }
 
-public final class io/getstream/chat/android/client/utils/FilterObject {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/Object;)V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/util/Map;
-	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/client/utils/FilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/utils/FilterObject;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getData ()Ljava/util/Map;
-	public fun hashCode ()I
-	public final fun put (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;
-	public final fun setData (Ljava/util/Map;)V
-	public final fun toMap ()Ljava/util/HashMap;
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (J)V

@@ -33,9 +33,6 @@ internal class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             Date::class.java -> {
                 DateAdapter() as TypeAdapter<T>
             }
-            io.getstream.chat.android.client.utils.FilterObject::class.java -> {
-                FilterObjectAdapter(gson) as TypeAdapter<T>
-            }
             QuerySortAdapter::class.java -> {
                 QuerySortAdapter(gson) as TypeAdapter<T>
             }

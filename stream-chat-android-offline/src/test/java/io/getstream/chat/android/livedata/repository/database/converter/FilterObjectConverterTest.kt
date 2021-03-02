@@ -27,9 +27,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class NewFilterObjectConverterTest {
+internal class FilterObjectConverterTest {
 
-    private val filterObjectConverter = NewFilterObjectConverter()
+    private val filterObjectConverter = FilterObjectConverter()
 
     /** [objectToStringArguments] */
     @ParameterizedTest
