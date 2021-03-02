@@ -37,13 +37,8 @@ public object Filters {
     }
 
     @JvmStatic
-    public fun contains(value: Any): FilterObject {
-        return FilterObject(KEY_CONTAINS, value)
-    }
-
-    @JvmStatic
-    public fun contains(vararg filters: FilterObject): FilterObject {
-        return FilterObject(KEY_CONTAINS, filters)
+    public fun contains(key: String, value: Any): FilterObject {
+        return FilterObject(key, FilterObject(KEY_CONTAINS, value))
     }
 
     @JvmStatic

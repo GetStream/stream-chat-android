@@ -2366,8 +2366,7 @@ public final class io/getstream/chat/android/client/models/Filters {
 	public static final field KEY_OR Ljava/lang/String;
 	public static final fun and ([Lio/getstream/chat/android/client/utils/FilterObject;)Lio/getstream/chat/android/client/utils/FilterObject;
 	public static final fun autocomplete (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/FilterObject;
-	public static final fun contains (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;
-	public static final fun contains ([Lio/getstream/chat/android/client/utils/FilterObject;)Lio/getstream/chat/android/client/utils/FilterObject;
+	public static final fun contains (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;
 	public static final fun distinct (Ljava/util/List;)Lio/getstream/chat/android/client/utils/FilterObject;
 	public static final fun eq (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;
 	public static final fun exists (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/FilterObject;

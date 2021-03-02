@@ -34,7 +34,7 @@ class ChannelTypes(val client: ChatClient) {
             // Search for users with the name Jordan that are part of the red team
             val filter = Filters.and(
                 Filters.eq("name", "Jordan"),
-                Filters.eq("teams", Filters.contains("red"))
+                Filters.contains("teams", "red")
             )
 
             client.queryUsers(QueryUsersRequest(filter, offset = 0, limit = 1)).enqueue { result ->

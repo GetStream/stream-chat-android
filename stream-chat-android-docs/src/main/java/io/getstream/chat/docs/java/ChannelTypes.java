@@ -38,7 +38,7 @@ public class ChannelTypes {
             // Search for users with the name Jordan that are part of the red team
             FilterObject filter = Filters.and(
                     Filters.eq("name", "Jordan"),
-                    Filters.eq("teams", Filters.contains("red"))
+                    Filters.contains("teams", "red")
             );
 
             int offset = 0;
