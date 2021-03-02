@@ -2,11 +2,11 @@ package io.getstream.chat.android.client.api.models
 
 public sealed class FilterObject
 
-public data class AndFilterObject(val filterObjects: List<FilterObject>) : FilterObject()
+public data class AndFilterObject(val filterObjects: Set<FilterObject>) : FilterObject()
 
-public data class OrFilterObject(val filterObjects: List<FilterObject>) : FilterObject()
+public data class OrFilterObject(val filterObjects: Set<FilterObject>) : FilterObject()
 
-public data class NorFilterObject(val filterObjects: List<FilterObject>) : FilterObject()
+public data class NorFilterObject(val filterObjects: Set<FilterObject>) : FilterObject()
 
 public data class ContainsFilterObject(val fieldName: String, val value: Any) : FilterObject()
 
@@ -28,10 +28,10 @@ public data class LessThanFilterObject(val fieldName: String, val value: Any) : 
 
 public data class LessThanOrEqualsFilterObject(val fieldName: String, val value: Any) : FilterObject()
 
-public data class InFilterObject(val fieldName: String, val values: List<Any>) : FilterObject()
+public data class InFilterObject(val fieldName: String, val values: Set<Any>) : FilterObject()
 
-public data class NotInFilterObject(val fieldName: String, val values: List<Any>) : FilterObject()
+public data class NotInFilterObject(val fieldName: String, val values: Set<Any>) : FilterObject()
 
-public data class DistinctFilterObject(val membeerIds: List<String>) : FilterObject()
+public data class DistinctFilterObject(val membeerIds: Set<String>) : FilterObject()
 
 public object NeutralFilterObject : FilterObject()

@@ -185,12 +185,12 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 }
 
 public final class io/getstream/chat/android/client/api/models/AndFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/AndFilterObject;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/AndFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/List;
+	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -222,12 +222,12 @@ public final class io/getstream/chat/android/client/api/models/ContainsFilterObj
 }
 
 public final class io/getstream/chat/android/client/api/models/DistinctFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/DistinctFilterObject;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/DistinctFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMembeerIds ()Ljava/util/List;
+	public final fun getMembeerIds ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -286,14 +286,14 @@ public final class io/getstream/chat/android/client/api/models/GreaterThanOrEqua
 }
 
 public final class io/getstream/chat/android/client/api/models/InFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/InFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/InFilterObject;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/InFilterObject;
+	public final fun component2 ()Ljava/util/Set;
+	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/InFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/InFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/InFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValues ()Ljava/util/List;
+	public final fun getValues ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -340,12 +340,12 @@ public final class io/getstream/chat/android/client/api/models/NonExistsFilterOb
 }
 
 public final class io/getstream/chat/android/client/api/models/NorFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NorFilterObject;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NorFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/List;
+	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -364,25 +364,25 @@ public final class io/getstream/chat/android/client/api/models/NotEqualsFilterOb
 }
 
 public final class io/getstream/chat/android/client/api/models/NotInFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotInFilterObject;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
+	public final fun component2 ()Ljava/util/Set;
+	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotInFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValues ()Ljava/util/List;
+	public final fun getValues ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/api/models/OrFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/OrFilterObject;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/OrFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/List;
+	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -178,7 +178,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.let { values ->
+                List(positiveRandomInt(20)) { randomString() }.toSet().let { values ->
                     Arguments.of(
                         InFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$in\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
@@ -186,7 +186,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
                     Arguments.of(
                         InFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
@@ -194,7 +194,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
+                List(positiveRandomInt(20)) { randomBoolean() }.toSet().let { values ->
                     Arguments.of(
                         InFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
@@ -202,7 +202,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.let { values ->
+                List(positiveRandomInt(20)) { randomString() }.toSet().let { values ->
                     Arguments.of(
                         NotInFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
@@ -210,7 +210,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
                     Arguments.of(
                         NotInFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
@@ -218,7 +218,7 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
+                List(positiveRandomInt(20)) { randomBoolean() }.toSet().let { values ->
                     Arguments.of(
                         NotInFilterObject(fieldName, values),
                         "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
@@ -226,10 +226,10 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
                     Arguments.of(
                         AndFilterObject(
-                            listOf(
+                            setOf(
                                 InFilterObject(fieldName, values),
                                 EqualsFilterObject(fieldName, values.first())
                             )
@@ -239,10 +239,10 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
                     Arguments.of(
                         OrFilterObject(
-                            listOf(
+                            setOf(
                                 InFilterObject(fieldName, values),
                                 EqualsFilterObject(fieldName, values.first())
                             )
@@ -252,10 +252,10 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
                     Arguments.of(
                         NorFilterObject(
-                            listOf(
+                            setOf(
                                 InFilterObject(fieldName, values),
                                 EqualsFilterObject(fieldName, values.first())
                             )
@@ -264,7 +264,7 @@ internal class FilterObjectTypeAdapterTest {
                     )
                 }
             },
-            List(positiveRandomInt(20)) { randomString() }.let { memberIds ->
+            List(positiveRandomInt(20)) { randomString() }.toSet().let { memberIds ->
                 Arguments.of(
                     DistinctFilterObject(memberIds),
                     "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}"
