@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.api.models.GreaterThanOrEqualsFilterObje
 import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.NonExistsFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
@@ -49,4 +50,5 @@ private fun FilterObject.toMap(): Map<*, *> = when (this) {
     is InFilterObject -> mapOf(this.fieldName to mapOf("\$in" to this.values))
     is NotInFilterObject -> mapOf(this.fieldName to mapOf("\$nin" to this.values))
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf("\$autocomplete" to this.value))
+    is NeutralFilterObject -> emptyMap<String, String>()
 }
