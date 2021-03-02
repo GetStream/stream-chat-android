@@ -36,6 +36,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed refreshing channel list after removing member
 
 ### ⬆️ Improved
 
