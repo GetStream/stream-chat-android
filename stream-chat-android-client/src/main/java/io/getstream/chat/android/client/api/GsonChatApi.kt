@@ -104,7 +104,12 @@ internal class GsonChatApi(
         }
     }
 
-    override fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback?): Call<String> {
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback?,
+    ): Call<String> {
         return CoroutineCall(coroutineScope) {
             val result = if (callback != null) {
                 fileUploader.sendImage(
@@ -392,14 +397,15 @@ internal class GsonChatApi(
     override fun updateChannel(
         channelType: String,
         channelId: String,
-        request: UpdateChannelRequest,
+        extraData: Map<String, Any>,
+        updateMessage: Message?,
     ): Call<Channel> {
         return retrofitApi.updateChannel(
             channelType,
             channelId,
             apiKey,
             connectionId,
-            request
+            UpdateChannelRequest(extraData, updateMessage)
         ).map { flattenChannel(it) }
     }
 
