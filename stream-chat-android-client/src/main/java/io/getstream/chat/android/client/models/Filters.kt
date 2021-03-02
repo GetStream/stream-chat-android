@@ -125,4 +125,14 @@ public object Filters {
     public fun autocomplete(field: String, value: String): FilterObject {
         return FilterObject(field, FilterObject(KEY_AUTOCOMPLETE, value))
     }
+
+    @JvmStatic
+    public fun distinct(memberIds: List<String>): FilterObject {
+        return FilterObject(
+            data = mutableMapOf(
+                "distinct" to true,
+                "members" to memberIds
+            ),
+        )
+    }
 }
