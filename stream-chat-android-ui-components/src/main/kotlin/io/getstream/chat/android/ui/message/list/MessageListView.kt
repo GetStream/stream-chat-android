@@ -384,9 +384,7 @@ public class MessageListView : ConstraintLayout {
         initLoadingView()
         initEmptyStateView()
 
-        if (attr != null) {
-            configureAttributes(attr)
-        }
+        configureAttributes(attr)
 
         buffer.subscribe(::handleNewWrapper)
         buffer.active()
@@ -423,7 +421,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private fun configureAttributes(attributeSet: AttributeSet) {
+    private fun configureAttributes(attributeSet: AttributeSet?) {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
