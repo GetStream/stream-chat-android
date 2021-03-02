@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -120,7 +119,7 @@ internal class MessagesApiCallsTests {
                 this.user = user
             }
 
-        val messageFilter = FilterObject("text", "search-text")
+        val messageFilter = Filters.eq("text", "search-text")
         val channelFilter = Filters.eq("cid", "cid")
 
         val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)
@@ -151,7 +150,7 @@ internal class MessagesApiCallsTests {
     @Test
     fun searchMessageError() {
 
-        val messageFilter = FilterObject("text", "search-text")
+        val messageFilter = Filters.eq("text", "search-text")
         val channelFilter = Filters.eq("cid", "cid")
 
         val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)

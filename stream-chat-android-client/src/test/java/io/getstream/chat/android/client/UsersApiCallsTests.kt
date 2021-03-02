@@ -10,10 +10,10 @@ import io.getstream.chat.android.client.api.models.QueryUserListResponse
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.RemoveMembersRequest
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
 import org.junit.Before
@@ -195,7 +195,7 @@ internal class UsersApiCallsTests {
 
         val user = User().apply { id = "a-user" }
 
-        val request = QueryUsersRequest(FilterObject("id", "1"), 0, 1)
+        val request = QueryUsersRequest(Filters.eq("id", "1"), 0, 1)
 
         Mockito.`when`(
             mock.retrofitApi.queryUsers(
