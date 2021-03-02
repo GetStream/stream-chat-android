@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.reactions.internal
 
+import android.os.Build
 import android.view.ViewGroup
 import androidx.annotation.Px
 import androidx.core.view.updateLayoutParams
@@ -36,8 +37,11 @@ internal class ReactionsAdapter(
         private lateinit var reactionItem: ReactionItem
 
         init {
+            val isLollipop = Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1
+            val isProblemDensity = context.resources.displayMetrics.densityDpi == 560
+            val additionalWidth = if (isLollipop && isProblemDensity) 10 else 0
             binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                width = itemSize
+                width = itemSize + additionalWidth
                 height = itemSize
             }
             binding.root.setOnClickListener {
