@@ -60,9 +60,7 @@ import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.extensions.NEVER
 import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.extensions.inOffsetWith
-import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
-import io.getstream.chat.android.livedata.extensions.isVideoMimetype
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
 import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
@@ -1109,7 +1107,10 @@ internal class ChannelControllerImpl(
                 setHidden(false)
             }
             is MessageUpdatedEvent -> {
-                upsertEventMessage(event.message)
+                event.message.apply {
+                    replyTo = _messages.value[replyMessageId]
+                }.let(::upsertEventMessage)
+
                 setHidden(false)
             }
             is MessageDeletedEvent -> {
@@ -1525,6 +1526,10 @@ internal class ChannelControllerImpl(
     internal fun replyMessage(repliedMessage: Message?) {
         _repliedMessage.value = repliedMessage
     }
+
+    private fun String?.isImageMimetype() = this?.contains("image") ?: false
+
+    private fun String?.isVideoMimetype() = this?.contains("video") ?: false
 
     companion object {
         private const val TYPE_IMAGE = "image"

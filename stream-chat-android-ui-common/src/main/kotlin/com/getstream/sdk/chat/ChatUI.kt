@@ -44,7 +44,7 @@ public class ChatUI internal constructor(
             message = "Deprecated constructor, `ChatClient` and `ChatDomain` is not needed " +
                 "anymore to build a `ChatUI` instance",
             replaceWith = ReplaceWith("ChatUI.Builder(appContext)"),
-            level = DeprecationLevel.WARNING,
+            level = DeprecationLevel.ERROR,
         )
         @Suppress("UNUSED_PARAMETER")
         public constructor(

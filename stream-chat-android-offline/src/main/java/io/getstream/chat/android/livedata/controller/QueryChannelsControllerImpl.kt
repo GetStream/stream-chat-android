@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -116,6 +117,14 @@ internal class QueryChannelsControllerImpl(
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
+        } else if (event is NotificationMessageNewEvent) {
+            // It is necessary to add the channel only if it is not already present
+            val channel = event.channel
+
+            if (!queryChannelsSpec.cids.contains(channel.cid) && newChannelEventFilter(channel, filter)) {
+                val channelControllerImpl = domainImpl.channel(channel)
+                channelControllerImpl.updateLiveDataFromChannel(channel)
+            }
         }
 
         if (event is MarkAllReadEvent) {
@@ -329,7 +338,13 @@ internal class QueryChannelsControllerImpl(
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
-            existingChannelMap[channel.cid] = channel
+            if (channel.members.any { member -> member.getUserId() == domainImpl.currentUser.id }) {
+                existingChannelMap[channel.cid] = channel
+            } else {
+                domainImpl.scope.launch {
+                    removeChannel(channel.cid)
+                }
+            }
         }
         _channels.value = existingChannelMap
     }

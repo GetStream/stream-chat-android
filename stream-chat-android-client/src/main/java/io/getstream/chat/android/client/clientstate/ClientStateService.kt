@@ -20,10 +20,6 @@ internal class ClientStateService {
         stateMachine.sendEvent(ClientStateEvent.SetAnonymousUserEvent)
     }
 
-    fun onTokenReceived(token: String) {
-        stateMachine.sendEvent(ClientStateEvent.TokenReceivedEvent(token))
-    }
-
     fun onDisconnectRequested() {
         stateMachine.sendEvent(ClientStateEvent.DisconnectRequestedEvent)
     }
@@ -35,26 +31,15 @@ internal class ClientStateService {
             defaultHandler { state, event -> state.failedToHandleEvent(event) }
 
             state<ClientState.Idle> {
-                onEvent<ClientStateEvent.SetUserEvent> { _, event -> ClientState.User.Pending.WithoutToken(event.user) }
-                onEvent<ClientStateEvent.SetAnonymousUserEvent> { _, _ -> ClientState.Anonymous.Pending.WithoutToken }
+                onEvent<ClientStateEvent.SetUserEvent> { _, event -> ClientState.User.Pending(event.user) }
+                onEvent<ClientStateEvent.SetAnonymousUserEvent> { _, _ -> ClientState.Anonymous.Pending }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
-            state<ClientState.User.Pending.WithoutToken> {
-                onEvent<ClientStateEvent.TokenReceivedEvent> { state, event ->
-                    ClientState.User.Pending.WithToken(
-                        state.user,
-                        event.token
-                    )
-                }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-            }
-
-            state<ClientState.User.Pending.WithToken> {
-                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user, state.token) }
+            state<ClientState.User.Pending> {
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user) }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
             }
@@ -64,7 +49,6 @@ internal class ClientStateService {
                     ClientState.User.Authorized.Disconnected(
                         state.connectionId,
                         state.user,
-                        state.token
                     )
                 }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
@@ -74,23 +58,16 @@ internal class ClientStateService {
             state<ClientState.User.Authorized.Disconnected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event ->
                     ClientState.User.Authorized.Connected(
                         event.connectionId,
                         event.user,
-                        state.token
                     )
                 }
             }
 
-            state<ClientState.Anonymous.Pending.WithoutToken> {
-                onEvent<ClientStateEvent.TokenReceivedEvent> { _, event -> ClientState.Anonymous.Pending.WithToken(event.token) }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-            }
-
-            state<ClientState.Anonymous.Pending.WithToken> {
-                onEvent<ClientStateEvent.ConnectedEvent> { state, event -> ClientState.Anonymous.Authorized.Connected(event.connectionId, event.user, state.token) }
+            state<ClientState.Anonymous.Pending> {
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.Anonymous.Authorized.Connected(event.connectionId, event.user) }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
             }
@@ -100,7 +77,6 @@ internal class ClientStateService {
                     ClientState.Anonymous.Authorized.Disconnected(
                         state.connectionId,
                         state.anonymousUser,
-                        state.token
                     )
                 }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
@@ -110,11 +86,10 @@ internal class ClientStateService {
             state<ClientState.Anonymous.Authorized.Disconnected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { state, event ->
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event ->
                     ClientState.Anonymous.Authorized.Connected(
                         event.connectionId,
                         event.user,
-                        state.token
                     )
                 }
             }
@@ -130,7 +105,6 @@ internal class ClientStateService {
     private sealed class ClientStateEvent {
         data class SetUserEvent(val user: User) : ClientStateEvent()
         object SetAnonymousUserEvent : ClientStateEvent()
-        data class TokenReceivedEvent(val token: String) : ClientStateEvent()
         data class ConnectedEvent(val user: User, val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()
         object DisconnectedEvent : ClientStateEvent()

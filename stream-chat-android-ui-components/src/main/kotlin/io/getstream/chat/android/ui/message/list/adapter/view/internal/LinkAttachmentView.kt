@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
@@ -14,7 +16,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 
 internal class LinkAttachmentView : FrameLayout {
-    internal val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
+    private val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
         .inflate(context.inflater, this, true)
     private var previewUrl: String? = null
 
@@ -49,10 +51,9 @@ internal class LinkAttachmentView : FrameLayout {
             binding.labelContainer.isVisible = false
         }
 
-        val previewUrl = attachment.thumbUrl ?: attachment.imageUrl
-        if (previewUrl != null) {
+        if (attachment.imagePreviewUrl != null) {
             binding.linkPreviewImageView.load(
-                data = previewUrl,
+                data = attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_picture_placeholder,
                 onStart = { binding.progressBar.isVisible = true },
                 onComplete = { binding.progressBar.isVisible = false },
@@ -61,6 +62,13 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.linkPreviewImageView.isVisible = false
             binding.progressBar.isVisible = false
+        }
+    }
+
+    internal fun setTextColor(@ColorInt textColor: Int) {
+        binding.apply {
+            descriptionTextView.setTextColor(textColor)
+            titleTextView.setTextColor(textColor)
         }
     }
 

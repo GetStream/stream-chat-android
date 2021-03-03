@@ -1,16 +1,15 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.parser2.DtoTestData.downstreamJson
-import io.getstream.chat.android.client.parser2.DtoTestData.downstreamJsonWithoutExtraData
-import io.getstream.chat.android.client.parser2.DtoTestData.downstreamMessage
-import io.getstream.chat.android.client.parser2.DtoTestData.downstreamMessageWithoutExtraData
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJson
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJsonWithoutExtraData
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessage
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithoutExtraData
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class DownstreamMessageDtoAdapterTest {
-
     private val parser = MoshiChatParser()
 
     @Test
@@ -26,7 +25,7 @@ internal class DownstreamMessageDtoAdapterTest {
     }
 
     @Test
-    fun `Can't serialize downstream message`() {
+    fun `Can't serialize downstream dto`() {
         assertThrows<RuntimeException> {
             parser.toJson(downstreamMessage)
         }

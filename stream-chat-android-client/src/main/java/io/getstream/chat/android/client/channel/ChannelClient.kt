@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.channel
 
 import androidx.annotation.CheckResult
@@ -93,7 +95,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     override fun create(extraData: Map<String, Any>): Call<Channel> {
-        return client.createChannel(channelType, channelId, emptyList())
+        return client.createChannel(channelType, channelId, extraData)
     }
 
     override fun events(): ChatObservable {
@@ -101,7 +103,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribe with ChatEventListener")
+    @Deprecated("Use subscribe with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
@@ -112,7 +114,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeFor with ChatEventListener")
+    @Deprecated("Use subscribeFor with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribeFor(
         vararg eventTypes: String,
@@ -129,7 +131,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeFor with ChatEventListener")
+    @Deprecated("Use subscribeFor with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
@@ -156,7 +158,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeFor with ChatEventListener")
+    @Deprecated("Use subscribeFor with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
@@ -173,7 +175,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeFor with ChatEventListener")
+    @Deprecated("Use subscribeFor with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
@@ -200,7 +202,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeForSingle with ChatEventListener")
+    @Deprecated("Use subscribeForSingle with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun subscribeForSingle(
         eventType: String,
@@ -217,7 +219,7 @@ public class ChannelClient internal constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("User subscribeForSingle with ChatEventListener")
+    @Deprecated("Use subscribeForSingle with ChatEventListener")
     @SinceKotlin("99999.9")
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,

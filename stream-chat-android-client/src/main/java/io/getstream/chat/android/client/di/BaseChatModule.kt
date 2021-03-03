@@ -15,9 +15,15 @@ import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api2.ChannelApi
+import io.getstream.chat.android.client.api2.DeviceApi
+import io.getstream.chat.android.client.api2.GeneralApi
+import io.getstream.chat.android.client.api2.GuestApi
 import io.getstream.chat.android.client.api2.MessageApi
+import io.getstream.chat.android.client.api2.ModerationApi
 import io.getstream.chat.android.client.api2.MoshiApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.api2.UserApi
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -174,7 +180,14 @@ internal open class BaseChatModule(
             MoshiChatApi(
                 chatConfig.apiKey,
                 gsonChatApi,
+                fileUploader ?: defaultFileUploader,
+                buildRetrofitApi<UserApi>(),
+                buildRetrofitApi<GuestApi>(),
                 buildRetrofitApi<MessageApi>(),
+                buildRetrofitApi<ChannelApi>(),
+                buildRetrofitApi<DeviceApi>(),
+                buildRetrofitApi<ModerationApi>(),
+                buildRetrofitApi<GeneralApi>(),
             )
         } else {
             gsonChatApi

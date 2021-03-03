@@ -502,9 +502,10 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
         /**
          * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#channel-mute">Channel Mute</a>
          */
-        // TODO code in this method doesn't match the CMS, review it
         fun channelMute() {
-            client.muteChannel("channel-type", "channel-id").enqueue { result ->
+            // Mute a channel
+            val channelClient = client.channel("messaging", "general")
+            channelClient.mute().enqueue { result ->
                 if (result.isSuccess) {
                     // Channel is muted
                 } else {
@@ -517,7 +518,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val user = result.data().user
-                        // Mutes contains the list of channel mutes
+                        // Result contains the list of channel mutes
                         val mutes: List<ChannelMute> = user.channelMutes
                     }
                 }

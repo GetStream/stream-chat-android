@@ -36,7 +36,7 @@ public class StorageHelper {
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!
         }
-        val cachedFile = File(context.cacheDir, getFileName(attachmentMetaData))
+        val cachedFile = File(getUniqueCacheFolder(context), attachmentMetaData.getTitleWithExtension())
         context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
             cachedFile.outputStream().use {
                 inputStream.copyTo(it)
@@ -136,8 +136,10 @@ public class StorageHelper {
         return mimeType?.startsWith("video") ?: false
     }
 
-    private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
-        "$FILE_NAME_PREFIX${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
+    private fun getUniqueCacheFolder(context: Context): File =
+        File(context.cacheDir, "$FILE_NAME_PREFIX${dateFormat.format(Date().time)}").also {
+            it.mkdirs()
+        }
 
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"

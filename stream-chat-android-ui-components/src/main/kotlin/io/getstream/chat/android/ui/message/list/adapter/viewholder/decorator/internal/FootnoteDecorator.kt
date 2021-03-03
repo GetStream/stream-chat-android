@@ -25,57 +25,21 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteV
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.OnlyMediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithFileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.PlainTextWithMediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: Boolean,
 ) : BaseDecorator() {
 
-    override fun decoratePlainTextWithFileAttachmentsMessage(
-        viewHolder: PlainTextWithFileAttachmentsViewHolder,
+    override fun decorateTextAndAttachmentsMessage(
+        viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupFootnote(
         viewHolder.binding.footnote,
         viewHolder.binding.root,
         viewHolder.binding.threadGuideline,
         viewHolder.binding.messageContainer,
-        data,
-    )
-
-    override fun decorateOnlyFileAttachmentsMessage(
-        viewHolder: OnlyFileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) = setupFootnote(
-        viewHolder.binding.footnote,
-        viewHolder.binding.root,
-        viewHolder.binding.threadGuideline,
-        viewHolder.binding.fileAttachmentsView,
-        data,
-    )
-
-    override fun decoratePlainTextWithMediaAttachmentsMessage(
-        viewHolder: PlainTextWithMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) = setupFootnote(
-        viewHolder.binding.footnote,
-        viewHolder.binding.root,
-        viewHolder.binding.threadGuideline,
-        viewHolder.binding.messageContainer,
-        data,
-    )
-
-    override fun decorateOnlyMediaAttachmentsMessage(
-        viewHolder: OnlyMediaAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) = setupFootnote(
-        viewHolder.binding.footnote,
-        viewHolder.binding.root,
-        viewHolder.binding.threadGuideline,
-        viewHolder.binding.mediaAttachmentsGroupView,
         data,
     )
 

@@ -8,6 +8,8 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -22,17 +24,10 @@ import io.getstream.chat.android.test.randomFiles
 import io.getstream.chat.android.test.randomImageFile
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.Verify
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.`with message`
-import org.amshove.kluent.called
-import org.amshove.kluent.calling
 import org.amshove.kluent.invoking
-import org.amshove.kluent.on
-import org.amshove.kluent.that
-import org.amshove.kluent.was
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -42,6 +37,7 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Ignore
+@Suppress("DEPRECATION_ERROR")
 internal class SendMessageWithAttachmentsImplTest {
 
     val channelController: ChannelControllerImpl = mock()
@@ -51,8 +47,8 @@ internal class SendMessageWithAttachmentsImplTest {
     @Before
     fun setup() {
         shadowOf(MimeTypeMap.getSingleton()).addExtensionMimeTypMapping("jpg", "image/jpeg")
-        runBlocking { When calling channelController.sendMessage(any()) doAnswer { Result(it.arguments[0] as Message) } }
-        When calling chatDomain.channel(any<String>()) doReturn channelController
+        runBlocking { whenever(channelController.sendMessage(any())) doAnswer { Result(it.arguments[0] as Message) } }
+        whenever(chatDomain.channel(any<String>())) doReturn channelController
     }
 
     @Test
@@ -75,7 +71,7 @@ internal class SendMessageWithAttachmentsImplTest {
             val badFile = randomFile()
             val files = randomFiles()
             val expectedResult = Result<Message>(badFile.toCharError())
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingFiles(files)
             channelController.configureFailureResultSendingFile(badFile)
 
@@ -95,7 +91,7 @@ internal class SendMessageWithAttachmentsImplTest {
             val badImage = randomImageFile()
             val images = randomFiles { randomImageFile() }
             val expectedResult = Result<Message>(badImage.toCharError())
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingImages(images)
             channelController.configureFailureResultSendingImage(badImage)
 
@@ -124,7 +120,7 @@ internal class SendMessageWithAttachmentsImplTest {
                         ).toMutableList()
                 )
             )
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingFiles(files)
 
             val result = sendMessageWithAttachemen(cid, message, files).execute()
@@ -152,7 +148,7 @@ internal class SendMessageWithAttachmentsImplTest {
                         ).toMutableList()
                 )
             )
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingImages(images)
 
             val result = sendMessageWithAttachemen(cid, message, images).execute()
@@ -186,14 +182,14 @@ internal class SendMessageWithAttachmentsImplTest {
                         ).toMutableList()
                 )
             )
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingImages(images)
 
             val result = sendMessageWithAttachemen(cid, message, images, transformationSpy).execute()
 
             result `should be equal to result` expectedResult
             images.forEach {
-                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
+                verify(transformationSpy).invoke(any(), eq(it))
             }
         }
     }
@@ -223,14 +219,14 @@ internal class SendMessageWithAttachmentsImplTest {
                         ).toMutableList()
                 )
             )
-            When calling chatDomain.scope doReturn this
+            whenever(chatDomain.scope) doReturn this
             channelController.configureSuccessResultSendingFiles(files)
 
             val result = sendMessageWithAttachemen(cid, message, files, transformationSpy).execute()
 
             result `should be equal to result` expectedResult
             files.forEach {
-                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
+                verify(transformationSpy).invoke(any(), eq(it))
             }
         }
     }
@@ -257,7 +253,7 @@ private suspend fun ChannelControllerImpl.configureFailureResultSendingFile(file
 }
 
 private suspend fun ChannelControllerImpl.configureResultSendingFile(file: File, result: Result<String>) {
-    When calling sendFile(file) doReturn result
+    whenever(sendFile(file)) doReturn result
 }
 
 private suspend fun ChannelControllerImpl.configureSuccessResultSendingImages(files: List<File>) {
@@ -273,5 +269,5 @@ private suspend fun ChannelControllerImpl.configureFailureResultSendingImage(fil
 }
 
 private suspend fun ChannelControllerImpl.configureResultSendingImage(file: File, result: Result<String>) {
-    When calling sendImage(file) doReturn result
+    whenever(sendImage(file)) doReturn result
 }

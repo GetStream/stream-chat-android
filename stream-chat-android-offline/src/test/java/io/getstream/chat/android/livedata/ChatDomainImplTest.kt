@@ -34,7 +34,7 @@ internal class ChatDomainImplTest {
             on { userDao() } doReturn mock()
             on { channelConfigDao() } doReturn mock()
             on { channelStateDao() } doReturn mock()
-            on { queryChannelsQDao() } doReturn mock()
+            on { queryChannelsDao() } doReturn mock()
             on { messageDao() } doReturn mock()
             on { reactionDao() } doReturn mock()
             on { syncStateDao() } doReturn mock()

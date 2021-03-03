@@ -1764,6 +1764,7 @@ public class com/getstream/sdk/chat/utils/exomedia/util/TimeFormatUtil {
 
 public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt {
 	public static final fun getDisplayableName (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
+	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {

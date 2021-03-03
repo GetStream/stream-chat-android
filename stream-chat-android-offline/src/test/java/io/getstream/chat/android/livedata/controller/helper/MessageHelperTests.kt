@@ -2,11 +2,10 @@ package io.getstream.chat.android.livedata.controller.helper
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.livedata.randomAttachment
 import io.getstream.chat.android.livedata.randomMessage
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -81,7 +80,7 @@ internal class MessageHelperTests {
             attachments = mutableListOf(newAttachment),
             updatedAt = Date(2000L)
         )
-        When calling attachmentHelper.hasValidImageUrl(oldAttachment) doReturn false
+        whenever(attachmentHelper.hasValidImageUrl(oldAttachment)) doReturn false
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
 
@@ -98,7 +97,7 @@ internal class MessageHelperTests {
             attachments = mutableListOf(oldAttachment.copy(imageUrl = "SomeNewUrl")),
             updatedAt = Date(2000L)
         )
-        When calling attachmentHelper.hasValidImageUrl(oldAttachment) doReturn true
+        whenever(attachmentHelper.hasValidImageUrl(oldAttachment)) doReturn true
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
 

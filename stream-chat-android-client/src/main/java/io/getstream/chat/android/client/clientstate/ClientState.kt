@@ -5,45 +5,30 @@ private typealias UserModel = io.getstream.chat.android.client.models.User
 internal sealed class ClientState {
     object Idle : ClientState()
     sealed class Anonymous : ClientState() {
-        sealed class Pending : Anonymous() {
-            object WithoutToken : Pending()
-            class WithToken(val token: String) : Pending()
-        }
+        object Pending : Anonymous()
 
         sealed class Authorized(
             val anonymousUser: UserModel,
-            val token: String,
             val connectionId: String
         ) : Anonymous() {
-            class Connected(connectionId: String, anonymousUser: UserModel, token: String) :
-                Authorized(anonymousUser, token, connectionId)
+            class Connected(connectionId: String, anonymousUser: UserModel) :
+                Authorized(anonymousUser, connectionId)
 
-            class Disconnected(connectionId: String, anonymousUser: UserModel, token: String) :
-                Authorized(anonymousUser, token, connectionId)
+            class Disconnected(connectionId: String, anonymousUser: UserModel) :
+                Authorized(anonymousUser, connectionId)
         }
     }
 
     sealed class User(val user: UserModel) : ClientState() {
-        sealed class Pending(user: UserModel) : User(user) {
-            class WithToken(user: UserModel, val token: String) : Pending(user)
-            class WithoutToken(user: UserModel) : Pending(user)
+        class Pending(user: UserModel) : User(user)
+
+        sealed class Authorized(user: UserModel, val connectionId: String) : User(user) {
+            class Connected(connectionId: String, user: UserModel) :
+                Authorized(user, connectionId)
+
+            class Disconnected(connectionId: String, user: UserModel) :
+                Authorized(user, connectionId)
         }
-
-        sealed class Authorized(user: UserModel, val token: String, val connectionId: String) : User(user) {
-            class Connected(connectionId: String, user: UserModel, token: String) :
-                Authorized(user, token, connectionId)
-
-            class Disconnected(connectionId: String, user: UserModel, token: String) :
-                Authorized(user, token, connectionId)
-        }
-    }
-
-    internal fun tokenOrError(): String = when (this) {
-        is User.Pending.WithToken -> token
-        is User.Authorized -> token
-        is Anonymous.Pending.WithToken -> token
-        is Anonymous.Authorized -> token
-        else -> error("This state doesn't contain token!")
     }
 
     internal fun userOrError(): UserModel = when (this) {

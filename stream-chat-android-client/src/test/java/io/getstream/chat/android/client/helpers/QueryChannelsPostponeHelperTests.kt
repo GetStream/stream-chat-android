@@ -12,10 +12,8 @@ import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
-import org.amshove.kluent.When
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.`should be`
-import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,11 +35,10 @@ internal class QueryChannelsPostponeHelperTests {
     @Test
     fun `Given authorized user state When query channel Should return channel from api`() {
         val expectedResult = Mother.randomChannel()
-        When calling api.queryChannel(any(), any(), any()) doReturn expectedResult.asCall()
-        When calling clientStateService.state doReturn ClientState.User.Authorized.Connected(
+        whenever(api.queryChannel(any(), any(), any())) doReturn expectedResult.asCall()
+        whenever(clientStateService.state) doReturn ClientState.User.Authorized.Connected(
             randomString(),
             Mother.randomUser(),
-            randomString()
         )
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().data()
@@ -53,7 +50,7 @@ internal class QueryChannelsPostponeHelperTests {
     @Test
     fun `Given idle state When query channel Should return a Error Call`() {
         val expectedErrorResult = "User must be set before querying channels"
-        When calling clientStateService.state doReturn ClientState.Idle
+        whenever(clientStateService.state) doReturn ClientState.Idle
 
         val result = sut.queryChannel("channelType", "channelId", mock())
         result `should be instance of` ErrorCall::class
@@ -62,8 +59,9 @@ internal class QueryChannelsPostponeHelperTests {
 
     @Test
     fun `Given long pending state When query channel Should return a Error Call`() {
-        val expectedErrorResult = "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
-        When calling clientStateService.state doReturn ClientState.User.Pending.WithoutToken(Mother.randomUser())
+        val expectedErrorResult =
+            "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
+        whenever(clientStateService.state) doReturn ClientState.User.Pending(Mother.randomUser())
 
         val result = sut.queryChannel("channelType", "channelId", mock())
         result `should be instance of` ErrorCall::class
@@ -75,8 +73,8 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedResult = Mother.randomChannel()
         whenever(api.queryChannel(any(), any(), any())).thenReturn(expectedResult.asCall())
         whenever(clientStateService.state)
-            .thenReturn(ClientState.User.Pending.WithoutToken(mock()))
-            .thenReturn(ClientState.User.Authorized.Connected("connId", mock(), "token"))
+            .thenReturn(ClientState.User.Pending(mock()))
+            .thenReturn(ClientState.User.Authorized.Connected("connId", mock()))
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().data()
 

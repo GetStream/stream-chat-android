@@ -11,6 +11,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -38,8 +39,6 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.When
-import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -152,7 +151,7 @@ internal open class BaseDomainTest2 {
                 Result(data.reaction1)
             )
         }
-        When calling client.connectUser(any(), any<String>()) doAnswer {
+        whenever(client.connectUser(any(), any<String>())) doAnswer {
             TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
         }
 

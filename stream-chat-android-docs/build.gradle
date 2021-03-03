@@ -1,23 +1,17 @@
 import com.getstream.sdk.chat.Dependencies
-import com.getstream.sdk.chat.Configuration
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
-android {
-    compileSdkVersion Configuration.compileSdkVersion
+apply from: "${rootDir}/scripts/android.gradle"
 
+android {
     defaultConfig {
         applicationId "io.getstream.chat.docs"
-        minSdkVersion Configuration.minSdkVersion
-        targetSdkVersion Configuration.targetSdkVersion
-        versionCode gitVersioner.versionCode
-        versionName gitVersioner.versionName
-        ndkVersion "21.3.6528147"
     }
 
-    signingConfigs{
+    signingConfigs {
         release {
             storeFile rootProject.file('.sign/debug.keystore')
             storePassword 'android'
@@ -49,13 +43,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 
     sourceSets.all {
         it.java.srcDir "src/$it.name/kotlin"
@@ -89,5 +76,7 @@ dependencies {
     implementation Dependencies.constraintLayout
     implementation Dependencies.fragmentKtx
     implementation Dependencies.kotlinStdLib
+    implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
+    implementation Dependencies.firebaseMessaging
 }

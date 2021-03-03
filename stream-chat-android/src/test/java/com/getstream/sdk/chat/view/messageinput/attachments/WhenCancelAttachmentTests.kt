@@ -5,14 +5,13 @@ import com.getstream.sdk.chat.createAttachment
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.verify
-import org.amshove.kluent.When
-import org.amshove.kluent.any
-import org.amshove.kluent.calling
+import com.nhaarman.mockitokotlin2.whenever
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
@@ -26,7 +25,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), false)
 
         sut.selectedAttachments.contains(attachment) shouldBeEqualTo false
     }
@@ -40,7 +39,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), true)
 
         verify(selectedMediaAttachmentAdapter).removeAttachment(attachment)
     }
@@ -54,7 +53,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenMediaSelectedAttachment(attachment)
             .please()
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), true)
 
         verify(totalMediaAttachmentAdapter).unselectAttachment(attachment)
     }
@@ -68,7 +67,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .please()
         reset(selectedFileAttachmentAdapter)
 
-        sut.cancelAttachment(attachment, mock())
+        sut.cancelAttachment(attachment, mock(), false)
 
         verify(selectedFileAttachmentAdapter).setAttachments(argThat { !contains(attachment) })
     }
@@ -77,8 +76,8 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
         private val attachmentsController = sut
 
         fun givenMediaAttachmentsState(totalMediaAttachments: List<AttachmentMetaData>): Fixture {
-            When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
-            When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
+            whenever(storageHelper.getMediaAttachments(any())) doReturn totalMediaAttachments
+            whenever(permissionHelper.isGrantedStoragePermissions(any())) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
             return this
         }
@@ -89,9 +88,11 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
         }
 
         fun givenFileSelectedAttachment(selectedAttachments: List<AttachmentMetaData>): Fixture {
-            When calling storageHelper.getAttachmentsFromUriList(
-                any(),
-                any()
+            whenever(
+                storageHelper.getAttachmentsFromUriList(
+                    any(),
+                    any()
+                )
             ) doReturn selectedAttachments
             sut.selectAttachmentsFromUriList(listOf(Uri.EMPTY))
             return this

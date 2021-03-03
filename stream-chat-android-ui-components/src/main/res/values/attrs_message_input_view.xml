@@ -8,7 +8,6 @@
         <attr name="streamUiAttachButtonIconColor" format="color|reference" />
         <attr name="streamUiAttachButtonIconPressedColor" format="color|reference" />
         <attr name="streamUiAttachButtonIconDisabledColor" format="color|reference" />
-        <attr name="streamUiAttachButtonSelectedIconColor" format="color|reference" />
 
         <!--Lightning Button-->
         <attr name="streamUiLightningButtonEnabled" format="boolean" />
