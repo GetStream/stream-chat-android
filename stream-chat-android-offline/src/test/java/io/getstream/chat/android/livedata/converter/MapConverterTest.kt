@@ -20,7 +20,7 @@ internal class MapConverterTest : BaseTest() {
     @Test
     fun testEncoding() {
         val converter = MapConverter()
-        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id))
+        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0))
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         Truth.assertThat(converted).isEqualTo(readMap)
