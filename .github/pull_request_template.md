@@ -8,6 +8,14 @@ _Describe why we are making this change_
 
 _Provide a description of the implementation_
 
+### 🎨 UI Changes
+
+_ Add relevant screenshots_
+
+| Before | After |
+| --- | --- |
+| img | img |
+
 ### 🧪 Testing
 
 _Explain how this change can be tested (or why it can't be tested)_
