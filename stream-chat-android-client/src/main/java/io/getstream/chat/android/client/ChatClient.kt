@@ -5,6 +5,7 @@ package io.getstream.chat.android.client
 import android.content.Context
 import android.util.Base64
 import androidx.annotation.CheckResult
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -1127,7 +1128,8 @@ public class ChatClient internal constructor(
         return runCatching {
             when (clientStateService.state) {
                 is ClientState.User.Pending,
-                is ClientState.User.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                is ClientState.User.Authorized,
+                -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()
@@ -1264,6 +1266,8 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var httpProtocol: String = PROTOCOL_HTTPS
+        private var wsProtocol: String = PROTOCOL_WSS
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1304,6 +1308,13 @@ public class ChatClient internal constructor(
             warmUp = false
         }
 
+        @VisibleForTesting
+        public fun disableTls(): Builder {
+            httpProtocol = PROTOCOL_HTTP
+            wsProtocol = PROTOCOL_WS
+            return this
+        }
+
         public fun baseUrl(value: String): Builder {
             var baseUrl = value
             if (baseUrl.startsWith("https://")) {
@@ -1342,9 +1353,9 @@ public class ChatClient internal constructor(
 
             val config = ChatClientConfig(
                 apiKey,
-                "https://$baseUrl/",
-                "https://$cdnUrl/",
-                "wss://$baseUrl/",
+                "$httpProtocol$baseUrl/",
+                "$httpProtocol$cdnUrl/",
+                "$wsProtocol$baseUrl/",
                 baseTimeout,
                 cdnTimeout,
                 warmUp,
@@ -1373,6 +1384,12 @@ public class ChatClient internal constructor(
 
     public companion object {
         private const val VERSION_PREFIX = "stream-chat-android-"
+
+        private const val PROTOCOL_HTTP = "http://"
+        private const val PROTOCOL_HTTPS = "https://"
+        private const val PROTOCOL_WS = "ws://"
+        private const val PROTOCOL_WSS = "wss://"
+
         private var instance: ChatClient? = null
 
         @JvmField

@@ -110,6 +110,8 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.okhttpMockWebserver
+    testImplementation Dependencies.okhttpTls
     testImplementation Dependencies.truth
 
     // Instrumentation tests

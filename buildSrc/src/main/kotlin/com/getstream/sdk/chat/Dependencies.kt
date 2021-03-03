@@ -165,6 +165,7 @@ object Dependencies {
     const val okhttp = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
     const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
     const val okhttpMockWebserver = "com.squareup.okhttp3:mockwebserver:$OKHTTP_VERSION"
+    const val okhttpTls = "com.squareup.okhttp3:okhttp-tls:$OKHTTP_VERSION"
     const val photodraweeview = "me.relex:photodraweeview:$PHOTODRAWEEVIEW_VERSION"
     const val photoview = "com.github.chrisbanes:PhotoView:$PHOTOVIEW_VERSION"
     const val retrofit = "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
