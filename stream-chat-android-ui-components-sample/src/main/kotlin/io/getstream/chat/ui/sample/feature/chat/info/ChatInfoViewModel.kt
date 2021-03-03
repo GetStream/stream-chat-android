@@ -42,7 +42,7 @@ class ChatInfoViewModel(
                     _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
 
                     _state.addSource(channelController.members) { memberList ->
-                        //Updates only if the user state is already set
+                        // Updates only if the user state is already set
                         memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
                             _state.value = _state.value?.copy(member = member)
                         }
