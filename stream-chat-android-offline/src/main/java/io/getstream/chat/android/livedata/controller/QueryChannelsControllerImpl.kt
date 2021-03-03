@@ -338,7 +338,13 @@ internal class QueryChannelsControllerImpl(
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
-            existingChannelMap[channel.cid] = channel
+            if (channel.members.any { member -> member.getUserId() == domainImpl.currentUser.id }) {
+                existingChannelMap[channel.cid] = channel
+            } else {
+                domainImpl.scope.launch {
+                    removeChannel(channel.cid)
+                }
+            }
         }
         _channels.value = existingChannelMap
     }
