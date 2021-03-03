@@ -1287,7 +1287,7 @@ internal class ChannelControllerImpl(
          * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
          * to show in the channel list.
          */
-        val incomingUserRead = incomingUserIdToReadMap[domainImpl.currentUser.id] ?: return
+        val incomingUserRead = incomingUserIdToReadMap[currentUserId] ?: return
 
         // the previous last Read date that is most current
         val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
