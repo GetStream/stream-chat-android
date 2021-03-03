@@ -6,6 +6,7 @@ import io.getstream.chat.android.livedata.repository.database.converter.MapConve
 import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
 import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
 import org.junit.Test
+import java.util.Date
 
 internal class MapConverterTest : BaseTest() {
     // read maps
