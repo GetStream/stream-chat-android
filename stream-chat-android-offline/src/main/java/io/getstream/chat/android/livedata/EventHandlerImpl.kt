@@ -404,9 +404,9 @@ internal class EventHandlerImpl(
                 is ChannelUserUnbannedEvent,
                 is UserUpdatedEvent,
                 is UserDeletedEvent,
-                is UserPresenceChangedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
+                is UserPresenceChangedEvent,
                 -> Unit
             }.exhaustive
         }
@@ -459,6 +459,22 @@ internal class EventHandlerImpl(
             domainImpl.allActiveChannels().forEach { channelController ->
                 channelController.handleEvent(markAllRead)
             }
+        }
+
+        // User presence change applies to all active channels with that user
+        sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
+            val event = userPresenceChanged as UserPresenceChangedEvent
+
+            domainImpl.allActiveChannels()
+                .filter { channelControllerImpl ->
+                    channelControllerImpl.members
+                        .value
+                        ?.map { member -> member.user.id }
+                        ?.contains(event.user.id) == true
+                }
+                .forEach { channelController ->
+                    channelController.handleEvent(userPresenceChanged)
+                }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
