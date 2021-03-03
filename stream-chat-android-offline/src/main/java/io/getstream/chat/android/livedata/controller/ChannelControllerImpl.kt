@@ -1206,7 +1206,7 @@ internal class ChannelControllerImpl(
         // members and watchers have users
         val members = _members.value
         val watchers = _watchers.value
-        val member = members[userId]
+        val member = members[userId]?.copy()
         val watcher = watchers[userId]
         if (member != null) {
             member.user = user
