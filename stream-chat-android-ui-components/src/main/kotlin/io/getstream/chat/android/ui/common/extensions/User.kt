@@ -11,7 +11,7 @@ public fun User.getLastSeenText(context: Context): String {
         return context.getString(R.string.stream_ui_message_list_header_online)
     }
 
-    (lastActive ?: createdAt)?.let { date ->
+    (updatedAt ?: lastActive ?: createdAt)?.let { date ->
         return context.getString(
             R.string.stream_ui_message_list_header_last_seen,
             DateUtils.getRelativeTimeSpanString(date.time).toString()

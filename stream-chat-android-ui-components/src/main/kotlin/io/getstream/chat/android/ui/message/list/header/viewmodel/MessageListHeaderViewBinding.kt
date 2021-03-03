@@ -23,6 +23,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         view.setTitle(it.getDisplayName(view.context))
         view.setAvatar(it)
     }
+
     online.observe(lifecycle) { isOnline ->
         if (isOnline) {
             view.showOnlineStateSubtitle()
@@ -30,6 +31,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
             view.showSearchingForNetworkLabel()
         }
     }
+
     typingUsers.observe(lifecycle, view::showTypingStateLabel)
 
     activeThread.observe(lifecycle) { message ->
@@ -49,11 +51,11 @@ private fun getOnlineStateSubtitle(context: Context, members: List<Member>): Str
     val users = members.map { member -> member.user }.filterCurrentUser()
     if (users.isEmpty()) return String.EMPTY
 
-    if (users.size == 1) {
-        return users.first().getLastSeenText(context)
+    return if (users.size == 1) {
+         users.first().getLastSeenText(context)
+    } else {
+        getGroupSubtitle(context, members)
     }
-
-    return getGroupSubtitle(context, members)
 }
 
 private fun List<User>.filterCurrentUser(): List<User> {
