@@ -1271,9 +1271,7 @@ internal class ChannelControllerImpl(
     }
 
     fun upsertMembers(members: List<Member>) {
-        val oldMembers = _members.value + members.associateBy { it.user.id }
-
-        _members.value += oldMembers
+        _members.value = _members.value + members.associateBy { it.user.id }
     }
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))

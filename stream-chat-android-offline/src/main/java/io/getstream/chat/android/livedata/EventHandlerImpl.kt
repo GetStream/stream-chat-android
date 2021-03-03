@@ -215,9 +215,6 @@ internal class EventHandlerImpl(
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
-                is UserPresenceChangedEvent -> {
-                    batch.addUser(event.user)
-                }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
@@ -409,6 +406,7 @@ internal class EventHandlerImpl(
                 is UserDeletedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
+                is UserPresenceChangedEvent,
                 -> Unit
             }.exhaustive
         }
