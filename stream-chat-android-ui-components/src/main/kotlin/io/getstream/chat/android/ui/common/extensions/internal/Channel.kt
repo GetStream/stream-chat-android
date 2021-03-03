@@ -9,10 +9,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isFailed

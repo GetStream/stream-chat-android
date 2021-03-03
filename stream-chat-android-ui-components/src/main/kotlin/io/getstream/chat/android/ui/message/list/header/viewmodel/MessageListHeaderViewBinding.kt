@@ -52,7 +52,7 @@ private fun getOnlineStateSubtitle(context: Context, members: List<Member>): Str
     if (users.isEmpty()) return String.EMPTY
 
     return if (users.size == 1) {
-         users.first().getLastSeenText(context)
+        users.first().getLastSeenText(context)
     } else {
         getGroupSubtitle(context, members)
     }

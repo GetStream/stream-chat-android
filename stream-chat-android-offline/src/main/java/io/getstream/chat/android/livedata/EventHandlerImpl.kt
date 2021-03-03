@@ -475,8 +475,8 @@ internal class EventHandlerImpl(
                         ?.contains(event.user.id) == true
                 }
                 .forEach { channelController ->
-                channelController.handleEvent(userPresenceChanged)
-            }
+                    channelController.handleEvent(userPresenceChanged)
+                }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
