@@ -3,11 +3,11 @@ package io.getstream.chat.android.client.parser
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import io.getstream.chat.android.client.parser.adapters.QuerySortAdapter
-import io.getstream.chat.android.client.utils.FilterObject
 import java.util.Date
 
 internal class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
@@ -33,11 +33,14 @@ internal class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             Date::class.java -> {
                 DateAdapter() as TypeAdapter<T>
             }
-            FilterObject::class.java -> {
+            io.getstream.chat.android.client.utils.FilterObject::class.java -> {
                 FilterObjectAdapter(gson) as TypeAdapter<T>
             }
             QuerySortAdapter::class.java -> {
                 QuerySortAdapter(gson) as TypeAdapter<T>
+            }
+            FilterObject::class.java -> {
+                FilterObjectTypeAdapter(gson) as TypeAdapter<T>
             }
             else -> {
                 null

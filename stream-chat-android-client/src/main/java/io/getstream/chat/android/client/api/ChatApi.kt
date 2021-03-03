@@ -1,14 +1,12 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
-import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
@@ -141,7 +139,8 @@ internal interface ChatApi {
     fun updateChannel(
         channelType: String,
         channelId: String,
-        request: UpdateChannelRequest,
+        extraData: Map<String, Any>,
+        updateMessage: Message?,
     ): Call<Channel>
 
     @CheckResult
@@ -251,7 +250,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse>
+    ): Call<Unit>
 
     @CheckResult
     fun unBanUser(
@@ -259,7 +258,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse>
+    ): Call<Unit>
 
     @CheckResult
     fun sendEvent(

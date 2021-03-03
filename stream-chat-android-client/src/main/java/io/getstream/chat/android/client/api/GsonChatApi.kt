@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
 import io.getstream.chat.android.client.api.models.ChannelResponse
-import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.GetSyncHistory
 import io.getstream.chat.android.client.api.models.GuestUserRequest
 import io.getstream.chat.android.client.api.models.HideChannelRequest
@@ -105,7 +104,12 @@ internal class GsonChatApi(
         }
     }
 
-    override fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback?): Call<String> {
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback?,
+    ): Call<String> {
         return CoroutineCall(coroutineScope) {
             val result = if (callback != null) {
                 fileUploader.sendImage(
@@ -393,14 +397,15 @@ internal class GsonChatApi(
     override fun updateChannel(
         channelType: String,
         channelId: String,
-        request: UpdateChannelRequest,
+        extraData: Map<String, Any>,
+        updateMessage: Message?,
     ): Call<Channel> {
         return retrofitApi.updateChannel(
             channelType,
             channelId,
             apiKey,
             connectionId,
-            request
+            UpdateChannelRequest(extraData, updateMessage)
         ).map { flattenChannel(it) }
     }
 
@@ -621,7 +626,7 @@ internal class GsonChatApi(
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse> {
+    ): Call<Unit> {
         return retrofitApi.banUser(
             apiKey = apiKey,
             connectionId = connectionId,
@@ -633,7 +638,7 @@ internal class GsonChatApi(
                 channelId = channelId,
                 shadow = shadow,
             )
-        )
+        ).map { Unit }
     }
 
     override fun unBanUser(
@@ -641,7 +646,7 @@ internal class GsonChatApi(
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<CompletableResponse> {
+    ): Call<Unit> {
         return retrofitApi.unBanUser(
             apiKey = apiKey,
             connectionId = connectionId,
@@ -649,7 +654,7 @@ internal class GsonChatApi(
             channelId = channelId,
             channelType = channelType,
             shadow = shadow,
-        )
+        ).map { Unit }
     }
 
     override fun sendEvent(

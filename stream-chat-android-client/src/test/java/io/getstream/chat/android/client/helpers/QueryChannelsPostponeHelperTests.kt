@@ -39,7 +39,6 @@ internal class QueryChannelsPostponeHelperTests {
         whenever(clientStateService.state) doReturn ClientState.User.Authorized.Connected(
             randomString(),
             Mother.randomUser(),
-            randomString()
         )
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().data()
@@ -62,7 +61,7 @@ internal class QueryChannelsPostponeHelperTests {
     fun `Given long pending state When query channel Should return a Error Call`() {
         val expectedErrorResult =
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
-        whenever(clientStateService.state) doReturn ClientState.User.Pending.WithoutToken(Mother.randomUser())
+        whenever(clientStateService.state) doReturn ClientState.User.Pending(Mother.randomUser())
 
         val result = sut.queryChannel("channelType", "channelId", mock())
         result `should be instance of` ErrorCall::class
@@ -74,8 +73,8 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedResult = Mother.randomChannel()
         whenever(api.queryChannel(any(), any(), any())).thenReturn(expectedResult.asCall())
         whenever(clientStateService.state)
-            .thenReturn(ClientState.User.Pending.WithoutToken(mock()))
-            .thenReturn(ClientState.User.Authorized.Connected("connId", mock(), "token"))
+            .thenReturn(ClientState.User.Pending(mock()))
+            .thenReturn(ClientState.User.Authorized.Connected("connId", mock()))
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().data()
 

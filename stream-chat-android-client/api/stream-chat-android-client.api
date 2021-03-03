@@ -546,21 +546,30 @@ public final class io/getstream/chat/android/client/controllers/ChannelControlle
 
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
 	public static final field API_KEY_NOT_FOUND Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field AUTHENTICATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field CANT_PARSE_CONNECTION_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field CANT_PARSE_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field Companion Lio/getstream/chat/android/client/errors/ChatErrorCode$Companion;
 	public static final field INVALID_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NETWORK_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NO_ERROR_BODY Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field PARSER_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field SOCKET_CLOSED Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field SOCKET_FAILURE Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_DATE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field TOKEN_EXPIRED Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_NOT_VALID Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_SIGNATURE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field UNABLE_TO_PARSE_SOCKET_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field UNDEFINED_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public final fun getCode ()I
 	public final fun getDescription ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static fun values ()[Lio/getstream/chat/android/client/errors/ChatErrorCode;
+}
+
+public final class io/getstream/chat/android/client/errors/ChatErrorCode$Companion {
+	public final fun isAuthenticationError (I)Z
 }
 
 public final class io/getstream/chat/android/client/errors/ChatNetworkError : io/getstream/chat/android/client/errors/ChatError {

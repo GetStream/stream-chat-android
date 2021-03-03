@@ -1,3 +1,8 @@
 package io.getstream.chat.android.client.api.models
 
-internal data class HideChannelRequest(val clearHistory: Boolean = false)
+import com.google.gson.annotations.SerializedName
+
+internal data class HideChannelRequest(
+    @SerializedName("clear_history")
+    val clearHistory: Boolean = false,
+)
