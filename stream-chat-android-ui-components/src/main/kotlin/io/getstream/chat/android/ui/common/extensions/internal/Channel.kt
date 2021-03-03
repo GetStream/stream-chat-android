@@ -46,37 +46,6 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
         unreadCountChanged = unreadCount != other.unreadCount,
     )
 
-internal fun Channel.getOnlineStateSubtitle(context: Context): String {
-    val users = getUsers()
-    if (users.isEmpty()) return String.EMPTY
-
-    if (users.size == 1) {
-        return users.first().getLastSeenText(context)
-    }
-
-    return getGroupSubtitle(context)
-}
-
-internal fun Channel.getGroupSubtitle(context: Context): String {
-    val allUsers = members.map { it.user }
-    val onlineUsers = allUsers.count { it.online }
-    val groupMembers = context.resources.getQuantityString(
-        R.plurals.stream_ui_message_list_header_group_member_count,
-        allUsers.size,
-        allUsers.size
-    )
-
-    return if (onlineUsers > 0) {
-        context.getString(
-            R.string.stream_ui_message_list_header_group_member_count_with_online,
-            groupMembers,
-            onlineUsers
-        )
-    } else {
-        groupMembers
-    }
-}
-
 internal fun Channel.isMessageRead(message: Message): Boolean {
     val currentUser = ChatDomain.instance().currentUser
     return read.filter { it.user.id != currentUser.id }

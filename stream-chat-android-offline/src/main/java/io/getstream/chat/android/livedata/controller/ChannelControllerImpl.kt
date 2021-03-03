@@ -1206,7 +1206,7 @@ internal class ChannelControllerImpl(
         // members and watchers have users
         val members = _members.value
         val watchers = _watchers.value
-        val member = members[userId]
+        val member = members[userId]?.copy()
         val watcher = watchers[userId]
         if (member != null) {
             member.user = user
@@ -1271,7 +1271,9 @@ internal class ChannelControllerImpl(
     }
 
     fun upsertMembers(members: List<Member>) {
-        _members.value = _members.value + members.associateBy { it.user.id }
+        val oldMembers = _members.value + members.associateBy { it.user.id }
+
+        _members.value += oldMembers
     }
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))

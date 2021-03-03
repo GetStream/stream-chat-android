@@ -215,6 +215,9 @@ internal class EventHandlerImpl(
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                 }
+                is UserPresenceChangedEvent -> {
+                    batch.addUser(event.user)
+                }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
@@ -404,7 +407,6 @@ internal class EventHandlerImpl(
                 is ChannelUserUnbannedEvent,
                 is UserUpdatedEvent,
                 is UserDeletedEvent,
-                is UserPresenceChangedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 -> Unit
@@ -458,6 +460,22 @@ internal class EventHandlerImpl(
         sortedEvents.filterIsInstance<MarkAllReadEvent>().firstOrNull()?.let { markAllRead ->
             domainImpl.allActiveChannels().forEach { channelController ->
                 channelController.handleEvent(markAllRead)
+            }
+        }
+
+        // User presence change applies to all active channels with that user
+        sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
+            val event = userPresenceChanged as UserPresenceChangedEvent
+
+            domainImpl.allActiveChannels()
+                .filter { channelControllerImpl ->
+                    channelControllerImpl.members
+                        .value
+                        ?.map { member -> member.user.id }
+                        ?.contains(event.user.id) == true
+                }
+                .forEach { channelController ->
+                channelController.handleEvent(userPresenceChanged)
             }
         }
 
