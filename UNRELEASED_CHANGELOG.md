@@ -63,6 +63,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed some rare crashes when `MessageListView` was created without any attribute info present
 
 ### ⬆️ Improved
 - Updated PhotoView to version 2.3.0
