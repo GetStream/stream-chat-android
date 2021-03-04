@@ -10,13 +10,16 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
@@ -97,7 +100,7 @@ internal class QueryChannelsControllerImpl(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-    internal suspend fun addChannelIfFilterMatches(
+    internal fun addChannelIfFilterMatches(
         channel: Channel,
     ) {
         if (newChannelEventFilter(channel, filter)) {
@@ -152,6 +155,33 @@ internal class QueryChannelsControllerImpl(
                 refreshChannel(event.cid)
             }
         }
+
+        if (event is UserPresenceChangedEvent) {
+            refreshMembersStateForUser(event.user)
+        }
+    }
+
+    private suspend fun refreshMembersStateForUser(newUser: User) {
+        val userId = newUser.id
+
+        val affectedChannels = _channels.value
+            .values
+            .filter { channel -> channel.users().map { user -> user.id }.contains(userId) }
+            .map { channel ->
+                val copiedChannel = channel.copy()
+                val copiedMembers = copiedChannel.members.map { member -> member.copy() }
+
+                copiedChannel.members = copiedMembers
+                copiedChannel
+            }
+
+        affectedChannels.forEach { channel ->
+            channel.members
+                .find { member -> member.user.id == userId }
+                ?.let { member -> member.user = newUser }
+        }
+
+        _channels.value += affectedChannels.associateBy(Channel::cid)
     }
 
     suspend fun loadMore(
@@ -268,7 +298,7 @@ internal class QueryChannelsControllerImpl(
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    internal suspend fun updateChannelsAndQueryResults(
+    internal fun updateChannelsAndQueryResults(
         channels: List<Channel>?,
         isFirstPage: Boolean,
     ) {

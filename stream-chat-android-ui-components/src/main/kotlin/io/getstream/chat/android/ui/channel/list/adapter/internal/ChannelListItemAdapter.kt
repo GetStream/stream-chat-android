@@ -30,10 +30,7 @@ internal class ChannelListItemAdapter(
                 .filterIsInstance<ChannelListPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
                 ?: listOf(FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF)
-            )
-            .fold(EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF) { acc, channelListItemPayloadDiff ->
-                acc + channelListItemPayloadDiff
-            }
+            ).fold(EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF, ChannelListPayloadDiff::plus)
 
         bind(position, holder, diff)
     }
