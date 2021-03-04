@@ -2,6 +2,7 @@ package io.getstream.chat.docs.java;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
 
@@ -442,7 +443,7 @@ public class Messages {
                     @NotNull MessageListItem.MessageItem data,
                     @NotNull MessageListListenerContainer listeners,
                     @NotNull MessageListItemStyle style,
-                    @NotNull View parent
+                    @NotNull ViewGroup parent
             ) {
                 return super.createAttachmentView(data, listeners, style, parent);
             }
@@ -465,7 +466,7 @@ public class Messages {
                     @NotNull MessageListItem.MessageItem data,
                     @NotNull MessageListListenerContainer listeners,
                     @NotNull MessageListItemStyle style,
-                    @NotNull View parent
+                    @NotNull ViewGroup parent
             ) {
                 boolean containsMyAttachments = false;
                 for (Attachment attachment: data.getMessage().getAttachments()) {

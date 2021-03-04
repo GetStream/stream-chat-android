@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -435,11 +436,12 @@ class Messages(
                 data: MessageListItem.MessageItem,
                 listeners: MessageListListenerContainer,
                 style: MessageListItemStyle,
-                parent: View
+                parent: ViewGroup,
             ): View {
                 return super.createAttachmentView(data, listeners, style, parent)
             }
         }
+
         private lateinit var messageListView: MessageListView
 
         fun setAttachmentFactory() {
@@ -453,7 +455,7 @@ class Messages(
                 data: MessageListItem.MessageItem,
                 listeners: MessageListListenerContainer,
                 style: MessageListItemStyle,
-                parent: View,
+                parent: ViewGroup,
             ): View {
                 return if (data.message.attachments.any { it.imageUrl?.contains(MY_URL_ADDRESS) == true }) {
                     // put your custom attachment view creation here

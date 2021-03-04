@@ -42,7 +42,7 @@ public open class AttachmentViewFactory {
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer,
         style: MessageListItemStyle,
-        parent: View,
+        parent: ViewGroup,
     ): View {
         val (links, attachments) = data.message.attachments.partition(Attachment::hasLink)
 
