@@ -454,5 +454,33 @@ public class Messages {
             AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
             messageListView.setAttachmentViewFactory(attachmentViewFactory);
         }
+
+        private class MyAttachmentViewFactory extends AttachmentViewFactory {
+
+            private static final String MY_URL_ADDRESS = "https://myurl.com";
+
+            @NotNull
+            @Override
+            public View createAttachmentView(
+                    @NotNull MessageListItem.MessageItem data,
+                    @NotNull MessageListListenerContainer listeners,
+                    @NotNull MessageListItemStyle style,
+                    @NotNull View parent
+            ) {
+                boolean containsMyAttachments = false;
+                for (Attachment attachment: data.getMessage().getAttachments()) {
+                    if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
+                        containsMyAttachments = true;
+                    }
+                }
+
+                if (containsMyAttachments) {
+                    // put your custom attachment view creation here
+                    return new View(parent.getContext());
+                } else {
+                    return super.createAttachmentView(data, listeners, style, parent);
+                }
+            }
+        }
     }
 }

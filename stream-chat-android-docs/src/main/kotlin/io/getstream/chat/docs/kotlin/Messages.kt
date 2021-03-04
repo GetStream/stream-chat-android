@@ -446,5 +446,22 @@ class Messages(
             val attachmentViewFactory = CustomAttachmentViewFactory()
             messageListView.setAttachmentViewFactory(attachmentViewFactory)
         }
+
+        private inner class MyAttachmentViewFactory : AttachmentViewFactory() {
+            private val MY_URL_ADDRESS = "https://myurl.com"
+            override fun createAttachmentView(
+                data: MessageListItem.MessageItem,
+                listeners: MessageListListenerContainer,
+                style: MessageListItemStyle,
+                parent: View,
+            ): View {
+                return if (data.message.attachments.any { it.imageUrl?.contains(MY_URL_ADDRESS) == true }) {
+                    // put your custom attachment view creation here
+                    View(parent.context)
+                } else {
+                    super.createAttachmentView(data, listeners, style, parent)
+                }
+            }
+        }
     }
 }
