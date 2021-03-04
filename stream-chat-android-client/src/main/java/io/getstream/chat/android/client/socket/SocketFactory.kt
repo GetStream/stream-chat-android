@@ -58,7 +58,7 @@ internal class SocketFactory(
             "user_details" to user.reduceUserDetails(),
             "user_id" to user.id,
             "server_determines_connection_id" to true,
-            "X-STREAM-CLIENT" to ChatClient.instance().getVersion()
+            "X-Stream-Client" to ChatClient.instance().getVersion()
         )
         return parser.toJson(data)
     }

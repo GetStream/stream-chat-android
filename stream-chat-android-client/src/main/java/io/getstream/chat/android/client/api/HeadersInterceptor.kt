@@ -12,7 +12,7 @@ internal class HeadersInterceptor(private val isAnonymous: () -> Boolean) : Inte
             .addHeader("Content-Type", "application/json")
             .addHeader("stream-auth-type", authType)
             .addHeader("Accept-Encoding", "application/gzip")
-            .addHeader("X-STREAM-CLIENT", ChatClient.instance().getVersion())
+            .addHeader("X-Stream-Client", ChatClient.instance().getVersion())
             .addHeader("Cache-Control", "no-cache")
             .build()
         return chain.proceed(request)

@@ -59,6 +59,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.extensions.NEVER
 import io.getstream.chat.android.livedata.extensions.addMyReaction
+import io.getstream.chat.android.livedata.extensions.inOffsetWith
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeMyReaction
 import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
@@ -1206,7 +1207,7 @@ internal class ChannelControllerImpl(
         // members and watchers have users
         val members = _members.value
         val watchers = _watchers.value
-        val member = members[userId]
+        val member = members[userId]?.copy()
         val watcher = watchers[userId]
         if (member != null) {
             member.user = user
@@ -1277,12 +1278,33 @@ internal class ChannelControllerImpl(
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     private fun updateReads(reads: List<ChannelUserRead>) {
+        val currentUserId = domainImpl.currentUser.id
         val previousUserIdToReadMap = _reads.value
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
-        incomingUserIdToReadMap[domainImpl.currentUser.id]?.let {
-            _read.value = it
-            _unreadCount.value = it.unreadMessages
+        /**
+         * It's possible that the data coming back from the online channel query has a last read date that's
+         * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
+         * to show in the channel list.
+         */
+        val incomingUserRead = incomingUserIdToReadMap[currentUserId] ?: return
+
+        // the previous last Read date that is most current
+        val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+
+        // Use AFTER to determine if the incoming read is more current.
+        // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+        val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
+            previousLastRead,
+            OFFSET_EVENT_TIME
+        ) == true
+
+        if (shouldUpdateByIncoming) {
+            _read.value = incomingUserRead
+            _unreadCount.value = incomingUserRead.unreadMessages
+        } else {
+            // if the previous Read was more current, replace the item in the update map
+            incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
         }
 
         // always post the newly updated map
@@ -1514,5 +1536,6 @@ internal class ChannelControllerImpl(
         private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+        private const val OFFSET_EVENT_TIME = 5L
     }
 }

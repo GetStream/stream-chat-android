@@ -6,6 +6,7 @@ import io.getstream.chat.android.livedata.repository.database.converter.MapConve
 import io.getstream.chat.android.livedata.repository.domain.channel.member.MemberEntity
 import io.getstream.chat.android.livedata.repository.domain.channel.userread.ChannelUserReadEntity
 import org.junit.Test
+import java.util.Date
 
 internal class MapConverterTest : BaseTest() {
     // read maps
@@ -20,7 +21,7 @@ internal class MapConverterTest : BaseTest() {
     @Test
     fun testEncoding() {
         val converter = MapConverter()
-        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id))
+        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0))
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         Truth.assertThat(converted).isEqualTo(readMap)

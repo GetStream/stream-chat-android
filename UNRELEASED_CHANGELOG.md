@@ -36,6 +36,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed refreshing channel list after removing member
 
 ### ⬆️ Improved
 
@@ -62,6 +63,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed some rare crashes when `MessageListView` was created without any attribute info present
 
 ### ⬆️ Improved
 - Updated PhotoView to version 2.3.0
