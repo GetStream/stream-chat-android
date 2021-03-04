@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.gson
 import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
@@ -44,30 +45,30 @@ internal class FilterObjectConverter {
 private fun Map<String, Any>.toFilterObject(): FilterObject = when {
     this.isEmpty() -> NeutralFilterObject
     this.size == 1 -> this.entries.first().toFilterObject()
-    this.size == 2 && this.containsKey(KEY_DISTINCT) && this.containsKey(KEY_MEMBERS) -> DistinctFilterObject((this[KEY_MEMBERS] as List<String>).toSet())
+    this.size == 2 && this.containsKey(KEY_DISTINCT) && this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List<String>))
     else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
 }
 
 private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.key) {
-    KEY_AND -> AndFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
-    KEY_OR -> OrFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
-    KEY_NOR -> NorFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
+    KEY_AND -> Filters.and(*(this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toTypedArray())
+    KEY_OR -> Filters.or(*(this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toTypedArray())
+    KEY_NOR -> Filters.nor(*(this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toTypedArray())
     else -> (this.value as Map<String, Any>).entries.first().let {
         when (it.key) {
             KEY_EXIST -> when (it.value as Boolean) {
-                true -> ExistsFilterObject(this.key)
-                false -> NonExistsFilterObject(this.key)
+                true -> Filters.exists(this.key)
+                false -> Filters.notExists(this.key)
             }
-            KEY_EQUALS -> EqualsFilterObject(this.key, it.value)
-            KEY_NOT_EQUALS -> NotEqualsFilterObject(this.key, it.value)
-            KEY_CONTAINS -> ContainsFilterObject(this.key, it.value)
-            KEY_GREATER_THAN -> GreaterThanFilterObject(this.key, it.value)
-            KEY_GREATER_THAN_OR_EQUALS -> GreaterThanOrEqualsFilterObject(this.key, it.value)
-            KEY_LESS_THAN -> LessThanFilterObject(this.key, it.value)
-            KEY_LESS_THAN_OR_EQUALS -> LessThanOrEqualsFilterObject(this.key, it.value)
-            KEY_IN -> InFilterObject(this.key, (it.value as List<Any>).toSet())
-            KEY_NOT_IN -> NotInFilterObject(this.key, (it.value as List<Any>).toSet())
-            KEY_AUTOCOMPLETE -> AutocompleteFilterObject(this.key, it.value as String)
+            KEY_EQUALS -> Filters.eq(this.key, it.value)
+            KEY_NOT_EQUALS -> Filters.ne(this.key, it.value)
+            KEY_CONTAINS -> Filters.contains(this.key, it.value)
+            KEY_GREATER_THAN -> Filters.greaterThan(this.key, it.value)
+            KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.key, it.value)
+            KEY_LESS_THAN -> Filters.lessThan(this.key, it.value)
+            KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.key, it.value)
+            KEY_IN -> Filters.`in`(this.key, (it.value as List<Any>))
+            KEY_NOT_IN -> Filters.nin(this.key, (it.value as List<Any>))
+            KEY_AUTOCOMPLETE -> Filters.autocomplete(this.key, it.value as String)
             else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
         }
     }
