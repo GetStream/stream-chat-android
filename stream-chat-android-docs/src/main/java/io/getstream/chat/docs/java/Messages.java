@@ -1,6 +1,10 @@
 package io.getstream.chat.docs.java;
 
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.getstream.sdk.chat.adapter.MessageListItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +26,10 @@ import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
+import io.getstream.chat.android.ui.message.list.MessageListView;
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory;
+import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
 public class Messages {
@@ -423,6 +431,57 @@ public class Messages {
                     // Handle result.error()
                 }
             });
+        }
+    }
+
+    class CustomAttachments {
+
+        private class CustomAttachmentViewFactory extends AttachmentViewFactory {
+            @NotNull
+            @Override
+            public View createAttachmentView(
+                    @NotNull MessageListItem.MessageItem data,
+                    @NotNull MessageListListenerContainer listeners,
+                    @NotNull MessageListItemStyle style,
+                    @NotNull ViewGroup parent
+            ) {
+                return super.createAttachmentView(data, listeners, style, parent);
+            }
+        }
+
+        private MessageListView messageListView;
+
+        public void setAttachmentFactory() {
+            AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
+            messageListView.setAttachmentViewFactory(attachmentViewFactory);
+        }
+
+        private class MyAttachmentViewFactory extends AttachmentViewFactory {
+
+            private static final String MY_URL_ADDRESS = "https://myurl.com";
+
+            @NotNull
+            @Override
+            public View createAttachmentView(
+                    @NotNull MessageListItem.MessageItem data,
+                    @NotNull MessageListListenerContainer listeners,
+                    @NotNull MessageListItemStyle style,
+                    @NotNull ViewGroup parent
+            ) {
+                boolean containsMyAttachments = false;
+                for (Attachment attachment: data.getMessage().getAttachments()) {
+                    if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
+                        containsMyAttachments = true;
+                    }
+                }
+
+                if (containsMyAttachments) {
+                    // put your custom attachment view creation here
+                    return new View(parent.getContext());
+                } else {
+                    return super.createAttachmentView(data, listeners, style, parent);
+                }
+            }
         }
     }
 }
