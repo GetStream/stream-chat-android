@@ -32,6 +32,6 @@ public data class InFilterObject(val fieldName: String, val values: Set<Any>) : 
 
 public data class NotInFilterObject(val fieldName: String, val values: Set<Any>) : FilterObject()
 
-public data class DistinctFilterObject(val membeerIds: Set<String>) : FilterObject()
+public data class DistinctFilterObject(val memberIds: Set<String>) : FilterObject()
 
 public object NeutralFilterObject : FilterObject()

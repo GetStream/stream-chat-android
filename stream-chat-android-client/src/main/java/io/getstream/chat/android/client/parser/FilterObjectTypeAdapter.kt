@@ -51,6 +51,6 @@ private fun FilterObject.toMap(): Map<*, *> = when (this) {
     is InFilterObject -> mapOf(this.fieldName to mapOf("\$in" to this.values))
     is NotInFilterObject -> mapOf(this.fieldName to mapOf("\$nin" to this.values))
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf("\$autocomplete" to this.value))
-    is DistinctFilterObject -> mapOf("distinct" to true, "members" to this.membeerIds)
+    is DistinctFilterObject -> mapOf("distinct" to true, "members" to this.memberIds)
     is NeutralFilterObject -> emptyMap<String, String>()
 }
