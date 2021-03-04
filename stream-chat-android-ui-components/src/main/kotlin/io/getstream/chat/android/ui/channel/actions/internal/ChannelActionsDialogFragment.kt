@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.channel.actions.internal
 
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
@@ -33,7 +33,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = StreamUiFragmentChannelActionsBinding.inflate(inflater, container, false)
         return binding.root
@@ -115,10 +115,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             members
                 .getOrNull(0)
                 ?.user
-                ?.lastActive
-                ?.time
-                ?.let { DateUtils.getRelativeTimeSpanString(it) }
-                ?.let { requireContext().getString(R.string.stream_ui_channel_actions_last_seen, it) }
+                ?.getLastSeenText(requireContext())
                 ?: ""
         }
     }
@@ -136,14 +133,6 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     companion object {
         private const val ARG_CID = "cid"
         private const val ARG_IS_GROUP = "is_group"
-
-        fun newGroupChatInstance(cid: String): ChannelActionsDialogFragment {
-            return newInstance(cid, true)
-        }
-
-        fun newDirectMessageInstance(cid: String): ChannelActionsDialogFragment {
-            return newInstance(cid, false)
-        }
 
         fun newInstance(cid: String, isGroup: Boolean): ChannelActionsDialogFragment {
             return ChannelActionsDialogFragment().apply {
