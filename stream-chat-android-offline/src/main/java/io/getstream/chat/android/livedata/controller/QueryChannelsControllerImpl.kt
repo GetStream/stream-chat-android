@@ -161,27 +161,20 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
-    private suspend fun refreshMembersStateForUser(newUser: User) {
+    private fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
 
         val affectedChannels = _channels.value
-            .values
-            .filter { channel -> channel.users().map { user -> user.id }.contains(userId) }
-            .map { channel ->
-                val copiedChannel = channel.copy()
-                val copiedMembers = copiedChannel.members.map { member -> member.copy() }
-
-                copiedChannel.members = copiedMembers
-                copiedChannel
+            .filter { (_, channel) -> channel.users().any { it.id == userId} }
+            .mapValues { (_, channel) ->
+                channel.copy(
+                    members = channel.members.map { member ->
+                        member.copy(user = member.user.takeUnless { it.id == userId } ?: newUser)
+                    }
+                )
             }
 
-        affectedChannels.forEach { channel ->
-            channel.members
-                .find { member -> member.user.id == userId }
-                ?.let { member -> member.user = newUser }
-        }
-
-        _channels.value += affectedChannels.associateBy(Channel::cid)
+        _channels.value += affectedChannels
     }
 
     suspend fun loadMore(
