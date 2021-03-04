@@ -114,8 +114,8 @@ internal abstract class BaseMockWebServerIntegrationTest {
         return MockWebServer().apply {
             dispatcher = object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest): MockResponse {
-                    if (isWebSocketUrl(request)) {
-                        return MockResponse().withWebSocketUpgrade(object : WebSocketListener() {
+                    return if (isWebSocketUrl(request)) {
+                        MockResponse().withWebSocketUpgrade(object : WebSocketListener() {
                             override fun onOpen(webSocket: WebSocket, response: Response) {
                                 super.onOpen(webSocket, response)
                                 // very likely that this instance of `WebSocket`
@@ -123,13 +123,11 @@ internal abstract class BaseMockWebServerIntegrationTest {
                                 webSocket.send(createConnectedEventStringJson())
                             }
                         })
+                    } else {
+                        serverCalls.find { it.isApplicable(request) }
+                            ?.executeCall()
+                            ?: throw IllegalStateException("Request not supported")
                     }
-                    serverCalls.forEach {
-                        if (it.isApplicable(request)) {
-                            return it.executeCall()
-                        }
-                    }
-                    throw IllegalStateException("Request not supported")
                 }
 
                 private fun isWebSocketUrl(request: RecordedRequest): Boolean {
