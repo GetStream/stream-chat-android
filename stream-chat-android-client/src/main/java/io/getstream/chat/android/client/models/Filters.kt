@@ -32,20 +32,6 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
  */
 public object Filters {
 
-    public const val KEY_EXIST: String = "\$exists"
-    public const val KEY_CONTAINS: String = "\$contains"
-    public const val KEY_AND: String = "\$and"
-    public const val KEY_OR: String = "\$or"
-    public const val KEY_NOR: String = "\$nor"
-    public const val KEY_NE: String = "\$ne"
-    public const val KEY_GREATER_THAN: String = "\$gt"
-    public const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
-    public const val KEY_LESS_THAN: String = "\$lt"
-    public const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
-    public const val KEY_IN: String = "\$in"
-    public const val KEY_NOT_IN: String = "\$nin"
-    public const val KEY_AUTOCOMPLETE: String = "\$autocomplete"
-
     @JvmStatic
     public fun exists(fieldName: String): FilterObject = ExistsFilterObject(fieldName)
 

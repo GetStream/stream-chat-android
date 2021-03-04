@@ -2347,19 +2347,6 @@ public final class io/getstream/chat/android/client/models/EventType {
 
 public final class io/getstream/chat/android/client/models/Filters {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Filters;
-	public static final field KEY_AND Ljava/lang/String;
-	public static final field KEY_AUTOCOMPLETE Ljava/lang/String;
-	public static final field KEY_CONTAINS Ljava/lang/String;
-	public static final field KEY_EXIST Ljava/lang/String;
-	public static final field KEY_GREATER_THAN Ljava/lang/String;
-	public static final field KEY_GREATER_THAN_OR_EQUALS Ljava/lang/String;
-	public static final field KEY_IN Ljava/lang/String;
-	public static final field KEY_LESS_THAN Ljava/lang/String;
-	public static final field KEY_LESS_THAN_OR_EQUALS Ljava/lang/String;
-	public static final field KEY_NE Ljava/lang/String;
-	public static final field KEY_NOR Ljava/lang/String;
-	public static final field KEY_NOT_IN Ljava/lang/String;
-	public static final field KEY_OR Ljava/lang/String;
 	public static final fun and ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun autocomplete (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun contains (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;

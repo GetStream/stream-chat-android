@@ -44,51 +44,68 @@ internal class FilterObjectConverter {
 private fun Map<String, Any>.toFilterObject(): FilterObject = when {
     this.isEmpty() -> NeutralFilterObject
     this.size == 1 -> this.entries.first().toFilterObject()
-    this.size == 2 && this.containsKey("distinct") && this.containsKey("members") -> DistinctFilterObject((this["members"] as List<String>).toSet())
+    this.size == 2 && this.containsKey(KEY_DISTINCT) && this.containsKey(KEY_MEMBERS) -> DistinctFilterObject((this[KEY_MEMBERS] as List<String>).toSet())
     else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
 }
 
 private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.key) {
-    "\$and" -> AndFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
-    "\$or" -> OrFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
-    "\$nor" -> NorFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
+    KEY_AND -> AndFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
+    KEY_OR -> OrFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
+    KEY_NOR -> NorFilterObject((this.value as List<Map<String, Any>>).map(Map<String, Any>::toFilterObject).toSet())
     else -> (this.value as Map<String, Any>).entries.first().let {
-        when {
-            it.key == "\$exists" -> when (it.value as Boolean) {
+        when (it.key) {
+            KEY_EXIST -> when (it.value as Boolean) {
                 true -> ExistsFilterObject(this.key)
                 false -> NonExistsFilterObject(this.key)
             }
-            it.key == "\$eq" -> EqualsFilterObject(this.key, it.value)
-            it.key == "\$ne" -> NotEqualsFilterObject(this.key, it.value)
-            it.key == "\$contains" -> ContainsFilterObject(this.key, it.value)
-            it.key == "\$gt" -> GreaterThanFilterObject(this.key, it.value)
-            it.key == "\$gte" -> GreaterThanOrEqualsFilterObject(this.key, it.value)
-            it.key == "\$lt" -> LessThanFilterObject(this.key, it.value)
-            it.key == "\$lte" -> LessThanOrEqualsFilterObject(this.key, it.value)
-            it.key == "\$in" -> InFilterObject(this.key, (it.value as List<Any>).toSet())
-            it.key == "\$nin" -> NotInFilterObject(this.key, (it.value as List<Any>).toSet())
-            it.key == "\$autocomplete" -> AutocompleteFilterObject(this.key, it.value as String)
+            KEY_EQUALS -> EqualsFilterObject(this.key, it.value)
+            KEY_NOT_EQUALS -> NotEqualsFilterObject(this.key, it.value)
+            KEY_CONTAINS -> ContainsFilterObject(this.key, it.value)
+            KEY_GREATER_THAN -> GreaterThanFilterObject(this.key, it.value)
+            KEY_GREATER_THAN_OR_EQUALS -> GreaterThanOrEqualsFilterObject(this.key, it.value)
+            KEY_LESS_THAN -> LessThanFilterObject(this.key, it.value)
+            KEY_LESS_THAN_OR_EQUALS -> LessThanOrEqualsFilterObject(this.key, it.value)
+            KEY_IN -> InFilterObject(this.key, (it.value as List<Any>).toSet())
+            KEY_NOT_IN -> NotInFilterObject(this.key, (it.value as List<Any>).toSet())
+            KEY_AUTOCOMPLETE -> AutocompleteFilterObject(this.key, it.value as String)
             else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
         }
     }
 }
 
 private fun FilterObject.toMap(): Map<*, *> = when (this) {
-    is AndFilterObject -> mapOf("\$and" to this.filterObjects.map(FilterObject::toMap))
-    is OrFilterObject -> mapOf("\$or" to this.filterObjects.map(FilterObject::toMap))
-    is NorFilterObject -> mapOf("\$nor" to this.filterObjects.map(FilterObject::toMap))
-    is ExistsFilterObject -> mapOf(this.fieldName to mapOf("\$exists" to true))
-    is NonExistsFilterObject -> mapOf(this.fieldName to mapOf("\$exists" to false))
-    is EqualsFilterObject -> mapOf(this.fieldName to mapOf("\$eq" to this.value))
-    is NotEqualsFilterObject -> mapOf(this.fieldName to mapOf("\$ne" to this.value))
-    is ContainsFilterObject -> mapOf(this.fieldName to mapOf("\$contains" to this.value))
-    is GreaterThanFilterObject -> mapOf(this.fieldName to mapOf("\$gt" to this.value))
-    is GreaterThanOrEqualsFilterObject -> mapOf(this.fieldName to mapOf("\$gte" to this.value))
-    is LessThanFilterObject -> mapOf(this.fieldName to mapOf("\$lt" to this.value))
-    is LessThanOrEqualsFilterObject -> mapOf(this.fieldName to mapOf("\$lte" to this.value))
-    is InFilterObject -> mapOf(this.fieldName to mapOf("\$in" to this.values))
-    is NotInFilterObject -> mapOf(this.fieldName to mapOf("\$nin" to this.values))
-    is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf("\$autocomplete" to this.value))
-    is DistinctFilterObject -> mapOf("distinct" to true, "members" to this.memberIds)
+    is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
+    is OrFilterObject -> mapOf(KEY_OR to this.filterObjects.map(FilterObject::toMap))
+    is NorFilterObject -> mapOf(KEY_NOR to this.filterObjects.map(FilterObject::toMap))
+    is ExistsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EXIST to true))
+    is NonExistsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EXIST to false))
+    is EqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EQUALS to this.value))
+    is NotEqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_NOT_EQUALS to this.value))
+    is ContainsFilterObject -> mapOf(this.fieldName to mapOf(KEY_CONTAINS to this.value))
+    is GreaterThanFilterObject -> mapOf(this.fieldName to mapOf(KEY_GREATER_THAN to this.value))
+    is GreaterThanOrEqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_GREATER_THAN_OR_EQUALS to this.value))
+    is LessThanFilterObject -> mapOf(this.fieldName to mapOf(KEY_LESS_THAN to this.value))
+    is LessThanOrEqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_LESS_THAN_OR_EQUALS to this.value))
+    is InFilterObject -> mapOf(this.fieldName to mapOf(KEY_IN to this.values))
+    is NotInFilterObject -> mapOf(this.fieldName to mapOf(KEY_NOT_IN to this.values))
+    is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf(KEY_AUTOCOMPLETE to this.value))
+    is DistinctFilterObject -> mapOf(KEY_DISTINCT to true, KEY_MEMBERS to this.memberIds)
     is NeutralFilterObject -> emptyMap<String, String>()
 }
+
+private const val KEY_EXIST: String = "\$exists"
+private const val KEY_CONTAINS: String = "\$contains"
+private const val KEY_AND: String = "\$and"
+private const val KEY_OR: String = "\$or"
+private const val KEY_NOR: String = "\$nor"
+private const val KEY_EQUALS: String = "\$eq"
+private const val KEY_NOT_EQUALS: String = "\$ne"
+private const val KEY_GREATER_THAN: String = "\$gt"
+private const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
+private const val KEY_LESS_THAN: String = "\$lt"
+private const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
+private const val KEY_IN: String = "\$in"
+private const val KEY_NOT_IN: String = "\$nin"
+private const val KEY_AUTOCOMPLETE: String = "\$autocomplete"
+private const val KEY_DISTINCT: String = "distinct"
+private const val KEY_MEMBERS: String = "members"
