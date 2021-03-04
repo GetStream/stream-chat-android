@@ -1,6 +1,8 @@
 package io.getstream.chat.docs.kotlin
 
 import android.content.Context
+import android.view.View
+import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
@@ -12,6 +14,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
@@ -420,6 +426,25 @@ class Messages(
                     // Handle result.error()
                 }
             }
+        }
+    }
+
+    inner class CustomAttachment() {
+        private inner class CustomAttachmentViewFactory : AttachmentViewFactory() {
+            override fun createAttachmentView(
+                data: MessageListItem.MessageItem,
+                listeners: MessageListListenerContainer,
+                style: MessageListItemStyle,
+                parent: View
+            ): View {
+                return super.createAttachmentView(data, listeners, style, parent)
+            }
+        }
+        private lateinit var messageListView: MessageListView
+
+        fun setAttachmentFactory() {
+            val attachmentViewFactory = CustomAttachmentViewFactory()
+            messageListView.setAttachmentViewFactory(attachmentViewFactory)
         }
     }
 }
