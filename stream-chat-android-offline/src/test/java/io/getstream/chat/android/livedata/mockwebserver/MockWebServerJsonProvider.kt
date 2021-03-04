@@ -25,29 +25,7 @@ internal fun createConnectedEventStringJson() =
                         "disabled_reason":"NotRegistered",
                         "user_id":"cebf562a-4806-4c64-a827-59d50aac42ba"
                     },
-                    {
-                        "push_provider":"firebase",
-                        "id":"f8LrpCuiSB6kP7zNInnWCa:APA91bEm9zJ0hc0FtKYYMJkGMaUbP-58_YGxIksEJ8POxTxP-CCBDphSe5tFbBDrK3wsgfKRZ91j5DdFg1m7esyh1dB51U0yQ2uHD19FuwK8vMB65uayw2myYxMGzErCPz8WTweMTV94",
-                        "created_at":"2021-01-21T09:13:02.774031Z",
-                        "disabled":true,
-                        "disabled_reason":"NotRegistered",
-                        "user_id":"cebf562a-4806-4c64-a827-59d50aac42ba"
-                    },
-                    {
-                        "push_provider":"firebase",
-                        "id":"e_rLNv1HS--Q7zFmYYoIb5:APA91bFfRJ61xoMp1PKZ3jSljVHECv_EjUmguF5yDYo45B_aNcif8kP8SovrgOCJHv2F7iIYDS45MVOlqho2Wamh6ebr3hpPtgGZR8imUaSbtdPXelOQcGDK0PhAAAaa8s8COTVrjU0M",
-                        "created_at":"2021-01-12T17:46:23.711316Z",
-                        "user_id":"cebf562a-4806-4c64-a827-59d50aac42ba"
-                    },
-                    {
-                        "push_provider":"firebase",
-                        "id":"d_aeFmT7RKC5KfvR1VBGto:APA91bFqTK9uD_-rHgj4wHZd92PJ-MLpeW_FwfOm173xXpTfWcBrzejAkIRRCyyzqnFU80ViK2KFLtEz-YzMCqeLx8zI87nKEunmHR6mKgtidwDhbzEhXiyk_BAPOMSJ6TZgQp6GX4ko",
-                        "created_at":"2021-01-11T08:23:59.43695Z",
-                        "disabled":true,
-                        "disabled_reason":"NotRegistered",
-                        "user_id":"cebf562a-4806-4c64-a827-59d50aac42ba"
-                    }
-                  ],
+                ],
                 "mutes":[],
                 "channel_mutes":[],
                 "unread_count":133,
@@ -61,8 +39,12 @@ internal fun createConnectedEventStringJson() =
        }        
     """.trimIndent()
 
-internal fun createSendMessageRequestJsonString() =
-    """
+internal fun createSendMessageRequestJsonString(
+    messageId: String,
+    messageText: String,
+    channelId: String,
+): String {
+    return """
         {
             "message":{
                 "pinned":false,
@@ -71,21 +53,27 @@ internal fun createSendMessageRequestJsonString() =
                 "show_in_channel":false,
                 "shadowed":false,
                 "html":"",
-                "id":"cebf562a-4806-4c64-a827-59d50aac42ba-80f7fe50-ec73-49f8-a389-3dd5b4304b6f",
-                "text":"message test",
+                "id":"$messageId",
+                "text":"$messageText",
                 "thread_participants":[],
                 "mentioned_users":[],
-                "cid":"messaging:e87283f0-a58d-4685-bf0b-729a7b6eb84d"
+                "cid":"$channelId"
             }
         }
     """.trimIndent()
+}
 
-internal fun createSendMessageResponseJsonString() =
-    """        
+internal fun createSendMessageResponseJsonString(
+    messageId: String,
+    messageText: String,
+    channelId: String,
+    username: String,
+): String {
+    return """        
         {
             "message": {
-                "id": "cebf562a-4806-4c64-a827-59d50aac42ba-80f7fe50-ec73-49f8-a389-3dd5b4304b6f",
-                "text": "message test",
+                "id": "$messageId",
+                "text": "$messageText",
                 "html": "\u003cp\u003emessage test\u003c/p\u003e\n",
                 "type": "regular",
                 "user": {
@@ -98,7 +86,7 @@ internal fun createSendMessageResponseJsonString() =
                     "online": true,
                     "image": "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FZetra.png?alt\u003dmedia",
                     "invisible": false,
-                    "name": "Zetra",
+                    "name": "$username",
                     "unread_count": 33
                 },
                 "attachments": [],
@@ -106,7 +94,7 @@ internal fun createSendMessageResponseJsonString() =
                 "own_reactions": [],
                 "reaction_scores": {},
                 "reply_count": 0,
-                "cid": "messaging:e87283f0-a58d-4685-bf0b-729a7b6eb84d",
+                "cid": "$channelId",
                 "created_at": "2021-03-03T02:57:17.64866Z",
                 "updated_at": "2021-03-03T02:57:17.648661Z",
                 "shadowed": false,
@@ -117,3 +105,4 @@ internal fun createSendMessageResponseJsonString() =
             "duration": "50.92ms"
         }
     """.trimIndent()
+}

@@ -1308,6 +1308,7 @@ public class ChatClient internal constructor(
             warmUp = false
         }
 
+        @InternalStreamChatApi
         @VisibleForTesting
         public fun disableTls(): Builder {
             httpProtocol = PROTOCOL_HTTP

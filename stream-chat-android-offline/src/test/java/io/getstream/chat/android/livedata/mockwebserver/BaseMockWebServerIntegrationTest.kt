@@ -64,6 +64,9 @@ internal abstract class BaseMockWebServerIntegrationTest {
     /** mock web server which provides recorded responses */
     private lateinit var mockWebServer: MockWebServer
 
+    /** spec of calls supported by mock web server */
+    var serverCalls: List<MockWebServerCall> = emptyList()
+
     @Before
     fun setup() {
         mockWebServer = createMockWebServer()
@@ -79,6 +82,7 @@ internal abstract class BaseMockWebServerIntegrationTest {
     @After
     fun tearDown() {
         println("test cleanup")
+        serverCalls = emptyList()
         mockWebServer.shutdown()
         client.disconnect()
         chatDatabase.close()
@@ -106,25 +110,26 @@ internal abstract class BaseMockWebServerIntegrationTest {
      * Handles requests to the mock web server, validates them, and provides prerecorded
      * mock responses to satisfy the request.
      */
-    abstract fun dispatchApiRequest(request: RecordedRequest): MockResponse
-
     private fun createMockWebServer(): MockWebServer {
         return MockWebServer().apply {
             dispatcher = object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest): MockResponse {
-                    return when {
-                        isWebSocketUrl(request) -> {
-                            MockResponse().withWebSocketUpgrade(object : WebSocketListener() {
-                                override fun onOpen(webSocket: WebSocket, response: Response) {
-                                    super.onOpen(webSocket, response)
-                                    // very likely that this instance of `WebSocket`
-                                    // can be used to send further events
-                                    webSocket.send(createConnectedEventStringJson())
-                                }
-                            })
-                        }
-                        else -> dispatchApiRequest(request)
+                    if (isWebSocketUrl(request)) {
+                        return MockResponse().withWebSocketUpgrade(object : WebSocketListener() {
+                            override fun onOpen(webSocket: WebSocket, response: Response) {
+                                super.onOpen(webSocket, response)
+                                // very likely that this instance of `WebSocket`
+                                // can be used to send further events
+                                webSocket.send(createConnectedEventStringJson())
+                            }
+                        })
                     }
+                    serverCalls.forEach {
+                        if (it.isApplicable(request)) {
+                            return it.executeCall()
+                        }
+                    }
+                    throw IllegalStateException("Request not supported")
                 }
 
                 private fun isWebSocketUrl(request: RecordedRequest): Boolean {
