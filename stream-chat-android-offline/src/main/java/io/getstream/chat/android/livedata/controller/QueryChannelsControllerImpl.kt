@@ -165,7 +165,7 @@ internal class QueryChannelsControllerImpl(
         val userId = newUser.id
 
         val affectedChannels = _channels.value
-            .filter { (_, channel) -> channel.users().any { it.id == userId} }
+            .filter { (_, channel) -> channel.users().any { it.id == userId } }
             .mapValues { (_, channel) ->
                 channel.copy(
                     members = channel.members.map { member ->
