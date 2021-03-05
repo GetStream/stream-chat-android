@@ -1779,6 +1779,9 @@ public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/DateKt {
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt {
 }
 
