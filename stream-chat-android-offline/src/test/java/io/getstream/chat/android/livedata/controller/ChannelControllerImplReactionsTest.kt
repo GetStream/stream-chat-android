@@ -1,13 +1,19 @@
 package io.getstream.chat.android.livedata.controller
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
@@ -45,6 +51,12 @@ internal class ChannelControllerImplReactionsTest {
             score = 234
         },
     )
+
+    private val mockReaction: Reaction = mock {
+        on(it.messageId) doReturn ""
+        on(it.userId) doReturn currentUser.id
+        on(it.type) doReturn "type1"
+    }
 
     private val newReaction = Reaction().apply {
         userId = currentUser.id
@@ -121,6 +133,7 @@ internal class ChannelControllerImplReactionsTest {
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
                 .get()
+
             val deletedReaction = myReactions.first()
 
             sut.deleteReaction(deletedReaction)
@@ -131,11 +144,80 @@ internal class ChannelControllerImplReactionsTest {
             result.latestReactions.contains(deletedReaction) `should be equal to` false
         }
 
+    @Test
+    fun `when deleting a reaction while offline, status must be right and reaction inserted`() =
+        runBlockingTest {
+            val sut = Fixture(testCoroutines.scope, currentUser)
+                .givenMockedRepositories()
+                .givenMessageWithReactions(myReactions)
+                .get()
+
+            whenever(sut.domainImpl.isOnline()) doReturn false
+
+            val result = sut.deleteReaction(mockReaction)
+
+            inOrder(mockReaction) {
+                verify(mockReaction).syncStatus = SyncStatus.IN_PROGRESS
+                verify(mockReaction).syncStatus = SyncStatus.SYNC_NEEDED
+            }
+
+            result.isSuccess `should be equal to` true
+
+            verify(sut.domainImpl.repos).insertReaction(mockReaction)
+        }
+
+    @Test
+    fun `when delete reaction, the sync status is right and reaction is inserted`() =
+        runBlockingTest {
+            val sut = Fixture(testCoroutines.scope, currentUser)
+                .givenMockedRepositories()
+                .givenMessageWithReactions(myReactions)
+                .get()
+
+            whenever(sut.domainImpl.isOnline()) doReturn true
+            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(ChatError()) }
+
+            val result = sut.deleteReaction(mockReaction)
+
+            inOrder(mockReaction) {
+                verify(mockReaction).syncStatus = SyncStatus.IN_PROGRESS
+                verify(mockReaction).syncStatus = SyncStatus.SYNC_NEEDED
+            }
+
+            result.isError `should be equal to` true
+
+            verify(sut.domainImpl.repos).insertReaction(mockReaction)
+        }
+
+    @Test
+    fun `when deleting a reaction, the sync status is right and message is inserted`() =
+        runBlockingTest {
+            val sut = Fixture(testCoroutines.scope, currentUser)
+                .givenMockedRepositories()
+                .givenMessageWithReactions(myReactions)
+                .get()
+
+            whenever(sut.domainImpl.isOnline()) doReturn true
+            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(Message()) }
+
+            val result = sut.deleteReaction(mockReaction)
+
+            inOrder(mockReaction) {
+                verify(mockReaction).syncStatus = SyncStatus.IN_PROGRESS
+                verify(mockReaction).syncStatus = SyncStatus.COMPLETED
+            }
+
+            result.isSuccess `should be equal to` true
+
+            verify(sut.domainImpl.repos).insertReaction(mockReaction)
+        }
+
     private class Fixture(scope: CoroutineScope, user: User) {
-        private val chatClient: ChatClient = mock()
-        private val chatDomainImpl: ChatDomainImpl = mock()
         private val repos: RepositoryFacade = mock()
         private val channelControllerImpl: ChannelControllerImpl
+
+        val chatClient: ChatClient = mock()
+        val chatDomainImpl: ChatDomainImpl = mock()
 
         init {
             whenever(chatDomainImpl.currentUser) doReturn user
@@ -165,3 +247,4 @@ internal class ChannelControllerImplReactionsTest {
         fun get(): ChannelControllerImpl = channelControllerImpl
     }
 }
+
