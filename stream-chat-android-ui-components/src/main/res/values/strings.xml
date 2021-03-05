@@ -50,6 +50,7 @@
     <string name="stream_ui_message_list_header_typing">is typing</string>
     <string name="stream_ui_message_list_header_online">Online</string>
     <string name="stream_ui_message_list_header_last_seen">Last seen %s</string>
+    <string name="stream_ui_message_list_header_just_now">just now</string>
     <string name="stream_ui_message_list_header_group_member_count_with_online">%s, %d Online</string>
     <plurals name="stream_ui_message_list_header_group_member_count">
         <item quantity="one">%1d Member</item>
