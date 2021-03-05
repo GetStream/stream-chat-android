@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -24,7 +25,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;

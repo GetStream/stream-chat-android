@@ -14,9 +14,9 @@ import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -413,7 +413,7 @@ internal class ChannelsApiCallsTests {
             .apply { id = "10" }
 
         val request = QueryChannelsRequest(
-            FilterObject("type", "messaging"),
+            Filters.eq("type", "messaging"),
             offset,
             limit
         )
@@ -438,7 +438,7 @@ internal class ChannelsApiCallsTests {
         val limit = 1
 
         val request = QueryChannelsRequest(
-            FilterObject("type", "messaging"),
+            Filters.eq("type", "messaging"),
             offset,
             limit
         )

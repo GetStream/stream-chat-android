@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.utils.Event
@@ -38,12 +37,7 @@ class GroupChatInfoMemberOptionsViewModel(
             val result = chatDomain.useCases.queryChannels(
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    FilterObject(
-                        data = mutableMapOf(
-                            "distinct" to true,
-                            "members" to listOf(memberId, chatDomain.currentUser.id),
-                        ),
-                    ),
+                    Filters.distinct(listOf(memberId, chatDomain.currentUser.id)),
                 ),
                 sort = QuerySort.desc(Channel::lastUpdated),
                 messageLimit = 0,

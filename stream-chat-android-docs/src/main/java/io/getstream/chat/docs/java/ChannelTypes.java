@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 
 public class ChannelTypes {
     private ChatClient client;
@@ -38,7 +38,7 @@ public class ChannelTypes {
             // Search for users with the name Jordan that are part of the red team
             FilterObject filter = Filters.and(
                     Filters.eq("name", "Jordan"),
-                    Filters.eq("teams", Filters.contains("red"))
+                    Filters.contains("teams", "red")
             );
 
             int offset = 0;

@@ -90,8 +90,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
     internal companion object {
         private val USERS_QUERY_SORT = QuerySort.asc(User::name)
 
-        @VisibleForTesting
-        internal const val FIELD_NAME = "name"
+        private const val FIELD_NAME = "name"
         private const val FIELD_ID = "id"
     }
 }
