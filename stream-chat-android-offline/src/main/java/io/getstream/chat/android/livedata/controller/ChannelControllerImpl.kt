@@ -942,7 +942,7 @@ internal class ChannelControllerImpl(
             val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertReaction(reaction)
+
                 Result(result.data())
             } else {
                 if (result.error().isPermanent()) {
@@ -950,7 +950,7 @@ internal class ChannelControllerImpl(
                 } else {
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.insertReaction(reaction)
+
                 Result(result.error())
             }
         }
