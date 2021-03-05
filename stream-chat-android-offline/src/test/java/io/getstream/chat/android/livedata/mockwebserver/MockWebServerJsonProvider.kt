@@ -117,3 +117,60 @@ internal fun createSendMessageResponseJsonString() =
             "duration": "50.92ms"
         }
     """.trimIndent()
+
+internal fun createDeleteReactionResponseJsonString() =
+    """
+        "message": {
+        "id": "1f052c08-f682-4a83-896c-9f19a68bd2bb-78836b4a-a17d-4f5e-ad22-b6210a8bdda0",
+        "text": "Fghh",
+        "html": "\u003cp\u003eFghh\u003c/p\u003e\n",
+        "type": "regular",
+        "user": {
+          "id": "1f052c08-f682-4a83-896c-9f19a68bd2bb",
+          "role": "user",
+          "created_at": "2020-12-03T11:54:56.394229Z",
+          "updated_at": "2021-03-04T13:47:45.647043Z",
+          "last_active": "2021-03-04T13:44:58.463492Z",
+          "banned": false,
+          "online": false,
+          "image": "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FMarton.png?alt\u003dmedia",
+          "invisible": false,
+          "name": "Marton"
+        },
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "reaction_counts": {},
+        "reaction_scores": {},
+        "reply_count": 0,
+        "cid": "messaging:!members-rOvo1wmwXakoJ-aRjvyoAPFvULMoEFizIR9UYpSoyEM",
+        "created_at": "2021-03-02T17:23:15.511051Z",
+        "updated_at": "2021-03-04T19:21:23.263352Z",
+        "shadowed": false,
+        "mentioned_users": [],
+        "silent": false,
+        "pinned": false
+      },
+      "reaction": {
+        "message_id": "1f052c08-f682-4a83-896c-9f19a68bd2bb-78836b4a-a17d-4f5e-ad22-b6210a8bdda0",
+        "user_id": "29e46def-88f4-4b6a-a10c-584d10c4fdc9",
+        "user": {
+          "id": "29e46def-88f4-4b6a-a10c-584d10c4fdc9",
+          "role": "user",
+          "created_at": "2020-12-03T11:54:56.390689Z",
+          "updated_at": "2021-03-04T19:21:02.486489Z",
+          "last_active": "2021-03-04T19:21:02.486489Z",
+          "banned": false,
+          "online": true,
+          "image": "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FLeandro.png?alt\u003dmedia",
+          "invisible": false,
+          "name": "Leandro"
+        },
+        "type": "like",
+        "score": 1,
+        "created_at": "2021-03-04T19:21:16.019659Z",
+        "updated_at": "2021-03-04T19:21:16.019659Z"
+      },
+      "duration": "13.59ms"
+    }
+    """
