@@ -1,12 +1,13 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.Observer
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -24,6 +25,7 @@ internal class ChannelControllerImplEventNewTest {
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomainImpl = mock {
         on(it.scope) doReturn TestCoroutineScope()
+        on(it.currentUser) doReturn User()
     }
 
     private val channelControllerImpl =
@@ -56,4 +58,28 @@ internal class ChannelControllerImplEventNewTest {
         verify(observerMock).onChanged(listOf(user))
     }
 
+    @Test
+    fun `when new message event arrives, messages should be propagated`() = runBlockingTest {
+        val message = Message()
+
+        val newMessageEvent = NewMessageEvent(
+            type = "type",
+            createdAt = Date(),
+            user = User(),
+            cid = "cid",
+            channelType = "channelType",
+            channelId = "channelId",
+            message = message,
+            watcherCount = 1,
+            totalUnreadCount = 1,
+            unreadChannels = 1
+        )
+
+        val messageObserver: Observer<List<Message>> = mock()
+        channelControllerImpl.messages.observeForever(messageObserver)
+
+        channelControllerImpl.handleEvent(newMessageEvent)
+
+        verify(messageObserver).onChanged(listOf(message))
+    }
 }
