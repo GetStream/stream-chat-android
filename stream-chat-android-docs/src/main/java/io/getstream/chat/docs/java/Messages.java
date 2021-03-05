@@ -2,6 +2,7 @@ package io.getstream.chat.docs.java;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -23,7 +25,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
@@ -442,7 +443,7 @@ public class Messages {
                     @NotNull MessageListItem.MessageItem data,
                     @NotNull MessageListListenerContainer listeners,
                     @NotNull MessageListItemStyle style,
-                    @NotNull View parent
+                    @NotNull ViewGroup parent
             ) {
                 return super.createAttachmentView(data, listeners, style, parent);
             }
@@ -465,7 +466,7 @@ public class Messages {
                     @NotNull MessageListItem.MessageItem data,
                     @NotNull MessageListListenerContainer listeners,
                     @NotNull MessageListItemStyle style,
-                    @NotNull View parent
+                    @NotNull ViewGroup parent
             ) {
                 boolean containsMyAttachments = false;
                 for (Attachment attachment: data.getMessage().getAttachments()) {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -17,7 +18,6 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
