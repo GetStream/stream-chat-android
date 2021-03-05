@@ -247,4 +247,3 @@ internal class ChannelControllerImplReactionsTest {
         fun get(): ChannelControllerImpl = channelControllerImpl
     }
 }
-
