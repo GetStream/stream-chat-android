@@ -6,7 +6,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-
+Message options list changed colour for dark version. The colour is a little lighters
+now, what makes it easier to see. 
 ### ❌ Removed
 
 
@@ -78,4 +79,3 @@
 ### ❌ Removed
 - Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`,
   `PlainTextWithMediaAttachmentsViewHolder` and `PlainTextWithFileAttachmentsViewHolder`
-
