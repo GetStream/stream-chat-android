@@ -165,7 +165,7 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Qu
 	public abstract fun getChannels ()Landroidx/lifecycle/LiveData;
 	public abstract fun getChannelsState ()Landroidx/lifecycle/LiveData;
 	public abstract fun getEndOfChannels ()Landroidx/lifecycle/LiveData;
-	public abstract fun getFilter ()Lio/getstream/chat/android/client/utils/FilterObject;
+	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public abstract fun getLoading ()Landroidx/lifecycle/LiveData;
 	public abstract fun getLoadingMore ()Landroidx/lifecycle/LiveData;
 	public abstract fun getNewChannelEventFilter ()Lkotlin/jvm/functions/Function2;
@@ -388,24 +388,24 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/MarkR
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/QueryChannels {
-	public abstract fun invoke (Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/livedata/usecase/QueryChannels$DefaultImpls {
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryChannels;Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryChannels;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore {
-	public abstract fun invoke (Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore$DefaultImpls {
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore;Lio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryChannelsLoadMore;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/livedata/usecase/QueryMembers {
-	public final fun invoke (Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryMembers;Ljava/lang/String;IILio/getstream/chat/android/client/utils/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun invoke (Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun invoke$default (Lio/getstream/chat/android/livedata/usecase/QueryMembers;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/usecase/ReplayEventsForActiveChannels {

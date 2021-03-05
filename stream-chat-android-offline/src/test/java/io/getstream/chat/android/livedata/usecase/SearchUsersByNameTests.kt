@@ -17,6 +17,7 @@ import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -63,14 +64,16 @@ internal class SearchUsersByNameTests {
     fun `Given nonempty search string and online state Should perform search query with autocomplete filter`() {
         whenever(chatClient.queryUsers(any())) doReturn TestCall(mock())
         whenever(chatDomainImpl.isOnline()) doReturn true
+        val querySearch = randomString()
 
-        sut(querySearch = "searchString", offset = randomInt(), userLimit = randomInt(), userPresence = true).execute()
-
+        sut(querySearch = querySearch, offset = randomInt(), userLimit = randomInt(), userPresence = true).execute()
         verify(chatClient).queryUsers(
-            argThat {
-                presence `should be equal to` true
-                val filterMap = filter.data[Filters.KEY_AND] as ArrayList<Map<String, Map<String, String>>>
-                filterMap.first()[SearchUsersByName.FIELD_NAME]!![Filters.KEY_AUTOCOMPLETE] == "searchString"
+            com.nhaarman.mockitokotlin2.check {
+                it.presence `should be equal to` true
+                it.filter `should be equal to` Filters.and(
+                    Filters.ne("id", chatDomainImpl.currentUser.id),
+                    Filters.autocomplete("name", querySearch),
+                )
             }
         )
     }
@@ -81,7 +84,7 @@ internal class SearchUsersByNameTests {
         whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(
-            querySearch = "searchString",
+            querySearch = randomString(),
             offset = randomInt(),
             userLimit = randomInt(),
             userPresence = randomBoolean()
@@ -96,7 +99,7 @@ internal class SearchUsersByNameTests {
         whenever(chatDomainImpl.isOnline()) doReturn true
 
         sut(
-            querySearch = "searchString",
+            querySearch = randomString(),
             offset = randomInt(),
             userLimit = randomInt(),
             userPresence = randomBoolean()
@@ -128,15 +131,16 @@ internal class SearchUsersByNameTests {
         whenever(chatDomainImpl.isOnline()) doReturn false
         val dbUsers = listOf(randomUser(), randomUser())
         whenever(repositoryFacade.selectUsersLikeName(any(), any(), any())) doReturn dbUsers
+        val querySearch = randomString()
 
         val result = sut(
-            querySearch = "querySearch",
+            querySearch = querySearch,
             offset = randomInt(),
             userLimit = randomInt(),
             userPresence = randomBoolean()
         ).execute()
 
-        verify(repositoryFacade).selectUsersLikeName(eq("querySearch"), any(), any())
+        verify(repositoryFacade).selectUsersLikeName(eq(querySearch), any(), any())
         result.data() `should be equal to` dbUsers
     }
 }

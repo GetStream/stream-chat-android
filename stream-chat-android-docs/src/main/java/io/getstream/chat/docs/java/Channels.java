@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.client.api.models.NeutralFilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
@@ -22,7 +24,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Member;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
 
 import static io.getstream.chat.android.client.api.models.Pagination.LESS_THAN;
 import static java.util.Collections.emptyList;
@@ -638,7 +639,7 @@ public class Channels {
             FilterObject filterByPendingInvite = Filters.eq("invite", "pending");
 
             // Query all the members
-            FilterObject filterByNone = new FilterObject();
+            FilterObject filterByNone = NeutralFilterObject.INSTANCE;
 
             // We can order the results too with QuerySort param
             // Here example to order results by member created at descending

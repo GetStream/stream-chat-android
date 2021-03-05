@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
 import io.getstream.chat.android.client.api.models.ChannelResponse
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.GetSyncHistory
 import io.getstream.chat.android.client.api.models.GuestUserRequest
 import io.getstream.chat.android.client.api.models.HideChannelRequest
@@ -43,7 +44,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
