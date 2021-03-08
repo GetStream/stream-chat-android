@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,28 +33,28 @@ internal class IdGenerationDomainTest : BaseDomainTest() {
     @Test
     fun queryId() {
         val query = QueryChannelsSpec(
-            FilterObject(
+            Filters.eq(
                 "type",
                 "messaging"
             ),
             QuerySort()
         )
         val query2 = QueryChannelsSpec(
-            FilterObject(
+            Filters.eq(
                 "type",
                 "messaging"
             ),
             QuerySort()
         )
         val query3 = QueryChannelsSpec(
-            FilterObject(
+            Filters.eq(
                 "type",
                 "commerce"
             ),
             QuerySort()
         )
         val query4 = QueryChannelsSpec(
-            FilterObject(
+            Filters.eq(
                 "type",
                 "messaging"
             ),

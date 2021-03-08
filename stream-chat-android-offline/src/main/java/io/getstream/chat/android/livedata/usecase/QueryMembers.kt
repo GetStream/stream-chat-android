@@ -1,11 +1,12 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
@@ -31,7 +32,7 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
         cid: String,
         offset: Int = 0,
         limit: Int = 0,
-        filter: FilterObject = FilterObject(),
+        filter: FilterObject = NeutralFilterObject,
         sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {

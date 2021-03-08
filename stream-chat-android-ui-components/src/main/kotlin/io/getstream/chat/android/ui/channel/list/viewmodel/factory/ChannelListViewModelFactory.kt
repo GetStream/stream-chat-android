@@ -2,10 +2,10 @@ package io.getstream.chat.android.ui.channel.list.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 

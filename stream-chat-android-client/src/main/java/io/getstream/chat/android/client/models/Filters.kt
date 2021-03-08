@@ -1,6 +1,23 @@
 package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.api.models.AndFilterObject
+import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
+import io.getstream.chat.android.client.api.models.ContainsFilterObject
+import io.getstream.chat.android.client.api.models.DistinctFilterObject
+import io.getstream.chat.android.client.api.models.EqualsFilterObject
+import io.getstream.chat.android.client.api.models.ExistsFilterObject
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.GreaterThanFilterObject
+import io.getstream.chat.android.client.api.models.GreaterThanOrEqualsFilterObject
+import io.getstream.chat.android.client.api.models.InFilterObject
+import io.getstream.chat.android.client.api.models.LessThanFilterObject
+import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.api.models.NonExistsFilterObject
+import io.getstream.chat.android.client.api.models.NorFilterObject
+import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NotInFilterObject
+import io.getstream.chat.android.client.api.models.OrFilterObject
 
 /**
  * Stream supports a limited set of filters for querying channels, users and members.
@@ -17,112 +34,66 @@ import io.getstream.chat.android.client.utils.FilterObject
  */
 public object Filters {
 
-    public const val KEY_EXIST: String = "\$exists"
-    public const val KEY_CONTAINS: String = "\$contains"
-    public const val KEY_AND: String = "\$and"
-    public const val KEY_OR: String = "\$or"
-    public const val KEY_NOR: String = "\$nor"
-    public const val KEY_NE: String = "\$ne"
-    public const val KEY_GREATER_THAN: String = "\$gt"
-    public const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
-    public const val KEY_LESS_THAN: String = "\$lt"
-    public const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
-    public const val KEY_IN: String = "\$in"
-    public const val KEY_NOT_IN: String = "\$nin"
-    public const val KEY_AUTOCOMPLETE: String = "\$autocomplete"
+    @JvmStatic
+    public fun neutral(): FilterObject = NeutralFilterObject
 
     @JvmStatic
-    public fun exists(value: Any): FilterObject {
-        return FilterObject(KEY_EXIST, value)
-    }
+    public fun exists(fieldName: String): FilterObject = ExistsFilterObject(fieldName)
 
     @JvmStatic
-    public fun contains(value: Any): FilterObject {
-        return FilterObject(KEY_CONTAINS, value)
-    }
+    public fun notExists(fieldName: String): FilterObject = NonExistsFilterObject(fieldName)
 
     @JvmStatic
-    public fun contains(vararg filters: FilterObject): FilterObject {
-        return FilterObject(KEY_CONTAINS, filters)
-    }
+    public fun contains(fieldName: String, value: Any): FilterObject = ContainsFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun and(vararg filters: FilterObject): FilterObject {
-        return FilterObject(KEY_AND, filters)
-    }
+    public fun and(vararg filters: FilterObject): FilterObject = AndFilterObject(filters.toSet())
 
     @JvmStatic
-    public fun or(vararg filters: FilterObject): FilterObject {
-        return FilterObject(KEY_OR, filters)
-    }
+    public fun or(vararg filters: FilterObject): FilterObject = OrFilterObject(filters.toSet())
 
     @JvmStatic
-    public fun nor(vararg filters: FilterObject): FilterObject {
-        return FilterObject(KEY_NOR, filters)
-    }
+    public fun nor(vararg filters: FilterObject): FilterObject = NorFilterObject(filters.toSet())
 
     @JvmStatic
-    public fun eq(field: String, value: Any): FilterObject {
-        return FilterObject(field, value)
-    }
+    public fun eq(fieldName: String, value: Any): FilterObject = EqualsFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun ne(field: String, value: Any): FilterObject {
-        return FilterObject(field, FilterObject(KEY_NE, value))
-    }
+    public fun ne(fieldName: String, value: Any): FilterObject = NotEqualsFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun greaterThan(field: String, value: Any): FilterObject {
-        return FilterObject(field, FilterObject(KEY_GREATER_THAN, value))
-    }
+    public fun greaterThan(fieldName: String, value: Any): FilterObject = GreaterThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun greaterThanEquals(field: String, value: Any): FilterObject {
-        return FilterObject(field, FilterObject(KEY_GREATER_THAN_OR_EQUALS, value))
-    }
+    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject = GreaterThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun lessThan(field: String, value: Any): FilterObject {
-        return FilterObject(field, FilterObject(KEY_LESS_THAN, value))
-    }
+    public fun lessThan(fieldName: String, value: Any): FilterObject = LessThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun lessThanEquals(field: String, value: Any): FilterObject {
-        return FilterObject(field, FilterObject(KEY_LESS_THAN_OR_EQUALS, value))
-    }
+    public fun lessThanEquals(fieldName: String, value: Any): FilterObject = LessThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun `in`(field: String, vararg values: String): FilterObject {
-        return FilterObject(field, FilterObject(KEY_IN, values))
-    }
+    public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun `in`(field: String, values: List<*>): FilterObject {
-        return FilterObject(field, FilterObject(KEY_IN, values))
-    }
+    public fun `in`(fieldName: String, values: List<Any>): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun `in`(field: String, vararg values: Number): FilterObject {
-        return FilterObject(field, FilterObject(KEY_IN, values))
-    }
+    public fun `in`(fieldName: String, vararg values: Number): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(field: String, vararg values: String): FilterObject {
-        return FilterObject(field, FilterObject(KEY_NOT_IN, values))
-    }
+    public fun nin(fieldName: String, vararg values: String): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(field: String, values: List<*>): FilterObject {
-        return FilterObject(field, FilterObject(KEY_NOT_IN, values))
-    }
+    public fun nin(fieldName: String, values: List<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(field: String, vararg values: Number): FilterObject {
-        return FilterObject(field, FilterObject(KEY_NOT_IN, values))
-    }
+    public fun nin(fieldName: String, vararg values: Number): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun autocomplete(field: String, value: String): FilterObject {
-        return FilterObject(field, FilterObject(KEY_AUTOCOMPLETE, value))
-    }
+    public fun autocomplete(fieldName: String, value: String): FilterObject = AutocompleteFilterObject(fieldName, value)
+
+    @JvmStatic
+    public fun distinct(memberIds: List<String>): FilterObject = DistinctFilterObject(memberIds.toSet())
 }

@@ -1,9 +1,8 @@
 package io.getstream.chat.docs.java;
 
 import android.util.Log;
-import android.view.ViewGroup;
-
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.utils.DateFormatter;
-
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
@@ -31,15 +29,12 @@ import java.util.Collections;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.FilterObject;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -57,11 +52,11 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelB
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
+import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory;
-import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
@@ -73,10 +68,6 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
-import kotlin.Unit;
-import kotlin.coroutines.Continuation;
-import kotlin.coroutines.CoroutineContext;
-import kotlinx.coroutines.GlobalScope;
 
 import static java.util.Collections.singletonList;
 
