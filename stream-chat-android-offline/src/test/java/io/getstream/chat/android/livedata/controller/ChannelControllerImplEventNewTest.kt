@@ -3,21 +3,26 @@ package io.getstream.chat.android.livedata.controller
 import androidx.lifecycle.Observer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -35,6 +40,11 @@ internal class ChannelControllerImplEventNewTest {
         on(it.currentUser) doReturn User(id = CURRENT_USER_ID)
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
+    private val messageHelper: MessageHelper = mock {
+        on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
+            invocation.arguments[0] as List<Message>
+        }
+    }
 
     private lateinit var channelControllerImpl: ChannelControllerImpl
 
@@ -44,7 +54,8 @@ internal class ChannelControllerImplEventNewTest {
             channelType = "type1",
             channelId = "channelId",
             client = chatClient,
-            domainImpl = chatDomain
+            domainImpl = chatDomain,
+            messageHelper = messageHelper
         )
     }
 
@@ -62,7 +73,7 @@ internal class ChannelControllerImplEventNewTest {
     }
 
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`() = runBlockingTest {
+    fun `when new message event arrives, messages should be propagated correctly`() {
         val updatedAt = Date()
         val user = User(id = CURRENT_USER_ID)
         val message = Message(updatedAt = updatedAt, user = user)
@@ -74,6 +85,8 @@ internal class ChannelControllerImplEventNewTest {
 
         channelControllerImpl.messages.observeForever(messageObserver)
         channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
+
+        whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
         channelControllerImpl.handleEvent(newMessageEvent)
 
@@ -88,7 +101,7 @@ internal class ChannelControllerImplEventNewTest {
     }
 
     @Test
-    fun `when new message event arrives from other user, unread number should be updated`() = runBlockingTest {
+    fun `when new message event arrives from other user, unread number should be updated`() {
         val updatedAt = Date()
         val message = Message(updatedAt = updatedAt, user = User(id = "otherUserId"))
 
@@ -110,5 +123,57 @@ internal class ChannelControllerImplEventNewTest {
 
         // Last message is updated
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
+    }
+
+    @Test
+        fun `when a message update for a non existing message arrives, it is added`() {
+        val message = Message(user = User(id = "otherUserId"))
+
+        val messageUpdateEvent = MessageUpdatedEvent(
+            type = "type",
+            createdAt = Date(),
+            user = User(),
+            cid = "cid",
+            channelType = "channelType",
+            channelId = "channelId",
+            message = message,
+            watcherCount = 1,
+        )
+
+
+        val messageObserver: Observer<List<Message>> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.handleEvent(messageUpdateEvent)
+
+        verify(messageObserver).onChanged(listOf(message))
+    }
+
+    @Test
+    fun `when a message update event is outdated, it should be ignored`() {
+        val recentMessage = Message(user = User(id = "otherUserId"), updatedAt = Date())
+        val oldMessage = Message(user = User(id = "otherUserId"), updatedAt = Date(Long.MIN_VALUE))
+
+        val messageUpdateEvent = MessageUpdatedEvent(
+            type = "type",
+            createdAt = Date(),
+            user = User(),
+            cid = "cid",
+            channelType = "channelType",
+            channelId = "channelId",
+            message = oldMessage,
+            watcherCount = 1,
+        )
+
+        channelControllerImpl.upsertMessage(recentMessage)
+
+        val messageObserver: Observer<List<Message>> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.handleEvent(messageUpdateEvent)
+
+        // No message is added
+        verify(messageObserver, never()).onChanged(listOf(oldMessage))
+        Truth.assertThat(channelControllerImpl.messages.value).isEqualTo(listOf(recentMessage))
     }
 }

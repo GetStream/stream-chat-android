@@ -1000,6 +1000,7 @@ internal class ChannelControllerImpl(
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
+
         for (message in newMessages) {
             val oldMessage = copy[message.id]
             var outdated = false
@@ -1019,7 +1020,7 @@ internal class ChannelControllerImpl(
         }
 
         // return all the fresh messages
-        return copy + messages.map { it.copy() }.associateBy(Message::id)
+        return copy + freshMessages.map { it.copy() }.associateBy(Message::id)
     }
 
     private fun upsertMessages(messages: List<Message>) {
@@ -1099,7 +1100,7 @@ internal class ChannelControllerImpl(
         return _hidden.value
     }
 
-    internal suspend fun handleEvent(event: ChatEvent) {
+    internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
