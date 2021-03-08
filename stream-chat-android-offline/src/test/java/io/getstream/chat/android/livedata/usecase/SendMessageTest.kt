@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class SendMessageTest : BaseConnectedMockedTest() {
+
     @Test
     fun `Should send message`() = runBlocking {
         val message1 = data.createMessage().apply { extraData = mutableMapOf("location" to "Amsterdam") }
@@ -39,7 +39,7 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
         }
 
         fun givenChatClient(chatClient: ChatClient) = apply {
-            whenever(chatClient.sendMessage(any(), any(), any())).thenReturn(TestCall(Result(mock())))
+            whenever(chatClient.sendMessage(any(), any(), any())).thenReturn(TestCall(Result(data.message1)))
         }
 
         fun build(): ChannelController {

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.whenever
@@ -22,21 +23,15 @@ internal class DeleteMessageImplTest : BaseConnectedMockedTest() {
 
     @Test
     fun deleteMessageUseCase() = runBlocking {
-        /*val message = data.createMessage()
-        val fixture = Fixture(chatDomain).givenMessage(message)
-        val message1 = data.createMessage()
+        val message = data.createMessage()
+        val channelController = Fixture().givenChatClient(client).givenChatDomain(chatDomain).givenMessage(message).build()
 
-        val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        chatDomain.useCases.deleteMessage(message).execute()
 
-        val result =
-        assertSuccess(result)
-        var messages = channelState.messages.getOrAwaitValue()
-        Truth.assertThat(messages.last()).isEqualTo(message1)
-        val result2 = chatDomain.useCases.deleteMessage(message1).execute()
-        assertSuccess(result2)
-        messages = channelState.messages.getOrAwaitValue()
-        Truth.assertThat(messages.last().id).isEqualTo(result.data().id)
-        Truth.assertThat(messages.last().deletedAt).isNotNull()*/
+        val deletedMessage = channelController.messages.getOrAwaitValue().last()
+
+        Truth.assertThat(deletedMessage.id).isEqualTo(message.id)
+        Truth.assertThat(deletedMessage.deletedAt).isNotNull()
     }
 }
 
@@ -60,7 +55,7 @@ private class Fixture {
         chatDomain.useCases.sendMessage(message).execute()
     }
 
-    fun build(): List<Message> {
-        return channelState.messages.getOrAwaitValue()
+    fun build(): ChannelController {
+        return channelState
     }
 }
