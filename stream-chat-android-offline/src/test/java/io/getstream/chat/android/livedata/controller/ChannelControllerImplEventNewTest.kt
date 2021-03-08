@@ -77,7 +77,7 @@ internal class ChannelControllerImplEventNewTest {
         val newMessageEvent = NewMessageEvent(
             type = "type",
             createdAt = Date(),
-            user = User(),
+            user = User(id = CURRENT_USER_ID),
             cid = "cid",
             channelType = "channelType",
             channelId = "channelId",
@@ -136,43 +136,6 @@ internal class ChannelControllerImplEventNewTest {
 
         // Unread count should be propagated, because it is a message form another user
         verify(unreadCountObserver).onChanged(1)
-
-        // Last message is updated
-        channelControllerImpl.toChannel().lastMessageAt = updatedAt
-    }
-
-    @Test
-    fun `when new message event arrives from same user, no unread should be updated`() = runBlockingTest {
-        val updatedAt = Date()
-        // The current user has the id of
-        val message = Message(updatedAt = updatedAt, user = User(id = CURRENT_USER_ID))
-
-        val newMessageEvent = NewMessageEvent(
-            type = "type",
-            createdAt = Date(),
-            user = User(),
-            cid = "cid",
-            channelType = "channelType",
-            channelId = "channelId",
-            message = message,
-            watcherCount = 1,
-            totalUnreadCount = 1,
-            unreadChannels = 1
-        )
-
-        val messageObserver: Observer<List<Message>> = mock()
-        val unreadCountObserver: Observer<Int?> = mock()
-
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
-
-        channelControllerImpl.handleEvent(newMessageEvent)
-
-        // Message is propagated
-        verify(messageObserver).onChanged(listOf(message))
-
-        // Unread count should not be propagated, because it is a message form the current user
-        verify(unreadCountObserver, never()).onChanged(1)
 
         // Last message is updated
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
