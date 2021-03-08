@@ -1,12 +1,15 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.Observer
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
@@ -26,6 +29,7 @@ internal class ChannelControllerImplEventNewTest {
     private val chatDomain: ChatDomainImpl = mock {
         on(it.scope) doReturn TestCoroutineScope()
         on(it.currentUser) doReturn User()
+        on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
 
     private val channelControllerImpl =
@@ -59,8 +63,10 @@ internal class ChannelControllerImplEventNewTest {
     }
 
     @Test
-    fun `when new message event arrives, messages should be propagated`() = runBlockingTest {
-        val message = Message()
+    fun `when new message event arrives, messages should be propagated correctly`() = runBlockingTest {
+        val updatedAt = Date()
+        val message = Message(updatedAt = updatedAt)
+
 
         val newMessageEvent = NewMessageEvent(
             type = "type",
@@ -76,10 +82,56 @@ internal class ChannelControllerImplEventNewTest {
         )
 
         val messageObserver: Observer<List<Message>> = mock()
+        val unreadCountObserver: Observer<Int?> = mock()
+
         channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
 
         channelControllerImpl.handleEvent(newMessageEvent)
 
+        // Message is propagated
         verify(messageObserver).onChanged(listOf(message))
+
+        //Unread count should not be propagated, because it is a message form the same user
+        verify(unreadCountObserver, never()).onChanged(1)
+
+        // Last message is updated
+        channelControllerImpl.toChannel().lastMessageAt = updatedAt
+    }
+
+    @Test
+    fun `when new message event arrives from other user, unread number should be updated`() = runBlockingTest {
+        val updatedAt = Date()
+        val message = Message(updatedAt = updatedAt, user = User(id = "otherUserId"))
+
+        val newMessageEvent = NewMessageEvent(
+            type = "type",
+            createdAt = Date(),
+            user = User(),
+            cid = "cid",
+            channelType = "channelType",
+            channelId = "channelId",
+            message = message,
+            watcherCount = 1,
+            totalUnreadCount = 1,
+            unreadChannels = 1
+        )
+
+        val messageObserver: Observer<List<Message>> = mock()
+        val unreadCountObserver: Observer<Int?> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
+
+        channelControllerImpl.handleEvent(newMessageEvent)
+
+        // Message is propagated
+        verify(messageObserver).onChanged(listOf(message))
+
+        //Unread count should not be propagated, because it is a message form the same user
+        verify(unreadCountObserver).onChanged(1)
+
+        // Last message is updated
+        channelControllerImpl.toChannel().lastMessageAt = updatedAt
     }
 }
