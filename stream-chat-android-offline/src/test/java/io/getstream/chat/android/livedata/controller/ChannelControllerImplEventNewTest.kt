@@ -33,7 +33,7 @@ internal class ChannelControllerImplEventNewTest {
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
 
-    private lateinit var channelControllerImpl : ChannelControllerImpl
+    private lateinit var channelControllerImpl: ChannelControllerImpl
 
     @BeforeEach
     fun setUp() {
@@ -59,7 +59,7 @@ internal class ChannelControllerImplEventNewTest {
             user = user
         )
 
-        val observerMock : Observer<List<User>> = mock()
+        val observerMock: Observer<List<User>> = mock()
         channelControllerImpl.watchers.observeForever(observerMock)
 
         channelControllerImpl.handleEvent(userStartWatchingEvent)
@@ -71,7 +71,6 @@ internal class ChannelControllerImplEventNewTest {
     fun `when new message event arrives, messages should be propagated correctly`() = runBlockingTest {
         val updatedAt = Date()
         val message = Message(updatedAt = updatedAt)
-
 
         val newMessageEvent = NewMessageEvent(
             type = "type",
@@ -97,7 +96,7 @@ internal class ChannelControllerImplEventNewTest {
         // Message is propagated
         verify(messageObserver).onChanged(listOf(message))
 
-        //Unread count should not be propagated, because it is a message form the same user
+        // Unread count should not be propagated, because it is a message form the same user
         verify(unreadCountObserver, never()).onChanged(1)
 
         // Last message is updated
@@ -133,7 +132,7 @@ internal class ChannelControllerImplEventNewTest {
         // Message is propagated
         verify(messageObserver).onChanged(listOf(message))
 
-        //Unread count should not be propagated, because it is a message form the same user
+        // Unread count should not be propagated, because it is a message form the same user
         verify(unreadCountObserver).onChanged(1)
 
         // Last message is updated
