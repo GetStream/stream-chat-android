@@ -72,12 +72,13 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when new message event arrives, messages should be propagated correctly`() = runBlockingTest {
         val updatedAt = Date()
-        val message = Message(updatedAt = updatedAt)
+        val user = User(id = CURRENT_USER_ID)
+        val message = Message(updatedAt = updatedAt, user = user)
 
         val newMessageEvent = NewMessageEvent(
             type = "type",
             createdAt = Date(),
-            user = User(id = CURRENT_USER_ID),
+            user = user,
             cid = "cid",
             channelType = "channelType",
             channelId = "channelId",
