@@ -9,13 +9,18 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomReaction
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
@@ -107,6 +112,27 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
+    fun `When insert a message, all participant users of this message need to be stored`() = runBlockingTest {
+        val messageUser = randomUser()
+        val replyToUser = randomUser()
+        val reactionUser = randomUser()
+        val message = randomMessage(
+            user = messageUser,
+            replyTo = randomMessage(user = replyToUser),
+        )
+        val cache = randomBoolean()
+        sut.insertMessage(message, cache)
+
+        verify(messages).insertMessage(eq(message), eq(cache))
+        verify(users).insertUsers(
+            com.nhaarman.mockitokotlin2.check { listUser ->
+                listUser.size `should be equal to` 2
+                listUser `should contain same` listOf(replyToUser, messageUser)
+            }
+        )
+    }
+
+    @Test
     fun `When insert a list of channels, all participant users of these channels need to be stored`() =
         runBlockingTest {
             val (listOfUser: List<User>, listOfChannels: List<Channel>) =
@@ -133,6 +159,54 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 }
             )
         }
+
+    @Test
+    fun `When insert a list of messages, all participant users of these messages need to be stored`() =
+        runBlockingTest {
+            val (listOfUser: List<User>, listOfMessages: List<Message>) =
+                (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
+                    val messageUser = randomUser()
+                    val replyToUser = randomUser()
+                    val message = randomMessage(
+                        user = messageUser,
+                        replyTo = randomMessage(user = replyToUser)
+                    )
+                    acc.first + listOf(messageUser, replyToUser) to acc.second + message
+                }
+            val cache = randomBoolean()
+
+            sut.insertMessages(listOfMessages, cache)
+
+            verify(messages).insertMessages(eq(listOfMessages), eq(cache))
+            verify(users).insertUsers(
+                com.nhaarman.mockitokotlin2.check { listUser ->
+                    listUser `should contain same` listOfUser
+                }
+            )
+        }
+
+    @Test
+    fun `When insert a reaction, it should have a valid users and it need to be stored`() = runBlockingTest {
+        val user = randomUser()
+        val reaction = randomReaction(user = user)
+
+        sut.insertReaction(reaction)
+
+        verify(reactions).insertReaction(eq(reaction))
+        verify(users).insertUser(user)
+    }
+
+    @Test
+    fun `When updating members of a channels, they need to be stored`() = runBlockingTest {
+        val usersList = List(positiveRandomInt(20)) { randomUser() }
+        val members = usersList.map(::randomMember)
+        val cid = randomCID()
+
+        sut.updateMembersForChannel(cid, members)
+
+        verify(users).insertUsers(usersList)
+        verify(channels).updateMembersForChannel(cid, members)
+    }
 
     @Test
     fun `Proves that correct methods are called in storeStateForChannels`() {
