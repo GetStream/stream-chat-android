@@ -17,6 +17,7 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
@@ -32,13 +33,17 @@ internal class ChannelControllerImplEventNewTest {
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
 
-    private val channelControllerImpl =
-        ChannelControllerImpl(
+    private lateinit var channelControllerImpl : ChannelControllerImpl
+
+    @BeforeEach
+    fun setUp() {
+        channelControllerImpl = ChannelControllerImpl(
             channelType = "type1",
             channelId = "channelId",
             client = chatClient,
             domainImpl = chatDomain
         )
+    }
 
     @Test
     fun `when user watching event arrives, watchers should be incremented`() = runBlockingTest {
