@@ -139,7 +139,6 @@ internal class ChannelControllerImplEventNewTest {
             message = message,
             watcherCount = 1,
         )
-        
         val messageObserver: Observer<List<Message>> = mock()
 
         channelControllerImpl.messages.observeForever(messageObserver)
