@@ -754,7 +754,6 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionsSyncNeeded().onEach { reaction ->
-            reaction.user = null
             val result = if (reaction.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).execute()
             } else {
