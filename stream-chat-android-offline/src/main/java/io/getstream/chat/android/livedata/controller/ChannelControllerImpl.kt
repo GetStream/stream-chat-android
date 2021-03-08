@@ -97,6 +97,7 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl,
+    private val messageHelper: MessageHelper = MessageHelper(),
 ) : ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
 
@@ -234,7 +235,6 @@ internal class ChannelControllerImpl(
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> =
         ConcurrentHashMap()
-    private val messageHelper = MessageHelper()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client, domainImpl)
