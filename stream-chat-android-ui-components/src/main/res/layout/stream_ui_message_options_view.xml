@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/stream_ui_white_snow"
+    app:cardBackgroundColor="@color/stream_ui_white"
     app:cardCornerRadius="@dimen/stream_ui_options_menu_corner_radius"
     >
 

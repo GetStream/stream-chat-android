@@ -37,8 +37,16 @@ class ChatInfoViewModel(
             viewModelScope.launch {
                 val channelControllerResult = chatDomain.useCases.getChannelController(cid).await()
                 if (channelControllerResult.isSuccess) {
-                    val canDeleteChannel = channelControllerResult.data().members.value.isCurrentUserOwnerOrAdmin()
+                    val channelController = channelControllerResult.data()
+                    val canDeleteChannel = channelController.members.value.isCurrentUserOwnerOrAdmin()
                     _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
+
+                    _state.addSource(channelController.members) { memberList ->
+                        // Updates only if the user state is already set
+                        memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
+                            _state.value = _state.value?.copy(member = member)
+                        }
+                    }
                 }
                 // Currently, we don't receive any event when channel member is banned/shadow banned, so
                 // we need to get member data from the server

@@ -4,6 +4,5 @@ import java.util.Date
 
 /**
  * Efficiently store the channel user read info
- *
  */
-internal data class ChannelUserReadEntity(var userId: String, var lastRead: Date? = null)
+internal data class ChannelUserReadEntity(val userId: String, val lastRead: Date?, val unreadMessages: Int)

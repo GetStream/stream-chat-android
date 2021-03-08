@@ -2,9 +2,15 @@
 
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
-import io.getstream.chat.android.ui.common.extensions.internal.getOnlineStateSubtitle
+import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 
 /**
@@ -15,9 +21,9 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
         view.setTitle(it.getDisplayName(view.context))
-        view.setOnlineStateSubtitle(it.getOnlineStateSubtitle(view.context))
         view.setAvatar(it)
     }
+
     online.observe(lifecycle) { isOnline ->
         if (isOnline) {
             view.showOnlineStateSubtitle()
@@ -25,6 +31,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
             view.showSearchingForNetworkLabel()
         }
     }
+
     typingUsers.observe(lifecycle, view::showTypingStateLabel)
 
     activeThread.observe(lifecycle) { message ->
@@ -33,5 +40,49 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         } else {
             view.setNormalMode()
         }
+    }
+
+    members.observe(lifecycle) { memberList ->
+        view.setOnlineStateSubtitle(getOnlineStateSubtitle(view.context, memberList))
+    }
+}
+
+private fun getOnlineStateSubtitle(context: Context, members: List<Member>): String {
+    val users = members.map { member -> member.user }.filterCurrentUser()
+    if (users.isEmpty()) return String.EMPTY
+
+    return if (users.size == 1) {
+        users.first().getLastSeenText(context)
+    } else {
+        getGroupSubtitle(context, members)
+    }
+}
+
+private fun List<User>.filterCurrentUser(): List<User> {
+    return if (ChatDomain.isInitialized) {
+        val currentUser = ChatDomain.instance().currentUser
+        filter { it.id != currentUser.id }
+    } else {
+        this
+    }
+}
+
+private fun getGroupSubtitle(context: Context, members: List<Member>): String {
+    val allUsers = members.map { it.user }
+    val onlineUsers = allUsers.count { it.online }
+    val groupMembers = context.resources.getQuantityString(
+        R.plurals.stream_ui_message_list_header_group_member_count,
+        allUsers.size,
+        allUsers.size
+    )
+
+    return if (onlineUsers > 0) {
+        context.getString(
+            R.string.stream_ui_message_list_header_group_member_count_with_online,
+            groupMembers,
+            onlineUsers
+        )
+    } else {
+        groupMembers
     }
 }

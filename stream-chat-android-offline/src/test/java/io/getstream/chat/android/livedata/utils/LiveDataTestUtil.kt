@@ -2,10 +2,9 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
 import org.robolectric.shadows.ShadowLooper
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal suspend fun waitForSetUser(
     client: ChatClient,
@@ -13,14 +12,16 @@ internal suspend fun waitForSetUser(
     token: String,
     timeMillis: Long = 5000,
 ) {
-    val lock = CompletableDeferred<Unit>()
+    val attemptDuration = 10L
+    var attempt = timeMillis / attemptDuration
+
+    var success = AtomicBoolean(false)
     client.connectUser(user, token).enqueue {
-        lock.complete(Unit)
+        success.set(true)
     }
-    // TODO: this makes all tests very slow, someone should investigate why this doesn't work properly
-    // Workaround to have `setUser()` process completed ¯\_(ツ)_/¯
-    delay(timeMillis)
-    // trigger the event loop to run
-    ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-    withTimeout(timeMillis) { lock.await() }
+    while (!success.get() && --attempt > 0) {
+        delay(attemptDuration)
+        // trigger the event loop to run
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+    }
 }

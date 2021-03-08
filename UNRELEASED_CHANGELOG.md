@@ -6,7 +6,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-
+Message options list changed colour for dark version. The colour is a little lighters
+now, what makes it easier to see. 
 ### ❌ Removed
 
 
@@ -30,6 +31,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Refactored `FilterObject` class  - see the [migration guide](https://github.com/GetStream/stream-chat-android/wiki/Migration-guide:-FilterObject) for more info
 
 ### ❌ Removed
 
@@ -77,4 +79,3 @@
 ### ❌ Removed
 - Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`,
   `PlainTextWithMediaAttachmentsViewHolder` and `PlainTextWithFileAttachmentsViewHolder`
-

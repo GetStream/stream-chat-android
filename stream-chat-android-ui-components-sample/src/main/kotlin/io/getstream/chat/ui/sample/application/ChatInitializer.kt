@@ -29,6 +29,7 @@ class ChatInitializer(private val context: Context) {
             .build()
 
         val domain = ChatDomain.Builder(client, user, context)
+            .userPresenceEnabled()
             .offlineEnabled()
             .build()
     }
