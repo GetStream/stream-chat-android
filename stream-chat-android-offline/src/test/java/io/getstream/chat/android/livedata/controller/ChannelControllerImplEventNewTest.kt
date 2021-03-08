@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
 
+private const val CURRENT_USER_ID = "currentUserId"
+
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelControllerImplEventNewTest {
@@ -29,7 +31,7 @@ internal class ChannelControllerImplEventNewTest {
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomainImpl = mock {
         on(it.scope) doReturn TestCoroutineScope()
-        on(it.currentUser) doReturn User()
+        on(it.currentUser) doReturn User(id = CURRENT_USER_ID)
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
 
@@ -132,8 +134,45 @@ internal class ChannelControllerImplEventNewTest {
         // Message is propagated
         verify(messageObserver).onChanged(listOf(message))
 
-        // Unread count should not be propagated, because it is a message form the same user
+        // Unread count should be propagated, because it is a message form another user
         verify(unreadCountObserver).onChanged(1)
+
+        // Last message is updated
+        channelControllerImpl.toChannel().lastMessageAt = updatedAt
+    }
+
+    @Test
+    fun `when new message event arrives from same user, no unread should be updated`() = runBlockingTest {
+        val updatedAt = Date()
+        // The current user has the id of
+        val message = Message(updatedAt = updatedAt, user = User(id = CURRENT_USER_ID))
+
+        val newMessageEvent = NewMessageEvent(
+            type = "type",
+            createdAt = Date(),
+            user = User(),
+            cid = "cid",
+            channelType = "channelType",
+            channelId = "channelId",
+            message = message,
+            watcherCount = 1,
+            totalUnreadCount = 1,
+            unreadChannels = 1
+        )
+
+        val messageObserver: Observer<List<Message>> = mock()
+        val unreadCountObserver: Observer<Int?> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
+
+        channelControllerImpl.handleEvent(newMessageEvent)
+
+        // Message is propagated
+        verify(messageObserver).onChanged(listOf(message))
+
+        // Unread count should not be propagated, because it is a message form the current user
+        verify(unreadCountObserver, never()).onChanged(1)
 
         // Last message is updated
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
