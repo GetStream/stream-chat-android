@@ -126,7 +126,7 @@ internal class ChannelControllerImplEventNewTest {
     }
 
     @Test
-        fun `when a message update for a non existing message arrives, it is added`() {
+    fun `when a message update for a non existing message arrives, it is added`() {
         val message = Message(user = User(id = "otherUserId"))
 
         val messageUpdateEvent = MessageUpdatedEvent(
@@ -139,8 +139,7 @@ internal class ChannelControllerImplEventNewTest {
             message = message,
             watcherCount = 1,
         )
-
-
+        
         val messageObserver: Observer<List<Message>> = mock()
 
         channelControllerImpl.messages.observeForever(messageObserver)
