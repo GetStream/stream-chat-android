@@ -59,7 +59,9 @@ internal open class BaseChatModule(
         buildNotification(notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config) }
-    private val defaultSocket by lazy { buildSocket(config, gsonParser) }
+    private val defaultSocket by lazy {
+        buildSocket(config, if (config.enableMoshi) moshiParser else gsonParser)
+    }
     private val defaultFileUploader by lazy {
         StreamFileUploader(
             config.apiKey,

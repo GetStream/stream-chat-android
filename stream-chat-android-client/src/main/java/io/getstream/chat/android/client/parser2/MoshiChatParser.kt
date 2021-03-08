@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAda
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
@@ -22,6 +23,7 @@ internal class MoshiChatParser : ChatParser {
     private val moshi: Moshi by lazy {
         Moshi.Builder()
             .addAdapter(DateAdapter())
+            .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)
             .add(UpstreamMessageDtoAdapter)
             .add(DownstreamChannelDtoAdapter)
