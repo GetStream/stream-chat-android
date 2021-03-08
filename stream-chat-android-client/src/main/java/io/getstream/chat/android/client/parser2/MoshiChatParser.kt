@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -40,7 +41,9 @@ internal class MoshiChatParser : ChatParser {
     }
 
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
-        return builder.addConverterFactory(MoshiConverterFactory.create(moshi))
+        return builder
+            .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
     }
 
     private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
