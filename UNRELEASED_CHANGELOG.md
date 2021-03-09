@@ -39,6 +39,7 @@ now, what makes it easier to see.
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed refreshing channel list after removing member
+- Fixed an issue that didn't find the user when obtaining the list of messages
 
 ### ⬆️ Improved
 
