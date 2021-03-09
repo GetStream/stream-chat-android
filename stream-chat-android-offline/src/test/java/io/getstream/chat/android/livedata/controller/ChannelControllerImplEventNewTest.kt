@@ -26,7 +26,6 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -150,13 +149,15 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.messages.observeForever(messageObserver)
         channelControllerImpl.handleEvent(messageUpdateEvent)
 
-        verify(messageObserver, atLeastOnce()).onChanged(argThat { messageList ->
-            if (messageList.isNotEmpty()) {
-                messageList.first().id == messageId
-            } else {
-                true
+        verify(messageObserver, atLeastOnce()).onChanged(
+            argThat { messageList ->
+                if (messageList.isNotEmpty()) {
+                    messageList.first().id == messageId
+                } else {
+                    true
+                }
             }
-        })
+        )
     }
 
     @Test
