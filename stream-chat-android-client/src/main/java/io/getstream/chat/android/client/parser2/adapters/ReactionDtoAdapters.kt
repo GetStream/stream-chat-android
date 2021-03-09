@@ -16,7 +16,7 @@ internal object DownstreamReactionDtoAdapter :
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
         messageAdapter: JsonAdapter<DownstreamReactionDto>,
-    ): DownstreamReactionDto = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
+    ): DownstreamReactionDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
     fun toJson(jsonWriter: JsonWriter, value: DownstreamReactionDto): Unit = error("Can't convert this to Json")

@@ -14,7 +14,7 @@ internal object AttachmentDtoAdapter : CustomObjectDtoAdapter<AttachmentDto>(Att
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
         messageAdapter: JsonAdapter<AttachmentDto>,
-    ): AttachmentDto = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
+    ): AttachmentDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
     fun toJson(
