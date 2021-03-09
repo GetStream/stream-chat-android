@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -46,7 +45,7 @@ internal class ChatDomainImplCreateChannelTest {
         on(it.id) doReturn channelId
         on(it.type) doReturn channelType
     }
-    private val channelMembers = listOf(Member(user = randomUser()), Member(user = randomUser()))
+    private val channelMembers = listOf(randomMember(), randomMember())
     private val channelExtraData = mutableMapOf<String, Any>("extraData" to true)
 
     @Test
