@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.controller
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.description
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
@@ -9,6 +10,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -167,7 +169,7 @@ internal class ChannelControllerImplReactionsTest {
         }
 
     @Test
-    fun `when delete reaction, the sync status is right and reaction is inserted`() =
+    fun `when deleting reaction FAILED, the sync status is right and reaction is inserted`() =
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
@@ -188,7 +190,34 @@ internal class ChannelControllerImplReactionsTest {
         }
 
     @Test
-    fun `when deleting a reaction, the sync status is right and message is inserted`() =
+    fun `when deleting reaction failed PERMANENTLY, the sync status is right and reaction is inserted`() =
+        runBlockingTest {
+            val sut = Fixture(testCoroutines.scope, currentUser)
+                .givenMockedRepositories()
+                .givenMessageWithReactions(myReactions)
+                .get()
+
+            val chatError = ChatNetworkError.create(
+                description = "error",
+                streamCode = 401,
+                statusCode = 401
+            )
+
+            whenever(sut.domainImpl.isOnline()) doReturn true
+            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(chatError) }
+
+            val result = sut.deleteReaction(mockReaction)
+
+            inOrder(mockReaction) {
+                verify(mockReaction).syncStatus = SyncStatus.IN_PROGRESS
+                verify(mockReaction).syncStatus = SyncStatus.FAILED_PERMANENTLY
+            }
+
+            result.isError `should be equal to` true
+        }
+
+    @Test
+    fun `when deleting a reaction SUCCESSFULLY, the sync status is right and message is inserted`() =
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
