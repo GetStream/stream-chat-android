@@ -16,7 +16,7 @@ internal data class ConfigDto(
     val mutes: Boolean,
     val max_message_length: Int,
     val automod: String,
-    val infinite: String,
+    val infinite: String = "",
     val name: String,
     val commands: List<CommandDto>,
 )
