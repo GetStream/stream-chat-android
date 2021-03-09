@@ -14,10 +14,8 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -25,10 +23,9 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomInt
@@ -75,7 +72,7 @@ internal class ChannelControllerImplEventNewTest {
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should be updated`() = runBlockingTest {
+    fun `when user watching event arrives, last message should be updated`() {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(id = "thisId", createdAt = newDate)
