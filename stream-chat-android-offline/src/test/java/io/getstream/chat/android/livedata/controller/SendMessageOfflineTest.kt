@@ -14,8 +14,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -38,17 +40,15 @@ internal class SendMessageOfflineTest {
     @RegisterExtension
     val testCoroutines = TestCoroutineExtension()
 
-    private val data = TestDataHelper()
-
     @Test
     fun `when calling watch, local messages should not be lost`() = testCoroutines.scope.runBlockingTest {
-        val sut = Fixture(testCoroutines.scope, data.user1)
-            .givenChannelWithoutMessages(data.channel1)
+        val sut = Fixture(testCoroutines.scope, randomUser())
+            .givenChannelWithoutMessages(randomChannel(cid = "channelType:channelId"))
             .givenMockedRepositories()
             .givenIsOffline()
             .get()
 
-        val message = data.createMessage()
+        val message = randomMessage(cid = "channelType:channelId", parentId = null)
         // the message is only created locally
         sut.sendMessage(message)
         // the message should still show up after invocation
