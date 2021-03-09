@@ -112,4 +112,3 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
     }
 }
-
