@@ -12,12 +12,16 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
@@ -25,6 +29,7 @@ import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
@@ -40,6 +45,8 @@ private const val CURRENT_USER_ID = "currentUserId"
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelControllerImplEventNewTest {
+
+    private val channelId = randomString()
 
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomainImpl = mock {
@@ -59,7 +66,7 @@ internal class ChannelControllerImplEventNewTest {
     fun setUp() {
         channelControllerImpl = ChannelControllerImpl(
             channelType = "type1",
-            channelId = "channelId",
+            channelId = channelId,
             client = chatClient,
             domainImpl = chatDomain,
             messageHelper = messageHelper
@@ -219,5 +226,65 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.handleEvent(notificationEvent)
 
         verify(watchersCountObserver).onChanged(watcherCount)
+    }
+
+    // Member added event
+    @Test
+    fun `when member is added, it should be propagated`() {
+        val user = randomUser()
+        val member = Member(user = user)
+
+        val memberAddedEvent = MemberAddedEvent(
+            type = randomString(),
+            createdAt = Date(),
+            user = user,
+            cid = randomString(),
+            channelType = randomString(),
+            channelId = randomString(),
+            member = member
+        )
+
+        val membersCountObserver: Observer<List<Member>> = mock()
+
+        channelControllerImpl.members.observeForever(membersCountObserver)
+        channelControllerImpl.handleEvent(memberAddedEvent)
+
+        verify(membersCountObserver).onChanged(listOf(member))
+    }
+
+    // Typing event
+    @Test
+    fun `when events of start tying arrive, it should be correctly propagated`() {
+        val user1 = randomUser()
+        val user2 = randomUser()
+
+        val typingStartEvent1 = TypingStartEvent(
+            type = randomString(),
+            createdAt = Date(),
+            user = user1,
+            cid = randomString(),
+            channelType = randomString(),
+            channelId = randomString(),
+            parentId = randomString()
+        )
+
+        val typingStartEvent2 = TypingStartEvent(
+            type = randomString(),
+            createdAt = Date(),
+            user = user2,
+            cid = randomString(),
+            channelType = randomString(),
+            channelId = randomString(),
+            parentId = randomString()
+        )
+
+        val typingStartObserver: Observer<TypingEvent> = mock()
+
+        channelControllerImpl.typing.observeForever(typingStartObserver)
+        channelControllerImpl.handleEvent(typingStartEvent1)
+        channelControllerImpl.handleEvent(typingStartEvent2)
+
+        verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
+        verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1, user2)))
     }
 }
