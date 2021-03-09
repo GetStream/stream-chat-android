@@ -3,6 +3,9 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
+import io.getstream.chat.android.client.api2.mapping.toDomain
+import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -42,6 +45,10 @@ internal class MoshiChatParser : ChatParser {
     }
 
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
+        if (clazz == ChatEvent::class.java) {
+            return parseAndMapEvent(raw)
+        }
+
         val adapter = moshi.adapter(clazz)
         return adapter.fromJson(raw)!!
     }
@@ -54,5 +61,11 @@ internal class MoshiChatParser : ChatParser {
 
     private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
         this.add(T::class.java, adapter)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> parseAndMapEvent(raw: String): T {
+        val adapter = moshi.adapter(ChatEventDto::class.java)
+        return adapter.fromJson(raw)!!.toDomain() as T
     }
 }
