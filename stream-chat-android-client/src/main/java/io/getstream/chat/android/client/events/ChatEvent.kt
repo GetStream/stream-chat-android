@@ -39,7 +39,7 @@ public data class ChannelDeletedEvent(
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
-    @SerializedName("channel_id") val ChannelId: String,
+    @SerializedName("channel_id") val channelId: String,
     val channel: Channel,
     val user: User?,
 ) : CidEvent()
@@ -212,7 +212,7 @@ public data class NotificationChannelDeletedEvent(
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
-    @SerializedName("channel_id") val ChannelId: String,
+    @SerializedName("channel_id") val channelId: String,
     val channel: Channel,
     val user: User?,
 ) : CidEvent()
