@@ -51,14 +51,14 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when user watching event arrives, last message should be updated`() = runBlockingTest {
         val user = User()
-        val updatedAt = Date(Long.MAX_VALUE)
-        val newMessage = randomMessage(id = "thisId", updatedAt = updatedAt)
+        val newDate = Date(Long.MAX_VALUE)
+        val newMessage = randomMessage(id = "thisId", createdAt = newDate)
 
-        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = Date(), message = newMessage)
+        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
         channelControllerImpl.handleEvent(userStartWatchingEvent)
 
-        Truth.assertThat(channelControllerImpl.toChannel().lastMessageAt).isEqualTo(updatedAt)
+        Truth.assertThat(channelControllerImpl.toChannel().lastMessageAt).isEqualTo(newDate)
     }
 
     @Test

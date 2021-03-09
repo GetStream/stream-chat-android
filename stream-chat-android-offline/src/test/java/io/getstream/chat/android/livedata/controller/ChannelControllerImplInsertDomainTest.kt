@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,6 +18,11 @@ import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
+
+    @Before
+    override fun setup() {
+        super.setup()
+    }
 
     @Test
     fun reactionStorage() = runBlocking {
