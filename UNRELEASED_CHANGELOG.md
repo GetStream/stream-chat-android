@@ -31,6 +31,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`
 
 ### ❌ Removed
 
