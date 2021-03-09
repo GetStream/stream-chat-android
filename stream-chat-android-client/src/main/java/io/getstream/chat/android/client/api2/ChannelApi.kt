@@ -9,10 +9,12 @@ import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
@@ -111,6 +113,16 @@ internal interface ChannelApi {
         @Query("client_id") connectionId: String,
         @Body body: RemoveMembersRequest,
     ): RetrofitCall<ChannelResponse>
+
+    @POST("/channels/{type}/{id}/event")
+    fun sendEvent(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String,
+        @Body request: SendEventRequest,
+    ): RetrofitCall<EventResponse>
 
     @POST("/channels/{type}/{id}/hide")
     fun hideChannel(
