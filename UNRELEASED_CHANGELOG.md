@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed parsing of `createdAt` property in `MessageDeletedEvent`
 
 ### ⬆️ Improved
 
