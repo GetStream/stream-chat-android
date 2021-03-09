@@ -3,6 +3,8 @@ package io.getstream.chat.android.livedata.controller
 import androidx.lifecycle.Observer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.atLeastOnce
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -21,8 +23,10 @@ import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -127,7 +131,8 @@ internal class ChannelControllerImplEventNewTest {
 
     @Test
     fun `when a message update for a non existing message arrives, it is added`() {
-        val message = Message(user = User(id = "otherUserId"))
+        val messageId = randomString()
+        val message = Message(id = messageId, user = User(id = "otherUserId"))
 
         val messageUpdateEvent = MessageUpdatedEvent(
             type = "type",
@@ -139,12 +144,19 @@ internal class ChannelControllerImplEventNewTest {
             message = message,
             watcherCount = 1,
         )
+
         val messageObserver: Observer<List<Message>> = mock()
 
         channelControllerImpl.messages.observeForever(messageObserver)
         channelControllerImpl.handleEvent(messageUpdateEvent)
 
-        verify(messageObserver).onChanged(listOf(message))
+        verify(messageObserver, atLeastOnce()).onChanged(argThat { messageList ->
+            if (messageList.isNotEmpty()) {
+                messageList.first().id == messageId
+            } else {
+                true
+            }
+        })
     }
 
     @Test
