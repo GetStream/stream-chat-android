@@ -141,7 +141,7 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
     }
 
-    //Message update
+    // Message update
     @Test
     fun `when a message update for a non existing message arrives, it is added`() {
         val messageId = randomString()
