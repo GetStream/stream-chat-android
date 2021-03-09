@@ -14,6 +14,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
@@ -22,7 +23,10 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomNewMessageEvent
+import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -62,6 +66,7 @@ internal class ChannelControllerImplEventNewTest {
         )
     }
 
+    // User watching event
     @Test
     fun `when user watching event arrives, last message should be updated`() = runBlockingTest {
         val user = User()
@@ -75,6 +80,7 @@ internal class ChannelControllerImplEventNewTest {
         Truth.assertThat(channelControllerImpl.toChannel().lastMessageAt).isEqualTo(newDate)
     }
 
+    // New message event
     @Test
     fun `when new message event arrives, messages should be propagated correctly`() {
         val updatedAt = Date()
@@ -128,6 +134,7 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
     }
 
+    //Message update
     @Test
     fun `when a message update for a non existing message arrives, it is added`() {
         val messageId = randomString()
@@ -186,5 +193,31 @@ internal class ChannelControllerImplEventNewTest {
         // No message is added
         verify(messageObserver, never()).onChanged(listOf(oldMessage))
         Truth.assertThat(channelControllerImpl.messages.value).isEqualTo(listOf(recentMessage))
+    }
+
+    // New message notification event
+    @Test
+    fun `when a new message notification event comes, watchers should be incremented accordingly`() {
+        val watcherCount = randomInt()
+
+        val notificationEvent = NotificationMessageNewEvent(
+            type = randomString(),
+            createdAt = Date(),
+            cid = randomString(),
+            channelType = randomString(),
+            channelId = randomString(),
+            channel = randomChannel(),
+            message = randomMessage(),
+            watcherCount = watcherCount,
+            totalUnreadCount = randomInt(),
+            unreadChannels = randomInt(),
+        )
+
+        val watchersCountObserver: Observer<Int> = mock()
+
+        channelControllerImpl.watcherCount.observeForever(watchersCountObserver)
+        channelControllerImpl.handleEvent(notificationEvent)
+
+        verify(watchersCountObserver).onChanged(watcherCount)
     }
 }
