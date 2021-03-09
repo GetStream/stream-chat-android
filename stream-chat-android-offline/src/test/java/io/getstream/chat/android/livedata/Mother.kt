@@ -42,7 +42,7 @@ internal fun randomNewMessageEvent(
     watcherCount: Int = randomInt(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
-) : NewMessageEvent{
+): NewMessageEvent {
     return NewMessageEvent(
         type = type,
         createdAt = createdAt,
@@ -321,5 +321,5 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
             Attachment.UploadState::class.java,
             Attachment.UploadState.Success
         )
-    }<Attachment>().apply(attachmentBuilder)
+    } <Attachment>().apply(attachmentBuilder)
 }
