@@ -1,6 +1,13 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -39,10 +46,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -624,9 +633,126 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
+    override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
+        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
+            offset = request.offset,
+            limit = request.limit,
+            filter_conditions = request.channelFilter.toMap(),
+            message_filter_conditions = request.messageFilter.toMap(),
+        )
+        return generalApi.searchMessages(apiKey, connectionId, newRequest)
+            .map { response ->
+                response.results.map { resp ->
+                    resp.message.toDomain().apply {
+                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
+                            ?.let(::enrichWithCid)
+                    }
+                }
+            }
+    }
+
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+        if (connectionId.isEmpty()) return noConnectionIdError()
+
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
+            filter_conditions = query.filter.toMap(),
+            offset = query.offset,
+            limit = query.limit,
+            querySort = query.sort,
+            message_limit = query.messageLimit,
+            member_limit = query.memberLimit,
+            state = query.state,
+            watch = query.watch,
+            presence = query.presence,
+        )
+
+        return channelApi.queryChannels(
+            apiKey = apiKey,
+            userId = userId,
+            clientID = connectionId,
+            payload = request,
+        ).map { response -> response.channels.map(this::flattenChannel) }
+    }
+
+    override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
+            state = query.state,
+            watch = query.watch,
+            presence = query.presence,
+            messages = query.messages,
+            watchers = query.watchers,
+            members = query.members,
+            data = query.data,
+        )
+
+        return if (channelId.isEmpty()) {
+            channelApi.queryChannel(
+                channelType = channelType,
+                apiKey = apiKey,
+                userId = userId,
+                clientID = connectionId,
+                request = request,
+            )
+        } else {
+            channelApi.queryChannel(
+                channelType = channelType,
+                channelId = channelId,
+                apiKey = apiKey,
+                userId = userId,
+                clientID = connectionId,
+                request = request,
+            )
+        }.map(::flattenChannel)
+    }
+
+    override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
+            filter_conditions = queryUsers.filter.toMap(),
+            offset = queryUsers.offset,
+            limit = queryUsers.limit,
+            sort = queryUsers.sort,
+            presence = queryUsers.presence,
+        )
+        return userApi.queryUsers(
+            apiKey,
+            connectionId,
+            request,
+        ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+    }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+    ): Call<List<Member>> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
+            type = channelType,
+            id = channelId,
+            filter_conditions = filter.toMap(),
+            offset = offset,
+            limit = limit,
+            sort = sort.toDto(),
+            members = members.map(Member::toDto),
+        )
+
+        return generalApi.queryMembers(
+            apiKey,
+            connectionId,
+            request,
+        ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+    }
+
     override fun warmUp() {
         generalApi.warmUp().enqueue()
     }
 
     private fun Call<*>.toUnitCall() = map {}
+
+    private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
+        return ErrorCall(ChatError("setUser is either not called or not finished"))
+    }
 }
