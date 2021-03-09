@@ -185,8 +185,6 @@ internal class ChannelControllerImplReactionsTest {
             }
 
             result.isError `should be equal to` true
-
-            verify(sut.domainImpl.repos).insertReaction(mockReaction)
         }
 
     @Test
@@ -208,8 +206,6 @@ internal class ChannelControllerImplReactionsTest {
             }
 
             result.isSuccess `should be equal to` true
-
-            verify(sut.domainImpl.repos).insertReaction(mockReaction)
         }
 
     private class Fixture(scope: CoroutineScope, user: User) {
