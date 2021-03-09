@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -29,6 +30,32 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomNewMessageEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+) : NewMessageEvent{
+    return NewMessageEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels
+    )
+}
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
@@ -83,7 +110,8 @@ internal fun randomUserEntity(
     banned: Boolean = randomBoolean(),
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
-): UserEntity = UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+): UserEntity =
+    UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 internal fun randomMessage(
     id: String = randomString(),
@@ -110,7 +138,7 @@ internal fun randomMessage(
     user: User = randomUser(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean(),
-    replyTo: Message? = null
+    replyTo: Message? = null,
 ): Message = Message(
     id = id,
     cid = cid,
@@ -293,5 +321,5 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
             Attachment.UploadState::class.java,
             Attachment.UploadState.Success
         )
-    } <Attachment>().apply(attachmentBuilder)
+    }<Attachment>().apply(attachmentBuilder)
 }

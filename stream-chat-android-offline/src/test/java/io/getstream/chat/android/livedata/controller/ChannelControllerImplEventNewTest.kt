@@ -1,18 +1,19 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.Observer
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -48,25 +49,16 @@ internal class ChannelControllerImplEventNewTest {
     }
 
     @Test
-    fun `when user watching event arrives, watchers should be incremented`() = runBlockingTest {
+    fun `when user watching event arrives, last message should be updated`() = runBlockingTest {
         val user = User()
+        val updatedAt = Date(Long.MAX_VALUE)
+        val newMessage = randomMessage(id = "thisId", updatedAt = updatedAt)
 
-        val userStartWatchingEvent = UserStartWatchingEvent(
-            type = "type",
-            createdAt = Date(),
-            cid = "cid",
-            watcherCount = 1,
-            channelType = "channelType",
-            channelId = "channelId",
-            user = user
-        )
-
-        val observerMock: Observer<List<User>> = mock()
-        channelControllerImpl.watchers.observeForever(observerMock)
+        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = Date(), message = newMessage)
 
         channelControllerImpl.handleEvent(userStartWatchingEvent)
 
-        verify(observerMock).onChanged(listOf(user))
+        Truth.assertThat(channelControllerImpl.toChannel().lastMessageAt).isEqualTo(updatedAt)
     }
 
     @Test
@@ -75,18 +67,7 @@ internal class ChannelControllerImplEventNewTest {
         val user = User(id = CURRENT_USER_ID)
         val message = Message(updatedAt = updatedAt, user = user)
 
-        val newMessageEvent = NewMessageEvent(
-            type = "type",
-            createdAt = Date(),
-            user = user,
-            cid = "cid",
-            channelType = "channelType",
-            channelId = "channelId",
-            message = message,
-            watcherCount = 1,
-            totalUnreadCount = 1,
-            unreadChannels = 1
-        )
+        val newMessageEvent = randomNewMessageEvent(user = user, message = message)
 
         val messageObserver: Observer<List<Message>> = mock()
         val unreadCountObserver: Observer<Int?> = mock()
@@ -111,18 +92,7 @@ internal class ChannelControllerImplEventNewTest {
         val updatedAt = Date()
         val message = Message(updatedAt = updatedAt, user = User(id = "otherUserId"))
 
-        val newMessageEvent = NewMessageEvent(
-            type = "type",
-            createdAt = Date(),
-            user = User(),
-            cid = "cid",
-            channelType = "channelType",
-            channelId = "channelId",
-            message = message,
-            watcherCount = 1,
-            totalUnreadCount = 1,
-            unreadChannels = 1
-        )
+        val newMessageEvent = randomNewMessageEvent(message = message)
 
         val messageObserver: Observer<List<Message>> = mock()
         val unreadCountObserver: Observer<Int?> = mock()
@@ -142,3 +112,4 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.toChannel().lastMessageAt = updatedAt
     }
 }
+
