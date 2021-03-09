@@ -491,6 +491,18 @@ internal data class ConnectedEventDto(
     val connection_id: String,
 ) : ChatEventDto()
 
+/**
+ * Special upstream event class, as we have to send this event
+ * after connecting.
+ */
+@JsonClass(generateAdapter = true)
+internal data class UpstreamConnectedEventDto(
+    val type: String,
+    val created_at: Date,
+    val me: UpstreamUserDto,
+    val connection_id: String,
+)
+
 @JsonClass(generateAdapter = true)
 internal data class ConnectingEventDto(
     val type: String,

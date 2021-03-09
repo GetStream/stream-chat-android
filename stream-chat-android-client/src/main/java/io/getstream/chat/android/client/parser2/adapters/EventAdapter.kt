@@ -221,6 +221,6 @@ internal class EventDtoAdapter(
     }
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
-        error("Can't convert this to Json")
+        error("Can't convert this event to Json $value")
     }
 }

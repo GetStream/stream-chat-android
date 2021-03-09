@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMutedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
@@ -110,6 +111,15 @@ import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
+
+internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
+    return UpstreamConnectedEventDto(
+        type = this.type,
+        created_at = createdAt,
+        me = me.toDto(),
+        connection_id = connectionId,
+    )
+}
 
 internal fun ChatEventDto.toDomain(): ChatEvent {
     return when (this) {
