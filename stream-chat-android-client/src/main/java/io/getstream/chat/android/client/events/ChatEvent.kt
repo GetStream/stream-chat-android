@@ -155,7 +155,7 @@ public data class MemberUpdatedEvent(
 
 public data class MessageDeletedEvent(
     override val type: String,
-    @SerializedName("deleted_at") override val createdAt: Date,
+    @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
