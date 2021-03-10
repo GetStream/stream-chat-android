@@ -19,8 +19,12 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
+import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomChannelDeletedEvent
+import io.getstream.chat.android.livedata.randomChannelUpdatedEvent
 import io.getstream.chat.android.livedata.randomMemberAddedEvent
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageReadEvent
@@ -81,7 +85,12 @@ internal class ChannelControllerImplEventNewTest {
     fun `when user watching event arrives, last message should be updated`() {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
-        val newMessage = randomMessage(id = "thisId", createdAt = newDate)
+        val newMessage = randomMessage(
+            id = "thisId",
+            createdAt = newDate,
+            silent = false,
+            showInChannel = true
+        )
 
         whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
 
@@ -97,7 +106,12 @@ internal class ChannelControllerImplEventNewTest {
     fun `when new message event arrives, messages should be propagated correctly`() {
         val updatedAt = Date()
         val user = User(id = CURRENT_USER_ID)
-        val message = randomMessage(updatedAt = updatedAt, user = user)
+        val message = randomMessage(
+            updatedAt = updatedAt,
+            user = user,
+            silent = false,
+            showInChannel = true
+        )
 
         val newMessageEvent = randomNewMessageEvent(user = user, message = message)
 
@@ -124,7 +138,12 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when new message event arrives from other user, unread number should be updated`() {
         val updatedAt = Date()
-        val message = randomMessage(updatedAt = updatedAt, user = User(id = "otherUserId"), silent = false)
+        val message = randomMessage(
+            updatedAt = updatedAt,
+            user = User(id = "otherUserId"),
+            silent = false,
+            showInChannel = true
+        )
 
         val newMessageEvent = randomNewMessageEvent(message = message)
 
@@ -150,7 +169,12 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when a message update for a non existing message arrives, it is added`() {
         val messageId = randomString()
-        val message = randomMessage(id = messageId, user = User(id = "otherUserId"), silent = false)
+        val message = randomMessage(
+            id = messageId,
+            user = User(id = "otherUserId"),
+            silent = false,
+            showInChannel = true
+        )
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
         val messageObserver: Observer<List<Message>> = mock()
@@ -171,11 +195,17 @@ internal class ChannelControllerImplEventNewTest {
 
     @Test
     fun `when a message update event is outdated, it should be ignored`() {
-        val recentMessage = randomMessage(user = User(id = "otherUserId"), updatedAt = Date(), silent = false)
+        val recentMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            updatedAt = Date(),
+            silent = false,
+            showInChannel = true
+        )
         val oldMessage = randomMessage(
             user = User(id = "otherUserId"),
             updatedAt = Date(Long.MIN_VALUE),
-            silent = false
+            silent = false,
+            showInChannel = true
         )
 
         val messageUpdateEvent = randomMessageUpdateEvent()
@@ -277,7 +307,10 @@ internal class ChannelControllerImplEventNewTest {
     // Reaction event
     @Test
     fun `when reaction event arrives, the message of the event should be upsert`() {
-        val message = randomMessage(showInChannel = true)
+        val message = randomMessage(
+            showInChannel = true,
+            silent = false,
+        )
         val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
 
         val messageObserver: Observer<List<Message>> = mock()
@@ -289,5 +322,37 @@ internal class ChannelControllerImplEventNewTest {
 
         // Message is propagated
         verify(messageObserver).onChanged(listOf(message))
+    }
+
+    // Channel deleted event
+    @Test
+    fun `when channel is deleted, messages are deleted too`() {
+        val deleteChannelEvent = randomChannelDeletedEvent()
+
+        val messageObserver: Observer<List<Message>> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.handleEvent(deleteChannelEvent)
+    }
+
+    @Test
+    fun `when channel is deleted, the status is updated`() {
+        val channel = randomChannel()
+
+        val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
+        val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
+
+        val messageObserver: Observer<List<Message>> = mock()
+        val channelObserver: Observer<ChannelData> = mock()
+
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.channelData.observeForever(channelObserver)
+
+        channelControllerImpl.handleEvent(updateChannelEvent)
+        channelControllerImpl.handleEvent(deleteChannelEvent)
+
+        verify(channelObserver).onChanged(argThat { channelData ->
+            channelData.channelId == channel.id && channelData.deletedAt == deleteChannelEvent.createdAt
+        })
     }
 }

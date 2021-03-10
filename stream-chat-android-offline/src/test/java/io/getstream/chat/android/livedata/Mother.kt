@@ -2,6 +2,8 @@ package io.getstream.chat.android.livedata
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
@@ -38,6 +40,46 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomChannelUpdatedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    message: Message = randomMessage()
+): ChannelUpdatedEvent {
+    return ChannelUpdatedEvent(
+        type = type,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        message = message,
+    )
+}
+
+internal fun randomChannelDeletedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel()
+): ChannelDeletedEvent {
+    return ChannelDeletedEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel
+    )
+}
 
 internal fun randomReactionNewEvent(
     type: String = randomString(),
