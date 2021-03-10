@@ -1,12 +1,11 @@
-package io.getstream.chat.android.client.parser2.adapters
+package io.getstream.chat.android.client.parser2
 
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.parser2.MoshiChatParser
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class EventAdapterTest {
+internal class MoshiChatParserTest {
 
     private val parser = MoshiChatParser()
 
