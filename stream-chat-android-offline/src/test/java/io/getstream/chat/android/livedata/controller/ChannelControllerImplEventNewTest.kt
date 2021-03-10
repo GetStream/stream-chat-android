@@ -13,6 +13,7 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -24,6 +25,7 @@ import io.getstream.chat.android.livedata.randomMemberAddedEvent
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageUpdateEvent
 import io.getstream.chat.android.livedata.randomNewMessageEvent
+import io.getstream.chat.android.livedata.randomNotificationMarkReadEvent
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomTypingStartEvent
 import io.getstream.chat.android.livedata.randomTypingStopEvent
@@ -45,11 +47,12 @@ private const val CURRENT_USER_ID = "currentUserId"
 internal class ChannelControllerImplEventNewTest {
 
     private val channelId = randomString()
+    private val currentUser = User(id = CURRENT_USER_ID)
 
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomainImpl = mock {
         on(it.scope) doReturn TestCoroutineScope()
-        on(it.currentUser) doReturn User(id = CURRENT_USER_ID)
+        on(it.currentUser) doReturn currentUser
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
     private val messageHelper: MessageHelper = mock {
@@ -238,5 +241,18 @@ internal class ChannelControllerImplEventNewTest {
             verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1, user2)))
             verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
         }
+    }
+
+    // Read event
+    @Test
+    fun `when read event arrives, it should be correctly propagated`() {
+        val readEvent = randomNotificationMarkReadEvent(user = currentUser)
+
+        val readObserver: Observer<List<ChannelUserRead>> = mock()
+
+        channelControllerImpl.reads.observeForever(readObserver)
+        channelControllerImpl.handleEvent(readEvent)
+
+        verify(readObserver).onChanged(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
     }
 }

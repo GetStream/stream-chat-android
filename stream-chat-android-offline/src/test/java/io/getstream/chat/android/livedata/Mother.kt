@@ -5,6 +5,7 @@ import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
@@ -35,6 +36,30 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomNotificationMarkReadEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationMarkReadEvent {
+    return NotificationMarkReadEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+    )
+}
 
 internal fun randomTypingStopEvent(
     type: String = randomString(),
