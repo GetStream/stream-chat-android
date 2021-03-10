@@ -115,7 +115,7 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     /**
-     * Allows clients to set a custom implementation of [BaseChannelViewHolderFactory]
+     * Allows clients to set a custom implementation of [ChannelListItemViewHolderFactory]
      *
      * @param factory the custom factory to be used when generating item view holders
      */
