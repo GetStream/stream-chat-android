@@ -212,7 +212,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal lateinit var repos: RepositoryFacade
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal lateinit var initJob: Deferred<SyncState?>
+    internal var initJob: Deferred<SyncState?>? = null
 
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
@@ -586,7 +586,7 @@ internal class ChatDomainImpl internal constructor(
      */
     suspend fun replayEventsForActiveChannels(cid: String? = null): Result<List<ChatEvent>> {
         // wait for the active channel info to load
-        initJob.join()
+        initJob?.join()
         // make a list of all channel ids
         val cids = activeChannelMapImpl.keys().toList().toMutableList()
         cid?.let {
@@ -628,7 +628,7 @@ internal class ChatDomainImpl internal constructor(
      */
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0 ensure load is complete
-        initJob.join()
+        initJob?.join()
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
