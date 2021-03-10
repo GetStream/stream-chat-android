@@ -77,15 +77,17 @@ internal class MoshiChatParser : ChatParser {
         return adapter.toJson(any)
     }
 
+    private val mapAdapter = moshi.adapter(Map::class.java)
+
     private fun serializeMap(any: Any): String {
-        val adapter = moshi.adapter(Map::class.java)
-        return adapter.toJson(any as Map<*, *>)
+        return mapAdapter.toJson(any as Map<*, *>)
     }
+
+    private val upstreamConnectedEventAdapter = moshi.adapter(UpstreamConnectedEventDto::class.java)
 
     private fun serializeConnectedEvent(connectedEvent: ConnectedEvent): String {
         val eventDto = connectedEvent.toDto()
-        val adapter = moshi.adapter(UpstreamConnectedEventDto::class.java)
-        return adapter.toJson(eventDto)
+        return upstreamConnectedEventAdapter.toJson(eventDto)
     }
 
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
@@ -102,16 +104,18 @@ internal class MoshiChatParser : ChatParser {
         return adapter.fromJson(raw)!!
     }
 
+    private val socketErrorResponseAdapter = moshi.adapter(SocketErrorResponse::class.java)
+
     @Suppress("UNCHECKED_CAST")
     private fun parseSocketError(raw: String): SocketErrorMessage {
-        val adapter = moshi.adapter(SocketErrorResponse::class.java)
-        return adapter.fromJson(raw)!!.toDomain()
+        return socketErrorResponseAdapter.fromJson(raw)!!.toDomain()
     }
+
+    private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
     @Suppress("UNCHECKED_CAST")
     private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val adapter = moshi.adapter(ChatEventDto::class.java)
-        val event = adapter.fromJson(raw)!!.toDomain()
+        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
         return event.enrichIfNeeded()
     }
 
