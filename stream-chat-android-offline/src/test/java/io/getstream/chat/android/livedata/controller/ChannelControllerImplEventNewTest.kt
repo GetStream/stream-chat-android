@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import android.util.Log
 import androidx.lifecycle.Observer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -23,10 +24,12 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomMemberAddedEvent
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomMessageReadEvent
 import io.getstream.chat.android.livedata.randomMessageUpdateEvent
 import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.livedata.randomNotificationMarkReadEvent
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
+import io.getstream.chat.android.livedata.randomReactionNewEvent
 import io.getstream.chat.android.livedata.randomTypingStartEvent
 import io.getstream.chat.android.livedata.randomTypingStopEvent
 import io.getstream.chat.android.livedata.randomUser
@@ -245,7 +248,7 @@ internal class ChannelControllerImplEventNewTest {
 
     // Read event
     @Test
-    fun `when read event arrives, it should be correctly propagated`() {
+    fun `when read notification event arrives, it should be correctly propagated`() {
         val readEvent = randomNotificationMarkReadEvent(user = currentUser)
 
         val readObserver: Observer<List<ChannelUserRead>> = mock()
@@ -254,5 +257,35 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.handleEvent(readEvent)
 
         verify(readObserver).onChanged(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+    }
+
+    // Read event notification
+    @Test
+    fun `when read event arrives, it should be correctly propagated`() {
+        val readEvent = randomMessageReadEvent(user = currentUser)
+
+        val readObserver: Observer<List<ChannelUserRead>> = mock()
+
+        channelControllerImpl.reads.observeForever(readObserver)
+        channelControllerImpl.handleEvent(readEvent)
+
+        verify(readObserver).onChanged(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+    }
+
+    // Reaction event
+    @Test
+    fun `when reaction event arrives, the message of the event should be upsert`() {
+        val message = randomMessage(showInChannel = true)
+        val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
+
+        val messageObserver: Observer<List<Message>> = mock()
+
+        whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+        
+        channelControllerImpl.messages.observeForever(messageObserver)
+        channelControllerImpl.handleEvent(reactionEvent)
+
+        // Message is propagated
+        verify(messageObserver).onChanged(listOf(message))
     }
 }

@@ -3,10 +3,12 @@ package io.getstream.chat.android.livedata
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Attachment
@@ -36,6 +38,48 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomReactionNewEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    reaction: Reaction = randomReaction(),
+): ReactionNewEvent {
+    return ReactionNewEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        reaction = reaction
+    )
+}
+
+internal fun randomMessageReadEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    watcherCount: Int = randomInt(),
+): MessageReadEvent {
+    return MessageReadEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        watcherCount = watcherCount,
+    )
+}
 
 internal fun randomNotificationMarkReadEvent(
     type: String = randomString(),
@@ -275,6 +319,7 @@ internal fun randomMessage(
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean(),
     replyTo: Message? = null,
+    showInChannel: Boolean = randomBoolean()
 ): Message = Message(
     id = id,
     cid = cid,
@@ -300,7 +345,8 @@ internal fun randomMessage(
     user = user,
     extraData = extraData,
     silent = silent,
-    replyTo = replyTo
+    replyTo = replyTo,
+    showInChannel = showInChannel
 )
 
 internal fun randomChannel(
@@ -457,5 +503,5 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
             Attachment.UploadState::class.java,
             Attachment.UploadState.Success
         )
-    }<Attachment>().apply(attachmentBuilder)
+    } <Attachment>().apply(attachmentBuilder)
 }
