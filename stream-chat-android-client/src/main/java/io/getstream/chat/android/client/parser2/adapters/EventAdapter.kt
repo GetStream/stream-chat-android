@@ -136,7 +136,7 @@ internal class EventDtoAdapter(
             return null
         }
 
-        val map: MutableMap<String, Any?> = mapAdapter.fromJson(reader)!!
+        val map: Map<String, Any?> = mapAdapter.fromJson(reader)!!.filterValues { it != null }
 
         val adapter = when (val type = map["type"] as? String) {
             EventType.HEALTH_CHECK -> when {
