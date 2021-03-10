@@ -10,15 +10,9 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -26,9 +20,13 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomMemberAddedEvent
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomMessageUpdateEvent
 import io.getstream.chat.android.livedata.randomNewMessageEvent
+import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
+import io.getstream.chat.android.livedata.randomTypingStartEvent
+import io.getstream.chat.android.livedata.randomTypingStopEvent
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomInt
@@ -149,17 +147,7 @@ internal class ChannelControllerImplEventNewTest {
         val messageId = randomString()
         val message = Message(id = messageId, user = User(id = "otherUserId"))
 
-        val messageUpdateEvent = MessageUpdatedEvent(
-            type = "type",
-            createdAt = Date(),
-            user = User(),
-            cid = "cid",
-            channelType = "channelType",
-            channelId = "channelId",
-            message = message,
-            watcherCount = 1,
-        )
-
+        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
         val messageObserver: Observer<List<Message>> = mock()
 
         channelControllerImpl.messages.observeForever(messageObserver)
@@ -181,16 +169,7 @@ internal class ChannelControllerImplEventNewTest {
         val recentMessage = Message(user = User(id = "otherUserId"), updatedAt = Date())
         val oldMessage = Message(user = User(id = "otherUserId"), updatedAt = Date(Long.MIN_VALUE))
 
-        val messageUpdateEvent = MessageUpdatedEvent(
-            type = "type",
-            createdAt = Date(),
-            user = User(),
-            cid = "cid",
-            channelType = "channelType",
-            channelId = "channelId",
-            message = oldMessage,
-            watcherCount = 1,
-        )
+        val messageUpdateEvent = randomMessageUpdateEvent()
 
         channelControllerImpl.upsertMessage(recentMessage)
 
@@ -209,18 +188,7 @@ internal class ChannelControllerImplEventNewTest {
     fun `when a new message notification event comes, watchers should be incremented accordingly`() {
         val watcherCount = randomInt()
 
-        val notificationEvent = NotificationMessageNewEvent(
-            type = randomString(),
-            createdAt = Date(),
-            cid = randomString(),
-            channelType = randomString(),
-            channelId = randomString(),
-            channel = randomChannel(),
-            message = randomMessage(),
-            watcherCount = watcherCount,
-            totalUnreadCount = randomInt(),
-            unreadChannels = randomInt(),
-        )
+        val notificationEvent = randomNotificationMessageNewEvent(watcherCount = watcherCount)
 
         val watchersCountObserver: Observer<Int> = mock()
 
@@ -236,15 +204,7 @@ internal class ChannelControllerImplEventNewTest {
         val user = randomUser()
         val member = Member(user = user)
 
-        val memberAddedEvent = MemberAddedEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = user,
-            cid = randomString(),
-            channelType = randomString(),
-            channelId = randomString(),
-            member = member
-        )
+        val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
 
         val membersCountObserver: Observer<List<Member>> = mock()
 
@@ -260,35 +220,9 @@ internal class ChannelControllerImplEventNewTest {
         val user1 = randomUser()
         val user2 = randomUser()
 
-        val typingStartEvent1 = TypingStartEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = user1,
-            cid = randomString(),
-            channelType = randomString(),
-            channelId = channelId,
-            parentId = randomString()
-        )
-
-        val typingStartEvent2 = TypingStartEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = user2,
-            cid = randomString(),
-            channelType = randomString(),
-            channelId = channelId,
-            parentId = randomString()
-        )
-
-        val typingStopEvent = TypingStopEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = user2,
-            cid = randomString(),
-            channelType = randomString(),
-            channelId = channelId,
-            parentId = randomString()
-        )
+        val typingStartEvent1 = randomTypingStartEvent(user = user1, channelId = channelId)
+        val typingStartEvent2 = randomTypingStartEvent(user = user2, channelId = channelId)
+        val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId)
 
         val typingStartObserver: Observer<TypingEvent> = mock()
 

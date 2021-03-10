@@ -2,7 +2,12 @@ package io.getstream.chat.android.livedata
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -30,6 +35,112 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomTypingStopEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    parentId: String? = randomString()
+): TypingStopEvent {
+    return TypingStopEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentId
+    )
+}
+
+internal fun randomTypingStartEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    parentId: String? = randomString()
+): TypingStartEvent {
+    return TypingStartEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentId
+    )
+}
+
+internal fun randomMemberAddedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    member: Member = randomMember()
+): MemberAddedEvent {
+    return MemberAddedEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member
+    )
+}
+
+internal fun randomNotificationMessageNewEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationMessageNewEvent {
+    return NotificationMessageNewEvent(
+        type = type,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        message = message,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+    )
+}
+
+internal fun randomMessageUpdateEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+) = MessageUpdatedEvent(
+    type = type,
+    createdAt = createdAt,
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    message = message,
+    watcherCount = watcherCount,
+)
 
 internal fun randomNewMessageEvent(
     type: String = randomString(),
@@ -321,5 +432,5 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
             Attachment.UploadState::class.java,
             Attachment.UploadState.Success
         )
-    } <Attachment>().apply(attachmentBuilder)
+    }<Attachment>().apply(attachmentBuilder)
 }
