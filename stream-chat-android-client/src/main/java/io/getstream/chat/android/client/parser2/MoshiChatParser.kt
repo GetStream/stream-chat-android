@@ -8,8 +8,19 @@ import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
+import io.getstream.chat.android.client.events.ChannelCreatedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -44,6 +55,16 @@ internal class MoshiChatParser : ChatParser {
             .build()
     }
 
+    private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
+        this.add(T::class.java, adapter)
+    }
+
+    override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
+        return builder
+            .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+    }
+
     override fun toJson(any: Any): String {
         if (Map::class.java.isAssignableFrom(any.javaClass)) {
             return serializeMap(any)
@@ -69,10 +90,12 @@ internal class MoshiChatParser : ChatParser {
 
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
         if (clazz == ChatEvent::class.java) {
-            return parseAndMapEvent(raw)
+            @Suppress("UNCHECKED_CAST")
+            return parseAndProcessEvent(raw) as T
         }
         if (clazz == SocketErrorMessage::class.java) {
-            return parseSocketError(raw)
+            @Suppress("UNCHECKED_CAST")
+            return parseSocketError(raw) as T
         }
 
         val adapter = moshi.adapter(clazz)
@@ -80,24 +103,32 @@ internal class MoshiChatParser : ChatParser {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> parseAndMapEvent(raw: String): T {
-        val adapter = moshi.adapter(ChatEventDto::class.java)
-        return adapter.fromJson(raw)!!.toDomain() as T
+    private fun parseSocketError(raw: String): SocketErrorMessage {
+        val adapter = moshi.adapter(SocketErrorResponse::class.java)
+        return adapter.fromJson(raw)!!.toDomain()
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> parseSocketError(raw: String): T {
-        val adapter = moshi.adapter(SocketErrorResponse::class.java)
-        return adapter.fromJson(raw)!!.toDomain() as T
+    private fun parseAndProcessEvent(raw: String): ChatEvent {
+        val adapter = moshi.adapter(ChatEventDto::class.java)
+        val event = adapter.fromJson(raw)!!.toDomain()
+        return event.enrichIfNeeded()
     }
 
-    override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
-        return builder
-            .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-    }
-
-    private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
-        this.add(T::class.java, adapter)
+    private fun ChatEvent.enrichIfNeeded(): ChatEvent = apply {
+        when (this) {
+            is NewMessageEvent -> message.enrichWithCid(cid)
+            is MessageDeletedEvent -> message.enrichWithCid(cid)
+            is MessageUpdatedEvent -> message.enrichWithCid(cid)
+            is ReactionNewEvent -> message.enrichWithCid(cid)
+            is ReactionUpdateEvent -> message.enrichWithCid(cid)
+            is ReactionDeletedEvent -> message.enrichWithCid(cid)
+            is ChannelCreatedEvent -> message?.enrichWithCid(cid)
+            is ChannelUpdatedEvent -> message?.enrichWithCid(cid)
+            is ChannelUpdatedByUserEvent -> message?.enrichWithCid(cid)
+            is NotificationMessageNewEvent -> message.enrichWithCid(cid)
+            else -> { /* Do nothing */
+            }
+        }
     }
 }
