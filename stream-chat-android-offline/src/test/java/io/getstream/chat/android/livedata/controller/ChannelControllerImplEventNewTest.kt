@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import android.util.Log
 import androidx.lifecycle.Observer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -281,7 +280,7 @@ internal class ChannelControllerImplEventNewTest {
         val messageObserver: Observer<List<Message>> = mock()
 
         whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
-        
+
         channelControllerImpl.messages.observeForever(messageObserver)
         channelControllerImpl.handleEvent(reactionEvent)
 
