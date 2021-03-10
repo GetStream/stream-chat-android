@@ -41,7 +41,7 @@ internal class ConnectedRecoveryTest : BaseDomainTest2() {
     fun `Active channels should be stored in sync state`(): Unit = runBlocking {
         val cid = "messaging:myspecialchannel"
         chatDomainImpl.channel(cid)
-        chatDomainImpl.initJob.await()
+        chatDomainImpl.initJob?.await()
         val syncState1 = chatDomainImpl.storeSyncState()
         val syncState2 = chatDomainImpl.repos.selectSyncState(data.user1.id)
         Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
