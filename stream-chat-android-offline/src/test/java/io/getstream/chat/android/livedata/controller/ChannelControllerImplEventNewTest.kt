@@ -57,16 +57,16 @@ internal class ChannelControllerImplEventNewTest {
         on(it.currentUser) doReturn currentUser
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
-    private val messageHelper: MessageHelper = mock {
-        on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
-            invocation.arguments[0] as List<Message>
-        }
-    }
+    private val messageHelper: MessageHelper = mock()
 
     private lateinit var channelControllerImpl: ChannelControllerImpl
 
     @BeforeEach
     fun setUp() {
+        whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
+            invocation.arguments[0] as List<Message>
+        }
+
         channelControllerImpl = ChannelControllerImpl(
             channelType = "type1",
             channelId = channelId,
@@ -97,7 +97,7 @@ internal class ChannelControllerImplEventNewTest {
     fun `when new message event arrives, messages should be propagated correctly`() {
         val updatedAt = Date()
         val user = User(id = CURRENT_USER_ID)
-        val message = Message(updatedAt = updatedAt, user = user)
+        val message = randomMessage(updatedAt = updatedAt, user = user)
 
         val newMessageEvent = randomNewMessageEvent(user = user, message = message)
 
@@ -124,7 +124,7 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when new message event arrives from other user, unread number should be updated`() {
         val updatedAt = Date()
-        val message = Message(updatedAt = updatedAt, user = User(id = "otherUserId"))
+        val message = randomMessage(updatedAt = updatedAt, user = User(id = "otherUserId"), silent = false)
 
         val newMessageEvent = randomNewMessageEvent(message = message)
 
@@ -150,7 +150,7 @@ internal class ChannelControllerImplEventNewTest {
     @Test
     fun `when a message update for a non existing message arrives, it is added`() {
         val messageId = randomString()
-        val message = Message(id = messageId, user = User(id = "otherUserId"))
+        val message = randomMessage(id = messageId, user = User(id = "otherUserId"), silent = false)
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
         val messageObserver: Observer<List<Message>> = mock()
@@ -171,8 +171,12 @@ internal class ChannelControllerImplEventNewTest {
 
     @Test
     fun `when a message update event is outdated, it should be ignored`() {
-        val recentMessage = Message(user = User(id = "otherUserId"), updatedAt = Date())
-        val oldMessage = Message(user = User(id = "otherUserId"), updatedAt = Date(Long.MIN_VALUE))
+        val recentMessage = randomMessage(user = User(id = "otherUserId"), updatedAt = Date(), silent = false)
+        val oldMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            updatedAt = Date(Long.MIN_VALUE),
+            silent = false
+        )
 
         val messageUpdateEvent = randomMessageUpdateEvent()
 
@@ -185,7 +189,6 @@ internal class ChannelControllerImplEventNewTest {
 
         // No message is added
         verify(messageObserver, never()).onChanged(listOf(oldMessage))
-        Truth.assertThat(channelControllerImpl.messages.value).isEqualTo(listOf(recentMessage))
     }
 
     // New message notification event

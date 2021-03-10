@@ -319,7 +319,8 @@ internal fun randomMessage(
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean(),
     replyTo: Message? = null,
-    showInChannel: Boolean = randomBoolean()
+    showInChannel: Boolean = randomBoolean(),
+    shadowed: Boolean = false
 ): Message = Message(
     id = id,
     cid = cid,
@@ -346,7 +347,8 @@ internal fun randomMessage(
     extraData = extraData,
     silent = silent,
     replyTo = replyTo,
-    showInChannel = showInChannel
+    showInChannel = showInChannel,
+    shadowed = shadowed
 )
 
 internal fun randomChannel(
