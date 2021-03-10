@@ -77,6 +77,8 @@ internal class ChannelControllerImplEventNewTest {
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(id = "thisId", createdAt = newDate)
 
+        whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
+
         val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
         channelControllerImpl.handleEvent(userStartWatchingEvent)
