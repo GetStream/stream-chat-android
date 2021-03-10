@@ -1,4 +1,4 @@
-# Official Android SDK for [Stream Chat](https://getstream.io/chat/)
+# Official Android SDK for [Stream Chat](https://getstream.io/chat/sdk/android/)
 
 ![Build status](https://github.com/GetStream/stream-chat-android/workflows/Build%20and%20test/badge.svg) ![GitHub release](https://img.shields.io/github/v/release/GetStream/stream-chat-android)
 
@@ -8,7 +8,7 @@
   </a>
 </p>
 
-This is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
+This is the official Android SDK for [Stream Chat](https://getstream.io/chat/sdk/android/), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
 
 <img align="right" src="https://getstream.imgix.net/images/chat-android/android_chat_art@1x.png?auto=format,enhance" width="50%" />
 
