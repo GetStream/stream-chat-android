@@ -351,8 +351,10 @@ internal class ChannelControllerImplEventNewTest {
         channelControllerImpl.handleEvent(updateChannelEvent)
         channelControllerImpl.handleEvent(deleteChannelEvent)
 
-        verify(channelObserver).onChanged(argThat { channelData ->
-            channelData.channelId == channel.id && channelData.deletedAt == deleteChannelEvent.createdAt
-        })
+        verify(channelObserver).onChanged(
+            xargThat { channelData ->
+                channelData.channelId == channel.id && channelData.deletedAt == deleteChannelEvent.createdAt
+            }
+        )
     }
 }
