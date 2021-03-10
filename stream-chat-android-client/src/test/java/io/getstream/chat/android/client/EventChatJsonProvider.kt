@@ -163,8 +163,7 @@ internal fun createMessageDeletedEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "message": ${createMessageJsonString()},
-            "deleted_at": "2020-06-29T06:14:28.000Z"
+            "message": ${createMessageJsonString()}
         """.trimIndent()
     )
 
