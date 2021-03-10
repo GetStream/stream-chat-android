@@ -7,8 +7,10 @@ import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.atLeastOnce
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
@@ -16,6 +18,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -251,9 +254,9 @@ internal class ChannelControllerImplEventNewTest {
         verify(membersCountObserver).onChanged(listOf(member))
     }
 
-    // Typing event
+    // Typing events
     @Test
-    fun `when events of start tying arrive, it should be correctly propagated`() {
+    fun `when events of start and stop tying arrive, it should be correctly propagated`() {
         val user1 = randomUser()
         val user2 = randomUser()
 
@@ -263,7 +266,7 @@ internal class ChannelControllerImplEventNewTest {
             user = user1,
             cid = randomString(),
             channelType = randomString(),
-            channelId = randomString(),
+            channelId = channelId,
             parentId = randomString()
         )
 
@@ -273,17 +276,33 @@ internal class ChannelControllerImplEventNewTest {
             user = user2,
             cid = randomString(),
             channelType = randomString(),
-            channelId = randomString(),
+            channelId = channelId,
+            parentId = randomString()
+        )
+
+        val typingStopEvent = TypingStopEvent(
+            type = randomString(),
+            createdAt = Date(),
+            user = user2,
+            cid = randomString(),
+            channelType = randomString(),
+            channelId = channelId,
             parentId = randomString()
         )
 
         val typingStartObserver: Observer<TypingEvent> = mock()
 
-        channelControllerImpl.typing.observeForever(typingStartObserver)
-        channelControllerImpl.handleEvent(typingStartEvent1)
-        channelControllerImpl.handleEvent(typingStartEvent2)
+        channelControllerImpl.run {
+            typing.observeForever(typingStartObserver)
+            handleEvent(typingStartEvent1)
+            handleEvent(typingStartEvent2)
+            handleEvent(typingStopEvent)
+        }
 
-        verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
-        verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1, user2)))
+        inOrder(typingStartObserver).run {
+            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
+            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1, user2)))
+            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
+        }
     }
 }
