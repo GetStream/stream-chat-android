@@ -170,18 +170,9 @@ internal open class BaseChatModule(
 
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        val gsonChatApi = GsonChatApi(
-            chatConfig.apiKey,
-            buildRetrofitApi<RetrofitApi>(),
-            buildRetrofitApi<RetrofitAnonymousApi>(),
-            UuidGeneratorImpl(),
-            fileUploader ?: defaultFileUploader
-        )
-
         return if (chatConfig.enableMoshi) {
             MoshiChatApi(
                 chatConfig.apiKey,
-                gsonChatApi,
                 fileUploader ?: defaultFileUploader,
                 buildRetrofitApi<UserApi>(),
                 buildRetrofitApi<GuestApi>(),
@@ -192,7 +183,13 @@ internal open class BaseChatModule(
                 buildRetrofitApi<GeneralApi>(),
             )
         } else {
-            gsonChatApi
+            GsonChatApi(
+                chatConfig.apiKey,
+                buildRetrofitApi<RetrofitApi>(),
+                buildRetrofitApi<RetrofitAnonymousApi>(),
+                UuidGeneratorImpl(),
+                fileUploader ?: defaultFileUploader
+            )
         }
     }
 

@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSe
 
 internal class MoshiChatApi(
     private val apiKey: String,
-    private val legacyApiDelegate: ChatApi,
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -77,7 +76,7 @@ internal class MoshiChatApi(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val coroutineScope: CoroutineScope = GlobalScope,
-) : ChatApi by legacyApiDelegate {
+) : ChatApi {
 
     val logger = ChatLogger.get("MoshiChatApi")
 
