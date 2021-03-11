@@ -41,26 +41,6 @@ import java.util.Date
 
 private val fixture = JFixture()
 
-internal fun randomChannelUpdatedEvent(
-    type: String = randomString(),
-    createdAt: Date = Date(),
-    cid: String = randomString(),
-    channelType: String = randomString(),
-    channelId: String = randomString(),
-    channel: Channel = randomChannel(),
-    message: Message = randomMessage()
-): ChannelUpdatedEvent {
-    return ChannelUpdatedEvent(
-        type = type,
-        createdAt = createdAt,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        channel = channel,
-        message = message,
-    )
-}
-
 internal fun randomChannelDeletedEvent(
     type: String = randomString(),
     createdAt: Date = Date(),
@@ -252,32 +232,6 @@ internal fun randomMessageUpdateEvent(
     message = message,
     watcherCount = watcherCount,
 )
-
-internal fun randomNewMessageEvent(
-    type: String = randomString(),
-    createdAt: Date = Date(),
-    user: User = randomUser(),
-    cid: String = randomString(),
-    channelType: String = randomString(),
-    channelId: String = randomString(),
-    message: Message = randomMessage(),
-    watcherCount: Int = randomInt(),
-    totalUnreadCount: Int = randomInt(),
-    unreadChannels: Int = randomInt(),
-): NewMessageEvent {
-    return NewMessageEvent(
-        type = type,
-        createdAt = createdAt,
-        user = user,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        message = message,
-        watcherCount = watcherCount,
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels
-    )
-}
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
