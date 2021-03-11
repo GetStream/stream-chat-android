@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils.extensions
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomain
 
 @InternalStreamChatApi
@@ -28,6 +29,11 @@ public fun Channel.isDistinctChannel(): Boolean {
     return cid.contains("!members")
 }
 
+
+@InternalStreamChatApi
+public fun ChannelData.isDistinctChannel(): Boolean {
+    return cid.contains("!members")
+}
 private fun List<User>.withoutCurrentUser(): List<User> {
     return if (ChatDomain.isInitialized) {
         val currentUser = ChatDomain.instance().currentUser
