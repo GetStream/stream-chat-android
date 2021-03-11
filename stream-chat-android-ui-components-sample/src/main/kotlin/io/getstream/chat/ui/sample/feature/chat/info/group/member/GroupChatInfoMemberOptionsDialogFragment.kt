@@ -8,9 +8,11 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.getstream.sdk.chat.utils.extensions.isDistinctChannel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
@@ -53,6 +55,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
+    @InternalStreamChatApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
@@ -72,19 +75,26 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             optionMessage.setOnClickListener {
                 viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
             }
-            optionRemove.setOnClickListener {
-                ConfirmationDialogFragment.newInstance(
-                    iconResId = R.drawable.ic_delete,
-                    iconTintResId = R.color.red,
-                    title = getString(R.string.chat_group_info_user_remove_title, user.name),
-                    description = getString(R.string.chat_group_info_user_remove_description, user.name, channelName),
-                    confirmText = getString(R.string.remove),
-                    cancelText = getString(R.string.cancel),
-                ).apply {
-                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                        viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel)
-                    }
-                }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+
+            if (cid.isDistinctChannel()) {
+                optionRemove.isVisible = false
+            } else {
+                optionRemove.setOnClickListener {
+                    ConfirmationDialogFragment.newInstance(
+                        iconResId = R.drawable.ic_delete,
+                        iconTintResId = R.color.red,
+                        title = getString(R.string.chat_group_info_user_remove_title, user.name),
+                        description = getString(R.string.chat_group_info_user_remove_description,
+                            user.name,
+                            channelName),
+                        confirmText = getString(R.string.remove),
+                        cancelText = getString(R.string.cancel),
+                    ).apply {
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                            viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel)
+                        }
+                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+                }
             }
             optionCancel.setOnOptionClickListener {
                 dismiss()
