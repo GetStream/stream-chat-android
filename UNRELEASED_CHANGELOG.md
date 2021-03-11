@@ -1,6 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-
+It is not possible to remove users from distinct channels anymore. 
 ### ⬆️ Improved
 
 ### ✅ Added
