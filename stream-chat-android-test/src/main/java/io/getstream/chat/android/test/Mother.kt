@@ -16,6 +16,7 @@ public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
 public fun randomInt(): Int = Random.nextInt()
 public fun randomIntBetween(min: Int, max: Int): Int = Random.nextInt(min, max + 1)
 public fun randomLong(): Long = Random.nextLong()
+public fun randomLongBetween(min: Long, max: Long): Long = Random.nextLong(min, max + 1)
 public fun randomBoolean(): Boolean = Random.nextBoolean()
 public fun randomString(size: Int = 20): String = buildString(capacity = size) {
     repeat(size) {
