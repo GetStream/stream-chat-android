@@ -35,7 +35,7 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is OrFilterObject -> TODO()
         is NorFilterObject -> TODO()
         is ContainsFilterObject -> t.getMemberPropertyOrExtra(fieldName, List::class)?.contains(value) ?: false
-        is AutocompleteFilterObject -> TODO()
+        is AutocompleteFilterObject -> t.getMemberPropertyOrExtra(fieldName, String::class)?.contains(value) ?: false
         is ExistsFilterObject -> TODO()
         is NonExistsFilterObject -> TODO()
         is EqualsFilterObject -> TODO()

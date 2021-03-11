@@ -41,7 +41,8 @@ internal class CustomObjectFilteringTest {
         @JvmStatic
         fun filterArguments() = neutralFilterArguments() +
             distinctFilterArguments() +
-            containsFilterArguments()
+            containsFilterArguments() +
+            autocompleteFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -151,6 +152,17 @@ internal class CustomObjectFilteringTest {
                     expectedList,
                 )
             },
+        )
+
+        @JvmStatic
+        fun autocompleteFilterArguments() = listOf(
+            List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel(type = randomString(8)) }).shuffled(),
+                    Filters.autocomplete("type", stringQuery),
+                    expectedList,
+                )
+            }
         )
     }
 }
