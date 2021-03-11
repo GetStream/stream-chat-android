@@ -32,7 +32,7 @@ internal fun <T : CustomObject> Collection<T>.filter(filterObject: FilterObject)
 private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
     when (this) {
         is AndFilterObject -> filterObjects.all { it.filter(t) }
-        is OrFilterObject -> TODO()
+        is OrFilterObject -> filterObjects.any { it.filter(t) }
         is NorFilterObject -> filterObjects.none { it.filter(t) }
         is ContainsFilterObject -> t.getMemberPropertyOrExtra(fieldName, List::class)?.contains(value) ?: false
         is AutocompleteFilterObject -> t.getMemberPropertyOrExtra(fieldName, String::class)?.contains(value) ?: false

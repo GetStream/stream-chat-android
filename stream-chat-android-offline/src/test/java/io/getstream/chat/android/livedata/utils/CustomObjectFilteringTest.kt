@@ -57,7 +57,8 @@ internal class CustomObjectFilteringTest {
             inFilterArguments() +
             notInFilterArguments() +
             andFilterArguments() +
-            norFilterArguments()
+            norFilterArguments() +
+            orFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -1337,19 +1338,23 @@ internal class CustomObjectFilteringTest {
 
         @JvmStatic
         fun norFilterArguments() = List(positiveRandomInt(10)) {
-            randomChannel(syncStatus = randomSyncStatus(
-                listOf(SyncStatus.FAILED_PERMANENTLY, SyncStatus.IN_PROGRESS)),
+            randomChannel(
+                syncStatus = randomSyncStatus(
+                    listOf(SyncStatus.FAILED_PERMANENTLY, SyncStatus.IN_PROGRESS)
+                ),
                 type = "a${randomString()}"
             )
         }.let { expectedList ->
             listOf(
                 Arguments.of(
-                    (expectedList + List(10) {
-                        randomChannel(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = "c${randomString()}")
-                            .apply {
-                                extraData["Something"] = listOf(1, 2, 3)
-                            }
-                    }).shuffled(),
+                    (
+                        expectedList + List(10) {
+                            randomChannel(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = "c${randomString()}")
+                                .apply {
+                                    extraData["Something"] = listOf(1, 2, 3)
+                                }
+                        }
+                        ).shuffled(),
                     Filters.nor(
                         Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
                         Filters.greaterThan("type", "b"),
@@ -1367,6 +1372,55 @@ internal class CustomObjectFilteringTest {
                     ),
                     emptyList<Channel>(),
                 )
+            )
+        }
+
+        @JvmStatic
+        fun orFilterArguments() = List(positiveRandomInt(10)) {
+            randomChannel(
+                syncStatus = randomSyncStatus(
+                    listOf(SyncStatus.SYNC_NEEDED, SyncStatus.COMPLETED)
+                ),
+                type = "b${randomString()}"
+            )
+                .apply {
+                    extraData["Something"] = listOf(1, 2, 3)
+                }
+        }.let { expectedList ->
+            listOf(
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel(
+                                syncStatus = randomSyncStatus(
+                                    listOf(
+                                        SyncStatus.FAILED_PERMANENTLY,
+                                        SyncStatus.IN_PROGRESS
+                                    )
+                                ),
+                                type = "a${randomString()}",
+                            )
+                        }
+                        ).shuffled(),
+                    Filters.or(
+                        Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
+                        Filters.greaterThan("type", "b"),
+                        Filters.contains("Something", 2),
+                    ),
+                    expectedList
+                ),
+                (expectedList + List(10) { randomChannel() }).shuffled().let {
+                    Arguments.of(
+                        it,
+                        Filters.or(
+                            Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
+                            Filters.greaterThan("type", "0"),
+                            Filters.contains("Something", 2),
+                            NeutralFilterObject
+                        ),
+                        it
+                    )
+                },
             )
         }
     }
