@@ -2,8 +2,17 @@ package io.getstream.chat.android.livedata
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -32,6 +41,198 @@ import io.getstream.chat.android.test.randomString
 import java.util.Date
 
 private val fixture = JFixture()
+
+internal fun randomChannelDeletedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel()
+): ChannelDeletedEvent {
+    return ChannelDeletedEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel
+    )
+}
+
+internal fun randomReactionNewEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    reaction: Reaction = randomReaction(),
+): ReactionNewEvent {
+    return ReactionNewEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        reaction = reaction
+    )
+}
+
+internal fun randomMessageReadEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    watcherCount: Int = randomInt(),
+): MessageReadEvent {
+    return MessageReadEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        watcherCount = watcherCount,
+    )
+}
+
+internal fun randomNotificationMarkReadEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationMarkReadEvent {
+    return NotificationMarkReadEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+    )
+}
+
+internal fun randomTypingStopEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    parentId: String? = randomString()
+): TypingStopEvent {
+    return TypingStopEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentId
+    )
+}
+
+internal fun randomTypingStartEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    parentId: String? = randomString()
+): TypingStartEvent {
+    return TypingStartEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentId
+    )
+}
+
+internal fun randomMemberAddedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    member: Member = randomMember()
+): MemberAddedEvent {
+    return MemberAddedEvent(
+        type = type,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member
+    )
+}
+
+internal fun randomNotificationMessageNewEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationMessageNewEvent {
+    return NotificationMessageNewEvent(
+        type = type,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        message = message,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+    )
+}
+
+internal fun randomMessageUpdateEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+) = MessageUpdatedEvent(
+    type = type,
+    createdAt = createdAt,
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    message = message,
+    watcherCount = watcherCount,
+)
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
@@ -115,6 +316,8 @@ internal fun randomMessage(
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean(),
     replyTo: Message? = null,
+    showInChannel: Boolean = randomBoolean(),
+    shadowed: Boolean = false
 ): Message = Message(
     id = id,
     cid = cid,
@@ -140,7 +343,9 @@ internal fun randomMessage(
     user = user,
     extraData = extraData,
     silent = silent,
-    replyTo = replyTo
+    replyTo = replyTo,
+    showInChannel = showInChannel,
+    shadowed = shadowed
 )
 
 internal fun randomChannel(
