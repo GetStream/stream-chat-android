@@ -2,11 +2,13 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
+import io.getstream.chat.android.livedata.randomSyncStatus
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomIntBetween
@@ -54,7 +56,8 @@ internal class CustomObjectFilteringTest {
             lessThanOrEqualsFilterArguments() +
             inFilterArguments() +
             notInFilterArguments() +
-            andFilterArguments()
+            andFilterArguments() +
+            norFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -1329,6 +1332,41 @@ internal class CustomObjectFilteringTest {
                     ),
                     expectedList
                 ),
+            )
+        }
+
+        @JvmStatic
+        fun norFilterArguments() = List(positiveRandomInt(10)) {
+            randomChannel(syncStatus = randomSyncStatus(
+                listOf(SyncStatus.FAILED_PERMANENTLY, SyncStatus.IN_PROGRESS)),
+                type = "a${randomString()}"
+            )
+        }.let { expectedList ->
+            listOf(
+                Arguments.of(
+                    (expectedList + List(10) {
+                        randomChannel(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = "c${randomString()}")
+                            .apply {
+                                extraData["Something"] = listOf(1, 2, 3)
+                            }
+                    }).shuffled(),
+                    Filters.nor(
+                        Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
+                        Filters.greaterThan("type", "b"),
+                        Filters.contains("Something", 2),
+                    ),
+                    expectedList
+                ),
+                Arguments.of(
+                    expectedList,
+                    Filters.nor(
+                        Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
+                        Filters.greaterThan("type", "b"),
+                        Filters.contains("Something", 2),
+                        NeutralFilterObject
+                    ),
+                    emptyList<Channel>(),
+                )
             )
         }
     }
