@@ -43,7 +43,7 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is InFilterObject -> TODO()
         is NotInFilterObject -> TODO()
         is DistinctFilterObject -> TODO()
-        NeutralFilterObject -> TODO()
+        NeutralFilterObject -> true
     }
 } catch (e: ClassCastException) {
     false
