@@ -44,7 +44,8 @@ internal class CustomObjectFilteringTest {
             containsFilterArguments() +
             autocompleteFilterArguments() +
             existsFilterArguments() +
-            notExistsFilterArguments()
+            notExistsFilterArguments() +
+            equalsFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -242,6 +243,150 @@ internal class CustomObjectFilteringTest {
                         }
                         ).shuffled(),
                     Filters.notExists("someField"),
+                    expectedList,
+                )
+            },
+        )
+
+        @JvmStatic
+        fun equalsFilterArguments() = listOf(
+            List(positiveRandomInt(10)) { randomChannel(type = stringQuery) }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel(type = randomString(20)) }).shuffled(),
+                    Filters.eq("type", stringQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) { randomChannel(watcherCount = intQuery) }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel(
+                                watcherCount = randomIntBetween(
+                                    intQuery + 1,
+                                    Int.MAX_VALUE - 1
+                                )
+                            )
+                        }
+                        ).shuffled(),
+                    Filters.eq("watcherCount", intQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) { randomChannel(watcherCount = intQuery) }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel(
+                                watcherCount = randomIntBetween(
+                                    intQuery + 1,
+                                    Int.MAX_VALUE - 1
+                                )
+                            )
+                        }
+                        ).shuffled(),
+                    Filters.eq("watcherCount", intQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) { randomChannel(watcherCount = intQuery) }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel(
+                                watcherCount = randomIntBetween(
+                                    Int.MIN_VALUE,
+                                    intQuery - 1
+                                )
+                            )
+                        }
+                        ).shuffled(),
+                    Filters.eq("watcherCount", intQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) { randomChannel(watcherCount = intQuery) }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel(
+                                watcherCount = randomIntBetween(
+                                    Int.MIN_VALUE,
+                                    intQuery - 1
+                                )
+                            )
+                        }
+                        ).shuffled(),
+                    Filters.eq("watcherCount", intQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = longQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.eq("someField", longQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = longQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.eq("someField", longQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = longQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(Long.MIN_VALUE, longQuery - 1)
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.eq("someField", longQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = longQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(10) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(Long.MIN_VALUE, longQuery - 1)
+                            }
+                        }
+                        )
+                        .shuffled(),
+                    Filters.eq("someField", longQuery),
                     expectedList,
                 )
             },
