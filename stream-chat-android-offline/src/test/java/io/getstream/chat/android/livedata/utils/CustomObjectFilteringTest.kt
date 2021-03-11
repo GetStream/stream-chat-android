@@ -7,6 +7,10 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomIntBetween
+import io.getstream.chat.android.test.randomLong
+import io.getstream.chat.android.test.randomLongBetween
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should contain same`
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,9 +34,14 @@ internal class CustomObjectFilteringTest {
 
     companion object {
 
+        val stringQuery = randomString(10)
+        val intQuery = randomIntBetween(-100, 300)
+        val longQuery = randomLongBetween(-300, 100)
+
         @JvmStatic
         fun filterArguments() = neutralFilterArguments() +
-            distinctFilterArguments()
+            distinctFilterArguments() +
+            containsFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -106,5 +115,42 @@ internal class CustomObjectFilteringTest {
                 }
             )
         }
+
+        @JvmStatic
+        fun containsFilterArguments() = listOf(
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = (List(positiveRandomInt(10)) { randomLong() } + longQuery).shuffled()
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.contains("someField", longQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = (List(positiveRandomInt(10)) { randomString() } + stringQuery).shuffled()
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.contains("someField", stringQuery),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = (List(positiveRandomInt(10)) { randomInt() } + intQuery).shuffled()
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.contains("someField", intQuery),
+                    expectedList,
+                )
+            },
+        )
     }
 }
