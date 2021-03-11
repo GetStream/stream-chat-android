@@ -49,7 +49,8 @@ internal class CustomObjectFilteringTest {
             notEqualsFilterArguments() +
             greaterThanFilterArguments() +
             greaterThanOrEqualsFilterArguments() +
-            lessThanFilterArguments()
+            lessThanFilterArguments() +
+            lessThanOrEqualsFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -898,6 +899,202 @@ internal class CustomObjectFilteringTest {
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
                     Filters.lessThan("someField", "ba${randomString()}"),
+                    expectedList,
+                )
+            },
+        )
+
+        @JvmStatic
+        fun lessThanOrEqualsFilterArguments() = listOf(
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomIntBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomIntBetween(320, Int.MAX_VALUE - 1)
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", randomIntBetween(300, 320)),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = randomIntBetween(-80, 300)
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = 300
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomIntBetween(320, Int.MAX_VALUE - 1)
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", 300),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomLongBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(320, Long.MAX_VALUE - 1)
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", randomLongBetween(300, 320)),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = randomLongBetween(-80, 300)
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = 300L
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(320, Long.MAX_VALUE - 1)
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", 300L),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = "a${randomString()}"
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = "bb${randomString()}"
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", "ba${randomString()}"),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = "a${randomString()}"
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = "ba"
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = "bb${randomString()}"
+                            }
+                        }
+                        ),
+                    Filters.lessThanEquals("someField", "ba"),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomIntBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", randomIntBetween(300, 320)),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = randomIntBetween(-80, 300)
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = 300
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", 300),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomLongBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", randomLongBetween(300, 320)),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = randomLongBetween(-80, 300)
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = 300L
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", 300L),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = "a${randomString()}"
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", "ba${randomString()}"),
+                    expectedList,
+                )
+            },
+            (
+                List(positiveRandomInt(10)) {
+                    randomChannel().apply {
+                        extraData["someField"] = "a${randomString()}"
+                    }
+                } + randomChannel().apply {
+                    extraData["someField"] = "ba"
+                }
+                ).let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.lessThanEquals("someField", "ba"),
                     expectedList,
                 )
             },
