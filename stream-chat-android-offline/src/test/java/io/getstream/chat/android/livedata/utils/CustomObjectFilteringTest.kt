@@ -42,7 +42,8 @@ internal class CustomObjectFilteringTest {
         fun filterArguments() = neutralFilterArguments() +
             distinctFilterArguments() +
             containsFilterArguments() +
-            autocompleteFilterArguments()
+            autocompleteFilterArguments() +
+            existsFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -163,6 +164,43 @@ internal class CustomObjectFilteringTest {
                     expectedList,
                 )
             }
+        )
+
+        @JvmStatic
+        fun existsFilterArguments() = listOf(
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = longQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.exists("someField"),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = stringQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.exists("someField"),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = intQuery
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.exists("someField"),
+                    expectedList,
+                )
+            },
         )
     }
 }
