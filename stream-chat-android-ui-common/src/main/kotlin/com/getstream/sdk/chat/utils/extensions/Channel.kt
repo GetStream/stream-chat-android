@@ -29,7 +29,6 @@ public fun Channel.isDistinctChannel(): Boolean {
     return cid.contains("!members")
 }
 
-
 @InternalStreamChatApi
 public fun ChannelData.isDistinctChannel(): Boolean {
     return cid.contains("!members")
