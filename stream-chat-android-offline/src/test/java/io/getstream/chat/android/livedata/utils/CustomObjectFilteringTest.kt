@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.test.positiveRandomInt
@@ -52,7 +53,8 @@ internal class CustomObjectFilteringTest {
             lessThanFilterArguments() +
             lessThanOrEqualsFilterArguments() +
             inFilterArguments() +
-            notInFilterArguments()
+            notInFilterArguments() +
+            andFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -1309,5 +1311,25 @@ internal class CustomObjectFilteringTest {
                     },
                 )
             }
+
+        @JvmStatic
+        fun andFilterArguments() = List(positiveRandomInt(10)) {
+            randomChannel(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = "1${randomString()}")
+                .apply {
+                    extraData["Something"] = listOf(1, 2, 3)
+                }
+        }.let { expectedList ->
+            listOf(
+                Arguments.of(
+                    (expectedList + List(10) { randomChannel() }).shuffled(),
+                    Filters.and(
+                        Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
+                        Filters.greaterThan("type", "0"),
+                        Filters.contains("Something", 2),
+                    ),
+                    expectedList
+                ),
+            )
+        }
     }
 }

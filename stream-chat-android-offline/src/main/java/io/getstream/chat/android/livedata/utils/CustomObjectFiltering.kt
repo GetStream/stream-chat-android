@@ -31,7 +31,7 @@ internal fun <T : CustomObject> Collection<T>.filter(filterObject: FilterObject)
 @Suppress("UNCHECKED_CAST")
 private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
     when (this) {
-        is AndFilterObject -> TODO()
+        is AndFilterObject -> filterObjects.all { it.filter(t) }
         is OrFilterObject -> TODO()
         is NorFilterObject -> TODO()
         is ContainsFilterObject -> t.getMemberPropertyOrExtra(fieldName, List::class)?.contains(value) ?: false
