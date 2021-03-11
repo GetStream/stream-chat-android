@@ -7,32 +7,10 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-
-@RunWith(AndroidJUnit4::class)
-internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
-
-    @Test
-    fun replayEventsForActiveChannels() = runBlocking {
-        // - when you receive a push notification you want to sync all data for the specific channel you received the push on
-        // - alternatively we could sync all channels you are interested in
-        // - in theory (new channel) you could not be watching the channel yet
-        // - your client is typically not connected when running this recover flow
-        // - you don't want to watch the channel
-        val events = chatDomainImpl.replayEventsForActiveChannels(data.channel1.cid)
-
-        // verify we now have 2 message in offline storage
-        val channelState = chatDomainImpl.selectAndEnrichChannel(
-            data.channel1.cid,
-            QueryChannelPaginationRequest()
-        )
-        Truth.assertThat(channelState!!.messages.size).isEqualTo(2)
-    }
-}
 
 @RunWith(AndroidJUnit4::class)
 internal class ConnectedRecoveryTest : BaseDomainTest2() {
