@@ -39,7 +39,7 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is ExistsFilterObject -> t.getMemberPropertyOrExtra(fieldName, Any::class) != null
         is NotExistsFilterObject -> t.getMemberPropertyOrExtra(fieldName, Any::class) == null
         is EqualsFilterObject -> value == t.getMemberPropertyOrExtra(fieldName, value::class)
-        is NotEqualsFilterObject -> TODO()
+        is NotEqualsFilterObject -> value != t.getMemberPropertyOrExtra(fieldName, value::class)
         is GreaterThanFilterObject -> TODO()
         is GreaterThanOrEqualsFilterObject -> TODO()
         is LessThanFilterObject -> TODO()
@@ -65,3 +65,10 @@ private fun <T : Any> CustomObject.getMemberPropertyOrExtra(name: String, clazz:
     }
 
 private fun <T : Any> Any.cast(clazz: KClass<out T>): T = clazz.javaObjectType.cast(this)!!
+
+private fun <T : Comparable<T>> compare(a: T?, b: T?, compareFun: (Int) -> Boolean): Boolean =
+    a?.let { notNullA ->
+        b?.let { notNullB ->
+            compareFun(notNullA.compareTo(notNullB))
+        }
+    } ?: false
