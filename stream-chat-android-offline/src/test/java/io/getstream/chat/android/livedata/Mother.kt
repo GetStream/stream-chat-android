@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
@@ -502,4 +503,48 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
             Attachment.UploadState.Success
         )
     } <Attachment>().apply(attachmentBuilder)
+}
+
+internal fun randomChannelUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    channel: Channel = randomChannel(),
+): ChannelUpdatedEvent {
+    return ChannelUpdatedEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        channel = channel,
+    )
+}
+
+internal fun randomNewMessageEvent(
+    createdAt: Date = randomDate(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    watcherCount: Int = randomInt(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NewMessageEvent {
+    return NewMessageEvent(
+        type = EventType.MESSAGE_NEW,
+        createdAt = createdAt,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+    )
 }
