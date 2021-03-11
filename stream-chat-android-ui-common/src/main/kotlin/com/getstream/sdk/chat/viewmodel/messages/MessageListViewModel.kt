@@ -16,7 +16,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.controller.ChannelController.MessagesState
 import kotlin.properties.Delegates
 
 /**
@@ -101,12 +101,12 @@ public class MessageListViewModel @JvmOverloads constructor(
                     stateMerger.apply {
                         addSource(channelController.messagesState) { messageState ->
                             when (messageState) {
-                                is ChannelController.MessagesState.NoQueryActive,
-                                is ChannelController.MessagesState.Loading,
+                                is MessagesState.NoQueryActive,
+                                is MessagesState.Loading,
                                 -> value = State.Loading
-                                is ChannelController.MessagesState.OfflineNoResults ->
+                                is MessagesState.OfflineNoResults ->
                                     value = State.Result(MessageListItemWrapper())
-                                is ChannelController.MessagesState.Result -> {
+                                is MessagesState.Result -> {
                                     removeSource(channelController.messagesState)
                                     onNormalModeEntered()
                                 }
@@ -381,11 +381,13 @@ public class MessageListViewModel @JvmOverloads constructor(
             val reactionType: String,
             val enforceUnique: Boolean,
         ) : Event()
+
         public data class MuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
         public data class DownloadAttachment(val attachment: Attachment) : Event()
+
         @Deprecated(replaceWith = ReplaceWith("DownloadAttachment"), message = "Deprecated class.")
         public data class AttachmentDownload(val attachment: Attachment) : Event()
         public data class ShowMessage(val messageId: String) : Event()

@@ -67,9 +67,10 @@ import io.getstream.chat.android.livedata.extensions.setMember
 import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.offline.ChatDomainImpl as NewChatDomainImpl
 
 internal class EventHandlerImpl(
-    private val domainImpl: ChatDomainImpl,
+    private val domainImpl: NewChatDomainImpl,
 ) {
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true

@@ -7,6 +7,7 @@ import io.getstream.chat.android.livedata.extensions.incrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.updateLastMessage
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.offline.ChatDomainImpl as NewChatDomainImpl
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -28,7 +29,7 @@ import io.getstream.chat.android.livedata.extensions.users
  * batch.execute()
  */
 internal class EventBatchUpdate private constructor(
-    private val domainImpl: ChatDomainImpl,
+    private val domainImpl: NewChatDomainImpl,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
     private val userMap: MutableMap<String, User>
@@ -107,7 +108,7 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
-        suspend fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
+        suspend fun build(domainImpl: NewChatDomainImpl): EventBatchUpdate {
             val messageMap: Map<String, Message> =
                 domainImpl.repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
             val channelMap: Map<String, Channel> =

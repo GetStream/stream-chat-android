@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.controller.QueryChannelsController.ChannelsState
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -52,14 +52,14 @@ public class ChannelListViewModel(
                 stateMerger.addSource(
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
-                            is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading,
+                            is ChannelsState.NoQueryActive,
+                            is ChannelsState.Loading,
                             -> currentState.copy(isLoading = true)
-                            is QueryChannelsController.ChannelsState.OfflineNoResults -> currentState.copy(
+                            is ChannelsState.OfflineNoResults -> currentState.copy(
                                 isLoading = false,
                                 channels = emptyList(),
                             )
-                            is QueryChannelsController.ChannelsState.Result -> currentState.copy(
+                            is ChannelsState.Result -> currentState.copy(
                                 isLoading = false,
                                 channels = channelState.channels.filterNot { it.hidden == true || it.isDraft },
                             )

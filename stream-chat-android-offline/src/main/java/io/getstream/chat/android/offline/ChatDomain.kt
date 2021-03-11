@@ -1,9 +1,8 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
@@ -11,14 +10,14 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.offline.ChatDomainImpl as NewChatDomainImpl
+import kotlinx.coroutines.flow.StateFlow
+import io.getstream.chat.android.offline.QueryChannelsController as QueryChannelsControllerDelegate
+import io.getstream.chat.android.offline.usecase.UseCaseHelper as NewUseCaseHelper
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -37,23 +36,23 @@ public interface ChatDomain {
     public var userPresence: Boolean
 
     /** if the client connection has been initialized */
-    public val initialized: LiveData<Boolean>
+    public val initialized: StateFlow<Boolean>
 
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    public val online: LiveData<Boolean>
+    public val online: StateFlow<Boolean>
 
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    public val totalUnreadCount: LiveData<Int>
+    public val totalUnreadCount: StateFlow<Int>
 
     /**
      * the number of unread channels for the current user
      */
-    public val channelUnreadCount: LiveData<Int>
+    public val channelUnreadCount: StateFlow<Int>
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -64,17 +63,17 @@ public interface ChatDomain {
      *   })
      *
      */
-    public val errorEvents: LiveData<Event<ChatError>>
+    public val errorEvents: StateFlow<Event<ChatError>>
 
     /**
      * list of users that you've muted
      */
-    public val muted: LiveData<List<Mute>>
+    public val muted: StateFlow<List<Mute>>
 
     /**
      * if the current user is banned or not
      */
-    public val banned: LiveData<Boolean>
+    public val banned: StateFlow<Boolean>
 
     /** The retry policy for retrying failed requests */
     public var retryPolicy: RetryPolicy
@@ -82,17 +81,17 @@ public interface ChatDomain {
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
-    public val typingUpdates: LiveData<TypingEvent>
+    public val typingUpdates: StateFlow<TypingEvent>
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    public val useCases: UseCaseHelper
+    public val useCases: NewUseCaseHelper
 
     @Deprecated("Disconnecting from ChatClient will automatically disconnect from ChatDomain")
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
     public fun isInitialized(): Boolean
-    public fun getActiveQueries(): List<QueryChannelsController>
+    public fun getActiveQueries(): List<QueryChannelsControllerDelegate>
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
@@ -190,7 +189,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            val instance = NewChatDomainImpl(
+            return ChatDomainImpl(
                 client,
                 user,
                 database,
@@ -201,7 +200,6 @@ public interface ChatDomain {
                 backgroundSyncEnabled,
                 appContext
             )
-            return ChatDomainImpl(instance)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

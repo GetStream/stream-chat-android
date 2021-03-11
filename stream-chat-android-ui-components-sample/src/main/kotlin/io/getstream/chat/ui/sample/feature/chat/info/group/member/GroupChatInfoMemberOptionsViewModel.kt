@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.controller.QueryChannelsController.ChannelsState
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.launch
@@ -54,9 +54,9 @@ class GroupChatInfoMemberOptionsViewModel(
         }
     }
 
-    private fun mapChannelState(channelState: QueryChannelsController.ChannelsState): State {
+    private fun mapChannelState(channelState: ChannelsState): State {
         return when (channelState) {
-            is QueryChannelsController.ChannelsState.Result -> {
+            is ChannelsState.Result -> {
                 State(
                     directChannelCid = channelState.channels.filterNot { channel ->
                         channel.isDraft
@@ -64,10 +64,10 @@ class GroupChatInfoMemberOptionsViewModel(
                     loading = false,
                 )
             }
-            QueryChannelsController.ChannelsState.NoQueryActive,
-            QueryChannelsController.ChannelsState.Loading,
+            ChannelsState.NoQueryActive,
+            ChannelsState.Loading,
             -> State(directChannelCid = null, loading = true)
-            QueryChannelsController.ChannelsState.OfflineNoResults -> State(
+            ChannelsState.OfflineNoResults -> State(
                 directChannelCid = null,
                 loading = false,
             )
