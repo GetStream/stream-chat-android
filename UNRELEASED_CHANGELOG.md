@@ -1,6 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-
+Group channels with 1<>1 behaviour the same way as group channels with many users
 ### ⬆️ Improved
 
 ### ✅ Added
