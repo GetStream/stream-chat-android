@@ -18,8 +18,12 @@ import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
+import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import java.lang.ClassCastException
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 
 internal fun <T : CustomObject> Collection<T>.filter(filterObject: FilterObject): List<T> =
     filter { filterObject.filter(it) }
@@ -42,9 +46,22 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is LessThanOrEqualsFilterObject -> TODO()
         is InFilterObject -> TODO()
         is NotInFilterObject -> TODO()
-        is DistinctFilterObject -> TODO()
+        is DistinctFilterObject -> (t as? Channel)?.let { channel ->
+            channel.id.startsWith("!members") &&
+                channel.members.size == memberIds.size &&
+                channel.members.map { it.user.id }.containsAll(memberIds)
+        } ?: false
         NeutralFilterObject -> true
     }
 } catch (e: ClassCastException) {
     false
 }
+
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> CustomObject.getMemberPropertyOrExtra(name: String, clazz: KClass<out T>): T? =
+    name.snakeToLowerCamelCase().let { fieldName ->
+        this::class.memberProperties.firstOrNull { it.name == fieldName }?.getter?.call(this)?.cast(clazz)
+            ?: extraData[name] as? T
+    }
+
+private fun <T : Any> Any.cast(clazz: KClass<out T>): T = clazz.javaObjectType.cast(this)!!
