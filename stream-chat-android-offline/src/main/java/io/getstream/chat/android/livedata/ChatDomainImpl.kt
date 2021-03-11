@@ -200,7 +200,8 @@ internal class ChatDomainImpl internal constructor(
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
-    internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
+    @VisibleForTesting
+    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -597,7 +598,7 @@ internal class ChatDomainImpl internal constructor(
         return replayEventsForChannels(cids)
     }
 
-    internal suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         val now = Date()
 
         return if (cids.isNotEmpty()) {
