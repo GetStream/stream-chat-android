@@ -46,7 +46,8 @@ internal class CustomObjectFilteringTest {
             existsFilterArguments() +
             notExistsFilterArguments() +
             equalsFilterArguments() +
-            notEqualsFilterArguments()
+            notEqualsFilterArguments() +
+            greaterThanFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -524,6 +525,94 @@ internal class CustomObjectFilteringTest {
                         )
                         .shuffled(),
                     Filters.ne("someField", longQuery),
+                    expectedList,
+                )
+            },
+        )
+
+        @JvmStatic
+        fun greaterThanFilterArguments() = listOf(
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomIntBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomIntBetween(Int.MIN_VALUE, -100)
+                            }
+                        }
+                        ),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomLongBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = randomLongBetween(Long.MIN_VALUE, -100)
+                            }
+                        }
+                        ),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = "b${randomString()}"
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = "aa${randomString()}"
+                            }
+                        }
+                        ),
+                    Filters.greaterThan("someField", "ab${randomString()}"),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomIntBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = randomLongBetween(-80, 300)
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    expectedList,
+                )
+            },
+            List(positiveRandomInt(10)) {
+                randomChannel().apply {
+                    extraData["someField"] = "b${randomString()}"
+                }
+            }.let { expectedList ->
+                Arguments.of(
+                    (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
+                    Filters.greaterThan("someField", "ab${randomString()}"),
                     expectedList,
                 )
             },

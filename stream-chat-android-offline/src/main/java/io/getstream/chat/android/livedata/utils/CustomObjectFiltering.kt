@@ -40,7 +40,8 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is NotExistsFilterObject -> t.getMemberPropertyOrExtra(fieldName, Any::class) == null
         is EqualsFilterObject -> value == t.getMemberPropertyOrExtra(fieldName, value::class)
         is NotEqualsFilterObject -> value != t.getMemberPropertyOrExtra(fieldName, value::class)
-        is GreaterThanFilterObject -> TODO()
+        is GreaterThanFilterObject ->
+            compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable<Any>, value as? Comparable<Any>) { it > 0 }
         is GreaterThanOrEqualsFilterObject -> TODO()
         is LessThanFilterObject -> TODO()
         is LessThanOrEqualsFilterObject -> TODO()
