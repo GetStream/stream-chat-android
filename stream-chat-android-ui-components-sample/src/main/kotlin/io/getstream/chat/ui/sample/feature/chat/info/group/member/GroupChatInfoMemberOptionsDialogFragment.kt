@@ -84,9 +84,11 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         iconResId = R.drawable.ic_delete,
                         iconTintResId = R.color.red,
                         title = getString(R.string.chat_group_info_user_remove_title, user.name),
-                        description = getString(R.string.chat_group_info_user_remove_description,
+                        description = getString(
+                            R.string.chat_group_info_user_remove_description,
                             user.name,
-                            channelName),
+                            channelName
+                        ),
                         confirmText = getString(R.string.remove),
                         cancelText = getString(R.string.cancel),
                     ).apply {
