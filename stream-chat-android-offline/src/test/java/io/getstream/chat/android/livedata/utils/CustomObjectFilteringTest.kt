@@ -43,7 +43,8 @@ internal class CustomObjectFilteringTest {
             distinctFilterArguments() +
             containsFilterArguments() +
             autocompleteFilterArguments() +
-            existsFilterArguments()
+            existsFilterArguments() +
+            notExistsFilterArguments()
 
         @JvmStatic
         fun neutralFilterArguments() = listOf(
@@ -198,6 +199,49 @@ internal class CustomObjectFilteringTest {
                 Arguments.of(
                     (expectedList + List(10) { randomChannel() }).shuffled(),
                     Filters.exists("someField"),
+                    expectedList,
+                )
+            },
+        )
+
+        @JvmStatic
+        fun notExistsFilterArguments() = listOf(
+            List(10) { randomChannel() }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = longQuery
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.notExists("someField"),
+                    expectedList,
+                )
+            },
+            List(10) { randomChannel() }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = stringQuery
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.notExists("someField"),
+                    expectedList,
+                )
+            },
+            List(10) { randomChannel() }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList + List(positiveRandomInt(10)) {
+                            randomChannel().apply {
+                                extraData["someField"] = intQuery
+                            }
+                        }
+                        ).shuffled(),
+                    Filters.notExists("someField"),
                     expectedList,
                 )
             },

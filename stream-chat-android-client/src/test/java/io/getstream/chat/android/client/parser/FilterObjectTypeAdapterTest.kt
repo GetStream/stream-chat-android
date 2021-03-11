@@ -15,9 +15,9 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NonExistsFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.test.positiveRandomInt
@@ -51,7 +51,7 @@ internal class FilterObjectTypeAdapterTest {
         fun writeArguments() = listOf(
             Arguments.of(NeutralFilterObject, "{}"),
             randomString().let { Arguments.of(ExistsFilterObject(it), "{\"$it\":{\"\$exists\":true}}") },
-            randomString().let { Arguments.of(NonExistsFilterObject(it), "{\"$it\":{\"\$exists\":false}}") },
+            randomString().let { Arguments.of(NotExistsFilterObject(it), "{\"$it\":{\"\$exists\":false}}") },
             randomString().let { fieldName ->
                 randomString().let { value ->
                     Arguments.of(

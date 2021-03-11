@@ -8,7 +8,7 @@ public data class NorFilterObject internal constructor(val filterObjects: Set<Fi
 public data class ContainsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class AutocompleteFilterObject internal constructor(val fieldName: String, val value: String) : FilterObject()
 public data class ExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
-public data class NonExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
+public data class NotExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
 public data class EqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class NotEqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class GreaterThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()

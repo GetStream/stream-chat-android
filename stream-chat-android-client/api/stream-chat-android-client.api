@@ -317,16 +317,6 @@ public final class io/getstream/chat/android/client/api/models/NeutralFilterObje
 	public static final field INSTANCE Lio/getstream/chat/android/client/api/models/NeutralFilterObject;
 }
 
-public final class io/getstream/chat/android/client/api/models/NonExistsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/NonExistsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NonExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NonExistsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/client/api/models/NorFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
 	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
@@ -345,6 +335,16 @@ public final class io/getstream/chat/android/client/api/models/NotEqualsFilterOb
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/NotExistsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFieldName ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
