@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-
+Group channels with 1<>1 behaviour the same way as group channels with many users
+It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -24,27 +25,26 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed parsing of `createdAt` property in `MessageDeletedEvent`
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`
 
 ### ❌ Removed
 
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed refreshing channel list after removing member
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Deprecated `ChatDomain::disconnect`, use disconnect on ChatClient instead, it will make the disconnection on ChatDomain too.
-- Deprecated constructors for `ChatDomain.Builder` with the `User` type parameter, use constructor with `Context` and `ChatClient` instead.
 
 ### ❌ Removed
 
@@ -63,18 +63,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed some rare crashes when `MessageListView` was created without any attribute info present
 
 ### ⬆️ Improved
-- Updated PhotoView to version 2.3.0
 
 ### ✅ Added
-- Introduced `AttachmentViewFactory` as a factory for custom attachment views/custom link view
-- Introduced `TextAndAttachmentsViewHolder` for any combination of attachment content and text
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Deleted `OnlyFileAttachmentsViewHolder`, `OnlyMediaAttachmentsViewHolder`,
-  `PlainTextWithMediaAttachmentsViewHolder` and `PlainTextWithFileAttachmentsViewHolder`
-

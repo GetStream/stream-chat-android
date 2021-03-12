@@ -138,13 +138,16 @@ public class PushMessageSyncHandler(private val service: Service) {
     private fun createSyncNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).run {
+                this.importance = NotificationManager.IMPORTANCE_LOW
                 service.getSystemService(NotificationManager::class.java).createNotificationChannel(this)
             }
         }
     }
 
     private fun initDomain(user: User, client: ChatClient): ChatDomain {
-        return ChatDomain.Builder(service, client, user).build()
+        return ChatDomain.Builder(service, client).build().apply {
+            currentUser = user
+        }
     }
 
     private fun initClient(

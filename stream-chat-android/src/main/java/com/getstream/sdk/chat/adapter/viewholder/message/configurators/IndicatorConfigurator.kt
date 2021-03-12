@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
     private val readStateStyle: ReadStateStyle,
-    private val readStateClickListener: MessageListView.ReadStateClickListener
+    private val readStateClickListener: MessageListView.ReadStateClickListener,
 ) : Configurator {
 
     override fun configure(messageItem: MessageItem) {
@@ -64,6 +64,19 @@ internal class IndicatorConfigurator(
             SyncStatus.FAILED_PERMANENTLY -> {
                 binding.pbDeliver.isVisible = false
                 binding.ivDeliver.isVisible = false
+            }
+        }
+
+        if (message.text.isEmpty()) {
+            binding.itemMessageContainer.updateConstraints {
+                clear(binding.ivDeliver.id, ConstraintSet.START)
+                clear(binding.ivDeliver.id, ConstraintSet.END)
+                connect(
+                    binding.ivDeliver.id,
+                    ConstraintSet.END,
+                    binding.attachmentview.id,
+                    ConstraintSet.START,
+                )
             }
         }
     }

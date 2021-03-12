@@ -4,6 +4,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.Pagination.LESS_THAN
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -20,7 +22,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.docs.StaticInstances.TAG
 
 class Channels(val client: ChatClient, val channelClient: ChannelClient) {
@@ -617,7 +618,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             val filterByPendingInvite = Filters.eq("invite", "pending")
 
             // Query all the members
-            val filterByNone = FilterObject()
+            val filterByNone = NeutralFilterObject
 
             // Results can also be orderd with the QuerySort param
             // For example, this will order results by member creation time, descending

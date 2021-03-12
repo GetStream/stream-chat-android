@@ -84,10 +84,7 @@ public class MentionListViewModel : ViewModel() {
         val currentState = _state.value!!
         val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
-        val messageFilter = Filters.eq(
-            "mentioned_users.id",
-            Filters.contains(currentUser.id)
-        )
+        val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
 
         val request = SearchMessagesRequest(
             offset = currentState.results.size,

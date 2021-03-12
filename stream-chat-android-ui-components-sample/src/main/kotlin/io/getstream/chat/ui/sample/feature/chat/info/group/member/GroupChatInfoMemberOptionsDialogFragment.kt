@@ -72,25 +72,36 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             optionMessage.setOnClickListener {
                 viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
             }
-            optionRemove.setOnClickListener {
-                ConfirmationDialogFragment.newInstance(
-                    iconResId = R.drawable.ic_delete,
-                    iconTintResId = R.color.red,
-                    title = getString(R.string.chat_group_info_user_remove_title, user.name),
-                    description = getString(R.string.chat_group_info_user_remove_description, user.name, channelName),
-                    confirmText = getString(R.string.remove),
-                    cancelText = getString(R.string.cancel),
-                ).apply {
-                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                        viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel)
-                    }
-                }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+
+            if (isAnonymousChannel(cid)) {
+                optionRemove.isVisible = false
+            } else {
+                optionRemove.setOnClickListener {
+                    ConfirmationDialogFragment.newInstance(
+                        iconResId = R.drawable.ic_delete,
+                        iconTintResId = R.color.red,
+                        title = getString(R.string.chat_group_info_user_remove_title, user.name),
+                        description = getString(
+                            R.string.chat_group_info_user_remove_description,
+                            user.name,
+                            channelName
+                        ),
+                        confirmText = getString(R.string.remove),
+                        cancelText = getString(R.string.cancel),
+                    ).apply {
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                            viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel)
+                        }
+                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+                }
             }
             optionCancel.setOnOptionClickListener {
                 dismiss()
             }
         }
     }
+
+    private fun isAnonymousChannel(cid: String): Boolean = cid.startsWith("!messages")
 
     private fun initViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->

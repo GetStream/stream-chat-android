@@ -9,6 +9,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -30,7 +31,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.socket.SocketListener
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -200,7 +200,8 @@ internal class ChatDomainImpl internal constructor(
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
-    internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
+    @VisibleForTesting
+    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -212,7 +213,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal lateinit var repos: RepositoryFacade
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal lateinit var initJob: Deferred<SyncState?>
+    internal var initJob: Deferred<SyncState?>? = null
 
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
@@ -586,7 +587,7 @@ internal class ChatDomainImpl internal constructor(
      */
     suspend fun replayEventsForActiveChannels(cid: String? = null): Result<List<ChatEvent>> {
         // wait for the active channel info to load
-        initJob.join()
+        initJob?.join()
         // make a list of all channel ids
         val cids = activeChannelMapImpl.keys().toList().toMutableList()
         cid?.let {
@@ -597,7 +598,7 @@ internal class ChatDomainImpl internal constructor(
         return replayEventsForChannels(cids)
     }
 
-    internal suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         val now = Date()
 
         return if (cids.isNotEmpty()) {
@@ -628,7 +629,7 @@ internal class ChatDomainImpl internal constructor(
      */
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0 ensure load is complete
-        initJob.join()
+        initJob?.join()
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
@@ -754,7 +755,6 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionsSyncNeeded().onEach { reaction ->
-            reaction.user = null
             val result = if (reaction.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).execute()
             } else {

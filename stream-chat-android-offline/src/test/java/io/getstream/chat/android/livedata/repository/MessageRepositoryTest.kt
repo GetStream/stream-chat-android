@@ -9,6 +9,7 @@ import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.`should be equal to`
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,16 +70,25 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     @Test
     fun testSelectMessagesForChannel() = runBlocking {
         val message1 = data.createMessage().apply {
-            id = "testSelectMessagesForChannel1"; text = "message1"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =
-                calendar(2019, 11, 1)
+            id = "testSelectMessagesForChannel1"
+            text = "message1"
+            syncStatus = SyncStatus.SYNC_NEEDED
+            user = data.user1
+            createdAt = calendar(2019, 11, 1)
         }
         val message2 = data.createMessage().apply {
-            id = "testSelectMessagesForChannel2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
-                data.user1; createdAt = calendar(2019, 10, 1)
+            id = "testSelectMessagesForChannel2"
+            text = "hi123"
+            syncStatus = SyncStatus.FAILED_PERMANENTLY
+            user = data.user1
+            createdAt = calendar(2019, 10, 1)
         }
         val message3 = data.createMessage().apply {
-            id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
-                data.user1; createdAt = calendar(2019, 9, 1)
+            id = "testSelectMessagesForChannel3"
+            text = "hi123123"
+            syncStatus = SyncStatus.FAILED_PERMANENTLY
+            user = data.user1
+            createdAt = calendar(2019, 9, 1)
         }
         repo.insertMessages(listOf(message1, message2, message3), true)
 
@@ -108,4 +118,28 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message2.id)
     }
+
+    @Test
+    fun `When a message sync is needed and retry is called Then the message should be synced with the backend`(): Unit =
+        runBlocking {
+            val message1 = data.createMessage().apply { syncStatus = SyncStatus.SYNC_NEEDED }
+            val message2 = data.createMessage().apply { syncStatus = SyncStatus.FAILED_PERMANENTLY }
+
+            repo.insertMessage(message1)
+            repo.insertMessage(message2)
+
+            var messages = repo.selectMessagesSyncNeeded()
+
+            messages.size `should be equal to` 1
+            messages[0].syncStatus `should be equal to` SyncStatus.SYNC_NEEDED
+
+            chatDomainImpl.retryMessages()
+
+            messages = repo.selectMessages(listOf(message1.id))
+            messages.size `should be equal to` 1
+            messages[0].syncStatus `should be equal to` SyncStatus.COMPLETED
+
+            messages = repo.selectMessagesSyncNeeded()
+            messages.size `should be equal to` 0
+        }
 }

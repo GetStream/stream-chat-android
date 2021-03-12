@@ -2,9 +2,17 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should not be`
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,4 +64,23 @@ internal class ReactionRepositoryTest : BaseDomainTest() {
         val reaction = helper.selectUserReactionsToMessage(data.reaction1.messageId, data.reaction1.user!!.id).first()
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
     }
+
+    @Test
+    fun `When sending and deleting a reaction while offline Then retry reaction invocation should sync the deleted reaction`(): Unit =
+        runBlocking {
+            chatDomainImpl.setOffline()
+            channelControllerImpl.sendReaction(data.reaction1, enforceUnique = false)
+            channelControllerImpl.deleteReaction(data.reaction1)
+            val reaction = chatDomainImpl.repos
+                .selectUserReactionsToMessage(data.message1.id, data.user1.id)
+                .first()
+
+            reaction.syncStatus `should be equal to` SyncStatus.SYNC_NEEDED
+            reaction.deletedAt `should not be` null
+
+            whenever(client.deleteReaction(any(), any())) doReturn TestCall(Result(Message()))
+            val reactions = chatDomainImpl.retryReactions()
+
+            reactions.size `should be equal to` 1
+        }
 }

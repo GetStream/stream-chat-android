@@ -3,7 +3,9 @@ package io.getstream.chat.android.livedata.repository
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.extensions.lastMessage
 import io.getstream.chat.android.livedata.extensions.users
@@ -26,8 +28,8 @@ internal class RepositoryFacade constructor(
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
     queryChannelsRepository: QueryChannelsRepository,
-    messageRepository: MessageRepository,
-    reactionsRepository: ReactionRepository,
+    private val messageRepository: MessageRepository,
+    private val reactionsRepository: ReactionRepository,
     syncStateRepository: SyncStateRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
@@ -73,13 +75,35 @@ internal class RepositoryFacade constructor(
     }
 
     override suspend fun insertChannel(channel: Channel) {
-        channelsRepository.insertChannel(channel)
         insertUsers(channel.let(Channel::users))
+        channelsRepository.insertChannel(channel)
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
-        channelsRepository.insertChannels(channels)
         insertUsers(channels.flatMap(Channel::users))
+        channelsRepository.insertChannels(channels)
+    }
+
+    override suspend fun insertMessage(message: Message, cache: Boolean) {
+        insertUsers(message.users())
+        messageRepository.insertMessage(message, cache)
+    }
+
+    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+        insertUsers(messages.flatMap(Message::users))
+        messageRepository.insertMessages(messages, cache)
+    }
+
+    override suspend fun insertReaction(reaction: Reaction) {
+        reaction.user?.let {
+            insertUser(it)
+            reactionsRepository.insertReaction(reaction)
+        }
+    }
+
+    override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
+        insertUsers(members.map(Member::user))
+        channelsRepository.updateMembersForChannel(cid, members)
     }
 
     internal suspend fun storeStateForChannels(
