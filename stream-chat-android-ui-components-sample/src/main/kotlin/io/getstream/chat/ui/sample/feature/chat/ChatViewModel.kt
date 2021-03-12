@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
 
 class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 
@@ -27,7 +28,9 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
                 val controller = requireNotNull(channelController)
                 controller.members.value?.let { members ->
                     _navigationEvent.value = Event(
-                        if (members.size > 2) {
+                        if (members.size > 2 ||
+                            controller.channelData.value?.isAnonymousChannel() == false
+                        ) {
                             NavigationEvent.NavigateToGroupChatInfo(cid)
                         } else {
                             NavigationEvent.NavigateToChatInfo(cid)
