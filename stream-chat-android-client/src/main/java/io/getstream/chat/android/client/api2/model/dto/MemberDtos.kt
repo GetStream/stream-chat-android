@@ -24,5 +24,5 @@ internal data class DownstreamMemberDto(
     val invited: Boolean?,
     val invite_accepted_at: Date?,
     val invite_rejected_at: Date?,
-    val shadow_banned: Boolean,
+    val shadow_banned: Boolean = false,
 )
