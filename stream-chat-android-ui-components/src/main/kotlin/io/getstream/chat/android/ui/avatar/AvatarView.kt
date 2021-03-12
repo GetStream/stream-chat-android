@@ -50,7 +50,7 @@ public class AvatarView : AppCompatImageView {
 
     public fun setChannelData(channel: Channel) {
         val otherUsers = channel.getUsers()
-        if (channel.id.isAnonymousChannel() && otherUsers.size == 1) {
+        if (channel.isAnonymousChannel() && otherUsers.size == 1) {
             setUserData(otherUsers.first())
         } else {
             load(
