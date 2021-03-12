@@ -101,7 +101,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun isAnonymousChannel(cid: String): Boolean = cid.startsWith("!messages")
+    private fun isAnonymousChannel(cid: String): Boolean = cid.contains("!members")
 
     private fun initViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
