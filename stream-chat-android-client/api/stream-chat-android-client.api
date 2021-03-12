@@ -1865,6 +1865,10 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
+	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
+}
+
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 }

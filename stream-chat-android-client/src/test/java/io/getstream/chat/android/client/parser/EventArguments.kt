@@ -170,10 +170,12 @@ internal object EventArguments {
     private val message = Message(
         id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         text = "Hello",
+        html = "<p>Hello</p>",
         user = user,
         createdAt = date,
         updatedAt = date,
-        cid = channel.cid
+        cid = channel.cid,
+        type = "regular",
     )
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",

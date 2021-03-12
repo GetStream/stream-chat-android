@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-It is not possible to remove users from distinct channels anymore. 
+Group channels with 1<>1 behaviour the same way as group channels with many users
+It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
