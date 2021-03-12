@@ -8,7 +8,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.utils.extensions.isDistinctChannel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -74,7 +73,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                 viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
             }
 
-            if (cid.isDistinctChannel()) {
+            if (isAnonymousChannel(cid)) {
                 optionRemove.isVisible = false
             } else {
                 optionRemove.setOnClickListener {
@@ -101,6 +100,8 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
+    private fun isAnonymousChannel(cid: String): Boolean = cid.startsWith("!messages")
 
     private fun initViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
