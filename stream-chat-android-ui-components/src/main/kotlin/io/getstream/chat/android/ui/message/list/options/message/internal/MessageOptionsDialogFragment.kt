@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
@@ -29,7 +30,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 import java.io.Serializable
 
-internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
+internal class MessageOptionsDialogFragment(private val markdown: ChatMarkdown) : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
@@ -136,7 +137,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory()
+        viewHolder = MessageListItemViewHolderFactory(markdown)
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
@@ -289,16 +290,18 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         fun newReactionOptionsInstance(
             message: Message,
             style: MessageListItemStyle,
+            markdown: ChatMarkdown
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, null, style)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, null, style, markdown)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListItemStyle,
+            markdown: ChatMarkdown
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, markdown)
         }
 
         private fun newInstance(
@@ -306,8 +309,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration?,
             style: MessageListItemStyle,
+            markdown: ChatMarkdown
         ): MessageOptionsDialogFragment {
-            return MessageOptionsDialogFragment().apply {
+            return MessageOptionsDialogFragment(markdown).apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
                     ARG_OPTIONS_CONFIG to configuration,

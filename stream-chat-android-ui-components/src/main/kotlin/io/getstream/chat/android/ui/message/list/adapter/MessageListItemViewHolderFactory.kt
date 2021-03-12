@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list.adapter
 import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
@@ -24,7 +23,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
-public open class MessageListItemViewHolderFactory {
+public open class MessageListItemViewHolderFactory(private val markdown: ChatMarkdown) {
     internal lateinit var decoratorProvider: DecoratorProvider
 
     protected lateinit var listenerContainer: MessageListListenerContainer
@@ -46,8 +45,6 @@ public open class MessageListItemViewHolderFactory {
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
         this.style = style
     }
-
-    private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].

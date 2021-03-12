@@ -8,12 +8,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -78,6 +80,11 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelpe
 import io.getstream.chat.android.ui.message.list.internal.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+import io.noties.markwon.Markwon
+import io.noties.markwon.core.CorePlugin
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -237,6 +244,7 @@ public class MessageListView : ConstraintLayout {
                             threadEnabled = !adapter.isThread && !message.isInThread(),
                         ),
                         messageListViewStyle.itemStyle,
+                        markdown
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -302,9 +310,7 @@ public class MessageListView : ConstraintLayout {
             val attachmentIndex = filteredAttachments.indexOf(attachment)
 
             attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
-            ChatUI.instance()
-                .navigator
-                .navigate(attachmentGalleryDestination)
+            attachmentGalleryDestination.navigate()
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -319,7 +325,11 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message, messageListViewStyle.itemStyle)
+                MessageOptionsDialogFragment.newReactionOptionsInstance(
+                    message,
+                    messageListViewStyle.itemStyle,
+                    markdown
+                )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
@@ -357,6 +367,19 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
+
+    private var markdown: ChatMarkdown = object : ChatMarkdown {
+        val markwon: Markwon = Markwon.builder(context)
+            .usePlugin(CorePlugin.create())
+            .usePlugin(LinkifyPlugin.create())
+            .usePlugin(ImagesPlugin.create())
+            .usePlugin(StrikethroughPlugin.create())
+            .build()
+
+        override fun setText(textView: TextView, text: String) {
+            markwon.setMarkdown(textView, text)
+        }
+    }
 
     public constructor(context: Context) : super(context) {
         init(context, null)
@@ -586,7 +609,7 @@ public class MessageListView : ConstraintLayout {
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory(markdown)
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -676,6 +699,10 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
         this.attachmentViewFactory = attachmentViewFactory
+    }
+
+    public fun setChatMarkdown(markdown: ChatMarkdown) {
+        this.markdown = markdown
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
