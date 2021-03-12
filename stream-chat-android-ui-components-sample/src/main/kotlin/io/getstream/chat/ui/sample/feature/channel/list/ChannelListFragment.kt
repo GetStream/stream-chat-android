@@ -87,7 +87,7 @@ class ChannelListFragment : Fragment() {
 
             setChannelInfoClickListener { channel ->
                 val direction = when {
-                    channel.members.size > 2 || channel.id.isAnonymousChannel() ->
+                    channel.members.size > 2 || channel.isAnonymousChannel() ->
                         HomeFragmentDirections.actionHomeFragmentToGroupChatInfoFragment(channel.cid)
 
                     else -> HomeFragmentDirections.actionHomeFragmentToChatInfoFragment(channel.cid)

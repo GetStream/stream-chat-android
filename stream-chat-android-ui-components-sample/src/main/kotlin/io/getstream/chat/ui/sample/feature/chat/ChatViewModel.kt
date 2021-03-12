@@ -3,11 +3,10 @@ package io.getstream.chat.ui.sample.feature.chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.extensions.isAnonymousChannel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
 
 class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 
@@ -23,7 +22,6 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
         }
     }
 
-    @OptIn(InternalStreamChatApi::class)
     fun onAction(action: Action) {
         when (action) {
             Action.HeaderClicked -> {
@@ -31,7 +29,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
                 controller.members.value?.let { members ->
                     _navigationEvent.value = Event(
                         if (members.size > 2 ||
-                            controller.channelData.value?.channelId?.isAnonymousChannel() == false
+                            controller.channelData.value?.isAnonymousChannel() == false
                         ) {
                             NavigationEvent.NavigateToGroupChatInfo(cid)
                         } else {

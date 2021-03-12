@@ -22,4 +22,4 @@ internal fun String.camelCaseToSnakeCase(): String {
     return camelRegex.replace(this) { "_${it.value}" }.toLowerCase()
 }
 
-public fun String.isAnonymousChannel(): Boolean = contains("!members")
+internal fun String.isAnonymousChannelId(): Boolean = startsWith("!members")
