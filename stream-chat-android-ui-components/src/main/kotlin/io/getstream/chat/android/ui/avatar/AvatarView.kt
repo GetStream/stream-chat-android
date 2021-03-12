@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.getUsers
-import com.getstream.sdk.chat.utils.extensions.isDistinctChannel
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
@@ -50,7 +50,7 @@ public class AvatarView : AppCompatImageView {
 
     public fun setChannelData(channel: Channel) {
         val otherUsers = channel.getUsers()
-        if (channel.isDistinctChannel() && otherUsers.size == 1) {
+        if (channel.id.isAnonymousChannel() && otherUsers.size == 1) {
             setUserData(otherUsers.first())
         } else {
             load(

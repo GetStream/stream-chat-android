@@ -3,7 +3,7 @@ package io.getstream.chat.ui.sample.feature.chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.extensions.isDistinctChannel
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
@@ -30,7 +30,9 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
                 val controller = requireNotNull(channelController)
                 controller.members.value?.let { members ->
                     _navigationEvent.value = Event(
-                        if (members.size > 2 || controller.channelData.value?.isDistinctChannel() == false) {
+                        if (members.size > 2 ||
+                            controller.channelData.value?.channelId?.isAnonymousChannel() == false
+                        ) {
                             NavigationEvent.NavigateToGroupChatInfo(cid)
                         } else {
                             NavigationEvent.NavigateToChatInfo(cid)
