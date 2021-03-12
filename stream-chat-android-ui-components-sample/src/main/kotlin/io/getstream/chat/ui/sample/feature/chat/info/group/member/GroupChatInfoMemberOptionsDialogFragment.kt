@@ -55,7 +55,6 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    @InternalStreamChatApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
