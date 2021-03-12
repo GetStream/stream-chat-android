@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.utils.extensions
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomain
 
 @InternalStreamChatApi
