@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
@@ -86,7 +87,8 @@ class ChannelListFragment : Fragment() {
 
             setChannelInfoClickListener { channel ->
                 val direction = when {
-                    channel.members.size > 2 -> HomeFragmentDirections.actionHomeFragmentToGroupChatInfoFragment(channel.cid)
+                    channel.members.size > 2 || channel.id.isAnonymousChannel() ->
+                        HomeFragmentDirections.actionHomeFragmentToGroupChatInfoFragment(channel.cid)
 
                     else -> HomeFragmentDirections.actionHomeFragmentToChatInfoFragment(channel.cid)
                 }
