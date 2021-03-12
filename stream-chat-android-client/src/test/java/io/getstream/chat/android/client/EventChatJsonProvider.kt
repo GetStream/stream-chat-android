@@ -565,6 +565,7 @@ private fun createMessageJsonString() =
             "id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "text": "Hello",
             "user": ${createUserJsonString()},
+            "html": "<p>Hello</p>",
             "attachments": [ ],
             "latest_reactions": [ ],
             "own_reactions": [ ],
@@ -575,6 +576,7 @@ private fun createMessageJsonString() =
             "updated_at": "2020-06-29T06:14:28.000Z",
             "mentioned_users": [ ],
             "silent": false,
+            "type": "regular",
             "cid": ""
         }
     """.trimIndent()
