@@ -35,10 +35,32 @@ public class Moderation {
             });
         }
 
+        public void unFlagMessage() {
+            client.unFlagMessage("message-id").enqueue(result -> {
+                if (result.isSuccess()) {
+                    // Message flag was removed
+                    Flag flag = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
         public void flagUser() {
             client.flagUser("user-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     // User was flagged
+                    Flag flag = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void unFlagUser() {
+            client.unFlagUser("user-id").enqueue(result -> {
+                if (result.isSuccess()) {
+                    // User flag was removed
                     Flag flag = result.data();
                 } else {
                     // Handle result.error()
