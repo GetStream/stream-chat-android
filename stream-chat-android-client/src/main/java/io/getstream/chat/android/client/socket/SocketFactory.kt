@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets
 internal class SocketFactory(
     private val eventsParser: EventsParser,
     private val parser: ChatParser,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
 ) {
 
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
@@ -71,9 +71,15 @@ internal class SocketFactory(
         private const val ANONYMOUS_USER_ID = "anon"
     }
 
-    private fun User.reduceUserDetails() = this.copy(
-        devices = emptyList(),
-        mutes = emptyList(),
-        channelMutes = emptyList()
-    )
+    private fun User.reduceUserDetails(): Map<String, Any> {
+        val details = mutableMapOf(
+            "id" to id,
+            "role" to role,
+            "banned" to banned,
+            "invisible" to invisible,
+            "teams" to teams,
+        )
+        details.putAll(extraData)
+        return details
+    }
 }
