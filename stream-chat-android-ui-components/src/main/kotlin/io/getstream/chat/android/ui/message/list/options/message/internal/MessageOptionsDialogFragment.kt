@@ -86,11 +86,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         reactionClickHandler = null
@@ -138,7 +133,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(itemStyle)
+                decoratorProvider = MessageOptionsDecoratorProvider(itemStyle, currentUser)
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
                 setMessageListItemStyle(itemStyle)
@@ -313,7 +308,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     ARG_OPTIONS_CONFIG to configuration,
                     ARG_OPTIONS_ITEM_STYLE to style
                 )
-                // pass message via static field
+                // pass message and user via static field
                 messageArg = message
             }
         }
