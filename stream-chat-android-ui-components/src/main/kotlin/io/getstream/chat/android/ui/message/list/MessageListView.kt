@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
@@ -344,7 +343,8 @@ public class MessageListView : ConstraintLayout {
             giphySendHandler.onSendGiphy(message, action)
         }
     private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
-        ChatUI.instance().navigator.navigate(WebLinkDestination(url, context))
+        // TODO: allow setting urlSigner in messageListView?
+        WebLinkDestination(url, context).navigate()
     }
     private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
         // Empty
