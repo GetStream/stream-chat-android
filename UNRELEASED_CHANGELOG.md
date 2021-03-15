@@ -30,6 +30,7 @@ It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `unFlagMessage(messageId)` and `unFlagUser(userId)` methods to `ChatClient`
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`

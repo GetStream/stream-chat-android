@@ -1035,7 +1035,13 @@ public class ChatClient internal constructor(
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
 
     @CheckResult
+    public fun unFlagUser(userId: String): Call<Flag> = api.unFlagUser(userId)
+
+    @CheckResult
     public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
+
+    @CheckResult
+    public fun unFlagMessage(messageId: String): Call<Flag> = api.unFlagMessage(messageId)
 
     @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
@@ -1127,7 +1133,8 @@ public class ChatClient internal constructor(
         return runCatching {
             when (clientStateService.state) {
                 is ClientState.User.Pending,
-                is ClientState.User.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                is ClientState.User.Authorized,
+                -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()
