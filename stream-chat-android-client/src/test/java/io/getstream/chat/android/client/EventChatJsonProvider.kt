@@ -624,11 +624,14 @@ private fun createConfigJsonString() =
           "replies": true,
           "mutes": true,
           "uploads": true,
-          "url_enrichment": true,
+          "url_enrichment":true,
+          "custom_events": true,
+          "push_notifications":true,
           "message_retention": "infinite",
           "max_message_length": 5000,
           "automod": "disabled",
-          "automod_behavior": "flag",
+          "automod_behavior":"flag",
+          "blocklist_behavior":"flag",
           "commands": [
             {
               "name": "giphy",

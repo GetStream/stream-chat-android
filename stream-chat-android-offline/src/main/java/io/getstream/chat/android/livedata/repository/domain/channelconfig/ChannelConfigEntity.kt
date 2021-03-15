@@ -14,6 +14,7 @@ internal data class ChannelConfigInnerEntity(
     val channelType: String,
     val createdAt: Date?,
     val updatedAt: Date?,
+    val name: String,
     val isTypingEvents: Boolean,
     val isReadEvents: Boolean,
     val isConnectEvents: Boolean,
@@ -21,10 +22,15 @@ internal data class ChannelConfigInnerEntity(
     val isReactionsEnabled: Boolean,
     val isRepliesEnabled: Boolean,
     val isMutes: Boolean,
+    val isUploads: Boolean,
+    val isUrlEnrichment: Boolean,
+    val isCustomEvents: Boolean,
+    val isPushNotifications: Boolean,
+    val messageRetention: String,
     val maxMessageLength: Int,
     val automod: String,
-    val infinite: String,
-    val name: String,
+    val automodBehavior: String,
+    val blocklistBehavior: String,
 )
 
 @Entity(
