@@ -13,9 +13,9 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NonExistsFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 
@@ -41,7 +41,7 @@ public object Filters {
     public fun exists(fieldName: String): FilterObject = ExistsFilterObject(fieldName)
 
     @JvmStatic
-    public fun notExists(fieldName: String): FilterObject = NonExistsFilterObject(fieldName)
+    public fun notExists(fieldName: String): FilterObject = NotExistsFilterObject(fieldName)
 
     @JvmStatic
     public fun contains(fieldName: String, value: Any): FilterObject = ContainsFilterObject(fieldName, value)

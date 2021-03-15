@@ -494,7 +494,7 @@ internal fun randomReaction(
     enforceUnique = enforceUnique,
 )
 
-internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
+internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus = (SyncStatus.values().asList() - exclude).random()
 
 internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
     return KFixture(fixture) {
