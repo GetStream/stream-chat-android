@@ -62,12 +62,12 @@ internal class UsersApiCallsTests {
     }
 
     @Test
-    fun unBanSuccess() {
+    fun unbanSuccess() {
 
         val targetUserId = "target-id"
 
         Mockito.`when`(
-            mock.retrofitApi.unBanUser(
+            mock.retrofitApi.unbanUser(
                 mock.apiKey,
                 mock.connectionId,
                 targetUserId,
@@ -77,7 +77,7 @@ internal class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
-        val result = client.unBanUser(
+        val result = client.unbanUser(
             targetUserId,
             mock.channelType,
             mock.channelId
@@ -260,12 +260,12 @@ internal class UsersApiCallsTests {
     }
 
     @Test
-    fun unMuteUserSuccess() {
+    fun unmuteUserSuccess() {
 
         val targetUser = User().apply { id = "target-id" }
 
         Mockito.`when`(
-            mock.retrofitApi.unMuteUser(
+            mock.retrofitApi.unmuteUser(
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,

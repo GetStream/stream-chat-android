@@ -1010,8 +1010,17 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unmuteChannel(channelType, channelId) method instead",
+        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)")
+    )
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return api.unMuteChannel(channelType, channelId)
+        return api.unmuteChannel(channelType, channelId)
+    }
+
+    @CheckResult
+    public fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return api.unmuteChannel(channelType, channelId)
     }
 
     @CheckResult
@@ -1035,13 +1044,13 @@ public class ChatClient internal constructor(
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
 
     @CheckResult
-    public fun unFlagUser(userId: String): Call<Flag> = api.unFlagUser(userId)
+    public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
     @CheckResult
     public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
 
     @CheckResult
-    public fun unFlagMessage(messageId: String): Call<Flag> = api.unFlagMessage(messageId)
+    public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
 
     @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
@@ -1066,11 +1075,29 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unbanUser(targetId, channelType, channelId) method instead",
+        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)")
+    )
     public fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String,
-    ): Call<Unit> = api.unBanUser(
+    ): Call<Unit> = api.unbanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = false
+    ).map {
+        Unit
+    }
+
+    @CheckResult
+    public fun unbanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> = api.unbanUser(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,
@@ -1102,7 +1129,7 @@ public class ChatClient internal constructor(
         targetId: String,
         channelType: String,
         channelId: String,
-    ): Call<Unit> = api.unBanUser(
+    ): Call<Unit> = api.unbanUser(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,

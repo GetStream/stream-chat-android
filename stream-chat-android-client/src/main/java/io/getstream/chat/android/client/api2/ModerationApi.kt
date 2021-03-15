@@ -26,7 +26,7 @@ internal interface ModerationApi {
     ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
-    fun unMuteUser(
+    fun unmuteUser(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
@@ -42,7 +42,7 @@ internal interface ModerationApi {
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
-    fun unMuteChannel(
+    fun unmuteChannel(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
@@ -58,7 +58,7 @@ internal interface ModerationApi {
     ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/unflag")
-    fun unFlag(
+    fun unflag(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
@@ -73,7 +73,7 @@ internal interface ModerationApi {
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
-    fun unBanUser(
+    fun unbanUser(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Query("target_user_id") targetUserId: String,

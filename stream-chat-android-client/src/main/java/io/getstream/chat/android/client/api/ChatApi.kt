@@ -110,7 +110,7 @@ internal interface ChatApi {
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
     @CheckResult
-    fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
+    fun unmuteChannel(channelType: String, channelId: String): Call<Unit>
 
     @CheckResult
     fun updateMessage(
@@ -240,13 +240,13 @@ internal interface ChatApi {
     fun flagUser(userId: String): Call<Flag>
 
     @CheckResult
-    fun unFlagUser(userId: String): Call<Flag>
+    fun unflagUser(userId: String): Call<Flag>
 
     @CheckResult
     fun flagMessage(messageId: String): Call<Flag>
 
     @CheckResult
-    fun unFlagMessage(messageId: String): Call<Flag>
+    fun unflagMessage(messageId: String): Call<Flag>
 
     @CheckResult
     fun banUser(
@@ -259,7 +259,7 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun unBanUser(
+    fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,

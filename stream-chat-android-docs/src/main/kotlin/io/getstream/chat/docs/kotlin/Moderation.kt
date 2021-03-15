@@ -28,8 +28,8 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
-        fun unFlagMessage() {
-            client.unFlagMessage("message-id").enqueue { result ->
+        fun unflagMessage() {
+            client.unflagMessage("message-id").enqueue { result ->
                 if (result.isSuccess) {
                     // Message flag was removed
                     val flag: Flag = result.data()
@@ -50,8 +50,8 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
-        fun unFlagUser() {
-            client.unFlagUser("user-id").enqueue { result ->
+        fun unflagUser() {
+            client.unflagUser("user-id").enqueue { result ->
                 if (result.isSuccess) {
                     // User flag was removed
                     val flag: Flag = result.data()
@@ -106,7 +106,7 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
         }
 
         fun unbanUser() {
-            channelClient.unBanUser(targetId = "user-id").enqueue { result ->
+            channelClient.unbanUser(targetId = "user-id").enqueue { result ->
                 if (result.isSuccess) {
                     // User was unbanned
                 } else {
