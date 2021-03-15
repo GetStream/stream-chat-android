@@ -123,6 +123,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unFlagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unFlagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unMuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -1863,6 +1865,10 @@ public final class io/getstream/chat/android/client/events/UsersUnmutedEvent : i
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
 	public static final fun getUploadId (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
+	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {

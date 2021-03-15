@@ -1,6 +1,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-
+Group channels with 1<>1 behaviour the same way as group channels with many users
+It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -29,6 +30,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `unFlagMessage(messageId)` and `unFlagUser(userId)` methods to `ChatClient`
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`

@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 
 internal fun DownstreamChannelDto.toDomain(): Channel =
     Channel(
@@ -24,7 +25,7 @@ internal fun DownstreamChannelDto.toDomain(): Channel =
         watchers = watchers.map(DownstreamUserDto::toDomain),
         read = read.map(DownstreamChannelUserRead::toDomain),
         config = config.toDomain(),
-        createdBy = created_by.toDomain(),
+        createdBy = created_by?.toDomain() ?: User(),
         team = team,
         cooldown = cooldown,
         pinnedMessages = pinned_messages.map(DownstreamMessageDto::toDomain),

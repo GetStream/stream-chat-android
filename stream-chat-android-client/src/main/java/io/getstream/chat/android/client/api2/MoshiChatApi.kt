@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
+import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
@@ -31,6 +32,8 @@ import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -40,6 +43,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -58,11 +62,11 @@ import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import java.io.File
+import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 internal class MoshiChatApi(
     private val apiKey: String,
-    private val legacyApiDelegate: ChatApi,
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -72,7 +76,7 @@ internal class MoshiChatApi(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val coroutineScope: CoroutineScope = GlobalScope,
-) : ChatApi by legacyApiDelegate {
+) : ChatApi {
 
     val logger = ChatLogger.get("MoshiChatApi")
 
@@ -342,11 +346,26 @@ internal class MoshiChatApi(
     override fun flagUser(userId: String): Call<Flag> =
         flag(mutableMapOf("target_user_id" to userId))
 
+    override fun unFlagUser(userId: String): Call<Flag> =
+        unFlag(mutableMapOf("target_user_id" to userId))
+
     override fun flagMessage(messageId: String): Call<Flag> =
         flag(mutableMapOf("target_message_id" to messageId))
 
+    override fun unFlagMessage(messageId: String): Call<Flag> =
+        unFlag(mutableMapOf("target_message_id" to messageId))
+
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { response -> response.flag.toDomain() }
+    }
+
+    private fun unFlag(body: MutableMap<String, String>): Call<Flag> {
+        return moderationApi.unFlag(
             apiKey,
             userId,
             connectionId,
@@ -744,6 +763,37 @@ internal class MoshiChatApi(
             connectionId,
             request,
         ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+    }
+
+    override fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>,
+    ): Call<ChatEvent> {
+        val map = mutableMapOf<Any, Any>("type" to eventType)
+        map.putAll(extraData)
+
+        return channelApi.sendEvent(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            request = SendEventRequest(map),
+        ).map { response -> response.event.toDomain() }
+    }
+
+    override fun getSyncHistory(
+        channelIds: List<String>,
+        lastSyncAt: Date,
+    ): Call<List<ChatEvent>> {
+        return generalApi.getSyncHistory(
+            body = SyncHistoryRequest(channelIds, lastSyncAt),
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+        ).map { response -> response.events.map(ChatEventDto::toDomain) }
     }
 
     override fun warmUp() {
