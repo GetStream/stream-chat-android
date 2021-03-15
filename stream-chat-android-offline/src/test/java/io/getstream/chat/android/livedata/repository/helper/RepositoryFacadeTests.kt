@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.randomChannel
@@ -115,10 +116,20 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `When insert a message, all participant users of this message need to be stored`() = runBlockingTest {
         val messageUser = randomUser()
         val replyToUser = randomUser()
-        val reactionUser = randomUser()
+        val latestReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+        val ownReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+        val latestReactionUsers = latestReactions.mapNotNull(Reaction::user)
+        val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
+        val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+        val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+        val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser
         val message = randomMessage(
             user = messageUser,
             replyTo = randomMessage(user = replyToUser),
+            latestReactions = latestReactions,
+            ownReactions = ownReactions,
+            mentionedUsers = mentionedUsers,
+            threadParticipants = threadParticipantsUsers,
         )
         val cache = randomBoolean()
         sut.insertMessage(message, cache)
@@ -126,8 +137,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         verify(messages).insertMessage(eq(message), eq(cache))
         verify(users).insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
-                listUser.size `should be equal to` 2
-                listUser `should contain same` listOf(replyToUser, messageUser)
+                listUser `should contain same` expectedListOfUser
             }
         )
     }
@@ -167,11 +177,21 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
                     val messageUser = randomUser()
                     val replyToUser = randomUser()
+                    val latestReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+                    val ownReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+                    val latestReactionUsers = latestReactions.mapNotNull(Reaction::user)
+                    val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
+                    val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+                    val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
                     val message = randomMessage(
                         user = messageUser,
-                        replyTo = randomMessage(user = replyToUser)
+                        replyTo = randomMessage(user = replyToUser),
+                        latestReactions = latestReactions,
+                        ownReactions = ownReactions,
+                        mentionedUsers = mentionedUsers,
+                        threadParticipants = threadParticipantsUsers,
                     )
-                    acc.first + listOf(messageUser, replyToUser) to acc.second + message
+                    (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser) to acc.second + message
                 }
             val cache = randomBoolean()
 

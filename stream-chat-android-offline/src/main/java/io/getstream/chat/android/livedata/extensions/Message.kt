@@ -24,7 +24,12 @@ internal fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
 }
 
 internal fun Message.users(): List<User> {
-    return latestReactions.mapNotNull(Reaction::user) + user + (replyTo?.users().orEmpty())
+    return latestReactions.mapNotNull(Reaction::user) +
+        user +
+        (replyTo?.users().orEmpty()) +
+        mentionedUsers +
+        ownReactions.mapNotNull(Reaction::user) +
+        threadParticipants
 }
 
 internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {
