@@ -68,8 +68,11 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
@@ -388,6 +391,30 @@ public class ChannelClient internal constructor(
             targetId = targetId,
             channelType = channelType,
             channelId = channelId,
+        )
+    }
+
+    @CheckResult
+    public fun queryBannedUsers(
+        filter: FilterObject? = null,
+        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        offset: Int? = null,
+        limit: Int? = null,
+        createdAtAfter: Date? = null,
+        createdAtAfterOrEqual: Date? = null,
+        createdAtBefore: Date? = null,
+        createdAtBeforeOrEqual: Date? = null,
+    ): Call<List<BannedUser>> {
+        val channelCidFilter = Filters.eq("channel_cid", cid)
+        return client.queryBannedUsers(
+            filter = filter?.let { Filters.and(channelCidFilter, it) } ?: channelCidFilter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
     }
 

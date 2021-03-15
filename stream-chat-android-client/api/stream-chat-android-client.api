@@ -72,6 +72,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun onNewTokenReceived (Ljava/lang/String;)V
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
@@ -614,6 +616,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient : io/g
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public fun query (Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public fun queryMembers (IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public fun rejectInvite ()Lio/getstream/chat/android/client/call/Call;
 	public fun removeMembers ([Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -2043,6 +2047,40 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$Success : io/getstream/chat/android/client/models/Attachment$UploadState {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Success;
+}
+
+public final class io/getstream/chat/android/client/models/BannedUser {
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;Ljava/util/Date;Ljava/util/Date;ZLjava/lang/String;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component3 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()Ljava/util/Date;
+	public final fun component6 ()Z
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;Ljava/util/Date;Ljava/util/Date;ZLjava/lang/String;)Lio/getstream/chat/android/client/models/BannedUser;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/BannedUser;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;Ljava/util/Date;Ljava/util/Date;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/BannedUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBannedBy ()Lio/getstream/chat/android/client/models/User;
+	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getExpires ()Ljava/util/Date;
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getShadow ()Z
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/BannedUsersSort {
+	public fun <init> (Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/client/models/BannedUsersSort;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/BannedUsersSort;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/BannedUsersSort;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/Channel : io/getstream/chat/android/client/models/CustomObject {

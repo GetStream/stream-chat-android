@@ -38,6 +38,8 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
@@ -1109,6 +1111,29 @@ public class ChatClient internal constructor(
         shadow = true
     ).map {
         Unit
+    }
+
+    @CheckResult
+    public fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        offset: Int? = null,
+        limit: Int? = null,
+        createdAtAfter: Date? = null,
+        createdAtAfterOrEqual: Date? = null,
+        createdAtBefore: Date? = null,
+        createdAtBeforeOrEqual: Date? = null,
+    ): Call<List<BannedUser>> {
+        return api.queryBannedUsers(
+            filter = filter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        )
     }
 
     //endregion

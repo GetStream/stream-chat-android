@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -37,6 +38,7 @@ import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.Call
@@ -46,6 +48,8 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -409,6 +413,33 @@ internal class MoshiChatApi(
             channelType = channelType,
             shadow = shadow,
         ).toUnitCall()
+    }
+
+    override fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>> {
+        return moderationApi.queryBannedUsers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            userId = userId,
+            payload = QueryBannedUsersRequest(
+                filter_conditions = filter.toMap(),
+                sort = sort.toDto(),
+                offset = offset,
+                limit = limit,
+                created_at_after = createdAtAfter,
+                created_at_after_or_equal = createdAtAfterOrEqual,
+                created_at_before = createdAtBefore,
+                created_at_before_or_equal = createdAtBeforeOrEqual,
+            )
+        ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
     }
 
     override fun enableSlowMode(

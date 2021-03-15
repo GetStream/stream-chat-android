@@ -31,6 +31,7 @@ It is not possible to remove users from distinct channels anymore.
 
 ### ✅ Added
 - Added `unFlagMessage(messageId)` and `unFlagUser(userId)` methods to `ChatClient`
+- Added support for querying banned users - added `ChatClient::queryBannedUsers` and `ChannelClient::queryBannedUsers`
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`

@@ -10,6 +10,8 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -265,6 +267,18 @@ internal interface ChatApi {
         channelId: String,
         shadow: Boolean,
     ): Call<Unit>
+
+    @CheckResult
+    fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>>
 
     @CheckResult
     fun sendEvent(
