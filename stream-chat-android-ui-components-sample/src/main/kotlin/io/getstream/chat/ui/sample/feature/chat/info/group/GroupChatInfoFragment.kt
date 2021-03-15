@@ -54,7 +54,7 @@ class GroupChatInfoFragment : Fragment() {
         binding.optionsRecyclerView.adapter = adapter
         binding.optionsRecyclerView.autoScrollToTop()
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
-        if (!isDistinctChannel()) {
+        if (!isAnonymousChannel()) {
             binding.addChannelButton.apply {
                 isVisible = true
                 setOnClickListener {
@@ -78,7 +78,7 @@ class GroupChatInfoFragment : Fragment() {
 
     // Distinct channel == channel created without id (based on members).
     // There is no possibility to modify distinct channel members.
-    private fun isDistinctChannel(): Boolean = args.cid.contains("!members")
+    private fun isAnonymousChannel(): Boolean = args.cid.contains("!members")
 
     private fun bindGroupInfoViewModel() {
         subscribeForChannelMutesUpdatedEvents()
@@ -92,7 +92,7 @@ class GroupChatInfoFragment : Fragment() {
                         GroupChatInfoMemberOptionsDialogFragment.newInstance(
                             args.cid,
                             it.channelName,
-                            it.member.user,
+                            it.member.user
                         )
                             .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(

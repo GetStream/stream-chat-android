@@ -346,11 +346,26 @@ internal class MoshiChatApi(
     override fun flagUser(userId: String): Call<Flag> =
         flag(mutableMapOf("target_user_id" to userId))
 
+    override fun unFlagUser(userId: String): Call<Flag> =
+        unFlag(mutableMapOf("target_user_id" to userId))
+
     override fun flagMessage(messageId: String): Call<Flag> =
         flag(mutableMapOf("target_message_id" to messageId))
 
+    override fun unFlagMessage(messageId: String): Call<Flag> =
+        unFlag(mutableMapOf("target_message_id" to messageId))
+
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { response -> response.flag.toDomain() }
+    }
+
+    private fun unFlag(body: MutableMap<String, String>): Call<Flag> {
+        return moderationApi.unFlag(
             apiKey,
             userId,
             connectionId,

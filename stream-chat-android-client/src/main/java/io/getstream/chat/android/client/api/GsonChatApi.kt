@@ -604,14 +604,33 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun flagUser(userId: String): Call<Flag> =
-        flag(mutableMapOf("target_user_id" to userId))
+    override fun flagUser(userId: String): Call<Flag> {
+        return flag(mutableMapOf("target_user_id" to userId))
+    }
 
-    override fun flagMessage(messageId: String): Call<Flag> =
-        flag(mutableMapOf("target_message_id" to messageId))
+    override fun unFlagUser(userId: String): Call<Flag> {
+        return unflag(mutableMapOf("target_user_id" to userId))
+    }
+
+    override fun flagMessage(messageId: String): Call<Flag> {
+        return flag(mutableMapOf("target_message_id" to messageId))
+    }
+
+    override fun unFlagMessage(messageId: String): Call<Flag> {
+        return unflag(mutableMapOf("target_message_id" to messageId))
+    }
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return retrofitApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { it.flag }
+    }
+
+    private fun unflag(body: MutableMap<String, String>): Call<Flag> {
+        return retrofitApi.unFlag(
             apiKey,
             userId,
             connectionId,

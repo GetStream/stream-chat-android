@@ -266,6 +266,14 @@ internal interface RetrofitApi {
         @Body body: Map<String, String>
     ): RetrofitCall<FlagResponse>
 
+    @POST("/moderation/unflag")
+    fun unFlag(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String,
+        @Body body: Map<String, String>
+    ): RetrofitCall<FlagResponse>
+
     @POST("/moderation/ban")
     fun banUser(
         @Query("api_key") apiKey: String,
