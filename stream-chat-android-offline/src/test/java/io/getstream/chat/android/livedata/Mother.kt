@@ -298,7 +298,6 @@ internal fun randomMessage(
     parentId: String? = randomString(),
     command: String? = randomString(),
     attachments: MutableList<Attachment> = mutableListOf(),
-    mentionedUsersIds: MutableList<String> = mutableListOf(),
     mentionedUsers: MutableList<User> = mutableListOf(),
     replyCount: Int = randomInt(),
     reactionCounts: MutableMap<String, Int> = mutableMapOf(),
@@ -317,7 +316,8 @@ internal fun randomMessage(
     silent: Boolean = randomBoolean(),
     replyTo: Message? = null,
     showInChannel: Boolean = randomBoolean(),
-    shadowed: Boolean = false
+    shadowed: Boolean = false,
+    threadParticipants: List<User> = emptyList()
 ): Message = Message(
     id = id,
     cid = cid,
@@ -326,7 +326,7 @@ internal fun randomMessage(
     parentId = parentId,
     command = command,
     attachments = attachments,
-    mentionedUsersIds = mentionedUsersIds,
+    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
     mentionedUsers = mentionedUsers,
     replyCount = replyCount,
     reactionCounts = reactionCounts,
@@ -345,7 +345,8 @@ internal fun randomMessage(
     silent = silent,
     replyTo = replyTo,
     showInChannel = showInChannel,
-    shadowed = shadowed
+    shadowed = shadowed,
+    threadParticipants = threadParticipants,
 )
 
 internal fun randomChannel(
