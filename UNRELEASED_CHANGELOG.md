@@ -34,10 +34,10 @@ It is not possible to remove users from distinct channels anymore.
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`
-- Deprecated `ChatClient::unMuteChannel`, the `ChatClient::unmuteChannel` should be used instead
-- Deprecated `ChatClient::unBanUser`, the `ChatClient::unbanUser` should be used instead
-- Deprecated `ChannelClient::unBanUser`, the `ChannelClient::unbanUser` should be used instead
-- Deprecated `ChannelController::unBanUser`, the `ChannelController::unbanUser` should be used instead
+- Deprecated `ChatClient::unMuteChannel`, the `ChatClient::unmuteChannel` method should be used instead
+- Deprecated `ChatClient::unBanUser`, the `ChatClient::unbanUser` method should be used instead
+- Deprecated `ChannelClient::unBanUser`, the `ChannelClient::unbanUser` method should be used instead
+- Deprecated `ChannelController::unBanUser`, the `ChannelController::unbanUser` method should be used instead
 
 ### ❌ Removed
 
