@@ -48,12 +48,10 @@ internal class MessageRepositoryTests {
             val cachedMessage1 = randomMessage(id = "id1")
             val cachedMessage2 = randomMessage(id = "id2")
 
-            val messageEntityFromDb1 = randomMessageEntity(id = "id3")
-            val messageEntityFromDb2 = randomMessageEntity(id = "id4")
+            val messageEntity1 = randomMessageEntity(id = "id3")
+            val messageEntity2 = randomMessageEntity(id = "id4")
 
-
-            whenever(messageDao.select(listOf("id3", "id4"))) doReturn listOf(messageEntityFromDb1,
-                messageEntityFromDb2)
+            whenever(messageDao.select(listOf("id3", "id4"))) doReturn listOf(messageEntity1, messageEntity2)
 
             whenever(cache[cachedMessage1.id]) doReturn cachedMessage1
             whenever(cache[cachedMessage2.id]) doReturn cachedMessage2
