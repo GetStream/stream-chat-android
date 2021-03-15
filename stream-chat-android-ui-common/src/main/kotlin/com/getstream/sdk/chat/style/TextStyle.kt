@@ -4,9 +4,8 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.widget.TextView
-import com.getstream.sdk.chat.ChatUI
 
-public class TextStyle {
+public class TextStyle(private val chatFonts: ChatFonts? = null) {
     private companion object {
         const val UNSET_SIZE = -1
         const val UNSET_COLOR = Integer.MAX_VALUE
@@ -23,12 +22,10 @@ public class TextStyle {
 
     public val font: Typeface?
         get() {
-            return ChatUI.instance().fonts.getFont(this)
+            return chatFonts?.getFont(this)
         }
 
     public fun apply(textView: TextView) {
-        val chatFonts = ChatUI.instance().fonts
-
         if (size != UNSET_SIZE) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size.toFloat())
         }
@@ -39,7 +36,7 @@ public class TextStyle {
             textView.setHintTextColor(hintColor)
         }
 
-        chatFonts.setFont(this, textView)
+        chatFonts?.setFont(this, textView)
     }
 
     public fun hasFont(): Boolean {

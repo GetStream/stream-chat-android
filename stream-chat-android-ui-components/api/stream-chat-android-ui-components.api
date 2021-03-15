@@ -629,6 +629,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;)V
+	public final fun setChatMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
@@ -812,7 +813,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory {
-	public fun <init> ()V
+	public fun <init> (Lcom/getstream/sdk/chat/ChatMarkdown;)V
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
