@@ -123,6 +123,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unFlagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unFlagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unMuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;

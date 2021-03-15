@@ -28,10 +28,32 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
+        fun unFlagMessage() {
+            client.unFlagMessage("message-id").enqueue { result ->
+                if (result.isSuccess) {
+                    // Message flag was removed
+                    val flag: Flag = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
         fun flagUser() {
             client.flagUser("user-id").enqueue { result ->
                 if (result.isSuccess) {
                     // User was flagged
+                    val flag: Flag = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
+        fun unFlagUser() {
+            client.unFlagUser("user-id").enqueue { result ->
+                if (result.isSuccess) {
+                    // User flag was removed
                     val flag: Flag = result.data()
                 } else {
                     // Handle result.error()

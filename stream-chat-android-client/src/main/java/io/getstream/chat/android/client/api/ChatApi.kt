@@ -240,7 +240,13 @@ internal interface ChatApi {
     fun flagUser(userId: String): Call<Flag>
 
     @CheckResult
+    fun unFlagUser(userId: String): Call<Flag>
+
+    @CheckResult
     fun flagMessage(messageId: String): Call<Flag>
+
+    @CheckResult
+    fun unFlagMessage(messageId: String): Call<Flag>
 
     @CheckResult
     fun banUser(
