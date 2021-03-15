@@ -308,7 +308,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     ARG_OPTIONS_CONFIG to configuration,
                     ARG_OPTIONS_ITEM_STYLE to style
                 )
-                // pass message and user via static field
+                // pass message via static field
                 messageArg = message
             }
         }
