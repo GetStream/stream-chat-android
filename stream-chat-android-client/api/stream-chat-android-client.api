@@ -125,9 +125,11 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun unFlagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun unFlagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unMuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unbanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unflagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unflagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun unmuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unpinMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -649,6 +651,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient : io/g
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public fun unBanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public fun unbanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public fun unmute ()Lio/getstream/chat/android/client/call/Call;
 	public fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -714,6 +717,7 @@ public abstract interface class io/getstream/chat/android/client/controllers/Cha
 	public abstract fun subscribeForSingle (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public abstract fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public abstract fun unBanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun unbanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun unmute ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;

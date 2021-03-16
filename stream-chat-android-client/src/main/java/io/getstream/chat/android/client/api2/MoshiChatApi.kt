@@ -227,7 +227,7 @@ internal class MoshiChatApi(
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
-        return moderationApi.unMuteUser(
+        return moderationApi.unmuteUser(
             apiKey = apiKey,
             userId = this.userId,
             connectionId = this.connectionId,
@@ -244,8 +244,8 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
-    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return moderationApi.unMuteChannel(
+    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return moderationApi.unmuteChannel(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
@@ -350,14 +350,14 @@ internal class MoshiChatApi(
     override fun flagUser(userId: String): Call<Flag> =
         flag(mutableMapOf("target_user_id" to userId))
 
-    override fun unFlagUser(userId: String): Call<Flag> =
-        unFlag(mutableMapOf("target_user_id" to userId))
+    override fun unflagUser(userId: String): Call<Flag> =
+        unflag(mutableMapOf("target_user_id" to userId))
 
     override fun flagMessage(messageId: String): Call<Flag> =
         flag(mutableMapOf("target_message_id" to messageId))
 
-    override fun unFlagMessage(messageId: String): Call<Flag> =
-        unFlag(mutableMapOf("target_message_id" to messageId))
+    override fun unflagMessage(messageId: String): Call<Flag> =
+        unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.flag(
@@ -368,8 +368,8 @@ internal class MoshiChatApi(
         ).map { response -> response.flag.toDomain() }
     }
 
-    private fun unFlag(body: MutableMap<String, String>): Call<Flag> {
-        return moderationApi.unFlag(
+    private fun unflag(body: MutableMap<String, String>): Call<Flag> {
+        return moderationApi.unflag(
             apiKey,
             userId,
             connectionId,
@@ -399,13 +399,13 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
-    override fun unBanUser(
+    override fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationApi.unBanUser(
+        return moderationApi.unbanUser(
             apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,

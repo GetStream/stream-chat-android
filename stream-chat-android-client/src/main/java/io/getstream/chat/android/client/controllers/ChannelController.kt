@@ -66,7 +66,14 @@ public interface ChannelController {
     public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unbanUser(targetId) method instead",
+        replaceWith = ReplaceWith("this.unbanUser(targetId)")
+    )
     public fun unBanUser(targetId: String): Call<Unit>
+
+    @CheckResult
+    public fun unbanUser(targetId: String): Call<Unit>
 
     @CheckResult
     public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit>

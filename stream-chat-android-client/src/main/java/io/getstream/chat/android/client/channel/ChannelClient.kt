@@ -366,8 +366,21 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unbanUser(targetId) method instead",
+        replaceWith = ReplaceWith("this.unbanUser(targetId)")
+    )
     override fun unBanUser(targetId: String): Call<Unit> {
-        return client.unBanUser(
+        return client.unbanUser(
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId,
+        )
+    }
+
+    @CheckResult
+    override fun unbanUser(targetId: String): Call<Unit> {
+        return client.unbanUser(
             targetId = targetId,
             channelType = channelType,
             channelId = channelId,
@@ -537,7 +550,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     override fun unmute(): Call<Unit> {
-        return client.unMuteChannel(channelType, channelId)
+        return client.unmuteChannel(channelType, channelId)
     }
 
     @CheckResult

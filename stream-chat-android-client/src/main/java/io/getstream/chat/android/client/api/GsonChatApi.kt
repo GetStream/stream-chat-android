@@ -308,8 +308,8 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return retrofitApi.unMuteChannel(
+    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return retrofitApi.unmuteChannel(
             apiKey,
             userId,
             connectionId,
@@ -599,7 +599,7 @@ internal class GsonChatApi(
     override fun unmuteUser(
         userId: String,
     ): Call<Unit> {
-        return retrofitApi.unMuteUser(
+        return retrofitApi.unmuteUser(
             apiKey,
             this.userId,
             connectionId,
@@ -611,7 +611,7 @@ internal class GsonChatApi(
         return flag(mutableMapOf("target_user_id" to userId))
     }
 
-    override fun unFlagUser(userId: String): Call<Flag> {
+    override fun unflagUser(userId: String): Call<Flag> {
         return unflag(mutableMapOf("target_user_id" to userId))
     }
 
@@ -619,7 +619,7 @@ internal class GsonChatApi(
         return flag(mutableMapOf("target_message_id" to messageId))
     }
 
-    override fun unFlagMessage(messageId: String): Call<Flag> {
+    override fun unflagMessage(messageId: String): Call<Flag> {
         return unflag(mutableMapOf("target_message_id" to messageId))
     }
 
@@ -633,7 +633,7 @@ internal class GsonChatApi(
     }
 
     private fun unflag(body: MutableMap<String, String>): Call<Flag> {
-        return retrofitApi.unFlag(
+        return retrofitApi.unflag(
             apiKey,
             userId,
             connectionId,
@@ -663,13 +663,13 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun unBanUser(
+    override fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return retrofitApi.unBanUser(
+        return retrofitApi.unbanUser(
             apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,

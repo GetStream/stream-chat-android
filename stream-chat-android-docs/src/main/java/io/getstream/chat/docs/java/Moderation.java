@@ -35,8 +35,8 @@ public class Moderation {
             });
         }
 
-        public void unFlagMessage() {
-            client.unFlagMessage("message-id").enqueue(result -> {
+        public void unflagMessage() {
+            client.unflagMessage("message-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     // Message flag was removed
                     Flag flag = result.data();
@@ -57,8 +57,8 @@ public class Moderation {
             });
         }
 
-        public void unFlagUser() {
-            client.unFlagUser("user-id").enqueue(result -> {
+        public void unflagUser() {
+            client.unflagUser("user-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     // User flag was removed
                     Flag flag = result.data();
@@ -114,7 +114,7 @@ public class Moderation {
         }
 
         public void unbanUser() {
-            channelClient.unBanUser("user-id").enqueue(result -> {
+            channelClient.unbanUser("user-id").enqueue(result -> {
                 if (result.isSuccess()) {
                     // User was unbanned
                 } else {

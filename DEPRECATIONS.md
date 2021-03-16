@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatClient#unMuteChannel`<br/>*client* | 2021.03.15<br/>4.7.1  | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unmuteChannel` method instead |
+| `ChatClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
+| `ChannelClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
+| `ChannelController#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
 | `ChatDomain.Builder` constructors with user params | 2021.02.26<br/>4.7.0 | 2021.05.26 ⌛ | 2021.08.26 ⌛ | Use `ChatDomain.Builder(context, chatClient)` instead |
 | `ChatDomain#disconnect` | 2021.02.25<br/>4.7.0 | 2021.05.25 ⌛ | 2021.08.25 ⌛ | Use just `ChatClient#disconnect` instead |
 | `setUser` (and similar) methods<br/>*client* | 2021.02.03<br/>4.5.3 | 2021.05.03 ⌛ | 2021.08.03 ⌛ | Replaced by `connectUser` style methods that return `Call` objects, see the updated documentation for [Initialization & Users](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin)) |
