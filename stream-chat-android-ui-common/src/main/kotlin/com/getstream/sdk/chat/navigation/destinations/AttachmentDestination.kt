@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.navigation.destinations
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer
 import com.getstream.sdk.chat.view.activity.AttachmentActivity
@@ -23,7 +24,7 @@ public open class AttachmentDestination(
         showAttachment(message, attachment)
     }
 
-    public fun showAttachment(message: Message, attachment: Attachment) {
+    private fun showAttachment(message: Message, attachment: Attachment, attachmentUrlSigner: UrlSigner? = null) {
         var url: String? = null
         var type: String? = attachment.type
 
@@ -61,7 +62,8 @@ public open class AttachmentDestination(
 
         val intent = Intent(context, AttachmentActivity::class.java).apply {
             putExtra("type", type)
-            putExtra("url", url)
+            val signedUrl = attachmentUrlSigner?.signFileUrl(url) ?: url
+            putExtra("url", signedUrl)
         }
         start(intent)
     }

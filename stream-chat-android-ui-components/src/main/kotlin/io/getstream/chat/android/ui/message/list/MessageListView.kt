@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatMarkdown
+import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
@@ -343,7 +344,6 @@ public class MessageListView : ConstraintLayout {
             giphySendHandler.onSendGiphy(message, action)
         }
     private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
-        // TODO: allow setting urlSigner in messageListView?
         WebLinkDestination(url, context).navigate()
     }
     private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
@@ -379,6 +379,11 @@ public class MessageListView : ConstraintLayout {
         override fun setText(textView: TextView, text: String) {
             markwon.setMarkdown(textView, text)
         }
+    }
+
+    private var attachmentUrlSigner: UrlSigner = object : UrlSigner {
+        override fun signFileUrl(url: String): String = url
+        override fun signImageUrl(url: String): String = url
     }
 
     public constructor(context: Context) : super(context) {
@@ -575,6 +580,14 @@ public class MessageListView : ConstraintLayout {
         scrollHelper.scrollToMessage(message)
     }
 
+    public fun setChatMarkdown(markdown: ChatMarkdown) {
+        this.markdown = markdown
+    }
+
+    public fun setAttachmentUrlSigner(urlSigner: UrlSigner) {
+        this.attachmentUrlSigner = urlSigner
+    }
+
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
         binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
         /*
@@ -699,10 +712,6 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
         this.attachmentViewFactory = attachmentViewFactory
-    }
-
-    public fun setChatMarkdown(markdown: ChatMarkdown) {
-        this.markdown = markdown
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {

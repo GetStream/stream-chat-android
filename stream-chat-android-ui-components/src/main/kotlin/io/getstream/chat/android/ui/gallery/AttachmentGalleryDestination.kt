@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
+import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryRepository
 
@@ -16,6 +17,7 @@ public class AttachmentGalleryDestination(
     private val attachmentShowInChatOptionHandler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     private val attachmentDownloadOptionHandler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler,
     private val attachmentDeleteOptionClickHandler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler,
+    private val urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
 ) : ChatDestination(context) {
     private var launcher: ActivityResultLauncher<AttachmentGalleryResultContract.Input>? = null
 
@@ -34,7 +36,7 @@ public class AttachmentGalleryDestination(
         }
 
         AttachmentGalleryRepository.setAttachmentGalleryItems(attachmentGalleryItems)
-        launcher?.launch(AttachmentGalleryResultContract.Input(attachmentIndex))
+        launcher?.launch(AttachmentGalleryResultContract.Input(attachmentIndex, urlSigner))
     }
 
     public fun register(activityResultRegistry: ActivityResultRegistry) {
@@ -68,10 +70,10 @@ public class AttachmentGalleryDestination(
 private class AttachmentGalleryResultContract :
     ActivityResultContract<AttachmentGalleryResultContract.Input, AttachmentGalleryActivity.AttachmentOptionResult?>() {
 
-    class Input(val attachmentIndex: Int)
+    class Input(val attachmentIndex: Int, val urlSigner: UrlSigner)
 
     override fun createIntent(context: Context, input: Input): Intent {
-        return AttachmentGalleryActivity.createIntent(context, input.attachmentIndex)
+        return AttachmentGalleryActivity.createIntent(context, input.attachmentIndex, input.urlSigner)
     }
 
     override fun parseResult(resultCode: Int, result: Intent?): AttachmentGalleryActivity.AttachmentOptionResult? {

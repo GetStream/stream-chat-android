@@ -84,12 +84,12 @@ public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/con
 	public fun <init> ()V
 }
 
-public abstract interface class com/getstream/sdk/chat/UrlSigner {
+public abstract interface class com/getstream/sdk/chat/UrlSigner : java/io/Serializable {
 	public abstract fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
 	public abstract fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public class com/getstream/sdk/chat/UrlSigner$DefaultUrlSigner : com/getstream/sdk/chat/UrlSigner {
+public final class com/getstream/sdk/chat/UrlSigner$DefaultUrlSigner : com/getstream/sdk/chat/UrlSigner {
 	public fun <init> ()V
 	public fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
 	public fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
@@ -238,7 +238,6 @@ public class com/getstream/sdk/chat/navigation/destinations/AttachmentDestinatio
 	public fun navigate ()V
 	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 }
 

@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-internal class AttachmentGalleryViewModel : ViewModel() {
+internal class AttachmentGalleryViewModel() : ViewModel() {
     private val _attachmentGalleryItemsLiveData: MutableLiveData<List<AttachmentGalleryItem>> =
         MutableLiveData<List<AttachmentGalleryItem>>()
     val attachmentGalleryItemsLiveData: LiveData<List<AttachmentGalleryItem>> = _attachmentGalleryItemsLiveData

@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -53,8 +52,8 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         else
             iv_audio.setVisibility(View.GONE);
 
-
-        playVideo(ChatUI.instance().getUrlSigner().signFileUrl(url));
+        // todo: inject UrlSigner
+        playVideo(url);
     }
 
     /**
@@ -63,7 +62,8 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(ChatUI.instance().getUrlSigner().signFileUrl(url)));
+        // todo: inject UrlSigner
+        videoView.setVideoURI(Uri.parse(url));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }

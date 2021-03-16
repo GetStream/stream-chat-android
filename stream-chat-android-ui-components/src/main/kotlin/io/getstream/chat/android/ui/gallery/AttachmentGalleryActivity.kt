@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileProvider
+import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -37,6 +38,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
 
     private val initialIndex: Int by lazy { intent.getIntExtra(EXTRA_KEY_INITIAL_INDEX, 0) }
+    private val attachmentUrlSigner: UrlSigner by lazy { intent.getSerializableExtra(EXTRA_KEY_ATTACHMENT_URL_SIGNER) as UrlSigner }
     private val viewModel: AttachmentGalleryViewModel by viewModels()
     private val dateFormatter: DateFormatter by lazy { DateFormatter.from(this) }
     private lateinit var adapter: AttachmentGalleryPagerAdapter
@@ -89,7 +91,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupGalleryAdapter() {
         adapter = AttachmentGalleryPagerAdapter(
             fragmentActivity = this,
-            imageList = attachmentGalleryItems.map { it.attachment.imagePreviewUrl!! },
+            imageList = attachmentGalleryItems.map { attachmentUrlSigner.signImageUrl(it.attachment.imagePreviewUrl!!) },
             imageClickListener = {
                 isFullScreen = !isFullScreen
                 if (isFullScreen) enterFullScreenMode() else exitFullScreenMode()
@@ -250,13 +252,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     public companion object {
         private const val EXTRA_KEY_INITIAL_INDEX: String = "extra_key_initial_index"
+        private const val EXTRA_KEY_ATTACHMENT_URL_SIGNER: String = "extra_key_url_signer"
 
         internal const val EXTRA_ATTACHMENT_OPTION_RESULT = "extra_attachment_option_result"
 
         @JvmStatic
-        public fun createIntent(context: Context, initialIndex: Int): Intent {
+        public fun createIntent(context: Context, initialIndex: Int, attachmentUrlSigner: UrlSigner): Intent {
             return Intent(context, AttachmentGalleryActivity::class.java).apply {
                 putExtra(EXTRA_KEY_INITIAL_INDEX, initialIndex)
+                putExtra(EXTRA_KEY_ATTACHMENT_URL_SIGNER, attachmentUrlSigner)
             }
         }
     }

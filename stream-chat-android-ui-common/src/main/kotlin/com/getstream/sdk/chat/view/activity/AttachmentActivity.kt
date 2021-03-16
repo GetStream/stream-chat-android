@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
@@ -28,8 +27,11 @@ public class AttachmentActivity : AppCompatActivity() {
 
     private val logger = get("AttachmentActivity")
 
-    private val urlSigner: UrlSigner
-        get() = ChatUI.instance().urlSigner
+    // TODO inject UrlSigner
+    private val urlSigner: UrlSigner = object : UrlSigner {
+        override fun signFileUrl(url: String): String = url
+        override fun signImageUrl(url: String): String = url
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +83,7 @@ public class AttachmentActivity : AppCompatActivity() {
      *
      * @param url web url
      */
-    private fun loadUrlToWeb(url: String?) {
+    private fun loadUrlToWeb(url: String) {
         iv_image.isVisible = false
         webView.isVisible = true
         progressBar.isVisible = true
