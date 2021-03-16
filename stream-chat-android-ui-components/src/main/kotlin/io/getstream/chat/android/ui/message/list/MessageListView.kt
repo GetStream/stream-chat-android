@@ -237,6 +237,7 @@ public class MessageListView : ConstraintLayout {
                             threadEnabled = !adapter.isThread && !message.isInThread(),
                         ),
                         messageListViewStyle.itemStyle,
+                        messageListViewStyle.reactionsEnabled
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -319,8 +320,10 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message, messageListViewStyle.itemStyle)
-                    .apply {
+                MessageOptionsDialogFragment.newReactionOptionsInstance(message,
+                    messageListViewStyle.itemStyle,
+                    messageListViewStyle.reactionsEnabled
+                ).apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
                         }

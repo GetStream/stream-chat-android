@@ -39,5 +39,7 @@
         <!-- Message link color -->
         <attr name="streamUiMessageLinkColorMine" format="color" />
         <attr name="streamUiMessageLinkColorTheirs" format="color" />
+
+        <attr name="streamUiReactionsEnabled" format="boolean" />
     </declare-styleable>
 </resources>

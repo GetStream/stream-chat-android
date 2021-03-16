@@ -22,18 +22,20 @@ internal class MessageListItemDecoratorProvider(
     style: MessageListItemStyle,
 ) : DecoratorProvider {
 
-    private val messageListDecorators = listOf<Decorator>(
+    private val messageListDecorators = mutableListOf<Decorator>(
         BackgroundDecorator(style),
         TextDecorator(style),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         FailedIndicatorDecorator(),
-        ReactionsDecorator(),
         ReplyDecorator(currentUser),
-        ReactionsDecorator(),
         FootnoteDecorator(dateFormatter, isDirectMessage),
-    )
+    ).apply {
+        if (style.reactionsEnabled) {
+            add(ReactionsDecorator())
+        }
+    }
 
     override val decorators: List<Decorator> = messageListDecorators
 }
