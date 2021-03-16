@@ -237,7 +237,7 @@ public class MessageListView : ConstraintLayout {
                             threadEnabled = !adapter.isThread && !message.isInThread(),
                         ),
                         messageListViewStyle.itemStyle,
-                        messageListViewStyle.reactionsEnabled
+                        channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -323,7 +323,7 @@ public class MessageListView : ConstraintLayout {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
                     messageListViewStyle.itemStyle,
-                    messageListViewStyle.reactionsEnabled
+                    channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
