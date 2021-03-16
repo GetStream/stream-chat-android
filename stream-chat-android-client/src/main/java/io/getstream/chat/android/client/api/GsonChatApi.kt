@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.AcceptInviteRequest
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.BannedUserResponse
 import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.GetSyncHistory
@@ -13,6 +14,7 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryMembersRequest
@@ -28,12 +30,15 @@ import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
+import io.getstream.chat.android.client.api.models.toDomain
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -674,6 +679,33 @@ internal class GsonChatApi(
             channelType = channelType,
             shadow = shadow,
         ).map { Unit }
+    }
+
+    override fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>> {
+        return retrofitApi.queryBannedUsers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            userId = userId,
+            payload = QueryBannedUsersRequest(
+                filter = filter,
+                sort = sort.toDto(),
+                offset = offset,
+                limit = limit,
+                createdAtAfter = createdAtAfter,
+                createdAtAfterOrEqual = createdAtAfterOrEqual,
+                createdAtBefore = createdAtBefore,
+                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+            )
+        ).map { it.bans.map(BannedUserResponse::toDomain) }
     }
 
     override fun sendEvent(

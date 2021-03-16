@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
 import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api.models.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResponse
@@ -290,6 +292,14 @@ internal interface RetrofitApi {
         @Query("id") channelId: String,
         @Query("shadow") shadow: Boolean,
     ): RetrofitCall<CompletableResponse>
+
+    @GET("/query_banned_users")
+    fun queryBannedUsers(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
+    ): RetrofitCall<QueryBannedUsersResponse>
 
     //endregion
 

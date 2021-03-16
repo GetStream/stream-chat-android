@@ -4,12 +4,15 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -81,4 +84,12 @@ internal interface ModerationApi {
         @Query("id") channelId: String,
         @Query("shadow") shadow: Boolean,
     ): RetrofitCall<CompletableResponse>
+
+    @GET("/query_banned_users")
+    fun queryBannedUsers(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
+    ): RetrofitCall<QueryBannedUsersResponse>
 }
