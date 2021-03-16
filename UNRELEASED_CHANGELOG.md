@@ -31,7 +31,7 @@ It is not possible to remove users from distinct channels anymore.
 
 ### ✅ Added
 - Added `unflagMessage(messageId)` and `unflagUser(userId)` methods to `ChatClient`
-- Added `isUploads`, `isUrlEnrichment`, `isCustomEvents`, `isPushNotifications`, `messageRetention`, `automodBehavior` and `blocklistBehavior` fields to channel config
+- Added `uploadsEnabled`, `urlEnrichmentEnabled`, `customEventsEnabled`, `pushNotificationsEnabled`, `messageRetention`, `automodBehavior` and `blocklistBehavior` fields to channel config
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`
