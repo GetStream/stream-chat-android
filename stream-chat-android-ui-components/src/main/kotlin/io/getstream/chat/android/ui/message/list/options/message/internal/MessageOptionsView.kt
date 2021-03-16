@@ -39,7 +39,11 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        if (configuration.replyEnabled) {
+            binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        } else {
+            binding.replyTV.isVisible = false
+        }
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -59,7 +63,11 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        if (configuration.replyEnabled) {
+            binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        } else {
+            binding.replyTV.isVisible = false
+        }
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -109,6 +117,7 @@ internal class MessageOptionsView : FrameLayout {
     internal data class Configuration(
         val iconsTint: Int,
         val replyIcon: Int,
+        val replyEnabled: Boolean = true,
         val threadReplyIcon: Int,
         val threadEnabled: Boolean = true,
         val retryIcon: Int,

@@ -467,6 +467,8 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
+        val replyEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
+
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
@@ -515,6 +517,7 @@ public class MessageListView : ConstraintLayout {
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
+            replyEnabled = replyEnabled,
             threadReplyIcon = threadReplyIcon,
             retryIcon = retryIcon,
             copyIcon = copyIcon,
@@ -572,6 +575,10 @@ public class MessageListView : ConstraintLayout {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
+
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(
+            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled
+        )
     }
 
     private fun initAdapter() {
