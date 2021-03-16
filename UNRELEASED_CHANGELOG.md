@@ -31,6 +31,7 @@ It is not possible to remove users from distinct channels anymore.
 
 ### ✅ Added
 - Added `unflagMessage(messageId)` and `unflagUser(userId)` methods to `ChatClient`
+- Added `uploadsEnabled`, `urlEnrichmentEnabled`, `customEventsEnabled`, `pushNotificationsEnabled`, `messageRetention`, `automodBehavior` and `blocklistBehavior` fields to channel config
 
 ### ⚠️ Changed
 - Renamed `ChannelId` property to `channelId` in both `ChannelDeletedEvent` and `NotificationChannelDeletedEvent`
@@ -40,7 +41,6 @@ It is not possible to remove users from distinct channels anymore.
 - Deprecated `ChannelController::unBanUser`, the `ChannelController::unbanUser` method should be used instead
 
 ### ❌ Removed
-
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
