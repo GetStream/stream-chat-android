@@ -2216,24 +2216,22 @@ public final class io/getstream/chat/android/client/models/Config {
 	public final fun getBlocklistBehavior ()Ljava/lang/String;
 	public final fun getCommands ()Ljava/util/List;
 	public final fun getCreated_at ()Ljava/util/Date;
+	public final fun getCustomEventsEnabled ()Z
 	public final fun getMaxMessageLength ()I
 	public final fun getMessageRetention ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
+	public final fun getPushNotificationsEnabled ()Z
 	public final fun getUpdated_at ()Ljava/util/Date;
+	public final fun getUploadsEnabled ()Z
+	public final fun getUrlEnrichmentEnabled ()Z
 	public fun hashCode ()I
 	public final fun isConnectEvents ()Z
-	public final fun isCustomEvents ()Z
 	public final fun isMutes ()Z
-	public final fun isPushNotifications ()Z
 	public final fun isReactionsEnabled ()Z
 	public final fun isReadEvents ()Z
 	public final fun isRepliesEnabled ()Z
 	public final fun isSearch ()Z
 	public final fun isTypingEvents ()Z
-	public final fun isUploads ()Z
-	public final fun isUrlEnrichment ()Z
-	public final fun setReadEvents (Z)V
-	public final fun setTypingEvents (Z)V
 	public fun toString ()Ljava/lang/String;
 }
 

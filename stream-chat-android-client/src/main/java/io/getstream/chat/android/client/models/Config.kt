@@ -68,19 +68,19 @@ public data class Config(
      * Allows image and file uploads within messages. Enabled by default.
      */
     @SerializedName("uploads")
-    val isUploads: Boolean = false,
+    val uploadsEnabled: Boolean = false,
 
     /**
      * Determines if URL enrichment enabled to show they as attachments. Enabled by default.
      */
     @SerializedName("url_enrichment")
-    val isUrlEnrichment: Boolean = false,
+    val urlEnrichmentEnabled: Boolean = false,
 
     @SerializedName("custom_events")
-    val isCustomEvents: Boolean = false,
+    val customEventsEnabled: Boolean = false,
 
     @SerializedName("push_notifications")
-    val isPushNotifications: Boolean = false,
+    val pushNotificationsEnabled: Boolean = false,
 
     /**
      * A number of days or infinite. "Infinite" by default.

@@ -41,7 +41,6 @@ It is not possible to remove users from distinct channels anymore.
 - Deprecated `ChannelController::unBanUser`, the `ChannelController::unbanUser` method should be used instead
 
 ### ❌ Removed
-- Removed `infinite` field from channel config
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
