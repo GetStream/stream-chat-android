@@ -408,6 +408,7 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
+    @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject? = null,
         sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
