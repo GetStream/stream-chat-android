@@ -320,14 +320,15 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message,
+                MessageOptionsDialogFragment.newReactionOptionsInstance(
+                    message,
                     messageListViewStyle.itemStyle,
                     messageListViewStyle.reactionsEnabled
                 ).apply {
-                        setReactionClickHandler { message, reactionType ->
-                            messageReactionHandler.onMessageReaction(message, reactionType)
-                        }
+                    setReactionClickHandler { message, reactionType ->
+                        messageReactionHandler.onMessageReaction(message, reactionType)
                     }
+                }
                     .show(it, MessageOptionsDialogFragment.TAG)
             }
         }
