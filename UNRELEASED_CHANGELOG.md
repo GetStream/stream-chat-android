@@ -2,6 +2,7 @@
 ### 🐞 Fixed
 Group channels with 1<>1 behaviour the same way as group channels with many users
 It is not possible to remove users from distinct channels anymore.
+Configure enable/disable of replies using XML in `MessageListView`
 ### ⬆️ Improved
 
 ### ✅ Added
