@@ -26,13 +26,13 @@ public data class Config(
      * Controls if typing indicators are shown. Enabled by default.
      */
     @SerializedName("typing_events")
-    var isTypingEvents: Boolean = false,
+    val isTypingEvents: Boolean = false,
 
     /**
      * Controls whether the chat shows how far you’ve read. Enabled by default.
      */
     @SerializedName("read_events")
-    var isReadEvents: Boolean = false,
+    val isReadEvents: Boolean = false,
 
     /**
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
