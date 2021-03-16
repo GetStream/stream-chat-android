@@ -71,6 +71,7 @@ It is not possible to remove users from distinct channels anymore.
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Now replied messages are shown correctly with the replied part in message options
+- `MessageListView::enterThreadListener` is properly notified when entering into a thread
 
 ### ⬆️ Improved
 
