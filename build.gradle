@@ -12,12 +12,6 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-            content {
-                includeGroup('org.jetbrains.dokka')
-            }
-        }
     }
 
     dependencies {
@@ -77,12 +71,6 @@ allprojects {
 
                 // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
                 includeModule("com.github.mrmike", "ok2curl")
-            }
-        }
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-            content {
-                includeGroup('org.jetbrains.dokka')
             }
         }
     }
