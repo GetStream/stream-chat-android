@@ -224,7 +224,6 @@ public class MessageListView : ConstraintLayout {
         MessageClickListener { message ->
             if (message.replyCount > 0) {
                 threadStartHandler.onStartThread(message)
-                enterThreadListener.onThreadEntered(message)
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
@@ -272,7 +271,6 @@ public class MessageListView : ConstraintLayout {
         ThreadClickListener { message ->
             if (message.replyCount > 0) {
                 threadStartHandler.onStartThread(message)
-                enterThreadListener.onThreadEntered(message)
             }
         }
 
@@ -686,7 +684,13 @@ public class MessageListView : ConstraintLayout {
 
                 val isThreadStart = !adapter.isThread && listItem.isThread
                 val isOldListEmpty = adapter.currentList.isEmpty()
-
+                if (isThreadStart) {
+                    listItem.items
+                        .asSequence()
+                        .filterIsInstance(MessageListItem.MessageItem::class.java)
+                        .firstOrNull { it.message.parentId == null }
+                        ?.let { enterThreadListener.onThreadEntered(it.message) }
+                }
                 adapter.isThread = listItem.isThread
                 adapter.submitList(filteredList) {
                     scrollHelper.onMessageListChanged(
