@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.AcceptInviteRequest
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.BannedUserResponse
 import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.GetSyncHistory
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
+import io.getstream.chat.android.client.api.models.toDomain
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
@@ -703,7 +705,7 @@ internal class GsonChatApi(
                 createdAtBefore = createdAtBefore,
                 createdAtBeforeOrEqual = createdAtBeforeOrEqual,
             )
-        ).map { it.bans }
+        ).map { it.bans.map(BannedUserResponse::toDomain) }
     }
 
     override fun sendEvent(
