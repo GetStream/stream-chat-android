@@ -32,15 +32,16 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testUpdate() = runBlocking {
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
-        data.config1.maxMessageLength = 200
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        val config1 = data.config1
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", config1))
+        val config2 = data.config1.copy(maxMessageLength = 200)
+        repoHelper.insertChannelConfig(ChannelConfig("messaging", config2))
 
         repoHelper.clearChannelConfigsCache()
         repoHelper.cacheChannelConfigs()
 
         val config = repoHelper.selectChannelConfig("messaging")?.config
-        Truth.assertThat(config).isEqualTo(data.config1)
+        Truth.assertThat(config).isEqualTo(config2)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }
 }

@@ -150,8 +150,15 @@ internal object EventArguments {
         isReactionsEnabled = true,
         isRepliesEnabled = true,
         isMutes = true,
+        uploadsEnabled = true,
+        urlEnrichmentEnabled = true,
+        customEventsEnabled = true,
+        pushNotificationsEnabled = true,
+        messageRetention = "infinite",
         maxMessageLength = 5000,
         automod = "disabled",
+        automodBehavior = "flag",
+        blocklistBehavior = "flag",
         commands = mutableListOf(giphyCommand)
     )
     private val channel = Channel(
