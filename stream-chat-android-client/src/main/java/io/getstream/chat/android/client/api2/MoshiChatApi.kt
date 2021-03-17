@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequ
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -830,8 +831,6 @@ internal class MoshiChatApi(
     override fun warmUp() {
         generalApi.warmUp().enqueue()
     }
-
-    private fun Call<*>.toUnitCall() = map {}
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
         return ErrorCall(ChatError("setUser is either not called or not finished"))

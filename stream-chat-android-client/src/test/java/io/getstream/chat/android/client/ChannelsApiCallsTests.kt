@@ -1,11 +1,14 @@
 package io.getstream.chat.android.client
 
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.AcceptInviteRequest
 import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.EventResponse
 import io.getstream.chat.android.client.api.models.HideChannelRequest
 import io.getstream.chat.android.client.api.models.MarkReadRequest
+import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResponse
@@ -361,9 +364,16 @@ internal class ChannelsApiCallsTests {
 
     @Test
     fun markReadSuccess() {
-
         val messageId = "message-id"
-        val event = MessageReadEvent(EventType.MESSAGE_READ, Date(), User(), "${mock.channelType}:${mock.channelId}", mock.channelType, mock.channelId, 0)
+        val event = MessageReadEvent(
+            EventType.MESSAGE_READ,
+            Date(),
+            User(),
+            "${mock.channelType}:${mock.channelId}",
+            mock.channelType,
+            mock.channelId,
+            0
+        )
 
         Mockito.`when`(
             mock.retrofitApi.markRead(
@@ -384,7 +394,6 @@ internal class ChannelsApiCallsTests {
 
     @Test
     fun markReadError() {
-
         val messageId = "message-id"
 
         Mockito.`when`(
@@ -489,5 +498,37 @@ internal class ChannelsApiCallsTests {
         val result = client.stopWatching(mock.channelType, mock.channelId).execute()
 
         verifyError(result, mock.serverErrorCode)
+    }
+
+    @Test
+    fun `Given mute channel api call succeeds When muting a channel Should return a result with success`() {
+        whenever(
+            mock.retrofitApi.muteChannel(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
+                MuteChannelRequest("${mock.channelType}:${mock.channelId}")
+            )
+        ) doReturn RetroSuccess(CompletableResponse()).toRetrofitCall()
+
+        val result = client.muteChannel(mock.channelType, mock.channelId).execute()
+
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun `Given unmute channel api call succeeds When unmuting a channel Should return a result with success`() {
+        whenever(
+            mock.retrofitApi.unmuteChannel(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
+                MuteChannelRequest("${mock.channelType}:${mock.channelId}")
+            )
+        ) doReturn RetroSuccess(CompletableResponse()).toRetrofitCall()
+
+        val result = client.unmuteChannel(mock.channelType, mock.channelId).execute()
+
+        verifySuccess(result, Unit)
     }
 }
