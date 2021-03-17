@@ -9,7 +9,7 @@ import java.util.regex.Pattern
 
 internal class SuggestionListController(
     private val suggestionListView: SuggestionListView,
-    private val dismissListener: SuggestionListDismissListener
+    private val dismissListener: SuggestionListDismissListener,
 ) {
     var users: List<User> = emptyList()
         set(value) {
@@ -21,13 +21,19 @@ internal class SuggestionListController(
             field = value
             showSuggestions(messageText)
         }
+    var mentionsEnabled: Boolean = true
+
     private var messageText: String = String.EMPTY
 
     fun showSuggestions(messageText: String) {
         this.messageText = messageText
         when {
-            messageText.isCommandMessage() -> suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
-            messageText.isMentionMessage() -> suggestionListView.showSuggestionList(messageText.getMentionSuggestions())
+            messageText.isCommandMessage() -> {
+                suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
+            }
+            mentionsEnabled && messageText.isMentionMessage() -> {
+                suggestionListView.showSuggestionList(messageText.getMentionSuggestions())
+            }
             else -> hideSuggestionList()
         }
     }

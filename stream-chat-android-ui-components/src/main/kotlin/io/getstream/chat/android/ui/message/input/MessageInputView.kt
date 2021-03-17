@@ -45,6 +45,7 @@ public class MessageInputView : ConstraintLayout {
     private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
     private var suggestionListController: SuggestionListController? = null
     private var isSendButtonEnabled: Boolean = true
+    private var mentionsEnabled: Boolean = true
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
@@ -143,6 +144,16 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
+    /**
+     * Enables or disables the handling of mentions in the message input view.
+     *
+     * @param enabled True if handling of mentions in the message input view is enabled, false otherwise.
+     */
+    public fun setMentionsEnabled(enabled: Boolean) {
+        this.mentionsEnabled = enabled
+        suggestionListController?.mentionsEnabled = mentionsEnabled
+    }
+
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
         suggestionListView.setOnSuggestionClickListener(
             object : SuggestionListView.OnSuggestionClickListener {
@@ -157,6 +168,8 @@ public class MessageInputView : ConstraintLayout {
         )
         suggestionListController = SuggestionListController(suggestionListView) {
             binding.commandsButton.isSelected = false
+        }.also {
+            it.mentionsEnabled = mentionsEnabled
         }
         refreshControlsState()
     }
@@ -177,6 +190,7 @@ public class MessageInputView : ConstraintLayout {
         configSendAlsoToChannelCheckbox()
         configSendButtonListener()
         binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
+        setMentionsEnabled(style.mentionsEnabled)
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
