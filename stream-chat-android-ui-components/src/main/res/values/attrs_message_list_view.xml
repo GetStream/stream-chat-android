@@ -27,7 +27,7 @@
         <attr name="streamUiMessageOptionIconColor" format="color" />
         <attr name="streamUiCopyMessageActionEnabled" format="color" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
-        <attr name="streamUiDeleteMessageOptionEnabled" format="boolean" />
+        <attr name="streamUiDeleteMessageEnabled" format="boolean" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
 
         <!-- Message text color -->
