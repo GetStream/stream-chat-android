@@ -12,7 +12,7 @@ public class MessageListItemStyle private constructor(
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
-    public val reactionsEnabled: Boolean
+    public var reactionsEnabled: Boolean
 ) : Serializable {
 
     @ColorInt

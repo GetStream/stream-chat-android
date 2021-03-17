@@ -10,8 +10,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
 
     internal val scrollButtonViewStyle: ScrollButtonViewStyle
-    internal val itemStyle: MessageListItemStyle
-    internal val reactionsEnabled: Boolean
+    internal var itemStyle: MessageListItemStyle
+    internal var reactionsEnabled: Boolean
 
     init {
         context.obtainStyledAttributes(
@@ -58,5 +58,10 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                 .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
                 .build()
         }
+    }
+
+    internal fun isReactionsEnabled(enabled: Boolean) {
+        reactionsEnabled = enabled
+        itemStyle.reactionsEnabled = enabled
     }
 }

@@ -378,6 +378,10 @@ public class MessageListView : ConstraintLayout {
         init(context, attrs)
     }
 
+    public fun isReactionEnabled(enabled: Boolean) {
+        messageListViewStyle.isReactionsEnabled(enabled)
+    }
+
     private fun init(context: Context, attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
