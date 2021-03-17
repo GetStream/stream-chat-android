@@ -22,16 +22,15 @@ internal class MessageListItemDecoratorProvider(
     style: MessageListItemStyle,
 ) : DecoratorProvider {
 
-    private val messageListDecorators = listOf<Decorator>(
+    private val messageListDecorators = listOfNotNull<Decorator>(
         BackgroundDecorator(style),
         TextDecorator(style),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         FailedIndicatorDecorator(),
-        ReactionsDecorator(),
+        ReactionsDecorator().takeIf { style.reactionsEnabled },
         ReplyDecorator(currentUser),
-        ReactionsDecorator(),
         FootnoteDecorator(dateFormatter, isDirectMessage),
     )
 

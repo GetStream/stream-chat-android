@@ -28,7 +28,8 @@ public open class AttachmentDestination(
         var type: String? = attachment.type
 
         when (attachment.type) {
-            ModelType.attach_file -> {
+            ModelType.attach_file,
+            ModelType.attach_video -> {
                 loadFile(attachment)
                 return
             }
@@ -48,7 +49,6 @@ public open class AttachmentDestination(
                     }
                 }
             }
-            ModelType.attach_video -> url = attachment.assetUrl
             ModelType.attach_giphy -> url = attachment.thumbUrl
             ModelType.attach_product -> url = attachment.url
         }
