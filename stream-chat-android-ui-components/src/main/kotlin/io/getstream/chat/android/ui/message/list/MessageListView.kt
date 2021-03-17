@@ -387,10 +387,6 @@ public class MessageListView : ConstraintLayout {
         init(context, attrs)
     }
 
-    public fun isReactionEnabled(enabled: Boolean) {
-        messageListViewStyle.isReactionsEnabled(enabled)
-    }
-
     private fun init(context: Context, attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
@@ -539,7 +535,6 @@ public class MessageListView : ConstraintLayout {
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
-            replyEnabled = replyEnabled,
             threadReplyIcon = threadReplyIcon,
             retryIcon = retryIcon,
             copyIcon = copyIcon,
@@ -549,9 +544,10 @@ public class MessageListView : ConstraintLayout {
             muteIcon = muteIcon,
             blockIcon = blockIcon,
             deleteIcon = deleteIcon,
+            replyEnabled = replyEnabled,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
-            deleteMessageEnabled = deleteMessageEnabled,
+            deleteMessageEnabled = deleteMessageEnabled
         )
     }
 
@@ -929,6 +925,15 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
+
+    public fun setReactionsEnabled(enabled: Boolean) {
+        messageListViewStyle.isReactionsEnabled(enabled)
+    }
+
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(replyEnabled = enabled)
+    }
+
     //endregion
 
     //region Listener declarations
