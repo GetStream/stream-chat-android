@@ -6,6 +6,7 @@ Configure enable/disable of replies using XML in `MessageListView`
 ### ⬆️ Improved
 
 ### ✅ Added
+Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
 
 ### ⚠️ Changed
 
@@ -61,6 +62,7 @@ Configure enable/disable of replies using XML in `MessageListView`
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Show AttachmentMediaActivity for video attachments
 
 ### ✅ Added
 
@@ -74,8 +76,11 @@ Configure enable/disable of replies using XML in `MessageListView`
 - Now replied messages are shown correctly with the replied part in message options
 
 ### ⬆️ Improved
+- Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
+- Added possibility to configure delete message option visibility using `streamUiDeleteMessageEnabled` attribute, and `MessageListView::setDeleteMessageEnabled` method
+- Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
 
 ### ⚠️ Changed
 

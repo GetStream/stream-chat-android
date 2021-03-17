@@ -621,6 +621,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)V
+	public final fun isReactionEnabled (Z)V
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
@@ -630,7 +631,9 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
+	public final fun setDeleteMessageEnabled (Z)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
+	public final fun setEditMessageEnabled (Z)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
@@ -907,15 +910,17 @@ public final class io/getstream/chat/android/ui/message/list/header/viewmodel/Me
 
 public final class io/getstream/chat/android/ui/message/list/internal/MessageListItemStyle : java/io/Serializable {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle$Companion;
-	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getMessageBackgroundColorMine ()Ljava/lang/Integer;
 	public final fun getMessageBackgroundColorTheirs ()Ljava/lang/Integer;
 	public final fun getMessageLinkTextColorMine ()Ljava/lang/Integer;
 	public final fun getMessageLinkTextColorTheirs ()Ljava/lang/Integer;
 	public final fun getMessageTextColorMine ()Ljava/lang/Integer;
 	public final fun getMessageTextColorTheirs ()Ljava/lang/Integer;
+	public final fun getReactionsEnabled ()Z
 	public final fun getStyleLinkTextColor (Z)Ljava/lang/Integer;
 	public final fun getStyleTextColor (Z)Ljava/lang/Integer;
+	public final fun setReactionsEnabled (Z)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/reactions/ReactionClickListener {
