@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.activity
 
-import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -8,10 +7,8 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
-import android.widget.MediaController
 import android.widget.ProgressBar
 import android.widget.Toast
-import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.ChatUI
@@ -28,7 +25,6 @@ public class AttachmentActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var iv_image: ImageView
     private lateinit var progressBar: ProgressBar
-    private lateinit var videoView: VideoView
 
     private val logger = ChatLogger.get("AttachmentActivity")
 
@@ -42,7 +38,6 @@ public class AttachmentActivity : AppCompatActivity() {
         webView = findViewById(R.id.webView)
         iv_image = findViewById(R.id.iv_image)
         progressBar = findViewById(R.id.progressBar)
-        videoView = findViewById(R.id.videoView)
 
         configUIs()
 
@@ -59,7 +54,6 @@ public class AttachmentActivity : AppCompatActivity() {
     private fun configUIs() {
         iv_image.isVisible = false
         webView.isVisible = false
-        videoView.isVisible = false
 
         // WebView
         webView.apply {
@@ -77,31 +71,7 @@ public class AttachmentActivity : AppCompatActivity() {
     private fun showAttachment(type: String, url: String) {
         when (type) {
             ModelType.attach_giphy -> showGiphy(url)
-            ModelType.attach_video -> showVideo(url)
             else -> loadUrlToWeb(url)
-        }
-    }
-
-    private fun showVideo(url: String) {
-        iv_image.isVisible = false
-        webView.isVisible = false
-        progressBar.isVisible = true
-        videoView.isVisible = true
-
-        try {
-            val mc = MediaController(this).apply {
-                setAnchorView(videoView)
-                setMediaPlayer(videoView)
-            }
-            videoView.run {
-                setMediaController(mc)
-                setVideoURI(Uri.parse(url))
-                setOnPreparedListener { progressBar.isVisible = false }
-                requestFocus()
-                start()
-            }
-        } catch (e: Exception) {
-            logger.logE("Exception during playing video\n$e")
         }
     }
 
@@ -114,7 +84,6 @@ public class AttachmentActivity : AppCompatActivity() {
         iv_image.isVisible = false
         webView.isVisible = true
         progressBar.isVisible = true
-        videoView.isVisible = false
 
         webView.loadUrl(urlSigner.signFileUrl(url))
     }
@@ -131,7 +100,6 @@ public class AttachmentActivity : AppCompatActivity() {
         }
         iv_image.isVisible = true
         webView.isVisible = false
-        videoView.isVisible = false
 
         iv_image.load(
             data = urlSigner.signImageUrl(url),
