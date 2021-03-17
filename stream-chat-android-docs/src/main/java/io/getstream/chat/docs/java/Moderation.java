@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.java;
 
+import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
@@ -7,6 +8,8 @@ import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.client.models.BannedUser;
+import io.getstream.chat.android.client.models.BannedUsersSort;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Flag;
 import io.getstream.chat.android.client.models.Member;
@@ -130,11 +133,22 @@ public class Moderation {
     class ListBannedUsers {
 
         public void queryBannedUsers() {
+            // Retrieve the list of banned users
             FilterObject filter = Filters.eq("banned", true);
             QueryUsersRequest request = new QueryUsersRequest(filter, 0, 10);
             client.queryUsers(request).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<User> users = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            // Query for banned members from one channel
+            FilterObject channelFilter = Filters.eq("channel_cid", "ChannelType:ChannelId");
+            client.queryBannedUsers(channelFilter).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<BannedUser> bannedUsers = result.data();
                 } else {
                     // Handle result.error()
                 }
@@ -147,6 +161,34 @@ public class Moderation {
             channelClient.queryMembers(0, 10, filter, sort, emptyList()).enqueue(result -> {
                 if (result.isSuccess()) {
                     List<Member> members = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/react/moderation/?language=java#query-bans-endpoint">Query bans endpoint</a>
+     */
+    class QueryBansEndpoint {
+
+        public void queryBans() {
+            // Get the bans for channel livestream:123 in descending order
+            FilterObject filter = Filters.eq("channel_cid", "livestream:123");
+            QuerySort<BannedUsersSort> sort = new QuerySort<BannedUsersSort>().desc("created_at");
+            client.queryBannedUsers(filter, sort).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<BannedUser> bannedUsers = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            // Get the page of bans which where created before or equal date for the same channel
+            client.queryBannedUsers(filter, sort, null, null, null, null, null, new Date()).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<BannedUser> bannedUsers = result.data();
                 } else {
                     // Handle result.error()
                 }

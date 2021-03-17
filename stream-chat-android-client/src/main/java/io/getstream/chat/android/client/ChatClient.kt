@@ -1132,6 +1132,7 @@ public class ChatClient internal constructor(
     ).toUnitCall()
 
     @CheckResult
+    @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
         sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
