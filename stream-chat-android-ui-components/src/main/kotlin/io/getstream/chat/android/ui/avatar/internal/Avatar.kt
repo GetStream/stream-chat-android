@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.avatar.internal
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.avatar.AvatarStyle
 
 internal sealed class Avatar(open val avatarStyle: AvatarStyle) {
     data class UserAvatar(
