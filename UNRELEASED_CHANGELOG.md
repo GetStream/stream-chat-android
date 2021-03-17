@@ -75,6 +75,7 @@ It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
 
 ### ⚠️ Changed
 
