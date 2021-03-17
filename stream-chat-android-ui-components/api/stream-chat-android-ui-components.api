@@ -630,7 +630,9 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
+	public final fun setDeleteMessageEnabled (Z)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
+	public final fun setEditMessageEnabled (Z)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
