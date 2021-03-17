@@ -91,10 +91,7 @@ internal class MessageOptionsView : FrameLayout {
         binding.flagTV.isVisible = false
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
-        binding.deleteTV.run {
-            configureListItem(configuration.deleteIcon, iconsTint)
-            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
-        }
+        configureDeleteMessage(configuration)
     }
 
     private fun configureEditMessage(configuration: Configuration) {
@@ -117,6 +114,18 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
+    private fun configureDeleteMessage(configuration: Configuration) {
+        if (configuration.deleteMessageEnabled) {
+            binding.deleteTV.apply {
+                isVisible = true
+                configureListItem(configuration.deleteIcon, configuration.iconsTint)
+                setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+            }
+        } else {
+            binding.deleteTV.isVisible = false
+        }
+    }
+
     internal data class Configuration(
         val iconsTint: Int,
         val replyIcon: Int,
@@ -130,6 +139,7 @@ internal class MessageOptionsView : FrameLayout {
         val muteIcon: Int,
         val blockIcon: Int,
         val deleteIcon: Int,
+        val deleteMessageEnabled: Boolean,
         val copyTextEnabled: Boolean,
         val deleteConfirmationEnabled: Boolean,
     ) : Serializable
