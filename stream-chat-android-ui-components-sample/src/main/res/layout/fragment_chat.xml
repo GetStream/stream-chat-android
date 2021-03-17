@@ -24,6 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
+        android:background="@color/stream_ui_accent_blue"
         />
 
     <io.getstream.chat.android.ui.suggestion.list.SuggestionListView
