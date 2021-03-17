@@ -18,7 +18,7 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.common.R
 
 /**
@@ -30,7 +30,7 @@ public class AttachmentActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var videoView: VideoView
 
-    private val logger = get("AttachmentActivity")
+    private val logger = ChatLogger.get("AttachmentActivity")
 
     private val urlSigner: UrlSigner
         get() = ChatUI.instance().urlSigner
@@ -85,19 +85,24 @@ public class AttachmentActivity : AppCompatActivity() {
     private fun showVideo(url: String) {
         iv_image.isVisible = false
         webView.isVisible = false
-        progressBar.isVisible = false
+        progressBar.isVisible = true
         videoView.isVisible = true
 
-        val uri = Uri.parse(url)
-        val mc = MediaController(this).apply {
-            setAnchorView(videoView)
-            setMediaPlayer(videoView)
+        try {
+            val mc = MediaController(this).apply {
+                setAnchorView(videoView)
+                setMediaPlayer(videoView)
+            }
+            videoView.run {
+                setMediaController(mc)
+                setVideoURI(Uri.parse(url))
+                setOnPreparedListener { progressBar.isVisible = false }
+                requestFocus()
+                start()
+            }
+        } catch (e: Exception) {
+            logger.logE("Exception during playing video\n$e")
         }
-
-        videoView.setMediaController(mc)
-        videoView.setVideoURI(uri)
-        videoView.requestFocus()
-        videoView.start()
     }
 
     /**
