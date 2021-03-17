@@ -75,6 +75,8 @@ It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added possibility to configure delete message option visibility using `streamUiDeleteMessageOptionEnabled` attribute,
+  and `MessageListView::enableDeleteMessageOption`, `MessageListView::disableDeleteMessageOption` methods
 
 ### ⚠️ Changed
 

@@ -512,6 +512,9 @@ public class MessageListView : ConstraintLayout {
         val deleteConfirmationEnabled =
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
+        val deleteMessageEnabled =
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageOptionEnabled, true)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
@@ -525,6 +528,7 @@ public class MessageListView : ConstraintLayout {
             deleteIcon = deleteIcon,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
+            deleteMessageEnabled = deleteMessageEnabled,
         )
     }
 
@@ -676,6 +680,14 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
         this.attachmentViewFactory = attachmentViewFactory
+    }
+
+    public fun enableDeleteMessageOption() {
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(deleteMessageEnabled = true)
+    }
+
+    public fun disableDeleteMessageOption() {
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(deleteMessageEnabled = false)
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
