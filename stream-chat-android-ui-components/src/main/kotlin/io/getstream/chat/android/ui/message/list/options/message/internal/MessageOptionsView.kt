@@ -39,11 +39,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration) {
         val iconsTint = configuration.iconsTint
 
-        if (configuration.replyEnabled) {
-            binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
-        } else {
-            binding.replyTV.isVisible = false
-        }
+        configureReply(configuration)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -63,11 +59,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        if (configuration.replyEnabled) {
-            binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
-        } else {
-            binding.replyTV.isVisible = false
-        }
+        configureReply(configuration)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -102,6 +94,14 @@ internal class MessageOptionsView : FrameLayout {
         binding.deleteTV.run {
             configureListItem(configuration.deleteIcon, iconsTint)
             setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+        }
+    }
+
+    private fun configureReply(configuration: Configuration) {
+        if (configuration.replyEnabled) {
+            binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        } else {
+            binding.replyTV.isVisible = false
         }
     }
 
