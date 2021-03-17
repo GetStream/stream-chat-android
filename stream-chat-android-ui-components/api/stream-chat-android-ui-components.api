@@ -341,6 +341,47 @@ public final class io/getstream/chat/android/ui/common/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/internal/style/ChatFonts {
+	public abstract fun getFont (Lio/getstream/chat/android/ui/common/internal/style/TextStyle;)Landroid/graphics/Typeface;
+	public abstract fun setFont (Lio/getstream/chat/android/ui/common/internal/style/TextStyle;Landroid/widget/TextView;)V
+}
+
+public final class io/getstream/chat/android/ui/common/internal/style/TextStyle {
+	public static final field UNSET_COLOR I
+	public static final field UNSET_FONT_RESOURCE I
+	public static final field UNSET_HINT_COLOR I
+	public static final field UNSET_SIZE I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/internal/style/ChatFonts;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/internal/style/ChatFonts;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun apply (Landroid/widget/TextView;)V
+	public final fun getColor ()I
+	public final fun getFont ()Landroid/graphics/Typeface;
+	public final fun getFontAssetsPath ()Ljava/lang/String;
+	public final fun getFontResource ()I
+	public final fun getHintColor ()I
+	public final fun getSize ()I
+	public final fun getStyle ()I
+	public final fun hasFont ()Z
+	public final fun setColor (I)V
+	public final fun setFontAssetsPath (Ljava/lang/String;)V
+	public final fun setFontResource (I)V
+	public final fun setHintColor (I)V
+	public final fun setSize (I)V
+	public final fun setStyle (I)V
+}
+
+public final class io/getstream/chat/android/ui/common/internal/style/TextStyle$Builder {
+	public fun <init> (Landroid/content/res/TypedArray;)V
+	public final fun build ()Lio/getstream/chat/android/ui/common/internal/style/TextStyle;
+	public final fun color (II)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+	public final fun font (II)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+	public final fun hintColor (II)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+	public final fun size (I)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+	public final fun size (II)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+	public final fun style (II)Lio/getstream/chat/android/ui/common/internal/style/TextStyle$Builder;
+}
+
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$Companion;
 	public fun <init> ()V

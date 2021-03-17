@@ -13,7 +13,6 @@ import androidx.core.content.res.use
 import androidx.core.view.forEach
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
@@ -21,6 +20,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
+import io.getstream.chat.android.ui.common.internal.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListHeaderViewBinding
 
 public class MessageListHeaderView : ConstraintLayout {

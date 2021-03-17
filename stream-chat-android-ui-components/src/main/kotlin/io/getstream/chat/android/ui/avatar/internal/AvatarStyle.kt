@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.internal.style.TextStyle
 
 internal class AvatarStyle internal constructor(context: Context, attrs: AttributeSet?) {
     var avatarBorderWidth: Int
