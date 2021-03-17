@@ -12,8 +12,8 @@ import coil.size.Size
 import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.avatar.internal.Avatar
-import io.getstream.chat.android.ui.avatar.internal.AvatarBitmapFactory
 
 internal class AvatarFetcher(
     private val avatarBitmapFactory: AvatarBitmapFactory
@@ -32,14 +32,14 @@ internal class AvatarFetcher(
                 resources,
                 when (data) {
                     is Avatar.UserAvatar -> {
-                        avatarBitmapFactory.createUserBitmap(
+                        avatarBitmapFactory.createUserBitmapInternal(
                             data.user,
                             data.avatarStyle,
                             targetSize
                         )
                     }
                     is Avatar.ChannelAvatar -> {
-                        avatarBitmapFactory.createChannelBitmap(
+                        avatarBitmapFactory.createChannelBitmapInternal(
                             data.channel,
                             data.channel.getUsers(),
                             data.avatarStyle,
@@ -53,8 +53,7 @@ internal class AvatarFetcher(
         )
     }
 
-    override fun key(data: Avatar): String? {
-
+    override fun key(data: Avatar): String {
         return when (data) {
             is Avatar.UserAvatar -> {
                 "${data.user.name}${data.user.image}"

@@ -42,6 +42,18 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicato
 	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 }
 
+public class io/getstream/chat/android/ui/avatar/internal/AvatarBitmapFactory {
+	public fun <init> (Landroid/content/Context;)V
+	public fun createChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+}
+
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
