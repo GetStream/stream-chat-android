@@ -60,7 +60,7 @@ It is not possible to remove users from distinct channels anymore.
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Add video support for AttachmentActivity
+- Show AttachmentMediaActivity for video attachments
 
 ### ✅ Added
 
