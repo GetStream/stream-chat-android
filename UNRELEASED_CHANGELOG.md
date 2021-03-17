@@ -5,6 +5,7 @@ It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 
 ### ✅ Added
+Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
 
 ### ⚠️ Changed
 
