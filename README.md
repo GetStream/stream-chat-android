@@ -27,6 +27,11 @@ This is the official Android SDK for [Stream Chat](https://getstream.io/chat/sdk
 
 The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin). It teaches you how to use this SDK and also shows you how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
+## Free for Makers
+
+Stream is free for most side and hobby projects. To qualify your project/company needs to have < 5 team members and < $10k in monthly revenue.
+For complete pricing details visit our [Chat Pricing Page](https://getstream.io/chat/pricing/)
+
 ## Sample App
 
 This repo includes a fully functional example app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage. To run the sample app, start by cloning this repo:
