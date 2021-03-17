@@ -5,6 +5,23 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 	public fun <init> ()V
 }
 
+public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion;
+	public fun <init> (Landroid/content/Context;)V
+	public fun createChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion {
+	public final fun overrideDefaultInstance (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
+}
+
 public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarStyle$Companion;
 	public fun <init> (IILcom/getstream/sdk/chat/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;)V
@@ -40,18 +57,6 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicato
 	public static final field TOP Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-}
-
-public class io/getstream/chat/android/ui/avatar/internal/AvatarBitmapFactory {
-	public fun <init> (Landroid/content/Context;)V
-	public fun createChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
-	public fun createDefaultChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createDefaultChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
-	public fun createDefaultUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createDefaultUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
-	public fun createUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView : android/widget/FrameLayout {

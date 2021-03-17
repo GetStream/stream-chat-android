@@ -266,13 +266,18 @@ public open class AvatarBitmapFactory(private val context: Context) {
         )
     }
 
-    private companion object {
+    public companion object {
         private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f
         private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f
 
         /**
          * Marker object to detect whether methods have been implemented by custom subclasses.
          */
-        private val NOT_IMPLEMENTED_MARKER: Bitmap by lazy { Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8) }
+        private val NOT_IMPLEMENTED_MARKER = Bitmap.createBitmap(0, 0, Bitmap.Config.ALPHA_8)
+        internal lateinit var instance: AvatarBitmapFactory
+
+        public fun overrideDefaultInstance(avatarBitmapFactory: AvatarBitmapFactory) {
+            instance = avatarBitmapFactory
+        }
     }
 }
