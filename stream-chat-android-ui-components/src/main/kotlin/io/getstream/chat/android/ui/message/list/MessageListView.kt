@@ -522,7 +522,7 @@ public class MessageListView : ConstraintLayout {
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
         val deleteMessageEnabled =
-            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageOptionEnabled, true)
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
 
         val editMessageEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
 
@@ -679,6 +679,15 @@ public class MessageListView : ConstraintLayout {
         updateMessageOptionsConfiguration { copy(editMessageEnabled = enabled) }
     }
 
+    /**
+     * Enables or disables the message deleting feature.
+     *
+     * @param enabled True if deleting a message is enabled, false otherwise.
+     */
+    public fun setDeleteMessageEnabled(enabled: Boolean) {
+        updateMessageOptionsConfiguration { copy(deleteMessageEnabled = enabled) }
+    }
+
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -701,14 +710,6 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
         this.attachmentViewFactory = attachmentViewFactory
-    }
-
-    public fun enableDeleteMessageOption() {
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(deleteMessageEnabled = true)
-    }
-
-    public fun disableDeleteMessageOption() {
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(deleteMessageEnabled = false)
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
