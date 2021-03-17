@@ -728,7 +728,7 @@ public class MessageListView : ConstraintLayout {
         reducer: MessageOptionsView.Configuration.() -> MessageOptionsView.Configuration,
     ) {
         check(::messageOptionsConfiguration.isInitialized) {
-            "Message options configurations needs to be initialized first"
+            "Message options configuration needs to be initialized first"
         }
         messageOptionsConfiguration = reducer(messageOptionsConfiguration)
     }
