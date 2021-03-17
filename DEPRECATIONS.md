@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `GetUnreadChannelCount#invoke`<br/> | 2021.03.16<br/>4.7.1  | 2021.04.16 ⌛ | 2021.05.16 ⌛ | Use ChatDomain::channelUnreadCount instead |
+| `GetUnreadChannelCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::channelUnreadCount instead |
 | `ChatClient#unMuteChannel`<br/>*client* | 2021.03.15<br/>4.7.1  | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unmuteChannel` method instead |
 | `ChatClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
 | `ChannelClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.15 ⌛ | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
