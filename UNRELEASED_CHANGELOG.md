@@ -60,6 +60,7 @@ It is not possible to remove users from distinct channels anymore.
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Show AttachmentMediaActivity for video attachments
 
 ### ✅ Added
 
@@ -73,6 +74,7 @@ It is not possible to remove users from distinct channels anymore.
 - Now replied messages are shown correctly with the replied part in message options
 
 ### ⬆️ Improved
+- Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
 - Added possibility to configure delete message option visibility using `streamUiDeleteMessageEnabled` attribute, and `MessageListView::setDeleteMessageEnabled` method

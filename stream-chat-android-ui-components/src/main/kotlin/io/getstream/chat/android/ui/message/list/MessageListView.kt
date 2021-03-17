@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
@@ -37,6 +38,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
+import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
@@ -287,24 +289,31 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            val filteredAttachments = message.attachments
-                .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
-            val attachmentGalleryItems = filteredAttachments.map {
-                AttachmentGalleryItem(
-                    attachment = it,
-                    user = message.user,
-                    createdAt = message.getCreatedAtOrThrow(),
-                    messageId = message.id,
-                    cid = message.cid,
-                    isMine = message.user.isCurrentUser()
-                )
-            }
-            val attachmentIndex = filteredAttachments.indexOf(attachment)
+            val destination = when {
+                message.attachments.all(Attachment::isMedia) -> {
+                    val filteredAttachments = message.attachments
+                        .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                    val attachmentGalleryItems = filteredAttachments.map {
+                        AttachmentGalleryItem(
+                            attachment = it,
+                            user = message.user,
+                            createdAt = message.getCreatedAtOrThrow(),
+                            messageId = message.id,
+                            cid = message.cid,
+                            isMine = message.user.isCurrentUser()
+                        )
+                    }
+                    val attachmentIndex = filteredAttachments.indexOf(attachment)
 
-            attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                    attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                    attachmentGalleryDestination
+                }
+                else -> AttachmentDestination(message, attachment, context)
+            }
+
             ChatUI.instance()
                 .navigator
-                .navigate(attachmentGalleryDestination)
+                .navigate(destination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
