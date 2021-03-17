@@ -87,11 +87,22 @@ internal class MessageOptionsView : FrameLayout {
 
         configureCopyMessage(iconsTint, configuration)
 
-        binding.editTV.configureListItem(configuration.editIcon, iconsTint)
+        configureEditMessage(configuration)
         binding.flagTV.isVisible = false
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
         configureDeleteMessage(configuration)
+    }
+
+    private fun configureEditMessage(configuration: Configuration) {
+        binding.editTV.apply {
+            if (configuration.editMessageEnabled) {
+                isVisible = true
+                configureListItem(configuration.editIcon, configuration.iconsTint)
+            } else {
+                isVisible = false
+            }
+        }
     }
 
     private fun configureCopyMessage(iconsTint: Int, configuration: Configuration) {
@@ -122,6 +133,7 @@ internal class MessageOptionsView : FrameLayout {
         val threadEnabled: Boolean = true,
         val retryIcon: Int,
         val copyIcon: Int,
+        val editMessageEnabled: Boolean,
         val editIcon: Int,
         val flagIcon: Int,
         val muteIcon: Int,

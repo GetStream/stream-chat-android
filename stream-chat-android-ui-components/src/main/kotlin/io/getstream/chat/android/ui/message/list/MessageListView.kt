@@ -515,12 +515,15 @@ public class MessageListView : ConstraintLayout {
         val deleteMessageEnabled =
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageOptionEnabled, true)
 
+        val editMessageEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
             threadReplyIcon = threadReplyIcon,
             retryIcon = retryIcon,
             copyIcon = copyIcon,
+            editMessageEnabled = editMessageEnabled,
             editIcon = editIcon,
             flagIcon = flagIcon,
             muteIcon = muteIcon,
@@ -658,6 +661,15 @@ public class MessageListView : ConstraintLayout {
         scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
     }
 
+    /**
+     * Enables or disables the message editing feature.
+     *
+     * @param enabled True if editing a message is enabled, false otherwise.
+     */
+    public fun setEditMessageEnabled(enabled: Boolean) {
+        updateMessageOptionsConfiguration { copy(editMessageEnabled = enabled) }
+    }
+
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -710,6 +722,15 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
+    }
+
+    private fun updateMessageOptionsConfiguration(
+        reducer: MessageOptionsView.Configuration.() -> MessageOptionsView.Configuration,
+    ) {
+        check(::messageOptionsConfiguration.isInitialized) {
+            "Message options configuration needs to be initialized first"
+        }
+        messageOptionsConfiguration = reducer(messageOptionsConfiguration)
     }
 
     //region Listener setters
