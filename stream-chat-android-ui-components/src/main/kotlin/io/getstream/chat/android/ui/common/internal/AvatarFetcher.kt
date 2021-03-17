@@ -15,9 +15,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
-internal class AvatarFetcher(
-    private val avatarBitmapFactory: AvatarBitmapFactory
-) : Fetcher<Avatar> {
+internal class AvatarFetcher() : Fetcher<Avatar> {
 
     override suspend fun fetch(
         pool: BitmapPool,
@@ -32,14 +30,14 @@ internal class AvatarFetcher(
                 resources,
                 when (data) {
                     is Avatar.UserAvatar -> {
-                        avatarBitmapFactory.createUserBitmapInternal(
+                        AvatarBitmapFactory.instance.createUserBitmapInternal(
                             data.user,
                             data.avatarStyle,
                             targetSize
                         )
                     }
                     is Avatar.ChannelAvatar -> {
-                        avatarBitmapFactory.createChannelBitmapInternal(
+                        AvatarBitmapFactory.instance.createChannelBitmapInternal(
                             data.channel,
                             data.channel.getUsers(),
                             data.avatarStyle,
