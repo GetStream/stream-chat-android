@@ -32,16 +32,21 @@ internal class AvatarBitmapFactory(private val context: Context) {
             ?: createInitialsBitmap(style, avatarSize, user.initials)
     }
 
-    internal suspend fun createChannelBitmaps(
+    internal suspend fun createChannelBitmap(
         channel: Channel,
         lastActiveUsers: List<User>,
         style: AvatarStyle,
-        @Px avatarSize: Int
-    ): List<Bitmap> {
-        return StreamImageLoader.instance().loadAsBitmap(context, channel.image)
-            ?.let { listOf(it) }
-            ?: createUsersBitmaps(lastActiveUsers, style, avatarSize).takeUnless { it.isEmpty() }
-            ?: listOf(createInitialsBitmap(style, avatarSize, channel.initials))
+        @Px avatarSize: Int,
+    ): Bitmap {
+        return (
+            StreamImageLoader.instance().loadAsBitmap(context, channel.image)
+                ?.let { listOf(it) }
+                ?: createUsersBitmaps(lastActiveUsers, style, avatarSize).takeUnless { it.isEmpty() }
+                ?: listOf(createInitialsBitmap(style, avatarSize, channel.initials))
+            )
+            .let {
+                if (it.size == 1) it[0] else AvatarBitmapCombiner.combine(it, avatarSize)
+            }
     }
 
     private suspend fun createUsersBitmaps(
