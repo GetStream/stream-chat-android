@@ -77,6 +77,9 @@ It is not possible to remove users from distinct channels anymore.
 - Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
+- Added possibility to configure delete message option visibility using `streamUiDeleteMessageOptionEnabled` attribute,
+  and `MessageListView::enableDeleteMessageOption`, `MessageListView::disableDeleteMessageOption` methods
+- Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
 
 ### ⚠️ Changed
 
