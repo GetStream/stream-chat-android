@@ -120,7 +120,7 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    internal enum class OnlineIndicatorPosition {
+    public enum class OnlineIndicatorPosition {
         TOP,
         BOTTOM
     }
