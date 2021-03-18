@@ -150,8 +150,15 @@ internal object EventArguments {
         isReactionsEnabled = true,
         isRepliesEnabled = true,
         isMutes = true,
+        uploadsEnabled = true,
+        urlEnrichmentEnabled = true,
+        customEventsEnabled = true,
+        pushNotificationsEnabled = true,
+        messageRetention = "infinite",
         maxMessageLength = 5000,
         automod = "disabled",
+        automodBehavior = "flag",
+        blocklistBehavior = "flag",
         commands = mutableListOf(giphyCommand)
     )
     private val channel = Channel(
@@ -170,10 +177,12 @@ internal object EventArguments {
     private val message = Message(
         id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         text = "Hello",
+        html = "<p>Hello</p>",
         user = user,
         createdAt = date,
         updatedAt = date,
-        cid = channel.cid
+        cid = channel.cid,
+        type = "regular",
     )
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",

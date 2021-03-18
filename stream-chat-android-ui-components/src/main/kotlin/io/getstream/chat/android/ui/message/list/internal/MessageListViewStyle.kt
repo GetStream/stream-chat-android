@@ -10,7 +10,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
 
     internal val scrollButtonViewStyle: ScrollButtonViewStyle
-    internal val itemStyle: MessageListItemStyle
+    internal var itemStyle: MessageListItemStyle
+    internal var reactionsEnabled: Boolean
 
     init {
         context.obtainStyledAttributes(
@@ -45,6 +46,8 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                     context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                 ).build()
 
+            reactionsEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReactionsEnabled, true)
+
             itemStyle = MessageListItemStyle.Builder(attributes)
                 .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
                 .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
@@ -52,7 +55,14 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                 .messageTextColorTheirs(R.styleable.MessageListView_streamUiMessageTextColorTheirs)
                 .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
                 .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
+                .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
+                .threadsEnabled(R.styleable.MessageListView_streamUiThreadsEnabled)
                 .build()
         }
+    }
+
+    internal fun isReactionsEnabled(enabled: Boolean) {
+        reactionsEnabled = enabled
+        itemStyle.reactionsEnabled = enabled
     }
 }

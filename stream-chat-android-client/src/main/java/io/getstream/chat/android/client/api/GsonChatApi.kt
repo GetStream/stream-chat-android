@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.AcceptInviteRequest
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.BannedUserResponse
 import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.GetSyncHistory
@@ -13,6 +14,7 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryMembersRequest
@@ -28,12 +30,15 @@ import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
+import io.getstream.chat.android.client.api.models.toDomain
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -305,8 +310,8 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return retrofitApi.unMuteChannel(
+    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return retrofitApi.unmuteChannel(
             apiKey,
             userId,
             connectionId,
@@ -596,7 +601,7 @@ internal class GsonChatApi(
     override fun unmuteUser(
         userId: String,
     ): Call<Unit> {
-        return retrofitApi.unMuteUser(
+        return retrofitApi.unmuteUser(
             apiKey,
             this.userId,
             connectionId,
@@ -604,14 +609,33 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun flagUser(userId: String): Call<Flag> =
-        flag(mutableMapOf("target_user_id" to userId))
+    override fun flagUser(userId: String): Call<Flag> {
+        return flag(mutableMapOf("target_user_id" to userId))
+    }
 
-    override fun flagMessage(messageId: String): Call<Flag> =
-        flag(mutableMapOf("target_message_id" to messageId))
+    override fun unflagUser(userId: String): Call<Flag> {
+        return unflag(mutableMapOf("target_user_id" to userId))
+    }
+
+    override fun flagMessage(messageId: String): Call<Flag> {
+        return flag(mutableMapOf("target_message_id" to messageId))
+    }
+
+    override fun unflagMessage(messageId: String): Call<Flag> {
+        return unflag(mutableMapOf("target_message_id" to messageId))
+    }
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return retrofitApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { it.flag }
+    }
+
+    private fun unflag(body: MutableMap<String, String>): Call<Flag> {
+        return retrofitApi.unflag(
             apiKey,
             userId,
             connectionId,
@@ -641,13 +665,13 @@ internal class GsonChatApi(
         ).map { Unit }
     }
 
-    override fun unBanUser(
+    override fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return retrofitApi.unBanUser(
+        return retrofitApi.unbanUser(
             apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,
@@ -655,6 +679,33 @@ internal class GsonChatApi(
             channelType = channelType,
             shadow = shadow,
         ).map { Unit }
+    }
+
+    override fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>> {
+        return retrofitApi.queryBannedUsers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            userId = userId,
+            payload = QueryBannedUsersRequest(
+                filter = filter,
+                sort = sort.toDto(),
+                offset = offset,
+                limit = limit,
+                createdAtAfter = createdAtAfter,
+                createdAtAfterOrEqual = createdAtAfterOrEqual,
+                createdAtBefore = createdAtBefore,
+                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+            )
+        ).map { it.bans.map(BannedUserResponse::toDomain) }
     }
 
     override fun sendEvent(

@@ -59,7 +59,9 @@ internal open class BaseChatModule(
         buildNotification(notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config) }
-    private val defaultSocket by lazy { buildSocket(config, gsonParser) }
+    private val defaultSocket by lazy {
+        buildSocket(config, if (config.enableMoshi) moshiParser else gsonParser)
+    }
     private val defaultFileUploader by lazy {
         StreamFileUploader(
             config.apiKey,
@@ -168,18 +170,9 @@ internal open class BaseChatModule(
 
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        val gsonChatApi = GsonChatApi(
-            chatConfig.apiKey,
-            buildRetrofitApi<RetrofitApi>(),
-            buildRetrofitApi<RetrofitAnonymousApi>(),
-            UuidGeneratorImpl(),
-            fileUploader ?: defaultFileUploader
-        )
-
         return if (chatConfig.enableMoshi) {
             MoshiChatApi(
                 chatConfig.apiKey,
-                gsonChatApi,
                 fileUploader ?: defaultFileUploader,
                 buildRetrofitApi<UserApi>(),
                 buildRetrofitApi<GuestApi>(),
@@ -190,7 +183,13 @@ internal open class BaseChatModule(
                 buildRetrofitApi<GeneralApi>(),
             )
         } else {
-            gsonChatApi
+            GsonChatApi(
+                chatConfig.apiKey,
+                buildRetrofitApi<RetrofitApi>(),
+                buildRetrofitApi<RetrofitAnonymousApi>(),
+                UuidGeneratorImpl(),
+                fileUploader ?: defaultFileUploader
+            )
         }
     }
 

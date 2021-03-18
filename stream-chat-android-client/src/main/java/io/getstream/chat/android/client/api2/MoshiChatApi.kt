@@ -1,8 +1,16 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
+import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
@@ -20,40 +28,50 @@ import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import java.io.File
+import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 internal class MoshiChatApi(
     private val apiKey: String,
-    private val legacyApiDelegate: ChatApi,
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -63,7 +81,7 @@ internal class MoshiChatApi(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val coroutineScope: CoroutineScope = GlobalScope,
-) : ChatApi by legacyApiDelegate {
+) : ChatApi {
 
     val logger = ChatLogger.get("MoshiChatApi")
 
@@ -210,7 +228,7 @@ internal class MoshiChatApi(
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
-        return moderationApi.unMuteUser(
+        return moderationApi.unmuteUser(
             apiKey = apiKey,
             userId = this.userId,
             connectionId = this.connectionId,
@@ -227,8 +245,8 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
-    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return moderationApi.unMuteChannel(
+    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return moderationApi.unmuteChannel(
             apiKey = apiKey,
             userId = userId,
             connectionId = connectionId,
@@ -333,11 +351,26 @@ internal class MoshiChatApi(
     override fun flagUser(userId: String): Call<Flag> =
         flag(mutableMapOf("target_user_id" to userId))
 
+    override fun unflagUser(userId: String): Call<Flag> =
+        unflag(mutableMapOf("target_user_id" to userId))
+
     override fun flagMessage(messageId: String): Call<Flag> =
         flag(mutableMapOf("target_message_id" to messageId))
 
+    override fun unflagMessage(messageId: String): Call<Flag> =
+        unflag(mutableMapOf("target_message_id" to messageId))
+
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.flag(
+            apiKey,
+            userId,
+            connectionId,
+            body
+        ).map { response -> response.flag.toDomain() }
+    }
+
+    private fun unflag(body: MutableMap<String, String>): Call<Flag> {
+        return moderationApi.unflag(
             apiKey,
             userId,
             connectionId,
@@ -367,13 +400,13 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
-    override fun unBanUser(
+    override fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationApi.unBanUser(
+        return moderationApi.unbanUser(
             apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,
@@ -381,6 +414,33 @@ internal class MoshiChatApi(
             channelType = channelType,
             shadow = shadow,
         ).toUnitCall()
+    }
+
+    override fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>> {
+        return moderationApi.queryBannedUsers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            userId = userId,
+            payload = QueryBannedUsersRequest(
+                filter_conditions = filter.toMap(),
+                sort = sort.toDto(),
+                offset = offset,
+                limit = limit,
+                created_at_after = createdAtAfter,
+                created_at_after_or_equal = createdAtAfterOrEqual,
+                created_at_before = createdAtBefore,
+                created_at_before_or_equal = createdAtBeforeOrEqual,
+            )
+        ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
     }
 
     override fun enableSlowMode(
@@ -624,9 +684,155 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
+    override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
+        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
+            offset = request.offset,
+            limit = request.limit,
+            filter_conditions = request.channelFilter.toMap(),
+            message_filter_conditions = request.messageFilter.toMap(),
+        )
+        return generalApi.searchMessages(apiKey, connectionId, newRequest)
+            .map { response ->
+                response.results.map { resp ->
+                    resp.message.toDomain().apply {
+                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
+                            ?.let(::enrichWithCid)
+                    }
+                }
+            }
+    }
+
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+        if (connectionId.isEmpty()) return noConnectionIdError()
+
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
+            filter_conditions = query.filter.toMap(),
+            offset = query.offset,
+            limit = query.limit,
+            querySort = query.sort,
+            message_limit = query.messageLimit,
+            member_limit = query.memberLimit,
+            state = query.state,
+            watch = query.watch,
+            presence = query.presence,
+        )
+
+        return channelApi.queryChannels(
+            apiKey = apiKey,
+            userId = userId,
+            clientID = connectionId,
+            payload = request,
+        ).map { response -> response.channels.map(this::flattenChannel) }
+    }
+
+    override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
+            state = query.state,
+            watch = query.watch,
+            presence = query.presence,
+            messages = query.messages,
+            watchers = query.watchers,
+            members = query.members,
+            data = query.data,
+        )
+
+        return if (channelId.isEmpty()) {
+            channelApi.queryChannel(
+                channelType = channelType,
+                apiKey = apiKey,
+                userId = userId,
+                clientID = connectionId,
+                request = request,
+            )
+        } else {
+            channelApi.queryChannel(
+                channelType = channelType,
+                channelId = channelId,
+                apiKey = apiKey,
+                userId = userId,
+                clientID = connectionId,
+                request = request,
+            )
+        }.map(::flattenChannel)
+    }
+
+    override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
+            filter_conditions = queryUsers.filter.toMap(),
+            offset = queryUsers.offset,
+            limit = queryUsers.limit,
+            sort = queryUsers.sort,
+            presence = queryUsers.presence,
+        )
+        return userApi.queryUsers(
+            apiKey,
+            connectionId,
+            request,
+        ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+    }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+    ): Call<List<Member>> {
+        val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
+            type = channelType,
+            id = channelId,
+            filter_conditions = filter.toMap(),
+            offset = offset,
+            limit = limit,
+            sort = sort.toDto(),
+            members = members.map(Member::toDto),
+        )
+
+        return generalApi.queryMembers(
+            apiKey,
+            connectionId,
+            request,
+        ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+    }
+
+    override fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>,
+    ): Call<ChatEvent> {
+        val map = mutableMapOf<Any, Any>("type" to eventType)
+        map.putAll(extraData)
+
+        return channelApi.sendEvent(
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+            request = SendEventRequest(map),
+        ).map { response -> response.event.toDomain() }
+    }
+
+    override fun getSyncHistory(
+        channelIds: List<String>,
+        lastSyncAt: Date,
+    ): Call<List<ChatEvent>> {
+        return generalApi.getSyncHistory(
+            body = SyncHistoryRequest(channelIds, lastSyncAt),
+            apiKey = apiKey,
+            userId = userId,
+            connectionId = connectionId,
+        ).map { response -> response.events.map(ChatEventDto::toDomain) }
+    }
+
     override fun warmUp() {
         generalApi.warmUp().enqueue()
     }
 
-    private fun Call<*>.toUnitCall() = map {}
+    private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
+        return ErrorCall(ChatError("setUser is either not called or not finished"))
+    }
 }

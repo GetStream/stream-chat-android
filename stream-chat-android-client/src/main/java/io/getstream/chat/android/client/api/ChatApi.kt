@@ -10,6 +10,8 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -110,7 +112,7 @@ internal interface ChatApi {
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
     @CheckResult
-    fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
+    fun unmuteChannel(channelType: String, channelId: String): Call<Unit>
 
     @CheckResult
     fun updateMessage(
@@ -240,7 +242,13 @@ internal interface ChatApi {
     fun flagUser(userId: String): Call<Flag>
 
     @CheckResult
+    fun unflagUser(userId: String): Call<Flag>
+
+    @CheckResult
     fun flagMessage(messageId: String): Call<Flag>
+
+    @CheckResult
+    fun unflagMessage(messageId: String): Call<Flag>
 
     @CheckResult
     fun banUser(
@@ -253,12 +261,24 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun unBanUser(
+    fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
     ): Call<Unit>
+
+    @CheckResult
+    fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>>
 
     @CheckResult
     fun sendEvent(

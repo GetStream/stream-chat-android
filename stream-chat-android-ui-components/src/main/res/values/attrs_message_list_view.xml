@@ -16,6 +16,7 @@
         </attr>
 
         <attr name="streamUiReplyOptionIcon" format="reference" />
+        <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiRetryOptionIcon" format="reference" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
@@ -27,6 +28,9 @@
         <attr name="streamUiMessageOptionIconColor" format="color" />
         <attr name="streamUiCopyMessageActionEnabled" format="color" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
+        <attr name="streamUiDeleteMessageEnabled" format="boolean" />
+        <attr name="streamUiEditMessageEnabled" format="boolean" />
+        <attr name="streamUiThreadsEnabled" format="boolean" />
 
         <!-- Message text color -->
         <attr name="streamUiMessageTextColorMine" format="color" />
@@ -39,5 +43,7 @@
         <!-- Message link color -->
         <attr name="streamUiMessageLinkColorMine" format="color" />
         <attr name="streamUiMessageLinkColorTheirs" format="color" />
+
+        <attr name="streamUiReactionsEnabled" format="boolean" />
     </declare-styleable>
 </resources>

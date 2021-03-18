@@ -163,8 +163,7 @@ internal fun createMessageDeletedEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "message": ${createMessageJsonString()},
-            "deleted_at": "2020-06-29T06:14:28.000Z"
+            "message": ${createMessageJsonString()}
         """.trimIndent()
     )
 
@@ -566,6 +565,7 @@ private fun createMessageJsonString() =
             "id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "text": "Hello",
             "user": ${createUserJsonString()},
+            "html": "<p>Hello</p>",
             "attachments": [ ],
             "latest_reactions": [ ],
             "own_reactions": [ ],
@@ -576,6 +576,7 @@ private fun createMessageJsonString() =
             "updated_at": "2020-06-29T06:14:28.000Z",
             "mentioned_users": [ ],
             "silent": false,
+            "type": "regular",
             "cid": ""
         }
     """.trimIndent()
@@ -623,11 +624,14 @@ private fun createConfigJsonString() =
           "replies": true,
           "mutes": true,
           "uploads": true,
-          "url_enrichment": true,
+          "url_enrichment":true,
+          "custom_events": true,
+          "push_notifications":true,
           "message_retention": "infinite",
           "max_message_length": 5000,
           "automod": "disabled",
-          "automod_behavior": "flag",
+          "automod_behavior":"flag",
+          "blocklist_behavior":"flag",
           "commands": [
             {
               "name": "giphy",

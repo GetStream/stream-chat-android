@@ -5,15 +5,21 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.client.api2.model.response.EventResponse
+import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -21,6 +27,23 @@ import retrofit2.http.Query
 @MoshiApi
 @AuthenticatedApi
 internal interface ChannelApi {
+
+    @GET("/channels")
+    fun queryChannels(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") clientID: String,
+        @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest,
+    ): RetrofitCall<QueryChannelsResponse>
+
+    @POST("/channels/{type}/query")
+    fun queryChannel(
+        @Path("type") channelType: String,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") clientID: String,
+        @Body request: QueryChannelRequest,
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/read")
     fun markAllRead(
@@ -79,7 +102,7 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Body body: AddMembersRequest
+        @Body body: AddMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
@@ -88,8 +111,18 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Body body: RemoveMembersRequest
+        @Body body: RemoveMembersRequest,
     ): RetrofitCall<ChannelResponse>
+
+    @POST("/channels/{type}/{id}/event")
+    fun sendEvent(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String,
+        @Body request: SendEventRequest,
+    ): RetrofitCall<EventResponse>
 
     @POST("/channels/{type}/{id}/hide")
     fun hideChannel(
@@ -99,6 +132,16 @@ internal interface ChannelApi {
         @Query("client_id") clientID: String,
         @Body body: HideChannelRequest,
     ): RetrofitCall<CompletableResponse>
+
+    @POST("/channels/{type}/{id}/query")
+    fun queryChannel(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") clientID: String,
+        @Body request: QueryChannelRequest,
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/read")
     fun markRead(

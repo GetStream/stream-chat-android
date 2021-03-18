@@ -12,6 +12,8 @@ public class MessageListItemStyle private constructor(
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
+    public var reactionsEnabled: Boolean,
+    public var threadsEnabled: Boolean,
 ) : Serializable {
 
     @ColorInt
@@ -46,6 +48,9 @@ public class MessageListItemStyle private constructor(
 
         @ColorInt
         private var messageLinkTextColorTheirs: Int = VALUE_NOT_SET
+
+        private var reactionsEnabled: Boolean = true
+        private var threadsEnabled: Boolean = true
 
         fun messageBackgroundColorMine(
             @StyleableRes messageBackgroundColorMineStyleableId: Int,
@@ -89,6 +94,20 @@ public class MessageListItemStyle private constructor(
             messageLinkTextColorTheirs = attributes.getColor(messageLinkTextColorTheirsId, defaultValue)
         }
 
+        fun reactionsEnabled(
+            @StyleableRes reactionsEnabled: Int,
+            defaultValue: Boolean = true,
+        ) = apply {
+            this.reactionsEnabled = attributes.getBoolean(reactionsEnabled, defaultValue)
+        }
+
+        fun threadsEnabled(
+            @StyleableRes threadsEnabled: Int,
+            defaultValue: Boolean = true,
+        ) = apply {
+            this.threadsEnabled = attributes.getBoolean(threadsEnabled, defaultValue)
+        }
+
         fun build(): MessageListItemStyle {
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
@@ -97,6 +116,8 @@ public class MessageListItemStyle private constructor(
                 messageTextColorTheirs = messageTextColorTheirs.nullIfNotSet(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
+                reactionsEnabled = reactionsEnabled,
+                threadsEnabled = threadsEnabled,
             )
         }
 

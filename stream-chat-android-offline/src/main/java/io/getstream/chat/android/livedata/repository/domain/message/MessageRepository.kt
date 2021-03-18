@@ -27,9 +27,9 @@ internal class MessageRepositoryImpl(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val cacheSize: Int = 100,
+    private var messageCache: LruCache<String, Message> = LruCache(cacheSize)
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
-    private var messageCache = LruCache<String, Message>(cacheSize)
 
     override suspend fun selectMessagesForChannel(
         cid: String,
@@ -69,12 +69,14 @@ internal class MessageRepositoryImpl(
 
     override suspend fun selectMessages(messageIds: List<String>): List<Message> {
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        return messageIds.mapNotNull { messageCache[it] } + messageDao.select(missingMessageIds)
+        val cachedIds = messageIds - missingMessageIds
+        return cachedIds.mapNotNull { messageCache[it] } + messageDao.select(missingMessageIds)
             .map { entity -> entity.toModel(getUser, ::selectMessage).also { messageCache.put(it.id, it) } }
     }
 
     override suspend fun selectMessage(messageId: String): Message? {
         return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+            ?.also { messageCache.put(it.id, it) }
     }
 
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {

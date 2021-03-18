@@ -24,6 +24,7 @@ internal class MessageInputViewStyle(context: Context, attrs: AttributeSet?) {
     val sendButtonEnabledIcon: Drawable?
     val sendButtonDisabledIcon: Drawable?
     val showSendAlsoToChannelCheckbox: Boolean
+    val mentionsEnabled: Boolean
 
     init {
         context.obtainStyledAttributes(
@@ -146,6 +147,10 @@ internal class MessageInputViewStyle(context: Context, attrs: AttributeSet?) {
 
             showSendAlsoToChannelCheckbox = a.getBoolean(
                 R.styleable.MessageInputView_streamUiShowSendAlsoToChannelCheckbox,
+                true
+            )
+            mentionsEnabled = a.getBoolean(
+                R.styleable.MessageInputView_streamUiMentionsEnabled,
                 true
             )
         }

@@ -12,19 +12,12 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-            content {
-                includeGroup('org.jetbrains.dokka')
-            }
-        }
     }
 
     dependencies {
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
         classpath Dependencies.googleServicesPlugin
-        classpath Dependencies.jacoco
         classpath Dependencies.androidMavenGradlePlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
@@ -77,12 +70,6 @@ allprojects {
 
                 // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
                 includeModule("com.github.mrmike", "ok2curl")
-            }
-        }
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-            content {
-                includeGroup('org.jetbrains.dokka')
             }
         }
     }

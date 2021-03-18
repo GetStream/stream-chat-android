@@ -1,31 +1,65 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest.Companion.data
+import io.getstream.chat.android.livedata.BaseConnectedMockedTest
+import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should not be`
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class DeleteMessageImplTest : BaseConnectedIntegrationTest() {
+internal class DeleteMessageImplTest : BaseConnectedMockedTest() {
 
     @Test
-    @Ignore("flaky")
-    fun deleteMessageUseCase() = runBlocking {
-        val message1 = data.createMessage()
-        client.subscribe { println(it.type) }
-        val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        val result = chatDomain.useCases.sendMessage(message1).execute()
-        assertSuccess(result)
-        var messages = channelState.messages.getOrAwaitValue()
-        Truth.assertThat(messages.last()).isEqualTo(message1)
-        val result2 = chatDomain.useCases.deleteMessage(message1).execute()
-        assertSuccess(result2)
-        messages = channelState.messages.getOrAwaitValue()
-        Truth.assertThat(messages.last().id).isEqualTo(result.data().id)
-        Truth.assertThat(messages.last().deletedAt).isNotNull()
+    fun `Given a message was sent When deleting the message Should return the deleted message`() {
+        runBlocking {
+            val message = data.createMessage()
+            val channelController = Fixture(client, chatDomain)
+                .givenMockedSendMessageResponse(channelClientMock, message)
+                .givenMockedDeleteMessageResponse(message)
+                .get()
+
+            chatDomain.useCases.sendMessage(message).execute()
+            chatDomain.useCases.deleteMessage(message).execute()
+
+            val deletedMessage = channelController.messages.getOrAwaitValue().last()
+
+            deletedMessage.id `should be equal to` message.id
+            deletedMessage.deletedAt `should not be` null
+        }
+    }
+
+    private class Fixture(
+        private val chatClient: ChatClient,
+        private val chatDomain: ChatDomain,
+    ) {
+
+        fun givenMockedDeleteMessageResponse(message: Message) = apply {
+            whenever(chatClient.deleteMessage(message.id)) doReturn TestCall(Result(message))
+        }
+
+        fun givenMockedSendMessageResponse(channelClient: ChannelClient, message: Message) = apply {
+            whenever(channelClient.sendMessage(any())).thenReturn(TestCall(Result(message)))
+        }
+
+        fun get(): ChannelController {
+            return chatDomain.useCases
+                .watchChannel(data.channel1.cid, 10)
+                .execute()
+                .data()
+        }
     }
 }

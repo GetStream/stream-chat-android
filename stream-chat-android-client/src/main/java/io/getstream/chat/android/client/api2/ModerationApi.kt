@@ -4,12 +4,15 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -26,7 +29,7 @@ internal interface ModerationApi {
     ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
-    fun unMuteUser(
+    fun unmuteUser(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
@@ -42,7 +45,7 @@ internal interface ModerationApi {
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
-    fun unMuteChannel(
+    fun unmuteChannel(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
@@ -57,6 +60,14 @@ internal interface ModerationApi {
         @Body body: Map<String, String>
     ): RetrofitCall<FlagResponse>
 
+    @POST("/moderation/unflag")
+    fun unflag(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String,
+        @Body body: Map<String, String>
+    ): RetrofitCall<FlagResponse>
+
     @POST("/moderation/ban")
     fun banUser(
         @Query("api_key") apiKey: String,
@@ -65,7 +76,7 @@ internal interface ModerationApi {
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
-    fun unBanUser(
+    fun unbanUser(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Query("target_user_id") targetUserId: String,
@@ -73,4 +84,12 @@ internal interface ModerationApi {
         @Query("id") channelId: String,
         @Query("shadow") shadow: Boolean,
     ): RetrofitCall<CompletableResponse>
+
+    @GET("/query_banned_users")
+    fun queryBannedUsers(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
+    ): RetrofitCall<QueryBannedUsersResponse>
 }

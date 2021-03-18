@@ -35,7 +35,12 @@ internal abstract class CustomObjectDtoAdapter<Value : Any>(private val kClass: 
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
         valueAdapter: JsonAdapter<Value>,
-    ): Value {
+    ): Value? {
+        if (jsonReader.peek() == JsonReader.Token.NULL) {
+            jsonReader.nextNull<Nothing?>()
+            return null
+        }
+
         // Parse full JSON content as a MutableMap
         val map = mapAdapter.fromJson(jsonReader)!!
 
@@ -56,7 +61,7 @@ internal abstract class CustomObjectDtoAdapter<Value : Any>(private val kClass: 
         // Replace original "extraData" with the newly collected values
         map[EXTRA_DATA] = extraData
 
-        // Parse output value object from the tranformed Map
+        // Parse output value object from the transformed Map
         return valueAdapter.fromJsonValue(map)!!
     }
 

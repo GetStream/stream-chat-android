@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.common.R
 
 /**
@@ -26,7 +26,7 @@ public class AttachmentActivity : AppCompatActivity() {
     private lateinit var iv_image: ImageView
     private lateinit var progressBar: ProgressBar
 
-    private val logger = get("AttachmentActivity")
+    private val logger = ChatLogger.get("AttachmentActivity")
 
     private val urlSigner: UrlSigner
         get() = ChatUI.instance().urlSigner
@@ -69,10 +69,9 @@ public class AttachmentActivity : AppCompatActivity() {
     }
 
     private fun showAttachment(type: String, url: String) {
-        if (type == ModelType.attach_giphy) {
-            showGiphy(url)
-        } else {
-            loadUrlToWeb(url)
+        when (type) {
+            ModelType.attach_giphy -> showGiphy(url)
+            else -> loadUrlToWeb(url)
         }
     }
 

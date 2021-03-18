@@ -17,9 +17,9 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NonExistsFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
+import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 
@@ -35,12 +35,12 @@ internal class FilterObjectTypeAdapter(val gson: Gson) : TypeAdapter<FilterObjec
     }
 }
 
-private fun FilterObject.toMap(): Map<*, *> = when (this) {
+internal fun FilterObject.toMap(): Map<*, *> = when (this) {
     is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
     is OrFilterObject -> mapOf(KEY_OR to this.filterObjects.map(FilterObject::toMap))
     is NorFilterObject -> mapOf(KEY_NOR to this.filterObjects.map(FilterObject::toMap))
     is ExistsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EXIST to true))
-    is NonExistsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EXIST to false))
+    is NotExistsFilterObject -> mapOf(this.fieldName to mapOf(KEY_EXIST to false))
     is EqualsFilterObject -> mapOf(this.fieldName to this.value)
     is NotEqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_NOT_EQUALS to this.value))
     is ContainsFilterObject -> mapOf(this.fieldName to mapOf(KEY_CONTAINS to this.value))

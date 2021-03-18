@@ -23,11 +23,6 @@ public fun Channel.getUsers(excludeCurrentUser: Boolean = true): List<User> =
             }
         }
 
-@InternalStreamChatApi
-public fun Channel.isDistinctChannel(): Boolean {
-    return cid.contains("!members")
-}
-
 private fun List<User>.withoutCurrentUser(): List<User> {
     return if (ChatDomain.isInitialized) {
         val currentUser = ChatDomain.instance().currentUser

@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
@@ -38,6 +39,8 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
@@ -1010,8 +1013,17 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unmuteChannel(channelType, channelId) method instead",
+        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)")
+    )
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return api.unMuteChannel(channelType, channelId)
+        return api.unmuteChannel(channelType, channelId)
+    }
+
+    @CheckResult
+    public fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return api.unmuteChannel(channelType, channelId)
     }
 
     @CheckResult
@@ -1035,7 +1047,13 @@ public class ChatClient internal constructor(
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
 
     @CheckResult
+    public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
+
+    @CheckResult
     public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
+
+    @CheckResult
+    public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
 
     @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
@@ -1055,23 +1073,35 @@ public class ChatClient internal constructor(
         reason = reason,
         timeout = timeout,
         shadow = false
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
+    @Deprecated(
+        message = "Use the unbanUser(targetId, channelType, channelId) method instead",
+        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)")
+    )
     public fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String,
-    ): Call<Unit> = api.unBanUser(
+    ): Call<Unit> = api.unbanUser(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,
         shadow = false
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
+
+    @CheckResult
+    public fun unbanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> = api.unbanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        shadow = false
+    ).toUnitCall()
 
     @CheckResult
     public fun shadowBanUser(
@@ -1087,22 +1117,42 @@ public class ChatClient internal constructor(
         reason = reason,
         timeout = timeout,
         shadow = true
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
     public fun removeShadowBan(
         targetId: String,
         channelType: String,
         channelId: String,
-    ): Call<Unit> = api.unBanUser(
+    ): Call<Unit> = api.unbanUser(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,
         shadow = true
-    ).map {
-        Unit
+    ).toUnitCall()
+
+    @CheckResult
+    @JvmOverloads
+    public fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        offset: Int? = null,
+        limit: Int? = null,
+        createdAtAfter: Date? = null,
+        createdAtAfterOrEqual: Date? = null,
+        createdAtBefore: Date? = null,
+        createdAtBeforeOrEqual: Date? = null,
+    ): Call<List<BannedUser>> {
+        return api.queryBannedUsers(
+            filter = filter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        )
     }
 
     //endregion
@@ -1127,7 +1177,8 @@ public class ChatClient internal constructor(
         return runCatching {
             when (clientStateService.state) {
                 is ClientState.User.Pending,
-                is ClientState.User.Authorized -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                is ClientState.User.Authorized,
+                -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()

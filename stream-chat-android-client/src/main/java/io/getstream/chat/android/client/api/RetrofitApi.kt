@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
 import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api.models.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResponse
@@ -65,7 +67,7 @@ internal interface RetrofitApi {
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
-    fun unMuteChannel(
+    fun unmuteChannel(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
@@ -251,7 +253,7 @@ internal interface RetrofitApi {
     ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
-    fun unMuteUser(
+    fun unmuteUser(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
@@ -266,6 +268,14 @@ internal interface RetrofitApi {
         @Body body: Map<String, String>
     ): RetrofitCall<FlagResponse>
 
+    @POST("/moderation/unflag")
+    fun unflag(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String,
+        @Body body: Map<String, String>
+    ): RetrofitCall<FlagResponse>
+
     @POST("/moderation/ban")
     fun banUser(
         @Query("api_key") apiKey: String,
@@ -274,7 +284,7 @@ internal interface RetrofitApi {
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
-    fun unBanUser(
+    fun unbanUser(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Query("target_user_id") targetUserId: String,
@@ -282,6 +292,14 @@ internal interface RetrofitApi {
         @Query("id") channelId: String,
         @Query("shadow") shadow: Boolean,
     ): RetrofitCall<CompletableResponse>
+
+    @GET("/query_banned_users")
+    fun queryBannedUsers(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
+    ): RetrofitCall<QueryBannedUsersResponse>
 
     //endregion
 
