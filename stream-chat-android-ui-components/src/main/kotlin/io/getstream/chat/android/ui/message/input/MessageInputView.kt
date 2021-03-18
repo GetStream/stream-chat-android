@@ -46,6 +46,7 @@ public class MessageInputView : ConstraintLayout {
     private var suggestionListController: SuggestionListController? = null
     private var isSendButtonEnabled: Boolean = true
     private var mentionsEnabled: Boolean = true
+    private var commandsEnabled: Boolean = true
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
@@ -154,6 +155,17 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController?.mentionsEnabled = mentionsEnabled
     }
 
+    /**
+     * Enables or disables the commands feature.
+     *
+     * @param enabled True if commands are enabled, false otherwise.
+     */
+    public fun setCommandsEnabled(enabled: Boolean) {
+        commandsEnabled = enabled
+        suggestionListController?.commandsEnabled = commandsEnabled
+        refreshControlsState()
+    }
+
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
         suggestionListView.setOnSuggestionClickListener(
             object : SuggestionListView.OnSuggestionClickListener {
@@ -170,6 +182,7 @@ public class MessageInputView : ConstraintLayout {
             binding.commandsButton.isSelected = false
         }.also {
             it.mentionsEnabled = mentionsEnabled
+            it.commandsEnabled = commandsEnabled
         }
         refreshControlsState()
     }
@@ -191,6 +204,7 @@ public class MessageInputView : ConstraintLayout {
         configSendButtonListener()
         binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
         setMentionsEnabled(style.mentionsEnabled)
+        setCommandsEnabled(style.commandsEnabled)
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -346,7 +360,8 @@ public class MessageInputView : ConstraintLayout {
             val hasValidContent = hasContent && !messageLengthExceeded
 
             attachmentsButton.isVisible = style.attachButtonEnabled && !commandMode
-            commandsButton.isVisible = style.lightningButtonEnabled && !commandMode && suggestionListViewAttached
+            commandsButton.isVisible =
+                style.lightningButtonEnabled && commandsEnabled && !commandMode && suggestionListViewAttached
             commandsButton.isEnabled = !hasContent
             setSendMessageButtonEnabled(hasValidContent)
         }

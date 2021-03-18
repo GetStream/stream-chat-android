@@ -36,6 +36,9 @@
 
         <!-- Mentions -->
         <attr name="streamUiMentionsEnabled" format="boolean" />
+
+        <!-- Commands -->
+        <attr name="streamUiCommandsEnabled" format="boolean" />
     </declare-styleable>
 
 </resources>
