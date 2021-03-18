@@ -133,6 +133,7 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
+        setCommandsEnabled(commands.isNotEmpty())
     }
 
     public fun enableSendButton() {
