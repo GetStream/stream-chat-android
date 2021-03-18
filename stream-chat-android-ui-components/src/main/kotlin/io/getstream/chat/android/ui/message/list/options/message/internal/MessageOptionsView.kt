@@ -41,7 +41,7 @@ internal class MessageOptionsView : FrameLayout {
 
         configureReply(configuration, iconsTint)
 
-        if (configuration.threadEnabled) {
+        if (configuration.threadsEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
         } else {
             binding.threadReplyTV.isVisible = false
@@ -61,7 +61,7 @@ internal class MessageOptionsView : FrameLayout {
 
         configureReply(configuration, iconsTint)
 
-        if (configuration.threadEnabled) {
+        if (configuration.threadsEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
         } else {
             binding.threadReplyTV.isVisible = false
@@ -139,7 +139,7 @@ internal class MessageOptionsView : FrameLayout {
         val replyIcon: Int,
         val replyEnabled: Boolean = true,
         val threadReplyIcon: Int,
-        val threadEnabled: Boolean,
+        val threadsEnabled: Boolean,
         val retryIcon: Int,
         val copyIcon: Int,
         val editMessageEnabled: Boolean,

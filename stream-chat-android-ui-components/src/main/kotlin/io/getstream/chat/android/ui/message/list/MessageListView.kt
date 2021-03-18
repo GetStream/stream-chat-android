@@ -235,7 +235,7 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         messageOptionsConfiguration.copy(
-                            threadEnabled = !adapter.isThread && !message.isInThread() && messageOptionsConfiguration.threadEnabled,
+                            threadsEnabled = !adapter.isThread && !message.isInThread() && messageOptionsConfiguration.threadsEnabled,
                         ),
                         messageListViewStyle.itemStyle,
                         channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
@@ -545,7 +545,7 @@ public class MessageListView : ConstraintLayout {
             blockIcon = blockIcon,
             deleteIcon = deleteIcon,
             replyEnabled = replyEnabled,
-            threadEnabled = threadsEnabled,
+            threadsEnabled = threadsEnabled,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
             deleteMessageEnabled = deleteMessageEnabled
@@ -599,7 +599,7 @@ public class MessageListView : ConstraintLayout {
 
         messageOptionsConfiguration = messageOptionsConfiguration.copy(
             replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled,
-            threadEnabled = messageOptionsConfiguration.threadEnabled && channel.config.isRepliesEnabled,
+            threadsEnabled = messageOptionsConfiguration.threadsEnabled && channel.config.isRepliesEnabled,
         )
     }
 
@@ -943,7 +943,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setThreadsEnabled(enabled: Boolean) {
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(threadEnabled = enabled)
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(threadsEnabled = enabled)
     }
 
     //endregion
