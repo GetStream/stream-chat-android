@@ -387,10 +387,6 @@ public class MessageListView : ConstraintLayout {
         init(context, attrs)
     }
 
-    public fun isReactionEnabled(enabled: Boolean) {
-        messageListViewStyle.isReactionsEnabled(enabled)
-    }
-
     private fun init(context: Context, attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
@@ -484,6 +480,8 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
+        val replyEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
+
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
@@ -546,9 +544,10 @@ public class MessageListView : ConstraintLayout {
             muteIcon = muteIcon,
             blockIcon = blockIcon,
             deleteIcon = deleteIcon,
+            replyEnabled = replyEnabled,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
-            deleteMessageEnabled = deleteMessageEnabled,
+            deleteMessageEnabled = deleteMessageEnabled
         )
     }
 
@@ -596,6 +595,10 @@ public class MessageListView : ConstraintLayout {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
+
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(
+            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled
+        )
     }
 
     private fun initAdapter() {
@@ -922,6 +925,15 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
+
+    public fun setReactionsEnabled(enabled: Boolean) {
+        messageListViewStyle.isReactionsEnabled(enabled)
+    }
+
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(replyEnabled = enabled)
+    }
+
     //endregion
 
     //region Listener declarations

@@ -16,6 +16,7 @@
         </attr>
 
         <attr name="streamUiReplyOptionIcon" format="reference" />
+        <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiRetryOptionIcon" format="reference" />
         <attr name="streamUiCopyOptionIcon" format="reference" />

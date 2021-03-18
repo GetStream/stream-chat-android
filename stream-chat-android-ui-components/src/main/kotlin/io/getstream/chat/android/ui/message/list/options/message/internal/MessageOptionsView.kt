@@ -39,7 +39,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        configureReply(configuration, iconsTint)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -59,7 +59,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        configureReply(configuration, iconsTint)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -105,6 +105,14 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
+    private fun configureReply(configuration: Configuration, iconTint: Int) {
+        if (configuration.replyEnabled) {
+            binding.replyTV.configureListItem(configuration.replyIcon, iconTint)
+        } else {
+            binding.replyTV.isVisible = false
+        }
+    }
+
     private fun configureCopyMessage(iconsTint: Int, configuration: Configuration) {
         if (configuration.copyTextEnabled) {
             binding.copyTV.isVisible = true
@@ -129,6 +137,7 @@ internal class MessageOptionsView : FrameLayout {
     internal data class Configuration(
         val iconsTint: Int,
         val replyIcon: Int,
+        val replyEnabled: Boolean = true,
         val threadReplyIcon: Int,
         val threadEnabled: Boolean = true,
         val retryIcon: Int,
