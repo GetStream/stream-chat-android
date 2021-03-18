@@ -943,7 +943,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setThreadsEnabled(enabled: Boolean) {
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(threadsEnabled = enabled)
+       updateMessageOptionsConfiguration { copy(threadsEnabled = enabled) }
     }
 
     //endregion
