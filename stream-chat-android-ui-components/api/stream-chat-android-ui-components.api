@@ -665,6 +665,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;)V
 	public final fun setThreadStartHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadStartHandler;)V
+	public final fun setThreadsEnabled (Z)V
 	public final fun setUserBlockHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserBlockHandler;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;)V
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
