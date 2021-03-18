@@ -33,6 +33,9 @@
 
         <!-- "Also send to channel" CheckBox -->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
+
+        <!-- Mentions -->
+        <attr name="streamUiMentionsEnabled" format="boolean" />
     </declare-styleable>
 
 </resources>
