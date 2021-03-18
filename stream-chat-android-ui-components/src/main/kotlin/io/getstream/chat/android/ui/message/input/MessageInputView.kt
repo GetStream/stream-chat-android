@@ -133,7 +133,7 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
-        setCommandsEnabled(commands.isNotEmpty())
+        refreshControlsState()
     }
 
     public fun enableSendButton() {
@@ -357,15 +357,18 @@ public class MessageInputView : ConstraintLayout {
             val commandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
             val hasContent = messageInputFieldView.hasContent()
             val messageLengthExceeded = messageInputFieldView.isMaxMessageLengthExceeded()
-            val suggestionListViewAttached = suggestionListController != null
             val hasValidContent = hasContent && !messageLengthExceeded
 
             attachmentsButton.isVisible = style.attachButtonEnabled && !commandMode
-            commandsButton.isVisible =
-                style.lightningButtonEnabled && commandsEnabled && !commandMode && suggestionListViewAttached
+            commandsButton.isVisible = shouldShowCommandsButton() && !commandMode
             commandsButton.isEnabled = !hasContent
             setSendMessageButtonEnabled(hasValidContent)
         }
+    }
+
+    private fun shouldShowCommandsButton(): Boolean {
+        val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
+        return hasCommands && style.lightningButtonEnabled && commandsEnabled
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
