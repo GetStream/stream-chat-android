@@ -235,7 +235,7 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         messageOptionsConfiguration.copy(
-                            threadEnabled = !adapter.isThread && !message.isInThread(),
+                            threadsEnabled = !adapter.isThread && !message.isInThread() && messageOptionsConfiguration.threadsEnabled,
                         ),
                         messageListViewStyle.itemStyle,
                         channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
@@ -530,6 +530,8 @@ public class MessageListView : ConstraintLayout {
 
         val editMessageEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
 
+        val threadsEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
@@ -543,6 +545,7 @@ public class MessageListView : ConstraintLayout {
             blockIcon = blockIcon,
             deleteIcon = deleteIcon,
             replyEnabled = replyEnabled,
+            threadsEnabled = threadsEnabled,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
             deleteMessageEnabled = deleteMessageEnabled
@@ -595,7 +598,8 @@ public class MessageListView : ConstraintLayout {
         initAdapter()
 
         messageOptionsConfiguration = messageOptionsConfiguration.copy(
-            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled
+            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled,
+            threadsEnabled = messageOptionsConfiguration.threadsEnabled && channel.config.isRepliesEnabled,
         )
     }
 
@@ -936,6 +940,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun setRepliesEnabled(enabled: Boolean) {
         messageOptionsConfiguration = messageOptionsConfiguration.copy(replyEnabled = enabled)
+    }
+
+    public fun setThreadsEnabled(enabled: Boolean) {
+        updateMessageOptionsConfiguration { copy(threadsEnabled = enabled) }
     }
 
     //endregion
