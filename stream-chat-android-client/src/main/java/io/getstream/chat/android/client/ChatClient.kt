@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
@@ -1072,9 +1073,7 @@ public class ChatClient internal constructor(
         reason = reason,
         timeout = timeout,
         shadow = false
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
     @Deprecated(
@@ -1090,9 +1089,7 @@ public class ChatClient internal constructor(
         channelType = channelType,
         channelId = channelId,
         shadow = false
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
     public fun unbanUser(
@@ -1104,9 +1101,7 @@ public class ChatClient internal constructor(
         channelType = channelType,
         channelId = channelId,
         shadow = false
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
     public fun shadowBanUser(
@@ -1122,9 +1117,7 @@ public class ChatClient internal constructor(
         reason = reason,
         timeout = timeout,
         shadow = true
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
     public fun removeShadowBan(
@@ -1136,11 +1129,10 @@ public class ChatClient internal constructor(
         channelType = channelType,
         channelId = channelId,
         shadow = true
-    ).map {
-        Unit
-    }
+    ).toUnitCall()
 
     @CheckResult
+    @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
         sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),

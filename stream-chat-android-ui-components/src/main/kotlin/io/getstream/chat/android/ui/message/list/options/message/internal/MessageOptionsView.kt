@@ -39,7 +39,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureTheirsMessage(configuration: Configuration) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        configureReply(configuration, iconsTint)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -59,7 +59,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureMineMessage(configuration: Configuration, syncStatus: SyncStatus) {
         val iconsTint = configuration.iconsTint
 
-        binding.replyTV.configureListItem(configuration.replyIcon, iconsTint)
+        configureReply(configuration, iconsTint)
 
         if (configuration.threadEnabled) {
             binding.threadReplyTV.configureListItem(configuration.threadReplyIcon, iconsTint)
@@ -87,13 +87,29 @@ internal class MessageOptionsView : FrameLayout {
 
         configureCopyMessage(iconsTint, configuration)
 
-        binding.editTV.configureListItem(configuration.editIcon, iconsTint)
+        configureEditMessage(configuration)
         binding.flagTV.isVisible = false
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
-        binding.deleteTV.run {
-            configureListItem(configuration.deleteIcon, iconsTint)
-            setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+        configureDeleteMessage(configuration)
+    }
+
+    private fun configureEditMessage(configuration: Configuration) {
+        binding.editTV.apply {
+            if (configuration.editMessageEnabled) {
+                isVisible = true
+                configureListItem(configuration.editIcon, configuration.iconsTint)
+            } else {
+                isVisible = false
+            }
+        }
+    }
+
+    private fun configureReply(configuration: Configuration, iconTint: Int) {
+        if (configuration.replyEnabled) {
+            binding.replyTV.configureListItem(configuration.replyIcon, iconTint)
+        } else {
+            binding.replyTV.isVisible = false
         }
     }
 
@@ -106,18 +122,33 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
+    private fun configureDeleteMessage(configuration: Configuration) {
+        if (configuration.deleteMessageEnabled) {
+            binding.deleteTV.apply {
+                isVisible = true
+                configureListItem(configuration.deleteIcon, configuration.iconsTint)
+                setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+            }
+        } else {
+            binding.deleteTV.isVisible = false
+        }
+    }
+
     internal data class Configuration(
         val iconsTint: Int,
         val replyIcon: Int,
+        val replyEnabled: Boolean = true,
         val threadReplyIcon: Int,
         val threadEnabled: Boolean = true,
         val retryIcon: Int,
         val copyIcon: Int,
+        val editMessageEnabled: Boolean,
         val editIcon: Int,
         val flagIcon: Int,
         val muteIcon: Int,
         val blockIcon: Int,
         val deleteIcon: Int,
+        val deleteMessageEnabled: Boolean,
         val copyTextEnabled: Boolean,
         val deleteConfirmationEnabled: Boolean,
     ) : Serializable

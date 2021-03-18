@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
@@ -37,6 +38,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
+import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
@@ -236,6 +238,7 @@ public class MessageListView : ConstraintLayout {
                             threadEnabled = !adapter.isThread && !message.isInThread(),
                         ),
                         messageListViewStyle.itemStyle,
+                        channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -285,24 +288,31 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            val filteredAttachments = message.attachments
-                .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
-            val attachmentGalleryItems = filteredAttachments.map {
-                AttachmentGalleryItem(
-                    attachment = it,
-                    user = message.user,
-                    createdAt = message.getCreatedAtOrThrow(),
-                    messageId = message.id,
-                    cid = message.cid,
-                    isMine = message.user.isCurrentUser()
-                )
-            }
-            val attachmentIndex = filteredAttachments.indexOf(attachment)
+            val destination = when {
+                message.attachments.all(Attachment::isMedia) -> {
+                    val filteredAttachments = message.attachments
+                        .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                    val attachmentGalleryItems = filteredAttachments.map {
+                        AttachmentGalleryItem(
+                            attachment = it,
+                            user = message.user,
+                            createdAt = message.getCreatedAtOrThrow(),
+                            messageId = message.id,
+                            cid = message.cid,
+                            isMine = message.user.isCurrentUser()
+                        )
+                    }
+                    val attachmentIndex = filteredAttachments.indexOf(attachment)
 
-            attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                    attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                    attachmentGalleryDestination
+                }
+                else -> AttachmentDestination(message, attachment, context)
+            }
+
             ChatUI.instance()
                 .navigator
-                .navigate(attachmentGalleryDestination)
+                .navigate(destination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -317,12 +327,15 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(message, messageListViewStyle.itemStyle)
-                    .apply {
-                        setReactionClickHandler { message, reactionType ->
-                            messageReactionHandler.onMessageReaction(message, reactionType)
-                        }
+                MessageOptionsDialogFragment.newReactionOptionsInstance(
+                    message,
+                    messageListViewStyle.itemStyle,
+                    channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
+                ).apply {
+                    setReactionClickHandler { message, reactionType ->
+                        messageReactionHandler.onMessageReaction(message, reactionType)
                     }
+                }
                     .show(it, MessageOptionsDialogFragment.TAG)
             }
         }
@@ -465,6 +478,8 @@ public class MessageListView : ConstraintLayout {
             R.drawable.stream_ui_ic_arrow_curve_left
         )
 
+        val replyEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
+
         val threadReplyIcon = tArray.getResourceId(
             R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
             R.drawable.stream_ui_ic_thread_reply
@@ -510,19 +525,27 @@ public class MessageListView : ConstraintLayout {
         val deleteConfirmationEnabled =
             tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
+        val deleteMessageEnabled =
+            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
+
+        val editMessageEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
+
         messageOptionsConfiguration = MessageOptionsView.Configuration(
             iconsTint = iconsTint,
             replyIcon = replyIcon,
             threadReplyIcon = threadReplyIcon,
             retryIcon = retryIcon,
             copyIcon = copyIcon,
+            editMessageEnabled = editMessageEnabled,
             editIcon = editIcon,
             flagIcon = flagIcon,
             muteIcon = muteIcon,
             blockIcon = blockIcon,
             deleteIcon = deleteIcon,
+            replyEnabled = replyEnabled,
             copyTextEnabled = copyTextEnabled,
             deleteConfirmationEnabled = deleteConfirmationEnabled,
+            deleteMessageEnabled = deleteMessageEnabled
         )
     }
 
@@ -570,6 +593,10 @@ public class MessageListView : ConstraintLayout {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
+
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(
+            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled
+        )
     }
 
     private fun initAdapter() {
@@ -652,6 +679,24 @@ public class MessageListView : ConstraintLayout {
         scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
     }
 
+    /**
+     * Enables or disables the message editing feature.
+     *
+     * @param enabled True if editing a message is enabled, false otherwise.
+     */
+    public fun setEditMessageEnabled(enabled: Boolean) {
+        updateMessageOptionsConfiguration { copy(editMessageEnabled = enabled) }
+    }
+
+    /**
+     * Enables or disables the message deleting feature.
+     *
+     * @param enabled True if deleting a message is enabled, false otherwise.
+     */
+    public fun setDeleteMessageEnabled(enabled: Boolean) {
+        updateMessageOptionsConfiguration { copy(deleteMessageEnabled = enabled) }
+    }
+
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -702,6 +747,15 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
+    }
+
+    private fun updateMessageOptionsConfiguration(
+        reducer: MessageOptionsView.Configuration.() -> MessageOptionsView.Configuration,
+    ) {
+        check(::messageOptionsConfiguration.isInitialized) {
+            "Message options configuration needs to be initialized first"
+        }
+        messageOptionsConfiguration = reducer(messageOptionsConfiguration)
     }
 
     //region Listener setters
@@ -875,6 +929,15 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
+
+    public fun setReactionsEnabled(enabled: Boolean) {
+        messageListViewStyle.isReactionsEnabled(enabled)
+    }
+
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageOptionsConfiguration = messageOptionsConfiguration.copy(replyEnabled = enabled)
+    }
+
     //endregion
 
     //region Listener declarations

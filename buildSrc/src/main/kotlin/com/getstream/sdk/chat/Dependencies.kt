@@ -131,7 +131,6 @@ object Dependencies {
     const val googleServicesPlugin = "com.google.gms:google-services:$GOOGLE_SERVICES_VERSION"
     const val gradleVersionsPlugin = "com.github.ben-manes:gradle-versions-plugin:$GRADLE_VERSIONS_PLUGIN"
     const val gson = "com.google.code.gson:gson:$GSON_VERSION"
-    const val jacoco = "com.hiya:jacoco-android:$JACOCO_VERSION"
     const val json = "org.json:json:$JSON_VERSION"
     const val junit4 = "junit:junit:$JUNIT4_VERSION"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:$JUNIT5_VERSION"
