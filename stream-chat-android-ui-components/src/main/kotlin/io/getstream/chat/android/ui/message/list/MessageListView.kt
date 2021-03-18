@@ -235,7 +235,7 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         messageOptionsConfiguration.copy(
-                            threadEnabled = !adapter.isThread && !message.isInThread(),
+                            threadEnabled = !adapter.isThread && !message.isInThread() && messageOptionsConfiguration.threadEnabled,
                         ),
                         messageListViewStyle.itemStyle,
                         channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled

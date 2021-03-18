@@ -139,7 +139,7 @@ internal class MessageOptionsView : FrameLayout {
         val replyIcon: Int,
         val replyEnabled: Boolean = true,
         val threadReplyIcon: Int,
-        val threadEnabled: Boolean = true,
+        val threadEnabled: Boolean,
         val retryIcon: Int,
         val copyIcon: Int,
         val editMessageEnabled: Boolean,
