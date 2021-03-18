@@ -56,6 +56,7 @@ internal class MessageListViewStyle(context: Context, attrs: AttributeSet?) {
                 .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
                 .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                 .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
+                .threadsEnabled(R.styleable.MessageListView_streamUiThreadsEnabled)
                 .build()
         }
     }
