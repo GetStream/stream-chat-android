@@ -26,10 +26,12 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: Boolean,
+    private val style: MessageListItemStyle,
 ) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
@@ -119,6 +121,9 @@ internal class FootnoteDecorator(
         threadGuideline: View,
         data: MessageListItem.MessageItem,
     ) {
+        if (!style.threadsEnabled) {
+            return
+        }
         root.updateConstraints {
             clear(footnoteView.id, ConstraintSet.TOP)
             connect(footnoteView.id, ConstraintSet.TOP, threadGuideline.id, ConstraintSet.BOTTOM)
