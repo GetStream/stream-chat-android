@@ -41,7 +41,6 @@ internal class QueryChannelsControllerImpl(
         set(value) {
             controllerStateFlow.recoveryNeeded = value
         }
-    
     val queryChannelsSpec: QueryChannelsSpec = controllerStateFlow.queryChannelsSpec
 
     override val endOfChannels: LiveData<Boolean> = controllerStateFlow._endOfChannels.asLiveData()
