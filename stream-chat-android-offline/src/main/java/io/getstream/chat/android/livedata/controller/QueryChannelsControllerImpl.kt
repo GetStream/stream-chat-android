@@ -30,18 +30,25 @@ internal class QueryChannelsControllerImpl(
     override val sort: QuerySort<Channel>
         get() = controllerStateFlow.sort
 
-    override var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
-        controllerStateFlow.newChannelEventFilter
+    override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
+        get() = controllerStateFlow.newChannelEventFilter
+        set(value) {
+            controllerStateFlow.newChannelEventFilter = value
+        }
 
-    override var recoveryNeeded: Boolean =
-        controllerStateFlow.recoveryNeeded
-
+    override var recoveryNeeded: Boolean
+        get() = controllerStateFlow.recoveryNeeded
+        set(value) {
+            controllerStateFlow.recoveryNeeded = value
+        }
+    
     val queryChannelsSpec: QueryChannelsSpec = controllerStateFlow.queryChannelsSpec
 
     override val endOfChannels: LiveData<Boolean> = controllerStateFlow._endOfChannels.asLiveData()
 
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = controllerStateFlow._sortedChannels.asLiveData()
+    override val channels: LiveData<List<Channel>>
+        get() = controllerStateFlow._sortedChannels.asLiveData()
 
     override val loading: LiveData<Boolean> = controllerStateFlow._loading.asLiveData()
 
