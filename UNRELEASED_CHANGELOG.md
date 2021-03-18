@@ -74,6 +74,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Now replied messages are shown correctly with the replied part in message options
+- `MessageListView::enterThreadListener` is properly notified when entering into a thread
 
 ### ⬆️ Improved
 - Add support of non-image attachment types to the default attachment click listener.
