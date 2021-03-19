@@ -40,9 +40,10 @@
         <attr name="streamUiMessageBackgroundColorMine" format="color" />
         <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
 
-        <!-- Message link color -->
+        <!-- Message link -->
         <attr name="streamUiMessageLinkColorMine" format="color" />
         <attr name="streamUiMessageLinkColorTheirs" format="color" />
+        <attr name="streamUiLinkDescriptionMaxLines" format="integer" />
 
         <attr name="streamUiReactionsEnabled" format="boolean" />
     </declare-styleable>
