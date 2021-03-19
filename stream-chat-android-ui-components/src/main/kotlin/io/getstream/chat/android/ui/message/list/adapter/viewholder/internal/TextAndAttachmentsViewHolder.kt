@@ -55,7 +55,7 @@ internal class TextAndAttachmentsViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = messageText,
                 longClickTarget = root,
-                onLinkClicked = { url -> listeners.linkClickListener.onLinkClick(url) }
+                onLinkClicked = listeners.linkClickListener::onLinkClick
             )
         }
     }

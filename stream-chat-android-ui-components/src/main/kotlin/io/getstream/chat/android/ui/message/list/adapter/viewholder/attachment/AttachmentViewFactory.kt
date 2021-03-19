@@ -83,6 +83,7 @@ public open class AttachmentViewFactory {
             setLinkPreviewClickListener(listeners.linkClickListener::onLinkClick)
             setLongClickTarget(parent)
             style.getStyleTextColor(isMine)?.also(::setTextColor)
+            setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
             showLinkAttachment(linkAttachment)
         }
         return linkAttachmentView
