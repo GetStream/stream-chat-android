@@ -2,9 +2,9 @@ package io.getstream.chat.android.ui.message.list.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR

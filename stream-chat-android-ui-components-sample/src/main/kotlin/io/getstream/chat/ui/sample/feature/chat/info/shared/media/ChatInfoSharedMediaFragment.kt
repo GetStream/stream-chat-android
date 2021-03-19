@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
@@ -70,9 +69,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
         binding.mediaAttachmentGridView.setMediaClickListener {
             val attachmentGalleryItems = binding.mediaAttachmentGridView.getAttachments()
             attachmentGalleryDestination.setData(attachmentGalleryItems, it)
-            ChatUI.instance()
-                .navigator
-                .navigate(attachmentGalleryDestination)
+            attachmentGalleryDestination.navigate()
         }
         binding.mediaAttachmentGridView.setOnLoadMoreListener {
             viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
