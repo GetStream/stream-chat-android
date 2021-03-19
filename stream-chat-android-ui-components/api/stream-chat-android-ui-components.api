@@ -28,6 +28,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelInfoClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
+	public final fun setChannelListItemPredicate (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
@@ -57,6 +58,10 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/Channe
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate {
+	public abstract fun predicate (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener {

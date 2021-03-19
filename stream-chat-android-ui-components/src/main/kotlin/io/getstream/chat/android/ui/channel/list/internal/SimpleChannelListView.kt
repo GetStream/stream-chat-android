@@ -68,6 +68,9 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         this.setAdapter(adapter)
     }
 
+    internal fun currentChannelItemList(): List<ChannelListItem>? =
+        if (::adapter.isInitialized) adapter.currentList else null
+
     fun setViewHolderFactory(viewHolderFactory: ChannelListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set ChannelListItemViewHolderFactory first" }
 
