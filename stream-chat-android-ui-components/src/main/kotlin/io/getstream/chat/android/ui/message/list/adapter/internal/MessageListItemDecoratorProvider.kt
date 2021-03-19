@@ -31,7 +31,7 @@ internal class MessageListItemDecoratorProvider(
         FailedIndicatorDecorator(),
         ReactionsDecorator().takeIf { style.reactionsEnabled },
         ReplyDecorator(currentUser),
-        FootnoteDecorator(dateFormatter, isDirectMessage),
+        FootnoteDecorator(dateFormatter, isDirectMessage, style),
     )
 
     override val decorators: List<Decorator> = messageListDecorators
