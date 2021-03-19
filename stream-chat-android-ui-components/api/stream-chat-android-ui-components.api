@@ -19,7 +19,7 @@ public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion {
-	public final fun overrideDefaultInstance (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
+	public final fun setInstance (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarStyle {

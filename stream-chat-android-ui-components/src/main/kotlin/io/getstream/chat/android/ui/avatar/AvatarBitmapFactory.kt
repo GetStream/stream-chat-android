@@ -276,7 +276,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         private val NOT_IMPLEMENTED_MARKER = Bitmap.createBitmap(0, 0, Bitmap.Config.ALPHA_8)
         internal lateinit var instance: AvatarBitmapFactory
 
-        public fun overrideDefaultInstance(avatarBitmapFactory: AvatarBitmapFactory) {
+        public fun setInstance(avatarBitmapFactory: AvatarBitmapFactory) {
             instance = avatarBitmapFactory
         }
     }
