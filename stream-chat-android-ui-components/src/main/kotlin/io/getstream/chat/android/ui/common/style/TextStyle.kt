@@ -23,11 +23,11 @@ public class TextStyle {
 
     public val font: Typeface?
         get() {
-            return ChatUI.instance().fonts.getFont(this)
+            return ChatUI.fonts.getFont(this)
         }
 
     public fun apply(textView: TextView) {
-        val chatFonts = ChatUI.instance().fonts
+        val chatFonts = ChatUI.fonts
 
         if (size != UNSET_SIZE) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size.toFloat())
