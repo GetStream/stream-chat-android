@@ -1,11 +1,14 @@
-package com.getstream.sdk.chat
+package io.getstream.sdk.chat
 
 import android.content.Context
+import android.widget.TextView
+import com.getstream.sdk.chat.ChatMarkdown
+import com.getstream.sdk.chat.ChatMarkdownImpl
+import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
 import com.getstream.sdk.chat.style.ChatFonts
-import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.ChatStrings
 import com.getstream.sdk.chat.utils.ChatStringsImpl
@@ -13,6 +16,7 @@ import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.BuildConfig
+import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 
 /**
  * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
@@ -28,6 +32,10 @@ import io.getstream.chat.android.ui.common.BuildConfig
  * @see ChatStrings
  * @see ChatFonts
  */
+@Deprecated(
+    level = DeprecationLevel.WARNING,
+    message = "Use ChatUI",
+)
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
@@ -85,7 +93,7 @@ public class ChatUI internal constructor(
         }
 
         public fun build(): ChatUI {
-            val chatStyle = style ?: ChatStyle.Builder().build()
+            val chatStyle = style ?: ChatStyle()
             instance = ChatUI(
                 fonts ?: ChatFontsImpl(chatStyle, appContext),
                 strings ?: ChatStringsImpl(appContext),
@@ -93,6 +101,27 @@ public class ChatUI internal constructor(
                 markdown ?: ChatMarkdownImpl(appContext),
                 urlSigner ?: UrlSigner.DefaultUrlSigner()
             )
+
+            // override default props of new ChatUI object
+            fonts?.let {
+                io.getstream.chat.android.ui.ChatUI.fonts = it
+            }
+            markdown?.let {
+                io.getstream.chat.android.ui.ChatUI.markdown = object :
+                    ChatMarkdown,
+                    io.getstream.chat.android.ui.common.markdown.ChatMarkdown {
+                    override fun setText(textView: TextView, text: String) = it.setText(textView, text)
+                }
+            }
+            urlSigner?.let {
+                io.getstream.chat.android.ui.ChatUI.urlSigner = object :
+                    UrlSigner,
+                    io.getstream.chat.android.ui.common.UrlSigner {
+                    override fun signFileUrl(url: String): String = it.signFileUrl(url)
+                    override fun signImageUrl(url: String): String = it.signImageUrl(url)
+                }
+            }
+
             return instance()
         }
     }
