@@ -107,7 +107,8 @@ public open class AvatarBitmapFactory(private val context: Context) {
     }
 
     /**
-     * Load a Bitmap with the specified [avatarSize] to represent the [user], in a suspending operation.
+     * Load a default Bitmap with the specified [avatarSize] to represent the [user], in a suspending operation.
+     * This should be a process that can never fail (e.g. not depend on network).
      *
      * The [createDefaultUserBitmapBlocking] method takes precedence over this one if both are implemented.
      * Prefer implementing this method if possible.
@@ -212,7 +213,8 @@ public open class AvatarBitmapFactory(private val context: Context) {
     }
 
     /**
-     * Load a Bitmap with the specified [avatarSize] to represent the [channel], in a suspending operation.
+     * Load a default Bitmap with the specified [avatarSize] to represent the [channel], in a suspending operation.
+     * This should be a process that can never fail (e.g. not depend on network).
      *
      * The [createDefaultChannelBitmapBlocking] method takes precedence over this one if both are implemented.
      * Prefer implementing this method if possible.
