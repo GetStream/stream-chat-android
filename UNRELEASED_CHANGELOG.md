@@ -3,7 +3,8 @@
 Group channels with 1<>1 behaviour the same way as group channels with many users
 It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
-
+it is now possible to configure the max lines of a link description. Just use
+`app:streamUiLinkDescriptionMaxLines` when defining MessageListView
 ### ✅ Added
 Configure enable/disable of replies using XML in `MessageListView`
 Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
