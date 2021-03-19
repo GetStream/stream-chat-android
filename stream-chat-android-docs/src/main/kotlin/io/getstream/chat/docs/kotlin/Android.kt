@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
@@ -54,6 +55,7 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.Date
 
 class Android {
 
@@ -610,6 +612,25 @@ class Android {
                         val messages: List<Message> = result.data()
                     }
                 }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/events/event_listening?language=kotlin">Listening for events</a>
+     */
+    class SyncHistory() : Fragment() {
+
+        fun getSyncHistory(chatClient: ChatClient) {
+            val cidList: List<String> = listOf("messaging:123")
+            val lastSeenExample = Date()
+
+            chatClient.getSyncHistory(cidList, lastSeenExample).enqueue { result ->
+                if (result.isSuccess) {
+                    val events: List<ChatEvent> = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
         }
     }
 }

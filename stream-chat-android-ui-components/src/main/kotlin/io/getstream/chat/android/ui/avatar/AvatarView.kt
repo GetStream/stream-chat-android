@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
-import io.getstream.chat.android.ui.avatar.internal.AvatarStyle
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -120,7 +119,7 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    internal enum class OnlineIndicatorPosition {
+    public enum class OnlineIndicatorPosition {
         TOP,
         BOTTOM
     }
