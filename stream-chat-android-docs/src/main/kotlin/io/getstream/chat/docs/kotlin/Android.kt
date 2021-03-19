@@ -624,7 +624,11 @@ class Android {
             val lastSeenExample = Date()
 
             chatClient.getSyncHistory(cidList, lastSeenExample).enqueue { result ->
-                // Use result here.
+                if (result.isSuccess) {
+                    val events: List<ChatEvent> = result.data()
+                } else {
+                    // Handle result.error()
+                }
             }
         }
     }

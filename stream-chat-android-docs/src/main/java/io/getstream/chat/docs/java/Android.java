@@ -693,7 +693,11 @@ public class Android {
             Date lastSeenExample = new Date();
 
             chatClient.getSyncHistory(cidList, lastSeenExample).enqueue(result -> {
-                // Use result here
+                if (result.isSuccess()) {
+                    List<ChatEvent> events = result.data();
+                } else {
+                    // Handle result.error()
+                }
             });
         }
     }
