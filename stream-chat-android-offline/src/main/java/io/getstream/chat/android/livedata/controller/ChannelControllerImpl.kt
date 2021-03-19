@@ -26,7 +26,7 @@ internal class ChannelControllerImpl(
     override val channelId: String,
     val client: ChatClient,
     val domainImpl: ChatDomainImpl,
-    private val messageHelper: MessageHelper = MessageHelper(),
+    messageHelper: MessageHelper = MessageHelper(),
 ) : ChannelController {
     private val flowChannelController = FlowChannelController(channelType, channelId, client, domainImpl, messageHelper)
 
@@ -53,7 +53,7 @@ internal class ChannelControllerImpl(
     override val endOfOlderMessages: LiveData<Boolean> = flowChannelController.endOfOlderMessages.asLiveData()
     override val endOfNewerMessages: LiveData<Boolean> = flowChannelController.endOfNewerMessages.asLiveData()
 
-    override var recoveryNeeded: Boolean = flowChannelController.recoveryNeeded
+    override var recoveryNeeded = flowChannelController.recoveryNeeded
     override val cid = flowChannelController.cid
 
     fun getThread(threadId: String): ThreadControllerImpl = flowChannelController.getThread(threadId)
