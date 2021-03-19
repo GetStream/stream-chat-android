@@ -16,10 +16,15 @@
             tools:node="merge"
             >
             <meta-data
+                android:name="io.getstream.chat.android.ui.common.internal.ChatUIInitializer"
+                android:value="androidx.startup"
+                />
+            <meta-data
                 android:name="io.getstream.chat.android.ui.common.internal.ImageLoaderFactoryInitializer"
                 android:value="androidx.startup"
                 />
         </provider>
+
         <activity android:name=".gallery.AttachmentGalleryActivity" />
     </application>
 </manifest>
