@@ -28,6 +28,10 @@ import io.getstream.chat.android.ui.common.BuildConfig
  * @see ChatStrings
  * @see ChatFonts
  */
+@Deprecated(
+    message = "The com.getstream.sdk.chat.ChatUI is replaced by io.getstream.chat.android.ui.ChatUI",
+    level = DeprecationLevel.WARNING,
+)
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
