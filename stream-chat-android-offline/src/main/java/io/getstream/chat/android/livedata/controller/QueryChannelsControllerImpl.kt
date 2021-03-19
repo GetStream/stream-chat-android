@@ -45,15 +45,15 @@ internal class QueryChannelsControllerImpl(
         }
     val queryChannelsSpec: QueryChannelsSpec = controllerStateFlow.queryChannelsSpec
 
-    override val endOfChannels: LiveData<Boolean> = controllerStateFlow._endOfChannels.asLiveData()
+    override val endOfChannels: LiveData<Boolean> = controllerStateFlow.endOfChannels.asLiveData()
 
     // Keep the channel list locally sorted
     override val channels: LiveData<List<Channel>>
         get() = controllerStateFlow._sortedChannels.asLiveData()
 
-    override val loading: LiveData<Boolean> = controllerStateFlow._loading.asLiveData()
+    override val loading: LiveData<Boolean> = controllerStateFlow.loading.asLiveData()
 
-    override val loadingMore: LiveData<Boolean> = controllerStateFlow._loadingMore.asLiveData()
+    override val loadingMore: LiveData<Boolean> = controllerStateFlow.loadingMore.asLiveData()
 
     override val channelsState = controllerStateFlow._channelsState.asLiveData()
 

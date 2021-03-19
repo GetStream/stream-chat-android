@@ -50,9 +50,13 @@ internal class QueryChannelsController(
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
     private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
-    internal val _loading = MutableStateFlow(false)
-    internal val _loadingMore = MutableStateFlow(false)
-    internal val _endOfChannels = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
+    private val _loadingMore = MutableStateFlow(false)
+    private val _endOfChannels = MutableStateFlow(false)
+
+    public val loading: StateFlow<Boolean> = _loading
+    public val loadingMore: StateFlow<Boolean> = _loadingMore
+    public val endOfChannels: StateFlow<Boolean> = _endOfChannels
 
     internal val _sortedChannels = _channels.filterNotNull()
         .map { it.values.sortedWith(sort.comparator) }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
