@@ -57,7 +57,6 @@ internal class MessageIdGenerationTests {
                 channelType,
                 channelId,
                 apiKey,
-                userId,
                 connectionId,
                 MessageRequest(message)
             )
@@ -81,7 +80,6 @@ internal class MessageIdGenerationTests {
                 channelType,
                 channelId,
                 apiKey,
-                userId,
                 connectionId,
                 MessageRequest(message)
             )

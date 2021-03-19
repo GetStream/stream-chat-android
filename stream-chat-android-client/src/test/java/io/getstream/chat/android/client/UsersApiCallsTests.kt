@@ -112,7 +112,6 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.flag(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
@@ -146,7 +145,6 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.flag(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
@@ -179,7 +177,6 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.flag(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 mapOf(Pair("target_message_id", targetMessageId))
             )
@@ -248,7 +245,6 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.muteUser(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
@@ -267,7 +263,6 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.unmuteUser(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
