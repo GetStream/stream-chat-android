@@ -7,6 +7,10 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
+@Deprecated(
+    message = "Use ChatDomain::totalUnreadCount instead",
+    level = DeprecationLevel.WARNING,
+)
 public interface GetTotalUnreadCount {
     /**
      * Returns the total unread messages count for the current user.
