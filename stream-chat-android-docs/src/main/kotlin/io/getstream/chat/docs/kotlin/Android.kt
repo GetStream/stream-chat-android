@@ -54,6 +54,7 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.Date
 
 class Android {
 
@@ -610,6 +611,21 @@ class Android {
                         val messages: List<Message> = result.data()
                     }
                 }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/events/event_listening?language=kotlin">Listening for events</a>
+     */
+    class SyncHistory() : Fragment() {
+
+        fun getSyncHistory(chatClient: ChatClient) {
+            val cidList: List<String> = listOf("messaging:123")
+            val lastSeenExample = Date()
+
+            chatClient.getSyncHistory(cidList, lastSeenExample).enqueue { result ->
+                // Use result here.
+            }
         }
     }
 }
