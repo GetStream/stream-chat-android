@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list
 
+import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.TypedArray
@@ -384,7 +385,7 @@ public class MessageListView : ConstraintLayout {
     private fun init(context: Context, attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
-        binding = StreamUiMessageListViewBinding.inflate(context.inflater, this, true)
+        binding = StreamUiMessageListViewBinding.inflate(context.inflater, this)
 
         initRecyclerView()
         initScrollHelper()
@@ -392,6 +393,7 @@ public class MessageListView : ConstraintLayout {
         initEmptyStateView()
 
         configureAttributes(attr)
+        layoutTransition = LayoutTransition()
 
         buffer.subscribe(::handleNewWrapper)
         buffer.active()
@@ -461,6 +463,9 @@ public class MessageListView : ConstraintLayout {
 
         configureMessageOptions(tArray)
         tArray.recycle()
+        if (background == null) {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.stream_ui_white_snow))
+        }
     }
 
     private fun configureMessageOptions(tArray: TypedArray) {
