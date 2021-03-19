@@ -123,7 +123,6 @@ public open class AvatarBitmapFactory(private val context: Context) {
     }
 
     internal suspend fun createChannelBitmapInternal(
-
         channel: Channel,
         lastActiveUsers: List<User>,
         style: AvatarStyle,
@@ -152,6 +151,16 @@ public open class AvatarBitmapFactory(private val context: Context) {
         }
     }
 
+    /**
+     * Load a Bitmap with the specified [avatarSize] to represent the [channel].
+     *
+     * This method takes precedence over [createChannelBitmap] if both are implemented.
+     *
+     * Override this method only if you can't provide a suspending implementation, otherwise
+     * override [createChannelBitmap] instead.
+     *
+     * @return The loaded bitmap or null if the loading failed (e.g. network issues).
+     */
     public open fun createChannelBitmapBlocking(
         channel: Channel,
         lastActiveUsers: List<User>,
@@ -161,6 +170,14 @@ public open class AvatarBitmapFactory(private val context: Context) {
         return NOT_IMPLEMENTED_MARKER
     }
 
+    /**
+     * Load a Bitmap with the specified [avatarSize] to represent the [channel], in a suspending operation.
+     *
+     * The [createChannelBitmapBlocking] method takes precedence over this one if both are implemented.
+     * Prefer implementing this method if possible.
+     *
+     * @return The loaded bitmap or null if the loading failed (e.g. network issues).
+     */
     public open suspend fun createChannelBitmap(
         channel: Channel,
         lastActiveUsers: List<User>,
@@ -174,6 +191,17 @@ public open class AvatarBitmapFactory(private val context: Context) {
                 }
     }
 
+    /**
+     * Load a default Bitmap with the specified [avatarSize] to represent the [channel].
+     * This should be a process that can never fail (e.g. not depend on network).
+     *
+     * This method takes precedence over [createDefaultChannelBitmap] if both are implemented.
+     *
+     * Override this method only if you can't provide a suspending implementation, otherwise
+     * override [createDefaultChannelBitmap] instead.
+     *
+     * @return The loaded bitmap.
+     */
     public open fun createDefaultChannelBitmapBlocking(
         channel: Channel,
         lastActiveUsers: List<User>,
@@ -183,6 +211,14 @@ public open class AvatarBitmapFactory(private val context: Context) {
         return NOT_IMPLEMENTED_MARKER
     }
 
+    /**
+     * Load a Bitmap with the specified [avatarSize] to represent the [channel], in a suspending operation.
+     *
+     * The [createDefaultChannelBitmapBlocking] method takes precedence over this one if both are implemented.
+     * Prefer implementing this method if possible.
+     *
+     * @return The loaded bitmap.
+     */
     public open suspend fun createDefaultChannelBitmap(
         channel: Channel,
         lastActiveUsers: List<User>,
