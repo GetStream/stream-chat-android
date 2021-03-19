@@ -86,6 +86,8 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Add `streamUiThreadsEnabled` attribute to `MessageListView` and `MessageListView::setThreadsEnabled` method to enable/disable the thread replies feature
 - Add `streamUiCommandsEnabled` attribute to `MessageInputView` and `MessageInputView::setCommandsEnabled` method to enable/disable commands
 - Add `ChannelListItemPredicate` to our `channelListView` to allow filter `ChannelListItem` before they are rendered
+- Open `AvatarBitmapFactory` class
+- Add `AvatarBitmapFactory::setInstance` method to allow custom implemention of `AvatarBitmapFactory`
 
 ### ⚠️ Changed
 
