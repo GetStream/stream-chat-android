@@ -72,6 +72,10 @@ internal class LinkAttachmentView : FrameLayout {
         }
     }
 
+    internal fun setLinkDescriptionMaxLines(maxLines: Int) {
+        binding.descriptionTextView.maxLines = maxLines
+    }
+
     fun setLinkPreviewClickListener(linkPreviewClickListener: LinkPreviewClickListener) {
         setOnClickListener {
             previewUrl?.let { url ->
