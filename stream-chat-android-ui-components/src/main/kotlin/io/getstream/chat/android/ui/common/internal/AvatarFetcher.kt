@@ -12,13 +12,10 @@ import coil.size.Size
 import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.avatar.internal.Avatar
-import io.getstream.chat.android.ui.avatar.internal.AvatarBitmapCombiner
-import io.getstream.chat.android.ui.avatar.internal.AvatarBitmapFactory
 
-internal class AvatarFetcher(
-    private val avatarBitmapFactory: AvatarBitmapFactory
-) : Fetcher<Avatar> {
+internal class AvatarFetcher() : Fetcher<Avatar> {
 
     override suspend fun fetch(
         pool: BitmapPool,
@@ -28,33 +25,33 @@ internal class AvatarFetcher(
     ): FetchResult {
         val targetSize = size.let { if (it is PixelSize) it.width else 0 }
         val resources = options.context.resources
-        return when (data) {
-            is Avatar.UserAvatar -> {
-                avatarBitmapFactory.createUserBitmap(
-                    data.user,
-                    data.avatarStyle,
-                    targetSize
-                ).let {
-                    DrawableResult(BitmapDrawable(resources, it), false, DataSource.MEMORY)
+        return DrawableResult(
+            BitmapDrawable(
+                resources,
+                when (data) {
+                    is Avatar.UserAvatar -> {
+                        AvatarBitmapFactory.instance.createUserBitmapInternal(
+                            data.user,
+                            data.avatarStyle,
+                            targetSize
+                        )
+                    }
+                    is Avatar.ChannelAvatar -> {
+                        AvatarBitmapFactory.instance.createChannelBitmapInternal(
+                            data.channel,
+                            data.channel.getUsers(),
+                            data.avatarStyle,
+                            targetSize
+                        )
+                    }
                 }
-            }
-            is Avatar.ChannelAvatar -> {
-                avatarBitmapFactory.createChannelBitmaps(
-                    data.channel,
-                    data.channel.getUsers(),
-                    data.avatarStyle,
-                    targetSize
-                ).let {
-                    if (it.size == 1) it[0] else AvatarBitmapCombiner.combine(it, targetSize)
-                }.let {
-                    DrawableResult(BitmapDrawable(resources, it), false, DataSource.MEMORY)
-                }
-            }
-        }
+            ),
+            false,
+            DataSource.MEMORY
+        )
     }
 
-    override fun key(data: Avatar): String? {
-
+    override fun key(data: Avatar): String {
         return when (data) {
             is Avatar.UserAvatar -> {
                 "${data.user.name}${data.user.image}"
