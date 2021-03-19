@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
+import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
@@ -143,6 +144,7 @@ class HomeFragment : Fragment() {
         binding.signOutTextView.setOnClickListener {
             viewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
         }
+        binding.versionName.text = BuildConfig.VERSION_NAME
     }
 
     private fun renderState(state: HomeFragmentViewModel.State) {

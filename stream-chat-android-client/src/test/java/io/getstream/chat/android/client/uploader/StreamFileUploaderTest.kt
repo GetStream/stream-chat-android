@@ -52,7 +52,7 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should send file to api when sending file without progress callback`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
 
@@ -63,7 +63,6 @@ internal class StreamFileUploaderTest {
             eq(channelId),
             file = any(),
             eq(apiKey),
-            eq(userId),
             eq(connectionId)
         )
     }
@@ -71,7 +70,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return file when successfully sent file without progress callback`() {
         val file = "file"
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
 
@@ -83,7 +82,7 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should return null when sending file without progress callback failed`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
@@ -95,7 +94,7 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should send file to api when sending file with progress callback`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
 
@@ -113,14 +112,13 @@ internal class StreamFileUploaderTest {
             eq(channelId),
             file = any(),
             eq(apiKey),
-            eq(userId),
             eq(connectionId)
         )
     }
 
     @Test
     fun `Should send image to api when sending image without progress callback`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
 
@@ -131,7 +129,6 @@ internal class StreamFileUploaderTest {
             eq(channelId),
             file = any(),
             eq(apiKey),
-            eq(userId),
             eq(connectionId)
         )
     }
@@ -139,7 +136,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return file when successfully sent image without progress callback`() {
         val file = "file"
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
 
@@ -151,7 +148,7 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should return null when sending image without progress callback failed`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
@@ -163,7 +160,7 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should send image to api when sending image with progress callback`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
 
@@ -181,7 +178,6 @@ internal class StreamFileUploaderTest {
             eq(channelId),
             file = any(),
             eq(apiKey),
-            eq(userId),
             eq(connectionId)
         )
     }
