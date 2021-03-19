@@ -1,8 +1,8 @@
-package com.getstream.sdk.chat.utils.strings
+package com.getstream.sdk.chat.utils
 
 import android.content.Context
 
-internal class ChatStringsImpl(private val appContext: Context) : ChatStrings {
+public class ChatStringsImpl(private val appContext: Context) : ChatStrings {
     override fun get(resId: Int): String {
         return appContext.getString(resId)
     }

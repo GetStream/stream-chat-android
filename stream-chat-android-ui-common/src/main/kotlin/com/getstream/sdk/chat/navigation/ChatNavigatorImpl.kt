@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.navigation
 
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 
-internal class ChatNavigatorImpl(private val handler: ChatNavigationHandler) : ChatNavigator {
+public class ChatNavigatorImpl(private val handler: ChatNavigationHandler) : ChatNavigator {
 
     override fun navigate(destination: ChatDestination) {
         val handled = handler.navigate(destination)
@@ -15,10 +15,10 @@ internal class ChatNavigatorImpl(private val handler: ChatNavigationHandler) : C
         destination.navigate()
     }
 
-    companion object {
+    public companion object {
 
         @JvmField
-        val EMPTY_HANDLER: ChatNavigationHandler = object : ChatNavigationHandler {
+        public val EMPTY_HANDLER: ChatNavigationHandler = object : ChatNavigationHandler {
             override fun navigate(destination: ChatDestination) = false
         }
     }

@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils.strings
+package com.getstream.sdk.chat.utils
 
 import androidx.annotation.StringRes
 
