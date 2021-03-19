@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.controller
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -17,6 +17,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
@@ -36,7 +38,7 @@ private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
-internal class QueryChannelsControllerStateFlow(
+internal class QueryChannelsController(
     val filter: FilterObject,
     val sort: QuerySort<Channel>,
     private val client: ChatClient,

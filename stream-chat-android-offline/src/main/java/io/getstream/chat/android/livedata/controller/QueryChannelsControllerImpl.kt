@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.offline.controller.QueryChannelsController as QueryChannelsControllerStateFlow
 
 private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
@@ -22,7 +23,8 @@ internal class QueryChannelsControllerImpl(
     client: ChatClient,
     domainImpl: ChatDomainImpl,
 ) : QueryChannelsController {
-    private val controllerStateFlow = QueryChannelsControllerStateFlow(filter, sort, client, domainImpl)
+    private val controllerStateFlow =
+        QueryChannelsControllerStateFlow(filter, sort, client, domainImpl)
 
     override val filter: FilterObject
         get() = controllerStateFlow.filter
