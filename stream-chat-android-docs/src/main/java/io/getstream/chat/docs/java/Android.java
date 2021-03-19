@@ -26,15 +26,19 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -674,6 +678,27 @@ public class Android {
                             final List<Message> messages = result.data();
                         }
                     });
+        }
+    }
+
+    /**
+     * @see <a href="hhttps://getstream.io/nessy/docs/chat_docs/events/event_listening/?language=java">Listening for events</a>
+     */
+    public class SyncHistory extends Fragment {
+
+        public void getSyncHistory(ChatClient chatClient) {
+            List<String> cidList = new ArrayList<>();
+            cidList.add("messaging:123");
+
+            Date lastSeenExample = new Date();
+
+            chatClient.getSyncHistory(cidList, lastSeenExample).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<ChatEvent> events = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
         }
     }
 }
