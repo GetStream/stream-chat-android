@@ -19,7 +19,6 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import java.io.File
-import java.util.Date
 import io.getstream.chat.android.offline.channel.ChannelController as FlowChannelController
 
 internal class ChannelControllerImpl(
@@ -32,10 +31,6 @@ internal class ChannelControllerImpl(
     private val flowChannelController = FlowChannelController(channelType, channelId, client, domainImpl, messageHelper)
 
     override val repliedMessage: LiveData<Message?> = flowChannelController.repliedMessage.asLiveData()
-
-    internal var hideMessagesBefore: Date? = flowChannelController.hideMessagesBefore
-    internal val unfilteredMessages = flowChannelController.unfilteredMessages
-
     override val messages: LiveData<List<Message>> = flowChannelController.messages.asLiveData()
     override val messagesState = flowChannelController.messagesState.asLiveData()
     override val oldMessages: LiveData<List<Message>> = flowChannelController.oldMessages.asLiveData()
