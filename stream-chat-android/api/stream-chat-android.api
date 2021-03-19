@@ -5,33 +5,6 @@ public final class com/getstream/sdk/chat/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class com/getstream/sdk/chat/ChatUI {
-	public static final field Companion Lcom/getstream/sdk/chat/ChatUI$Companion;
-	public final fun getFonts ()Lcom/getstream/sdk/chat/style/ChatFonts;
-	public final fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
-	public final fun getNavigator ()Lcom/getstream/sdk/chat/navigation/ChatNavigator;
-	public final fun getStrings ()Lcom/getstream/sdk/chat/utils/ChatStrings;
-	public final fun getUrlSigner ()Lcom/getstream/sdk/chat/UrlSigner;
-	public final fun getVersion ()Ljava/lang/String;
-	public static final fun instance ()Lcom/getstream/sdk/chat/ChatUI;
-}
-
-public final class com/getstream/sdk/chat/ChatUI$Builder {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/livedata/ChatDomain;Landroid/content/Context;)V
-	public final fun build ()Lcom/getstream/sdk/chat/ChatUI;
-	public final fun withFonts (Lcom/getstream/sdk/chat/style/ChatFonts;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withNavigationHandler (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withStrings (Lcom/getstream/sdk/chat/utils/ChatStrings;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withStyle (Lcom/getstream/sdk/chat/style/ChatStyle;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withUrlSigner (Lcom/getstream/sdk/chat/UrlSigner;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-}
-
-public final class com/getstream/sdk/chat/ChatUI$Companion {
-	public final fun instance ()Lcom/getstream/sdk/chat/ChatUI;
-}
-
 public class com/getstream/sdk/chat/ConnectionLiveData : androidx/lifecycle/LiveData {
 	public fun <init> (Landroid/content/Context;)V
 	protected fun onActive ()V

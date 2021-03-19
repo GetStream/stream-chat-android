@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.style
+package io.getstream.chat.android.ui.common.style
 
 import android.content.Context
 import android.graphics.Typeface
@@ -7,6 +7,9 @@ import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.util.contains
+import com.getstream.sdk.chat.style.ChatFonts
+import com.getstream.sdk.chat.style.ChatStyle
+import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.HashMap
 
@@ -60,7 +63,9 @@ internal class ChatFontsImpl(
 
     private fun setDefaultFont(textView: TextView, textStyle: Int) {
         if (style.hasDefaultFont()) {
-            textView.setTypeface(getFont(style.getDefaultTextStyle()), textStyle)
+            style.defaultTextStyle?.let {
+                textView.setTypeface(getFont(it), textStyle)
+            }
         } else {
             textView.setTypeface(Typeface.DEFAULT, textStyle)
         }

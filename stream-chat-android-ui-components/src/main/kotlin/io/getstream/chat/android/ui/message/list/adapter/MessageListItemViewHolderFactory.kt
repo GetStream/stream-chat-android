@@ -47,7 +47,7 @@ public open class MessageListItemViewHolderFactory {
         this.style = style
     }
 
-    private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
+    private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].

@@ -7,8 +7,8 @@ import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
 import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
-import com.getstream.sdk.chat.utils.strings.ChatStrings
-import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
+import com.getstream.sdk.chat.utils.ChatStrings
+import com.getstream.sdk.chat.utils.ChatStringsImpl
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.livedata.ChatDomain
@@ -28,10 +28,6 @@ import io.getstream.chat.android.ui.common.BuildConfig
  * @see ChatStrings
  * @see ChatFonts
  */
-@Deprecated(
-    message = "The com.getstream.sdk.chat.ChatUI is replaced by io.getstream.chat.android.ui.ChatUI",
-    level = DeprecationLevel.WARNING,
-)
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
