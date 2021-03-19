@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
+import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -24,22 +25,21 @@ internal interface GeneralApi {
     @POST("/sync")
     fun getSyncHistory(
         @Body body: SyncHistoryRequest,
-        @Query("api_key") apiKey: String,
-        @Query("user_id") userId: String,
-        @Query("connection_id") connectionId: String,
+        @Query(QueryParams.API_KEY) apiKey: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<SyncHistoryResponse>
 
     @GET("/search")
     fun searchMessages(
-        @Query("api_key") apiKey: String,
-        @Query("client_id") connectionId: String,
+        @Query(QueryParams.API_KEY) apiKey: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
     ): RetrofitCall<SearchMessagesResponse>
 
     @GET("/members")
     fun queryMembers(
-        @Query("api_key") apiKey: String,
-        @Query("connection_id") connectionId: String,
+        @Query(QueryParams.API_KEY) apiKey: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
     ): RetrofitCall<QueryMembersResponse>
 }

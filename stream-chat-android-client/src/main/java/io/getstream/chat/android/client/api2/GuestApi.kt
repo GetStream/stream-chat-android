@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.AnonymousApi
+import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -14,7 +15,7 @@ internal interface GuestApi {
 
     @POST("/guest")
     fun getGuestUser(
-        @Query("api_key") apiKey: String,
+        @Query(QueryParams.API_KEY) apiKey: String,
         @Body body: GuestUserRequest,
     ): RetrofitCall<TokenResponse>
 }

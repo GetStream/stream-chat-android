@@ -34,6 +34,8 @@ public class ChannelListView @JvmOverloads constructor(
 
     private var loadingView: View = defaultLoadingView()
 
+    private var channelListItemPredicate: ChannelListItemPredicate = ChannelListItemPredicate { true }
+
     private val simpleChannelListView: SimpleChannelListView =
         SimpleChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
 
@@ -200,8 +202,18 @@ public class ChannelListView @JvmOverloads constructor(
         simpleChannelListView.setOnEndReachedListener(listener)
     }
 
+    /**
+     * Allows a client to set a ChannelListItemPredicate to filter ChannelListItems before they are drawn
+     *
+     * @param channelListItemPredicate - ChannelListItemsPredicate used to filter the list of ChannelListItem
+     */
+    public fun setChannelListItemPredicate(channelListItemPredicate: ChannelListItemPredicate) {
+        this.channelListItemPredicate = channelListItemPredicate
+        simpleChannelListView.currentChannelItemList()?.let(::setChannels)
+    }
+
     public fun setChannels(channels: List<ChannelListItem>) {
-        simpleChannelListView.setChannels(channels)
+        simpleChannelListView.setChannels(channels.filter(channelListItemPredicate::predicate))
     }
 
     public fun hideLoadingView() {
@@ -326,6 +338,14 @@ public class ChannelListView @JvmOverloads constructor(
 
     public fun interface EndReachedListener {
         public fun onEndReached()
+    }
+
+    /**
+     * Predicate object with a filter condition for ChannelListItem. Used to filter a list of ChannelListItem
+     * before applying it to ChannelListView.
+     */
+    public fun interface ChannelListItemPredicate {
+        public fun predicate(channelListItem: ChannelListItem): Boolean
     }
 
     public interface SwipeListener {

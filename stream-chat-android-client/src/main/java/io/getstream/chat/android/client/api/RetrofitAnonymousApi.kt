@@ -12,7 +12,7 @@ internal interface RetrofitAnonymousApi {
 
     @POST("/guest")
     fun getGuestUser(
-        @Query("api_key") apiKey: String,
+        @Query(QueryParams.API_KEY) apiKey: String,
         @Body body: GuestUserRequest
     ): RetrofitCall<TokenResponse>
 }

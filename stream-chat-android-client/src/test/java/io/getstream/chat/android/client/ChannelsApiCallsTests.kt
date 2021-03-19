@@ -52,7 +52,6 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 request
             )
@@ -73,7 +72,6 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 request
             )
@@ -336,7 +334,6 @@ internal class ChannelsApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
@@ -352,7 +349,6 @@ internal class ChannelsApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
@@ -380,7 +376,6 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MarkReadRequest(messageId)
             )
@@ -401,7 +396,6 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MarkReadRequest(messageId)
             )
@@ -430,7 +424,6 @@ internal class ChannelsApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 request
             )
@@ -455,7 +448,6 @@ internal class ChannelsApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 request
             )
@@ -505,7 +497,6 @@ internal class ChannelsApiCallsTests {
         whenever(
             mock.retrofitApi.muteChannel(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MuteChannelRequest("${mock.channelType}:${mock.channelId}")
             )
@@ -521,7 +512,6 @@ internal class ChannelsApiCallsTests {
         whenever(
             mock.retrofitApi.unmuteChannel(
                 mock.apiKey,
-                mock.userId,
                 mock.connectionId,
                 MuteChannelRequest("${mock.channelType}:${mock.channelId}")
             )

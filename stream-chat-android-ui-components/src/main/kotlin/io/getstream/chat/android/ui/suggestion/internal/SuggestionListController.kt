@@ -22,13 +22,14 @@ internal class SuggestionListController(
             showSuggestions(messageText)
         }
     var mentionsEnabled: Boolean = true
+    var commandsEnabled: Boolean = true
 
     private var messageText: String = String.EMPTY
 
     fun showSuggestions(messageText: String) {
         this.messageText = messageText
         when {
-            messageText.isCommandMessage() -> {
+            commandsEnabled && messageText.isCommandMessage() -> {
                 suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
@@ -39,7 +40,9 @@ internal class SuggestionListController(
     }
 
     fun showAvailableCommands() {
-        suggestionListView.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
+        if (commandsEnabled) {
+            suggestionListView.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
+        }
     }
 
     fun hideSuggestionList() {

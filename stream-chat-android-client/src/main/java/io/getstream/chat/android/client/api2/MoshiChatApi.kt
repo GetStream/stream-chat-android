@@ -110,7 +110,6 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
@@ -120,7 +119,6 @@ internal class MoshiChatApi(
         return messageApi.updateMessage(
             messageId = message.id,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
@@ -130,7 +128,6 @@ internal class MoshiChatApi(
         return messageApi.getMessage(
             messageId = messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
@@ -139,7 +136,6 @@ internal class MoshiChatApi(
         return messageApi.deleteMessage(
             messageId = messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
@@ -162,7 +158,6 @@ internal class MoshiChatApi(
         return messageApi.sendReaction(
             messageId = reaction.messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = ReactionRequest(
                 reaction = reaction.toDto(),
@@ -179,7 +174,6 @@ internal class MoshiChatApi(
             messageId = messageId,
             reactionType = reactionType,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
@@ -187,7 +181,6 @@ internal class MoshiChatApi(
     override fun addDevice(firebaseToken: String): Call<Unit> {
         return deviceApi.addDevices(
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = AddDeviceRequest(id = firebaseToken),
         ).toUnitCall()
@@ -197,7 +190,6 @@ internal class MoshiChatApi(
         return deviceApi.deleteDevice(
             deviceId = firebaseToken,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).toUnitCall()
     }
@@ -205,7 +197,6 @@ internal class MoshiChatApi(
     override fun getDevices(): Call<List<Device>> {
         return deviceApi.getDevices(
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).map { response -> response.devices.map(DeviceDto::toDomain) }
     }
@@ -221,7 +212,6 @@ internal class MoshiChatApi(
     override fun muteUser(userId: String): Call<Mute> {
         return moderationApi.muteUser(
             apiKey = apiKey,
-            userId = this.userId,
             connectionId = connectionId,
             body = MuteUserRequest(userId, this.userId),
         ).map { response -> response.mute.toDomain() }
@@ -230,7 +220,6 @@ internal class MoshiChatApi(
     override fun unmuteUser(userId: String): Call<Unit> {
         return moderationApi.unmuteUser(
             apiKey = apiKey,
-            userId = this.userId,
             connectionId = this.connectionId,
             body = MuteUserRequest(userId, this.userId),
         ).toUnitCall()
@@ -239,7 +228,6 @@ internal class MoshiChatApi(
     override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
         return moderationApi.muteChannel(
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             body = MuteChannelRequest("$channelType:$channelId"),
         ).toUnitCall()
@@ -248,7 +236,6 @@ internal class MoshiChatApi(
     override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
         return moderationApi.unmuteChannel(
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             body = MuteChannelRequest("$channelType:$channelId"),
         ).toUnitCall()
@@ -362,19 +349,17 @@ internal class MoshiChatApi(
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.flag(
-            apiKey,
-            userId,
-            connectionId,
-            body
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = body
         ).map { response -> response.flag.toDomain() }
     }
 
     private fun unflag(body: MutableMap<String, String>): Call<Flag> {
         return moderationApi.unflag(
-            apiKey,
-            userId,
-            connectionId,
-            body
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = body
         ).map { response -> response.flag.toDomain() }
     }
 
@@ -429,7 +414,6 @@ internal class MoshiChatApi(
         return moderationApi.queryBannedUsers(
             apiKey = apiKey,
             connectionId = connectionId,
-            userId = userId,
             payload = QueryBannedUsersRequest(
                 filter_conditions = filter.toMap(),
                 sort = sort.toDto(),
@@ -471,18 +455,18 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = UpdateCooldownRequest(cooldownTimeInSeconds),
         ).map(this::flattenChannel)
     }
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
         return channelApi.stopWatching(
-            channelType,
-            channelId,
-            apiKey,
-            connectionId,
-            emptyMap(),
+            channelType = channelType,
+            channelId = channelId,
+            apiKey = apiKey,
+            connectionId = connectionId,
+            body = emptyMap(),
         ).toUnitCall()
     }
 
@@ -496,7 +480,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage?.toDto()),
         ).map(this::flattenChannel)
     }
@@ -509,7 +493,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = emptyMap(),
         ).toUnitCall()
     }
@@ -523,7 +507,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = HideChannelRequest(clearHistory),
         ).toUnitCall()
     }
@@ -533,7 +517,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = RejectInviteRequest(),
         ).map(this::flattenChannel)
     }
@@ -547,7 +531,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
             body = AcceptInviteRequest.create(userId = userId, message = message),
         ).map(this::flattenChannel)
     }
@@ -557,7 +541,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            clientID = connectionId,
+            connectionId = connectionId,
         ).map(this::flattenChannel)
     }
 
@@ -566,7 +550,6 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = MarkReadRequest(messageId),
         ).toUnitCall()
@@ -575,7 +558,6 @@ internal class MoshiChatApi(
     override fun markAllRead(): Call<Unit> {
         return channelApi.markAllRead(
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).toUnitCall()
     }
@@ -624,7 +606,6 @@ internal class MoshiChatApi(
         return messageApi.getReplies(
             messageId = messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             limit = limit,
         ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
@@ -634,7 +615,6 @@ internal class MoshiChatApi(
         return messageApi.getRepliesMore(
             messageId = messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             limit = limit,
             firstId = firstId,
@@ -645,7 +625,6 @@ internal class MoshiChatApi(
         return messageApi.sendAction(
             messageId = request.messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = SendActionRequest(
                 channel_id = request.channelId,
@@ -678,7 +657,6 @@ internal class MoshiChatApi(
         return messageApi.translate(
             messageId = messageId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = TranslateMessageRequest(language),
         ).map { response -> response.message.toDomain() }
@@ -719,8 +697,7 @@ internal class MoshiChatApi(
 
         return channelApi.queryChannels(
             apiKey = apiKey,
-            userId = userId,
-            clientID = connectionId,
+            connectionId = connectionId,
             payload = request,
         ).map { response -> response.channels.map(this::flattenChannel) }
     }
@@ -740,8 +717,7 @@ internal class MoshiChatApi(
             channelApi.queryChannel(
                 channelType = channelType,
                 apiKey = apiKey,
-                userId = userId,
-                clientID = connectionId,
+                connectionId = connectionId,
                 request = request,
             )
         } else {
@@ -749,8 +725,7 @@ internal class MoshiChatApi(
                 channelType = channelType,
                 channelId = channelId,
                 apiKey = apiKey,
-                userId = userId,
-                clientID = connectionId,
+                connectionId = connectionId,
                 request = request,
             )
         }.map(::flattenChannel)
@@ -810,7 +785,6 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
             request = SendEventRequest(map),
         ).map { response -> response.event.toDomain() }
@@ -823,7 +797,6 @@ internal class MoshiChatApi(
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             apiKey = apiKey,
-            userId = userId,
             connectionId = connectionId,
         ).map { response -> response.events.map(ChatEventDto::toDomain) }
     }

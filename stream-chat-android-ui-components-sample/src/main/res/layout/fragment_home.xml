@@ -62,14 +62,19 @@
         app:menu="@menu/menu_navigation_drawer"
         >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            >
+
         <TextView
             android:id="@+id/signOutTextView"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/spacing_small"
             android:background="?selectableItemBackground"
-            android:drawableStart="@drawable/ic_sign_out"
             android:drawablePadding="@dimen/spacing_medium"
             android:gravity="center_vertical|start"
             android:maxLines="1"
@@ -77,8 +82,18 @@
             android:text="@string/home_drawer_sign_out"
             android:textColor="@color/stream_ui_text_color_primary"
             app:drawableTint="@color/stream_ui_grey"
+            app:drawableStartCompat="@drawable/ic_sign_out"
             />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/versionName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/stream_ui_grey"
+            />
+        </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
