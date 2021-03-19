@@ -23,46 +23,46 @@ internal class QueryChannelsControllerImpl(
     client: ChatClient,
     domainImpl: ChatDomainImpl,
 ) : QueryChannelsController {
-    private val controllerStateFlow =
+    private val queryChannels =
         QueryChannelsControllerStateFlow(filter, sort, client, domainImpl)
 
     override val filter: FilterObject
-        get() = controllerStateFlow.filter
+        get() = queryChannels.filter
 
     override val sort: QuerySort<Channel>
-        get() = controllerStateFlow.sort
+        get() = queryChannels.sort
 
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
-        get() = controllerStateFlow.newChannelEventFilter
+        get() = queryChannels.newChannelEventFilter
         set(value) {
-            controllerStateFlow.newChannelEventFilter = value
+            queryChannels.newChannelEventFilter = value
         }
 
     override var recoveryNeeded: Boolean
-        get() = controllerStateFlow.recoveryNeeded
+        get() = queryChannels.recoveryNeeded
         set(value) {
-            controllerStateFlow.recoveryNeeded = value
+            queryChannels.recoveryNeeded = value
         }
-    val queryChannelsSpec: QueryChannelsSpec = controllerStateFlow.queryChannelsSpec
+    val queryChannelsSpec: QueryChannelsSpec = queryChannels.queryChannelsSpec
 
-    override val endOfChannels: LiveData<Boolean> = controllerStateFlow.endOfChannels.asLiveData()
+    override val endOfChannels: LiveData<Boolean> = queryChannels.endOfChannels.asLiveData()
 
     // Keep the channel list locally sorted
     override val channels: LiveData<List<Channel>>
-        get() = controllerStateFlow.channels.asLiveData()
+        get() = queryChannels.channels.asLiveData()
 
-    override val loading: LiveData<Boolean> = controllerStateFlow.loading.asLiveData()
+    override val loading: LiveData<Boolean> = queryChannels.loading.asLiveData()
 
-    override val loadingMore: LiveData<Boolean> = controllerStateFlow.loadingMore.asLiveData()
+    override val loadingMore: LiveData<Boolean> = queryChannels.loadingMore.asLiveData()
 
-    override val channelsState = controllerStateFlow.channelsState.asLiveData()
+    override val channelsState = queryChannels.channelsState.asLiveData()
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT,
     ): QueryChannelsPaginationRequest {
-        return controllerStateFlow.loadMoreRequest(channelLimit, messageLimit, memberLimit)
+        return queryChannels.loadMoreRequest(channelLimit, messageLimit, memberLimit)
     }
 
     /**
@@ -73,22 +73,22 @@ internal class QueryChannelsControllerImpl(
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
     internal fun addChannelIfFilterMatches(channel: Channel) {
-        controllerStateFlow.addChannelIfFilterMatches(channel)
+        queryChannels.addChannelIfFilterMatches(channel)
     }
 
     internal fun handleEvents(events: List<ChatEvent>) {
-        controllerStateFlow.handleEvents(events)
+        queryChannels.handleEvents(events)
     }
 
     internal fun handleEvent(event: ChatEvent) {
-        controllerStateFlow.handleEvent(event)
+        queryChannels.handleEvent(event)
     }
 
     suspend fun loadMore(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
     ): Result<List<Channel>> {
-        return controllerStateFlow.loadMore(channelLimit, messageLimit)
+        return queryChannels.loadMore(channelLimit, messageLimit)
     }
 
     suspend fun query(
@@ -96,19 +96,19 @@ internal class QueryChannelsControllerImpl(
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT,
     ): Result<List<Channel>> {
-        return controllerStateFlow.query(channelLimit, messageLimit, memberLimit)
+        return queryChannels.query(channelLimit, messageLimit, memberLimit)
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        return controllerStateFlow.runQueryOffline(pagination)
+        return queryChannels.runQueryOffline(pagination)
     }
 
     suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        return controllerStateFlow.runQueryOnline(pagination)
+        return queryChannels.runQueryOnline(pagination)
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        return controllerStateFlow.runQuery(pagination)
+        return queryChannels.runQuery(pagination)
     }
 
     /**
@@ -120,11 +120,11 @@ internal class QueryChannelsControllerImpl(
      *
      */
     internal fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
-        return controllerStateFlow.updateChannelsAndQueryResults(channels, isFirstPage)
+        return queryChannels.updateChannelsAndQueryResults(channels, isFirstPage)
     }
 
     internal suspend fun removeChannel(cid: String) {
-        controllerStateFlow.removeChannel(cid)
+        queryChannels.removeChannel(cid)
     }
 
     /**
@@ -150,7 +150,7 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun refreshChannels(cIds: List<String>) {
-        controllerStateFlow.refreshChannels(cIds)
+        queryChannels.refreshChannels(cIds)
     }
 
     /**
@@ -164,6 +164,6 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun addToQueryResult(cIds: List<String>) {
-        controllerStateFlow.addToQueryResult(cIds)
+        queryChannels.addToQueryResult(cIds)
     }
 }
