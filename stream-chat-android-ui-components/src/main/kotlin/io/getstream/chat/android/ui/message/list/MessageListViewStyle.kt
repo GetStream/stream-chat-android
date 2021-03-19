@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
-public class MessageListViewStyle(
+public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
     public var reactionsEnabled: Boolean,

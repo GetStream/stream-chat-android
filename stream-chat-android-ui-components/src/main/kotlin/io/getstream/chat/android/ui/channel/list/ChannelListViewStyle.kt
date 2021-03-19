@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
-public class ChannelListViewStyle(
+public data class ChannelListViewStyle(
     @Px public val channelTitleTextSize: Float,
     @Px public val lastMessageSize: Float,
     @Px public val lastMessageDateTextSize: Float,

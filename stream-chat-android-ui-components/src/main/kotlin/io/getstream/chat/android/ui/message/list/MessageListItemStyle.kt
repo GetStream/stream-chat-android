@@ -6,7 +6,7 @@ import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.TransformStyle
 import java.io.Serializable
 
-public class MessageListItemStyle(
+public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
     @ColorInt public val messageTextColorMine: Int?,
