@@ -63,6 +63,43 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setUrlSigner (Lio/getstream/chat/android/ui/common/UrlSigner;)V
 }
 
+public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion;
+	public fun <init> (Landroid/content/Context;)V
+	public fun createChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createDefaultUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createDefaultUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun createUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion {
+	public final fun setInstance (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarStyle$Companion;
+	public fun <init> (IILcom/getstream/sdk/chat/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun component4 ()Z
+	public final fun component5 ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public final fun copy (IILcom/getstream/sdk/chat/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILcom/getstream/sdk/chat/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;ILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAvatarBorderColor ()I
+	public final fun getAvatarBorderWidth ()I
+	public final fun getAvatarInitialText ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun getOnlineIndicatorEnabled ()Z
+	public final fun getOnlineIndicatorPosition ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/appcompat/widget/AppCompatImageView {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarView$Companion;
 	public static final field MAX_AVATAR_SECTIONS I
@@ -71,6 +108,13 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
+	public static final field BOTTOM Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static final field TOP Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView : android/widget/FrameLayout {

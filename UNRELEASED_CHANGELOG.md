@@ -67,7 +67,6 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Deprecated `ChatUI` class
 
 ### ❌ Removed
 
@@ -92,5 +91,6 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Add `AvatarBitmapFactory::setInstance` method to allow custom implemention of `AvatarBitmapFactory`
 
 ### ⚠️ Changed
+- Deprecated `ChatUI` class
 
 ### ❌ Removed
