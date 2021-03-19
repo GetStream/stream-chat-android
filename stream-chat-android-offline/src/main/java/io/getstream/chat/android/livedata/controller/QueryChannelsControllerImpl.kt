@@ -49,13 +49,13 @@ internal class QueryChannelsControllerImpl(
 
     // Keep the channel list locally sorted
     override val channels: LiveData<List<Channel>>
-        get() = controllerStateFlow._sortedChannels.asLiveData()
+        get() = controllerStateFlow.channels.asLiveData()
 
     override val loading: LiveData<Boolean> = controllerStateFlow.loading.asLiveData()
 
     override val loadingMore: LiveData<Boolean> = controllerStateFlow.loadingMore.asLiveData()
 
-    override val channelsState = controllerStateFlow._channelsState.asLiveData()
+    override val channelsState = controllerStateFlow.channelsState.asLiveData()
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
