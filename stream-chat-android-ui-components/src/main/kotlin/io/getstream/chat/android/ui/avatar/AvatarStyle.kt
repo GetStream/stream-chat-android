@@ -61,7 +61,13 @@ public data class AvatarStyle(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
                     AvatarView.OnlineIndicatorPosition.TOP
                 )
-                AvatarStyle(avatarBorderWidth, avatarBorderColor, avatarInitialText, onlineIndicatorEnabled, onlineIndicatorPosition)
+                AvatarStyle(
+                    avatarBorderWidth = avatarBorderWidth,
+                    avatarBorderColor = avatarBorderColor,
+                    avatarInitialText = avatarInitialText,
+                    onlineIndicatorEnabled = onlineIndicatorEnabled,
+                    onlineIndicatorPosition = onlineIndicatorPosition,
+                )
             }
     }
 }
