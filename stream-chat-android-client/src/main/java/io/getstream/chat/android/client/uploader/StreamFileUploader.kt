@@ -29,7 +29,6 @@ internal class StreamFileUploader(
             channelId,
             part,
             apiKey,
-            userId,
             connectionId
         ).execute()
 
@@ -58,7 +57,6 @@ internal class StreamFileUploader(
             channelId,
             part,
             apiKey,
-            userId,
             connectionId
         ).execute()
 
@@ -86,7 +84,6 @@ internal class StreamFileUploader(
                 channelId,
                 part,
                 apiKey,
-                userId,
                 connectionId
             ).execute()
 
@@ -115,7 +112,6 @@ internal class StreamFileUploader(
             channelId,
             part,
             apiKey,
-            userId,
             connectionId
         ).execute()
 
