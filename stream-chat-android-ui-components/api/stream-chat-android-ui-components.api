@@ -963,7 +963,8 @@ public final class io/getstream/chat/android/ui/message/list/header/viewmodel/Me
 
 public final class io/getstream/chat/android/ui/message/list/internal/MessageListItemStyle : java/io/Serializable {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/internal/MessageListItemStyle$Companion;
-	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLinkDescriptionMaxLines ()I
 	public final fun getMessageBackgroundColorMine ()Ljava/lang/Integer;
 	public final fun getMessageBackgroundColorTheirs ()Ljava/lang/Integer;
 	public final fun getMessageLinkTextColorMine ()Ljava/lang/Integer;
