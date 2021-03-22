@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
-import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
@@ -34,12 +33,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.isInThread
+import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
@@ -309,7 +310,7 @@ public class MessageListView : ConstraintLayout {
                 }
                 else -> AttachmentDestination(message, attachment, context)
             }
-            destination.navigate()
+            ChatUI.navigator.navigate(destination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -342,7 +343,7 @@ public class MessageListView : ConstraintLayout {
             giphySendHandler.onSendGiphy(message, action)
         }
     private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
-        WebLinkDestination(url, context).navigate()
+        ChatUI.navigator.navigate(WebLinkDestination(url, context, ChatUI.urlSigner))
     }
     private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
         // Empty
