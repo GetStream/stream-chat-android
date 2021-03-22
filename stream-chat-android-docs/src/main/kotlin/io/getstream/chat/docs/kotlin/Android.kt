@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -84,7 +83,7 @@ class Android {
                         Filters.eq("type", "messaging"),
                         Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
                     ),
-                    sort = ChannelsViewModel.DEFAULT_SORT,
+                    sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,
                 )
             }

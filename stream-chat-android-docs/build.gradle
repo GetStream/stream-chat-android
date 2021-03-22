@@ -71,7 +71,6 @@ android {
 }
 
 dependencies {
-    implementation project(":stream-chat-android")
     implementation project(":stream-chat-android-ui-components")
     implementation Dependencies.constraintLayout
     implementation Dependencies.fragmentKtx
