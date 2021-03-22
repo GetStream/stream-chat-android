@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--MessageInputViewNew-->
+    <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <!--Attachment Button-->
         <attr name="streamUiAttachButtonEnabled" format="boolean" />
@@ -31,14 +31,17 @@
         <attr name="streamUiSendButtonDisabledIcon" format="reference" />
         <attr name="streamUiSendButtonEnabled" format="boolean" />
 
-        <!-- "Also send to channel" CheckBox -->
+        <!--"Also send to channel" CheckBox-->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
 
-        <!-- Mentions -->
+        <!--Mentions-->
         <attr name="streamUiMentionsEnabled" format="boolean" />
 
-        <!-- Commands -->
+        <!--Commands-->
         <attr name="streamUiCommandsEnabled" format="boolean" />
+
+        <!--Constants-->
+        <attr name="streamUiAttachmentMaxFileSizeMb" format="integer" />
     </declare-styleable>
 
 </resources>

@@ -26,7 +26,8 @@ import io.getstream.chat.android.ui.message.input.attachment.selected.internal.S
 import java.io.File
 import kotlin.properties.Delegates
 
-private const val SIZE_MEGA_20 = 20 * 1048576
+internal const val ONE_MEGA = 1048576
+private const val SIZE_MEGA_20 = 20 * ONE_MEGA
 
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
@@ -41,6 +42,7 @@ internal class MessageInputFieldView : FrameLayout {
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
     private var maxMessageLength: Int = Integer.MAX_VALUE
+    private var attachmentMaxFile: Int = SIZE_MEGA_20
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
@@ -49,8 +51,8 @@ internal class MessageInputFieldView : FrameLayout {
     var messageText: String
         get() {
             val text = binding.messageEditText.text?.toString() ?: String.EMPTY
-            mode.let {
-                return when (it) {
+            return mode.let {
+                when (it) {
                     is Mode.CommandMode -> "/${it.command.name} $text"
                     else -> text
                 }
@@ -125,6 +127,10 @@ internal class MessageInputFieldView : FrameLayout {
 
     fun setInputFieldScrollbarFadingEnabled(enabled: Boolean) {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
+    }
+
+    fun setAttachmentMaxFileMb(size: Int) {
+        attachmentMaxFile = size
     }
 
     fun autoCompleteCommand(command: Command) {
@@ -239,7 +245,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun alertForBigFile() {
         AlertDialog.Builder(context)
-            .setMessage(R.string.stream_ui_file_too_big)
+            .setMessage(context.getString(R.string.stream_ui_file_too_big, attachmentMaxFile / ONE_MEGA))
             .setPositiveButton(R.string.stream_ui_ok_label) { dialog, _ -> dialog.dismiss() }
             .show()
     }
@@ -322,6 +328,6 @@ internal class MessageInputFieldView : FrameLayout {
         data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
-}
 
-private fun List<AttachmentMetaData>.hasBigFile(): Boolean = any { metaData -> metaData.size > SIZE_MEGA_20 }
+    private fun List<AttachmentMetaData>.hasBigFile(): Boolean = any { metaData -> metaData.size > attachmentMaxFile }
+}

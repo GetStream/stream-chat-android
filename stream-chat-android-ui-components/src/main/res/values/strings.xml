@@ -81,7 +81,7 @@
     <string name="stream_ui_attachment_downloading_started">Download started</string>
     <string name="stream_ui_title_thread_reply">Thread Reply</string>
     <string name="stream_ui_subtitle_thread">with %s</string>
-    <string name="stream_ui_file_too_big">This file is too large. File limit is 20 MB.</string>
+    <string name="stream_ui_file_too_big">This file is too large. File limit is %d MB.</string>
 
     <!-- Message options -->
     <string name="stream_ui_message_option_reply">Reply</string>
