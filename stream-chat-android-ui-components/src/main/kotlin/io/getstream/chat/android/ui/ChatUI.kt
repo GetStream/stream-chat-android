@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 
 /**
- * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
+ * ChatUI handles any configuration for the Chat UI elements.
  *
  * @param fonts allows you to overwrite fonts
  * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
