@@ -236,13 +236,6 @@ public abstract interface class com/getstream/sdk/chat/navigation/ChatNavigator 
 	public abstract fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)V
 }
 
-public final class com/getstream/sdk/chat/navigation/ChatNavigatorImpl : com/getstream/sdk/chat/navigation/ChatNavigator {
-	public static final field Companion Lcom/getstream/sdk/chat/navigation/ChatNavigatorImpl$Companion;
-	public static final field EMPTY_HANDLER Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;
-	public fun <init> (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)V
-	public fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)V
-}
-
 public final class com/getstream/sdk/chat/navigation/ChatNavigatorImpl$Companion {
 }
 
