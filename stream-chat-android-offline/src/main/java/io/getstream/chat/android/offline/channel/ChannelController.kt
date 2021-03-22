@@ -70,7 +70,6 @@ import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -118,14 +117,14 @@ internal class ChannelController(
 
     private var uploadStatusMessage: Message? = null
 
-    val repliedMessage: Flow<Message?> = _repliedMessage
+    val repliedMessage: StateFlow<Message?> = _repliedMessage
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages = _messages.map { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
         messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-    val messages: Flow<List<Message>> = sortedVisibleMessages
+    val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
     private val _messagesState: StateFlow<ChannelController.MessagesState> =
         _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
@@ -135,11 +134,11 @@ internal class ChannelController(
                 else -> ChannelController.MessagesState.Result(messages)
             }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelController.MessagesState.NoQueryActive)
-    val messagesState: Flow<ChannelController.MessagesState> = _messagesState
+    val messagesState: StateFlow<ChannelController.MessagesState> = _messagesState
 
-    val oldMessages: Flow<List<Message>> = messagesTransformation(_oldMessages)
+    val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): Flow<List<Message>> {
+    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): StateFlow<List<Message>> {
         return messages.map { messageMap ->
             messageMap.values
                 .asSequence()
@@ -148,15 +147,18 @@ internal class ChannelController(
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
-        }
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
     }
 
     /** the number of people currently watching the channel */
-    val watcherCount: Flow<Int> = _watcherCount
+    val watcherCount: StateFlow<Int> = _watcherCount
+
     /** the list of users currently watching this channel */
-    val watchers: Flow<List<User>> = _watchers.map { it.values.sortedBy { user -> user.createdAt } }
+    val watchers: StateFlow<List<User>> = _watchers.map { it.values.sortedBy(User::createdAt) }
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+
     /** who is currently typing (current user is excluded from this) */
-    val typing: Flow<TypingEvent> = _typing
+    val typing: StateFlow<TypingEvent> = _typing
         .map {
             val userList = it.values
                 .sortedBy(ChatEvent::createdAt)
@@ -168,34 +170,48 @@ internal class ChannelController(
                 }
 
             TypingEvent(channelId, userList)
-        }
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
 
     /** how far every user in this channel has read */
-    val reads: Flow<List<ChannelUserRead>> = _reads
+    val reads: StateFlow<List<ChannelUserRead>> = _reads
         .map { it.values.sortedBy(ChannelUserRead::lastRead) }
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     /** read status for the current user */
-    val read: Flow<ChannelUserRead?> = _read
+    val read: StateFlow<ChannelUserRead?> = _read
+
     /** unread count for this channel, calculated based on read state (this works even if you're offline)*/
-    val unreadCount: Flow<Int?> = _unreadCount
+    val unreadCount: StateFlow<Int?> = _unreadCount
+
     /** the list of members of this channel */
-    val members: Flow<List<Member>> = _members.map { it.values.sortedBy(Member::createdAt) }
-    /** LiveData object with the channel data */
-    val channelData: Flow<ChannelData> = _channelData.filterNotNull()
+    val members: StateFlow<List<Member>> = _members
+        .map { it.values.sortedBy(Member::createdAt) }
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+
+    /** StateFlow object with the channel data */
+    val channelData: StateFlow<ChannelData> = _channelData.filterNotNull()
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelData(type = channelType, channelId = channelId))
+
     /** if the channel is currently hidden */
-    val hidden: Flow<Boolean> = _hidden
+    val hidden: StateFlow<Boolean> = _hidden
+
     /** if the channel is currently muted */
-    val muted: Flow<Boolean> = _muted
+    val muted: StateFlow<Boolean> = _muted
+
     /** if we are currently loading */
-    val loading: Flow<Boolean> = _loading
+    val loading: StateFlow<Boolean> = _loading
+
     /** if we are currently loading older messages */
-    val loadingOlderMessages: Flow<Boolean> = _loadingOlderMessages
+    val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
+
     /** if we are currently loading newer messages */
-    val loadingNewerMessages: Flow<Boolean> = _loadingNewerMessages
+    val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages
+
     /** set to true if there are no more older messages to load */
-    val endOfOlderMessages: Flow<Boolean> = _endOfOlderMessages
+    val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
+
     /** set to true if there are no more newer messages to load */
-    val endOfNewerMessages: Flow<Boolean> = _endOfNewerMessages
+    val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
 
     var recoveryNeeded: Boolean = false
     private var lastMarkReadEvent: Date? = null
@@ -479,7 +495,7 @@ internal class ChannelController(
             )
         }
         loader.value = true
-        // first we load the data from room and update the messages and channel livedata
+        // first we load the data from room and update the messages and channel flow
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
@@ -488,14 +504,14 @@ internal class ChannelController(
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateLiveDataFromLocalChannel(channel)
+                updateDataFromLocalChannel(channel)
             }
             loader.value = false
         }
 
         val result: Result<Channel> = queryOnlineJob.await().let { onlineResult ->
             if (onlineResult.isSuccess) {
-                onlineResult.also { updateLiveDataFromChannel(onlineResult.data()) }
+                onlineResult.also { updateDataFromChannel(onlineResult.data()) }
             } else {
                 if (onlineResult.error().isPermanent()) {
                     logger.logW("Permanent failure calling channel.watch for channel $cid, with error ${onlineResult.error()}")
@@ -587,10 +603,10 @@ internal class ChannelController(
             uploadStatusMessage = newMessage
         }
 
-        // Update livedata in channel controller
+        // Update flow in channel controller
         upsertMessage(newMessage)
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update livedata for currently running queries
+        // Update flow for currently running queries
         for (query in domainImpl.getActiveQueries()) {
             query.refreshChannel(cid)
         }
@@ -857,7 +873,7 @@ internal class ChannelController(
             )
         }
         domainImpl.repos.insertReaction(reaction)
-        // update livedata
+        // update flow
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
             it.addMyReaction(reaction, enforceUnique = enforceUnique)
@@ -904,7 +920,7 @@ internal class ChannelController(
 
         domainImpl.repos.insertReaction(reaction)
 
-        // update livedata
+        // update flow
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.apply { removeMyReaction(reaction) }
             ?.also {
@@ -1063,8 +1079,6 @@ internal class ChannelController(
     }
 
     internal suspend fun handleEvents(events: List<ChatEvent>) {
-        // livedata actually batches many frequent updates after each other
-        // we might not need a more optimized handleEvents implementation.. TBD.
         for (event in events) {
             handleEvent(event)
         }
@@ -1292,10 +1306,10 @@ internal class ChannelController(
         updateReads(listOf(read))
     }
 
-    private fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+    private fun updateDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateLiveDataFromChannel(localChannel)
+        updateDataFromChannel(localChannel)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -1304,8 +1318,8 @@ internal class ChannelController(
         updateOldMessagesFromChannel(localChannel)
     }
 
-    fun updateLiveDataFromChannel(c: Channel) {
-        // Update all the livedata objects based on the channel
+    fun updateDataFromChannel(c: Channel) {
+        // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
@@ -1319,7 +1333,7 @@ internal class ChannelController(
     }
 
     private fun updateOldMessagesFromChannel(c: Channel) {
-        // Update all the livedata objects based on the channel
+        // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
@@ -1370,7 +1384,7 @@ internal class ChannelController(
 
         editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
-        // Update livedata
+        // Update flow
         upsertMessage(editedMessage)
 
         // Update Room State
@@ -1413,7 +1427,7 @@ internal class ChannelController(
         message.deletedAt = Date()
         message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
-        // Update livedata
+        // Update flow
         upsertMessage(message)
 
         // Update Room State

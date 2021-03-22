@@ -116,7 +116,7 @@ internal class ChannelControllerImpl(
     fun upsertMembers(members: List<Member>) = flowChannelController.upsertMembers(members)
     fun upsertMember(member: Member) = flowChannelController.upsertMember(member)
 
-    fun updateLiveDataFromChannel(c: Channel) = flowChannelController.updateLiveDataFromChannel(c)
+    fun updateLiveDataFromChannel(c: Channel) = flowChannelController.updateDataFromChannel(c)
 
     suspend fun editMessage(message: Message): Result<Message> = flowChannelController.editMessage(message)
     suspend fun deleteMessage(message: Message): Result<Message> = flowChannelController.deleteMessage(message)
