@@ -50,10 +50,12 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
+	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public final fun getStyle ()Lcom/getstream/sdk/chat/style/ChatStyle;
 	public final fun getUrlSigner ()Lio/getstream/chat/android/ui/common/UrlSigner;
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
+	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public final fun setStyle (Lcom/getstream/sdk/chat/style/ChatStyle;)V
 	public final fun setUrlSigner (Lio/getstream/chat/android/ui/common/UrlSigner;)V
 }
@@ -463,6 +465,18 @@ public final class io/getstream/chat/android/ui/common/internal/ChatUIInitialize
 
 public abstract interface class io/getstream/chat/android/ui/common/markdown/ChatMarkdown {
 	public abstract fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator {
+	public static final field Companion Lio/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion;
+	public static final field EMPTY_HANDLER Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;
+	public fun <init> ()V
+	public fun <init> (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)V
+	public synthetic fun <init> (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)V
+}
+
+public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion {
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/style/ChatFonts {
