@@ -14,6 +14,7 @@ public class MessageListItemStyle private constructor(
     @ColorInt public val messageLinkTextColorTheirs: Int?,
     public var reactionsEnabled: Boolean,
     public var threadsEnabled: Boolean,
+    public val linkDescriptionMaxLines: Int
 ) : Serializable {
 
     @ColorInt
@@ -51,6 +52,8 @@ public class MessageListItemStyle private constructor(
 
         private var reactionsEnabled: Boolean = true
         private var threadsEnabled: Boolean = true
+
+        private var linkDescriptionMaxLines: Int = 5
 
         fun messageBackgroundColorMine(
             @StyleableRes messageBackgroundColorMineStyleableId: Int,
@@ -108,6 +111,13 @@ public class MessageListItemStyle private constructor(
             this.threadsEnabled = attributes.getBoolean(threadsEnabled, defaultValue)
         }
 
+        fun linkDescriptionMaxLines(
+            maxLines: Int,
+            defaultValue: Int = 5,
+        ) = apply {
+            this.linkDescriptionMaxLines = attributes.getInt(maxLines, defaultValue)
+        }
+
         fun build(): MessageListItemStyle {
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
@@ -118,6 +128,7 @@ public class MessageListItemStyle private constructor(
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
+                linkDescriptionMaxLines = linkDescriptionMaxLines
             )
         }
 
