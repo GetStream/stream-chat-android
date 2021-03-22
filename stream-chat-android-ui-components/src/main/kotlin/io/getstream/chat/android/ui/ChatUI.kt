@@ -1,11 +1,11 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatStyle
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
+import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 
 /**

@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.util.contains
-import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.logger.ChatLogger

@@ -1,8 +1,3 @@
-public abstract interface class com/getstream/sdk/chat/style/ChatFonts {
-	public abstract fun getFont (Lcom/getstream/sdk/chat/style/TextStyle;)Landroid/graphics/Typeface;
-	public abstract fun setFont (Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;)V
-}
-
 public final class com/getstream/sdk/chat/style/ChatStyle {
 	public fun <init> ()V
 	public final fun getDefaultTextStyle ()Lcom/getstream/sdk/chat/style/TextStyle;
@@ -53,11 +48,11 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
-	public final fun getFonts ()Lcom/getstream/sdk/chat/style/ChatFonts;
+	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
 	public final fun getStyle ()Lcom/getstream/sdk/chat/style/ChatStyle;
 	public final fun getUrlSigner ()Lio/getstream/chat/android/ui/common/UrlSigner;
-	public final fun setFonts (Lcom/getstream/sdk/chat/style/ChatFonts;)V
+	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
 	public final fun setStyle (Lcom/getstream/sdk/chat/style/ChatStyle;)V
 	public final fun setUrlSigner (Lio/getstream/chat/android/ui/common/UrlSigner;)V
@@ -468,6 +463,11 @@ public final class io/getstream/chat/android/ui/common/internal/ChatUIInitialize
 
 public abstract interface class io/getstream/chat/android/ui/common/markdown/ChatMarkdown {
 	public abstract fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/style/ChatFonts {
+	public abstract fun getFont (Lcom/getstream/sdk/chat/style/TextStyle;)Landroid/graphics/Typeface;
+	public abstract fun setFont (Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;)V
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
@@ -1206,7 +1206,7 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 
 public final class io/getstream/sdk/chat/ChatUI {
 	public static final field Companion Lio/getstream/sdk/chat/ChatUI$Companion;
-	public final fun getFonts ()Lcom/getstream/sdk/chat/style/ChatFonts;
+	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
 	public final fun getNavigator ()Lcom/getstream/sdk/chat/navigation/ChatNavigator;
 	public final fun getStrings ()Lcom/getstream/sdk/chat/utils/strings/ChatStrings;
@@ -1219,7 +1219,7 @@ public final class io/getstream/sdk/chat/ChatUI$Builder {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/livedata/ChatDomain;Landroid/content/Context;)V
 	public final fun build ()Lio/getstream/sdk/chat/ChatUI;
-	public final fun withFonts (Lcom/getstream/sdk/chat/style/ChatFonts;)Lio/getstream/sdk/chat/ChatUI$Builder;
+	public final fun withFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)Lio/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)Lio/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withNavigationHandler (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)Lio/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withStrings (Lcom/getstream/sdk/chat/utils/strings/ChatStrings;)Lio/getstream/sdk/chat/ChatUI$Builder;

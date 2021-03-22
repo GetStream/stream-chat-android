@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
-import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
@@ -16,6 +15,7 @@ import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.BuildConfig
+import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 
 /**
