@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
@@ -18,7 +19,6 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.Attachmen
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
-import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 /**
  * Factory for creating a content view for links attachments and other types of attachments.

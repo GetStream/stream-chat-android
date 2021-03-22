@@ -21,12 +21,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.leftDrawable
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,

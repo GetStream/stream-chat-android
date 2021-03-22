@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 
@@ -19,9 +20,8 @@ public data class AvatarStyle(
 ) {
 
     internal companion object {
-
-        operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle =
-            context.obtainStyledAttributes(
+        operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle {
+            return context.obtainStyledAttributes(
                 attrs,
                 R.styleable.AvatarView,
                 0,
@@ -67,7 +67,8 @@ public data class AvatarStyle(
                     avatarInitialText = avatarInitialText,
                     onlineIndicatorEnabled = onlineIndicatorEnabled,
                     onlineIndicatorPosition = onlineIndicatorPosition,
-                )
+                ).let(TransformStyle.avatarStyleTransformer::transform)
             }
+        }
     }
 }
