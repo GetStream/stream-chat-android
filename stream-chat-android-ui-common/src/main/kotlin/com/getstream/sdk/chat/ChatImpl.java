@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
 import com.getstream.sdk.chat.navigation.ChatNavigatorImpl;
 import com.getstream.sdk.chat.style.ChatFonts;
-import com.getstream.sdk.chat.utils.ChatStrings;
+import com.getstream.sdk.chat.utils.strings.ChatStrings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

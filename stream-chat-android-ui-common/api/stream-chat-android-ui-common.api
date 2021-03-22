@@ -7,7 +7,7 @@ public abstract interface class com/getstream/sdk/chat/Chat {
 	public abstract fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
 	public abstract fun getNavigator ()Lcom/getstream/sdk/chat/navigation/ChatNavigator;
 	public abstract fun getOnlineStatus ()Landroidx/lifecycle/LiveData;
-	public abstract fun getStrings ()Lcom/getstream/sdk/chat/utils/ChatStrings;
+	public abstract fun getStrings ()Lcom/getstream/sdk/chat/utils/strings/ChatStrings;
 	public abstract fun getUnreadChannels ()Landroidx/lifecycle/LiveData;
 	public abstract fun getUnreadMessages ()Landroidx/lifecycle/LiveData;
 	public abstract fun getVersion ()Ljava/lang/String;
@@ -62,7 +62,7 @@ public final class com/getstream/sdk/chat/ChatUI {
 	public final fun getFonts ()Lcom/getstream/sdk/chat/style/ChatFonts;
 	public final fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
 	public final fun getNavigator ()Lcom/getstream/sdk/chat/navigation/ChatNavigator;
-	public final fun getStrings ()Lcom/getstream/sdk/chat/utils/ChatStrings;
+	public final fun getStrings ()Lcom/getstream/sdk/chat/utils/strings/ChatStrings;
 	public final fun getUrlSigner ()Lcom/getstream/sdk/chat/UrlSigner;
 	public final fun getVersion ()Ljava/lang/String;
 	public static final fun instance ()Lcom/getstream/sdk/chat/ChatUI;
@@ -75,7 +75,7 @@ public final class com/getstream/sdk/chat/ChatUI$Builder {
 	public final fun withFonts (Lcom/getstream/sdk/chat/style/ChatFonts;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withNavigationHandler (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)Lcom/getstream/sdk/chat/ChatUI$Builder;
-	public final fun withStrings (Lcom/getstream/sdk/chat/utils/ChatStrings;)Lcom/getstream/sdk/chat/ChatUI$Builder;
+	public final fun withStrings (Lcom/getstream/sdk/chat/utils/strings/ChatStrings;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withStyle (Lcom/getstream/sdk/chat/style/ChatStyle;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withUrlSigner (Lcom/getstream/sdk/chat/UrlSigner;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 }
@@ -320,17 +320,6 @@ public final class com/getstream/sdk/chat/style/TextStyle$Builder {
 	public final fun size (I)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun size (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun style (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
-}
-
-public abstract interface class com/getstream/sdk/chat/utils/ChatStrings {
-	public abstract fun get (I)Ljava/lang/String;
-	public abstract fun get (I[Ljava/lang/Object;)Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/utils/ChatStringsImpl : com/getstream/sdk/chat/utils/ChatStrings {
-	public fun <init> (Landroid/content/Context;)V
-	public fun get (I)Ljava/lang/String;
-	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
 public abstract interface class com/getstream/sdk/chat/utils/DateFormatter {
@@ -1958,6 +1947,17 @@ public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView 
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	protected fun paintMaskCanvas (Landroid/graphics/Canvas;Landroid/graphics/Paint;II)V
 	public fun setShape (Landroid/content/Context;Landroid/graphics/drawable/Drawable;)V
+}
+
+public abstract interface class com/getstream/sdk/chat/utils/strings/ChatStrings {
+	public abstract fun get (I)Ljava/lang/String;
+	public abstract fun get (I[Ljava/lang/Object;)Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/getstream/sdk/chat/utils/strings/ChatStrings {
+	public fun <init> (Landroid/content/Context;)V
+	public fun get (I)Ljava/lang/String;
+	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {

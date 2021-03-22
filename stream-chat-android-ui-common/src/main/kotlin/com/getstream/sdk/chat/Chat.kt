@@ -9,8 +9,8 @@ import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
-import com.getstream.sdk.chat.utils.ChatStrings
-import com.getstream.sdk.chat.utils.ChatStringsImpl
+import com.getstream.sdk.chat.utils.strings.ChatStrings
+import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User

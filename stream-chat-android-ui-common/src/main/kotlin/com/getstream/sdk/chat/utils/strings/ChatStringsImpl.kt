@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils
+package com.getstream.sdk.chat.utils.strings
 
 import android.content.Context
 
