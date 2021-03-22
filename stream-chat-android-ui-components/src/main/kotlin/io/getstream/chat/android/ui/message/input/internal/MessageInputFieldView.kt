@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -24,6 +25,8 @@ import io.getstream.chat.android.ui.message.input.attachment.selected.internal.S
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
 import java.io.File
 import kotlin.properties.Delegates
+
+private const val SIZE_MEGA_20 = 20 * 1048576
 
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
@@ -203,27 +206,42 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
-        binding.messageEditText.hint = attachmentModeHint
+        if (mode.attachments.hasBigFile()) {
+            alertForBigFile()
+        } else {
+            binding.messageEditText.hint = attachmentModeHint
 
-        selectedAttachments = mode.attachments.toList()
-        binding.selectedMediaAttachmentsRecyclerView.isVisible = false
-        selectedMediaAttachmentAdapter.clear()
-        binding.selectedFileAttachmentsRecyclerView.isVisible = true
-        selectedFileAttachmentAdapter.setItems(selectedAttachments)
+            selectedAttachments = mode.attachments.toList()
+            binding.selectedMediaAttachmentsRecyclerView.isVisible = false
+            selectedMediaAttachmentAdapter.clear()
+            binding.selectedFileAttachmentsRecyclerView.isVisible = true
+            selectedFileAttachmentAdapter.setItems(selectedAttachments)
 
-        selectedAttachmentsChanged()
+            selectedAttachmentsChanged()
+        }
     }
 
     private fun switchToMediaAttachmentMode(mode: Mode.MediaAttachmentMode) {
-        binding.messageEditText.hint = attachmentModeHint
+        if (mode.attachments.hasBigFile()) {
+            alertForBigFile()
+        } else {
+            binding.messageEditText.hint = attachmentModeHint
 
-        selectedAttachments = mode.attachments.toList()
-        binding.selectedFileAttachmentsRecyclerView.isVisible = false
-        selectedFileAttachmentAdapter.clear()
-        binding.selectedMediaAttachmentsRecyclerView.isVisible = true
-        selectedMediaAttachmentAdapter.setItems(selectedAttachments)
+            selectedAttachments = mode.attachments.toList()
+            binding.selectedFileAttachmentsRecyclerView.isVisible = false
+            selectedFileAttachmentAdapter.clear()
+            binding.selectedMediaAttachmentsRecyclerView.isVisible = true
+            selectedMediaAttachmentAdapter.setItems(selectedAttachments)
 
-        selectedAttachmentsChanged()
+            selectedAttachmentsChanged()
+        }
+    }
+
+    private fun alertForBigFile() {
+        AlertDialog.Builder(context)
+            .setMessage(R.string.stream_ui_file_too_big)
+            .setPositiveButton(R.string.stream_ui_ok_label) { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
     private fun switchToMessageMode() {
@@ -305,3 +323,5 @@ internal class MessageInputFieldView : FrameLayout {
         data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
 }
+
+private fun List<AttachmentMetaData>.hasBigFile(): Boolean = any { metaData -> metaData.size > SIZE_MEGA_20 }
