@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.ui.sample.common.initToolbar
@@ -69,7 +70,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
         binding.mediaAttachmentGridView.setMediaClickListener {
             val attachmentGalleryItems = binding.mediaAttachmentGridView.getAttachments()
             attachmentGalleryDestination.setData(attachmentGalleryItems, it)
-            attachmentGalleryDestination.navigate()
+            ChatUI.navigator.navigate(attachmentGalleryDestination)
         }
         binding.mediaAttachmentGridView.setOnLoadMoreListener {
             viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)

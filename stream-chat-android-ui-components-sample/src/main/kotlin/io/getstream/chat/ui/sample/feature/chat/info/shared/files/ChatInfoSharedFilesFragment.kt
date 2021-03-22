@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.view.EndlessScrollListener
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedFilesBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel
@@ -52,7 +53,9 @@ class ChatInfoSharedFilesFragment : Fragment() {
                 attachmentItem.message,
                 attachmentItem.attachment,
                 requireContext(),
-            ).navigate()
+            ).apply {
+                ChatUI.navigator.navigate(this)
+            }
         }
         if (args.cid != null) {
             bindViewModel()
