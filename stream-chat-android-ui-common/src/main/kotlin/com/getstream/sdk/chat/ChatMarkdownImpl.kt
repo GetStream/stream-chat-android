@@ -8,8 +8,8 @@ import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 
-public class ChatMarkdownImpl(context: Context?) : ChatMarkdown {
-    private val markwon: Markwon = Markwon.builder(context!!)
+public class ChatMarkdownImpl(context: Context) : ChatMarkdown {
+    private val markwon: Markwon = Markwon.builder(context)
         .usePlugin(CorePlugin.create())
         .usePlugin(LinkifyPlugin.create())
         .usePlugin(ImagesPlugin.create())
