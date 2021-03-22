@@ -81,7 +81,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
-- New `ChatUI` implementation
+- Replacing `ChatUI` with new `io.getstream.chat.android.ui.ChatUI` implementation
 - Added possibility to configure delete message option visibility using `streamUiDeleteMessageEnabled` attribute, and `MessageListView::setDeleteMessageEnabled` method
 - Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
 - Add `streamUiMentionsEnabled` attribute to `MessageInputView` and `MessageInputView::setMentionsEnabled` method to enable/disable mentions
