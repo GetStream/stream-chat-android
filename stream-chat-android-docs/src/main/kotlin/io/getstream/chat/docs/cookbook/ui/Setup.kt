@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.sdk.chat.ChatUI
 
 /**
  * @see <a href="https://github.com/GetStream/stream-chat-android/wiki/UI-Cookbook#setup">Setup</a>
@@ -20,8 +19,6 @@ class Setup {
         val domain = ChatDomain.Builder(applicationContext, client)
             .offlineEnabled()
             .build()
-
-        val ui = ChatUI.Builder(appContext = applicationContext).build()
     }
 
     fun connectUser() {

@@ -50,7 +50,6 @@ import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
-import io.getstream.sdk.chat.ChatUI
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -288,8 +287,6 @@ class Android {
             activity?.activityResultRegistry?.let(destination::register)
             val attachmentGalleryItems: List<AttachmentGalleryItem> = listOf()
             destination.setData(attachmentGalleryItems, 0)
-
-            ChatUI.instance().navigator.navigate(destination)
         }
     }
 

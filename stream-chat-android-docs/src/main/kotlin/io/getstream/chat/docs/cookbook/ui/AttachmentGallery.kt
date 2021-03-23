@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.cookbook.ui
 
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 
 /**
@@ -34,8 +33,5 @@ class AttachmentGallery : Fragment() {
 
         // Set the data to display
         destination.setData(attachmentGalleryItems = listOf(), attachmentIndex = 0)
-
-        // Fire the navigation request
-        ChatUI.navigator.navigate(destination)
     }
 }

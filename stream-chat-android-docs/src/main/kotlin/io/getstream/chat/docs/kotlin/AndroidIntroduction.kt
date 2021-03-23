@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.sdk.chat.ChatUI
 
 class AndroidIntroduction {
 
@@ -31,8 +30,6 @@ class AndroidIntroduction {
             // Enable offline support
             .offlineEnabled()
             .build()
-        // Step 3 - Set up UI components
-        val ui = ChatUI.Builder(applicationContext).build()
 
         // Step 2 - Authenticate and connect the user
         val user = User(
