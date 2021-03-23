@@ -2,10 +2,10 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import android.widget.TextView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(

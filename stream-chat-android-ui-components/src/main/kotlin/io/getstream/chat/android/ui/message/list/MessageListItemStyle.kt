@@ -1,11 +1,12 @@
-package io.getstream.chat.android.ui.message.list.internal
+package io.getstream.chat.android.ui.message.list
 
 import android.content.res.TypedArray
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.ui.TransformStyle
 import java.io.Serializable
 
-public class MessageListItemStyle private constructor(
+public class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
     @ColorInt public val messageTextColorMine: Int?,
@@ -13,8 +14,8 @@ public class MessageListItemStyle private constructor(
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
     public var reactionsEnabled: Boolean,
-    public var threadsEnabled: Boolean,
-    public val linkDescriptionMaxLines: Int
+    public val threadsEnabled: Boolean,
+    public val linkDescriptionMaxLines: Int,
 ) : Serializable {
 
     @ColorInt
@@ -129,7 +130,7 @@ public class MessageListItemStyle private constructor(
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
                 linkDescriptionMaxLines = linkDescriptionMaxLines
-            )
+            ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
         private fun Int.nullIfNotSet(): Int? {

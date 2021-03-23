@@ -8,8 +8,8 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
+import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsBubbleDrawer
-import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsViewStyle
 
 internal class SingleReactionView : FrameLayout {
     private val binding = StreamUiItemMessageReactionBinding.inflate(context.inflater, this, true)
