@@ -17,7 +17,21 @@ internal class DtoTestDataTest {
 
         anyAdapter.fromJson(ReactionDtoTestData.downstreamJson)
         anyAdapter.fromJson(ReactionDtoTestData.downstreamJsonWithoutExtraData)
+        anyAdapter.fromJson(ReactionDtoTestData.upstreamJson)
+        anyAdapter.fromJson(ReactionDtoTestData.upstreamJsonWithoutExtraData)
 
         anyAdapter.fromJson(UserDtoTestData.downstreamJson)
+        anyAdapter.fromJson(UserDtoTestData.downstreamJsonWithoutExtraData)
+        anyAdapter.fromJson(UserDtoTestData.upstreamJson)
+        anyAdapter.fromJson(UserDtoTestData.upstreamJsonWithoutExtraData)
+
+        anyAdapter.fromJson(ChannelDtoTestData.configJson)
+        anyAdapter.fromJson(ChannelDtoTestData.downstreamJson)
+        anyAdapter.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData)
+        anyAdapter.fromJson(ChannelDtoTestData.upstreamJson)
+        anyAdapter.fromJson(ChannelDtoTestData.upstreamJsonWithoutExtraData)
+
+        anyAdapter.fromJson(AttachmentDtoTestData.json)
+        anyAdapter.fromJson(AttachmentDtoTestData.jsonWithoutExtraData)
     }
 }

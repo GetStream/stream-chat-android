@@ -13,15 +13,15 @@ internal class DownstreamReactionDtoAdapterTest {
     private val parser = MoshiChatParser()
 
     @Test
-    fun `Deserialize JSON message with custom fields`() {
-        val message = parser.fromJson(downstreamJson, DownstreamReactionDto::class.java)
-        assertThat(message).isEqualTo(downstreamReaction)
+    fun `Deserialize JSON reaction with custom fields`() {
+        val reaction = parser.fromJson(downstreamJson, DownstreamReactionDto::class.java)
+        assertThat(reaction).isEqualTo(downstreamReaction)
     }
 
     @Test
-    fun `Deserialize JSON message without custom fields`() {
-        val message = parser.fromJson(downstreamJsonWithoutExtraData, DownstreamReactionDto::class.java)
-        assertThat(message).isEqualTo(downstreamReactionWithoutExtraData)
+    fun `Deserialize JSON reaction without custom fields`() {
+        val reaction = parser.fromJson(downstreamJsonWithoutExtraData, DownstreamReactionDto::class.java)
+        assertThat(reaction).isEqualTo(downstreamReactionWithoutExtraData)
     }
 
     @Test

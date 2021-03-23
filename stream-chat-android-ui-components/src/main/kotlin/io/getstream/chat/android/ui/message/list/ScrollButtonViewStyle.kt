@@ -1,17 +1,18 @@
-package io.getstream.chat.android.ui.message.list.internal
+package io.getstream.chat.android.ui.message.list
 
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.ui.TransformStyle
 
-internal class ScrollButtonViewStyle(
-    val scrollButtonEnabled: Boolean,
-    val scrollButtonUnreadEnabled: Boolean,
-    val scrollButtonColor: Int,
-    val scrollButtonRippleColor: Int,
-    val scrollButtonBadgeColor: Int,
-    val scrollButtonIcon: Drawable?
+public class ScrollButtonViewStyle(
+    public val scrollButtonEnabled: Boolean,
+    public val scrollButtonUnreadEnabled: Boolean,
+    public val scrollButtonColor: Int,
+    public val scrollButtonRippleColor: Int,
+    public val scrollButtonBadgeColor: Int,
+    public val scrollButtonIcon: Drawable?,
 ) {
 
     internal class Builder(private val a: TypedArray) {
@@ -24,54 +25,55 @@ internal class ScrollButtonViewStyle(
 
         fun scrollButtonEnabled(
             @StyleableRes scrollButtonEnabledStyleableId: Int,
-            defaultValue: Boolean
+            defaultValue: Boolean,
         ) = apply {
             scrollButtonEnabled = a.getBoolean(scrollButtonEnabledStyleableId, defaultValue)
         }
 
         fun scrollButtonUnreadEnabled(
             @StyleableRes scrollButtonUnreadEnabledStyleableId: Int,
-            defaultValue: Boolean
+            defaultValue: Boolean,
         ) = apply {
             scrollButtonUnreadEnabled = a.getBoolean(scrollButtonUnreadEnabledStyleableId, defaultValue)
         }
 
         fun scrollButtonColor(
             @StyleableRes scrollButtonColorStyleableId: Int,
-            @ColorInt defaultValue: Int
+            @ColorInt defaultValue: Int,
         ) = apply {
             scrollButtonColor = a.getColor(scrollButtonColorStyleableId, defaultValue)
         }
 
         fun scrollButtonRippleColor(
             @StyleableRes scrollButtonRippleColorStyleableId: Int,
-            @ColorInt defaultColor: Int
+            @ColorInt defaultColor: Int,
         ) = apply {
             scrollButtonRippleColor = a.getColor(scrollButtonRippleColorStyleableId, defaultColor)
         }
 
         fun scrollButtonBadgeColor(
             @StyleableRes scrollButtonBadgeColorStyleableId: Int,
-            @ColorInt defaultColor: Int
+            @ColorInt defaultColor: Int,
         ) = apply {
             scrollButtonBadgeColor = a.getColor(scrollButtonBadgeColorStyleableId, defaultColor)
         }
 
         fun scrollButtonIcon(
             @StyleableRes scrollButtonIconStyleableId: Int,
-            defaultIcon: Drawable?
+            defaultIcon: Drawable?,
         ) = apply {
             scrollButtonIcon = a.getDrawable(scrollButtonIconStyleableId) ?: defaultIcon
         }
 
-        fun build(): ScrollButtonViewStyle =
-            ScrollButtonViewStyle(
-                scrollButtonEnabled,
-                scrollButtonUnreadEnabled,
-                scrollButtonColor,
-                scrollButtonRippleColor,
-                scrollButtonBadgeColor,
-                scrollButtonIcon
-            )
+        fun build(): ScrollButtonViewStyle {
+            return ScrollButtonViewStyle(
+                scrollButtonEnabled = scrollButtonEnabled,
+                scrollButtonUnreadEnabled = scrollButtonUnreadEnabled,
+                scrollButtonColor = scrollButtonColor,
+                scrollButtonRippleColor = scrollButtonRippleColor,
+                scrollButtonBadgeColor = scrollButtonBadgeColor,
+                scrollButtonIcon = scrollButtonIcon
+            ).let(TransformStyle.scrollButtonStyleTransformer::transform)
+        }
     }
 }
