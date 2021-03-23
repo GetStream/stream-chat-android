@@ -5,17 +5,20 @@ import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsPostponeHelper(
     private val api: ChatApi,
     private val clientStateService: ClientStateService,
+    private val coroutineScope: CoroutineScope = GlobalScope,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT
 ) {
@@ -24,12 +27,12 @@ internal class QueryChannelsPostponeHelper(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest
-    ): Call<Channel> = runBlocking {
-        doSafeJob { api.queryChannel(channelType, channelId, request) }
+    ): Call<Channel> = CoroutineCall(coroutineScope) {
+        doSafeJob { api.queryChannel(channelType, channelId, request) }.execute()
     }
 
-    internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = runBlocking {
-        doSafeJob { api.queryChannels(request) }
+    internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = CoroutineCall(coroutineScope) {
+        doSafeJob { api.queryChannels(request) }.execute()
     }
 
     private suspend fun <T : Any> doSafeJob(job: () -> Call<T>): Call<T> =
