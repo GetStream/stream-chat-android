@@ -505,9 +505,24 @@ public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator 
 public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion {
 }
 
+public class io/getstream/chat/android/ui/common/navigation/destinations/AttachmentDestination : com/getstream/sdk/chat/navigation/destinations/ChatDestination {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)V
+	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun navigate ()V
+	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
+	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/style/ChatFonts {
 	public abstract fun getFont (Lcom/getstream/sdk/chat/style/TextStyle;)Landroid/graphics/Typeface;
 	public abstract fun setFont (Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;)V
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentActivity : androidx/appcompat/app/AppCompatActivity {
+	public fun <init> ()V
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity : androidx/appcompat/app/AppCompatActivity {
@@ -614,6 +629,14 @@ public class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem$Cr
 	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
 	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
 	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
+public class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field TYPE_KEY Ljava/lang/String;
+	public static final field URL_KEY Ljava/lang/String;
+	public fun <init> ()V
+	protected fun onCreate (Landroid/os/Bundle;)V
+	public fun playVideo (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {
