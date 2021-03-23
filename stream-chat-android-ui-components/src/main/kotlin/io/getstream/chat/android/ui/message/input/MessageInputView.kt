@@ -205,7 +205,7 @@ public class MessageInputView : ConstraintLayout {
         binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
         setMentionsEnabled(style.mentionsEnabled)
         setCommandsEnabled(style.commandsEnabled)
-        binding.messageInputFieldView.setAttachmentMaxFileMb(style.maxFileSize)
+        binding.messageInputFieldView.setAttachmentMaxFileMb(style.attachmentMaxFileSize)
     }
 
     private fun dismissInputMode(inputMode: InputMode) {

@@ -11,6 +11,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 
+private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
+
 public class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
@@ -27,6 +29,7 @@ public class MessageInputViewStyle(
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
+    public val attachmentMaxFileSize: Int
 ) {
 
     internal companion object {
@@ -159,6 +162,11 @@ public class MessageInputViewStyle(
                 )
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
+                val attachmentMaxFileSize = a.getInt(
+                    R.styleable.MessageInputView_streamUiAttachmentMaxFileSizeMb,
+                    DEFAULT_ATTACHMENT_MAX_SIZE_MB
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -175,6 +183,7 @@ public class MessageInputViewStyle(
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
+                    attachmentMaxFileSize = attachmentMaxFileSize,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
