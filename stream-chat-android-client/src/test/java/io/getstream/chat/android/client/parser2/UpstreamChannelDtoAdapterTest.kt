@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -13,13 +13,13 @@ internal class UpstreamChannelDtoAdapterTest {
     @Test
     fun `Serialize JSON channel with custom fields`() {
         val jsonString = parser.toJson(ChannelDtoTestData.upstreamChannel)
-        Assertions.assertThat(jsonString).isEqualTo(ChannelDtoTestData.upstreamJson)
+        assertThat(jsonString).isEqualTo(ChannelDtoTestData.upstreamJson)
     }
 
     @Test
     fun `Serialize JSON channel without custom fields`() {
         val jsonString = parser.toJson(ChannelDtoTestData.upstreamChannelWithoutExtraData)
-        Assertions.assertThat(jsonString).isEqualTo(ChannelDtoTestData.upstreamJsonWithoutExtraData)
+        assertThat(jsonString).isEqualTo(ChannelDtoTestData.upstreamJsonWithoutExtraData)
     }
 
     @Test
