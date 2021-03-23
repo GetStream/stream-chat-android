@@ -3,11 +3,10 @@ package io.getstream.sdk.chat
 import android.content.Context
 import android.widget.TextView
 import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.ChatMarkdownImpl
 import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
-import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
+import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
@@ -81,6 +80,7 @@ public class ChatUI internal constructor(
         }
 
         public fun withNavigationHandler(handler: ChatNavigationHandler): Builder = apply {
+            // TODO: update new ChatUI.navigator
             this.navigationHandler = handler
         }
 
@@ -94,11 +94,13 @@ public class ChatUI internal constructor(
 
         public fun build(): ChatUI {
             val chatStyle = style ?: ChatStyle()
+            val fakeNavigator: ChatNavigator = ChatNavigator { }
+            val fakeMarkdown: ChatMarkdown = ChatMarkdown { _, s -> }
             instance = ChatUI(
                 fonts ?: ChatFontsImpl(chatStyle, appContext),
                 strings ?: ChatStringsImpl(appContext),
-                ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER),
-                markdown ?: ChatMarkdownImpl(appContext),
+                fakeNavigator,
+                fakeMarkdown,
                 urlSigner ?: UrlSigner.DefaultUrlSigner()
             )
 
@@ -120,6 +122,13 @@ public class ChatUI internal constructor(
                     override fun signFileUrl(url: String): String = it.signFileUrl(url)
                     override fun signImageUrl(url: String): String = it.signImageUrl(url)
                 }
+            }
+            navigationHandler?.let {
+                val handler = object : ChatNavigationHandler {
+                    override fun navigate(destination: ChatDestination): Boolean = it.navigate(destination)
+                }
+                io.getstream.chat.android.ui.ChatUI.navigator =
+                    io.getstream.chat.android.ui.common.navigation.ChatNavigator(handler)
             }
 
             return instance()
