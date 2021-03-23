@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.supportedReactionCounts
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionsAdapter
+import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 
 @InternalStreamChatApi
 public class ViewReactionsView : RecyclerView {

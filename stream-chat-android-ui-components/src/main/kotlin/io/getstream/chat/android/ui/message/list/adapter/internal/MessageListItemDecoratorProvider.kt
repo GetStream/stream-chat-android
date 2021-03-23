@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -13,7 +14,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReactionsDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReplyDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
-import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 internal class MessageListItemDecoratorProvider(
     currentUser: User,

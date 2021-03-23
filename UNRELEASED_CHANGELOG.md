@@ -92,7 +92,8 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Add `streamUiCommandsEnabled` attribute to `MessageInputView` and `MessageInputView::setCommandsEnabled` method to enable/disable commands
 - Add `ChannelListItemPredicate` to our `channelListView` to allow filter `ChannelListItem` before they are rendered
 - Open `AvatarBitmapFactory` class
-- Add `AvatarBitmapFactory::setInstance` method to allow custom implemention of `AvatarBitmapFactory`
+- Add `AvatarBitmapFactory::setInstance` method to allow custom implementation of `AvatarBitmapFactory`
+- Add `StyleTransformer` class to allow application-wide style customizations
 
 ### ⚠️ Changed
 

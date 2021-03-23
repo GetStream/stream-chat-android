@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -22,7 +23,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
-import io.getstream.chat.android.ui.message.list.internal.MessageListItemStyle
 
 public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
