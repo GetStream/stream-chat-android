@@ -21,7 +21,6 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
-import io.getstream.chat.android.ui.message.input.internal.MessageInputViewStyle
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import java.io.File
@@ -251,7 +250,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configAttachmentButton() {
         binding.attachmentsButton.run {
-            style.attachButtonIcon?.let(this::setImageDrawable)
+            style.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
                     AttachmentDialogFragment.newInstance()
@@ -264,7 +263,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configLightningButton() {
         binding.commandsButton.run {
-            style.lightningButtonIcon?.let(this::setImageDrawable)
+            style.lightningButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
                     if (it.isSuggestionListVisible()) {
@@ -341,13 +340,13 @@ public class MessageInputView : ConstraintLayout {
         isSendButtonEnabled = style.sendButtonEnabled
 
         binding.sendMessageButtonDisabled.run {
-            style.sendButtonDisabledIcon?.let(this::setImageDrawable)
+            style.sendButtonDisabledIcon.let(this::setImageDrawable)
             alpha = 1F
             isEnabled = false
         }
 
         binding.sendMessageButtonEnabled.run {
-            style.sendButtonEnabledIcon?.let(this::setImageDrawable)
+            style.sendButtonEnabledIcon.let(this::setImageDrawable)
             alpha = 0F
             isEnabled = false
         }

@@ -26,7 +26,6 @@ internal class MessageInputViewStyle(context: Context, attrs: AttributeSet?) {
     val showSendAlsoToChannelCheckbox: Boolean
     val mentionsEnabled: Boolean
     val commandsEnabled: Boolean
-    val maxFileSize: Int
 
     init {
         context.obtainStyledAttributes(
@@ -39,9 +38,6 @@ internal class MessageInputViewStyle(context: Context, attrs: AttributeSet?) {
                 R.styleable.MessageInputView_streamUiAttachButtonEnabled,
                 true
             )
-
-            maxFileSize = a.getInt(R.styleable.MessageInputView_streamUiAttachmentMaxFileSizeMb, 20) * ONE_MEGA
-
             attachButtonIcon = a.getDrawable(R.styleable.MessageInputView_streamUiAttachButtonIcon)
                 ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)
                     ?.apply {

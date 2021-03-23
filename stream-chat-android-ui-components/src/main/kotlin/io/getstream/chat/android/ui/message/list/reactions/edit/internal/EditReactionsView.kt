@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.ReactionType
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
+import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionsAdapter
 
