@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
@@ -1308,6 +1309,7 @@ public class ChatClient internal constructor(
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
+        private var enableMoshi = false
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
@@ -1339,6 +1341,11 @@ public class ChatClient internal constructor(
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
             return this
+        }
+
+        @ExperimentalStreamChatApi
+        public fun useNewSerialization(enabled: Boolean): Builder = apply {
+            this.enableMoshi = enabled
         }
 
         public fun baseTimeout(timeout: Long): Builder {
@@ -1392,18 +1399,17 @@ public class ChatClient internal constructor(
             }
 
             val config = ChatClientConfig(
-                apiKey,
-                "https://$baseUrl/",
-                "https://$cdnUrl/",
-                "wss://$baseUrl/",
-                baseTimeout,
-                cdnTimeout,
-                warmUp,
-                ChatLogger.Config(logLevel, loggerHandler),
+                apiKey = apiKey,
+                httpUrl = "https://$baseUrl/",
+                cdnHttpUrl = "https://$cdnUrl/",
+                wssUrl = "wss://$baseUrl/",
+                baseTimeout = baseTimeout,
+                cdnTimeout = cdnTimeout,
+                warmUp = warmUp,
+                loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )
 
-            // Should not be set by clients yet, only for development
-            config.enableMoshi = false
+            config.enableMoshi = enableMoshi
 
             val module =
                 ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager)

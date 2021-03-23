@@ -39,6 +39,9 @@ public final class io/getstream/chat/android/client/utils/Result {
 	public final fun isSuccess ()Z
 }
 
+public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {
+}
+
 public final class io/getstream/chat/android/core/internal/ExtensionsKt {
 	public static final fun getExhaustive (Ljava/lang/Object;)Ljava/lang/Object;
 }
