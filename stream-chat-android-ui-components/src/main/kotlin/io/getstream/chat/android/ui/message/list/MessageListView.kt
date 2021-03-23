@@ -78,7 +78,6 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListLis
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
-import io.getstream.chat.android.ui.message.list.internal.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
 import kotlinx.coroutines.CoroutineScope

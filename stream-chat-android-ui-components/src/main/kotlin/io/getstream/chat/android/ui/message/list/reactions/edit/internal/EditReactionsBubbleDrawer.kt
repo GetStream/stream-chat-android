@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.reactions.edit.internal
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 
 internal class EditReactionsBubbleDrawer(
     private val editReactionsViewStyle: EditReactionsViewStyle

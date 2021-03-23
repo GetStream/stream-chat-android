@@ -33,6 +33,10 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 ### ⬆️ Improved
 
 ### ✅ Added
+- **Added a brand new serialization implementation, available as an opt-in API for now.** This can be enabled by making a `useNewSerialization(true)` call on the `ChatClient.Builder`.
+    - This new implementation will be more performant and greatly improve type safety in the networking code of the SDK.
+    - The old implementation remains the default for now, while we're making sure the new one is bug-free.
+    - We recommend that you opt-in to the new implementation and test your app with it, so that you can report any issues early and we can get them fixed before a general rollout.
 - Added `unflagMessage(messageId)` and `unflagUser(userId)` methods to `ChatClient`
 - Added support for querying banned users - added `ChatClient::queryBannedUsers` and `ChannelClient::queryBannedUsers`
 - Added `uploadsEnabled`, `urlEnrichmentEnabled`, `customEventsEnabled`, `pushNotificationsEnabled`, `messageRetention`, `automodBehavior` and `blocklistBehavior` fields to channel config
@@ -89,7 +93,8 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Add `streamUiCommandsEnabled` attribute to `MessageInputView` and `MessageInputView::setCommandsEnabled` method to enable/disable commands
 - Add `ChannelListItemPredicate` to our `channelListView` to allow filter `ChannelListItem` before they are rendered
 - Open `AvatarBitmapFactory` class
-- Add `AvatarBitmapFactory::setInstance` method to allow custom implemention of `AvatarBitmapFactory`
+- Add `AvatarBitmapFactory::setInstance` method to allow custom implementation of `AvatarBitmapFactory`
+- Add `StyleTransformer` class to allow application-wide style customizations
 
 ### ⚠️ Changed
 - Deprecated `ChatUI` class
