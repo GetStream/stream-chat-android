@@ -1,9 +1,7 @@
-package io.getstream.sdk.chat
+package com.getstream.sdk.chat
 
 import android.content.Context
 import android.widget.TextView
-import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
