@@ -2,45 +2,45 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class ChannelConfigRepositoryTest : BaseDomainTest() {
-    private val repoHelper by lazy { chatDomainImpl.repos }
+internal class ChannelConfigRepositoryTest : BaseDomainTest2() {
+    private val repositoryFacade by lazy { chatDomainImpl.repos }
 
     @Test
     fun testInsertAndRead() = runBlocking {
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
-        val config = repoHelper.selectChannelConfig("messaging")
+        repositoryFacade.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        val config = repositoryFacade.selectChannelConfig("messaging")
         Truth.assertThat(config).isEqualTo(config)
     }
 
     @Test
     fun testLoadAndRead() = runBlocking {
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", data.config1))
-        repoHelper.clearChannelConfigsCache()
-        var config = repoHelper.selectChannelConfig("messaging")
+        repositoryFacade.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        repositoryFacade.clearChannelConfigsCache()
+        var config = repositoryFacade.selectChannelConfig("messaging")
         Truth.assertThat(config).isNull()
-        repoHelper.cacheChannelConfigs()
-        config = repoHelper.selectChannelConfig("messaging")
+        repositoryFacade.cacheChannelConfigs()
+        config = repositoryFacade.selectChannelConfig("messaging")
         Truth.assertThat(config?.config).isEqualTo(data.config1)
     }
 
     @Test
     fun testUpdate() = runBlocking {
         val config1 = data.config1
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", config1))
+        repositoryFacade.insertChannelConfig(ChannelConfig("messaging", config1))
         val config2 = data.config1.copy(maxMessageLength = 200)
-        repoHelper.insertChannelConfig(ChannelConfig("messaging", config2))
+        repositoryFacade.insertChannelConfig(ChannelConfig("messaging", config2))
 
-        repoHelper.clearChannelConfigsCache()
-        repoHelper.cacheChannelConfigs()
+        repositoryFacade.clearChannelConfigsCache()
+        repositoryFacade.cacheChannelConfigs()
 
-        val config = repoHelper.selectChannelConfig("messaging")?.config
+        val config = repositoryFacade.selectChannelConfig("messaging")?.config
         Truth.assertThat(config).isEqualTo(config2)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }
