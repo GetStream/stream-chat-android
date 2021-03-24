@@ -6,7 +6,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.TransformStyle
 
-public class ScrollButtonViewStyle(
+public data class ScrollButtonViewStyle(
     public val scrollButtonEnabled: Boolean,
     public val scrollButtonUnreadEnabled: Boolean,
     public val scrollButtonColor: Int,

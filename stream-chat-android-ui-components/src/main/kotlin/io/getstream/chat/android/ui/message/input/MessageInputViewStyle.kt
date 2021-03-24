@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 
-public class MessageInputViewStyle(
+public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
     public val lightningButtonEnabled: Boolean,
