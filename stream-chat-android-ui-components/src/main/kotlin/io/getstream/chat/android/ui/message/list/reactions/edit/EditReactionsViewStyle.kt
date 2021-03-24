@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
-public class EditReactionsViewStyle(
+public data class EditReactionsViewStyle(
     public val bubbleColorMine: Int,
     public val bubbleColorTheirs: Int,
     public val totalHeight: Int,
