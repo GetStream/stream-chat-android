@@ -11,6 +11,8 @@ a files bigger than this is selected.
 ### ✅ Added
 Configure enable/disable of replies using XML in `MessageListView`
 Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
+It is possible now to configure the max size of the file upload using
+`app:streamUiAttachmentMaxFileSizeMb`
 
 ### ⚠️ Changed
 
