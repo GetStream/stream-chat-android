@@ -227,7 +227,7 @@ internal class ChannelController(
     private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> = ConcurrentHashMap()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
-        ThreadControllerImpl(threadId, this, client, domainImpl)
+        ThreadControllerImpl(threadId, this, domainImpl)
             .also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 

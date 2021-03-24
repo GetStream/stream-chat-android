@@ -24,6 +24,6 @@ internal fun ConfigDto.toDomain(): Config =
         maxMessageLength = max_message_length,
         automod = automod,
         automodBehavior = automod_behavior,
-        blocklistBehavior = blocklist_behavior,
+        blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map(CommandDto::toDomain),
     )

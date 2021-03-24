@@ -1,9 +1,7 @@
-package io.getstream.sdk.chat
+package com.getstream.sdk.chat
 
 import android.content.Context
 import android.widget.TextView
-import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.UrlSigner
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
@@ -33,7 +31,8 @@ import io.getstream.chat.android.ui.common.style.ChatFontsImpl
  */
 @Deprecated(
     level = DeprecationLevel.WARNING,
-    message = "Use ChatUI",
+    message = "Use new ChatUI implementation",
+    replaceWith = ReplaceWith("ChatUI", "io.getstream.chat.android.ui.ChatUI"),
 )
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
@@ -80,7 +79,6 @@ public class ChatUI internal constructor(
         }
 
         public fun withNavigationHandler(handler: ChatNavigationHandler): Builder = apply {
-            // TODO: update new ChatUI.navigator
             this.navigationHandler = handler
         }
 
