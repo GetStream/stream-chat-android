@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListI
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelListListenerContainerImpl
 import io.getstream.chat.android.ui.common.extensions.internal.cast
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 
 internal class SimpleChannelListView @JvmOverloads constructor(
     context: Context,
@@ -24,7 +25,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
     private val layoutManager: ScrollPauseLinearLayoutManager
     private val scrollListener: EndReachedScrollListener = EndReachedScrollListener()
-    private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider()
+    private val dividerDecoration: SimpleVerticalListDivider = SimpleVerticalListDivider(context)
 
     private var endReachedListener: ChannelListView.EndReachedListener? = null
 
@@ -102,7 +103,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
     }
 
     fun setItemSeparator(@DrawableRes drawableResource: Int) {
-        dividerDecoration.drawableResource = drawableResource
+        dividerDecoration.drawable = context.getDrawableCompat(drawableResource)!!
     }
 
     fun setItemSeparatorHeight(height: Int) {
