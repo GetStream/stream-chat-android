@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.inflater
@@ -39,12 +40,13 @@ internal class SelectedFileAttachmentAdapter(
             binding.apply {
                 ivFileThumb.loadAttachmentThumb(attachment)
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
-                tvFileTitle.text =
-                    if (item.size > attachmentMaxFileSize) {
-                        context.getString(R.string.stream_ui_file_too_big)
-                    } else {
-                        attachment.title
-                    }
+                if (item.size > attachmentMaxFileSize) {
+                    tvFileTitle.text = context.getString(R.string.stream_ui_file_too_big)
+                    tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+                } else {
+                    tvFileTitle.text = attachment.title
+                    tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
+                }
             }
         }
     }
