@@ -31,7 +31,8 @@ import io.getstream.chat.android.ui.common.style.ChatFontsImpl
  */
 @Deprecated(
     level = DeprecationLevel.WARNING,
-    message = "Use ChatUI",
+    message = "Use new ChatUI implementation",
+    replaceWith = ReplaceWith("ChatUI", "io.getstream.chat.android.ui.ChatUI"),
 )
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
@@ -78,7 +79,6 @@ public class ChatUI internal constructor(
         }
 
         public fun withNavigationHandler(handler: ChatNavigationHandler): Builder = apply {
-            // TODO: update new ChatUI.navigator
             this.navigationHandler = handler
         }
 
