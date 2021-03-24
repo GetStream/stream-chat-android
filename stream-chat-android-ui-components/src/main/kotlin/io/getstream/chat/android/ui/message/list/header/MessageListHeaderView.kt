@@ -84,6 +84,8 @@ public class MessageListHeaderView : ConstraintLayout {
         }
     }
 
+    public fun getOnlineStateSubtitle() : String = binding.onlineLabel.text.toString()
+
     public fun setThreadSubtitle(subtitle: String) {
         binding.onlineLabel.text = subtitle
     }

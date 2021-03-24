@@ -22,6 +22,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -42,6 +44,9 @@ internal class MessageInputFieldView : FrameLayout {
     private var contentChangeListener: ContentChangeListener? = null
     private var maxMessageLength: Int = Integer.MAX_VALUE
     private var attachmentMaxFileSize: Int = SIZE_MEGA_20
+
+    private val _hasBigAttachment = MutableStateFlow(false)
+    internal val hasBigAttachment: StateFlow<Boolean> = _hasBigAttachment
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
@@ -184,8 +189,13 @@ internal class MessageInputFieldView : FrameLayout {
         selectedAttachmentsChanged()
     }
 
+    private fun notifyBigAttachments() {
+        _hasBigAttachment.value = selectedAttachments.hasBigAttachment()
+    }
+
     private fun clearSelectedAttachments() {
         selectedAttachments = emptyList()
+        notifyBigAttachments()
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
@@ -217,6 +227,7 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageEditText.hint = attachmentModeHint
 
         selectedAttachments = mode.attachments.toList()
+
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
         binding.selectedFileAttachmentsRecyclerView.isVisible = true
@@ -279,6 +290,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     private fun selectedAttachmentsChanged() {
+        notifyBigAttachments()
         resetModeIfNecessary()
         contentChangeListener?.onSelectedAttachmentsChanged(selectedAttachments)
     }
@@ -315,4 +327,6 @@ internal class MessageInputFieldView : FrameLayout {
         data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
+
+    private fun List<AttachmentMetaData>.hasBigAttachment() = any { metaData -> metaData.size > attachmentMaxFileSize }
 }

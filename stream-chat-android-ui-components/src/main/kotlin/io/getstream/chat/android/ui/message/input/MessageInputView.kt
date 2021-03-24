@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -49,6 +50,11 @@ public class MessageInputView : ConstraintLayout {
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
+
+    public val attachmentBiggerThanMax: StateFlow<Boolean> by lazy {
+        binding.messageInputFieldView.hasBigAttachment
+    }
+
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
             if (attachments.isNotEmpty()) {
@@ -144,6 +150,8 @@ public class MessageInputView : ConstraintLayout {
         isSendButtonEnabled = false
         refreshControlsState()
     }
+
+
 
     /**
      * Enables or disables the handling of mentions in the message input view.
