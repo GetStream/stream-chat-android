@@ -882,7 +882,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListItemStyl
 	public final fun getStyleTextColor (Z)Ljava/lang/Integer;
 	public final fun getThreadsEnabled ()Z
 	public fun hashCode ()I
-	public final fun setReactionsEnabled (Z)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1070,7 +1069,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getReactionsEnabled ()Z
 	public final fun getScrollButtonViewStyle ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
 	public fun hashCode ()I
-	public final fun setReactionsEnabled (Z)V
 	public fun toString ()Ljava/lang/String;
 }
 
