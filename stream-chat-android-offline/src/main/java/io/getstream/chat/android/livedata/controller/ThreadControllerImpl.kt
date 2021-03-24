@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.wasCreatedAfterOrAt
+import io.getstream.chat.android.offline.channel.ChannelController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.map
  */
 internal class ThreadControllerImpl(
     override val threadId: String,
-    val channelControllerImpl: ChannelControllerImpl,
+    val channelControllerImpl: ChannelController,
     val client: ChatClient,
     val domain: ChatDomainImpl,
 ) : ThreadController {
