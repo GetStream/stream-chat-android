@@ -1,35 +1,31 @@
 package io.getstream.chat.android.ui.channel.list.internal
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import kotlin.math.roundToInt
 
-internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
+internal class SimpleVerticalListDivider(context: Context) : RecyclerView.ItemDecoration() {
 
-    @DrawableRes
-    var drawableResource: Int = R.drawable.stream_ui_divider
+    var drawable: Drawable = context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
     /**
      * Drawable height in pixels
      */
     var drawableHeight: Int? = null
 
-    var drawOnLastItem: Boolean = false
+    var drawOnLastItem = false
 
-    private lateinit var drawable: Drawable
+    private val bounds = Rect()
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        parent.context
-            .let { ContextCompat.getDrawable(it, R.drawable.stream_ui_divider) }
-            ?.also { drawable = it }
-            ?.let { outRect.set(0, 0, 0, determineHeight()) }
+        outRect.set(0, 0, 0, determineHeight())
     }
 
     override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -52,7 +48,6 @@ internal class SimpleVerticalListDivider : RecyclerView.ItemDecoration() {
 
         for (index in drawRange) {
             parent.getChildAt(index).let { item ->
-                val bounds = Rect()
                 parent.getDecoratedBoundsWithMargins(item, bounds)
                 val bottom = bounds.bottom + item.translationY.roundToInt()
                 val top = bottom - determineHeight()
