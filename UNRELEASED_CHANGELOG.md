@@ -53,6 +53,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed an issue that didn't find the user when obtaining the list of messages
+- Fix refreshing not messaging channels which don't contain current user as a member
 
 ### ⬆️ Improved
 
