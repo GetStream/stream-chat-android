@@ -4,23 +4,28 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
+import io.getstream.chat.android.ui.message.input.internal.SIZE_MEGA_20
 
 internal class SelectedFileAttachmentAdapter(
-    var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {}
+    var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {},
 ) : SimpleListAdapter<AttachmentMetaData, SelectedFileAttachmentAdapter.SelectedFileAttachmentViewHolder>() {
+
+    internal var attachmentMaxFileSize: Int = SIZE_MEGA_20
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedFileAttachmentViewHolder {
         return StreamUiItemSelectedAttachmentFileBinding
             .inflate(parent.inflater, parent, false)
-            .let { SelectedFileAttachmentViewHolder(it, onAttachmentCancelled) }
+            .let { SelectedFileAttachmentViewHolder(it, onAttachmentCancelled, attachmentMaxFileSize) }
     }
 
     class SelectedFileAttachmentViewHolder(
         private val binding: StreamUiItemSelectedAttachmentFileBinding,
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit,
+        private val attachmentMaxFileSize: Int,
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
         lateinit var attachment: AttachmentMetaData
 
@@ -33,8 +38,13 @@ internal class SelectedFileAttachmentAdapter(
 
             binding.apply {
                 ivFileThumb.loadAttachmentThumb(attachment)
-                tvFileTitle.text = attachment.title
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
+                tvFileTitle.text =
+                    if (item.size > attachmentMaxFileSize) {
+                        context.getString(R.string.stream_ui_file_too_big)
+                    } else {
+                        attachment.title
+                    }
             }
         }
     }

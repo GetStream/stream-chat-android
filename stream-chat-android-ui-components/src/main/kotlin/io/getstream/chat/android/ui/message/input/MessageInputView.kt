@@ -372,7 +372,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        if (binding.messageInputFieldView.hasAttachments()) {
+        if (binding.messageInputFieldView.hasValidAttachments()) {
             sendMessageHandler.sendMessageWithAttachments(
                 binding.messageInputFieldView.messageText,
                 binding.messageInputFieldView.getAttachedFiles(),
@@ -385,7 +385,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        if (binding.messageInputFieldView.hasAttachments()) {
+        if (binding.messageInputFieldView.hasValidAttachments()) {
             sendMessageHandler.sendToThreadWithAttachments(
                 parentMessage,
                 binding.messageInputFieldView.messageText,

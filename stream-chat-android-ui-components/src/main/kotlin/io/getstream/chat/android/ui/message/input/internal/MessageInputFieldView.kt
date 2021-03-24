@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -27,7 +26,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 internal const val ONE_MEGA = 1048576
-private const val SIZE_MEGA_20 = 20 * ONE_MEGA
+internal const val SIZE_MEGA_20 = 20 * ONE_MEGA
 
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
@@ -42,7 +41,7 @@ internal class MessageInputFieldView : FrameLayout {
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
     private var maxMessageLength: Int = Integer.MAX_VALUE
-    private var attachmentMaxFile: Int = SIZE_MEGA_20
+    private var attachmentMaxFileSize: Int = SIZE_MEGA_20
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
@@ -130,7 +129,10 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun setAttachmentMaxFileMb(size: Int) {
-        attachmentMaxFile = size
+        attachmentMaxFileSize = size
+
+        selectedFileAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
+        selectedMediaAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
     }
 
     fun autoCompleteCommand(command: Command) {
@@ -212,42 +214,27 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
-        if (mode.attachments.hasBigFile()) {
-            alertForBigFile()
-        } else {
-            binding.messageEditText.hint = attachmentModeHint
+        binding.messageEditText.hint = attachmentModeHint
 
-            selectedAttachments = mode.attachments.toList()
-            binding.selectedMediaAttachmentsRecyclerView.isVisible = false
-            selectedMediaAttachmentAdapter.clear()
-            binding.selectedFileAttachmentsRecyclerView.isVisible = true
-            selectedFileAttachmentAdapter.setItems(selectedAttachments)
+        selectedAttachments = mode.attachments.toList()
+        binding.selectedMediaAttachmentsRecyclerView.isVisible = false
+        selectedMediaAttachmentAdapter.clear()
+        binding.selectedFileAttachmentsRecyclerView.isVisible = true
+        selectedFileAttachmentAdapter.setItems(selectedAttachments)
 
-            selectedAttachmentsChanged()
-        }
+        selectedAttachmentsChanged()
     }
 
     private fun switchToMediaAttachmentMode(mode: Mode.MediaAttachmentMode) {
-        if (mode.attachments.hasBigFile()) {
-            alertForBigFile()
-        } else {
-            binding.messageEditText.hint = attachmentModeHint
+        binding.messageEditText.hint = attachmentModeHint
 
-            selectedAttachments = mode.attachments.toList()
-            binding.selectedFileAttachmentsRecyclerView.isVisible = false
-            selectedFileAttachmentAdapter.clear()
-            binding.selectedMediaAttachmentsRecyclerView.isVisible = true
-            selectedMediaAttachmentAdapter.setItems(selectedAttachments)
+        selectedAttachments = mode.attachments.toList()
+        binding.selectedFileAttachmentsRecyclerView.isVisible = false
+        selectedFileAttachmentAdapter.clear()
+        binding.selectedMediaAttachmentsRecyclerView.isVisible = true
+        selectedMediaAttachmentAdapter.setItems(selectedAttachments)
 
-            selectedAttachmentsChanged()
-        }
-    }
-
-    private fun alertForBigFile() {
-        AlertDialog.Builder(context)
-            .setMessage(context.getString(R.string.stream_ui_file_too_big, attachmentMaxFile / ONE_MEGA))
-            .setPositiveButton(R.string.stream_ui_ok_label) { dialog, _ -> dialog.dismiss() }
-            .show()
+        selectedAttachmentsChanged()
     }
 
     private fun switchToMessageMode() {
@@ -281,9 +268,9 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun hasText(): Boolean = messageText.isNotBlank()
 
-    fun hasAttachments(): Boolean = selectedAttachments.isNotEmpty()
+    fun hasValidAttachments(): Boolean = selectedAttachments.any { metaData -> metaData.size < attachmentMaxFileSize }
 
-    fun hasContent(): Boolean = hasText() || hasAttachments()
+    fun hasContent(): Boolean = hasText() || hasValidAttachments()
 
     private fun onMessageTextChanged() {
         configInputEditTextError()
@@ -328,6 +315,4 @@ internal class MessageInputFieldView : FrameLayout {
         data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
-
-    private fun List<AttachmentMetaData>.hasBigFile(): Boolean = any { metaData -> metaData.size > attachmentMaxFile }
 }
