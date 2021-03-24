@@ -10,6 +10,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.getOrAwaitValue
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +21,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ThreadControllerImplTest : BaseDomainTest2() {
-    val threadId = randomString()
-    val channelControllerMock = mock<ChannelControllerImpl>()
+    private val threadId = randomString()
+    private val channelControllerMock = mock<ChannelController>()
     lateinit var threadMessage: Message
     lateinit var threadReply: Message
     lateinit var channelMessages: MutableStateFlow<List<Message>>
