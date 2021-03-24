@@ -23,6 +23,6 @@ internal data class ConfigDto(
     val max_message_length: Int,
     val automod: String,
     val automod_behavior: String,
-    val blocklist_behavior: String,
+    val blocklist_behavior: String?,
     val commands: List<CommandDto>,
 )
