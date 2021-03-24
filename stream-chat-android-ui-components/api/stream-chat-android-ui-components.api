@@ -805,9 +805,10 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle$Companion;
-	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIIZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZ)V
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIIZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZI)V
 	public final fun getAttachButtonEnabled ()Z
 	public final fun getAttachButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getAttachmentMaxFileSize ()I
 	public final fun getCommandsEnabled ()Z
 	public final fun getLightningButtonEnabled ()Z
 	public final fun getLightningButtonIcon ()Landroid/graphics/drawable/Drawable;
