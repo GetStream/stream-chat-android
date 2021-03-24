@@ -80,6 +80,12 @@ dependencies {
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
 
+    // Markdown
+    implementation Dependencies.markwonCore
+    implementation Dependencies.markwonLinkify
+    implementation Dependencies.markwonextStrikethrough
+    implementation Dependencies.markwonImage
+
     // Tests
     testImplementation project(":stream-chat-android-test")
 

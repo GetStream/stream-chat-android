@@ -79,12 +79,6 @@ dependencies {
     implementation Dependencies.fresco
     implementation Dependencies.photodraweeview
 
-    implementation Dependencies.markwonCore
-    implementation Dependencies.markwonLinkify
-    implementation Dependencies.markwonextStrikethrough
-    implementation Dependencies.markwonImage
-
-
     testImplementation project(":stream-chat-android-test")
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

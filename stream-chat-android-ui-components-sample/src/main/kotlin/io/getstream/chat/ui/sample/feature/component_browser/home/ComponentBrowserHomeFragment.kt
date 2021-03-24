@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.ReactionType
@@ -26,9 +25,6 @@ class ComponentBrowserHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Init ChatUI to have access to fonts
-        ChatUI.Builder(requireContext().applicationContext).build()
     }
 
     override fun onCreateView(

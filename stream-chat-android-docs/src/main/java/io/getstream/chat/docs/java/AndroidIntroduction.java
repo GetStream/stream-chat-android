@@ -2,8 +2,6 @@ package io.getstream.chat.docs.java;
 
 import android.content.Context;
 
-import com.getstream.sdk.chat.ChatUI;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +38,6 @@ public class AndroidIntroduction {
                 // Enable offline support
                 .offlineEnabled()
                 .build();
-        // Step 3 - Set up UI components
-        ChatUI ui = new ChatUI.Builder(applicationContext).build();
 
         // Step 2 - Authenticate and connect the user
         User user = new User();
