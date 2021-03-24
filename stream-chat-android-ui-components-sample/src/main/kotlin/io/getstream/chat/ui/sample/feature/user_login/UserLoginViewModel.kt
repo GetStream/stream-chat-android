@@ -44,7 +44,7 @@ class UserLoginViewModel : ViewModel() {
             image = user.image
             name = user.name
         }
-        initChatSdk(chatUser)
+        initChatSdk(user.apiKey, chatUser)
 
         ChatClient.instance().connectUser(chatUser, user.token)
             .enqueue { result ->
@@ -63,8 +63,8 @@ class UserLoginViewModel : ViewModel() {
      * but since we allow changing API keys at runtime in this demo app, we have to
      * reinitialize the Chat SDK here with the new API key.
      */
-    private fun initChatSdk(user: ChatUser) {
-        App.instance.chatInitializer.init(AppConfig.apiKey, user)
+    private fun initChatSdk(apiKey: String, user: ChatUser) {
+        App.instance.chatInitializer.init(apiKey, user)
     }
 
     sealed class State {
