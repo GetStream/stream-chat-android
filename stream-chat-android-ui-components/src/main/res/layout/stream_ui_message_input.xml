@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white"
-    android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -152,4 +149,4 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
