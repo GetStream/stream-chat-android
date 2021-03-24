@@ -38,7 +38,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         channelMessages = MutableStateFlow(listOf(data.message1, threadMessage, threadReply))
         whenever(channelControllerMock.unfilteredMessages) doReturn channelMessages
         whenever(channelControllerMock.hideMessagesBefore) doReturn null
-        threadController = ThreadControllerImpl(threadId, channelControllerMock, clientMock, chatDomainImpl)
+        threadController = ThreadControllerImpl(threadId, channelControllerMock, chatDomainImpl)
     }
 
     @Test
