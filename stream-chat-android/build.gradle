@@ -74,6 +74,11 @@ dependencies {
     implementation Dependencies.drawabletoolbox
     implementation Dependencies.keyboardVisibilityEvent
 
+    implementation Dependencies.markwonCore
+    implementation Dependencies.markwonLinkify
+    implementation Dependencies.markwonextStrikethrough
+    implementation Dependencies.markwonImage
+
     // Tests
     testImplementation project(":stream-chat-android-test")
 
