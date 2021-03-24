@@ -8,9 +8,11 @@ import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
@@ -22,8 +24,10 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
+import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -56,6 +60,9 @@ internal class ClientConnectionTests {
     )
     private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
     private lateinit var api: GsonChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
@@ -69,6 +76,8 @@ internal class ClientConnectionTests {
 
     @Before
     fun before() {
+        val clientStateService = ClientStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
         socket = mock()
         retrofitApi = mock()
         retrofitAnonymousApi = mock()
@@ -81,6 +90,7 @@ internal class ClientConnectionTests {
             retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader,
+            testCoroutines.scope
         )
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
@@ -93,7 +103,9 @@ internal class ClientConnectionTests {
             api,
             socket,
             notificationsManager,
-            tokenManager = FakeTokenManager(token)
+            tokenManager = FakeTokenManager(token),
+            clientStateService,
+            queryChannelsPostponeHelper,
         )
     }
 

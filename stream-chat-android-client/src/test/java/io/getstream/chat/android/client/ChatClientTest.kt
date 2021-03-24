@@ -2,11 +2,13 @@ package io.getstream.chat.android.client
 
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -14,9 +16,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.test.TestCoroutineExtension
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.Date
 
 internal class ChatClientTest {
@@ -30,6 +34,10 @@ internal class ChatClientTest {
         val eventE = UnknownEvent("e", Date(), mapOf<Any, Any>("cid" to "myCid"))
         val eventF = UnknownEvent("f", Date(), emptyMap<Any, Any>())
     }
+
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
 
     lateinit var socket: FakeChatSocket
     lateinit var client: ChatClient
@@ -51,12 +59,16 @@ internal class ChatClientTest {
         )
 
         socket = FakeChatSocket()
+        val clientStateService = ClientStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
             notifications = mock(),
-            tokenManager = FakeTokenManager("")
+            tokenManager = FakeTokenManager(""),
+            clientStateService,
+            queryChannelsPostponeHelper,
         ).apply {
             connectUser(User(), "someToken").enqueue()
         }

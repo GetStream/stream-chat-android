@@ -8,10 +8,12 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class ChatSocketServiceImplTest {
     private lateinit var tokenManager: TokenManager
@@ -21,6 +23,9 @@ internal class ChatSocketServiceImplTest {
     private lateinit var socketListener: SocketListener
     private lateinit var socketService: ChatSocketServiceImpl
 
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
     @BeforeEach
     fun setup() {
         tokenManager = mock()
@@ -32,7 +37,8 @@ internal class ChatSocketServiceImplTest {
             tokenManager,
             socketFactory,
             eventsParser,
-            networkStateProvider
+            networkStateProvider,
+            testCoroutines.scope
         )
         socketService.addListener(socketListener)
     }

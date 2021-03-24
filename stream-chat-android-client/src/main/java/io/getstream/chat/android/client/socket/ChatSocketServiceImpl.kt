@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,6 +24,7 @@ internal class ChatSocketServiceImpl private constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
     private val networkStateProvider: NetworkStateProvider,
+    private val coroutineScope: CoroutineScope,
 ) : ChatSocketService {
     private val logger = ChatLogger.get("SocketService")
     private var connectionConf: ConnectionConf = ConnectionConf.None
@@ -191,7 +192,7 @@ internal class ChatSocketServiceImpl private constructor(
                 }
                 is ConnectionConf.UserConnectionConf -> {
                     state = State.Connecting
-                    socketConnectionJob = GlobalScope.launch(DispatcherProvider.IO) {
+                    socketConnectionJob = coroutineScope.launch {
                         tokenManager.ensureTokenLoaded()
                         withContext(DispatcherProvider.Main) {
                             socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
@@ -237,8 +238,9 @@ internal class ChatSocketServiceImpl private constructor(
             socketFactory: SocketFactory,
             eventsParser: EventsParser,
             networkStateProvider: NetworkStateProvider,
+            coroutineScope: CoroutineScope,
         ): ChatSocketServiceImpl {
-            return ChatSocketServiceImpl(tokenManager, socketFactory, networkStateProvider)
+            return ChatSocketServiceImpl(tokenManager, socketFactory, networkStateProvider, coroutineScope)
                 .also { eventsParser.setSocketService(it) }
         }
     }

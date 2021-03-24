@@ -11,14 +11,13 @@ import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsPostponeHelper(
     private val api: ChatApi,
     private val clientStateService: ClientStateService,
-    private val coroutineScope: CoroutineScope = GlobalScope,
+    private val coroutineScope: CoroutineScope,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT
 ) {
