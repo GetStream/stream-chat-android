@@ -6,7 +6,6 @@ import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
 class App : Application() {
@@ -29,9 +28,6 @@ class App : Application() {
             }.build()
         )
         ApplicationConfigurator.configureApp(this)
-
-        // ChatUI must be initialized before any io.getstream.chat UI component is rendered
-        val ui = ChatUI.Builder(this).build()
     }
 
     companion object {

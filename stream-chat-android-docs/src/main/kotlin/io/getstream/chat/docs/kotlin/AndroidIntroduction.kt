@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
 import android.content.Context
-import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -31,8 +30,6 @@ class AndroidIntroduction {
             // Enable offline support
             .offlineEnabled()
             .build()
-        // Step 3 - Set up UI components
-        val ui = ChatUI.Builder(applicationContext).build()
 
         // Step 2 - Authenticate and connect the user
         val user = User(

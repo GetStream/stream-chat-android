@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
@@ -323,8 +322,6 @@ public class Android {
 
             destination.register(getActivity().getActivityResultRegistry());
             destination.setData(attachmentGalleryItems, 0);
-
-            ChatUI.instance().getNavigator().navigate(destination);
         }
     }
 
