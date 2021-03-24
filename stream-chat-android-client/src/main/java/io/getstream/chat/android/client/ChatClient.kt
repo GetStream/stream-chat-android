@@ -700,6 +700,7 @@ public class ChatClient internal constructor(
         connectionListener = null
         clientStateService.onDisconnectRequested()
         socket.disconnect()
+        lifecycleObserver.dispose()
     }
 
     //region: api calls
