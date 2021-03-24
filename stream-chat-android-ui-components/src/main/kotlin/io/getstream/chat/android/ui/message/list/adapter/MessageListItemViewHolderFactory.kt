@@ -2,9 +2,9 @@ package io.getstream.chat.android.ui.message.list.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import com.getstream.sdk.chat.ChatMarkdown
-import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
@@ -47,7 +47,7 @@ public open class MessageListItemViewHolderFactory {
         this.style = style
     }
 
-    private val markdown: ChatMarkdown by lazy { ChatUI.instance().markdown }
+    private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
 
     /**
      * Returns a view type value based on the type and contents of the given [item].

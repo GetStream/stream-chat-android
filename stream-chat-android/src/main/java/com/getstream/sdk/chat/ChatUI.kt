@@ -89,7 +89,10 @@ public class ChatUI internal constructor(
             instance = ChatUI(
                 fonts ?: ChatFontsImpl(chatStyle, appContext),
                 strings ?: ChatStringsImpl(appContext),
-                ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER),
+                ChatNavigatorImpl(
+                    navigationHandler
+                        ?: ChatNavigatorImpl.EMPTY_HANDLER
+                ),
                 markdown ?: ChatMarkdownImpl(appContext),
                 urlSigner ?: UrlSigner.DefaultUrlSigner()
             )
