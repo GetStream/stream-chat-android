@@ -89,20 +89,39 @@ internal class QueryChannelsControllerImplTest {
         }
 
     @Test
-    fun `when refreshing channel which doesn't contain current user as member should post value to liveData without this channel`() =
+    fun `Given messaging channel When refreshing channel which doesn't contain current user as member Should post value to liveData without this channel`() =
         runBlockingTest {
             val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
                 .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false)
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false, channelType = "messaging")
                 .setupChatRepositories()
                 .get()
-            val channel = randomChannel()
+            val channel = randomChannel(type = "messaging")
             sut.addChannelIfFilterMatches(channel)
 
             sut.refreshChannel(channel.cid)
 
             val result = sut.channels.getOrAwaitValue()
             result.size shouldBeEqualTo 0
+        }
+
+    @Test
+    fun `Given not messaging channel When refreshing channel which doesn't contain current user as member Should post value to liveData with this channel`() =
+        runBlockingTest {
+            val cid = "channelType:channelId"
+            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
+                .givenNewChannelController(mock())
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false)
+                .setupChatRepositories()
+                .get()
+            val channel = randomChannel(cid = cid)
+            sut.addChannelIfFilterMatches(channel)
+
+            sut.refreshChannel(channel.cid)
+
+            val result = sut.channels.getOrAwaitValue()
+            result.size shouldBeEqualTo 1
+            result.first().cid shouldBeEqualTo cid
         }
 
     @Test
@@ -186,12 +205,16 @@ private class Fixture(scope: CoroutineScope, private val currentUser: User = moc
         return this
     }
 
-    fun setupChatControllersInstantiation(withCurrentUserAsChannelMember: Boolean = false): Fixture {
+    fun setupChatControllersInstantiation(
+        withCurrentUserAsChannelMember: Boolean = false,
+        channelType: String? = null,
+    ): Fixture {
         whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
             val cid = invocation.arguments[0] as String
             val mockChannelController = mock<ChannelControllerImpl>()
             val mockChannel = mock<Channel>()
             whenever(mockChannel.cid) doReturn cid
+            channelType?.let { type -> whenever(mockChannel.type) doReturn channelType }
             whenever(mockChannel.members) doReturn if (withCurrentUserAsChannelMember) listOf(Member(currentUser)) else emptyList()
             whenever(mockChannelController.toChannel()) doReturn mockChannel
             mockChannelController

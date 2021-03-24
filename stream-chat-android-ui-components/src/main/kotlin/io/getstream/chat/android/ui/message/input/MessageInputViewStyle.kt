@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.common.internal.getColorList
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
-public class MessageInputViewStyle(
+public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
     public val lightningButtonEnabled: Boolean,

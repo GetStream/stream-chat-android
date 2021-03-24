@@ -6,14 +6,14 @@ import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.TransformStyle
 import java.io.Serializable
 
-public class MessageListItemStyle(
+public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
     @ColorInt public val messageTextColorMine: Int?,
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
-    public var reactionsEnabled: Boolean,
+    public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
 ) : Serializable {

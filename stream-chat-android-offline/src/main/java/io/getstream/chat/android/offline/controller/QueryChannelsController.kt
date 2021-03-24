@@ -221,7 +221,10 @@ internal class QueryChannelsController(
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
-            if (channel.members.any { member -> member.getUserId() == domainImpl.currentUser.id }) {
+            // TODO: Update after channel's filtering refactoring is done.
+            // In order to interact with messaging channel user needs to be a member so for now,
+            // we are removing only channels of messaging type
+            if (channel.type != "messaging" || channel.members.any { member -> member.getUserId() == domainImpl.currentUser.id }) {
                 existingChannelMap[channel.cid] = channel
             } else {
                 domainImpl.scope.launch {
