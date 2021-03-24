@@ -150,9 +150,7 @@ public class MessageInputView : ConstraintLayout {
         isSendButtonEnabled = false
         refreshControlsState()
     }
-
-
-
+    
     /**
      * Enables or disables the handling of mentions in the message input view.
      *
