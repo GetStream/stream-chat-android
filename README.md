@@ -96,12 +96,13 @@ With these modules, the SDK provides:
 
 ## Installing the Kotlin/Java Chat SDK
 
-**Step 1**: Add `mavenCentral` to your repositories in your *project* level `build.gradle` file:
+**Step 1**: Add MavenCentral and Jitpack to your repositories in your *project* level `build.gradle` file:
 
 ```gradle
 allprojects {
     repositories {
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 ```
@@ -126,9 +127,6 @@ android {
 
 dependencies {
     implementation "io.getstream:stream-chat-android:$stream_version"
-
-    // for Java projects
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 ```
 
