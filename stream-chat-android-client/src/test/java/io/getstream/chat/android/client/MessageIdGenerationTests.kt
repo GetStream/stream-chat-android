@@ -17,7 +17,6 @@ import org.junit.Test
 internal class MessageIdGenerationTests {
 
     val userId = "user-id"
-    val apiKey = "api-key"
     val connectionId = "connection-id"
     val messageId = "message-id"
     val channelType = "channel-type"
@@ -36,7 +35,6 @@ internal class MessageIdGenerationTests {
         retroAnonymousApi = mock()
         uuidGenerator = mock()
         api = GsonChatApi(
-            apiKey,
             retroApi,
             retroAnonymousApi,
             uuidGenerator,
@@ -56,7 +54,6 @@ internal class MessageIdGenerationTests {
             retroApi.sendMessage(
                 channelType,
                 channelId,
-                apiKey,
                 connectionId,
                 MessageRequest(message)
             )
@@ -79,7 +76,6 @@ internal class MessageIdGenerationTests {
             retroApi.sendMessage(
                 channelType,
                 channelId,
-                apiKey,
                 connectionId,
                 MessageRequest(message)
             )

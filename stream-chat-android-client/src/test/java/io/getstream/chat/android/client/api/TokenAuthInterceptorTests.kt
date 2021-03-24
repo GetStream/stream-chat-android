@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.FakeResponse.Body
+import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser.GsonChatParser

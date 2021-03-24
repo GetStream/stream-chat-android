@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.api
+package io.getstream.chat.android.client.api.interceptor
 
 import io.getstream.chat.android.client.ChatClient
 import okhttp3.Interceptor

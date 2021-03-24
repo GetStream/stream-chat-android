@@ -25,20 +25,17 @@ internal interface GeneralApi {
     @POST("/sync")
     fun getSyncHistory(
         @Body body: SyncHistoryRequest,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<SyncHistoryResponse>
 
     @GET("/search")
     fun searchMessages(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
     ): RetrofitCall<SearchMessagesResponse>
 
     @GET("/members")
     fun queryMembers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
     ): RetrofitCall<QueryMembersResponse>

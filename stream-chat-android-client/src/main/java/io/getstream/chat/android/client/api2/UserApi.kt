@@ -17,14 +17,12 @@ import retrofit2.http.Query
 internal interface UserApi {
     @POST("/users")
     fun updateUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersRequest,
     ): RetrofitCall<UpdateUsersResponse>
 
     @GET("/users")
     fun queryUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
     ): RetrofitCall<UsersResponse>
