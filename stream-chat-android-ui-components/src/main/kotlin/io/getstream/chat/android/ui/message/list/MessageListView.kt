@@ -936,7 +936,10 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle.isReactionsEnabled(enabled)
+        messageListViewStyle = messageListViewStyle.copy(
+            reactionsEnabled = enabled,
+            itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
+        )
     }
 
     public fun setRepliesEnabled(enabled: Boolean) {

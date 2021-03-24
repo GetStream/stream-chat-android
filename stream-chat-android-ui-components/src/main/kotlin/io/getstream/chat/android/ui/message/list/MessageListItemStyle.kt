@@ -13,7 +13,7 @@ public data class MessageListItemStyle(
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
-    public var reactionsEnabled: Boolean,
+    public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
 ) : Serializable {

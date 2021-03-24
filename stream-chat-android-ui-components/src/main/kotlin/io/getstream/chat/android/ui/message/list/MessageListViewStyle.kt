@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
-    public var reactionsEnabled: Boolean,
+    public val reactionsEnabled: Boolean,
 ) {
 
     internal companion object {
@@ -72,11 +72,5 @@ public data class MessageListViewStyle(
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
-    }
-
-    // TODO: why this method changes the style?
-    internal fun isReactionsEnabled(enabled: Boolean) {
-        reactionsEnabled = enabled
-        itemStyle.reactionsEnabled = enabled
     }
 }
