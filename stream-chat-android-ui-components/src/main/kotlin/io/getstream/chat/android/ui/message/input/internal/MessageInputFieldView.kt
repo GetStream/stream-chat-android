@@ -27,8 +27,8 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import kotlin.properties.Delegates
 
-internal const val ONE_MEGA = 1048576
-internal const val SIZE_MEGA_20 = 20 * ONE_MEGA
+internal const val SIZE_ONE_MEGA = 1048576
+internal const val SIZE_MEGA_20 = 20 * SIZE_ONE_MEGA
 
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
@@ -134,7 +134,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun setAttachmentMaxFileMb(size: Int) {
-        attachmentMaxFileSize = size
+        attachmentMaxFileSize = size * SIZE_ONE_MEGA
 
         selectedFileAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
         selectedMediaAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
