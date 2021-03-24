@@ -51,6 +51,7 @@ class CustomLoginViewModel : ViewModel() {
 
                     App.instance.userRepository.setUser(
                         SampleUser(
+                            apiKey = loginCredentials.apiKey,
                             id = loginCredentials.userId,
                             name = loginCredentials.userName,
                             token = loginCredentials.userToken,
