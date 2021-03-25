@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import java.io.File
 import java.util.Date
 import kotlin.collections.set
@@ -64,7 +63,7 @@ internal class GsonChatApi(
     private val retrofitAnonymousApi: RetrofitAnonymousApi,
     private val uuidGenerator: UuidGenerator,
     private val fileUploader: FileUploader,
-    private val coroutineScope: CoroutineScope = GlobalScope,
+    private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
     private var userId: String = ""
