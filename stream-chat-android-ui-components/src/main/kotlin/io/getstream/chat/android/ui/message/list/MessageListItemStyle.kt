@@ -21,7 +21,7 @@ public data class MessageListItemStyle(
     public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
-    private val textStyleMineText: TextStyle,
+    public val textStyleMineText: TextStyle,
 ) : Serializable {
 
     @ColorInt
