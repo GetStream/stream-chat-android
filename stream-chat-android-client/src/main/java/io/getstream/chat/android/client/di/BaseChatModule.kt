@@ -8,13 +8,14 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.GsonChatApi
-import io.getstream.chat.android.client.api.HeadersInterceptor
-import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
-import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
+import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
+import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
+import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.DeviceApi
 import io.getstream.chat.android.client.api2.GeneralApi
@@ -63,10 +64,7 @@ internal open class BaseChatModule(
         buildSocket(config, if (config.enableMoshi) moshiParser else gsonParser)
     }
     private val defaultFileUploader by lazy {
-        StreamFileUploader(
-            config.apiKey,
-            buildRetrofitCdnApi()
-        )
+        StreamFileUploader(buildRetrofitCdnApi())
     }
 
     //region Modules
@@ -131,6 +129,7 @@ internal open class BaseChatModule(
             .writeTimeout(timeout, TimeUnit.MILLISECONDS)
             .readTimeout(timeout, TimeUnit.MILLISECONDS)
             // interceptors
+            .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
@@ -172,7 +171,6 @@ internal open class BaseChatModule(
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return if (chatConfig.enableMoshi) {
             MoshiChatApi(
-                chatConfig.apiKey,
                 fileUploader ?: defaultFileUploader,
                 buildRetrofitApi<UserApi>(),
                 buildRetrofitApi<GuestApi>(),
@@ -184,7 +182,6 @@ internal open class BaseChatModule(
             )
         } else {
             GsonChatApi(
-                chatConfig.apiKey,
                 buildRetrofitApi<RetrofitApi>(),
                 buildRetrofitApi<RetrofitAnonymousApi>(),
                 UuidGeneratorImpl(),

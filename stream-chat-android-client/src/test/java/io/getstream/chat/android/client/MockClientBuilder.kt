@@ -65,7 +65,6 @@ internal class MockClientBuilder {
         fileUploader = mock()
         notificationsManager = mock()
         api = GsonChatApi(
-            config.apiKey,
             retrofitApi,
             retrofitAnonymousApi,
             UuidGeneratorImpl(),

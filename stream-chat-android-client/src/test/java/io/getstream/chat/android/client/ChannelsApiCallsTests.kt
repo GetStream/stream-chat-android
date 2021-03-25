@@ -51,7 +51,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -71,7 +70,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -90,7 +88,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.showChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 emptyMap()
             )
@@ -108,7 +105,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.showChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 emptyMap()
             )
@@ -128,7 +124,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.deleteChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(ChannelResponse(response)).toRetrofitCall())
@@ -145,7 +140,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.deleteChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroError<ChannelResponse>(mock.serverErrorCode).toRetrofitCall())
@@ -162,7 +156,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.hideChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 HideChannelRequest()
             )
@@ -180,7 +173,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.hideChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 HideChannelRequest()
             )
@@ -203,7 +195,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.updateChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 UpdateChannelRequest(updateChannelData, updateMessage)
             )
@@ -227,7 +218,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.updateChannel(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 UpdateChannelRequest(updateChannelData, updateMessage)
             )
@@ -250,7 +240,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.acceptInvite(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 AcceptInviteRequest(
                     mock.user,
@@ -274,7 +263,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.acceptInvite(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 AcceptInviteRequest(
                     mock.user,
@@ -298,7 +286,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.rejectInvite(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 RejectInviteRequest()
             )
@@ -317,7 +304,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.rejectInvite(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 RejectInviteRequest()
             )
@@ -333,7 +319,6 @@ internal class ChannelsApiCallsTests {
     fun markAllReadSuccess() {
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
@@ -348,7 +333,6 @@ internal class ChannelsApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
@@ -375,7 +359,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.markRead(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 MarkReadRequest(messageId)
             )
@@ -395,7 +378,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.markRead(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 MarkReadRequest(messageId)
             )
@@ -423,7 +405,6 @@ internal class ChannelsApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -447,7 +428,6 @@ internal class ChannelsApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -464,7 +444,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.stopWatching(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 emptyMap()
             )
@@ -481,7 +460,6 @@ internal class ChannelsApiCallsTests {
             mock.retrofitApi.stopWatching(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 emptyMap()
             )
@@ -496,7 +474,6 @@ internal class ChannelsApiCallsTests {
     fun `Given mute channel api call succeeds When muting a channel Should return a result with success`() {
         whenever(
             mock.retrofitApi.muteChannel(
-                mock.apiKey,
                 mock.connectionId,
                 MuteChannelRequest("${mock.channelType}:${mock.channelId}")
             )
@@ -511,7 +488,6 @@ internal class ChannelsApiCallsTests {
     fun `Given unmute channel api call succeeds When unmuting a channel Should return a result with success`() {
         whenever(
             mock.retrofitApi.unmuteChannel(
-                mock.apiKey,
                 mock.connectionId,
                 MuteChannelRequest("${mock.channelType}:${mock.channelId}")
             )
