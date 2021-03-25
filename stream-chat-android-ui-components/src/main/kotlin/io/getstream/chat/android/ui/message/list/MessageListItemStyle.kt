@@ -40,6 +40,8 @@ public data class MessageListItemStyle(
     public val iconIndicatorSent: Int,
     public val iconIndicatorRead: Int,
     public val iconIndicatorPendingSync: Int,
+    public val textStyleMessageDeleted: TextStyle,
+    @ColorInt public val messageDeletedBackground: Int,
 ) : Serializable {
 
     @ColorInt
@@ -300,6 +302,28 @@ public data class MessageListItemStyle(
                     R.drawable.stream_ui_ic_clock
                 )
 
+            val messageDeletedBackground =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDeletedMessageBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                )
+
+            val textStyleMessageDeleted = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeMessageDeleted,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMessageDeleted,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMessageDeleted,
+                    R.styleable.MessageListView_streamUiMessageTextFontMessageDeleted,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleMessageDeleted, Typeface.ITALIC)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -322,7 +346,9 @@ public data class MessageListItemStyle(
                 editReactionsViewStyle = editReactionsViewStyle,
                 iconIndicatorSent = iconIndicatorSent,
                 iconIndicatorRead = iconIndicatorRead,
-                iconIndicatorPendingSync = iconIndicatorPendingSync
+                iconIndicatorPendingSync = iconIndicatorPendingSync,
+                messageDeletedBackground = messageDeletedBackground,
+                textStyleMessageDeleted = textStyleMessageDeleted,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

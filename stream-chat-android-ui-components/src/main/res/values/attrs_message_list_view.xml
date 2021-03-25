@@ -146,5 +146,17 @@
         <attr name="streamUiIconIndicatorRead" format="reference"/>
         <attr name="streamUiIconIndicatorPendingSync" format="reference"/>
 
+        <!-- Message deleted style -->
+        <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeleted" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeleted" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeleted" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeleted" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeleted">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>
