@@ -26,7 +26,15 @@ internal class ChatFontsImpl(
         if (textStyle.font != null) {
             textView.setTypeface(textStyle.font, textStyle.style)
         } else {
-            setDefaultFont(textView, textStyle.style)
+            setDefaultFont(textView, textStyle.style, null)
+        }
+    }
+
+    override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
+        if (textStyle.font != null) {
+            textView.setTypeface(textStyle.font, textStyle.style)
+        } else {
+            setDefaultFont(textView, textStyle.style, defaultTypeface)
         }
     }
 
@@ -60,13 +68,13 @@ internal class ChatFontsImpl(
         return typeface
     }
 
-    private fun setDefaultFont(textView: TextView, textStyle: Int) {
+    private fun setDefaultFont(textView: TextView, textStyle: Int, defaultTypeface: Typeface?) {
         if (style.hasDefaultFont()) {
             style.defaultTextStyle?.let {
                 textView.setTypeface(getFont(it), textStyle)
             }
         } else {
-            textView.setTypeface(Typeface.DEFAULT, textStyle)
+            textView.setTypeface(defaultTypeface ?: Typeface.DEFAULT, textStyle)
         }
     }
 

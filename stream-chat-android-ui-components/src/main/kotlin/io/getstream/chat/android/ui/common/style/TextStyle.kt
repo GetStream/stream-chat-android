@@ -20,6 +20,7 @@ public class TextStyle {
     public var size: Int = UNSET_SIZE
     public var color: Int = UNSET_COLOR
     public var hintColor: Int = UNSET_HINT_COLOR
+    public var defaultFont: Typeface = Typeface.DEFAULT
 
     public val font: Typeface?
         get() {
@@ -39,7 +40,7 @@ public class TextStyle {
             textView.setHintTextColor(hintColor)
         }
 
-        chatFonts.setFont(this, textView)
+        chatFonts.setFont(this, textView, defaultFont)
     }
 
     public fun hasFont(): Boolean {
@@ -60,6 +61,12 @@ public class TextStyle {
         public fun font(assetsPath: Int, resId: Int): Builder = apply {
             result.fontAssetsPath = array.getString(assetsPath)
             result.fontResource = array.getResourceId(resId, -1)
+        }
+
+        public fun font(assetsPath: Int, resId: Int, defaultFont: Typeface): Builder = apply {
+            result.fontAssetsPath = array.getString(assetsPath)
+            result.fontResource = array.getResourceId(resId, -1)
+            result.defaultFont = defaultFont
         }
 
         public fun color(ref: Int, defValue: Int): Builder = apply {

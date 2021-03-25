@@ -41,6 +41,7 @@ public final class com/getstream/sdk/chat/style/TextStyle {
 	public final fun apply (Landroid/widget/TextView;)V
 	public final fun colorOrNull ()Ljava/lang/Integer;
 	public final fun getColor ()I
+	public final fun getDefaultFont ()Landroid/graphics/Typeface;
 	public final fun getFont ()Landroid/graphics/Typeface;
 	public final fun getFontAssetsPath ()Ljava/lang/String;
 	public final fun getFontResource ()I
@@ -49,6 +50,7 @@ public final class com/getstream/sdk/chat/style/TextStyle {
 	public final fun getStyle ()I
 	public final fun hasFont ()Z
 	public final fun setColor (I)V
+	public final fun setDefaultFont (Landroid/graphics/Typeface;)V
 	public final fun setFontAssetsPath (Ljava/lang/String;)V
 	public final fun setFontResource (I)V
 	public final fun setHintColor (I)V
@@ -61,6 +63,7 @@ public final class com/getstream/sdk/chat/style/TextStyle$Builder {
 	public final fun build ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public final fun color (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun font (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
+	public final fun font (IILandroid/graphics/Typeface;)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun hintColor (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun size (I)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
 	public final fun size (II)Lcom/getstream/sdk/chat/style/TextStyle$Builder;
@@ -555,6 +558,11 @@ public class io/getstream/chat/android/ui/common/navigation/destinations/Attachm
 public abstract interface class io/getstream/chat/android/ui/common/style/ChatFonts {
 	public abstract fun getFont (Lcom/getstream/sdk/chat/style/TextStyle;)Landroid/graphics/Typeface;
 	public abstract fun setFont (Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;)V
+	public abstract fun setFont (Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;Landroid/graphics/Typeface;)V
+}
+
+public final class io/getstream/chat/android/ui/common/style/ChatFonts$DefaultImpls {
+	public static synthetic fun setFont$default (Lio/getstream/chat/android/ui/common/style/ChatFonts;Lcom/getstream/sdk/chat/style/TextStyle;Landroid/widget/TextView;Landroid/graphics/Typeface;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentActivity : androidx/appcompat/app/AppCompatActivity {

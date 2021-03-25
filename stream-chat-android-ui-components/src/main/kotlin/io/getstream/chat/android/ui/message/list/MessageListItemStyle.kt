@@ -5,9 +5,11 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import androidx.core.content.res.ResourcesCompat
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import java.io.Serializable
 
@@ -125,12 +127,15 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
+            val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
+
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
-                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR)
+                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, context.getColorCompat(DEFAULT_TEXT_COLOR))
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsMine,
-                    R.styleable.MessageListView_streamUiMessageTextFontMine
+                    R.styleable.MessageListView_streamUiMessageTextFontMine,
+                    mediumTypeface
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE)
                 .build()
@@ -140,10 +145,11 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeTheirs,
                     context.getDimension(DEFAULT_TEXT_SIZE)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorTheirs, DEFAULT_TEXT_COLOR)
+                .color(R.styleable.MessageListView_streamUiMessageTextColorTheirs, context.getColorCompat(DEFAULT_TEXT_COLOR))
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs,
-                    R.styleable.MessageListView_streamUiMessageTextFontTheirs
+                    R.styleable.MessageListView_streamUiMessageTextFontTheirs,
+                    mediumTypeface
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleTheirs, DEFAULT_TEXT_STYLE)
                 .build()
@@ -153,7 +159,7 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeUserName,
                     context.getDimension(DEFAULT_TEXT_SIZE_USER_NAME)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorUserName, DEFAULT_TEXT_COLOR_USER_NAME)
+                .color(R.styleable.MessageListView_streamUiMessageTextColorUserName, context.getColorCompat(DEFAULT_TEXT_COLOR_USER_NAME))
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsUserName,
                     R.styleable.MessageListView_streamUiMessageTextFontUserName
@@ -166,7 +172,7 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeDate,
                     context.getDimension(DEFAULT_TEXT_SIZE_DATE)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorDate, DEFAULT_TEXT_COLOR_DATE)
+                .color(R.styleable.MessageListView_streamUiMessageTextColorDate, context.getColorCompat(DEFAULT_TEXT_COLOR_DATE))
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsDate,
                     R.styleable.MessageListView_streamUiMessageTextFontDate
@@ -179,10 +185,14 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeThreadCounter,
                     context.getDimension(DEFAULT_TEXT_SIZE_THREAD_COUNTER)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorThreadCounter, DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorThreadCounter,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsThreadCounter,
-                    R.styleable.MessageListView_streamUiMessageTextFontThreadCounter
+                    R.styleable.MessageListView_streamUiMessageTextFontThreadCounter,
+                    mediumTypeface
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
                 .build()
