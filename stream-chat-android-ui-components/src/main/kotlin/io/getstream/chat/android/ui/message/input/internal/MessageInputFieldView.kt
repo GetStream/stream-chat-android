@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.input.internal
 
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -132,10 +133,14 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
     }
 
-    fun setTextInputTypeface(typeface: Int) {
+    fun setTextInputTypefaceStyle(typeface: Int) {
         val originalTypeface = binding.messageEditText.typeface
 
         binding.messageEditText.setTypeface(originalTypeface, typeface)
+    }
+
+    fun setTextInputTypeface(typeface: Typeface) {
+        binding.messageEditText.typeface = typeface
     }
 
     fun autoCompleteCommand(command: Command) {
