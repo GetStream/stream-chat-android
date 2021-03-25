@@ -26,7 +26,6 @@ internal interface MessageApi {
     fun sendMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body message: MessageRequest,
     ): RetrofitCall<MessageResponse>
@@ -34,14 +33,12 @@ internal interface MessageApi {
     @GET("/messages/{id}")
     fun getMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}")
     fun updateMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body message: MessageRequest,
     ): RetrofitCall<MessageResponse>
@@ -49,14 +46,12 @@ internal interface MessageApi {
     @DELETE("/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/action")
     fun sendAction(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: SendActionRequest,
     ): RetrofitCall<MessageResponse>
@@ -64,7 +59,6 @@ internal interface MessageApi {
     @POST("/messages/{id}/reaction")
     fun sendReaction(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: ReactionRequest,
     ): RetrofitCall<ReactionResponse>
@@ -73,14 +67,12 @@ internal interface MessageApi {
     fun deleteReaction(
         @Path("id") messageId: String,
         @Path("type") reactionType: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}/reactions")
     fun getReactions(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
@@ -89,7 +81,6 @@ internal interface MessageApi {
     @POST("/messages/{messageId}/translate")
     fun translate(
         @Path("messageId") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: TranslateMessageRequest,
     ): RetrofitCall<MessageResponse>
@@ -97,7 +88,6 @@ internal interface MessageApi {
     @GET("/messages/{parent_id}/replies")
     fun getReplies(
         @Path("parent_id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("limit") limit: Int,
     ): RetrofitCall<MessagesResponse>
@@ -105,7 +95,6 @@ internal interface MessageApi {
     @GET("/messages/{parent_id}/replies")
     fun getRepliesMore(
         @Path("parent_id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String,

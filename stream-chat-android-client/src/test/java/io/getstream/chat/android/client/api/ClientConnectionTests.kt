@@ -77,7 +77,6 @@ internal class ClientConnectionTests {
         notificationsManager = mock()
         initCallback = mock()
         api = GsonChatApi(
-            config.apiKey,
             retrofitApi,
             retrofitAnonymousApi,
             UuidGeneratorImpl(),
