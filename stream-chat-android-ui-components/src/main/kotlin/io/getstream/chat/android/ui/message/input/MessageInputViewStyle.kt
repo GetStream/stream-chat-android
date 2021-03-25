@@ -169,9 +169,8 @@ public data class MessageInputViewStyle(
                 )
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
-                
-                var backgroundColor: Int
 
+                var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
                 }
