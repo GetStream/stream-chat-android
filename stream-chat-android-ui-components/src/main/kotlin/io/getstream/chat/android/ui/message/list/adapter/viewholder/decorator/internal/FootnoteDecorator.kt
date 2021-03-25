@@ -160,9 +160,12 @@ internal class FootnoteDecorator(
         when {
             data.isNotBottomPosition() || createdAt == null -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
-                dateFormatter.formatTime(updatedAt)
+                dateFormatter.formatTime(
+                    updatedAt
+                ),
+                style
             )
-            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt))
+            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), style)
         }
     }
 

@@ -26,6 +26,7 @@ public data class MessageListItemStyle(
     public val textStyleMine: TextStyle,
     public val textStyleTheirs: TextStyle,
     public val textStyleUserName: TextStyle,
+    public val textStyleMessageDate: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -47,6 +48,9 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_USER_NAME = R.color.stream_ui_text_color_secondary
         internal val DEFAULT_TEXT_SIZE_USER_NAME = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_DATE = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_DATE = R.dimen.stream_ui_text_small
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -153,6 +157,19 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleUserName, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleMessageDate = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeDate,
+                    context.getDimension(DEFAULT_TEXT_SIZE_DATE)
+                )
+                .color(R.styleable.MessageListView_streamUiMessageTextColorDate, DEFAULT_TEXT_COLOR_DATE)
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsDate,
+                    R.styleable.MessageListView_streamUiMessageTextFontDate
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleDate, DEFAULT_TEXT_STYLE)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -166,6 +183,7 @@ public data class MessageListItemStyle(
                 textStyleMine = textStyleMine,
                 textStyleTheirs = textStyleTheirs,
                 textStyleUserName = textStyleUserName,
+                textStyleMessageDate = textStyleMessageDate,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

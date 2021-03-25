@@ -78,5 +78,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style date in footer -->
+        <attr name="streamUiMessageTextSizeDate" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorDate" format="color" />
+        <attr name="streamUiMessageTextFontDate" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsDate" format="string" />
+        <attr name="streamUiMessageTextStyleDate">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>
