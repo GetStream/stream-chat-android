@@ -105,7 +105,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun setCustomBackgroundDrawable(drawable: Drawable) {
-        binding.containerView.setBackgroundDrawable(drawable)
+        binding.containerView.background = drawable
     }
 
     fun setTextColor(@ColorInt color: Int) {

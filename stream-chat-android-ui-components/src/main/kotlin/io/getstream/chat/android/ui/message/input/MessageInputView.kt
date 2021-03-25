@@ -333,8 +333,6 @@ public class MessageInputView : ConstraintLayout {
             setTextInputTypeface(style.textTypeface)
             setCustomBackgroundDrawable(style.editTextBackgroundDrawable)
         }
-
-        background = style.editTextBackgroundDrawable
     }
 
     private fun handleKeyStroke() {
