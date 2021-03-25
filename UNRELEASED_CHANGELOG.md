@@ -16,6 +16,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 
 ## stream-chat-android
 ### 🐞 Fixed
+- Fixed crash when sending GIF from Samsung keyboard
 
 ### ⬆️ Improved
 
