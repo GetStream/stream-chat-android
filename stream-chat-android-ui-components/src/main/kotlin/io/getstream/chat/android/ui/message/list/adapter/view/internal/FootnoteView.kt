@@ -60,7 +60,7 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
-    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>) {
+    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>, style: MessageListItemStyle) {
         footnote.root.isVisible = false
         with(threadsFootnote) {
             root.isVisible = true
@@ -69,6 +69,7 @@ internal class FootnoteView : ConstraintLayout {
 
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_thread_messages_indicator, replyCount, replyCount)
+            style.textStyleThreadCounter.apply(threadRepliesButton)
         }
         setupUserAvatars(isMine, threadParticipants)
     }

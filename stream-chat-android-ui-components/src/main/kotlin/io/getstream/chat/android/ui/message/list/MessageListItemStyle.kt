@@ -27,6 +27,7 @@ public data class MessageListItemStyle(
     public val textStyleTheirs: TextStyle,
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
+    public val textStyleThreadCounter: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -51,6 +52,9 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_DATE = R.color.stream_ui_text_color_secondary
         internal val DEFAULT_TEXT_SIZE_DATE = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_THREAD_COUNTER = R.color.stream_ui_accent_blue
+        internal val DEFAULT_TEXT_SIZE_THREAD_COUNTER = R.dimen.stream_ui_text_small
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -170,6 +174,19 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleDate, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleThreadCounter = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeThreadCounter,
+                    context.getDimension(DEFAULT_TEXT_SIZE_THREAD_COUNTER)
+                )
+                .color(R.styleable.MessageListView_streamUiMessageTextColorThreadCounter, DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsThreadCounter,
+                    R.styleable.MessageListView_streamUiMessageTextFontThreadCounter
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -184,6 +201,7 @@ public data class MessageListItemStyle(
                 textStyleTheirs = textStyleTheirs,
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
+                textStyleThreadCounter = textStyleThreadCounter,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

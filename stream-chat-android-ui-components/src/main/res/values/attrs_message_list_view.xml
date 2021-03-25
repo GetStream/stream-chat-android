@@ -89,5 +89,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style thread counter in footer -->
+        <attr name="streamUiMessageTextSizeThreadCounter" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorThreadCounter" format="color" />
+        <attr name="streamUiMessageTextFontThreadCounter" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsThreadCounter" format="string" />
+        <attr name="streamUiMessageTextStyleThreadCounter">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>
