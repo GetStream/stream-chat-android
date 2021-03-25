@@ -132,5 +132,10 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message reactions view style -->
+        <attr name="streamUiMessageReactionsBubbleColorMine" format="color" />
+        <attr name="streamUiMessageReactionsBubbleColorTheirs" format="color" />
+        <attr name="streamUiMessageReactionsBubbleBorderColorMine" format="color|reference" />
+
     </declare-styleable>
 </resources>

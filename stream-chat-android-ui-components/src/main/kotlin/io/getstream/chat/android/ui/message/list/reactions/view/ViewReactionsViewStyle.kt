@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
 
 public data class ViewReactionsViewStyle(
     public val bubbleBorderColor: Int,
