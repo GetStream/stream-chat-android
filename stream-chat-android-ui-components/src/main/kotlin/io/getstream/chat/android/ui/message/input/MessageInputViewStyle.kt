@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -28,7 +29,9 @@ public data class MessageInputViewStyle(
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
-    public val textTypeface: Int
+    public val textTypeface: Int,
+    public val backgroundColor: Int,
+    public val editTextBackgroundDrawable: Drawable,
 ) {
 
     internal companion object {
@@ -166,6 +169,16 @@ public data class MessageInputViewStyle(
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
+                var backgroundColor: Int
+
+                context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
+                    backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
+                }
+
+                val editTextBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable
+                ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_shape_edit_text_round)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -183,6 +196,8 @@ public data class MessageInputViewStyle(
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
                     textTypeface = textTypeface,
+                    backgroundColor = backgroundColor,
+                    editTextBackgroundDrawable = editTextBackgroundDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

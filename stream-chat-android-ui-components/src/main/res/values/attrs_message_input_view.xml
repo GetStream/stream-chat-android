@@ -22,6 +22,7 @@
         <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
         <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
+        <attr name="streamUiMessageInputEditTextBackgroundDrawable" format="reference" />
         <attr name="streamUiMessageInputTextStyle" format="enum">
             <enum name="normal" value="0"/>
             <enum name="bold" value="1"/>

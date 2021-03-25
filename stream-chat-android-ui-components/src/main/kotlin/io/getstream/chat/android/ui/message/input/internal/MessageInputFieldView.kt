@@ -1,7 +1,7 @@
 package io.getstream.chat.android.ui.message.input.internal
 
 import android.content.Context
-import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -102,6 +102,10 @@ internal class MessageInputFieldView : FrameLayout {
 
     fun setContentChangeListener(contentChangeListener: ContentChangeListener) {
         this.contentChangeListener = contentChangeListener
+    }
+
+    fun setCustomBackgroundDrawable(drawable: Drawable) {
+        binding.containerView.setBackgroundDrawable(drawable)
     }
 
     fun setTextColor(@ColorInt color: Int) {

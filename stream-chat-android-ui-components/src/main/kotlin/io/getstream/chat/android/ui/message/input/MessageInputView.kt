@@ -197,6 +197,7 @@ public class MessageInputView : ConstraintLayout {
         binding = StreamUiMessageInputBinding.inflate(context.inflater, this)
         style = MessageInputViewStyle(context, attr)
 
+        setBackgroundColor(style.backgroundColor)
         configAttachmentButton()
         configLightningButton()
         configTextInput()
@@ -330,7 +331,10 @@ public class MessageInputView : ConstraintLayout {
             setInputFieldScrollBarEnabled(style.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(style.messageInputScrollbarFadingEnabled)
             setTextInputTypeface(style.textTypeface)
+            setCustomBackgroundDrawable(style.editTextBackgroundDrawable)
         }
+
+        background = style.editTextBackgroundDrawable
     }
 
     private fun handleKeyStroke() {
