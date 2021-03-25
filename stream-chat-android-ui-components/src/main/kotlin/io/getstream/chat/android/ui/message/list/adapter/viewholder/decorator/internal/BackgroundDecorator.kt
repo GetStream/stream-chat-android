@@ -34,7 +34,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
         val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(bottomRightCorner).build()
         viewHolder.binding.deleteLabel.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(viewHolder.itemView.context, style.messageDeletedBackground))
+            setTint(style.messageDeletedBackground)
         }
     }
 
