@@ -32,9 +32,6 @@
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
 
-        <!-- Message text color -->
-        <attr name="streamUiMessageTextColorTheirs" format="color" />
-
         <!-- Message background color -->
         <attr name="streamUiMessageBackgroundColorMine" format="color" />
         <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
@@ -48,7 +45,7 @@
 
         <attr name="streamUiBackgroundColor" format="color" />
 
-        <!-- Message text style -->
+        <!-- Message text style mine -->
         <attr name="streamUiMessageTextSizeMine" format="dimension|reference" />
         <attr name="streamUiMessageTextColorMine" format="color" />
         <attr name="streamUiMessageTextFontMine" format="reference" />
@@ -58,5 +55,17 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <!-- Message text style theirs -->
+        <attr name="streamUiMessageTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+        <attr name="streamUiMessageTextFontTheirs" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiMessageTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>

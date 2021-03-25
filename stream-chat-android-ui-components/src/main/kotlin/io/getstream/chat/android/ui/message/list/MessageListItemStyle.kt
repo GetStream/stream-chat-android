@@ -14,20 +14,22 @@ import java.io.Serializable
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
-    @Deprecated("Use MessageListItemStyle::textStyleMineText::color instead")
+    @Deprecated("Use MessageListItemStyle::textStyleMine::colorOrNull() instead")
     @ColorInt public val messageTextColorMine: Int?,
+    @Deprecated("Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead")
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
     public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
-    public val textStyleMineText: TextStyle,
+    public val textStyleMine: TextStyle,
+    public val textStyleTheirs: TextStyle,
 ) : Serializable {
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {
-        return if (isMine) textStyleMineText.color else messageTextColorTheirs
+        return if (isMine) textStyleMine.colorOrNull() else textStyleTheirs.colorOrNull()
     }
 
     @ColorInt
@@ -37,9 +39,9 @@ public data class MessageListItemStyle(
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
-        internal val DEFAULT_TEXT_COLOR_MINE = R.color.stream_ui_text_color_primary
-        internal val DEFAULT_TEXT_SIZE_MINE = R.dimen.stream_ui_text_medium
-        internal const val DEFAULT_TEXT_STYLE_MINE = Typeface.NORMAL
+        internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
+        internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
+        internal const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -48,9 +50,6 @@ public data class MessageListItemStyle(
 
         @ColorInt
         private var messageBackgroundColorTheirs: Int = VALUE_NOT_SET
-
-        @ColorInt
-        private var messageTextColorTheirs: Int = VALUE_NOT_SET
 
         @ColorInt
         private var messageLinkTextColorMine: Int = VALUE_NOT_SET
@@ -75,13 +74,6 @@ public data class MessageListItemStyle(
             @ColorInt defaultValue: Int = VALUE_NOT_SET,
         ) = apply {
             messageBackgroundColorTheirs = attributes.getColor(messageBackgroundColorTheirsId, defaultValue)
-        }
-
-        fun messageTextColorTheirs(
-            @StyleableRes messageTextColorTheirsId: Int,
-            @ColorInt defaultValue: Int = VALUE_NOT_SET,
-        ) = apply {
-            messageTextColorTheirs = attributes.getColor(messageTextColorTheirsId, defaultValue)
         }
 
         fun messageLinkTextColorMine(
@@ -120,27 +112,32 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
-            val messageTextColorMine =
-                attributes.getColor(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR_MINE)
-
-            val textStyleMineText = TextStyle.Builder(attributes)
-                .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE_MINE))
-                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR_MINE)
+            val textStyleMine = TextStyle.Builder(attributes)
+                .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
+                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR)
                 .font(R.styleable.MessageListView_streamUiMessageTextFontAssetsMine, R.styleable.MessageListView_streamUiMessageTextFontMine)
-                .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE_MINE)
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleTheirs = TextStyle.Builder(attributes)
+                .size(R.styleable.MessageListView_streamUiMessageTextSizeTheirs, context.getDimension(DEFAULT_TEXT_SIZE))
+                .color(R.styleable.MessageListView_streamUiMessageTextColorTheirs, DEFAULT_TEXT_COLOR)
+                .font(R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs, R.styleable.MessageListView_streamUiMessageTextFontTheirs)
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleTheirs, DEFAULT_TEXT_STYLE)
                 .build()
 
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
-                messageTextColorMine = messageTextColorMine,
-                messageTextColorTheirs = messageTextColorTheirs.nullIfNotSet(),
+                messageTextColorMine = textStyleMine.colorOrNull(),
+                messageTextColorTheirs = textStyleTheirs.colorOrNull(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
                 linkDescriptionMaxLines = linkDescriptionMaxLines,
-                textStyleMineText = textStyleMineText,
+                textStyleMine = textStyleMine,
+                textStyleTheirs = textStyleTheirs,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

@@ -46,6 +46,8 @@ public class TextStyle {
         return fontAssetsPath != null || fontResource != UNSET_FONT_RESOURCE
     }
 
+    public fun colorOrNull(): Int? = if (color != UNSET_COLOR) color else null
+
     public class Builder(private val array: TypedArray) {
         private val result: TextStyle = TextStyle()
 

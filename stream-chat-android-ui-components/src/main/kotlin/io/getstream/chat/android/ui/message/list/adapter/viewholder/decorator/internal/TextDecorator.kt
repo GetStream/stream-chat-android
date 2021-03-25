@@ -25,7 +25,9 @@ internal class TextDecorator(val style: MessageListItemStyle) : BaseDecorator() 
 
     private fun setupTextView(textView: TextView, data: MessageListItem.MessageItem) {
         if (data.isMine) {
-            style.textStyleMineText.apply(textView)
+            style.textStyleMine.apply(textView)
+        } else {
+            style.textStyleTheirs.apply(textView)
         }
 
         style.getStyleLinkTextColor(data.isMine)?.let { linkTextColor ->
