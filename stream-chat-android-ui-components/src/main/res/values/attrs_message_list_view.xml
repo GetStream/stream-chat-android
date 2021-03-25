@@ -46,5 +46,7 @@
         <attr name="streamUiLinkDescriptionMaxLines" format="integer" />
 
         <attr name="streamUiReactionsEnabled" format="boolean" />
+
+        <attr name="streamUiBackgroundColor" format="color" />
     </declare-styleable>
 </resources>
