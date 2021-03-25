@@ -329,6 +329,7 @@ public class MessageInputView : ConstraintLayout {
             setTextSizePx(style.messageInputTextSize)
             setInputFieldScrollBarEnabled(style.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(style.messageInputScrollbarFadingEnabled)
+            setTextInputTypeface(style.textTypeface)
         }
     }
 

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.graphics.drawable.DrawableCompat
@@ -27,6 +28,7 @@ public data class MessageInputViewStyle(
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
+    public val textTypeface: Int
 ) {
 
     internal companion object {
@@ -157,6 +159,11 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiMentionsEnabled,
                     true
                 )
+                val textTypeface = a.getInt(
+                    R.styleable.MessageInputView_streamUiMessageInputTextStyle,
+                    Typeface.NORMAL
+                )
+
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
                 return MessageInputViewStyle(
@@ -175,6 +182,7 @@ public data class MessageInputViewStyle(
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
+                    textTypeface = textTypeface,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
