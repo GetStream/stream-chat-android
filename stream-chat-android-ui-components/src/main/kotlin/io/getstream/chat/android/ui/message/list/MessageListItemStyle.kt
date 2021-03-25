@@ -37,6 +37,9 @@ public data class MessageListItemStyle(
     public val textStyleDateSeparator: TextStyle,
     public val reactionsViewStyle: ViewReactionsViewStyle,
     public val editReactionsViewStyle: EditReactionsViewStyle,
+    public val iconIndicatorSent: Int,
+    public val iconIndicatorRead: Int,
+    public val iconIndicatorPendingSync: Int,
 ) : Serializable {
 
     @ColorInt
@@ -283,6 +286,20 @@ public data class MessageListItemStyle(
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
                 .build()
 
+            val iconIndicatorSent = attributes.getResourceId(
+                R.styleable.MessageListView_streamUiIconIndicatorSent,
+                R.drawable.stream_ui_ic_check_single
+            )
+            val iconIndicatorRead = attributes.getResourceId(
+                R.styleable.MessageListView_streamUiIconIndicatorRead,
+                R.drawable.stream_ui_ic_check_double
+            )
+            val iconIndicatorPendingSync =
+                attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiIconIndicatorPendingSync,
+                    R.drawable.stream_ui_ic_clock
+                )
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -303,6 +320,9 @@ public data class MessageListItemStyle(
                 textStyleDateSeparator = textStyleDateSeparator,
                 reactionsViewStyle = reactionsViewStyle,
                 editReactionsViewStyle = editReactionsViewStyle,
+                iconIndicatorSent = iconIndicatorSent,
+                iconIndicatorRead = iconIndicatorRead,
+                iconIndicatorPendingSync = iconIndicatorPendingSync
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

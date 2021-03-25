@@ -141,5 +141,10 @@
         <attr name="streamUiEditReactionsBubbleColorMine" format="color"/>
         <attr name="streamUiEditReactionsBubbleColorTheirs" format="color"/>
 
+        <!-- Indicator icons -->
+        <attr name="streamUiIconIndicatorSent" format="reference"/>
+        <attr name="streamUiIconIndicatorRead" format="reference"/>
+        <attr name="streamUiIconIndicatorPendingSync" format="reference"/>
+
     </declare-styleable>
 </resources>
