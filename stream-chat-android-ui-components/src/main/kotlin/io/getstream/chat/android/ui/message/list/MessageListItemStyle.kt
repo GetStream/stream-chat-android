@@ -14,6 +14,7 @@ import java.io.Serializable
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
+    @Deprecated("Use MessageListItemStyle::textStyleMineText::color instead")
     @ColorInt public val messageTextColorMine: Int?,
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
@@ -26,7 +27,7 @@ public data class MessageListItemStyle(
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {
-        return if (isMine) messageTextColorMine else messageTextColorTheirs
+        return if (isMine) textStyleMineText.color else messageTextColorTheirs
     }
 
     @ColorInt

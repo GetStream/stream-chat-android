@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use Use MessageListItemStyle::textStyleMineText::color instead |
 | `com.getstream.sdk.chat.ChatUI`<br/>*ui-components* | 2021.03.19 | 2021.04.19<br/>4.7.2 | 2021.05.19 ⌛ | Use io.getstream.chat.android.ui.ChatUI instead |
 | `GetTotalUnreadCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::totalUnreadCount instead |
 | `GetUnreadChannelCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::channelUnreadCount instead |
