@@ -1,7 +1,10 @@
 package io.getstream.chat.android.ui.message.list.reactions.edit
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
+import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -32,14 +35,30 @@ public data class EditReactionsViewStyle(
                 0,
                 0,
             ).use { a ->
-                val bubbleColorMine = a.getColor(
-                    R.styleable.EditReactionsView_streamUiReactionsBubbleColorMine,
-                    context.getColorCompat(R.color.stream_ui_white),
-                )
-                val bubbleColorTheirs = a.getColor(
-                    R.styleable.EditReactionsView_streamUiReactionsBubbleColorTheirs,
-                    context.getColorCompat(R.color.stream_ui_white),
-                )
+                return Builder(a, context)
+                    .bubbleColorMine(R.styleable.EditReactionsView_streamUiReactionsBubbleColorMine)
+                    .bubbleColorTheirs(R.styleable.EditReactionsView_streamUiReactionsBubbleColorTheirs)
+                    .build()
+            }
+        }
+
+        internal data class Builder(private val array: TypedArray, private val context: Context) {
+            @ColorInt
+            private var bubbleColorMine: Int = context.getColorCompat(R.color.stream_ui_white)
+            @ColorInt
+            private var bubbleColorTheirs: Int = context.getColorCompat(R.color.stream_ui_white)
+
+            fun bubbleColorMine(@StyleableRes bubbleColorMineResId: Int) = apply {
+                val bubbleColorMine =
+                    array.getColor(bubbleColorMineResId, context.getColorCompat(R.color.stream_ui_white))
+            }
+
+            fun bubbleColorTheirs(@StyleableRes bubbleColorTheirsResId: Int) = apply {
+                val bubbleColorMine =
+                    array.getColor(bubbleColorTheirsResId, context.getColorCompat(R.color.stream_ui_white))
+            }
+
+            fun build(): EditReactionsViewStyle {
                 val totalHeight =
                     context.getDimension(R.dimen.stream_ui_edit_reactions_total_height)
                 val horizontalPadding =
