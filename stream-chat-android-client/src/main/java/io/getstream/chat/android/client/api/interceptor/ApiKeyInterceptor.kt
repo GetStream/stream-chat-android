@@ -7,7 +7,7 @@ internal class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
         val url = original.url.newBuilder()
-            .addQueryParameter(API_KEY, apiKey)
+            .addQueryParameter(PARAM_API_KEY, apiKey)
             .build()
         val request = original.newBuilder()
             .url(url)
@@ -16,6 +16,6 @@ internal class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     }
 
     companion object {
-        internal const val API_KEY = "api_key"
+        private const val PARAM_API_KEY = "api_key"
     }
 }
