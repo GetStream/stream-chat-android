@@ -31,6 +31,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Fixed parsing of `createdAt` property in `MessageDeletedEvent`
 
 ### ⬆️ Improved
+- Postponed queries as run as non-blocking
 
 ### ✅ Added
 - **Added a brand new serialization implementation, available as an opt-in API for now.** This can be enabled by making a `useNewSerialization(true)` call on the `ChatClient.Builder`.

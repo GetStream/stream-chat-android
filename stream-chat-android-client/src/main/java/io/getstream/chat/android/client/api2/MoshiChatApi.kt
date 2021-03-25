@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
@@ -79,7 +78,7 @@ internal class MoshiChatApi(
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
-    private val coroutineScope: CoroutineScope = GlobalScope,
+    private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
     val logger = ChatLogger.get("MoshiChatApi")

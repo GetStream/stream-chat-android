@@ -89,8 +89,8 @@ public class ChatClient internal constructor(
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService(),
+    private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
 ) {
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService)
 
     @InternalStreamChatApi
     public val notificationHandler: ChatNotificationHandler = notifications.handler
@@ -1420,7 +1420,9 @@ public class ChatClient internal constructor(
                 module.api(),
                 module.socket(),
                 module.notifications(),
-                tokenManager
+                tokenManager,
+                module.clientStateService,
+                module.queryChannelsPostponeHelper
             )
 
             instance = result
