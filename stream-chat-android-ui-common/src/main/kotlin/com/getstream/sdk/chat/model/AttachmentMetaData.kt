@@ -49,4 +49,9 @@ public data class AttachmentMetaData(
             }
         }
     } ?: ModelType.attach_file
+
+    @InternalStreamChatApi
+    public companion object {
+        public const val DEFAULT_ATTACHMENT_TITLE: String = "attachment"
+    }
 }
