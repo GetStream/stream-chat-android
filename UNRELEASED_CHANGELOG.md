@@ -36,6 +36,7 @@ It is possible now to configure the max size of the file upload using
 - Fixed parsing of `createdAt` property in `MessageDeletedEvent`
 
 ### ⬆️ Improved
+- Postponed queries as run as non-blocking
 
 ### ✅ Added
 - **Added a brand new serialization implementation, available as an opt-in API for now.** This can be enabled by making a `useNewSerialization(true)` call on the `ChatClient.Builder`.
@@ -86,6 +87,7 @@ It is possible now to configure the max size of the file upload using
 ### 🐞 Fixed
 - Now replied messages are shown correctly with the replied part in message options
 - `MessageListView::enterThreadListener` is properly notified when entering into a thread
+- Fix initial controls state in `MessageInputView`
 
 ### ⬆️ Improved
 - Add support of non-image attachment types to the default attachment click listener.

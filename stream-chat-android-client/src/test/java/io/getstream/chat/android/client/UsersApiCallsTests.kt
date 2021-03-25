@@ -41,7 +41,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.banUser(
-                mock.apiKey,
                 mock.connectionId,
                 BanUserRequest(targetUserId, timeout, reason, mock.channelType, mock.channelId, shadow = false)
             )
@@ -68,7 +67,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.unbanUser(
-                mock.apiKey,
                 mock.connectionId,
                 targetUserId,
                 mock.channelType,
@@ -111,7 +109,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey,
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
@@ -144,7 +141,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey,
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
@@ -176,7 +172,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey,
                 mock.connectionId,
                 mapOf(Pair("target_message_id", targetMessageId))
             )
@@ -196,7 +191,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.queryUsers(
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -219,7 +213,6 @@ internal class UsersApiCallsTests {
             mock.retrofitApi.removeMembers(
                 mock.channelType,
                 mock.channelId,
-                mock.apiKey,
                 mock.connectionId,
                 RemoveMembersRequest(listOf("a-id", "b-id"))
             )
@@ -244,7 +237,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.muteUser(
-                mock.apiKey,
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
@@ -262,7 +254,6 @@ internal class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.unmuteUser(
-                mock.apiKey,
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )

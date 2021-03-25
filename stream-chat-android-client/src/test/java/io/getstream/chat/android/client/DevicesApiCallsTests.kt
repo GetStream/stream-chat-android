@@ -30,7 +30,6 @@ internal class DevicesApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.getDevices(
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(GetDevicesResponse(listOf(device))).toRetrofitCall())
@@ -45,7 +44,6 @@ internal class DevicesApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.getDevices(
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroError<GetDevicesResponse>(mock.serverErrorCode).toRetrofitCall())
@@ -63,7 +61,6 @@ internal class DevicesApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -82,7 +79,6 @@ internal class DevicesApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
-                mock.apiKey,
                 mock.connectionId,
                 request
             )
@@ -101,7 +97,6 @@ internal class DevicesApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.deleteDevice(
                 device.id,
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
@@ -119,7 +114,6 @@ internal class DevicesApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.deleteDevice(
                 device.id,
-                mock.apiKey,
                 mock.connectionId
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())

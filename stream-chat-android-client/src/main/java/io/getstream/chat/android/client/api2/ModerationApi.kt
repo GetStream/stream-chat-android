@@ -23,56 +23,48 @@ internal interface ModerationApi {
 
     @POST("/moderation/mute")
     fun muteUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: MuteUserRequest,
     ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
     fun unmuteUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: MuteUserRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/mute/channel")
     fun muteChannel(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: MuteChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
     fun unmuteChannel(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: MuteChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/flag")
     fun flag(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: Map<String, String>,
     ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/unflag")
     fun unflag(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: Map<String, String>,
     ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/ban")
     fun banUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: BanUserRequest
+        @Body body: BanUserRequest,
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
     fun unbanUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("target_user_id") targetUserId: String,
         @Query("type") channelType: String,
@@ -82,7 +74,6 @@ internal interface ModerationApi {
 
     @GET("/query_banned_users")
     fun queryBannedUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
     ): RetrofitCall<QueryBannedUsersResponse>

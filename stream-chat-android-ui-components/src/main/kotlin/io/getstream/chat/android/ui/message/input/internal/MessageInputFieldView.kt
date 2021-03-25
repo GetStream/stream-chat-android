@@ -105,7 +105,6 @@ internal class MessageInputFieldView : FrameLayout {
                 R.drawable.stream_ui_ic_command,
                 R.dimen.stream_ui_message_input_command_icon_size
             )
-            onModeChanged(mode)
         }
     }
 

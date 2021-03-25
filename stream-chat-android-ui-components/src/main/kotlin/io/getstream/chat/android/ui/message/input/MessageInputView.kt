@@ -215,6 +215,8 @@ public class MessageInputView : ConstraintLayout {
         binding.messageInputFieldView.setAttachmentMaxFileMb(style.attachmentMaxFileSize)
         val horizontalPadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_tiny)
         updatePadding(left = horizontalPadding, right = horizontalPadding)
+
+        refreshControlsState()
     }
 
     private fun dismissInputMode(inputMode: InputMode) {

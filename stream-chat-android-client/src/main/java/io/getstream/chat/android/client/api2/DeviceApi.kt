@@ -18,13 +18,11 @@ internal interface DeviceApi {
 
     @GET("/devices")
     fun getDevices(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<DevicesResponse>
 
     @POST("devices")
     fun addDevices(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: AddDeviceRequest,
     ): RetrofitCall<CompletableResponse>
@@ -32,7 +30,6 @@ internal interface DeviceApi {
     @DELETE("/devices")
     fun deleteDevice(
         @Query("id") deviceId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<CompletableResponse>
 }

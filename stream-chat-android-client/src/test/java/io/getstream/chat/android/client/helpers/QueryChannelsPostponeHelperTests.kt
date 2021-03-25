@@ -7,16 +7,16 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
-import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class QueryChannelsPostponeHelperTests {
 
@@ -25,11 +25,15 @@ internal class QueryChannelsPostponeHelperTests {
 
     private lateinit var sut: QueryChannelsPostponeHelper
 
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
+
     @BeforeEach
     fun setUp() {
         api = mock()
         clientStateService = mock()
-        sut = QueryChannelsPostponeHelper(api, clientStateService, DELAY_DURATION, ATTEMPTS_COUNT)
+        sut = QueryChannelsPostponeHelper(api, clientStateService, testCoroutines.scope, DELAY_DURATION, ATTEMPTS_COUNT)
     }
 
     @Test
@@ -52,9 +56,8 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedErrorResult = "User must be set before querying channels"
         whenever(clientStateService.state) doReturn ClientState.Idle
 
-        val result = sut.queryChannel("channelType", "channelId", mock())
-        result `should be instance of` ErrorCall::class
-        result.execute().error().message `should be` expectedErrorResult
+        val result = sut.queryChannel("channelType", "channelId", mock()).execute().error()
+        result.message `should be` expectedErrorResult
     }
 
     @Test
@@ -63,9 +66,8 @@ internal class QueryChannelsPostponeHelperTests {
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(clientStateService.state) doReturn ClientState.User.Pending(Mother.randomUser())
 
-        val result = sut.queryChannel("channelType", "channelId", mock())
-        result `should be instance of` ErrorCall::class
-        result.execute().error().message `should be` expectedErrorResult
+        val result = sut.queryChannel("channelType", "channelId", mock()).execute().error()
+        result.message `should be` expectedErrorResult
     }
 
     @Test

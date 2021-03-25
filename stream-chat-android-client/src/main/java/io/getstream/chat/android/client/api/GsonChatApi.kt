@@ -54,18 +54,16 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import java.io.File
 import java.util.Date
 import kotlin.collections.set
 
 internal class GsonChatApi(
-    private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val retrofitAnonymousApi: RetrofitAnonymousApi,
     private val uuidGenerator: UuidGenerator,
     private val fileUploader: FileUploader,
-    private val coroutineScope: CoroutineScope = GlobalScope,
+    private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
     private var userId: String = ""
@@ -172,7 +170,6 @@ internal class GsonChatApi(
 
     override fun addDevice(firebaseToken: String): Call<Unit> {
         return retrofitApi.addDevices(
-            apiKey = apiKey,
             connectionId = connectionId,
             request = AddDeviceRequest(firebaseToken)
         ).toUnitCall()
@@ -181,21 +178,18 @@ internal class GsonChatApi(
     override fun deleteDevice(firebaseToken: String): Call<Unit> {
         return retrofitApi.deleteDevice(
             deviceId = firebaseToken,
-            apiKey = apiKey,
             connectionId = connectionId
         ).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
         return retrofitApi.getDevices(
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { it.devices }
     }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return retrofitApi.searchMessages(
-            apiKey = apiKey,
             connectionId = connectionId,
             payload = request
         )
@@ -216,7 +210,6 @@ internal class GsonChatApi(
     ): Call<List<Message>> {
         return retrofitApi.getRepliesMore(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             limit = limit,
             firstId = firstId
@@ -226,7 +219,6 @@ internal class GsonChatApi(
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return retrofitApi.getReplies(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             limit = limit
         ).map { it.messages }
@@ -239,7 +231,6 @@ internal class GsonChatApi(
     ): Call<List<Reaction>> {
         return retrofitApi.getReactions(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             offset = offset,
             limit = limit
@@ -249,7 +240,6 @@ internal class GsonChatApi(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
         return retrofitApi.sendReaction(
             messageId = reaction.messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             request = ReactionRequest(reaction, enforceUnique)
         ).map { it.reaction }
@@ -259,7 +249,6 @@ internal class GsonChatApi(
         return retrofitApi.deleteReaction(
             messageId = messageId,
             reactionType = reactionType,
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { it.message }
     }
@@ -267,7 +256,6 @@ internal class GsonChatApi(
     override fun deleteMessage(messageId: String): Call<Message> {
         return retrofitApi.deleteMessage(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { it.message }
     }
@@ -275,7 +263,6 @@ internal class GsonChatApi(
     override fun sendAction(request: SendActionRequest): Call<Message> {
         return retrofitApi.sendAction(
             messageId = request.messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             request = request
         ).map { it.message }
@@ -284,7 +271,6 @@ internal class GsonChatApi(
     override fun getMessage(messageId: String): Call<Message> {
         return retrofitApi.getMessage(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { it.message }
     }
@@ -299,7 +285,6 @@ internal class GsonChatApi(
         return retrofitApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             message = MessageRequest(message)
         ).map { it.message }
@@ -307,7 +292,6 @@ internal class GsonChatApi(
 
     override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
         return retrofitApi.muteChannel(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = MuteChannelRequest("$channelType:$channelId")
         ).toUnitCall()
@@ -315,7 +299,6 @@ internal class GsonChatApi(
 
     override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
         return retrofitApi.unmuteChannel(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = MuteChannelRequest("$channelType:$channelId")
         ).toUnitCall()
@@ -326,7 +309,6 @@ internal class GsonChatApi(
     ): Call<Message> {
         return retrofitApi.updateMessage(
             messageId = message.id,
-            apiKey = apiKey,
             connectionId = connectionId,
             message = MessageRequest(message)
         ).map { it.message }
@@ -339,7 +321,6 @@ internal class GsonChatApi(
         return retrofitApi.stopWatching(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = emptyMap()
         ).toUnitCall()
@@ -349,7 +330,6 @@ internal class GsonChatApi(
         if (connectionId.isEmpty()) return noConnectionIdError()
 
         return retrofitApi.queryChannels(
-            apiKey = apiKey,
             connectionId = connectionId,
             payload = query
         ).map {
@@ -361,7 +341,6 @@ internal class GsonChatApi(
         val map = users.associateBy({ it.id }, { user -> user })
 
         return retrofitApi.updateUsers(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = UpdateUsersRequest(map)
         )
@@ -380,7 +359,6 @@ internal class GsonChatApi(
         return if (channelId.isEmpty()) {
             retrofitApi.queryChannel(
                 channelType = channelType,
-                apiKey = apiKey,
                 connectionId = connectionId,
                 request = query
             )
@@ -388,7 +366,6 @@ internal class GsonChatApi(
             retrofitApi.queryChannel(
                 channelType = channelType,
                 channelId = channelId,
-                apiKey = apiKey,
                 connectionId = connectionId,
                 request = query
             )
@@ -404,7 +381,6 @@ internal class GsonChatApi(
         return retrofitApi.updateChannel(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage)
         ).map { flattenChannel(it) }
@@ -441,7 +417,6 @@ internal class GsonChatApi(
         retrofitApi.updateCooldown(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = UpdateCooldownRequest(cooldownTimeInSeconds)
         ).map { flattenChannel(it) }
@@ -454,7 +429,6 @@ internal class GsonChatApi(
         return retrofitApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             request = MarkReadRequest(messageId)
         ).toUnitCall()
@@ -464,7 +438,6 @@ internal class GsonChatApi(
         return retrofitApi.showChannel(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = emptyMap()
         ).toUnitCall()
@@ -478,7 +451,6 @@ internal class GsonChatApi(
         return retrofitApi.hideChannel(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = HideChannelRequest(clearHistory)
         ).toUnitCall()
@@ -488,7 +460,6 @@ internal class GsonChatApi(
         return retrofitApi.rejectInvite(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = RejectInviteRequest()
         ).map { flattenChannel(it) }
@@ -510,7 +481,6 @@ internal class GsonChatApi(
         return retrofitApi.acceptInvite(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = AcceptInviteRequest(
                 User().apply { id = userId },
@@ -523,28 +493,24 @@ internal class GsonChatApi(
         return retrofitApi.deleteChannel(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { flattenChannel(it) }
     }
 
     override fun markAllRead(): Call<Unit> {
         return retrofitApi.markAllRead(
-            apiKey = apiKey,
             connectionId = connectionId
         ).toUnitCall()
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return retrofitAnonymousApi.getGuestUser(
-            apiKey = apiKey,
             body = GuestUserRequest(userId, userName)
         ).map { GuestUser(it.user, it.accessToken) }
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
         return retrofitApi.queryUsers(
-            apiKey = apiKey,
             connectionId = connectionId,
             payload = queryUsers
         ).map { it.users }
@@ -558,7 +524,6 @@ internal class GsonChatApi(
         return retrofitApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = AddMembersRequest(members)
         ).map { flattenChannel(it) }
@@ -572,7 +537,6 @@ internal class GsonChatApi(
         return retrofitApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             body = RemoveMembersRequest(members)
         ).map { flattenChannel(it) }
@@ -588,7 +552,6 @@ internal class GsonChatApi(
         members: List<Member>,
     ): Call<List<Member>> {
         return retrofitApi.queryMembers(
-            apiKey = apiKey,
             connectionId = connectionId,
             payload = QueryMembersRequest(
                 channelType,
@@ -606,7 +569,6 @@ internal class GsonChatApi(
         userId: String,
     ): Call<Mute> {
         return retrofitApi.muteUser(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = MuteUserRequest(userId, this.userId)
         ).map { it.mute }
@@ -616,7 +578,6 @@ internal class GsonChatApi(
         userId: String,
     ): Call<Unit> {
         return retrofitApi.unmuteUser(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = MuteUserRequest(userId, this.userId)
         ).toUnitCall()
@@ -640,7 +601,6 @@ internal class GsonChatApi(
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
         return retrofitApi.flag(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = body
         ).map { it.flag }
@@ -648,7 +608,6 @@ internal class GsonChatApi(
 
     private fun unflag(body: MutableMap<String, String>): Call<Flag> {
         return retrofitApi.unflag(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = body
         ).map { it.flag }
@@ -663,7 +622,6 @@ internal class GsonChatApi(
         shadow: Boolean,
     ): Call<Unit> {
         return retrofitApi.banUser(
-            apiKey = apiKey,
             connectionId = connectionId,
             body = BanUserRequest(
                 targetUserId = targetId,
@@ -683,7 +641,6 @@ internal class GsonChatApi(
         shadow: Boolean,
     ): Call<Unit> {
         return retrofitApi.unbanUser(
-            apiKey = apiKey,
             connectionId = connectionId,
             targetUserId = targetId,
             channelId = channelId,
@@ -703,7 +660,6 @@ internal class GsonChatApi(
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>> {
         return retrofitApi.queryBannedUsers(
-            apiKey = apiKey,
             connectionId = connectionId,
             payload = QueryBannedUsersRequest(
                 filter = filter,
@@ -731,7 +687,6 @@ internal class GsonChatApi(
         return retrofitApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
-            apiKey = apiKey,
             connectionId = connectionId,
             request = SendEventRequest(map)
         ).map { it.event }
@@ -740,7 +695,6 @@ internal class GsonChatApi(
     override fun translate(messageId: String, language: String): Call<Message> {
         return retrofitApi.translate(
             messageId = messageId,
-            apiKey = apiKey,
             connectionId = connectionId,
             request = TranslateMessageRequest(language)
         ).map { it.message }
@@ -749,7 +703,6 @@ internal class GsonChatApi(
     override fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>> {
         return retrofitApi.getSyncHistory(
             body = GetSyncHistory(channelIds, lastSyncAt),
-            apiKey = apiKey,
             connectionId = connectionId
         ).map { it.events }
     }

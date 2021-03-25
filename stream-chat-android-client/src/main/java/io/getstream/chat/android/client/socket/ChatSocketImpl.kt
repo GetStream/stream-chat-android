@@ -8,13 +8,15 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
+import kotlinx.coroutines.CoroutineScope
 
 internal class ChatSocketImpl(
     private val apiKey: String,
     private val wssUrl: String,
     tokenManager: TokenManager,
     parser: ChatParser,
-    networkStateProvider: NetworkStateProvider
+    networkStateProvider: NetworkStateProvider,
+    coroutineScope: CoroutineScope,
 ) : ChatSocket {
 
     private val eventsParser = EventsParser(parser)
@@ -22,7 +24,8 @@ internal class ChatSocketImpl(
         tokenManager,
         SocketFactory(eventsParser, parser, tokenManager),
         eventsParser,
-        networkStateProvider
+        networkStateProvider,
+        coroutineScope,
     )
 
     override fun connectAnonymously() {

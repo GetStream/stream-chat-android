@@ -60,66 +60,58 @@ internal interface RetrofitApi {
 
     @POST("/moderation/mute/channel")
     fun muteChannel(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: MuteChannelRequest
+        @Body body: MuteChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
     fun unmuteChannel(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: MuteChannelRequest
+        @Body body: MuteChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
     @GET("/channels")
     fun queryChannels(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest
+        @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest,
     ): RetrofitCall<QueryChannelsResponse>
 
     @POST("/channels/{type}/{id}/query")
     fun queryChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: QueryChannelRequest
+        @Body request: QueryChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(
         @Path("type") channelType: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: QueryChannelRequest
+        @Body request: QueryChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: UpdateChannelRequest
+        @Body body: UpdateChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateCooldown(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: UpdateCooldownRequest
+        @Body body: UpdateCooldownRequest,
     ): RetrofitCall<ChannelResponse>
 
     @DELETE("/channels/{type}/{id}")
     fun deleteChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/stop-watching")
@@ -127,36 +119,32 @@ internal interface RetrofitApi {
     fun stopWatching(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<Any, Any>
+        @Body body: Map<Any, Any>,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}")
     fun acceptInvite(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: AcceptInviteRequest
+        @Body body: AcceptInviteRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun rejectInvite(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: RejectInviteRequest
+        @Body body: RejectInviteRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/hide")
     fun hideChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: HideChannelRequest
+        @Body body: HideChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/show")
@@ -164,33 +152,29 @@ internal interface RetrofitApi {
     fun showChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<Any, Any>
+        @Body body: Map<Any, Any>,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/read")
     fun markRead(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: MarkReadRequest
+        @Body request: MarkReadRequest,
     ): RetrofitCall<EventResponse>
 
     @POST("/channels/read")
     fun markAllRead(
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/event")
     fun sendEvent(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: SendEventRequest
+        @Body request: SendEventRequest,
     ): RetrofitCall<EventResponse>
 
     // endregion
@@ -199,81 +183,70 @@ internal interface RetrofitApi {
 
     @POST("/users")
     fun updateUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: UpdateUsersRequest
+        @Body body: UpdateUsersRequest,
     ): RetrofitCall<UpdateUsersResponse>
 
     @GET("/users")
     fun queryUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: QueryUsersRequest
+        @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
     ): RetrofitCall<QueryUserListResponse>
 
     @POST("/channels/{type}/{id}")
     fun addMembers(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: AddMembersRequest
+        @Body body: AddMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun removeMembers(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: RemoveMembersRequest
+        @Body body: RemoveMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
     @GET("/members")
     fun queryMembers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: QueryMembersRequest
+        @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
     ): RetrofitCall<QueryMembersResponse>
 
     @POST("/moderation/mute")
     fun muteUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: MuteUserRequest
+        @Body body: MuteUserRequest,
     ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
     fun unmuteUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: MuteUserRequest
+        @Body body: MuteUserRequest,
     ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/flag")
     fun flag(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: Map<String, String>,
     ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/unflag")
     fun unflag(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: Map<String, String>,
     ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/ban")
     fun banUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: BanUserRequest
+        @Body body: BanUserRequest,
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
     fun unbanUser(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("target_user_id") targetUserId: String,
         @Query("type") channelType: String,
@@ -283,7 +256,6 @@ internal interface RetrofitApi {
 
     @GET("/query_banned_users")
     fun queryBannedUsers(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
     ): RetrofitCall<QueryBannedUsersResponse>
@@ -297,82 +269,72 @@ internal interface RetrofitApi {
     fun sendMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body message: MessageRequest
+        @Body message: MessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun updateMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body message: MessageRequest
+        @Body message: MessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}")
     fun getMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/action")
     fun sendAction(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: SendActionRequest
+        @Body request: SendActionRequest,
     ): RetrofitCall<MessageResponse>
 
     @DELETE("/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/reaction")
     fun sendReaction(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: ReactionRequest
+        @Body request: ReactionRequest,
     ): RetrofitCall<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
     fun deleteReaction(
         @Path("id") messageId: String,
         @Path("type") reactionType: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}/reactions")
     fun getReactions(
         @Path("id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("offset") offset: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
     ): RetrofitCall<GetReactionsResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getReplies(
         @Path("parent_id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
     ): RetrofitCall<GetRepliesResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getRepliesMore(
         @Path("parent_id") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("limit") limit: Int,
-        @Query("id_lt") firstId: String
+        @Query("id_lt") firstId: String,
     ): RetrofitCall<GetRepliesResponse>
 
     //endregion
@@ -381,9 +343,8 @@ internal interface RetrofitApi {
 
     @GET("/search")
     fun searchMessages(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest
+        @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
     ): RetrofitCall<SearchMessagesResponse>
 
     //endregion
@@ -391,22 +352,19 @@ internal interface RetrofitApi {
     // region Device
     @GET("/devices")
     fun getDevices(
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<GetDevicesResponse>
 
     @POST("devices")
     fun addDevices(
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: AddDeviceRequest
+        @Body request: AddDeviceRequest,
     ): RetrofitCall<CompletableResponse>
 
     @DELETE("/devices")
     fun deleteDevice(
         @Query("id") deviceId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<CompletableResponse>
 
     // endregion
@@ -414,16 +372,14 @@ internal interface RetrofitApi {
     @POST("/messages/{messageId}/translate")
     fun translate(
         @Path("messageId") messageId: String,
-        @Query(QueryParams.API_KEY) apiKey: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: TranslateMessageRequest
+        @Body request: TranslateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @POST("/sync")
     fun getSyncHistory(
         @Body body: GetSyncHistory,
-        @Query(QueryParams.API_KEY) apiKey: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<GetSyncHistoryResponse>
 
     @OPTIONS("/connect")
