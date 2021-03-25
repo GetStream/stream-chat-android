@@ -67,5 +67,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style user name in footer -->
+        <attr name="streamUiMessageTextSizeUserName" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorUserName" format="color" />
+        <attr name="streamUiMessageTextFontUserName" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsUserName" format="string" />
+        <attr name="streamUiMessageTextStyleUserName">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>

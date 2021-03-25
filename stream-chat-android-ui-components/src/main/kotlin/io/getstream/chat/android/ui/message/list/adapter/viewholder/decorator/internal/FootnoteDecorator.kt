@@ -110,7 +110,7 @@ internal class FootnoteDecorator(
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         footnoteView.showSimpleFootnote()
-        setupMessageFooterLabel(footnoteView.footerTextLabel, data)
+        setupMessageFooterLabel(footnoteView.footerTextLabel, data, style)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
     }
@@ -131,11 +131,16 @@ internal class FootnoteDecorator(
         footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount, data.message.threadParticipants)
     }
 
-    private fun setupMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
+    private fun setupMessageFooterLabel(
+        textView: TextView,
+        data: MessageListItem.MessageItem,
+        style: MessageListItemStyle,
+    ) {
         when {
             data.isBottomPosition() && !isDirectMessage && data.isTheirs -> {
                 textView.text = data.message.user.name
                 textView.isVisible = true
+                style.textStyleUserName.apply(textView)
             }
             data.isNotBottomPosition() -> textView.isVisible = false
             !data.message.isEphemeral() && !data.message.isDeleted() -> textView.isVisible = false

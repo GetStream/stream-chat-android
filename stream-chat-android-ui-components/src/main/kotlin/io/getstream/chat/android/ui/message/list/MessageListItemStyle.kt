@@ -25,6 +25,7 @@ public data class MessageListItemStyle(
     public val linkDescriptionMaxLines: Int,
     public val textStyleMine: TextStyle,
     public val textStyleTheirs: TextStyle,
+    public val textStyleUserName: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -39,9 +40,13 @@ public data class MessageListItemStyle(
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
+
         internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
         internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
         internal const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
+
+        internal val DEFAULT_TEXT_COLOR_USER_NAME = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_USER_NAME = R.dimen.stream_ui_text_small
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -115,15 +120,37 @@ public data class MessageListItemStyle(
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
                 .color(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR)
-                .font(R.styleable.MessageListView_streamUiMessageTextFontAssetsMine, R.styleable.MessageListView_streamUiMessageTextFontMine)
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMine,
+                    R.styleable.MessageListView_streamUiMessageTextFontMine
+                )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE)
                 .build()
 
             val textStyleTheirs = TextStyle.Builder(attributes)
-                .size(R.styleable.MessageListView_streamUiMessageTextSizeTheirs, context.getDimension(DEFAULT_TEXT_SIZE))
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeTheirs,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
                 .color(R.styleable.MessageListView_streamUiMessageTextColorTheirs, DEFAULT_TEXT_COLOR)
-                .font(R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs, R.styleable.MessageListView_streamUiMessageTextFontTheirs)
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs,
+                    R.styleable.MessageListView_streamUiMessageTextFontTheirs
+                )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleTheirs, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleUserName = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeUserName,
+                    context.getDimension(DEFAULT_TEXT_SIZE_USER_NAME)
+                )
+                .color(R.styleable.MessageListView_streamUiMessageTextColorUserName, DEFAULT_TEXT_COLOR_USER_NAME)
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsUserName,
+                    R.styleable.MessageListView_streamUiMessageTextFontUserName
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleUserName, DEFAULT_TEXT_STYLE)
                 .build()
 
             return MessageListItemStyle(
@@ -138,6 +165,7 @@ public data class MessageListItemStyle(
                 linkDescriptionMaxLines = linkDescriptionMaxLines,
                 textStyleMine = textStyleMine,
                 textStyleTheirs = textStyleTheirs,
+                textStyleUserName = textStyleUserName,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
