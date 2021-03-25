@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -12,6 +13,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 internal class DateDividerViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
+    private val style: MessageListItemStyle,
     internal val binding: StreamUiItemDateDividerBinding = StreamUiItemDateDividerBinding.inflate(
         parent.inflater,
         parent,
@@ -29,5 +31,7 @@ internal class DateDividerViewHolder(
                 DateUtils.DAY_IN_MILLIS,
                 DateUtils.FORMAT_ABBREV_RELATIVE
             )
+
+        style.textStyleDateSeparator.apply(binding.dateLabel)
     }
 }

@@ -32,6 +32,7 @@ public data class MessageListItemStyle(
     public val textStyleThreadCounter: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
+    public val textStyleDateSeparator: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -62,6 +63,9 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_LINK_DESCRIPTION = R.color.stream_ui_text_color_secondary
         internal val DEFAULT_TEXT_SIZE_LINK_DESCRIPTION = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_DATE_SEPARATOR = R.color.stream_ui_white
+        internal val DEFAULT_TEXT_SIZE_DATE_SEPARATOR = R.dimen.stream_ui_text_small
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -248,6 +252,22 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleDateSeparator = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeDateSeparator,
+                    context.getDimension(DEFAULT_TEXT_SIZE_DATE_SEPARATOR)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorDateSeparator,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE_SEPARATOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsDateSeparator,
+                    R.styleable.MessageListView_streamUiMessageTextFontDateSeparator,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleDateSeparator, DEFAULT_TEXT_STYLE)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -265,6 +285,7 @@ public data class MessageListItemStyle(
                 textStyleThreadCounter = textStyleThreadCounter,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
+                textStyleDateSeparator = textStyleDateSeparator,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

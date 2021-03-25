@@ -121,5 +121,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text Date separator -->
+        <attr name="streamUiMessageTextSizeDateSeparator" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorDateSeparator" format="color" />
+        <attr name="streamUiMessageTextFontDateSeparator" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsDateSeparator" format="string" />
+        <attr name="streamUiMessageTextStyleDateSeparator">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>
