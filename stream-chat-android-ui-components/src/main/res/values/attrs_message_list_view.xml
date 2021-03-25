@@ -137,5 +137,9 @@
         <attr name="streamUiMessageReactionsBubbleColorTheirs" format="color" />
         <attr name="streamUiMessageReactionsBubbleBorderColorMine" format="color|reference" />
 
+        <!-- Message edit reactions view style -->
+        <attr name="streamUiEditReactionsBubbleColorMine" format="color"/>
+        <attr name="streamUiEditReactionsBubbleColorTheirs" format="color"/>
+
     </declare-styleable>
 </resources>

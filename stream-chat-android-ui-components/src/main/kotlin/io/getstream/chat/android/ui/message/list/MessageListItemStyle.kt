@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import java.io.Serializable
 
@@ -35,6 +36,7 @@ public data class MessageListItemStyle(
     public val textStyleLinkDescription: TextStyle,
     public val textStyleDateSeparator: TextStyle,
     public val reactionsViewStyle: ViewReactionsViewStyle,
+    public val editReactionsViewStyle: EditReactionsViewStyle,
 ) : Serializable {
 
     @ColorInt
@@ -276,6 +278,11 @@ public data class MessageListItemStyle(
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorTheirs)
                 .build()
 
+            val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
+                .bubbleColorMine(R.styleable.MessageListView_streamUiEditReactionsBubbleColorMine)
+                .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -295,6 +302,7 @@ public data class MessageListItemStyle(
                 textStyleLinkDescription = textStyleLinkDescription,
                 textStyleDateSeparator = textStyleDateSeparator,
                 reactionsViewStyle = reactionsViewStyle,
+                editReactionsViewStyle = editReactionsViewStyle,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

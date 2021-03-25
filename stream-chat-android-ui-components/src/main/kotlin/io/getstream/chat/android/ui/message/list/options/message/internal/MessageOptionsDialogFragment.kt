@@ -131,6 +131,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
+            applyStyle(itemStyle.editReactionsViewStyle)
             if (isReactionsEnabled) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
@@ -298,7 +299,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         fun newReactionOptionsInstance(
             message: Message,
             style: MessageListItemStyle,
-            reactionsEnabled: Boolean
+            reactionsEnabled: Boolean,
         ): MessageOptionsDialogFragment {
             return newInstance(OptionsMode.REACTION_OPTIONS, message, null, style, reactionsEnabled)
         }
@@ -307,7 +308,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListItemStyle,
-            reactionsEnabled: Boolean
+            reactionsEnabled: Boolean,
         ): MessageOptionsDialogFragment {
             return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, reactionsEnabled)
         }
@@ -317,7 +318,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration?,
             style: MessageListItemStyle,
-            reactionsEnabled: Boolean
+            reactionsEnabled: Boolean,
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
