@@ -30,6 +30,8 @@ public data class MessageListItemStyle(
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
     public val textStyleThreadCounter: TextStyle,
+    public val textStyleLinkTitle: TextStyle,
+    public val textStyleLinkDescription: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -57,6 +59,9 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_THREAD_COUNTER = R.color.stream_ui_accent_blue
         internal val DEFAULT_TEXT_SIZE_THREAD_COUNTER = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_LINK_DESCRIPTION = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_LINK_DESCRIPTION = R.dimen.stream_ui_text_small
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -128,10 +133,14 @@ public data class MessageListItemStyle(
 
         fun build(): MessageListItemStyle {
             val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
 
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
-                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, context.getColorCompat(DEFAULT_TEXT_COLOR))
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMine,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsMine,
                     R.styleable.MessageListView_streamUiMessageTextFontMine,
@@ -145,7 +154,10 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeTheirs,
                     context.getDimension(DEFAULT_TEXT_SIZE)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorTheirs, context.getColorCompat(DEFAULT_TEXT_COLOR))
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorTheirs,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs,
                     R.styleable.MessageListView_streamUiMessageTextFontTheirs,
@@ -159,7 +171,10 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeUserName,
                     context.getDimension(DEFAULT_TEXT_SIZE_USER_NAME)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorUserName, context.getColorCompat(DEFAULT_TEXT_COLOR_USER_NAME))
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorUserName,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_USER_NAME)
+                )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsUserName,
                     R.styleable.MessageListView_streamUiMessageTextFontUserName
@@ -172,7 +187,10 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextSizeDate,
                     context.getDimension(DEFAULT_TEXT_SIZE_DATE)
                 )
-                .color(R.styleable.MessageListView_streamUiMessageTextColorDate, context.getColorCompat(DEFAULT_TEXT_COLOR_DATE))
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorDate,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE)
+                )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsDate,
                     R.styleable.MessageListView_streamUiMessageTextFontDate
@@ -197,6 +215,39 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleLinkTitle = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkTitle,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkTitle,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkTitle,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkTitle,
+                    boldTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkTitle, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleLinkDescription = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkDescription,
+                    context.getDimension(DEFAULT_TEXT_SIZE_LINK_DESCRIPTION)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkDescription,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_LINK_DESCRIPTION)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkDescription,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkDescription,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -212,6 +263,8 @@ public data class MessageListItemStyle(
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
                 textStyleThreadCounter = textStyleThreadCounter,
+                textStyleLinkTitle = textStyleLinkTitle,
+                textStyleLinkDescription = textStyleLinkDescription,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

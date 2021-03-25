@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 internal class LinkAttachmentView : FrameLayout {
     private val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
@@ -24,7 +25,7 @@ internal class LinkAttachmentView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    fun showLinkAttachment(attachment: Attachment) {
+    fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
         previewUrl = attachment.ogUrl
 
         val title = attachment.title
@@ -34,6 +35,7 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.titleTextView.isVisible = false
         }
+        style.textStyleLinkTitle.apply(binding.titleTextView)
 
         val description = attachment.text
         if (description != null) {
@@ -42,6 +44,7 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.descriptionTextView.isVisible = false
         }
+        style.textStyleLinkDescription.apply(binding.descriptionTextView)
 
         val label = attachment.authorName
         if (label != null) {

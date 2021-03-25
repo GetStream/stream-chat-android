@@ -100,5 +100,26 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style link title -->
+        <attr name="streamUiMessageTextSizeLinkTitle" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkTitle" format="color" />
+        <attr name="streamUiMessageTextFontLinkTitle" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkTitle" format="string" />
+        <attr name="streamUiMessageTextStyleLinkTitle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageTextSizeLinkDescription" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkDescription" format="color" />
+        <attr name="streamUiMessageTextFontLinkDescription" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkDescription" format="string" />
+        <attr name="streamUiMessageTextStyleLinkDescription">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>
