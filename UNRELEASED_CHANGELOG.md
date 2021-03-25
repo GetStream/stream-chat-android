@@ -8,6 +8,11 @@ it is now possible to configure the max lines of a link description. Just use
 ### ✅ Added
 Configure enable/disable of replies using XML in `MessageListView`
 Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
+It is now possible to configure, for message input view:
+- TextStyle for the Input Text
+- Custom the cursor drawable
+- Background for EditText inside MessageInputView
+- Background MessageInputView itself
 
 ### ⚠️ Changed
 
