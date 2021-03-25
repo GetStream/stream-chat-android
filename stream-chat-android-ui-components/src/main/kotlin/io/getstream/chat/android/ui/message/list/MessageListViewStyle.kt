@@ -62,10 +62,9 @@ public data class MessageListViewStyle(
                     context.getColorCompat(DEFAULT_BACKGROUND_COLOR)
                 )
 
-                val itemStyle = MessageListItemStyle.Builder(attributes)
+                val itemStyle = MessageListItemStyle.Builder(attributes, context)
                     .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
                     .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
-                    .messageTextColorMine(R.styleable.MessageListView_streamUiMessageTextColorMine)
                     .messageTextColorTheirs(R.styleable.MessageListView_streamUiMessageTextColorTheirs)
                     .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
                     .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)

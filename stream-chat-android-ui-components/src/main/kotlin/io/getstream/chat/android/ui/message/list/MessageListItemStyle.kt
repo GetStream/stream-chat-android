@@ -1,9 +1,14 @@
 package io.getstream.chat.android.ui.message.list
 
+import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import com.getstream.sdk.chat.style.TextStyle
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import java.io.Serializable
 
 public data class MessageListItemStyle(
@@ -16,6 +21,7 @@ public data class MessageListItemStyle(
     public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
+    private val textStyleMineText: TextStyle,
 ) : Serializable {
 
     @ColorInt
@@ -30,17 +36,17 @@ public data class MessageListItemStyle(
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
+        internal val DEFAULT_TEXT_COLOR_MINE = R.color.stream_ui_text_color_primary
+        internal val DEFAULT_TEXT_SIZE_MINE = R.dimen.stream_ui_text_medium
+        internal const val DEFAULT_TEXT_STYLE_MINE = Typeface.NORMAL
     }
 
-    internal class Builder(private val attributes: TypedArray) {
+    internal class Builder(private val attributes: TypedArray, private val context: Context) {
         @ColorInt
         private var messageBackgroundColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
         private var messageBackgroundColorTheirs: Int = VALUE_NOT_SET
-
-        @ColorInt
-        private var messageTextColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
         private var messageTextColorTheirs: Int = VALUE_NOT_SET
@@ -68,13 +74,6 @@ public data class MessageListItemStyle(
             @ColorInt defaultValue: Int = VALUE_NOT_SET,
         ) = apply {
             messageBackgroundColorTheirs = attributes.getColor(messageBackgroundColorTheirsId, defaultValue)
-        }
-
-        fun messageTextColorMine(
-            @StyleableRes messageTextColorMineId: Int,
-            @ColorInt defaultValue: Int = VALUE_NOT_SET,
-        ) = apply {
-            messageTextColorMine = attributes.getColor(messageTextColorMineId, defaultValue)
         }
 
         fun messageTextColorTheirs(
@@ -120,16 +119,27 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
+            val messageTextColorMine =
+                attributes.getColor(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR_MINE)
+
+            val textStyleMineText = TextStyle.Builder(attributes)
+                .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE_MINE))
+                .color(R.styleable.MessageListView_streamUiMessageTextColorMine, DEFAULT_TEXT_COLOR_MINE)
+                .font(R.styleable.MessageListView_streamUiMessageTextFontAssetsMine, R.styleable.MessageListView_streamUiMessageTextFontMine)
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE_MINE)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
-                messageTextColorMine = messageTextColorMine.nullIfNotSet(),
+                messageTextColorMine = messageTextColorMine,
                 messageTextColorTheirs = messageTextColorTheirs.nullIfNotSet(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
-                linkDescriptionMaxLines = linkDescriptionMaxLines
+                linkDescriptionMaxLines = linkDescriptionMaxLines,
+                textStyleMineText = textStyleMineText,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
