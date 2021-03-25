@@ -32,6 +32,7 @@ public data class MessageInputViewStyle(
     public val textTypeface: Int,
     public val backgroundColor: Int,
     public val editTextBackgroundDrawable: Drawable,
+    public val customCursorDrawable: Drawable?,
 ) {
 
     internal companion object {
@@ -168,12 +169,16 @@ public data class MessageInputViewStyle(
                 )
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
-
+                
                 var backgroundColor: Int
 
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
                 }
+
+                val customCursorDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputCustomCursorDrawable
+                )
 
                 val editTextBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable
@@ -198,6 +203,7 @@ public data class MessageInputViewStyle(
                     textTypeface = textTypeface,
                     backgroundColor = backgroundColor,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
+                    customCursorDrawable = customCursorDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

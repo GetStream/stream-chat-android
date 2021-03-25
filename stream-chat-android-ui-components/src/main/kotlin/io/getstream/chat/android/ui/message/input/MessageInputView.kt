@@ -332,6 +332,7 @@ public class MessageInputView : ConstraintLayout {
             setInputFieldScrollbarFadingEnabled(style.messageInputScrollbarFadingEnabled)
             setTextInputTypeface(style.textTypeface)
             setCustomBackgroundDrawable(style.editTextBackgroundDrawable)
+            style.customCursorDrawable?.let(::setCustomCursor)
         }
     }
 
