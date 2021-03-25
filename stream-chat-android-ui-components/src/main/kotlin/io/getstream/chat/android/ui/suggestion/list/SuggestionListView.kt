@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
 
 public class SuggestionListView : FrameLayout {
 
-    private val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
+    internal val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
         StreamUiSuggestionListViewBinding.inflate(it, this)
     }
     private val mentionsAdapter: MentionsAdapter = MentionsAdapter { listener?.onMentionClick(it) }

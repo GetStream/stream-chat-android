@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.getstream.sdk.chat.style.TextStyle
@@ -31,6 +32,7 @@ public data class MessageInputViewStyle(
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
+    @ColorRes public val commandsBackground: Int,
     public val backgroundColor: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
@@ -178,6 +180,11 @@ public data class MessageInputViewStyle(
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
+                val commandsBackground = a.getColor(
+                    R.styleable.MessageInputView_streamUiCommandsBackgroundColor,
+                    ContextCompat.getColor(context, R.color.stream_ui_white)
+                )
+
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
@@ -208,6 +215,7 @@ public data class MessageInputViewStyle(
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
+                    commandsBackground = commandsBackground,
                     backgroundColor = backgroundColor,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,

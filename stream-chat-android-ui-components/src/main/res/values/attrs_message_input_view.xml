@@ -49,6 +49,7 @@
 
         <!-- Commands -->
         <attr name="streamUiCommandsEnabled" format="boolean" />
+        <attr name="streamUiCommandsBackgroundColor" format="reference|color" />
     </declare-styleable>
 
 </resources>

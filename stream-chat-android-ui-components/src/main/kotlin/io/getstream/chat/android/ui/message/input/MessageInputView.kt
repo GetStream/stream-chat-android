@@ -179,6 +179,9 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
         )
+
+        suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.commandsBackground)
+
         suggestionListController = SuggestionListController(suggestionListView) {
             binding.commandsButton.isSelected = false
         }.also {
