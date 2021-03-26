@@ -464,7 +464,7 @@ public class MessageListView : ConstraintLayout {
         configureMessageOptions(tArray)
         tArray.recycle()
         if (background == null) {
-            setBackgroundColor(ContextCompat.getColor(context, R.color.stream_ui_white_snow))
+            setBackgroundColor(messageListViewStyle.backgroundColor)
         }
     }
 

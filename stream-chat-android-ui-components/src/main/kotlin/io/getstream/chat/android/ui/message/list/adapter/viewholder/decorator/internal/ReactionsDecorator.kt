@@ -10,13 +10,14 @@ import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.common.extensions.hasReactions
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
 
-internal class ReactionsDecorator : BaseDecorator() {
+internal class ReactionsDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
@@ -54,6 +55,8 @@ internal class ReactionsDecorator : BaseDecorator() {
         if (data.message.hasReactions()) {
             reactionsView.isVisible = true
             reactionsSpace.isVisible = true
+
+            reactionsView.applyStyle(style.reactionsViewStyle)
 
             reactionsView.setMessage(data.message, data.isMine) {
                 rootConstraintLayout.updateConstraints {

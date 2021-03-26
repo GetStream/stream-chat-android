@@ -94,13 +94,13 @@ public open class MessageListItemViewHolderFactory {
     protected fun createDateDividerViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
-        return DateDividerViewHolder(parentView, decoratorProvider.decorators)
+        return DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
     protected fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessageDeletedViewHolder(parentView, decoratorProvider.decorators)
+        return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
     protected fun createPlainTextViewHolder(

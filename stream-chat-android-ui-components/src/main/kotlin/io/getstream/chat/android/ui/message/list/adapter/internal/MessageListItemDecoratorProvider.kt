@@ -29,7 +29,7 @@ internal class MessageListItemDecoratorProvider(
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         FailedIndicatorDecorator(),
-        ReactionsDecorator().takeIf { style.reactionsEnabled },
+        ReactionsDecorator(style).takeIf { style.reactionsEnabled },
         ReplyDecorator(currentUser),
         FootnoteDecorator(dateFormatter, isDirectMessage, style),
     )

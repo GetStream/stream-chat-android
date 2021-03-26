@@ -110,7 +110,7 @@ internal class FootnoteDecorator(
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         footnoteView.showSimpleFootnote()
-        setupMessageFooterLabel(footnoteView.footerTextLabel, data)
+        setupMessageFooterLabel(footnoteView.footerTextLabel, data, style)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
     }
@@ -128,14 +128,24 @@ internal class FootnoteDecorator(
             clear(footnoteView.id, ConstraintSet.TOP)
             connect(footnoteView.id, ConstraintSet.TOP, threadGuideline.id, ConstraintSet.BOTTOM)
         }
-        footnoteView.showThreadRepliesFootnote(data.isMine, data.message.replyCount, data.message.threadParticipants)
+        footnoteView.showThreadRepliesFootnote(
+            data.isMine,
+            data.message.replyCount,
+            data.message.threadParticipants,
+            style
+        )
     }
 
-    private fun setupMessageFooterLabel(textView: TextView, data: MessageListItem.MessageItem) {
+    private fun setupMessageFooterLabel(
+        textView: TextView,
+        data: MessageListItem.MessageItem,
+        style: MessageListItemStyle,
+    ) {
         when {
             data.isBottomPosition() && !isDirectMessage && data.isTheirs -> {
                 textView.text = data.message.user.name
                 textView.isVisible = true
+                style.textStyleUserName.apply(textView)
             }
             data.isNotBottomPosition() -> textView.isVisible = false
             !data.message.isEphemeral() && !data.message.isDeleted() -> textView.isVisible = false
@@ -155,9 +165,12 @@ internal class FootnoteDecorator(
         when {
             data.isNotBottomPosition() || createdAt == null -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
-                dateFormatter.formatTime(updatedAt)
+                dateFormatter.formatTime(
+                    updatedAt
+                ),
+                style
             )
-            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt))
+            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), style)
         }
     }
 
@@ -170,10 +183,10 @@ internal class FootnoteDecorator(
             data.message.isDeleted() -> footnoteView.hideStatusIndicator()
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
-                SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> footnoteView.showInProgressStatusIndicator()
+                SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> footnoteView.showStatusIndicator(style.iconIndicatorPendingSync)
                 SyncStatus.COMPLETED -> {
-                    if (data.isMessageRead) footnoteView.showReadStatusIndicator()
-                    else footnoteView.showSentStatusIndicator()
+                    if (data.isMessageRead) footnoteView.showStatusIndicator(style.iconIndicatorRead)
+                    else footnoteView.showStatusIndicator(style.iconIndicatorSent)
                 }
             }.exhaustive
         }

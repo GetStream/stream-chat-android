@@ -99,6 +99,20 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Open `AvatarBitmapFactory` class
 - Add `AvatarBitmapFactory::setInstance` method to allow custom implementation of `AvatarBitmapFactory`
 - Add `StyleTransformer` class to allow application-wide style customizations
+- Add the default font field to `TextStyle`
+- Add new method `ChatFonts::setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface)`
+- Add attributes for `MessageListView` in order to customize styles of:
+    - Mine message text
+    - Theirs message text
+    - User name text in footer of Message
+    - Message date in footer of Message
+    - Thread replies counter in footer of Message
+    - Link title text
+    - Link description text
+    - Date separator text
+    - Deleted message text and background
+    - Reactions style in list view and in options view
+    - Indicator icons in footer of Message
 It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiChannelOptionsIcon` - customize options icon
 - `streamUiChannelDeleteIcon` - customize delete icon
