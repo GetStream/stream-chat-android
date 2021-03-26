@@ -78,7 +78,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
                 // for messages with links, we use a different background color than other messages by default.
                 // however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.
                 val backgroundTintColor = if (hasLink) {
-                    style.messageBackgroundColorMine ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                    style.messageLinkBackgroundColorMine
                 } else {
                     style.messageBackgroundColorMine ?: ContextCompat.getColor(
                         view.context,
@@ -93,7 +93,7 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
                 strokeWidth = DEFAULT_STROKE_WIDTH
 
                 val backgroundTintColor = if (hasLink) {
-                    style.messageBackgroundColorTheirs ?: ContextCompat.getColor(view.context, MESSAGE_LINK_BACKGROUND)
+                    style.messageLinkBackgroundColorTheirs
                 } else {
                     style.messageBackgroundColorTheirs ?: ContextCompat.getColor(
                         view.context,
@@ -110,7 +110,6 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
         private val MESSAGE_OTHER_STROKE_COLOR = R.color.stream_ui_grey_whisper
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_gainsboro
-        private val MESSAGE_LINK_BACKGROUND = R.color.stream_ui_blue_alice
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
         private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()

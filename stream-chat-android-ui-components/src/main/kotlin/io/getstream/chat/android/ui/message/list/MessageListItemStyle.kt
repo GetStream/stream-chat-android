@@ -24,6 +24,8 @@ public data class MessageListItemStyle(
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
+    @ColorInt public val messageLinkBackgroundColorMine: Int,
+    @ColorInt public val messageLinkBackgroundColorTheirs: Int,
     public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
@@ -56,6 +58,8 @@ public data class MessageListItemStyle(
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
+
+        internal val DEFAULT_LINK_BACKGROUND_COLOR = R.color.stream_ui_blue_alice
 
         internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
         internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
@@ -145,6 +149,17 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
+            val linkBackgroundColorMine =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageLinkBackgroundColorMine,
+                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                )
+            val linkBackgroundColorTheirs =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageLinkBackgroundColorTheirs,
+                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                )
+
             val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
             val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
 
@@ -331,6 +346,8 @@ public data class MessageListItemStyle(
                 messageTextColorTheirs = textStyleTheirs.colorOrNull(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
+                messageLinkBackgroundColorMine = linkBackgroundColorMine,
+                messageLinkBackgroundColorTheirs = linkBackgroundColorTheirs,
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
                 linkDescriptionMaxLines = linkDescriptionMaxLines,

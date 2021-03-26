@@ -45,6 +45,9 @@
 
         <attr name="streamUiBackgroundColor" format="color" />
 
+        <attr name="streamUiMessageLinkBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageLinkBackgroundColorTheirs" format="color" />
+
         <!-- Message text style mine -->
         <attr name="streamUiMessageTextSizeMine" format="dimension|reference" />
         <attr name="streamUiMessageTextColorMine" format="color" />
