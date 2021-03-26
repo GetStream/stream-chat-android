@@ -36,6 +36,7 @@ public data class MessageListItemStyle(
     public val textStyleThreadCounter: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
+    @ColorInt public val dateSeparatorBackgroundColor: Int,
     public val textStyleDateSeparator: TextStyle,
     public val reactionsViewStyle: ViewReactionsViewStyle,
     public val editReactionsViewStyle: EditReactionsViewStyle,
@@ -276,6 +277,12 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val dateSeparatorBackgroundColor =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDateSeparatorBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_overlay_dark)
+                )
+
             val textStyleDateSeparator = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageTextSizeDateSeparator,
@@ -358,6 +365,7 @@ public data class MessageListItemStyle(
                 textStyleThreadCounter = textStyleThreadCounter,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
+                dateSeparatorBackgroundColor = dateSeparatorBackgroundColor,
                 textStyleDateSeparator = textStyleDateSeparator,
                 reactionsViewStyle = reactionsViewStyle,
                 editReactionsViewStyle = editReactionsViewStyle,

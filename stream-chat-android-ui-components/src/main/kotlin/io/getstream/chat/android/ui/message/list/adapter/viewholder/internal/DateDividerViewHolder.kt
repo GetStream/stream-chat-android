@@ -4,6 +4,9 @@ import android.text.format.DateUtils
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.inflater
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -33,5 +36,12 @@ internal class DateDividerViewHolder(
             )
 
         style.textStyleDateSeparator.apply(binding.dateLabel)
+
+        binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS).build()
+            .let(::MaterialShapeDrawable).apply { setTint(style.dateSeparatorBackgroundColor) }
+    }
+
+    private companion object {
+        private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
     }
 }

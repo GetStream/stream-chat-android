@@ -124,7 +124,9 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Message text Date separator -->
+        <!-- Date separator -->
+        <attr name="streamUiDateSeparatorBackgroundColor" format="color" />
+
         <attr name="streamUiMessageTextSizeDateSeparator" format="dimension|reference" />
         <attr name="streamUiMessageTextColorDateSeparator" format="color" />
         <attr name="streamUiMessageTextFontDateSeparator" format="reference" />
