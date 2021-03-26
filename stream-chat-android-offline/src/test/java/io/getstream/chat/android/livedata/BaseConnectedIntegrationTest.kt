@@ -18,7 +18,6 @@ import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import java.util.concurrent.Executors
 
 internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
@@ -31,7 +30,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             return ChatClient.Builder(data.apiKey, ApplicationProvider.getApplicationContext())
                 .logLevel(data.logLevel)
                 .loggerHandler(TestLoggerHandler())
-                .callbackExecutor(Executors.newSingleThreadExecutor())
+                .callbackExecutor { runnable -> runnable.run() }
                 .build()
         }
     }
