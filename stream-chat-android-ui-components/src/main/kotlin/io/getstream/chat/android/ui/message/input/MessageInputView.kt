@@ -195,6 +195,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSuggestionListView(suggestionListView: SuggestionListView, style: MessageInputViewStyle) {
         suggestionListView.styleCommandName(style.commandsNameTextStyle)
+        suggestionListView.styleCommandDescription(style.commandsDescriptionTextStyle)
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {

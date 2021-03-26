@@ -194,7 +194,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsNameTextColor,
-                        R.color.stream_ui_white
+                        R.color.stream_ui_black
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
@@ -213,7 +213,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
-                        R.color.stream_ui_white
+                        R.color.stream_ui_black
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 
 internal class CommandsAdapter(
     var commandsNameStyle: TextStyle? = null,
+    var commandsDescriptionStyle: TextStyle? = null,
     private val onCommandSelected: (Command) -> Unit,
 ) : ListAdapter<Command, CommandsAdapter.CommandViewHolder>(
     object : DiffUtil.ItemCallback<Command>() {
@@ -28,11 +30,10 @@ internal class CommandsAdapter(
         return StreamUiItemCommandBinding
             .inflate(parent.inflater, parent, false)
             .let { binding ->
-                val configuredBinding = commandsNameStyle?.let { textStyle ->
-                    configCommandView(binding, textStyle)
-                }
+                commandsNameStyle?.let { style -> configCommandView(binding.commandNameTextView, style) }
+                commandsDescriptionStyle?.let { style -> configCommandView(binding.commandQueryTextView, style) }
 
-                CommandViewHolder(configuredBinding ?: binding, onCommandSelected)
+                CommandViewHolder(binding, onCommandSelected)
             }
     }
 
@@ -40,17 +41,12 @@ internal class CommandsAdapter(
         return holder.bind(getItem(position))
     }
 
-    private fun configCommandView(
-        binding: StreamUiItemCommandBinding,
-        textStyle: TextStyle,
-    ): StreamUiItemCommandBinding {
-        return binding.apply {
-            commandNameTextView.run {
-                setTextColor(textStyle.color)
-                // textSize = textStyle.size
-                textStyle.font?.let { typeface = it }
-                setTypeface(this.typeface, textStyle.style)
-            }
+    private fun configCommandView(textView: TextView, textStyle: TextStyle) {
+        textView.run {
+            setTextColor(textStyle.color)
+            // textSize = textStyle.size
+            textStyle.font?.let { typeface = it }
+            setTypeface(this.typeface, textStyle.style)
         }
     }
 

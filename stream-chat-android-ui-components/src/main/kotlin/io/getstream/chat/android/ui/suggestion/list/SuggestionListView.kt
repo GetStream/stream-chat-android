@@ -70,6 +70,10 @@ public class SuggestionListView : FrameLayout {
         commandsAdapter.commandsNameStyle = style
     }
 
+    internal fun styleCommandDescription(style: TextStyle) {
+        commandsAdapter.commandsDescriptionStyle = style
+    }
+
     public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
         this.listener = listener
     }
