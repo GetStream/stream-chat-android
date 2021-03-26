@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
     private val scope: CoroutineScope,
-    private val suspendingTask: suspend () -> Result<T>,
+    private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
     private var job: Job? = null
@@ -28,7 +28,7 @@ public class CoroutineCall<T : Any>(
     }
 
     override fun execute(): Result<T> {
-        return runBlocking(scope.coroutineContext) { suspendingTask() }
+        return runBlocking(block = suspendingTask)
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
