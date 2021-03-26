@@ -37,6 +37,7 @@ public data class MessageInputViewStyle(
     public val mentionsEnabled: Boolean,
     public val mentionsUsernameTextStyle: TextStyle,
     public val mentionsNameTextStyle: TextStyle,
+    public val mentionsIcon: Drawable,
     @ColorRes public val backgroundColor: Int,
     @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
@@ -285,6 +286,11 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val mentionsIcon: Drawable =
+                    a.getDrawable(
+                        R.styleable.MessageInputView_streamUiMentionsIcon
+                    ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_mention)!!
+
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
@@ -315,13 +321,14 @@ public data class MessageInputViewStyle(
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     commandsEnabled = commandsEnabled,
                     commandsTitleTextStyle = commandsTitleTextStyle,
-                    suggestionsBackground = commandsBackground,
                     commandsNameTextStyle = commandsNameTextStyle,
                     commandsDescriptionTextStyle = commandsDescriptionTextStyle,
                     mentionsEnabled = mentionsEnabled,
-                    backgroundColor = backgroundColor,
                     mentionsUsernameTextStyle = mentionsUsernameTextStyle,
                     mentionsNameTextStyle = mentionsNameTextStyle,
+                    mentionsIcon = mentionsIcon,
+                    backgroundColor = backgroundColor,
+                    suggestionsBackground = commandsBackground,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)

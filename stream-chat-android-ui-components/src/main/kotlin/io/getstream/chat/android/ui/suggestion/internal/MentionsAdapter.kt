@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -15,6 +16,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 internal class MentionsAdapter(
     var usernameStyle: TextStyle? = null,
     var mentionNameStyle: TextStyle? = null,
+    var mentionIcon: Drawable? = null,
     private val onMentionSelected: (User) -> Unit,
 ) : ListAdapter<User, MentionsAdapter.MentionViewHolder>(
     object : DiffUtil.ItemCallback<User>() {
@@ -34,6 +36,9 @@ internal class MentionsAdapter(
             .let { binding ->
                 usernameStyle?.let { style -> configCommandView(binding.usernameTextView, style) }
                 mentionNameStyle?.let { style -> configCommandView(binding.mentionNameTextView, style) }
+                mentionIcon?.let { icon ->
+                    binding.mentionsIcon.setImageDrawable(icon)
+                }
 
                 MentionViewHolder(binding, onMentionSelected)
             }

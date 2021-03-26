@@ -65,6 +65,7 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+        <attr name="streamUiMentionsIcon" format="reference" />
 
         <!-- Commands -->
         <attr name="streamUiCommandsEnabled" format="boolean" />

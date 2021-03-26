@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.suggestion.list
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -89,6 +90,10 @@ public class SuggestionListView : FrameLayout {
 
     internal fun styleMentionsName(style: TextStyle) {
         mentionsAdapter.mentionNameStyle = style
+    }
+
+    internal fun styleMentionsIcon(icon: Drawable) {
+        mentionsAdapter.mentionIcon = icon
     }
 
     public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {

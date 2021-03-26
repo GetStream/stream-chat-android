@@ -199,6 +199,7 @@ public class MessageInputView : ConstraintLayout {
         styleCommandDescription(style.commandsDescriptionTextStyle)
         styleMentionsUsername(style.mentionsUsernameTextStyle)
         styleMentionsName(style.mentionsNameTextStyle)
+        styleMentionsIcon(style.mentionsIcon)
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
