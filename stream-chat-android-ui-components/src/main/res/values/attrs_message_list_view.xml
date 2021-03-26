@@ -32,10 +32,6 @@
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
 
-        <!-- Message text color -->
-        <attr name="streamUiMessageTextColorMine" format="color" />
-        <attr name="streamUiMessageTextColorTheirs" format="color" />
-
         <!-- Message background color -->
         <attr name="streamUiMessageBackgroundColorMine" format="color" />
         <attr name="streamUiMessageBackgroundColorTheirs" format="color" />
@@ -46,5 +42,126 @@
         <attr name="streamUiLinkDescriptionMaxLines" format="integer" />
 
         <attr name="streamUiReactionsEnabled" format="boolean" />
+
+        <attr name="streamUiBackgroundColor" format="color" />
+
+        <attr name="streamUiMessageLinkBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageLinkBackgroundColorTheirs" format="color" />
+
+        <!-- Message text style mine -->
+        <attr name="streamUiMessageTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMine" format="color" />
+        <attr name="streamUiMessageTextFontMine" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMine" format="string" />
+        <attr name="streamUiMessageTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style theirs -->
+        <attr name="streamUiMessageTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorTheirs" format="color" />
+        <attr name="streamUiMessageTextFontTheirs" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiMessageTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style user name in footer -->
+        <attr name="streamUiMessageTextSizeUserName" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorUserName" format="color" />
+        <attr name="streamUiMessageTextFontUserName" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsUserName" format="string" />
+        <attr name="streamUiMessageTextStyleUserName">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style date in footer -->
+        <attr name="streamUiMessageTextSizeDate" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorDate" format="color" />
+        <attr name="streamUiMessageTextFontDate" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsDate" format="string" />
+        <attr name="streamUiMessageTextStyleDate">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style thread counter in footer -->
+        <attr name="streamUiMessageTextSizeThreadCounter" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorThreadCounter" format="color" />
+        <attr name="streamUiMessageTextFontThreadCounter" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsThreadCounter" format="string" />
+        <attr name="streamUiMessageTextStyleThreadCounter">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style link title -->
+        <attr name="streamUiMessageTextSizeLinkTitle" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkTitle" format="color" />
+        <attr name="streamUiMessageTextFontLinkTitle" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkTitle" format="string" />
+        <attr name="streamUiMessageTextStyleLinkTitle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageTextSizeLinkDescription" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkDescription" format="color" />
+        <attr name="streamUiMessageTextFontLinkDescription" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkDescription" format="string" />
+        <attr name="streamUiMessageTextStyleLinkDescription">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Date separator -->
+        <attr name="streamUiDateSeparatorBackgroundColor" format="color" />
+
+        <attr name="streamUiMessageTextSizeDateSeparator" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorDateSeparator" format="color" />
+        <attr name="streamUiMessageTextFontDateSeparator" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsDateSeparator" format="string" />
+        <attr name="streamUiMessageTextStyleDateSeparator">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message reactions view style -->
+        <attr name="streamUiMessageReactionsBubbleColorMine" format="color" />
+        <attr name="streamUiMessageReactionsBubbleColorTheirs" format="color" />
+        <attr name="streamUiMessageReactionsBubbleBorderColorMine" format="color|reference" />
+
+        <!-- Message edit reactions view style -->
+        <attr name="streamUiEditReactionsBubbleColorMine" format="color"/>
+        <attr name="streamUiEditReactionsBubbleColorTheirs" format="color"/>
+
+        <!-- Indicator icons -->
+        <attr name="streamUiIconIndicatorSent" format="reference"/>
+        <attr name="streamUiIconIndicatorRead" format="reference"/>
+        <attr name="streamUiIconIndicatorPendingSync" format="reference"/>
+
+        <!-- Message deleted style -->
+        <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeleted" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeleted" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeleted" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeleted" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeleted">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>

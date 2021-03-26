@@ -63,13 +63,18 @@ public class EditReactionsView : RecyclerView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        this.reactionsViewStyle = EditReactionsViewStyle(context, attrs)
-        this.bubbleDrawer = EditReactionsBubbleDrawer(reactionsViewStyle)
+        applyStyle(EditReactionsViewStyle(context, attrs))
 
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         itemAnimator = null
         overScrollMode = View.OVER_SCROLL_NEVER
         setWillNotDraw(false)
+    }
+
+    internal fun applyStyle(editReactionsViewStyle: EditReactionsViewStyle) {
+        this.reactionsViewStyle = editReactionsViewStyle
+        this.bubbleDrawer = EditReactionsBubbleDrawer(reactionsViewStyle)
+
         minimumHeight = reactionsViewStyle.totalHeight
         reactionsViewStyle.horizontalPadding.let {
             setPadding(it, 0, it, 0)
