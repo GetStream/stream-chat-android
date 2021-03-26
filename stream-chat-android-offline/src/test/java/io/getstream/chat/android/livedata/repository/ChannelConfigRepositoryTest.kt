@@ -1,13 +1,18 @@
 package io.getstream.chat.android.livedata.repository
 
+import com.flextrade.jfixture.JFixture
+import com.flextrade.kfixture.KFixture
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.livedata.randomChannelConfig
 import io.getstream.chat.android.livedata.randomConfig
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigDao
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigEntity
+import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigInnerEntity
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,6 +73,38 @@ internal class ChannelConfigRepositoryTest {
                             it.channelConfigInnerEntity.name == "configName2"
                     }
             }
+        )
+    }
+
+    @Test
+    fun `Given config in cache When select Should return config`() = runBlockingTest {
+        val config = randomChannelConfig(type = "messaging", config = randomConfig(name = "configName"))
+        sut.insertChannelConfig(config)
+
+        val result = sut.selectChannelConfig("messaging")
+
+        Truth.assertThat(result).isEqualTo(config)
+    }
+
+    @Test
+    fun `Given DB with saved config When cache configs Should load them fromDB`() = runBlockingTest {
+        val firstConfigEntity = createChannelConfigEntity("type1", "name1")
+        val secondConfigEntity = createChannelConfigEntity("type2", "name2")
+        whenever(dao.selectAll()) doReturn listOf(firstConfigEntity, secondConfigEntity)
+
+        sut.cacheChannelConfigs()
+
+        Truth.assertThat(sut.selectChannelConfig("type1")!!.config.name).isEqualTo("name1")
+        Truth.assertThat(sut.selectChannelConfig("type2")!!.config.name).isEqualTo("name2")
+    }
+
+    private fun createChannelConfigEntity(type: String, name: String): ChannelConfigEntity {
+        return ChannelConfigEntity(
+            KFixture(JFixture())<ChannelConfigInnerEntity>().copy(
+                channelType = type,
+                name = name
+            ),
+            emptyList()
         )
     }
 }
