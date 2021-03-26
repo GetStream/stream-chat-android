@@ -190,6 +190,10 @@ public data class MessageInputViewStyle(
                         R.styleable.MessageInputView_streamUiMessageInputTextStyle,
                         Typeface.NORMAL
                     )
+                    .hint(
+                        R.styleable.MessageInputView_streamUiMessageInputHintTextColor,
+                        context.getString(R.string.stream_ui_message_input_default_hint)
+                    )
                     .hintColor(
                         R.styleable.MessageInputView_streamUiMessageInputHintTextColor,
                         context.getColorCompat(R.color.stream_ui_text_color_hint)
