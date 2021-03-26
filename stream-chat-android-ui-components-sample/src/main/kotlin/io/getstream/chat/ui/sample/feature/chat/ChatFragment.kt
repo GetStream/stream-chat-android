@@ -70,19 +70,23 @@ class ChatFragment : Fragment() {
 
     private fun configureMessageInputView() {
         lifecycleScope.launchWhenCreated {
-            binding.messageInputView.listenForBigAttachments(object : MessageInputView.BigFileSelectionListener {
-                override fun handleBigFileSelected(hasBigFile: Boolean) {
-                    if (hasBigFile) {
-                        messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
-                        binding.messagesHeaderView.setOnlineStateSubtitle(
-                            requireContext().getString(R.string.chat_fragment_big_attachment_subtitle,
-                                maxAttachmentFile)
-                        )
-                    } else {
-                        messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
+            binding.messageInputView.listenForBigAttachments(
+                object : MessageInputView.BigFileSelectionListener {
+                    override fun handleBigFileSelected(hasBigFile: Boolean) {
+                        if (hasBigFile) {
+                            messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
+                            binding.messagesHeaderView.setOnlineStateSubtitle(
+                                requireContext().getString(
+                                    R.string.chat_fragment_big_attachment_subtitle,
+                                    maxAttachmentFile
+                                )
+                            )
+                        } else {
+                            messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
+                        }
                     }
                 }
-            })
+            )
         }
     }
 
