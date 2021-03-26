@@ -168,6 +168,8 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
+        configSuggestionListView(suggestionListView, style)
+
         suggestionListView.setOnSuggestionClickListener(
             object : SuggestionListView.OnSuggestionClickListener {
                 override fun onMentionClick(user: User) {
@@ -189,6 +191,10 @@ public class MessageInputView : ConstraintLayout {
             it.commandsEnabled = commandsEnabled
         }
         refreshControlsState()
+    }
+
+    private fun configSuggestionListView(suggestionListView: SuggestionListView, style: MessageInputViewStyle) {
+        suggestionListView.styleCommandName(style.commandsNameTextStyle)
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {

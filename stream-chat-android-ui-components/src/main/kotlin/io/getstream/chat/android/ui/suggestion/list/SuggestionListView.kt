@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
+import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
@@ -63,6 +64,10 @@ public class SuggestionListView : FrameLayout {
 
     public fun isSuggestionListVisible(): Boolean {
         return binding.suggestionsCardView.isVisible
+    }
+
+    internal fun styleCommandName(style: TextStyle) {
+        commandsAdapter.commandsNameStyle = style
     }
 
     public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {

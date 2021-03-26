@@ -50,6 +50,24 @@
         <!-- Commands -->
         <attr name="streamUiCommandsEnabled" format="boolean" />
         <attr name="streamUiCommandsBackgroundColor" format="reference|color" />
+        <attr name="streamUiCommandsNameTextSize" format="dimension" />
+        <attr name="streamUiCommandsNameTextColor" format="reference|color" />
+        <attr name="streamUiCommandsNameFontAssets" format="string" />
+        <attr name="streamUiCommandsNameFont" format="string" />
+        <attr name="streamUiCommandsNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiCommandsDescriptionTextSize" format="dimension" />
+        <attr name="streamUiCommandsDescriptionTextColor" format="reference|color" />
+        <attr name="streamUiCommandsDescriptionFontAssets" format="string" />
+        <attr name="streamUiCommandsDescriptionFont" format="string" />
+        <attr name="streamUiCommandsDescriptionStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
     </declare-styleable>
 
 </resources>

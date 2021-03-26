@@ -33,6 +33,8 @@ public data class MessageInputViewStyle(
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
     @ColorRes public val commandsBackground: Int,
+    public val commandsNameTextStyle: TextStyle,
+    public val commandsDescriptionTextStyle: TextStyle,
     public val backgroundColor: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
@@ -185,6 +187,44 @@ public data class MessageInputViewStyle(
                     ContextCompat.getColor(context, R.color.stream_ui_white)
                 )
 
+                val commandsNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsNameTextColor,
+                        R.color.stream_ui_white
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val commandsDescriptionTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
+                        R.color.stream_ui_white
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
@@ -216,6 +256,8 @@ public data class MessageInputViewStyle(
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
                     commandsBackground = commandsBackground,
+                    commandsNameTextStyle = commandsNameTextStyle,
+                    commandsDescriptionTextStyle = commandsDescriptionTextStyle,
                     backgroundColor = backgroundColor,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
