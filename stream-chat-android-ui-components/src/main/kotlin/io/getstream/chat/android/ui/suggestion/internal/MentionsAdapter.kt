@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.suggestion.internal
 
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +31,9 @@ internal class MentionsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionViewHolder {
         return StreamUiItemMentionBinding
             .inflate(parent.inflater, parent, false)
-            // .let { MentionViewHolder(it, onMentionSelected) }
             .let { binding ->
-                usernameStyle?.let { style -> configCommandView(binding.usernameTextView, style) }
-                mentionNameStyle?.let { style -> configCommandView(binding.mentionNameTextView, style) }
+                usernameStyle?.apply(binding.usernameTextView)
+                mentionNameStyle?.apply(binding.mentionNameTextView)
                 mentionIcon?.let { icon ->
                     binding.mentionsIcon.setImageDrawable(icon)
                 }
@@ -46,15 +44,6 @@ internal class MentionsAdapter(
 
     override fun onBindViewHolder(holder: MentionViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    private fun configCommandView(textView: TextView, textStyle: TextStyle) {
-        textView.run {
-            setTextColor(textStyle.color)
-            // textSize = textStyle.size
-            textStyle.font?.let { typeface = it }
-            setTypeface(this.typeface, textStyle.style)
-        }
     }
 
     class MentionViewHolder(

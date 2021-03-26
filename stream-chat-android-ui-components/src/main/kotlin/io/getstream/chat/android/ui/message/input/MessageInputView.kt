@@ -194,7 +194,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
-        styleCommandTitle(style.commandsTitleTextStyle)
+        style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
         styleCommandName(style.commandsNameTextStyle)
         styleCommandDescription(style.commandsDescriptionTextStyle)
         styleMentionsUsername(style.mentionsUsernameTextStyle)

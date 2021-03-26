@@ -67,15 +67,6 @@ public class SuggestionListView : FrameLayout {
         return binding.suggestionsCardView.isVisible
     }
 
-    internal fun styleCommandTitle(textStyle: TextStyle) {
-        binding.commandsTitleTextView.run {
-            setTextColor(textStyle.color)
-            // textSize = textStyle.size
-            textStyle.font?.let { typeface = it }
-            setTypeface(this.typeface, textStyle.style)
-        }
-    }
-
     internal fun styleCommandName(style: TextStyle) {
         commandsAdapter.commandsNameStyle = style
     }
