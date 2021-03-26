@@ -21,9 +21,12 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
+import io.getstream.chat.android.client.models.Member
 import java.lang.ClassCastException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
+
+private const val MEMBERS_FIELD_NAME = "members"
 
 internal fun <T : CustomObject> Collection<T>.filter(filterObject: FilterObject): List<T> =
     filter { filterObject.filter(it) }
@@ -76,3 +79,6 @@ private fun <T : Comparable<T>> compare(a: T?, b: T?, compareFun: (Int) -> Boole
             compareFun(notNullA.compareTo(notNullB))
         }
     } ?: false
+
+private fun CustomObject.getMembersId(): List<String> =
+    getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()
