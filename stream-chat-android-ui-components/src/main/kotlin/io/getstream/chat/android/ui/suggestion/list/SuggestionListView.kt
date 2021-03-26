@@ -74,6 +74,14 @@ public class SuggestionListView : FrameLayout {
         commandsAdapter.commandsDescriptionStyle = style
     }
 
+    internal fun styleMentionsUsername(style: TextStyle) {
+        mentionsAdapter.usernameStyle = style
+    }
+
+    internal fun styleMentionsName(style: TextStyle) {
+        mentionsAdapter.mentionNameStyle = style
+    }
+
     public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
         this.listener = listener
     }

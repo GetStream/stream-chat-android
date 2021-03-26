@@ -30,11 +30,13 @@ public data class MessageInputViewStyle(
     public val sendButtonEnabledIcon: Drawable,
     public val sendButtonDisabledIcon: Drawable,
     public val showSendAlsoToChannelCheckbox: Boolean,
-    public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
     @ColorRes public val commandsBackground: Int,
     public val commandsNameTextStyle: TextStyle,
     public val commandsDescriptionTextStyle: TextStyle,
+    public val mentionsEnabled: Boolean,
+    public val mentionsUsernameTextStyle: TextStyle,
+    public val mentionsNameTextStyle: TextStyle,
     public val backgroundColor: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
@@ -183,7 +185,7 @@ public data class MessageInputViewStyle(
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
                 val commandsBackground = a.getColor(
-                    R.styleable.MessageInputView_streamUiCommandsBackgroundColor,
+                    R.styleable.MessageInputView_streamUiSuggestionBackgroundColor,
                     ContextCompat.getColor(context, R.color.stream_ui_white)
                 )
 
@@ -225,6 +227,44 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val mentionsUsernameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameTextColor,
+                        R.color.stream_ui_black
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameFontAssets,
+                        R.styleable.MessageInputView_streamUiMentionsUserNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mentionsNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMentionsNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMentionsNameTextColor,
+                        R.color.stream_ui_black
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMentionsNameFontAssets,
+                        R.styleable.MessageInputView_streamUiMentionsNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMentionsNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
@@ -253,12 +293,14 @@ public data class MessageInputViewStyle(
                     sendButtonEnabledIcon = sendButtonEnabledIcon,
                     sendButtonDisabledIcon = sendButtonDisabledIcon,
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
-                    mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
                     commandsBackground = commandsBackground,
                     commandsNameTextStyle = commandsNameTextStyle,
                     commandsDescriptionTextStyle = commandsDescriptionTextStyle,
+                    mentionsEnabled = mentionsEnabled,
                     backgroundColor = backgroundColor,
+                    mentionsUsernameTextStyle = mentionsUsernameTextStyle,
+                    mentionsNameTextStyle = mentionsNameTextStyle,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)

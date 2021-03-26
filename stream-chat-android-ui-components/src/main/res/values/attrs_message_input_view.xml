@@ -46,10 +46,28 @@
 
         <!-- Mentions -->
         <attr name="streamUiMentionsEnabled" format="boolean" />
+        <attr name="streamUiMentionsUserNameTextSize" format="dimension" />
+        <attr name="streamUiMentionsUserNameTextColor" format="reference|color" />
+        <attr name="streamUiMentionsUserNameFontAssets" format="string" />
+        <attr name="streamUiMentionsUserNameFont" format="string" />
+        <attr name="streamUiMentionsUserNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+
+        <attr name="streamUiMentionsNameTextSize" format="dimension" />
+        <attr name="streamUiMentionsNameTextColor" format="reference|color" />
+        <attr name="streamUiMentionsNameFontAssets" format="string" />
+        <attr name="streamUiMentionsNameFont" format="string" />
+        <attr name="streamUiMentionsNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
 
         <!-- Commands -->
         <attr name="streamUiCommandsEnabled" format="boolean" />
-        <attr name="streamUiCommandsBackgroundColor" format="reference|color" />
         <attr name="streamUiCommandsNameTextSize" format="dimension" />
         <attr name="streamUiCommandsNameTextColor" format="reference|color" />
         <attr name="streamUiCommandsNameFontAssets" format="string" />
@@ -68,6 +86,9 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+
+        <!-- Suggestions -->
+        <attr name="streamUiSuggestionBackgroundColor" format="reference|color" />
     </declare-styleable>
 
 </resources>
