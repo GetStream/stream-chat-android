@@ -1340,6 +1340,23 @@ internal class CustomObjectFilteringTest {
                         )
                     },
                 )
+            } +
+            List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList +
+                            memberIds.take(positiveRandomInt(memberIds.size))
+                                .map { randomMember(user = randomUser(id = it)) }.let { members ->
+                                    List(positiveRandomInt(10)) {
+                                        randomChannel(
+                                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()
+                                        )
+                                    }
+                                }
+                        ).shuffled(),
+                    Filters.nin("members", memberIds),
+                    expectedList,
+                )
             }
 
         @JvmStatic
