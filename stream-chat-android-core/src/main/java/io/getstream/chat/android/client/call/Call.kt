@@ -73,7 +73,7 @@ public interface Call<T : Any> {
  */
 public suspend fun <T : Any> Call<T>.await(): Result<T> {
     if (this is CoroutineCall<T>) {
-        return this.suspendingTask.invoke()
+        return this.awaitImpl()
     }
     return suspendCancellableCoroutine { continuation ->
         this.enqueue { result ->
