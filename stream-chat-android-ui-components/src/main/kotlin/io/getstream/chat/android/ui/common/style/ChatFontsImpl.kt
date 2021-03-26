@@ -7,14 +7,12 @@ import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.util.contains
-import com.getstream.sdk.chat.style.ChatStyle
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.HashMap
 
 internal class ChatFontsImpl(
     private val style: ChatStyle,
-    private val context: Context
+    private val context: Context,
 ) : ChatFonts {
 
     private val resourceMap = SparseArray<Typeface>()

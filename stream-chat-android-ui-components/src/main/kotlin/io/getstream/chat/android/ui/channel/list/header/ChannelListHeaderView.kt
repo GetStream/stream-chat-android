@@ -9,11 +9,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 
 public class ChannelListHeaderView : ConstraintLayout {
@@ -86,7 +86,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             setImageDrawable(drawable)
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+                    ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
 
