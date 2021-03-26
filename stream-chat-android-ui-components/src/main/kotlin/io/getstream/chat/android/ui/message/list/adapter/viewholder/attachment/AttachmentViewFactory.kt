@@ -84,7 +84,7 @@ public open class AttachmentViewFactory {
             setLongClickTarget(parent)
             style.getStyleTextColor(isMine)?.also(::setTextColor)
             setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
-            showLinkAttachment(linkAttachment)
+            showLinkAttachment(linkAttachment, style)
         }
         return linkAttachmentView
     }
