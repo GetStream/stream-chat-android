@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.suggestion.list
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -8,13 +9,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.internal.CommandsAdapter
 import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
 
 public class SuggestionListView : FrameLayout {
 
-    private val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
+    internal val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
         StreamUiSuggestionListViewBinding.inflate(it, this)
     }
     private val mentionsAdapter: MentionsAdapter = MentionsAdapter { listener?.onMentionClick(it) }
@@ -63,6 +65,26 @@ public class SuggestionListView : FrameLayout {
 
     public fun isSuggestionListVisible(): Boolean {
         return binding.suggestionsCardView.isVisible
+    }
+
+    internal fun styleCommandsName(style: TextStyle) {
+        commandsAdapter.commandsNameStyle = style
+    }
+
+    internal fun styleCommandsDescription(style: TextStyle) {
+        commandsAdapter.commandsDescriptionStyle = style
+    }
+
+    internal fun styleMentionsUsername(style: TextStyle) {
+        mentionsAdapter.usernameStyle = style
+    }
+
+    internal fun styleMentionsName(style: TextStyle) {
+        mentionsAdapter.mentionNameStyle = style
+    }
+
+    internal fun styleMentionsIcon(icon: Drawable) {
+        mentionsAdapter.mentionIcon = icon
     }
 
     public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
