@@ -151,7 +151,7 @@ It is now possible to customize the following attributes for `ChannelListView`:
 It is now possible to configure new fields in MessageInputView:
 - `streamUiMessageInputTextStyle` - customize message input text style.
 - `streamUiMessageInputFont` - customize message input text font.
-- `streamUiMessageInputFontAssets` - customize message input text font assets. 
+- `streamUiMessageInputFontAssets` - customize message input text font assets.
 - `streamUiMessageInputEditTextBackgroundDrawable` - customize message input EditText drawable.
 - `streamUiMessageInputCustomCursorDrawable` - customize message input EditText cursor drawable.
 - `streamUiCommandsTitleTextSize` - customize command title text size
@@ -173,6 +173,7 @@ It is now possible to configure new fields in MessageInputView:
 - `streamUiCommandsDescriptionFont` - customize command description text font
 - `streamUiCommandsDescriptionStyle` - customize command description text style
 - `streamUiSuggestionBackgroundColor` - customize suggestion view background
+- `streamUiMessageInputDividerBackgroundDrawable` - customize the background of divider of MessageInputView
 
 
 
