@@ -6,11 +6,11 @@ import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import java.io.Serializable
