@@ -67,11 +67,11 @@ public class SuggestionListView : FrameLayout {
         return binding.suggestionsCardView.isVisible
     }
 
-    internal fun styleCommandName(style: TextStyle) {
+    internal fun styleCommandsName(style: TextStyle) {
         commandsAdapter.commandsNameStyle = style
     }
 
-    internal fun styleCommandDescription(style: TextStyle) {
+    internal fun styleCommandsDescription(style: TextStyle) {
         commandsAdapter.commandsDescriptionStyle = style
     }
 
