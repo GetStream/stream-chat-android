@@ -147,11 +147,34 @@ It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiUnreadMessageCounterTextStyle` - customize message counter text style (normal / bold / italic)
 
 - Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
-It is now possible to configure, for message input view:
-- TextStyle for the Input Text
-- Custom the cursor drawable
-- Background for EditText inside MessageInputView
-- Background MessageInputView itself
+
+It is now possible to configure new fields in MessageInputView:
+- `streamUiMessageInputTextStyle` - customize message input text style.
+- `streamUiMessageInputFont` - customize message input text font.
+- `streamUiMessageInputFontAssets` - customize message input text font assets. 
+- `streamUiMessageInputEditTextBackgroundDrawable` - customize message input EditText drawable.
+- `streamUiMessageInputCustomCursorDrawable` - customize message input EditText cursor drawable.
+- `streamUiCommandsTitleTextSize` - customize command title text size
+- `streamUiCommandsTitleTextColor` - customize command title text color
+- `streamUiCommandsTitleFontAssets` - customize command title text color
+- `streamUiCommandsTitleTextColor` - customize command title font asset
+- `streamUiCommandsTitleFont` - customize command title text font
+- `streamUiCommandsTitleStyle` - customize command title text style
+- `streamUiCommandsNameTextSize` - customize command name text size
+- `streamUiCommandsNameTextColor` - customize command name text color
+- `streamUiCommandsNameFontAssets` - customize command name text color
+- `streamUiCommandsNameTextColor` - customize command name font asset
+- `streamUiCommandsNameFont` - customize command name text font
+- `streamUiCommandsNameStyle` - customize command name text style
+- `streamUiCommandsDescriptionTextSize` - customize command description text size
+- `streamUiCommandsDescriptionTextColor` - customize command description text color
+- `streamUiCommandsDescriptionFontAssets` - customize command description text color
+- `streamUiCommandsDescriptionTextColor` - customize command description font asset
+- `streamUiCommandsDescriptionFont` - customize command description text font
+- `streamUiCommandsDescriptionStyle` - customize command description text style
+- `streamUiSuggestionBackgroundColor` - customize suggestion view background
+
+
 
 ### ⚠️ Changed
 - Deprecated `ChatUI` class

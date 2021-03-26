@@ -7,10 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 
 internal class CommandsAdapter(
-    private val onCommandSelected: (Command) -> Unit
+    var commandsNameStyle: TextStyle? = null,
+    var commandsDescriptionStyle: TextStyle? = null,
+    private val onCommandSelected: (Command) -> Unit,
 ) : ListAdapter<Command, CommandsAdapter.CommandViewHolder>(
     object : DiffUtil.ItemCallback<Command>() {
         override fun areItemsTheSame(oldItem: Command, newItem: Command): Boolean {
@@ -25,7 +28,12 @@ internal class CommandsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         return StreamUiItemCommandBinding
             .inflate(parent.inflater, parent, false)
-            .let { CommandViewHolder(it, onCommandSelected) }
+            .let { binding ->
+                commandsNameStyle?.apply(binding.commandNameTextView)
+                commandsDescriptionStyle?.apply(binding.commandQueryTextView)
+
+                CommandViewHolder(binding, onCommandSelected)
+            }
     }
 
     override fun onBindViewHolder(holder: CommandViewHolder, position: Int) {
@@ -34,7 +42,7 @@ internal class CommandsAdapter(
 
     class CommandViewHolder(
         private val binding: StreamUiItemCommandBinding,
-        private val onCommandClicked: (Command) -> Unit
+        private val onCommandClicked: (Command) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var command: Command
