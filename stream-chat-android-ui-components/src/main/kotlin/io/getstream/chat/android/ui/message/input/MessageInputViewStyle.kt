@@ -5,7 +5,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
