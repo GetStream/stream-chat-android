@@ -113,6 +113,38 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
     - Deleted message text and background
     - Reactions style in list view and in options view
     - Indicator icons in footer of Message
+It is now possible to customize the following attributes for `ChannelListView`:
+- `streamUiChannelOptionsIcon` - customize options icon
+- `streamUiChannelDeleteIcon` - customize delete icon
+- `streamUiChannelOptionsEnabled` - hide/show options icon
+- `streamUiChannelDeleteEnabled` - hide/show delete button
+- `streamUiSwipeEnabled` - enable/disable swipe action
+- `streamUiBackgroundLayoutColor` - customize the color of "background layout"
+- `streamUiChannelTitleTextSize` - customize channel name text size
+- `streamUiChannelTitleTextColor` - customize channel name text color
+- `streamUiChannelTitleTextFont` - customize channel name text font
+- `streamUiChannelTitleFontAssets` - customize channel name font asset
+- `streamUiChannelTitleTextStyle` - customize channel name text style (normal / bold / italic)
+- `streamUiLastMessageTextSize` - customize last message text size
+- `streamUiLastMessageTextColor` - customize last message text color
+- `streamUiLastMessageTextFont` - customize last message text font
+- `streamUiLastMessageFontAssets` - customize last message font asset
+- `streamUiLastMessageTextStyle` - customize last message text style (normal / bold / italic)
+- `streamUiLastMessageDateTextSize` - customize last message date text size
+- `streamUiLastMessageDateTextColor` - customize last message date text color
+- `streamUiLastMessageDateTextFont` - customize last message date text font
+- `streamUiLastMessageDateFontAssets` - customize last message date font asset
+- `streamUiLastMessageDateTextStyle` - customize last message date text style (normal / bold / italic)
+- `streamUiIndicatorSentIcon` - customize drawable indicator for sent
+- `streamUiIndicatorReadIcon` - customize drawable indicator for read
+- `streamUiIndicatorPendingSyncIcon` - customize drawable indicator for pending sync
+- `streamUiForegroundLayoutColor` - customize the color of "foreground layout"
+- `streamUiUnreadMessageCounterBackgroundColor` - customize the color of message counter badge
+- `streamUiUnreadMessageCounterTextSize` - customize message counter text size
+- `streamUiUnreadMessageCounterTextColor` - customize message counter text color
+- `streamUiUnreadMessageCounterTextFont` - customize message counter text font
+- `streamUiUnreadMessageCounterFontAssets` - customize message counter font asset
+- `streamUiUnreadMessageCounterTextStyle` - customize message counter text style (normal / bold / italic)
 
 ### ⚠️ Changed
 - Deprecated `ChatUI` class

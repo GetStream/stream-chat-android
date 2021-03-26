@@ -14,6 +14,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
     public abstract fun getOpenedX(): Float
     public abstract fun getClosedX(): Float
     public abstract fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float>
+    public abstract fun isSwipeEnabled(): Boolean
     protected var listener: ChannelListView.SwipeListener? = null
     protected var swiping: Boolean = false
 
@@ -26,6 +27,10 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
         listener = swipeListener
 
         view.setOnTouchListener { _, event ->
+            if (!isSwipeEnabled()) {
+                return@setOnTouchListener false
+            }
+
             val rawX = event.rawX
             val rawY = event.rawY
 

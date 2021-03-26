@@ -261,16 +261,40 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Use
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle$Companion;
-	public fun <init> (FFF)V
-	public final fun component1 ()F
-	public final fun component2 ()F
-	public final fun component3 ()F
-	public final fun copy (FFF)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;FFFILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZILcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILcom/getstream/sdk/chat/style/TextStyle;I)V
+	public final fun component1 ()Landroid/graphics/drawable/Drawable;
+	public final fun component10 ()Landroid/graphics/drawable/Drawable;
+	public final fun component11 ()Landroid/graphics/drawable/Drawable;
+	public final fun component12 ()Landroid/graphics/drawable/Drawable;
+	public final fun component13 ()I
+	public final fun component14 ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun component15 ()I
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()I
+	public final fun component7 ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun component8 ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun component9 ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZILcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILcom/getstream/sdk/chat/style/TextStyle;I)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZILcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Lcom/getstream/sdk/chat/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILcom/getstream/sdk/chat/style/TextStyle;IILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannelTitleTextSize ()F
-	public final fun getLastMessageDateTextSize ()F
-	public final fun getLastMessageSize ()F
+	public final fun getBackgroundLayoutColor ()I
+	public final fun getChannelTitleText ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun getDeleteEnabled ()Z
+	public final fun getDeleteIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getForegroundLayoutColor ()I
+	public final fun getIndicatorPendingSyncIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getIndicatorReadIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getIndicatorSentIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getLastMessageDateText ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun getLastMessageText ()Lcom/getstream/sdk/chat/style/TextStyle;
+	public final fun getOptionsEnabled ()Z
+	public final fun getOptionsIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getSwipeEnabled ()Z
+	public final fun getUnreadMessageCounterBackgroundColor ()I
+	public final fun getUnreadMessageCounterText ()Lcom/getstream/sdk/chat/style/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -352,6 +376,7 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewhold
 	public abstract fun getSwipeDeltaRange ()Lkotlin/ranges/ClosedFloatingPointRange;
 	public abstract fun getSwipeView ()Landroid/view/View;
 	protected final fun getSwiping ()Z
+	public abstract fun isSwipeEnabled ()Z
 	protected final fun setListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setSwipeListener (Landroid/view/View;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	protected final fun setSwiping (Z)V
