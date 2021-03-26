@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.internal.CommandsAdapter
 import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
