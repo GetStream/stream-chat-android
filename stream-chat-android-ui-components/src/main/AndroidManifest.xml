@@ -26,5 +26,7 @@
         </provider>
 
         <activity android:name=".gallery.AttachmentGalleryActivity" />
+        <activity android:name=".gallery.AttachmentMediaActivity" />
+        <activity android:name=".gallery.AttachmentActivity" />
     </application>
 </manifest>

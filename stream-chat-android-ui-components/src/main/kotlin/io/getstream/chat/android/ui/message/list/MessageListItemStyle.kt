@@ -1,26 +1,55 @@
 package io.getstream.chat.android.ui.message.list
 
+import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import androidx.core.content.res.ResourcesCompat
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
+import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import java.io.Serializable
 
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
+    @Deprecated("Use MessageListItemStyle::textStyleMine::colorOrNull() instead")
     @ColorInt public val messageTextColorMine: Int?,
+    @Deprecated("Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead")
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,
+    @ColorInt public val messageLinkBackgroundColorMine: Int,
+    @ColorInt public val messageLinkBackgroundColorTheirs: Int,
     public val reactionsEnabled: Boolean,
     public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
+    public val textStyleMine: TextStyle,
+    public val textStyleTheirs: TextStyle,
+    public val textStyleUserName: TextStyle,
+    public val textStyleMessageDate: TextStyle,
+    public val textStyleThreadCounter: TextStyle,
+    public val textStyleLinkTitle: TextStyle,
+    public val textStyleLinkDescription: TextStyle,
+    @ColorInt public val dateSeparatorBackgroundColor: Int,
+    public val textStyleDateSeparator: TextStyle,
+    public val reactionsViewStyle: ViewReactionsViewStyle,
+    public val editReactionsViewStyle: EditReactionsViewStyle,
+    public val iconIndicatorSent: Int,
+    public val iconIndicatorRead: Int,
+    public val iconIndicatorPendingSync: Int,
+    public val textStyleMessageDeleted: TextStyle,
+    @ColorInt public val messageDeletedBackground: Int,
 ) : Serializable {
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {
-        return if (isMine) messageTextColorMine else messageTextColorTheirs
+        return if (isMine) textStyleMine.colorOrNull() else textStyleTheirs.colorOrNull()
     }
 
     @ColorInt
@@ -30,20 +59,35 @@ public data class MessageListItemStyle(
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
+
+        internal val DEFAULT_LINK_BACKGROUND_COLOR = R.color.stream_ui_blue_alice
+
+        internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
+        internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
+        internal const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
+
+        internal val DEFAULT_TEXT_COLOR_USER_NAME = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_USER_NAME = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_DATE = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_DATE = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_THREAD_COUNTER = R.color.stream_ui_accent_blue
+        internal val DEFAULT_TEXT_SIZE_THREAD_COUNTER = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_LINK_DESCRIPTION = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_LINK_DESCRIPTION = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_DATE_SEPARATOR = R.color.stream_ui_white
+        internal val DEFAULT_TEXT_SIZE_DATE_SEPARATOR = R.dimen.stream_ui_text_small
     }
 
-    internal class Builder(private val attributes: TypedArray) {
+    internal class Builder(private val attributes: TypedArray, private val context: Context) {
         @ColorInt
         private var messageBackgroundColorMine: Int = VALUE_NOT_SET
 
         @ColorInt
         private var messageBackgroundColorTheirs: Int = VALUE_NOT_SET
-
-        @ColorInt
-        private var messageTextColorMine: Int = VALUE_NOT_SET
-
-        @ColorInt
-        private var messageTextColorTheirs: Int = VALUE_NOT_SET
 
         @ColorInt
         private var messageLinkTextColorMine: Int = VALUE_NOT_SET
@@ -68,20 +112,6 @@ public data class MessageListItemStyle(
             @ColorInt defaultValue: Int = VALUE_NOT_SET,
         ) = apply {
             messageBackgroundColorTheirs = attributes.getColor(messageBackgroundColorTheirsId, defaultValue)
-        }
-
-        fun messageTextColorMine(
-            @StyleableRes messageTextColorMineId: Int,
-            @ColorInt defaultValue: Int = VALUE_NOT_SET,
-        ) = apply {
-            messageTextColorMine = attributes.getColor(messageTextColorMineId, defaultValue)
-        }
-
-        fun messageTextColorTheirs(
-            @StyleableRes messageTextColorTheirsId: Int,
-            @ColorInt defaultValue: Int = VALUE_NOT_SET,
-        ) = apply {
-            messageTextColorTheirs = attributes.getColor(messageTextColorTheirsId, defaultValue)
         }
 
         fun messageLinkTextColorMine(
@@ -120,16 +150,230 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
+            val linkBackgroundColorMine =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageLinkBackgroundColorMine,
+                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                )
+            val linkBackgroundColorTheirs =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageLinkBackgroundColorTheirs,
+                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                )
+
+            val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
+
+            val textStyleMine = TextStyle.Builder(attributes)
+                .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMine,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMine,
+                    R.styleable.MessageListView_streamUiMessageTextFontMine,
+                    mediumTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleMine, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleTheirs = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeTheirs,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorTheirs,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs,
+                    R.styleable.MessageListView_streamUiMessageTextFontTheirs,
+                    mediumTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleTheirs, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleUserName = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeUserName,
+                    context.getDimension(DEFAULT_TEXT_SIZE_USER_NAME)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorUserName,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_USER_NAME)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsUserName,
+                    R.styleable.MessageListView_streamUiMessageTextFontUserName
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleUserName, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleMessageDate = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeDate,
+                    context.getDimension(DEFAULT_TEXT_SIZE_DATE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorDate,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsDate,
+                    R.styleable.MessageListView_streamUiMessageTextFontDate
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleDate, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleThreadCounter = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeThreadCounter,
+                    context.getDimension(DEFAULT_TEXT_SIZE_THREAD_COUNTER)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorThreadCounter,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsThreadCounter,
+                    R.styleable.MessageListView_streamUiMessageTextFontThreadCounter,
+                    mediumTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleLinkTitle = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkTitle,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkTitle,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkTitle,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkTitle,
+                    boldTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkTitle, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleLinkDescription = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkDescription,
+                    context.getDimension(DEFAULT_TEXT_SIZE_LINK_DESCRIPTION)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkDescription,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_LINK_DESCRIPTION)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkDescription,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkDescription,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val dateSeparatorBackgroundColor =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDateSeparatorBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_overlay_dark)
+                )
+
+            val textStyleDateSeparator = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeDateSeparator,
+                    context.getDimension(DEFAULT_TEXT_SIZE_DATE_SEPARATOR)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorDateSeparator,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE_SEPARATOR)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsDateSeparator,
+                    R.styleable.MessageListView_streamUiMessageTextFontDateSeparator,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleDateSeparator, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val reactionsViewStyle = ViewReactionsViewStyle.Companion.Builder(attributes, context)
+                .bubbleBorderColor(R.styleable.MessageListView_streamUiMessageReactionsBubbleBorderColorMine)
+                .bubbleColorMine(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorMine)
+                .bubbleColorTheirs(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorTheirs)
+                .build()
+
+            val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
+                .bubbleColorMine(R.styleable.MessageListView_streamUiEditReactionsBubbleColorMine)
+                .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
+                .build()
+
+            val iconIndicatorSent = attributes.getResourceId(
+                R.styleable.MessageListView_streamUiIconIndicatorSent,
+                R.drawable.stream_ui_ic_check_single
+            )
+            val iconIndicatorRead = attributes.getResourceId(
+                R.styleable.MessageListView_streamUiIconIndicatorRead,
+                R.drawable.stream_ui_ic_check_double
+            )
+            val iconIndicatorPendingSync =
+                attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiIconIndicatorPendingSync,
+                    R.drawable.stream_ui_ic_clock
+                )
+
+            val messageDeletedBackground =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDeletedMessageBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                )
+
+            val textStyleMessageDeleted = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeMessageDeleted,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMessageDeleted,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMessageDeleted,
+                    R.styleable.MessageListView_streamUiMessageTextFontMessageDeleted,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleMessageDeleted, Typeface.ITALIC)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
-                messageTextColorMine = messageTextColorMine.nullIfNotSet(),
-                messageTextColorTheirs = messageTextColorTheirs.nullIfNotSet(),
+                messageTextColorMine = textStyleMine.colorOrNull(),
+                messageTextColorTheirs = textStyleTheirs.colorOrNull(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
+                messageLinkBackgroundColorMine = linkBackgroundColorMine,
+                messageLinkBackgroundColorTheirs = linkBackgroundColorTheirs,
                 reactionsEnabled = reactionsEnabled,
                 threadsEnabled = threadsEnabled,
-                linkDescriptionMaxLines = linkDescriptionMaxLines
+                linkDescriptionMaxLines = linkDescriptionMaxLines,
+                textStyleMine = textStyleMine,
+                textStyleTheirs = textStyleTheirs,
+                textStyleUserName = textStyleUserName,
+                textStyleMessageDate = textStyleMessageDate,
+                textStyleThreadCounter = textStyleThreadCounter,
+                textStyleLinkTitle = textStyleLinkTitle,
+                textStyleLinkDescription = textStyleLinkDescription,
+                dateSeparatorBackgroundColor = dateSeparatorBackgroundColor,
+                textStyleDateSeparator = textStyleDateSeparator,
+                reactionsViewStyle = reactionsViewStyle,
+                editReactionsViewStyle = editReactionsViewStyle,
+                iconIndicatorSent = iconIndicatorSent,
+                iconIndicatorRead = iconIndicatorRead,
+                iconIndicatorPendingSync = iconIndicatorPendingSync,
+                messageDeletedBackground = messageDeletedBackground,
+                textStyleMessageDeleted = textStyleMessageDeleted,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

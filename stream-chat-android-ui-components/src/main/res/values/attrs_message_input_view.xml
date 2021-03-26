@@ -22,6 +22,16 @@
         <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
         <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
+        <attr name="streamUiMessageInputEditTextBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageInputCustomCursorDrawable" format="reference" />
+        <attr name="streamUiMessageInputFontAssets" format="string" />
+        <attr name="streamUiMessageInputFont" format="string" />
+        <attr name="streamUiMessageInputTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+
 
         <!--Send Button-->
         <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />
@@ -36,12 +46,62 @@
 
         <!--Mentions-->
         <attr name="streamUiMentionsEnabled" format="boolean" />
+        <attr name="streamUiMentionsUserNameTextSize" format="dimension" />
+        <attr name="streamUiMentionsUserNameTextColor" format="reference|color" />
+        <attr name="streamUiMentionsUserNameFontAssets" format="string" />
+        <attr name="streamUiMentionsUserNameFont" format="string" />
+        <attr name="streamUiMentionsUserNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
 
-        <!--Commands-->
-        <attr name="streamUiCommandsEnabled" format="boolean" />
+        <attr name="streamUiMentionsNameTextSize" format="dimension" />
+        <attr name="streamUiMentionsNameTextColor" format="reference|color" />
+        <attr name="streamUiMentionsNameFontAssets" format="string" />
+        <attr name="streamUiMentionsNameFont" format="string" />
+        <attr name="streamUiMentionsNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiMentionsIcon" format="reference" />
 
         <!--Constants-->
         <attr name="streamUiAttachmentMaxFileSizeMb" format="integer" />
+
+        <!--Commands-->
+        <attr name="streamUiCommandsEnabled" format="boolean" />
+        <attr name="streamUiCommandsTitleTextSize" format="dimension" />
+        <attr name="streamUiCommandsTitleTextColor" format="reference|color" />
+        <attr name="streamUiCommandsTitleFontAssets" format="string" />
+        <attr name="streamUiCommandsTitleFont" format="string" />
+        <attr name="streamUiCommandsTitleStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiCommandsNameTextSize" format="dimension" />
+        <attr name="streamUiCommandsNameTextColor" format="reference|color" />
+        <attr name="streamUiCommandsNameFontAssets" format="string" />
+        <attr name="streamUiCommandsNameFont" format="string" />
+        <attr name="streamUiCommandsNameStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiCommandsDescriptionTextSize" format="dimension" />
+        <attr name="streamUiCommandsDescriptionTextColor" format="reference|color" />
+        <attr name="streamUiCommandsDescriptionFontAssets" format="string" />
+        <attr name="streamUiCommandsDescriptionFont" format="string" />
+        <attr name="streamUiCommandsDescriptionStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+
+        <!--Suggestions-->
+        <attr name="streamUiSuggestionBackgroundColor" format="reference|color" />
     </declare-styleable>
 
 </resources>

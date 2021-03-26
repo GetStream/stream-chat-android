@@ -153,4 +153,6 @@
     <string name="stream_ui_upload_complete">Upload complete, processing…</string>
     <string name="stream_ui_upload_sending">Uploading %d / %d …</string>
     <string name="stream_ui_upload_sending_percentage">%s / %s</string>
+
+    <string name="stream_ui_medium_font">sans-serif-medium</string>
 </resources>

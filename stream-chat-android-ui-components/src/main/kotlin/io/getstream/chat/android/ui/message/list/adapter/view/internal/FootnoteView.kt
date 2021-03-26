@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 internal class FootnoteView : ConstraintLayout {
 
@@ -59,7 +60,7 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
-    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>) {
+    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>, style: MessageListItemStyle) {
         footnote.root.isVisible = false
         with(threadsFootnote) {
             root.isVisible = true
@@ -68,6 +69,7 @@ internal class FootnoteView : ConstraintLayout {
 
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_thread_messages_indicator, replyCount, replyCount)
+            style.textStyleThreadCounter.apply(threadRepliesButton)
         }
         setupUserAvatars(isMine, threadParticipants)
     }
@@ -110,27 +112,16 @@ internal class FootnoteView : ConstraintLayout {
         footnote.deliveryStatusIcon.isVisible = false
     }
 
-    private fun showStatusIndicator(@DrawableRes drawableRes: Int) {
+    internal fun showStatusIndicator(@DrawableRes drawableRes: Int) {
         footnote.deliveryStatusIcon.isVisible = true
         footnote.deliveryStatusIcon.setImageResource(drawableRes)
     }
 
-    fun showInProgressStatusIndicator() {
-        showStatusIndicator(R.drawable.stream_ui_ic_clock)
-    }
-
-    fun showSentStatusIndicator() {
-        showStatusIndicator(R.drawable.stream_ui_ic_check_single)
-    }
-
-    fun showReadStatusIndicator() {
-        showStatusIndicator(R.drawable.stream_ui_ic_check_double)
-    }
-
-    fun showTime(time: String) {
+    fun showTime(time: String, style: MessageListItemStyle) {
         footnote.timeView.apply {
             isVisible = true
             text = time
+            style.textStyleMessageDate.apply(this)
         }
     }
 

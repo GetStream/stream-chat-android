@@ -5,7 +5,6 @@ import android.widget.TextView
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
-import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
@@ -14,6 +13,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.BuildConfig
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
+import io.getstream.chat.android.ui.common.style.ChatStyle
 
 /**
  * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
@@ -39,7 +39,7 @@ public class ChatUI internal constructor(
     public val strings: ChatStrings,
     public val navigator: ChatNavigator,
     public val markdown: ChatMarkdown,
-    public val urlSigner: UrlSigner
+    public val urlSigner: UrlSigner,
 ) {
     public val version: String
         get() = BuildConfig.BUILD_TYPE + ":" + STREAM_CHAT_VERSION
@@ -56,7 +56,7 @@ public class ChatUI internal constructor(
         public constructor(
             client: ChatClient,
             chatDomain: ChatDomain,
-            appContext: Context
+            appContext: Context,
         ) : this(appContext)
 
         private var style: ChatStyle? = null

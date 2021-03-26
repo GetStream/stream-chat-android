@@ -3,8 +3,61 @@
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
+
+        <!--Background layout-->
+        <attr name="streamUiChannelOptionsIcon" format="reference" />
+        <attr name="streamUiChannelDeleteIcon" format="reference" />
+        <attr name="streamUiChannelOptionsEnabled" format="boolean" />
+        <attr name="streamUiChannelDeleteEnabled" format="boolean" />
+        <attr name="streamUiSwipeEnabled" format="boolean" />
+        <attr name="streamUiBackgroundLayoutColor" format="color|reference" />
+
+        <!--Foreground layout-->
         <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
-        <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelTitleTextColor" format="color|reference" />
+        <attr name="streamUiChannelTitleTextFont" format="reference" />
+        <attr name="streamUiChannelTitleFontAssets" format="string" />
+        <attr name="streamUiChannelTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageTextColor" format="color|reference" />
+        <attr name="streamUiLastMessageTextFont" format="reference" />
+        <attr name="streamUiLastMessageFontAssets" format="string" />
+        <attr name="streamUiLastMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamUiLastMessageDateTextColor" format="color|reference" />
+        <attr name="streamUiLastMessageDateTextFont" format="reference" />
+        <attr name="streamUiLastMessageDateFontAssets" format="string" />
+        <attr name="streamUiLastMessageDateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiIndicatorSentIcon" format="reference" />
+        <attr name="streamUiIndicatorReadIcon" format="reference" />
+        <attr name="streamUiIndicatorPendingSyncIcon" format="reference" />
+        <attr name="streamUiForegroundLayoutColor" format="color|reference" />
+
+        <attr name="streamUiUnreadMessageCounterTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadMessageCounterTextColor" format="color|reference" />
+        <attr name="streamUiUnreadMessageCounterTextFont" format="reference" />
+        <attr name="streamUiUnreadMessageCounterFontAssets" format="string" />
+        <attr name="streamUiUnreadMessageCounterTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiUnreadMessageCounterBackgroundColor" format="color|reference" />
     </declare-styleable>
 </resources>

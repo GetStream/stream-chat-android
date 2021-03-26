@@ -80,7 +80,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         override fun sendToThread(
             parentMessage: Message,
             messageText: String,
-            alsoSendToChannel: Boolean
+            alsoSendToChannel: Boolean,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -89,7 +89,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
+            attachmentsFiles: List<File>,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -298,7 +298,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         parentMessage: Message,
         message: String,
         alsoSendToChannel: Boolean,
-        attachmentFiles: List<File>
+        attachmentFiles: List<File>,
     ) {
         messageSendHandler.sendToThreadWithAttachments(
             parentMessage,
@@ -325,7 +325,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun sendGifFromKeyboard(
         inputContentInfo: InputContentInfoCompat,
-        flags: Int
+        flags: Int,
     ): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
             flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0
@@ -336,13 +336,14 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
                 return false
             }
         }
+        val title = inputContentInfo.contentUri.pathSegments.lastOrNull() ?: AttachmentMetaData.DEFAULT_ATTACHMENT_TITLE
         messageInputController.setSelectedAttachments(
             setOf(
                 AttachmentMetaData(
                     uri = inputContentInfo.contentUri,
                     type = ModelType.attach_image,
                     mimeType = ModelType.attach_mime_gif,
-                    title = inputContentInfo.description.label.toString(),
+                    title = title,
                 )
             )
         )
@@ -447,7 +448,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
+            attachmentsFiles: List<File>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

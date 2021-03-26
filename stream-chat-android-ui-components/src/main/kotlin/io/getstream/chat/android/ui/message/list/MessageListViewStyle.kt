@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -12,9 +13,12 @@ public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
     public val reactionsEnabled: Boolean,
+    @ColorInt public val backgroundColor: Int,
 ) {
 
     internal companion object {
+        private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
+
         operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -53,11 +57,14 @@ public data class MessageListViewStyle(
                     true
                 )
 
-                val itemStyle = MessageListItemStyle.Builder(attributes)
+                val backgroundColor = attributes.getColor(
+                    R.styleable.MessageListView_streamUiBackgroundColor,
+                    context.getColorCompat(DEFAULT_BACKGROUND_COLOR)
+                )
+
+                val itemStyle = MessageListItemStyle.Builder(attributes, context)
                     .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
                     .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
-                    .messageTextColorMine(R.styleable.MessageListView_streamUiMessageTextColorMine)
-                    .messageTextColorTheirs(R.styleable.MessageListView_streamUiMessageTextColorTheirs)
                     .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
                     .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                     .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
@@ -68,7 +75,8 @@ public data class MessageListViewStyle(
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
-                    itemStyle = itemStyle
+                    itemStyle = itemStyle,
+                    backgroundColor = backgroundColor,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
