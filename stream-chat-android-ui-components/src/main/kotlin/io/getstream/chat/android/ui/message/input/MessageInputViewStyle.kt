@@ -1,9 +1,12 @@
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -19,6 +22,7 @@ public data class MessageInputViewStyle(
     public val messageInputTextSize: Float,
     public val messageInputTextColor: Int,
     public val messageInputHintTextColor: Int,
+    public val messageInputTextStyle: TextStyle,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
     public val sendButtonEnabled: Boolean,
@@ -27,6 +31,9 @@ public data class MessageInputViewStyle(
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
+    public val backgroundColor: Int,
+    public val editTextBackgroundDrawable: Drawable,
+    public val customCursorDrawable: Drawable?,
 ) {
 
     internal companion object {
@@ -157,7 +164,32 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiMentionsEnabled,
                     true
                 )
+
+                val messageInputTextStyle = TextStyle.Builder(a)
+                    .font(
+                        R.styleable.MessageInputView_streamUiMessageInputFontAssets,
+                        R.styleable.MessageInputView_streamUiMessageInputFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMessageInputTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
+
+                var backgroundColor: Int
+                context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
+                    backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
+                }
+
+                val customCursorDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputCustomCursorDrawable
+                )
+
+                val editTextBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable
+                ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_shape_edit_text_round)!!
 
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
@@ -167,6 +199,7 @@ public data class MessageInputViewStyle(
                     messageInputTextSize = messageInputTextSize,
                     messageInputTextColor = messageInputTextColor,
                     messageInputHintTextColor = messageInputHintTextColor,
+                    messageInputTextStyle = messageInputTextStyle,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
                     sendButtonEnabled = sendButtonEnabled,
@@ -175,6 +208,9 @@ public data class MessageInputViewStyle(
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
+                    backgroundColor = backgroundColor,
+                    editTextBackgroundDrawable = editTextBackgroundDrawable,
+                    customCursorDrawable = customCursorDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

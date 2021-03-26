@@ -1,6 +1,8 @@
 package io.getstream.chat.android.ui.message.input.internal
 
 import android.content.Context
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -99,8 +101,16 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    fun setCustomCursor(cursor: Drawable) {
+        binding.messageEditText.textCursorDrawable = cursor
+    }
+
     fun setContentChangeListener(contentChangeListener: ContentChangeListener) {
         this.contentChangeListener = contentChangeListener
+    }
+
+    fun setCustomBackgroundDrawable(drawable: Drawable) {
+        binding.containerView.background = drawable
     }
 
     fun setTextColor(@ColorInt color: Int) {
@@ -121,6 +131,16 @@ internal class MessageInputFieldView : FrameLayout {
 
     fun setInputFieldScrollbarFadingEnabled(enabled: Boolean) {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
+    }
+
+    fun setTextInputTypefaceStyle(typeface: Int) {
+        val originalTypeface = binding.messageEditText.typeface
+
+        binding.messageEditText.setTypeface(originalTypeface, typeface)
+    }
+
+    fun setTextInputTypeface(typeface: Typeface) {
+        binding.messageEditText.typeface = typeface
     }
 
     fun autoCompleteCommand(command: Command) {
