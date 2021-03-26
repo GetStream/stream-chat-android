@@ -196,7 +196,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsNameTextColor,
-                        R.color.stream_ui_black
+                        ContextCompat.getColor(context, R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
@@ -215,7 +215,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
-                        R.color.stream_ui_black
+                        ContextCompat.getColor(context, R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,
@@ -234,7 +234,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsUserNameTextColor,
-                        R.color.stream_ui_black
+                        ContextCompat.getColor(context, R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiMentionsUserNameFontAssets,
@@ -253,7 +253,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsNameTextColor,
-                        R.color.stream_ui_black
+                        ContextCompat.getColor(context, R.color.stream_ui_text_color_secondary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiMentionsNameFontAssets,
