@@ -20,9 +20,9 @@ public data class MessageInputViewStyle(
     public val attachButtonIcon: Drawable,
     public val lightningButtonEnabled: Boolean,
     public val lightningButtonIcon: Drawable,
-    public val messageInputTextSize: Float,
-    public val messageInputTextColor: Int,
-    public val messageInputHintTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") public val messageInputTextSize: Float,
+    @Deprecated("Use messageInputTextStyle") public val messageInputTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") public val messageInputHintTextColor: Int,
     public val messageInputTextStyle: TextStyle,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
@@ -42,6 +42,7 @@ public data class MessageInputViewStyle(
     @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
+    public val dividerBackground: Drawable
 ) {
 
     internal companion object {
@@ -174,6 +175,14 @@ public data class MessageInputViewStyle(
                 )
 
                 val messageInputTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMessageInputTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMessageInputTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
                     .font(
                         R.styleable.MessageInputView_streamUiMessageInputFontAssets,
                         R.styleable.MessageInputView_streamUiMessageInputFont
@@ -182,13 +191,17 @@ public data class MessageInputViewStyle(
                         R.styleable.MessageInputView_streamUiMessageInputTextStyle,
                         Typeface.NORMAL
                     )
+                    .hintColor(
+                        R.styleable.MessageInputView_streamUiMessageInputHintTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_hint)
+                    )
                     .build()
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
                 val commandsBackground = a.getColor(
                     R.styleable.MessageInputView_streamUiSuggestionBackgroundColor,
-                    ContextCompat.getColor(context, R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white)
                 )
 
                 val commandsTitleTextStyle = TextStyle.Builder(a)
@@ -198,7 +211,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsTitleTextColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsTitleFontAssets,
@@ -217,7 +230,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsNameTextColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
@@ -236,7 +249,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,
@@ -255,7 +268,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsUserNameTextColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiMentionsUserNameFontAssets,
@@ -274,7 +287,7 @@ public data class MessageInputViewStyle(
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsNameTextColor,
-                        ContextCompat.getColor(context, R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiMentionsNameFontAssets,
@@ -289,11 +302,11 @@ public data class MessageInputViewStyle(
                 val mentionsIcon: Drawable =
                     a.getDrawable(
                         R.styleable.MessageInputView_streamUiMentionsIcon
-                    ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_mention)!!
+                    ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
 
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
-                    backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
+                    backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
                 }
 
                 val customCursorDrawable = a.getDrawable(
@@ -302,7 +315,11 @@ public data class MessageInputViewStyle(
 
                 val editTextBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable
-                ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_shape_edit_text_round)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_shape_edit_text_round)!!
+
+                val dividerBackground = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputDividerBackgroundDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
@@ -311,10 +328,10 @@ public data class MessageInputViewStyle(
                     lightningButtonIcon = lightningButtonIcon,
                     messageInputTextSize = messageInputTextSize,
                     messageInputTextColor = messageInputTextColor,
-                    messageInputHintTextColor = messageInputHintTextColor,
                     messageInputTextStyle = messageInputTextStyle,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
+                    messageInputHintTextColor = messageInputHintTextColor,
                     sendButtonEnabled = sendButtonEnabled,
                     sendButtonEnabledIcon = sendButtonEnabledIcon,
                     sendButtonDisabledIcon = sendButtonDisabledIcon,
@@ -331,6 +348,7 @@ public data class MessageInputViewStyle(
                     suggestionsBackground = commandsBackground,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
+                    dividerBackground = dividerBackground,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
