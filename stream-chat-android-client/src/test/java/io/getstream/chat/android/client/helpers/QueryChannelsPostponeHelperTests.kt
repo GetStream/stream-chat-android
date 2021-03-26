@@ -25,9 +25,14 @@ internal class QueryChannelsPostponeHelperTests {
 
     private lateinit var sut: QueryChannelsPostponeHelper
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
+        private const val ATTEMPTS_COUNT = 2
+        private const val DELAY_DURATION = 30L
+    }
 
     @BeforeEach
     fun setUp() {
@@ -82,10 +87,5 @@ internal class QueryChannelsPostponeHelperTests {
 
         verify(api).queryChannel(any(), any(), any())
         result shouldBeEqualTo expectedResult
-    }
-
-    companion object {
-        private const val ATTEMPTS_COUNT = 2
-        private const val DELAY_DURATION = 30L
     }
 }

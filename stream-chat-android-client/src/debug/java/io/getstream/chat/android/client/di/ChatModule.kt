@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
+import java.util.concurrent.Executor
 
 /**
  * Debug implementation of [BaseChatModule].
@@ -20,13 +21,14 @@ internal class ChatModule(
     notificationsHandler: ChatNotificationHandler,
     uploader: FileUploader?,
     tokenManager: TokenManager,
-) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager) {
+    callbackExecutor: Executor?,
+) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor) {
 
     override fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
-        isAnonymousApi: Boolean
+        isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
         return super.clientBuilder(
             timeout,
