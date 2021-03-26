@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.style
+package io.getstream.chat.android.ui.common.style
 
 public class ChatStyle {
     public var defaultTextStyle: TextStyle? = null
