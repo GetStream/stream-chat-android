@@ -54,7 +54,10 @@ private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
             compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable<Any>, value as? Comparable<Any>) { it < 0 }
         is LessThanOrEqualsFilterObject ->
             compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable<Any>, value as? Comparable<Any>) { it <= 0 }
-        is InFilterObject -> values.contains(t.getMemberPropertyOrExtra(fieldName, Any::class))
+        is InFilterObject -> when (fieldName) {
+            MEMBERS_FIELD_NAME -> t.getMembersId().fold(false) { isIn, memberId -> isIn || values.contains(memberId) }
+            else -> values.contains(t.getMemberPropertyOrExtra(fieldName, Any::class))
+        }
         is NotInFilterObject -> !values.contains(t.getMemberPropertyOrExtra(fieldName, Any::class))
         is DistinctFilterObject -> (t as? Channel)?.let { channel ->
             channel.id.startsWith("!members") &&
