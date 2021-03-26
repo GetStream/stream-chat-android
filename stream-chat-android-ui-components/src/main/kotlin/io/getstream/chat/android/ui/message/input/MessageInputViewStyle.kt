@@ -6,13 +6,13 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
+import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
