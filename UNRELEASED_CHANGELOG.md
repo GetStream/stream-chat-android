@@ -7,7 +7,6 @@ it is now possible to configure the max lines of a link description. Just use
 `app:streamUiLinkDescriptionMaxLines` when defining MessageListView
 ### ✅ Added
 Configure enable/disable of replies using XML in `MessageListView`
-Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
 
 ### ⚠️ Changed
 
@@ -84,6 +83,7 @@ Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable 
 - Now replied messages are shown correctly with the replied part in message options
 - `MessageListView::enterThreadListener` is properly notified when entering into a thread
 - Fix initial controls state in `MessageInputView`
+- Fix crashing when open attachments destination
 
 ### ⬆️ Improved
 - Add support of non-image attachment types to the default attachment click listener.
@@ -145,6 +145,13 @@ It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiUnreadMessageCounterTextFont` - customize message counter text font
 - `streamUiUnreadMessageCounterFontAssets` - customize message counter font asset
 - `streamUiUnreadMessageCounterTextStyle` - customize message counter text style (normal / bold / italic)
+
+- Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
+It is now possible to configure, for message input view:
+- TextStyle for the Input Text
+- Custom the cursor drawable
+- Background for EditText inside MessageInputView
+- Background MessageInputView itself
 
 ### ⚠️ Changed
 - Deprecated `ChatUI` class
