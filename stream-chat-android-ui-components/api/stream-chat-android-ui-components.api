@@ -881,7 +881,7 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle$Companion;
-	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -901,6 +901,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun component24 ()I
 	public final fun component25 ()Landroid/graphics/drawable/Drawable;
 	public final fun component26 ()Landroid/graphics/drawable/Drawable;
+	public final fun component27 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Z
 	public final fun component4 ()Landroid/graphics/drawable/Drawable;
 	public final fun component5 ()F
@@ -908,8 +909,8 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component9 ()Z
-	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
+	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachButtonEnabled ()Z
 	public final fun getAttachButtonIcon ()Landroid/graphics/drawable/Drawable;
@@ -919,6 +920,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun getCommandsNameTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getCommandsTitleTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getCustomCursorDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getDividerBackground ()Landroid/graphics/drawable/Drawable;
 	public final fun getEditTextBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getLightningButtonEnabled ()Z
 	public final fun getLightningButtonIcon ()Landroid/graphics/drawable/Drawable;
