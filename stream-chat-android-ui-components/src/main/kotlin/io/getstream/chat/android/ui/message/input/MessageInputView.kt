@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -51,10 +51,6 @@ public class MessageInputView : ConstraintLayout {
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
-
-    public val attachmentBiggerThanMax: StateFlow<Boolean> by lazy {
-        binding.messageInputFieldView.hasBigAttachment
-    }
 
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
@@ -232,6 +228,10 @@ public class MessageInputView : ConstraintLayout {
         updatePadding(left = horizontalPadding, right = horizontalPadding)
 
         refreshControlsState()
+    }
+
+    public suspend fun listenForBigAttachments(listener: BigFileSelectionListener) {
+        binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -525,5 +525,10 @@ public class MessageInputView : ConstraintLayout {
     public interface TypingListener {
         public fun onKeystroke()
         public fun onStopTyping()
+    }
+
+    @FunctionalInterface
+    public interface BigFileSelectionListener {
+        public fun handleBigFileSelected(hasBigFile: Boolean)
     }
 }

@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
@@ -25,7 +26,6 @@ import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
-import kotlinx.coroutines.flow.collect
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
@@ -70,16 +70,19 @@ class ChatFragment : Fragment() {
 
     private fun configureMessageInputView() {
         lifecycleScope.launchWhenCreated {
-            binding.messageInputView.attachmentBiggerThanMax.collect { hasBigAttachment ->
-                if (hasBigAttachment) {
-                    messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
-                    binding.messagesHeaderView.setOnlineStateSubtitle(
-                        requireContext().getString(R.string.chat_fragment_big_attachment_subtitle, maxAttachmentFile)
-                    )
-                } else {
-                    messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
+            binding.messageInputView.listenForBigAttachments(object : MessageInputView.BigFileSelectionListener {
+                override fun handleBigFileSelected(hasBigFile: Boolean) {
+                    if (hasBigFile) {
+                        messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
+                        binding.messagesHeaderView.setOnlineStateSubtitle(
+                            requireContext().getString(R.string.chat_fragment_big_attachment_subtitle,
+                                maxAttachmentFile)
+                        )
+                    } else {
+                        messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
+                    }
                 }
-            }
+            })
         }
     }
 
