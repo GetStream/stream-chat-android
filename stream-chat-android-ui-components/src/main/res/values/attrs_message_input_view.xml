@@ -68,6 +68,15 @@
 
         <!-- Commands -->
         <attr name="streamUiCommandsEnabled" format="boolean" />
+        <attr name="streamUiCommandsTitleTextSize" format="dimension" />
+        <attr name="streamUiCommandsTitleTextColor" format="reference|color" />
+        <attr name="streamUiCommandsTitleFontAssets" format="string" />
+        <attr name="streamUiCommandsTitleFont" format="string" />
+        <attr name="streamUiCommandsTitleStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
         <attr name="streamUiCommandsNameTextSize" format="dimension" />
         <attr name="streamUiCommandsNameTextColor" format="reference|color" />
         <attr name="streamUiCommandsNameFontAssets" format="string" />

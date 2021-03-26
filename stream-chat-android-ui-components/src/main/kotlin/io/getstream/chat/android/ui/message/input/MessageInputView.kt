@@ -182,7 +182,7 @@ public class MessageInputView : ConstraintLayout {
             }
         )
 
-        suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.commandsBackground)
+        suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
         suggestionListController = SuggestionListController(suggestionListView) {
             binding.commandsButton.isSelected = false
@@ -194,6 +194,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
+        styleCommandTitle(style.commandsTitleTextStyle)
         styleCommandName(style.commandsNameTextStyle)
         styleCommandDescription(style.commandsDescriptionTextStyle)
         styleMentionsUsername(style.mentionsUsernameTextStyle)

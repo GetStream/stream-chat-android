@@ -31,13 +31,14 @@ public data class MessageInputViewStyle(
     public val sendButtonDisabledIcon: Drawable,
     public val showSendAlsoToChannelCheckbox: Boolean,
     public val commandsEnabled: Boolean,
-    @ColorRes public val commandsBackground: Int,
+    public val commandsTitleTextStyle: TextStyle,
     public val commandsNameTextStyle: TextStyle,
     public val commandsDescriptionTextStyle: TextStyle,
     public val mentionsEnabled: Boolean,
     public val mentionsUsernameTextStyle: TextStyle,
     public val mentionsNameTextStyle: TextStyle,
-    public val backgroundColor: Int,
+    @ColorRes public val backgroundColor: Int,
+    @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
 ) {
@@ -189,6 +190,25 @@ public data class MessageInputViewStyle(
                     ContextCompat.getColor(context, R.color.stream_ui_white)
                 )
 
+                val commandsTitleTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsTitleTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsTitleTextColor,
+                        ContextCompat.getColor(context, R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsTitleFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsTitleFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsTitleStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 val commandsNameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiCommandsNameTextSize,
@@ -294,7 +314,8 @@ public data class MessageInputViewStyle(
                     sendButtonDisabledIcon = sendButtonDisabledIcon,
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
                     commandsEnabled = commandsEnabled,
-                    commandsBackground = commandsBackground,
+                    commandsTitleTextStyle = commandsTitleTextStyle,
+                    suggestionsBackground = commandsBackground,
                     commandsNameTextStyle = commandsNameTextStyle,
                     commandsDescriptionTextStyle = commandsDescriptionTextStyle,
                     mentionsEnabled = mentionsEnabled,
