@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
 import io.getstream.chat.android.client.errors.ChatError
@@ -27,11 +28,11 @@ internal class QueryChannelsPostponeHelper(
         channelId: String,
         request: QueryChannelRequest
     ): Call<Channel> = CoroutineCall(coroutineScope) {
-        doSafeJob { api.queryChannel(channelType, channelId, request) }.execute()
+        doSafeJob { api.queryChannel(channelType, channelId, request) }.await()
     }
 
     internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = CoroutineCall(coroutineScope) {
-        doSafeJob { api.queryChannels(request) }.execute()
+        doSafeJob { api.queryChannels(request) }.await()
     }
 
     private suspend fun <T : Any> doSafeJob(job: () -> Call<T>): Call<T> =
