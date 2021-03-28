@@ -25,9 +25,11 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class TotalUnreadCountTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val data = TestDataHelper()
 

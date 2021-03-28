@@ -12,11 +12,17 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.UuidGenerator
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class MessageIdGenerationTests {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     val userId = "user-id"
     val connectionId = "connection-id"
@@ -26,15 +32,12 @@ internal class MessageIdGenerationTests {
     val randomUuid = "random-uuid"
     val messageText = "message-text"
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
     lateinit var uuidGenerator: UuidGenerator
     private lateinit var retroApi: RetrofitApi
     private lateinit var retroAnonymousApi: RetrofitAnonymousApi
     private lateinit var api: GsonChatApi
 
-    @Before
+    @BeforeEach
     fun before() {
         retroApi = mock()
         retroAnonymousApi = mock()

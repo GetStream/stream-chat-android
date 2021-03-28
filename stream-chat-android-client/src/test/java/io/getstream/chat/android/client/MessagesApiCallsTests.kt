@@ -15,18 +15,26 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
-import org.junit.Before
-import org.junit.Test
+import io.getstream.chat.android.test.TestCoroutineExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
 
 internal class MessagesApiCallsTests {
 
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
     lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient
 
-    @Before
+    @BeforeEach
     fun before() {
-        mock = MockClientBuilder()
+        mock = MockClientBuilder(testCoroutines.scope)
         client = mock.build()
     }
 

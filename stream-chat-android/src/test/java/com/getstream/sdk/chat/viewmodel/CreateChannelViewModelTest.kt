@@ -35,10 +35,6 @@ private val CHANNEL = createChannel(CID)
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class CreateChannelViewModelTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
-
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomain = mock()
     private val useCases: UseCaseHelper = mock()
@@ -107,6 +103,10 @@ internal class CreateChannelViewModelTest {
         }
 
     companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         @JvmStatic
         fun provideChannelName() = listOf(
             Arguments.of(""),
