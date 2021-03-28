@@ -44,8 +44,6 @@ class UserLoginViewModel : ViewModel() {
             image = user.image
             name = user.name
         }
-        initChatSdk(user.apiKey)
-
         ChatClient.instance().connectUser(chatUser, user.token)
             .enqueue { result ->
                 if (result.isSuccess) {
@@ -56,15 +54,6 @@ class UserLoginViewModel : ViewModel() {
                 }
             }
         _events.postValue(Event(UiEvent.RedirectToChannels))
-    }
-
-    /**
-     * You would normally initialize the Chat SDK only once in the Application class,
-     * but since we allow changing API keys at runtime in this demo app, we have to
-     * reinitialize the Chat SDK here with the new API key.
-     */
-    private fun initChatSdk(apiKey: String) {
-        App.instance.chatInitializer.init(apiKey)
     }
 
     sealed class State {

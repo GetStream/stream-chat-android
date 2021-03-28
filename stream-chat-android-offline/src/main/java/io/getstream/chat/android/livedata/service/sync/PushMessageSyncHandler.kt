@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.service.sync
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.os.Build
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
@@ -14,7 +13,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
 
@@ -43,18 +41,10 @@ public class PushMessageSyncHandler(private val service: Service) {
      * registered at your app.
      */
     public fun onNewToken(token: String) {
-        if (ChatClient.isInitialized) {
-            ChatClient.instance().onNewTokenReceived(token)
-        } else {
-            val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-            syncConfig?.let {
-                val config = it
-                val user = User(id = config.userId)
-                val userToken = config.userToken
-                val client = initClient(service, user, userToken, config.apiKey)
-                client.onNewTokenReceived(token)
-            }
+        syncModule.encryptedBackgroundSyncConfigStore.get()?.let {
+            ChatClient.instance().setUserWithoutConnecting(User(id = it.userId), it.userToken)
         }
+        ChatClient.instance().onNewTokenReceived(token)
     }
 
     /**
@@ -79,22 +69,16 @@ public class PushMessageSyncHandler(private val service: Service) {
         startForegroundExecution(notificationConfig.smallIcon)
 
         val cid: String = firebaseMessageParser.parse(message).let { "${it.channelType}:${it.channelId}" }
-        if (ChatDomain.isInitialized && ChatClient.isInitialized) {
-            logger.logD("Starting the sync")
+        val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
+        syncConfig?.let {
+            val config = it
+            val user = User(id = config.userId)
+            val token = config.userToken
+            ChatClient.instance().setUserWithoutConnecting(user, token)
+
+            logger.logD("Starting the sync, config: $syncConfig")
+
             performSync(ChatDomain.instance(), cid, ChatClient.instance(), message)
-        } else {
-            val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-            syncConfig?.let {
-                val config = it
-                val user = User(id = config.userId)
-                val token = config.userToken
-                val client = initClient(service, user, token, config.apiKey)
-                val domain = initDomain(user, client)
-
-                logger.logD("Starting the sync, config: $syncConfig")
-
-                performSync(domain, cid, client, message)
-            }
         }
         service.stopForeground(true)
     }
@@ -142,30 +126,6 @@ public class PushMessageSyncHandler(private val service: Service) {
                 service.getSystemService(NotificationManager::class.java).createNotificationChannel(this)
             }
         }
-    }
-
-    private fun initDomain(user: User, client: ChatClient): ChatDomain {
-        return ChatDomain.Builder(service, client).build().apply {
-            currentUser = user
-        }
-    }
-
-    private fun initClient(
-        context: Context,
-        user: User,
-        userToken: String,
-        apiKey: String,
-    ): ChatClient {
-        val notificationConfig = syncModule.notificationConfigStore.get()
-        val notificationHandler = ChatNotificationHandler(context, notificationConfig)
-
-        val client = ChatClient.Builder(apiKey, context.applicationContext)
-            .notifications(notificationHandler)
-            .build()
-
-        client.setUserWithoutConnecting(user, userToken)
-
-        return client
     }
 
     private companion object {

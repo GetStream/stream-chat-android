@@ -455,7 +455,6 @@ internal class ChatDomainImpl internal constructor(
             object : SocketListener() {
                 override fun onConnected(event: ConnectedEvent) {
                     storeBgSyncData()
-                    client.removeSocketListener(this)
                 }
             }
         )

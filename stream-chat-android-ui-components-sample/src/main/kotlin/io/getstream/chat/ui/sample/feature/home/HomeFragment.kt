@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
@@ -79,6 +80,8 @@ class HomeFragment : Fragment() {
                 val messageId = it.getStringExtra(EXTRA_MESSAGE_ID)
 
                 requireActivity().intent = null
+
+                ChatClient.instance().reconnectSocket()
 
                 findNavController().navigateSafely(HomeFragmentDirections.actionOpenChat(cid, messageId))
             }

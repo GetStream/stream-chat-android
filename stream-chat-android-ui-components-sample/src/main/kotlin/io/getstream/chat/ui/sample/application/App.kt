@@ -18,6 +18,7 @@ class App : Application() {
         super.onCreate()
         instance = this
         DebugMetricsHelper.init()
+        chatInitializer.init(AppConfig.apiKey)
         Coil.setImageLoader(
             ImageLoader.Builder(this).componentRegistry {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
