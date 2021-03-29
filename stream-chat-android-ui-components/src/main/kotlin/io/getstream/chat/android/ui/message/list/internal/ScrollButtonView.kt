@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 
 internal class ScrollButtonView : FrameLayout {
@@ -48,6 +49,10 @@ internal class ScrollButtonView : FrameLayout {
 
     fun setUnreadBadgeColor(@ColorInt color: Int) {
         binding.unreadCountTextView.backgroundTintList = ColorStateList.valueOf(color)
+    }
+
+    fun setUnreadBadgeTextStyle(textStyle: TextStyle) {
+        textStyle.apply(binding.unreadCountTextView)
     }
 
     override fun setOnClickListener(listener: OnClickListener?) {
