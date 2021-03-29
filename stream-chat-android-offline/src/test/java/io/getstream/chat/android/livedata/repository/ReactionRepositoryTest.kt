@@ -70,8 +70,8 @@ internal class ReactionRepositoryTest {
     }
 
     @Test
-    fun `Given reaction with empty user when it's saved in repo dao shouldn't store it to DB`() = runBlockingTest {
-        val reaction = randomReaction(messageId = randomString(10), user = null, type = "love")
+    fun `Given reaction with empty userId when it's saved in repo dao shouldn't store it to DB`() = runBlockingTest {
+        val reaction = randomReaction(messageId = randomString(10), userId = "", type = "love")
 
         assertThrows<IllegalArgumentException> { reactionRepo.insertReaction(reaction) }
 
