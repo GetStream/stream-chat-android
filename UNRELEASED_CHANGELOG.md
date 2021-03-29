@@ -95,6 +95,7 @@ It is possible now to configure the max size of the file upload using
 - Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
+- `MessageInputView` now uses the cursor `stream_ui_message_input_cursor.xml` instead of accent color. To change the cursor, override `stream_ui_message_input_cursor.xml`.  
 - Replacing `ChatUI` with new `io.getstream.chat.android.ui.ChatUI` implementation
 - Added possibility to configure delete message option visibility using `streamUiDeleteMessageEnabled` attribute, and `MessageListView::setDeleteMessageEnabled` method
 - Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
@@ -103,7 +104,9 @@ It is possible now to configure the max size of the file upload using
 - Add `streamUiCommandsEnabled` attribute to `MessageInputView` and `MessageInputView::setCommandsEnabled` method to enable/disable commands
 - Add `ChannelListItemPredicate` to our `channelListView` to allow filter `ChannelListItem` before they are rendered
 - Open `AvatarBitmapFactory` class
-- Add `AvatarBitmapFactory::setInstance` method to allow custom implementation of `AvatarBitmapFactory`
+- Add `ChatUI::avatarBitmapFactory` property to allow custom implementation of `AvatarBitmapFactory`
+- Add `AvatarBitmapFactory::userBitmapKey` method to generate cache key for a given User
+- Add `AvatarBitmapFactory::channelBitmapKey` method to generate cache key for a given Channel
 - Add `StyleTransformer` class to allow application-wide style customizations
 - Add the default font field to `TextStyle`
 - Add new method `ChatFonts::setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface)`

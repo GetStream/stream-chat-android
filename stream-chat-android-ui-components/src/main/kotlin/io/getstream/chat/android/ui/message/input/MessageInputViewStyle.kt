@@ -316,9 +316,8 @@ public data class MessageInputViewStyle(
                     backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
                 }
 
-                val customCursorDrawable = a.getDrawable(
-                    R.styleable.MessageInputView_streamUiMessageInputCustomCursorDrawable
-                )
+                // Override this to set cursor drawable programmatically. Only available for API 29+
+                val customCursorDrawable = null
 
                 val editTextBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable

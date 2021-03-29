@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -354,7 +355,10 @@ public class MessageInputView : ConstraintLayout {
             setCustomBackgroundDrawable(style.editTextBackgroundDrawable)
 
             style.messageInputTextStyle.apply(binding.messageEditText)
-            style.customCursorDrawable?.let(::setCustomCursor)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                style.customCursorDrawable?.let(::setCustomCursor)
+            }
         }
 
         binding.separator.background = style.dividerBackground

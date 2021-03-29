@@ -1,7 +1,9 @@
 package io.getstream.chat.android.ui.message.input.internal
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -109,6 +111,7 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.Q)
     fun setCustomCursor(cursor: Drawable) {
         binding.messageEditText.textCursorDrawable = cursor
     }
