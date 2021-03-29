@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.EventType
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.domain.message.MessageEntity
 import io.getstream.chat.android.livedata.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
@@ -49,7 +51,7 @@ internal fun randomChannelDeletedEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    channel: Channel = randomChannel()
+    channel: Channel = randomChannel(),
 ): ChannelDeletedEvent {
     return ChannelDeletedEvent(
         type = type,
@@ -135,7 +137,7 @@ internal fun randomTypingStopEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    parentId: String? = randomString()
+    parentId: String? = randomString(),
 ): TypingStopEvent {
     return TypingStopEvent(
         type = type,
@@ -155,7 +157,7 @@ internal fun randomTypingStartEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    parentId: String? = randomString()
+    parentId: String? = randomString(),
 ): TypingStartEvent {
     return TypingStartEvent(
         type = type,
@@ -175,7 +177,7 @@ internal fun randomMemberAddedEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    member: Member = randomMember()
+    member: Member = randomMember(),
 ): MemberAddedEvent {
     return MemberAddedEvent(
         type = type,
@@ -317,7 +319,7 @@ internal fun randomMessage(
     replyTo: Message? = null,
     showInChannel: Boolean = randomBoolean(),
     shadowed: Boolean = false,
-    threadParticipants: List<User> = emptyList()
+    threadParticipants: List<User> = emptyList(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -495,7 +497,8 @@ internal fun randomReaction(
     enforceUnique = enforceUnique,
 )
 
-internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus = (SyncStatus.values().asList() - exclude).random()
+internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
+    (SyncStatus.values().asList() - exclude).random()
 
 internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
     return KFixture(fixture) {
@@ -549,3 +552,50 @@ internal fun randomNewMessageEvent(
         unreadChannels = unreadChannels,
     )
 }
+
+internal fun randomConfig(
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    name: String = randomString(),
+    isTypingEvents: Boolean = randomBoolean(),
+    isReadEvents: Boolean = randomBoolean(),
+    isConnectEvents: Boolean = randomBoolean(),
+    isSearch: Boolean = randomBoolean(),
+    isReactionsEnabled: Boolean = randomBoolean(),
+    isRepliesEnabled: Boolean = randomBoolean(),
+    isMutes: Boolean = randomBoolean(),
+    uploadsEnabled: Boolean = randomBoolean(),
+    urlEnrichmentEnabled: Boolean = randomBoolean(),
+    customEventsEnabled: Boolean = randomBoolean(),
+    pushNotificationsEnabled: Boolean = randomBoolean(),
+    messageRetention: String = randomString(),
+    maxMessageLength: Int = randomInt(),
+    automod: String = randomString(),
+    automodBehavior: String = randomString(),
+    blocklistBehavior: String = randomString(),
+    commands: List<Command> = emptyList(),
+) = Config(
+    created_at = createdAt,
+    updated_at = updatedAt,
+    name = name,
+    isTypingEvents = isTypingEvents,
+    isReadEvents = isReadEvents,
+    isConnectEvents = isConnectEvents,
+    isSearch = isSearch,
+    isReactionsEnabled = isReactionsEnabled,
+    isRepliesEnabled = isRepliesEnabled,
+    isMutes = isMutes,
+    uploadsEnabled = uploadsEnabled,
+    urlEnrichmentEnabled = urlEnrichmentEnabled,
+    customEventsEnabled = customEventsEnabled,
+    pushNotificationsEnabled = pushNotificationsEnabled,
+    messageRetention = messageRetention,
+    maxMessageLength = maxMessageLength,
+    automod = automod,
+    automodBehavior = automodBehavior,
+    blocklistBehavior = blocklistBehavior,
+    commands = commands,
+)
+
+internal fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
+    ChannelConfig(type = type, config = config)
