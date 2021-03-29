@@ -26,6 +26,10 @@ import java.util.Date
 internal class ChatClientTest {
 
     companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
         val eventB = NewMessageEvent(EventType.MESSAGE_NEW, Date(), User(), "type:id", "type", "id", Message(), 0, 0, 0)
         val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
@@ -35,13 +39,8 @@ internal class ChatClientTest {
         val eventF = UnknownEvent("f", Date(), emptyMap<Any, Any>())
     }
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
-
     lateinit var socket: FakeChatSocket
     lateinit var client: ChatClient
-
     lateinit var result: MutableList<ChatEvent>
 
     @BeforeEach

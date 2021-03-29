@@ -20,11 +20,13 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplTest {
 
-    private lateinit var sut: ChatDomainImpl
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    private lateinit var sut: ChatDomainImpl
 
     @BeforeEach
     fun setUp() {

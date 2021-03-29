@@ -165,7 +165,10 @@ public data class MessageListItemStyle(
             val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
 
             val textStyleMine = TextStyle.Builder(attributes)
-                .size(R.styleable.MessageListView_streamUiMessageTextSizeMine, context.getDimension(DEFAULT_TEXT_SIZE))
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeMine,
+                    context.getDimension(DEFAULT_TEXT_SIZE)
+                )
                 .color(
                     R.styleable.MessageListView_streamUiMessageTextColorMine,
                     context.getColorCompat(DEFAULT_TEXT_COLOR)

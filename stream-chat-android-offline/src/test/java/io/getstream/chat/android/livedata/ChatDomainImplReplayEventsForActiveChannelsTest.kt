@@ -25,9 +25,11 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Test
     fun `when replaying events for active channels should add channel to active channels`() =

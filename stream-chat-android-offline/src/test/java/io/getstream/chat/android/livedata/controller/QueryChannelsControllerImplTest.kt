@@ -36,9 +36,11 @@ import java.util.Date
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class QueryChannelsControllerImplTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =

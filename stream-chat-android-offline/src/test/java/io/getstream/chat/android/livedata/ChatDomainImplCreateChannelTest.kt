@@ -32,9 +32,11 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplCreateChannelTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val currentUser = User()
     private val channelId = "ChannelId"

@@ -179,6 +179,7 @@ It is now possible to configure new fields in MessageInputView:
 - `streamUiCommandsDescriptionFont` - customize command description text font
 - `streamUiCommandsDescriptionStyle` - customize command description text style
 - `streamUiSuggestionBackgroundColor` - customize suggestion view background
+- `streamUiMessageInputDividerBackgroundDrawable` - customize the background of divider of MessageInputView
 
 
 

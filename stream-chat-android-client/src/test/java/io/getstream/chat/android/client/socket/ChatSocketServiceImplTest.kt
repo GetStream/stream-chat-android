@@ -16,6 +16,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class ChatSocketServiceImplTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
     private lateinit var tokenManager: TokenManager
     private lateinit var socketFactory: SocketFactory
     private lateinit var eventsParser: EventsParser
@@ -23,9 +30,6 @@ internal class ChatSocketServiceImplTest {
     private lateinit var socketListener: SocketListener
     private lateinit var socketService: ChatSocketServiceImpl
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
     @BeforeEach
     fun setup() {
         tokenManager = mock()
