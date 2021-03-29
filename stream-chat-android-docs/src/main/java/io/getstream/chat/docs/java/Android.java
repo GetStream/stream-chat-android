@@ -701,14 +701,16 @@ public class Android {
     }
 
     /**
-     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_input_view?language=kotlin">Message Input View</a>
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_input_view?language=java">Message Input View</a>
      */
     public class TransformStyleMessageInput extends Fragment {
         public void messageInputCustomisation() {
-            TransformStyle.INSTANCE.messageInputStyleTransformer = (viewStyle) -> {
-                // Create a new viewStyle!
-                return viewStyle;
-            };
+            TransformStyle.INSTANCE.setMessageInputStyleTransformer(
+                    viewStyle -> {
+                        // Create a new viewStyle!
+                        return viewStyle;
+                    }
+            );
         }
     }
 }
