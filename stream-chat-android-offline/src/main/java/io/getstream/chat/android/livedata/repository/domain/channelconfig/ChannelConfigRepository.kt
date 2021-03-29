@@ -8,7 +8,6 @@ internal interface ChannelConfigRepository {
      * Caches in memory data from DB.
      */
     suspend fun cacheChannelConfigs()
-    fun clearChannelConfigsCache()
     fun selectChannelConfig(channelType: String): ChannelConfig?
     suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>)
     suspend fun insertChannelConfig(config: ChannelConfig)
@@ -24,10 +23,6 @@ internal class ChannelConfigRepositoryImpl(private val channelConfigDao: Channel
     override suspend fun cacheChannelConfigs() {
         channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
             .associateBy(ChannelConfig::type)
-    }
-
-    override fun clearChannelConfigsCache() {
-        channelConfigs.clear()
     }
 
     override fun selectChannelConfig(channelType: String): ChannelConfig? {

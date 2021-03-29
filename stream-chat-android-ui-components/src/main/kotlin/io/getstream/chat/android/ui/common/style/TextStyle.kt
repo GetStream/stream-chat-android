@@ -12,6 +12,7 @@ public data class TextStyle(
     public val style: Int = Typeface.NORMAL,
     public val size: Int = UNSET_SIZE,
     public val color: Int = UNSET_COLOR,
+    public val hint: String = UNSET_HINT,
     public val hintColor: Int = UNSET_HINT_COLOR,
     public val defaultFont: Typeface = Typeface.DEFAULT,
 ) {
@@ -20,6 +21,7 @@ public data class TextStyle(
         const val UNSET_COLOR = Integer.MAX_VALUE
         const val UNSET_HINT_COLOR = Integer.MAX_VALUE
         const val UNSET_FONT_RESOURCE = -1
+        const val UNSET_HINT = ""
     }
 
     public val font: Typeface?
@@ -35,6 +37,9 @@ public data class TextStyle(
         }
         if (color != UNSET_COLOR) {
             textView.setTextColor(color)
+        }
+        if (hint != UNSET_HINT) {
+            textView.hint = hint
         }
         if (hintColor != UNSET_HINT_COLOR) {
             textView.setHintTextColor(hintColor)
@@ -55,6 +60,7 @@ public data class TextStyle(
         private var style: Int = Typeface.NORMAL
         private var size: Int = UNSET_SIZE
         private var color: Int = UNSET_COLOR
+        private var hint: String = UNSET_HINT
         private var hintColor: Int = UNSET_HINT_COLOR
         private var defaultFont: Typeface = Typeface.DEFAULT
 
@@ -83,6 +89,10 @@ public data class TextStyle(
             this.hintColor = array.getColor(ref, defValue)
         }
 
+        public fun hint(ref: Int, defValue: String): Builder = apply {
+            this.hint = array.getString(ref) ?: defValue
+        }
+
         public fun style(ref: Int, defValue: Int): Builder = apply {
             this.style = array.getInt(ref, defValue)
         }
@@ -94,6 +104,7 @@ public data class TextStyle(
                 style = style,
                 size = size,
                 color = color,
+                hint = hint,
                 hintColor = hintColor,
                 defaultFont = defaultFont
             )
