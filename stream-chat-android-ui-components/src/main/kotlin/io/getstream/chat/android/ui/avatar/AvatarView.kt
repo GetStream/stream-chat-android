@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.avatar
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
@@ -18,13 +17,17 @@ public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
-    private val onlineIndicatorOutlinePaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.WHITE
+    private val onlineIndicatorOutlinePaint by lazy {
+        Paint().apply {
+            style = Paint.Style.FILL
+            color = avatarStyle.onlineIndicatorBorderColor
+        }
     }
-    private val onlineIndicatorPaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.GREEN
+    private val onlineIndicatorPaint by lazy {
+        Paint().apply {
+            style = Paint.Style.FILL
+            color = avatarStyle.onlineIndicatorColor
+        }
     }
 
     private lateinit var avatarStyle: AvatarStyle

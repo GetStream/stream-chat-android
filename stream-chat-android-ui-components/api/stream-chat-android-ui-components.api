@@ -92,18 +92,22 @@ public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Compa
 
 public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarStyle$Companion;
-	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;)V
+	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component4 ()Z
 	public final fun component5 ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;ILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarBorderColor ()I
 	public final fun getAvatarBorderWidth ()I
 	public final fun getAvatarInitialText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getOnlineIndicatorBorderColor ()I
+	public final fun getOnlineIndicatorColor ()I
 	public final fun getOnlineIndicatorEnabled ()Z
 	public final fun getOnlineIndicatorPosition ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public fun hashCode ()I
