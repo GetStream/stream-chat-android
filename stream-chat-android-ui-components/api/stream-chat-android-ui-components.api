@@ -73,6 +73,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion;
 	public fun <init> (Landroid/content/Context;)V
+	public fun channelBitmapKey (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 	public fun createChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun createChannelBitmapBlocking (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
 	public fun createDefaultChannelBitmap (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -81,6 +82,7 @@ public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
 	public fun createDefaultUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
 	public fun createUserBitmap (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun createUserBitmapBlocking (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/ui/avatar/AvatarStyle;I)Landroid/graphics/Bitmap;
+	public fun userBitmapKey (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion {

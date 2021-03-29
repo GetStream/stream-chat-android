@@ -9,10 +9,12 @@ import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.annotation.Px
 import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
@@ -237,6 +239,34 @@ public open class AvatarBitmapFactory(private val context: Context) {
     ): List<Bitmap> {
         return users.take(MAX_AVATAR_SECTIONS).map { createUserBitmapInternal(it, style, avatarSize) }
     }
+
+    /**
+     * Compute the memory cache key for [user].
+     *
+     * Items with the same cache key will be treated as equivalent by the memory cache.
+     *
+     * Returning null will prevent the result of [createUserBitmap] from being added to the memory cache.
+     */
+    public open fun userBitmapKey(user: User): String? = "${user.name}${user.image}"
+
+    /**
+     * Compute the memory cache key for [channel].
+     *
+     * Items with the same cache key will be treated as equivalent by the memory cache.
+     *
+     * Returning null will prevent the result of [createChannelBitmap] from being added to the memory cache.
+     */
+    public open fun channelBitmapKey(channel: Channel): String? =
+        buildString {
+            append(channel.name)
+            append(channel.image)
+            channel.getUsers()
+                .take(4)
+                .forEach {
+                    append(it.name)
+                    append(it.image)
+                }
+        }
 
     private fun createInitialsBitmap(
         avatarStyle: AvatarStyle,
