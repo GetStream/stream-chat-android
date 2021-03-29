@@ -25,8 +25,8 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.test.TestCoroutineExtension
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -34,6 +34,12 @@ import org.mockito.Mockito.verify
 import java.util.Date
 
 internal class ClientConnectionTests {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val userId = "test-id"
     private val connectionId = "connection-id"
@@ -60,9 +66,6 @@ internal class ClientConnectionTests {
     )
     private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
     private lateinit var api: GsonChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
@@ -74,7 +77,7 @@ internal class ClientConnectionTests {
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
 
-    @Before
+    @BeforeEach
     fun before() {
         val clientStateService = ClientStateService()
         val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)

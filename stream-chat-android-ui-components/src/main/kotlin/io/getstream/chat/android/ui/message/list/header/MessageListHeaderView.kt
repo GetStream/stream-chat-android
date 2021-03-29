@@ -216,10 +216,11 @@ public class MessageListHeaderView : ConstraintLayout {
     }
 
     private fun getSearchingForNetworkTextStyle(attrs: TypedArray): TextStyle {
-        return TextStyle.Builder(attrs).size(
-            R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextSize,
-            context.getDimension(R.dimen.stream_ui_text_small)
-        )
+        return TextStyle.Builder(attrs)
+            .size(
+                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextSize,
+                context.getDimension(R.dimen.stream_ui_text_small)
+            )
             .color(
                 R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelColor,
                 context.getColorCompat(R.color.stream_ui_text_color_secondary)
@@ -249,10 +250,11 @@ public class MessageListHeaderView : ConstraintLayout {
     }
 
     private fun getOfflineTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray).size(
-            R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextSize,
-            context.getDimension(R.dimen.stream_ui_text_small)
-        )
+        return TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextSize,
+                context.getDimension(R.dimen.stream_ui_text_small)
+            )
             .color(
                 R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextColor,
                 context.getColorCompat(R.color.stream_ui_text_color_secondary)
@@ -279,10 +281,11 @@ public class MessageListHeaderView : ConstraintLayout {
     }
 
     private fun getOnlineTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray).size(
-            R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextSize,
-            context.getDimension(R.dimen.stream_ui_text_small)
-        )
+        return TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextSize,
+                context.getDimension(R.dimen.stream_ui_text_small)
+            )
             .color(
                 R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextColor,
                 context.getColorCompat(R.color.stream_ui_text_color_secondary)
@@ -325,10 +328,11 @@ public class MessageListHeaderView : ConstraintLayout {
     }
 
     private fun getTitleTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray).size(
-            R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextSize,
-            context.getDimension(R.dimen.stream_ui_text_large)
-        )
+        return TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextSize,
+                context.getDimension(R.dimen.stream_ui_text_large)
+            )
             .color(
                 R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextColor,
                 context.getColorCompat(R.color.stream_ui_text_color_primary)

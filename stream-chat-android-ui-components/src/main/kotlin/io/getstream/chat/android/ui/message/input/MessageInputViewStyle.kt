@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
@@ -210,7 +211,7 @@ public data class MessageInputViewStyle(
                 val commandsTitleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiCommandsTitleTextSize,
-                        R.dimen.stream_ui_text_medium
+                        context.getDimension(R.dimen.stream_ui_text_medium)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsTitleTextColor,
@@ -229,11 +230,11 @@ public data class MessageInputViewStyle(
                 val commandsNameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiCommandsNameTextSize,
-                        R.dimen.stream_ui_text_medium
+                        context.getDimension(R.dimen.stream_ui_text_medium)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsNameTextColor,
-                        context.getColorCompat(R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
@@ -248,11 +249,11 @@ public data class MessageInputViewStyle(
                 val commandsDescriptionTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionTextSize,
-                        R.dimen.stream_ui_text_medium
+                        context.getDimension(R.dimen.stream_ui_text_medium)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
-                        context.getColorCompat(R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,
@@ -267,11 +268,11 @@ public data class MessageInputViewStyle(
                 val mentionsUsernameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiMentionsUserNameTextSize,
-                        R.dimen.stream_ui_text_medium
+                        context.getDimension(R.dimen.stream_ui_text_medium)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsUserNameTextColor,
-                        context.getColorCompat(R.color.stream_ui_black)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
                     )
                     .font(
                         R.styleable.MessageInputView_streamUiMentionsUserNameFontAssets,
@@ -286,7 +287,7 @@ public data class MessageInputViewStyle(
                 val mentionsNameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiMentionsNameTextSize,
-                        R.dimen.stream_ui_text_medium
+                        context.getDimension(R.dimen.stream_ui_text_medium)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiMentionsNameTextColor,

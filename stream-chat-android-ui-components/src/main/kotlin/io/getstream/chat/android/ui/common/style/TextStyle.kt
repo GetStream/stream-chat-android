@@ -4,6 +4,9 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.Px
+import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.ChatUI
 
 public data class TextStyle(
@@ -64,36 +67,40 @@ public data class TextStyle(
         private var hintColor: Int = UNSET_HINT_COLOR
         private var defaultFont: Typeface = Typeface.DEFAULT
 
-        public fun size(ref: Int): Builder = size(ref, -1)
+        public fun size(@StyleableRes ref: Int): Builder = size(ref, -1)
 
-        public fun size(ref: Int, defValue: Int): Builder = apply {
+        public fun size(@StyleableRes ref: Int, @Px defValue: Int): Builder = apply {
             this.size = array.getDimensionPixelSize(ref, defValue)
         }
 
-        public fun font(assetsPath: Int, resId: Int): Builder = apply {
+        public fun font(@StyleableRes assetsPath: Int, @StyleableRes resId: Int): Builder = apply {
             this.fontAssetsPath = array.getString(assetsPath)
             this.fontResource = array.getResourceId(resId, -1)
         }
 
-        public fun font(assetsPath: Int, resId: Int, defaultFont: Typeface): Builder = apply {
+        public fun font(
+            @StyleableRes assetsPath: Int,
+            @StyleableRes resId: Int,
+            defaultFont: Typeface,
+        ): Builder = apply {
             this.fontAssetsPath = array.getString(assetsPath)
             this.fontResource = array.getResourceId(resId, -1)
             this.defaultFont = defaultFont
         }
 
-        public fun color(ref: Int, defValue: Int): Builder = apply {
+        public fun color(@StyleableRes ref: Int, @ColorInt defValue: Int): Builder = apply {
             this.color = array.getColor(ref, defValue)
         }
 
-        public fun hintColor(ref: Int, defValue: Int): Builder = apply {
+        public fun hintColor(@StyleableRes ref: Int, @ColorInt defValue: Int): Builder = apply {
             this.hintColor = array.getColor(ref, defValue)
         }
 
-        public fun hint(ref: Int, defValue: String): Builder = apply {
+        public fun hint(@StyleableRes ref: Int, defValue: String): Builder = apply {
             this.hint = array.getString(ref) ?: defValue
         }
 
-        public fun style(ref: Int, defValue: Int): Builder = apply {
+        public fun style(@StyleableRes ref: Int, defValue: Int): Builder = apply {
             this.style = array.getInt(ref, defValue)
         }
 
