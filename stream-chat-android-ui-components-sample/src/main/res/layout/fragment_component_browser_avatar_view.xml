@@ -159,6 +159,40 @@
                 app:streamUiAvatarBorderWidth="4dp"
                 app:streamUiAvatarBorderColor="@color/grey_dark"
                 />
+
+            <TextView
+                style="@style/ComponentBrowserLabel"
+                android:text="Custom indicator colors"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                style="@style/StreamUiMessageListAvatarStyle"
+                android:id="@+id/avatarViewSmallColors"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                app:streamUiAvatarOnlineIndicatorColor="@color/stream_ui_accent_blue"
+                app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                style="@style/StreamUiUserAvatarStyle"
+                android:id="@+id/avatarViewMediumColors"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                app:streamUiAvatarOnlineIndicatorColor="@color/stream_ui_accent_blue"
+                app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                style="@style/StreamUiGroupActionsAvatarStyle"
+                android:id="@+id/avatarViewLargeColors"
+                app:streamUiAvatarBorderWidth="4dp"
+                app:streamUiAvatarBorderColor="@color/grey_dark"
+                app:streamUiAvatarOnlineIndicatorColor="@color/stream_ui_accent_blue"
+                app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
+                />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
