@@ -19,6 +19,7 @@
         <!--Input Text-->
         <attr name="streamUiMessageInputTextSize" format="dimension|reference" />
         <attr name="streamUiMessageInputTextColor" format="color|reference" />
+        <attr name="streamUiMessageInputHintText" format="string" />
         <attr name="streamUiMessageInputHintTextColor" format="color|reference" />
         <attr name="streamUiMessageInputScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageInputScrollbarFadingEnabled" format="boolean" />
@@ -31,7 +32,7 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
-
+        <attr name="streamUiMessageInputDividerBackgroundDrawable" format="reference" />
 
         <!--Send Button-->
         <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />

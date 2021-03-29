@@ -17,16 +17,16 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
-import io.getstream.chat.android.test.TestCoroutineExtension
-import org.junit.jupiter.api.extension.RegisterExtension
+import kotlinx.coroutines.test.TestCoroutineScope
 import java.util.Date
 
 /**
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
-internal class MockClientBuilder {
-
+internal class MockClientBuilder(
+    private val testCoroutineScope: TestCoroutineScope,
+) {
     val userId = "test-id"
     val connectionId = "connection-id"
     val apiKey = "api-key"
@@ -42,9 +42,6 @@ internal class MockClientBuilder {
         connectionId
     )
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
     private lateinit var socket: FakeChatSocket
     private lateinit var fileUploader: FileUploader
 
@@ -76,11 +73,11 @@ internal class MockClientBuilder {
             retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader,
-            testCoroutines.scope
+            testCoroutineScope
         )
 
         val clientStateService = ClientStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService, testCoroutineScope)
         client = ChatClient(
             config,
             api,

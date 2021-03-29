@@ -16,25 +16,32 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
-import org.junit.Before
-import org.junit.Test
+import io.getstream.chat.android.test.TestCoroutineExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
 import java.util.Date
 
 internal class UsersApiCallsTests {
 
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
     lateinit var client: ChatClient
     lateinit var mock: MockClientBuilder
 
-    @Before
+    @BeforeEach
     fun before() {
-        mock = MockClientBuilder()
+        mock = MockClientBuilder(testCoroutines.scope)
         client = mock.build()
     }
 
     @Test
     fun banSuccess() {
-
         val targetUserId = "target-id"
         val timeout = 13
         val reason = "reason"
@@ -62,7 +69,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun unbanSuccess() {
-
         val targetUserId = "target-id"
 
         Mockito.`when`(
@@ -89,7 +95,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun flagSuccess() {
-
         val targetUserId = "target-id"
         val user = User("user-id")
         val targetUser = User(targetUserId)
@@ -121,7 +126,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun flagUserSuccess() {
-
         val targetUserId = "target-id"
         val user = User("user-id")
         val targetUser = User(targetUserId)
@@ -153,7 +157,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun flagMessageSuccess() {
-
         val targetMessageId = "message-id"
         val user = User("user-id")
         val date = Date()
@@ -184,7 +187,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun getUsersSuccess() {
-
         val user = User().apply { id = "a-user" }
 
         val request = QueryUsersRequest(Filters.eq("id", "1"), 0, 1)
@@ -205,7 +207,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun removeMembersSuccess() {
-
         val channel = Channel()
             .apply { id = "a-channel" }
 
@@ -226,7 +227,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun muteUserSuccess() {
-
         val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
@@ -249,7 +249,6 @@ internal class UsersApiCallsTests {
 
     @Test
     fun unmuteUserSuccess() {
-
         val targetUser = User().apply { id = "target-id" }
 
         Mockito.`when`(
