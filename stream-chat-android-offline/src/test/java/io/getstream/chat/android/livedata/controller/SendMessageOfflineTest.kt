@@ -36,9 +36,11 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class SendMessageOfflineTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Test
     fun `when calling watch, local messages should not be lost`() = testCoroutines.scope.runBlockingTest {

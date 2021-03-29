@@ -32,9 +32,11 @@ import java.util.Date
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelControllerImplTypingTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Test
     fun `When clean is invoked Then old typing indicators should be removed`() = runBlockingTest {

@@ -28,9 +28,11 @@ internal open class BaseAttachmentsControllerTests {
 
     protected lateinit var sut: AttachmentsController
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @ExperimentalCoroutinesApi
     @BeforeEach

@@ -17,9 +17,6 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
     private val clientStateService = ClientStateService()
     private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
     private val client = ChatClient(
@@ -38,6 +35,9 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
     }
 
     companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{index}: {0} => {1}")
