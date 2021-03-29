@@ -78,6 +78,7 @@ It is possible now to configure the max size of the file upload using
 - Show AttachmentMediaActivity for video attachments
 
 ### ✅ Added
+- `AvatarView.streamUiAvatarOnlineIndicatorColor` and `AvatarView.streamUiAvatarOnlineIndicatorBorderColor` attrs
 
 ### ⚠️ Changed
 
