@@ -41,8 +41,8 @@ internal class RetrofitCallAdapterFactory private constructor(
 
         fun create(
             chatParser: ChatParser,
-            callbackExecutor: Executor = mainThreadExecutor
-        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor)
+            callbackExecutor: Executor? = null,
+        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor ?: mainThreadExecutor)
     }
 }
 

@@ -168,6 +168,8 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
+        suggestionListView.configStyle(style)
+
         suggestionListView.setOnSuggestionClickListener(
             object : SuggestionListView.OnSuggestionClickListener {
                 override fun onMentionClick(user: User) {
@@ -179,6 +181,9 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
         )
+
+        suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
+
         suggestionListController = SuggestionListController(suggestionListView) {
             binding.commandsButton.isSelected = false
         }.also {
@@ -186,6 +191,15 @@ public class MessageInputView : ConstraintLayout {
             it.commandsEnabled = commandsEnabled
         }
         refreshControlsState()
+    }
+
+    private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
+        style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
+        styleCommandsName(style.commandsNameTextStyle)
+        styleCommandsDescription(style.commandsDescriptionTextStyle)
+        styleMentionsUsername(style.mentionsUsernameTextStyle)
+        styleMentionsName(style.mentionsNameTextStyle)
+        styleMentionsIcon(style.mentionsIcon)
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
@@ -330,11 +344,13 @@ public class MessageInputView : ConstraintLayout {
             setTextSizePx(style.messageInputTextSize)
             setInputFieldScrollBarEnabled(style.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(style.messageInputScrollbarFadingEnabled)
-            style.messageInputTextStyle.font?.let(::setTextInputTypeface)
-            setTextInputTypefaceStyle(style.messageInputTextStyle.style)
             setCustomBackgroundDrawable(style.editTextBackgroundDrawable)
+
+            style.messageInputTextStyle.apply(binding.messageEditText)
             style.customCursorDrawable?.let(::setCustomCursor)
         }
+
+        binding.separator.background = style.dividerBackground
     }
 
     private fun handleKeyStroke() {

@@ -5,11 +5,11 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
+import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class AvatarStyle(
     public val avatarBorderWidth: Int,

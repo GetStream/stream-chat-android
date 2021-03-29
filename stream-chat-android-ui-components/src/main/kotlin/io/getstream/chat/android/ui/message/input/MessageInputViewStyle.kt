@@ -4,24 +4,24 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.core.content.ContextCompat
+import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.DrawableCompat
-import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
+import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
     public val lightningButtonEnabled: Boolean,
     public val lightningButtonIcon: Drawable,
-    public val messageInputTextSize: Float,
-    public val messageInputTextColor: Int,
-    public val messageInputHintTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") public val messageInputTextSize: Float,
+    @Deprecated("Use messageInputTextStyle") public val messageInputTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") public val messageInputHintTextColor: Int,
     public val messageInputTextStyle: TextStyle,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
@@ -29,11 +29,19 @@ public data class MessageInputViewStyle(
     public val sendButtonEnabledIcon: Drawable,
     public val sendButtonDisabledIcon: Drawable,
     public val showSendAlsoToChannelCheckbox: Boolean,
-    public val mentionsEnabled: Boolean,
     public val commandsEnabled: Boolean,
-    public val backgroundColor: Int,
+    public val commandsTitleTextStyle: TextStyle,
+    public val commandsNameTextStyle: TextStyle,
+    public val commandsDescriptionTextStyle: TextStyle,
+    public val mentionsEnabled: Boolean,
+    public val mentionsUsernameTextStyle: TextStyle,
+    public val mentionsNameTextStyle: TextStyle,
+    public val mentionsIcon: Drawable,
+    @ColorRes public val backgroundColor: Int,
+    @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
+    public val dividerBackground: Drawable
 ) {
 
     internal companion object {
@@ -166,6 +174,14 @@ public data class MessageInputViewStyle(
                 )
 
                 val messageInputTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMessageInputTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMessageInputTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
                     .font(
                         R.styleable.MessageInputView_streamUiMessageInputFontAssets,
                         R.styleable.MessageInputView_streamUiMessageInputFont
@@ -174,13 +190,126 @@ public data class MessageInputViewStyle(
                         R.styleable.MessageInputView_streamUiMessageInputTextStyle,
                         Typeface.NORMAL
                     )
+                    .hint(
+                        R.styleable.MessageInputView_streamUiMessageInputHintText,
+                        context.getString(R.string.stream_ui_message_input_default_hint)
+                    )
+                    .hintColor(
+                        R.styleable.MessageInputView_streamUiMessageInputHintTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_hint)
+                    )
                     .build()
 
                 val commandsEnabled = a.getBoolean(R.styleable.MessageInputView_streamUiCommandsEnabled, true)
 
+                val commandsBackground = a.getColor(
+                    R.styleable.MessageInputView_streamUiSuggestionBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
+                val commandsTitleTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsTitleTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsTitleTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsTitleFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsTitleFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsTitleStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val commandsNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsNameFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val commandsDescriptionTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandsDescriptionStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mentionsUsernameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameFontAssets,
+                        R.styleable.MessageInputView_streamUiMentionsUserNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMentionsUserNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mentionsNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMentionsNameTextSize,
+                        R.dimen.stream_ui_text_medium
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMentionsNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMentionsNameFontAssets,
+                        R.styleable.MessageInputView_streamUiMentionsNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMentionsNameStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mentionsIcon: Drawable =
+                    a.getDrawable(
+                        R.styleable.MessageInputView_streamUiMentionsIcon
+                    ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+
                 var backgroundColor: Int
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
-                    backgroundColor = it.getColor(0, ContextCompat.getColor(context, R.color.stream_ui_white))
+                    backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
                 }
 
                 val customCursorDrawable = a.getDrawable(
@@ -189,7 +318,11 @@ public data class MessageInputViewStyle(
 
                 val editTextBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageInputView_streamUiMessageInputEditTextBackgroundDrawable
-                ) ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_shape_edit_text_round)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_shape_edit_text_round)!!
+
+                val dividerBackground = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiMessageInputDividerBackgroundDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
@@ -198,19 +331,27 @@ public data class MessageInputViewStyle(
                     lightningButtonIcon = lightningButtonIcon,
                     messageInputTextSize = messageInputTextSize,
                     messageInputTextColor = messageInputTextColor,
-                    messageInputHintTextColor = messageInputHintTextColor,
                     messageInputTextStyle = messageInputTextStyle,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
+                    messageInputHintTextColor = messageInputHintTextColor,
                     sendButtonEnabled = sendButtonEnabled,
                     sendButtonEnabledIcon = sendButtonEnabledIcon,
                     sendButtonDisabledIcon = sendButtonDisabledIcon,
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
-                    mentionsEnabled = mentionsEnabled,
                     commandsEnabled = commandsEnabled,
+                    commandsTitleTextStyle = commandsTitleTextStyle,
+                    commandsNameTextStyle = commandsNameTextStyle,
+                    commandsDescriptionTextStyle = commandsDescriptionTextStyle,
+                    mentionsEnabled = mentionsEnabled,
+                    mentionsUsernameTextStyle = mentionsUsernameTextStyle,
+                    mentionsNameTextStyle = mentionsNameTextStyle,
+                    mentionsIcon = mentionsIcon,
                     backgroundColor = backgroundColor,
+                    suggestionsBackground = commandsBackground,
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
+                    dividerBackground = dividerBackground,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
