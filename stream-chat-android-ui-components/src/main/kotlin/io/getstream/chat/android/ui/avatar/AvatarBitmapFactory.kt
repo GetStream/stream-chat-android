@@ -342,10 +342,5 @@ public open class AvatarBitmapFactory(private val context: Context) {
          * Marker object to detect whether methods have been implemented by custom subclasses.
          */
         private val NOT_IMPLEMENTED_MARKER = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
-        internal lateinit var instance: AvatarBitmapFactory
-
-        public fun setInstance(avatarBitmapFactory: AvatarBitmapFactory) {
-            instance = avatarBitmapFactory
-        }
     }
 }

@@ -10,7 +10,7 @@ import coil.fetch.Fetcher
 import coil.size.PixelSize
 import coil.size.Size
 import com.getstream.sdk.chat.utils.extensions.getUsers
-import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
 internal class AvatarFetcher() : Fetcher<Avatar> {
@@ -28,14 +28,14 @@ internal class AvatarFetcher() : Fetcher<Avatar> {
                 resources,
                 when (data) {
                     is Avatar.UserAvatar -> {
-                        AvatarBitmapFactory.instance.createUserBitmapInternal(
+                        ChatUI.avatarBitmapFactory.createUserBitmapInternal(
                             data.user,
                             data.avatarStyle,
                             targetSize
                         )
                     }
                     is Avatar.ChannelAvatar -> {
-                        AvatarBitmapFactory.instance.createChannelBitmapInternal(
+                        ChatUI.avatarBitmapFactory.createChannelBitmapInternal(
                             data.channel,
                             data.channel.getUsers(),
                             data.avatarStyle,
@@ -50,7 +50,7 @@ internal class AvatarFetcher() : Fetcher<Avatar> {
     }
 
     override fun key(data: Avatar): String? = when (data) {
-        is Avatar.UserAvatar -> AvatarBitmapFactory.instance.userBitmapKey(data.user)
-        is Avatar.ChannelAvatar -> AvatarBitmapFactory.instance.channelBitmapKey(data.channel)
+        is Avatar.UserAvatar -> ChatUI.avatarBitmapFactory.userBitmapKey(data.user)
+        is Avatar.ChannelAvatar -> ChatUI.avatarBitmapFactory.channelBitmapKey(data.channel)
     }
 }
