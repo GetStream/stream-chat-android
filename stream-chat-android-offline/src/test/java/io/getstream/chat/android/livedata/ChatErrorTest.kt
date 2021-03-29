@@ -11,8 +11,8 @@ import org.junit.runner.RunWith
 internal class ChatErrorTest {
 
     @Test
-    fun invalidMessageInput() {
-        val error = ChatNetworkError.create(4, "a message with ID thesame already exists", 400, null)
+    fun `error for messages with the same ID should be permanent`() {
+        val error = ChatNetworkError.create(4, "a message with ID the same id already exists", 400, null)
         Truth.assertThat(error.isPermanent()).isTrue()
     }
 
