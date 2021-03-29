@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
@@ -15,6 +16,7 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  * @param fonts allows you to overwrite fonts
  * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
  * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
+ * @param avatarBitmapFactory allows you to generate custom bitmap for avatarView
  *
  * @see ChatMarkdown
  * @see UrlSigner
@@ -41,5 +43,13 @@ public object ChatUI {
         get() = markdownOverride ?: defaultMarkdown
         set(value) {
             markdownOverride = value
+        }
+
+    private var avatarBitmapFactoryOverride: AvatarBitmapFactory? = null
+    private val defaultAvatarBitmapFactory: AvatarBitmapFactory by lazy { AvatarBitmapFactory(appContext) }
+    public var avatarBitmapFactory: AvatarBitmapFactory
+        get() = avatarBitmapFactoryOverride ?: defaultAvatarBitmapFactory
+        set(value) {
+            avatarBitmapFactoryOverride = value
         }
 }
