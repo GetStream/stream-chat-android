@@ -15,14 +15,18 @@ public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Afte
     public val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
     public val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
 
+    private var beforeAllCalled: Boolean = false
+
     override fun beforeAll(context: ExtensionContext) {
         DispatcherProvider.set(
             mainDispatcher = dispatcher,
             ioDispatcher = dispatcher
         )
+        beforeAllCalled = true
     }
 
     override fun afterEach(context: ExtensionContext) {
+        check(beforeAllCalled) { "TestCoroutineExtension field must be static" }
         scope.cleanupTestCoroutines()
     }
 

@@ -10,9 +10,11 @@ import org.junit.jupiter.api.extension.RegisterExtension
 @ExperimentalCoroutinesApi
 internal class StartStopBufferTest {
 
-    @JvmField
-    @RegisterExtension
-    val testCoroutines = TestCoroutineExtension()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Test
     fun `data should only be propagated when enqueueData and subscribe are done`() {
