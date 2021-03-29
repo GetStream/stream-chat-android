@@ -10,8 +10,6 @@ import coil.fetch.Fetcher
 import coil.size.PixelSize
 import coil.size.Size
 import com.getstream.sdk.chat.utils.extensions.getUsers
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
@@ -51,23 +49,8 @@ internal class AvatarFetcher() : Fetcher<Avatar> {
         )
     }
 
-    override fun key(data: Avatar): String {
-        return when (data) {
-            is Avatar.UserAvatar -> {
-                "${data.user.name}${data.user.image}"
-            }
-            is Avatar.ChannelAvatar -> {
-                buildString {
-                    append(data.channel.name)
-                    append(data.channel.image)
-                    data.channel.getUsers()
-                        .take(4)
-                        .forEach {
-                            append(it.name)
-                            append(it.image)
-                        }
-                }
-            }
-        }
+    override fun key(data: Avatar): String? = when (data) {
+        is Avatar.UserAvatar -> AvatarBitmapFactory.instance.userBitmapKey(data.user)
+        is Avatar.ChannelAvatar -> AvatarBitmapFactory.instance.channelBitmapKey(data.channel)
     }
 }
