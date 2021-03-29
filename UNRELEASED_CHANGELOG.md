@@ -119,6 +119,7 @@ It is possible now to configure the max size of the file upload using
     - Deleted message text and background
     - Reactions style in list view and in options view
     - Indicator icons in footer of Message
+    - Unread count badge on scroll to bottom button
 It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiChannelOptionsIcon` - customize options icon
 - `streamUiChannelDeleteIcon` - customize delete icon
