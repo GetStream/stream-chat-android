@@ -18,8 +18,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 @ExperimentalCoroutinesApi
@@ -28,7 +28,7 @@ internal class ReactionRepositoryTest {
     private lateinit var currentUser: User
     private lateinit var reactionRepo: ReactionRepository
 
-    @Before
+    @BeforeEach
     fun setup() {
         runBlocking {
             currentUser = randomUser()
