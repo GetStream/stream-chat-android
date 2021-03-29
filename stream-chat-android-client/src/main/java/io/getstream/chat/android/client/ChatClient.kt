@@ -5,6 +5,7 @@ package io.getstream.chat.android.client
 import android.content.Context
 import android.util.Base64
 import androidx.annotation.CheckResult
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -77,6 +78,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.Executor
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -1313,6 +1315,7 @@ public class ChatClient internal constructor(
         private var enableMoshi = false
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
+        private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler =
             ChatNotificationHandler(appContext)
@@ -1393,6 +1396,12 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @InternalStreamChatApi
+        @VisibleForTesting
+        public fun callbackExecutor(callbackExecutor: Executor): Builder = apply {
+            this.callbackExecutor = callbackExecutor
+        }
+
         public fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
@@ -1413,7 +1422,7 @@ public class ChatClient internal constructor(
             config.enableMoshi = enableMoshi
 
             val module =
-                ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager)
+                ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)
 
             val result = ChatClient(
                 config,
