@@ -26,7 +26,7 @@ public data class MessageListViewStyle(
                 0,
                 0
             ).use { attributes ->
-                val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(attributes)
+                val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
                     .scrollButtonEnabled(
                         R.styleable.MessageListView_streamUiScrollButtonEnabled,
                         true
