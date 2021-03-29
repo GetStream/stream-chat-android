@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -24,6 +25,8 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.StyleTransformer
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -629,6 +632,20 @@ class Android {
                 } else {
                     // Handle result.error()
                 }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_input_view?language=kotlin">Message Input View</a>
+     */
+    class TransformStyleMessageInput() : Fragment() {
+
+        fun messageInputCustomisation() {
+            TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
+                viewStyle.copy(
+                    messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
+                )
             }
         }
     }

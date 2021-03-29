@@ -43,6 +43,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.channel.list.ChannelListView;
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
@@ -696,6 +697,18 @@ public class Android {
                     // Handle result.error()
                 }
             });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_input_view?language=kotlin">Message Input View</a>
+     */
+    public class TransformStyleMessageInput extends Fragment {
+        public void messageInputCustomisation() {
+            TransformStyle.INSTANCE.messageInputStyleTransformer = (viewStyle) -> {
+                // Create a new viewStyle!
+                return viewStyle;
+            };
         }
     }
 }
