@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--MessageInputViewNew-->
+    <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <!--Attachment Button-->
         <attr name="streamUiAttachButtonEnabled" format="boolean" />
@@ -42,10 +42,10 @@
         <attr name="streamUiSendButtonDisabledIcon" format="reference" />
         <attr name="streamUiSendButtonEnabled" format="boolean" />
 
-        <!-- "Also send to channel" CheckBox -->
+        <!--"Also send to channel" CheckBox-->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
 
-        <!-- Mentions -->
+        <!--Mentions-->
         <attr name="streamUiMentionsEnabled" format="boolean" />
         <attr name="streamUiMentionsUserNameTextSize" format="dimension" />
         <attr name="streamUiMentionsUserNameTextColor" format="reference|color" />
@@ -68,7 +68,10 @@
         </attr>
         <attr name="streamUiMentionsIcon" format="reference" />
 
-        <!-- Commands -->
+        <!--Constants-->
+        <attr name="streamUiAttachmentMaxFileSizeMb" format="integer" />
+
+        <!--Commands-->
         <attr name="streamUiCommandsEnabled" format="boolean" />
         <attr name="streamUiCommandsTitleTextSize" format="dimension" />
         <attr name="streamUiCommandsTitleTextColor" format="reference|color" />
@@ -98,7 +101,7 @@
             <enum name="italic" value="2"/>
         </attr>
 
-        <!-- Suggestions -->
+        <!--Suggestions-->
         <attr name="streamUiSuggestionBackgroundColor" format="reference|color" />
     </declare-styleable>
 
