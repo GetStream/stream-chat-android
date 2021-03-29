@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -50,6 +51,7 @@ public class MessageInputView : ConstraintLayout {
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
+
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
             if (attachments.isNotEmpty()) {
@@ -221,10 +223,15 @@ public class MessageInputView : ConstraintLayout {
         binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
         setMentionsEnabled(style.mentionsEnabled)
         setCommandsEnabled(style.commandsEnabled)
+        binding.messageInputFieldView.setAttachmentMaxFileMb(style.attachmentMaxFileSize)
         val horizontalPadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_tiny)
         updatePadding(left = horizontalPadding, right = horizontalPadding)
 
         refreshControlsState()
+    }
+
+    public suspend fun listenForBigAttachments(listener: BigFileSelectionListener) {
+        binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -397,7 +404,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        if (binding.messageInputFieldView.hasAttachments()) {
+        if (binding.messageInputFieldView.hasValidAttachments()) {
             sendMessageHandler.sendMessageWithAttachments(
                 binding.messageInputFieldView.messageText,
                 binding.messageInputFieldView.getAttachedFiles(),
@@ -410,7 +417,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        if (binding.messageInputFieldView.hasAttachments()) {
+        if (binding.messageInputFieldView.hasValidAttachments()) {
             sendMessageHandler.sendToThreadWithAttachments(
                 parentMessage,
                 binding.messageInputFieldView.messageText,
@@ -520,5 +527,10 @@ public class MessageInputView : ConstraintLayout {
     public interface TypingListener {
         public fun onKeystroke()
         public fun onStopTyping()
+    }
+
+    @FunctionalInterface
+    public interface BigFileSelectionListener {
+        public fun handleBigFileSelected(hasBigFile: Boolean)
     }
 }

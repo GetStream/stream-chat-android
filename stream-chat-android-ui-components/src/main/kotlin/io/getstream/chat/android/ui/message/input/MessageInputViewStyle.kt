@@ -15,6 +15,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.style.TextStyle
 
+private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
+
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
@@ -42,7 +44,8 @@ public data class MessageInputViewStyle(
     @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
-    public val dividerBackground: Drawable
+    public val attachmentMaxFileSize: Int,
+    public val dividerBackground: Drawable,
 ) {
 
     internal companion object {
@@ -325,6 +328,11 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiMessageInputDividerBackgroundDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
+                val attachmentMaxFileSize = a.getInt(
+                    R.styleable.MessageInputView_streamUiAttachmentMaxFileSizeMb,
+                    DEFAULT_ATTACHMENT_MAX_SIZE_MB
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -353,6 +361,7 @@ public data class MessageInputViewStyle(
                     editTextBackgroundDrawable = editTextBackgroundDrawable,
                     customCursorDrawable = customCursorDrawable,
                     dividerBackground = dividerBackground,
+                    attachmentMaxFileSize = attachmentMaxFileSize,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

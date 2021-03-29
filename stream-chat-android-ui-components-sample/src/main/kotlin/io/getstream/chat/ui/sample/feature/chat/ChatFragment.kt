@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
@@ -14,11 +15,13 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -39,6 +42,9 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
+    private val maxAttachmentFile: Int = 20
+    private var messageListSubtitle: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,8 +63,31 @@ class ChatFragment : Fragment() {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         initChatViewModel()
         initMessagesViewModel()
+        configureMessageInputView()
         initMessageInputViewModel()
         configureBackButtonHandling()
+    }
+
+    private fun configureMessageInputView() {
+        lifecycleScope.launchWhenCreated {
+            binding.messageInputView.listenForBigAttachments(
+                object : MessageInputView.BigFileSelectionListener {
+                    override fun handleBigFileSelected(hasBigFile: Boolean) {
+                        if (hasBigFile) {
+                            messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
+                            binding.messagesHeaderView.setOnlineStateSubtitle(
+                                requireContext().getString(
+                                    R.string.chat_fragment_big_attachment_subtitle,
+                                    maxAttachmentFile
+                                )
+                            )
+                        } else {
+                            messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
+                        }
+                    }
+                }
+            )
+        }
     }
 
     override fun onResume() {

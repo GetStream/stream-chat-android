@@ -5,8 +5,14 @@ It is not possible to remove users from distinct channels anymore.
 ### ⬆️ Improved
 it is now possible to configure the max lines of a link description. Just use
 `app:streamUiLinkDescriptionMaxLines` when defining MessageListView
+
+It is now possible to configure the max size of files and an alert is shown when
+a files bigger than this is selected.
 ### ✅ Added
 Configure enable/disable of replies using XML in `MessageListView`
+Option `app:streamUiReactionsEnabled` in `MessageListView` to enable or disable reactions
+It is possible now to configure the max size of the file upload using
+`app:streamUiAttachmentMaxFileSizeMb`
 
 ### ⚠️ Changed
 
