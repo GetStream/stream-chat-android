@@ -103,7 +103,9 @@ It is possible now to configure the max size of the file upload using
 - Add `streamUiCommandsEnabled` attribute to `MessageInputView` and `MessageInputView::setCommandsEnabled` method to enable/disable commands
 - Add `ChannelListItemPredicate` to our `channelListView` to allow filter `ChannelListItem` before they are rendered
 - Open `AvatarBitmapFactory` class
-- Add `AvatarBitmapFactory::setInstance` method to allow custom implementation of `AvatarBitmapFactory`
+- Add `ChatUI::avatarBitmapFactory` property to allow custom implementation of `AvatarBitmapFactory`
+- Add `AvatarBitmapFactory::userBitmapKey` method to generate cache key for a given User
+- Add `AvatarBitmapFactory::channelBitmapKey` method to generate cache key for a given Channel
 - Add `StyleTransformer` class to allow application-wide style customizations
 - Add the default font field to `TextStyle`
 - Add new method `ChatFonts::setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface)`
