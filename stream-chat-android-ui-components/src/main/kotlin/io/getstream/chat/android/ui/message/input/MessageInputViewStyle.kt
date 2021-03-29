@@ -44,8 +44,8 @@ public data class MessageInputViewStyle(
     @ColorRes public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
-    public val attachmentMaxFileSize: Int
-    public val dividerBackground: Drawable
+    public val attachmentMaxFileSize: Int,
+    public val dividerBackground: Drawable,
 ) {
 
     internal companion object {
