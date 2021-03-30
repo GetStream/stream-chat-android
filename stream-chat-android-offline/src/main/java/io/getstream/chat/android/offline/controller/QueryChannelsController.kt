@@ -373,7 +373,7 @@ internal class QueryChannelsController(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val query = domainImpl.repos.selectQueryChannels(queryChannelsSpec)
+        val query = domainImpl.repos.selectById(queryChannelsSpec.id)
             ?: return null
 
         return domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {

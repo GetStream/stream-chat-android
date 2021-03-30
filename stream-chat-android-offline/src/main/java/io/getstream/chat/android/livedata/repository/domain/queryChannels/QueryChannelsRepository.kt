@@ -8,7 +8,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 
 internal interface QueryChannelsRepository {
     suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
-    suspend fun selectQueryChannels(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec?
     suspend fun selectById(id: String): QueryChannelsSpec?
     suspend fun selectQueriesChannelsByIds(ids: List<String>): List<QueryChannelsSpec>
 }
@@ -16,10 +15,6 @@ internal interface QueryChannelsRepository {
 internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
-    }
-
-    override suspend fun selectQueryChannels(queryChannelsSpec: QueryChannelsSpec): QueryChannelsSpec? {
-        return selectById(queryChannelsSpec.id)
     }
 
     override suspend fun selectById(id: String): QueryChannelsSpec? {
