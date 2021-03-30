@@ -14,12 +14,13 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/stream_ui_spacing_small"
-        android:backgroundTint="@color/stream_ui_literal_white"
-        android:src="@drawable/stream_ui_ic_down"
+        tools:backgroundTint="@color/stream_ui_literal_white"
+        tools:src="@drawable/stream_ui_ic_down"
+        app:tint="@null"
         app:borderWidth="0dp"
         app:elevation="3dp"
         app:fabCustomSize="@dimen/stream_ui_scroll_button_size"
-        app:rippleColor="@color/stream_ui_grey"
+        tools:rippleColor="@color/stream_ui_grey"
         tools:ignore="ContentDescription"
         />
 

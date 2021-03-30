@@ -2,24 +2,19 @@ package io.getstream.chat.android.ui.message.list.internal
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
+import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 
 internal class ScrollButtonView : FrameLayout {
 
+    private lateinit var scrollButtonViewStyle: ScrollButtonViewStyle
+    private var unreadCount: Int = 0
     private val binding: StreamUiScrollButtonViewBinding =
         StreamUiScrollButtonViewBinding.inflate(LayoutInflater.from(context), this)
-
-    private var unreadBadgeEnabled: Boolean = true
-
-    private var unreadCount: Int = 0
-    private var isVisible: Boolean = false
 
     constructor(context: Context) : super(context)
 
@@ -31,28 +26,13 @@ internal class ScrollButtonView : FrameLayout {
         defStyleAttr
     )
 
-    fun setUnreadBadgeEnabled(enabled: Boolean) {
-        this.unreadBadgeEnabled = enabled
-    }
-
-    fun setButtonRippleColor(@ColorInt color: Int) {
-        binding.scrollActionButton.rippleColor = color
-    }
-
-    fun setButtonIcon(icon: Drawable?) {
-        binding.scrollActionButton.setImageDrawable(icon)
-    }
-
-    fun setButtonColor(@ColorInt color: Int) {
-        binding.scrollActionButton.backgroundTintList = ColorStateList.valueOf(color)
-    }
-
-    fun setUnreadBadgeColor(@ColorInt color: Int) {
-        binding.unreadCountTextView.backgroundTintList = ColorStateList.valueOf(color)
-    }
-
-    fun setUnreadBadgeTextStyle(textStyle: TextStyle) {
-        textStyle.apply(binding.unreadCountTextView)
+    fun setScrollButtonViewStyle(scrollButtonViewStyle: ScrollButtonViewStyle) {
+        this.scrollButtonViewStyle = scrollButtonViewStyle
+        binding.scrollActionButton.rippleColor = scrollButtonViewStyle.scrollButtonRippleColor
+        binding.scrollActionButton.setImageDrawable(scrollButtonViewStyle.scrollButtonIcon)
+        binding.scrollActionButton.backgroundTintList = ColorStateList.valueOf(scrollButtonViewStyle.scrollButtonColor)
+        binding.unreadCountTextView.backgroundTintList = ColorStateList.valueOf(scrollButtonViewStyle.scrollButtonBadgeColor)
+        scrollButtonViewStyle.scrollButtonBadgeTextStyle.apply(binding.unreadCountTextView)
     }
 
     override fun setOnClickListener(listener: OnClickListener?) {
@@ -60,7 +40,7 @@ internal class ScrollButtonView : FrameLayout {
     }
 
     fun setUnreadCount(unreadCount: Int) {
-        if (unreadBadgeEnabled) {
+        if (scrollButtonViewStyle.scrollButtonUnreadEnabled) {
             setUnreadCountValue(unreadCount)
             setUnreadCountTextViewVisible(unreadCount > 0)
         } else {
@@ -76,10 +56,7 @@ internal class ScrollButtonView : FrameLayout {
     }
 
     private fun setUnreadCountTextViewVisible(isVisible: Boolean) {
-        if (this.isVisible != isVisible) {
-            this.isVisible = isVisible
-            binding.unreadCountTextView.isVisible = isVisible
-        }
+        binding.unreadCountTextView.isVisible = isVisible
     }
 
     private fun formatUnreadCount(unreadCount: Int): CharSequence {

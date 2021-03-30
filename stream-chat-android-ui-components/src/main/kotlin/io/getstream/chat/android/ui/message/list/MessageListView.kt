@@ -443,14 +443,7 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-        with(binding.scrollToBottomButton) {
-            setUnreadBadgeEnabled(messageListViewStyle.scrollButtonViewStyle.scrollButtonUnreadEnabled)
-            setButtonRippleColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonRippleColor)
-            setButtonIcon(messageListViewStyle.scrollButtonViewStyle.scrollButtonIcon)
-            setButtonColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonColor)
-            setUnreadBadgeColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeColor)
-            setUnreadBadgeTextStyle(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeTextStyle)
-        }
+        binding.scrollToBottomButton.setScrollButtonViewStyle(messageListViewStyle.scrollButtonViewStyle)
         scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
