@@ -5,6 +5,7 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
@@ -49,9 +50,9 @@ public data class MessageListItemStyle(
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
     @ColorInt public val messageStrokeColorMine: Int,
-    public val messageStrokeWidthMine: Float,
+    @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
-    public val messageStrokeWidthTheirs: Float,
+    @Px public val messageStrokeWidthTheirs: Float,
 ) : Serializable {
 
     @ColorInt

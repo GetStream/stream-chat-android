@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -12,7 +13,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class AvatarStyle(
-    public val avatarBorderWidth: Int,
+    @Px public val avatarBorderWidth: Int,
     @ColorInt public val avatarBorderColor: Int,
     public val avatarInitialText: TextStyle,
     public val onlineIndicatorEnabled: Boolean,

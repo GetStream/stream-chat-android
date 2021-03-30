@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -14,20 +15,20 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
 import java.io.Serializable
 
 public data class ViewReactionsViewStyle(
-    public val bubbleBorderColor: Int,
-    public val bubbleColorMine: Int,
-    public val bubbleColorTheirs: Int,
-    public val totalHeight: Int,
-    public val horizontalPadding: Int,
-    public val itemSize: Int,
-    public val bubbleHeight: Int,
-    public val bubbleRadius: Int,
-    public val largeTailBubbleCy: Int,
-    public val largeTailBubbleRadius: Int,
-    public val largeTailBubbleOffset: Int,
-    public val smallTailBubbleCy: Int,
-    public val smallTailBubbleRadius: Int,
-    public val smallTailBubbleOffset: Int,
+    @ColorInt public val bubbleBorderColor: Int,
+    @ColorInt public val bubbleColorMine: Int,
+    @ColorInt public val bubbleColorTheirs: Int,
+    @Px public val totalHeight: Int,
+    @Px public val horizontalPadding: Int,
+    @Px public val itemSize: Int,
+    @Px public val bubbleHeight: Int,
+    @Px public val bubbleRadius: Int,
+    @Px public val largeTailBubbleCy: Int,
+    @Px public val largeTailBubbleRadius: Int,
+    @Px public val largeTailBubbleOffset: Int,
+    @Px public val smallTailBubbleCy: Int,
+    @Px public val smallTailBubbleRadius: Int,
+    @Px public val smallTailBubbleOffset: Int,
 ) : Serializable {
 
     internal companion object {

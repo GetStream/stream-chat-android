@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -18,16 +19,16 @@ public data class ChannelListViewStyle(
     public val optionsEnabled: Boolean,
     public val deleteEnabled: Boolean,
     public val swipeEnabled: Boolean,
-    public val backgroundLayoutColor: Int,
+    @ColorInt public val backgroundLayoutColor: Int,
     public val channelTitleText: TextStyle,
     public val lastMessageText: TextStyle,
     public val lastMessageDateText: TextStyle,
     public val indicatorSentIcon: Drawable,
     public val indicatorReadIcon: Drawable,
     public val indicatorPendingSyncIcon: Drawable,
-    public val foregroundLayoutColor: Int,
+    @ColorInt public val foregroundLayoutColor: Int,
     public val unreadMessageCounterText: TextStyle,
-    public val unreadMessageCounterBackgroundColor: Int,
+    @ColorInt public val unreadMessageCounterBackgroundColor: Int,
 ) {
 
     internal companion object {

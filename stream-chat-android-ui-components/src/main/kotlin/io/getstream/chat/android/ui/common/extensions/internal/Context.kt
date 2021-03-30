@@ -6,13 +6,16 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ContextThemeWrapper
 import androidx.annotation.ArrayRes
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 
+@Px
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
     return resources.getDimensionPixelSize(dimen)
 }
@@ -21,6 +24,7 @@ internal fun Context.getIntArray(@ArrayRes id: Int): IntArray {
     return resources.getIntArray(id)
 }
 
+@ColorInt
 internal fun Context.getColorCompat(@ColorRes color: Int): Int {
     return ContextCompat.getColor(this, color)
 }
