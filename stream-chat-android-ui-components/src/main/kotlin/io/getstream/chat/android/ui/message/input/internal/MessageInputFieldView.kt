@@ -292,6 +292,9 @@ internal class MessageInputFieldView : FrameLayout {
     fun clearContent() {
         clearSelectedAttachments()
         binding.messageEditText.setText(String.EMPTY)
+        if (mode is Mode.CommandMode) {
+            resetMode()
+        }
     }
 
     private fun hasText(): Boolean = messageText.isNotBlank()

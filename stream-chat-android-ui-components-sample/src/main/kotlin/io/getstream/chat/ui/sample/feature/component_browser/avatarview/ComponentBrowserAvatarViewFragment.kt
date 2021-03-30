@@ -127,5 +127,14 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
         binding.avatarViewLargeIndicatorBorder.apply {
             setUserData(user3)
         }
+        binding.avatarViewSmallColors.apply {
+            setUserData(user1)
+        }
+        binding.avatarViewMediumColors.apply {
+            setUserData(user2)
+        }
+        binding.avatarViewLargeColors.apply {
+            setUserData(user3)
+        }
     }
 }

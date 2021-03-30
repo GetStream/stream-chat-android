@@ -173,5 +173,10 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiMessageStrokeColorMine" format="color" />
+        <attr name="streamUiMessageStrokeWidthMine" format="dimension|reference" />
+        <attr name="streamUiMessageStrokeColorTheirs" format="color" />
+        <attr name="streamUiMessageStrokeWidthTheirs" format="dimension|reference" />
+
     </declare-styleable>
 </resources>

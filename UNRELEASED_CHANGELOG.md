@@ -78,6 +78,7 @@ It is possible now to configure the max size of the file upload using
 - Show AttachmentMediaActivity for video attachments
 
 ### ✅ Added
+- `AvatarView.streamUiAvatarOnlineIndicatorColor` and `AvatarView.streamUiAvatarOnlineIndicatorBorderColor` attrs
 
 ### ⚠️ Changed
 
@@ -123,6 +124,7 @@ It is possible now to configure the max size of the file upload using
     - Reactions style in list view and in options view
     - Indicator icons in footer of Message
     - Unread count badge on scroll to bottom button
+    - Message stroke width and color for mine and theirs types
 It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiChannelOptionsIcon` - customize options icon
 - `streamUiChannelDeleteIcon` - customize delete icon
