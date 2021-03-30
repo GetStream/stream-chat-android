@@ -15,9 +15,9 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 public data class ScrollButtonViewStyle(
     public val scrollButtonEnabled: Boolean,
     public val scrollButtonUnreadEnabled: Boolean,
-    public val scrollButtonColor: Int,
-    public val scrollButtonRippleColor: Int,
-    public val scrollButtonBadgeColor: Int,
+    @ColorInt public val scrollButtonColor: Int,
+    @ColorInt public val scrollButtonRippleColor: Int,
+    @ColorInt public val scrollButtonBadgeColor: Int,
     public val scrollButtonIcon: Drawable?,
     public val scrollButtonBadgeTextStyle: TextStyle
 ) {
@@ -25,9 +25,9 @@ public data class ScrollButtonViewStyle(
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false
         private var scrollButtonUnreadEnabled: Boolean = false
-        private var scrollButtonColor: Int = 0
-        private var scrollButtonRippleColor: Int = 0
-        private var scrollButtonBadgeColor: Int = 0
+        @ColorInt private var scrollButtonColor: Int = 0
+        @ColorInt private var scrollButtonRippleColor: Int = 0
+        @ColorInt private var scrollButtonBadgeColor: Int = 0
         private var scrollButtonIcon: Drawable? = null
 
         fun scrollButtonEnabled(

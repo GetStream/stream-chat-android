@@ -4,19 +4,20 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.annotation.AnyRes
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.ChatUI
 
 public data class TextStyle(
-    public val fontResource: Int = UNSET_FONT_RESOURCE,
+    @AnyRes public val fontResource: Int = UNSET_FONT_RESOURCE,
     public val fontAssetsPath: String? = null,
     public val style: Int = Typeface.NORMAL,
-    public val size: Int = UNSET_SIZE,
-    public val color: Int = UNSET_COLOR,
+    @Px public val size: Int = UNSET_SIZE,
+    @ColorInt public val color: Int = UNSET_COLOR,
     public val hint: String = UNSET_HINT,
-    public val hintColor: Int = UNSET_HINT_COLOR,
+    @ColorInt public val hintColor: Int = UNSET_HINT_COLOR,
     public val defaultFont: Typeface = Typeface.DEFAULT,
 ) {
     private companion object {
