@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.avatar
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
@@ -15,17 +14,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
 public class AvatarView : AppCompatImageView {
-    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-    }
-    private val onlineIndicatorOutlinePaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.WHITE
-    }
-    private val onlineIndicatorPaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.GREEN
-    }
+    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
+    private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
+    private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
 
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
@@ -94,6 +85,8 @@ public class AvatarView : AppCompatImageView {
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
         val padding = this.avatarStyle.avatarBorderWidth - 1
         setPadding(padding, padding, padding, padding)
+        onlineIndicatorOutlinePaint.color = avatarStyle.onlineIndicatorBorderColor
+        onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {

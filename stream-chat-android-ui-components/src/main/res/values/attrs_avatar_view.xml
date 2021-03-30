@@ -17,5 +17,7 @@
             <enum name="top" value="0" />
             <enum name="bottom" value="1" />
         </attr>
+        <attr name="streamUiAvatarOnlineIndicatorColor" format="color|reference" />
+        <attr name="streamUiAvatarOnlineIndicatorBorderColor" format="color|reference" />
     </declare-styleable>
 </resources>
