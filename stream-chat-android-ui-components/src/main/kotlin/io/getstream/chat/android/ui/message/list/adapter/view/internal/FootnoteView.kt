@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
@@ -112,9 +112,9 @@ internal class FootnoteView : ConstraintLayout {
         footnote.deliveryStatusIcon.isVisible = false
     }
 
-    internal fun showStatusIndicator(@DrawableRes drawableRes: Int) {
+    internal fun showStatusIndicator(drawableRes: Drawable) {
         footnote.deliveryStatusIcon.isVisible = true
-        footnote.deliveryStatusIcon.setImageResource(drawableRes)
+        footnote.deliveryStatusIcon.setImageDrawable(drawableRes)
     }
 
     fun showTime(time: String, style: MessageListItemStyle) {
