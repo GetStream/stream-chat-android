@@ -26,24 +26,26 @@ internal class GiphyViewHolder(
             cancelButton.setOnClickListener {
                 listeners.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
             }
+            shuffleButton.setOnClickListener {
+                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
+            }
             sendButton.setOnClickListener {
                 listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
             }
-            nextButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
-            }
+            mediaAttachmentView.giphyBadgeEnabled = false
         }
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
+        data.message
+            .attachments
+            .firstOrNull()
+            ?.let(binding.mediaAttachmentView::showAttachment)
 
-        data.message.attachments.firstOrNull()?.let(binding.mediaAttachmentView::showAttachment)
-        binding.giphyTextLabel.text = trimText(data.message.text)
-    }
-
-    private fun trimText(text: String): String {
-        return "\"${text.replace(GIPHY_PREFIX, "")}\""
+        binding.giphyQueryTextView.text = data.message
+            .text
+            .replace(GIPHY_PREFIX, "")
     }
 
     private companion object {
