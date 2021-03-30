@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.annotation.ColorRes
+import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -23,8 +23,8 @@ public data class MessageInputViewStyle(
     public val lightningButtonEnabled: Boolean,
     public val lightningButtonIcon: Drawable,
     @Deprecated("Use messageInputTextStyle") public val messageInputTextSize: Float,
-    @Deprecated("Use messageInputTextStyle") public val messageInputTextColor: Int,
-    @Deprecated("Use messageInputTextStyle") public val messageInputHintTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") @ColorInt public val messageInputTextColor: Int,
+    @Deprecated("Use messageInputTextStyle") @ColorInt public val messageInputHintTextColor: Int,
     public val messageInputTextStyle: TextStyle,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
@@ -40,8 +40,8 @@ public data class MessageInputViewStyle(
     public val mentionsUsernameTextStyle: TextStyle,
     public val mentionsNameTextStyle: TextStyle,
     public val mentionsIcon: Drawable,
-    @ColorRes public val backgroundColor: Int,
-    @ColorRes public val suggestionsBackground: Int,
+    @ColorInt public val backgroundColor: Int,
+    @ColorInt public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
