@@ -14,21 +14,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
 public class AvatarView : AppCompatImageView {
-    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-    }
-    private val onlineIndicatorOutlinePaint by lazy {
-        Paint().apply {
-            style = Paint.Style.FILL
-            color = avatarStyle.onlineIndicatorBorderColor
-        }
-    }
-    private val onlineIndicatorPaint by lazy {
-        Paint().apply {
-            style = Paint.Style.FILL
-            color = avatarStyle.onlineIndicatorColor
-        }
-    }
+    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
+    private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
+    private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
 
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
@@ -97,6 +85,8 @@ public class AvatarView : AppCompatImageView {
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
         val padding = this.avatarStyle.avatarBorderWidth - 1
         setPadding(padding, padding, padding, padding)
+        onlineIndicatorOutlinePaint.color = avatarStyle.onlineIndicatorBorderColor
+        onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {
