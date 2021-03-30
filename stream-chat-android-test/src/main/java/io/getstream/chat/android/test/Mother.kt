@@ -38,6 +38,8 @@ public fun randomFiles(
 
 public fun randomDate(): Date = Date(randomLong())
 
+public fun randomDateBefore(date: Long): Date = Date(date - positiveRandomInt())
+
 public fun createDate(
     year: Int = positiveRandomInt(),
     month: Int = positiveRandomInt(),
