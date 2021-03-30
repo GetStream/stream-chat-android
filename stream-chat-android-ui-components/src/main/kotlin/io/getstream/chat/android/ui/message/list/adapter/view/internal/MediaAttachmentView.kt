@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBindi
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
+    var giphyBadgeEnabled: Boolean = true
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(LayoutInflater.from(context)).also {
@@ -47,7 +48,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
         val showGiphyLabel = {
-            if (attachment.type == ModelType.attach_giphy) {
+            if (giphyBadgeEnabled && attachment.type == ModelType.attach_giphy) {
                 binding.giphyLabel.isVisible = true
             }
         }

@@ -53,12 +53,6 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
             .build()
-        viewHolder.binding.mediaAttachmentView.setImageShapeByCorners(
-            IMAGE_VIEW_CORNER_RADIUS,
-            IMAGE_VIEW_CORNER_RADIUS,
-            0f,
-            0f
-        )
     }
 
     private fun setDefaultBackgroundDrawable(
