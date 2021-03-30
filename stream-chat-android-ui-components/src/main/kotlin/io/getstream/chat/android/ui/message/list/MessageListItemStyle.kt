@@ -8,6 +8,7 @@ import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -45,6 +46,10 @@ public data class MessageListItemStyle(
     public val iconIndicatorPendingSync: Int,
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
+    @ColorInt public val messageStrokeColorMine: Int,
+    public val messageStrokeWidthMine: Float,
+    @ColorInt public val messageStrokeColorTheirs: Int,
+    public val messageStrokeWidthTheirs: Float,
 ) : Serializable {
 
     @ColorInt
@@ -80,6 +85,11 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_DATE_SEPARATOR = R.color.stream_ui_white
         internal val DEFAULT_TEXT_SIZE_DATE_SEPARATOR = R.dimen.stream_ui_text_small
+
+        internal val MESSAGE_STROKE_COLOR_MINE = R.color.stream_ui_literal_transparent
+        internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
+        internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
+        internal val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -349,6 +359,28 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleMessageDeleted, Typeface.ITALIC)
                 .build()
 
+            val messageStrokeColorMine = attributes.getColor(
+                R.styleable.MessageListView_streamUiMessageStrokeColorMine,
+                context.getColorCompat(MESSAGE_STROKE_COLOR_MINE)
+            )
+            val messageStrokeWidthMine =
+                attributes.getDimension(
+                    R.styleable.MessageListView_streamUiMessageStrokeWidthMine,
+                    MESSAGE_STROKE_WIDTH_MINE
+                )
+            val messageStrokeColorTheirs =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageStrokeColorTheirs,
+                    context.getColorCompat(
+                        MESSAGE_STROKE_COLOR_THEIRS
+                    )
+                )
+            val messageStrokeWidthTheirs =
+                attributes.getDimension(
+                    R.styleable.MessageListView_streamUiMessageStrokeWidthTheirs,
+                    MESSAGE_STROKE_WIDTH_THEIRS
+                )
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -377,6 +409,10 @@ public data class MessageListItemStyle(
                 iconIndicatorPendingSync = iconIndicatorPendingSync,
                 messageDeletedBackground = messageDeletedBackground,
                 textStyleMessageDeleted = textStyleMessageDeleted,
+                messageStrokeColorMine = messageStrokeColorMine,
+                messageStrokeWidthMine = messageStrokeWidthMine,
+                messageStrokeColorTheirs = messageStrokeColorTheirs,
+                messageStrokeWidthTheirs = messageStrokeWidthTheirs,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
