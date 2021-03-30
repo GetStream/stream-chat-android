@@ -449,6 +449,7 @@ public class MessageListView : ConstraintLayout {
             setButtonIcon(messageListViewStyle.scrollButtonViewStyle.scrollButtonIcon)
             setButtonColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonColor)
             setUnreadBadgeColor(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeColor)
+            setUnreadBadgeTextStyle(messageListViewStyle.scrollButtonViewStyle.scrollButtonBadgeTextStyle)
         }
         scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
 

@@ -1,10 +1,16 @@
 package io.getstream.chat.android.ui.message.list
 
+import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class ScrollButtonViewStyle(
     public val scrollButtonEnabled: Boolean,
@@ -13,9 +19,10 @@ public data class ScrollButtonViewStyle(
     public val scrollButtonRippleColor: Int,
     public val scrollButtonBadgeColor: Int,
     public val scrollButtonIcon: Drawable?,
+    public val scrollButtonBadgeTextStyle: TextStyle
 ) {
 
-    internal class Builder(private val a: TypedArray) {
+    internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false
         private var scrollButtonUnreadEnabled: Boolean = false
         private var scrollButtonColor: Int = 0
@@ -27,52 +34,69 @@ public data class ScrollButtonViewStyle(
             @StyleableRes scrollButtonEnabledStyleableId: Int,
             defaultValue: Boolean,
         ) = apply {
-            scrollButtonEnabled = a.getBoolean(scrollButtonEnabledStyleableId, defaultValue)
+            scrollButtonEnabled = attrs.getBoolean(scrollButtonEnabledStyleableId, defaultValue)
         }
 
         fun scrollButtonUnreadEnabled(
             @StyleableRes scrollButtonUnreadEnabledStyleableId: Int,
             defaultValue: Boolean,
         ) = apply {
-            scrollButtonUnreadEnabled = a.getBoolean(scrollButtonUnreadEnabledStyleableId, defaultValue)
+            scrollButtonUnreadEnabled = attrs.getBoolean(scrollButtonUnreadEnabledStyleableId, defaultValue)
         }
 
         fun scrollButtonColor(
             @StyleableRes scrollButtonColorStyleableId: Int,
             @ColorInt defaultValue: Int,
         ) = apply {
-            scrollButtonColor = a.getColor(scrollButtonColorStyleableId, defaultValue)
+            scrollButtonColor = attrs.getColor(scrollButtonColorStyleableId, defaultValue)
         }
 
         fun scrollButtonRippleColor(
             @StyleableRes scrollButtonRippleColorStyleableId: Int,
             @ColorInt defaultColor: Int,
         ) = apply {
-            scrollButtonRippleColor = a.getColor(scrollButtonRippleColorStyleableId, defaultColor)
+            scrollButtonRippleColor = attrs.getColor(scrollButtonRippleColorStyleableId, defaultColor)
         }
 
         fun scrollButtonBadgeColor(
             @StyleableRes scrollButtonBadgeColorStyleableId: Int,
             @ColorInt defaultColor: Int,
         ) = apply {
-            scrollButtonBadgeColor = a.getColor(scrollButtonBadgeColorStyleableId, defaultColor)
+            scrollButtonBadgeColor = attrs.getColor(scrollButtonBadgeColorStyleableId, defaultColor)
         }
 
         fun scrollButtonIcon(
             @StyleableRes scrollButtonIconStyleableId: Int,
             defaultIcon: Drawable?,
         ) = apply {
-            scrollButtonIcon = a.getDrawable(scrollButtonIconStyleableId) ?: defaultIcon
+            scrollButtonIcon = attrs.getDrawable(scrollButtonIconStyleableId) ?: defaultIcon
         }
 
         fun build(): ScrollButtonViewStyle {
+            val scrollButtonBadgeTextStyle = TextStyle.Builder(attrs)
+                .size(
+                    R.styleable.MessageListView_streamUiScrollButtonBadgeTextSize,
+                    context.getDimension(R.dimen.stream_ui_scroll_button_unread_badge_text_size)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiScrollButtonBadgeTextColor,
+                    context.getColorCompat(R.color.stream_ui_literal_white)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiScrollButtonBadgeFontAssets,
+                    R.styleable.MessageListView_streamUiScrollButtonBadgeTextFont,
+                )
+                .style(R.styleable.MessageListView_streamUiScrollButtonBadgeTextStyle, Typeface.BOLD)
+                .build()
+
             return ScrollButtonViewStyle(
                 scrollButtonEnabled = scrollButtonEnabled,
                 scrollButtonUnreadEnabled = scrollButtonUnreadEnabled,
                 scrollButtonColor = scrollButtonColor,
                 scrollButtonRippleColor = scrollButtonRippleColor,
                 scrollButtonBadgeColor = scrollButtonBadgeColor,
-                scrollButtonIcon = scrollButtonIcon
+                scrollButtonIcon = scrollButtonIcon,
+                scrollButtonBadgeTextStyle = scrollButtonBadgeTextStyle
             ).let(TransformStyle.scrollButtonStyleTransformer::transform)
         }
     }
