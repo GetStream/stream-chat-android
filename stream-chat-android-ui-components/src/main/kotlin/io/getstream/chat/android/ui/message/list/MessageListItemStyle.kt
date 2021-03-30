@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.list
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
@@ -11,6 +12,7 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
@@ -41,9 +43,9 @@ public data class MessageListItemStyle(
     public val textStyleDateSeparator: TextStyle,
     public val reactionsViewStyle: ViewReactionsViewStyle,
     public val editReactionsViewStyle: EditReactionsViewStyle,
-    public val iconIndicatorSent: Int,
-    public val iconIndicatorRead: Int,
-    public val iconIndicatorPendingSync: Int,
+    public val iconIndicatorSent: Drawable,
+    public val iconIndicatorRead: Drawable,
+    public val iconIndicatorPendingSync: Drawable,
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
     @ColorInt public val messageStrokeColorMine: Int,
@@ -323,19 +325,15 @@ public data class MessageListItemStyle(
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
                 .build()
 
-            val iconIndicatorSent = attributes.getResourceId(
-                R.styleable.MessageListView_streamUiIconIndicatorSent,
-                R.drawable.stream_ui_ic_check_single
-            )
-            val iconIndicatorRead = attributes.getResourceId(
-                R.styleable.MessageListView_streamUiIconIndicatorRead,
-                R.drawable.stream_ui_ic_check_double
-            )
-            val iconIndicatorPendingSync =
-                attributes.getResourceId(
-                    R.styleable.MessageListView_streamUiIconIndicatorPendingSync,
-                    R.drawable.stream_ui_ic_clock
-                )
+            val iconIndicatorSent = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiIconIndicatorSent
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
+            val iconIndicatorRead = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiIconIndicatorRead
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double)!!
+            val iconIndicatorPendingSync = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiIconIndicatorPendingSync
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clock)!!
 
             val messageDeletedBackground =
                 attributes.getColor(
