@@ -101,6 +101,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.Body"
         android:textColorHint="@color/stream_ui_text_color_hint"
         android:textSize="15sp"
+        android:textCursorDrawable="@drawable/stream_ui_message_input_cursor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearCommandButton"
         app:layout_constraintStart_toEndOf="@id/commandBadge"

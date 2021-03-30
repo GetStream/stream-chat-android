@@ -96,6 +96,7 @@ It is possible now to configure the max size of the file upload using
 - Add support of non-image attachment types to the default attachment click listener.
 
 ### ✅ Added
+- `MessageInputView` now uses the cursor `stream_ui_message_input_cursor.xml` instead of accent color. To change the cursor, override `stream_ui_message_input_cursor.xml`.  
 - Replacing `ChatUI` with new `io.getstream.chat.android.ui.ChatUI` implementation
 - Added possibility to configure delete message option visibility using `streamUiDeleteMessageEnabled` attribute, and `MessageListView::setDeleteMessageEnabled` method
 - Add `streamUiEditMessageEnabled` attribute to `MessageListView` and `MessageListView::setEditMessageEnabled` method to enable/disable the message editing feature
@@ -122,6 +123,7 @@ It is possible now to configure the max size of the file upload using
     - Deleted message text and background
     - Reactions style in list view and in options view
     - Indicator icons in footer of Message
+    - Unread count badge on scroll to bottom button
 It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiChannelOptionsIcon` - customize options icon
 - `streamUiChannelDeleteIcon` - customize delete icon

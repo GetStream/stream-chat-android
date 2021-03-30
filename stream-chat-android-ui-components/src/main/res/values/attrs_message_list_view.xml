@@ -9,6 +9,16 @@
         <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
         <attr name="streamUiScrollButtonIcon" format="reference" />
 
+        <attr name="streamUiScrollButtonBadgeTextSize" format="dimension|reference" />
+        <attr name="streamUiScrollButtonBadgeTextColor" format="color|reference" />
+        <attr name="streamUiScrollButtonBadgeTextFont" format="reference" />
+        <attr name="streamUiScrollButtonBadgeFontAssets" format="string" />
+        <attr name="streamUiScrollButtonBadgeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiLoadMoreThreshold" format="integer" />
         <attr name="streamUiNewMessagesBehaviour" format="enum">
             <enum name="scroll_to_bottom" value="0" />
@@ -143,13 +153,13 @@
         <attr name="streamUiMessageReactionsBubbleBorderColorMine" format="color|reference" />
 
         <!-- Message edit reactions view style -->
-        <attr name="streamUiEditReactionsBubbleColorMine" format="color"/>
-        <attr name="streamUiEditReactionsBubbleColorTheirs" format="color"/>
+        <attr name="streamUiEditReactionsBubbleColorMine" format="color" />
+        <attr name="streamUiEditReactionsBubbleColorTheirs" format="color" />
 
         <!-- Indicator icons -->
-        <attr name="streamUiIconIndicatorSent" format="reference"/>
-        <attr name="streamUiIconIndicatorRead" format="reference"/>
-        <attr name="streamUiIconIndicatorPendingSync" format="reference"/>
+        <attr name="streamUiIconIndicatorSent" format="reference" />
+        <attr name="streamUiIconIndicatorRead" format="reference" />
+        <attr name="streamUiIconIndicatorPendingSync" format="reference" />
 
         <!-- Message deleted style -->
         <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
