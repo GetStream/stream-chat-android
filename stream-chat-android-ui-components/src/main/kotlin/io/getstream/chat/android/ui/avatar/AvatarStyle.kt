@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -17,6 +18,8 @@ public data class AvatarStyle(
     public val avatarInitialText: TextStyle,
     public val onlineIndicatorEnabled: Boolean,
     public val onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition,
+    @ColorRes public val onlineIndicatorColor: Int,
+    @ColorRes public val onlineIndicatorBorderColor: Int,
 ) {
 
     internal companion object {
@@ -61,12 +64,16 @@ public data class AvatarStyle(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
                     AvatarView.OnlineIndicatorPosition.TOP
                 )
+                val onlineIndicatorColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
+                val onlineIndicatorBorderColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
                 AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
                     avatarInitialText = avatarInitialText,
                     onlineIndicatorEnabled = onlineIndicatorEnabled,
                     onlineIndicatorPosition = onlineIndicatorPosition,
+                    onlineIndicatorColor = onlineIndicatorColor,
+                    onlineIndicatorBorderColor = onlineIndicatorBorderColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }
