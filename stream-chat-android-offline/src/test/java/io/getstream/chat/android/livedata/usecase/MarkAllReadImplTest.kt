@@ -1,43 +1,75 @@
 package io.getstream.chat.android.livedata.usecase
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.test.getOrAwaitValue
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
-@RunWith(AndroidJUnit4::class)
-internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
+internal class MarkAllReadImplTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    private lateinit var chatDomain: ChatDomainImpl
+    private lateinit var markAllRead: MarkAllReadImpl
+    private lateinit var chatClient: ChatClient
+    private lateinit var activeChannels: List<ChannelControllerImpl>
+
+    @BeforeEach
+    fun before() {
+        activeChannels = listOf(mock(), mock(), mock())
+
+        chatClient = mock()
+        chatDomain = mock {
+            whenever(mock.scope) doReturn testCoroutines.scope
+            whenever(mock.client) doReturn chatClient
+            whenever(mock.allActiveChannels()) doReturn activeChannels
+        }
+        markAllRead = MarkAllReadImpl(chatDomain)
+    }
 
     @Test
-    fun markAllRead() = testCoroutines.dispatcher.runBlockingTest {
-        chatDomainImpl.allActiveChannels().let { activeChannels ->
+    fun `Given successful response When marking all channels as read Should update all the controllers and return true`() {
+        return testCoroutines.dispatcher.runBlockingTest {
+            whenever(chatClient.markAllRead()) doReturn TestCall(Result(Unit))
 
-            // set up unread states
-            activeChannels.forEach { channel ->
-                channel.unreadCount.getOrAwaitValue().let { count ->
-                    Truth.assertThat(count).isEqualTo(0)
-                }
+            var result = markAllRead.invoke().execute()
 
-                channel.handleEvent(data.newMessageFromUser2)
-                advanceUntilIdle()
-
-                channel.unreadCount.getOrAwaitValue().let { unreadCount ->
-                    Truth.assertThat(unreadCount).isEqualTo(1)
-                }
+            Truth.assertThat(result.isSuccess).isTrue()
+            verify(chatClient, times(1)).markAllRead()
+            activeChannels.forEach {
+                verify(it).markRead()
             }
+        }
+    }
 
-            // mark all as read
-            chatDomainImpl.useCases.markAllRead().execute()
-            advanceUntilIdle()
+    @Test
+    fun `Given failed response When marking all channels as read Should update all the controllers and return true`() {
+        return testCoroutines.dispatcher.runBlockingTest {
+            whenever(chatClient.markAllRead()) doReturn TestCall(Result(ChatError()))
 
-            // verify result
-            activeChannels.forEach { channel ->
-                channel.unreadCount.getOrAwaitValue().let { unreadCount ->
-                    Truth.assertThat(unreadCount).isEqualTo(0)
-                }
+            var result = markAllRead.invoke().execute()
+
+            Truth.assertThat(result.isSuccess).isTrue()
+            verify(chatClient, times(1)).markAllRead()
+            activeChannels.forEach {
+                verify(it).markRead()
             }
         }
     }
