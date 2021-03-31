@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.controller
+package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject

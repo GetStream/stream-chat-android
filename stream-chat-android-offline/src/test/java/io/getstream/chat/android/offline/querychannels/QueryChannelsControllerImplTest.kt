@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller.querychannels
+package io.getstream.chat.android.offline.querychannels
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -17,13 +17,11 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
-import io.getstream.chat.android.test.getOrAwaitValue
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -90,7 +88,7 @@ internal class QueryChannelsControllerImplTest {
 
             sut.addChannelIfFilterMatches(newChannel)
 
-            val result = sut.channels.getOrAwaitValue()
+            val result = sut.channels.value
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo newChannel.cid
         }
@@ -123,7 +121,7 @@ internal class QueryChannelsControllerImplTest {
             sut.addChannelIfFilterMatches(newChannel)
             sut.addChannelIfFilterMatches(newChannel)
 
-            val result = sut.channels.getOrAwaitValue()
+            val result = sut.channels.value
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo newChannel.cid
         }
@@ -151,7 +149,7 @@ internal class QueryChannelsControllerImplTest {
 
             sut.refreshChannel(channel.cid)
 
-            val result = sut.channels.getOrAwaitValue()
+            val result = sut.channels.value
             result.size shouldBeEqualTo 0
         }
 
@@ -170,7 +168,7 @@ internal class QueryChannelsControllerImplTest {
 
             sut.refreshChannel(channel.cid)
 
-            val result = sut.channels.getOrAwaitValue()
+            val result = sut.channels.value
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo cid
         }
@@ -190,7 +188,7 @@ internal class QueryChannelsControllerImplTest {
 
             sut.refreshChannel(channel.cid)
 
-            val result = sut.channels.getOrAwaitValue()
+            val result = sut.channels.value
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo cid
         }
@@ -280,6 +278,6 @@ private class Fixture {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
-    fun get(): QueryChannelsControllerImpl =
-        QueryChannelsControllerImpl(filterObject, querySort, chatClient, chatDomainImpl)
+    fun get(): QueryChannelsController =
+        QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
 }
