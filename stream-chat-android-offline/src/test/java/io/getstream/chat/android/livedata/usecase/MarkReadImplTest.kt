@@ -1,31 +1,94 @@
 package io.getstream.chat.android.livedata.usecase
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.test.getOrAwaitValue
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
-@RunWith(AndroidJUnit4::class)
-internal class MarkReadImplTest : BaseConnectedIntegrationTest() {
+@ExperimentalCoroutinesApi
+internal class MarkReadImplTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    private lateinit var chatDomain: ChatDomainImpl
+    private lateinit var client: ChatClient
+
+    private lateinit var sut: MarkReadImpl
+
+    @BeforeEach
+    fun init() {
+        client = mock()
+        chatDomain = mock {
+            on { scope } doReturn testCoroutines.scope
+        }
+        sut = MarkReadImpl(chatDomain)
+    }
 
     @Test
-    fun read() = testCoroutines.dispatcher.runBlockingTest {
-        val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
-        channelControllerImpl.handleEvent(data.newMessageFromUser2)
-        advanceUntilIdle()
-        var unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
-        Truth.assertThat(unreadCount).isEqualTo(1)
+    fun `Given empty cid Should throw exception`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            sut.invoke("")
+        }
+    }
 
-        val result = chatDomain.useCases.markRead(data.channel1.cid).execute()
-        advanceUntilIdle()
-        assertSuccess(result)
-        val lastRead = channelControllerImpl.read.getOrAwaitValue()?.lastRead
-        Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
-        unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
-        Truth.assertThat(unreadCount).isEqualTo(0)
-        Truth.assertThat(channelControllerImpl.toChannel().unreadCount).isEqualTo(0)
+    @Test
+    fun `Given invalid cid Should throw exception`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            sut.invoke("no-colon")
+        }
+    }
+
+    @Test
+    fun `Given valid cid Should invoke markRead() on ChannelController`() = runBlockingTest {
+        val channelController = mock<ChannelControllerImpl>()
+        val cid = randomCID()
+        whenever(chatDomain.channel(cid)) doReturn channelController
+        sut.invoke(cid).execute()
+        verify(channelController).markRead()
+    }
+
+    @Test
+    fun `Given valid cid and successful ChannelController result Should return call client markRead() and return Result(true)`() = runBlockingTest {
+        val channelController = mock<ChannelControllerImpl> {
+            onBlocking { markRead() } doReturn true
+        }
+        val channelType = "messaging"
+        val channelId = randomString()
+        val cid = randomCID()
+        whenever(chatDomain.channel(cid)) doReturn channelController
+        whenever(chatDomain.client) doReturn client
+        whenever(channelController.channelType) doReturn channelType
+        whenever(channelController.channelId) doReturn channelId
+        val markReadCall = mock<Call<Unit>>()
+        whenever(client.markRead(any(), any())) doReturn markReadCall
+        val markReadCallResult = mock<Result<Unit>>()
+        whenever(markReadCall.execute()) doReturn markReadCallResult
+
+        val result = sut.invoke(cid).execute()
+
+        verify(channelController).markRead()
+        verify(client).markRead(channelType, channelId)
+        Truth.assertThat(result.isSuccess).isTrue()
+        Truth.assertThat(result.data()).isTrue()
     }
 }
