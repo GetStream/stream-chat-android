@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.channel
+package io.getstream.chat.android.offline.channel.controller
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -14,6 +14,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomDateBefore
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class ChannelControllerHideChannelTest {
+internal class WhenHide {
 
     companion object {
         @JvmField
@@ -68,7 +69,7 @@ internal class ChannelControllerHideChannelTest {
     }
 
     @Test
-    fun `When hiding channel Should mark it as hidden`() = runBlockingTest {
+    fun `Should mark channel as hidden`() = runBlockingTest {
         val response = Result(Unit)
         whenever(channelClient.hide(any())).thenReturn(TestCall(response))
 
@@ -79,7 +80,7 @@ internal class ChannelControllerHideChannelTest {
     }
 
     @Test
-    fun `Given failed response When hiding channel Should return server error`() =
+    fun `Given failed response Should return server error`() =
         runBlockingTest {
             val response = Result<Unit>(error = ChatError())
             whenever(channelClient.hide(any())).thenReturn(TestCall(response))
@@ -90,7 +91,7 @@ internal class ChannelControllerHideChannelTest {
         }
 
     @Test
-    fun `Given successful response When hiding channel without clearing history Should update channel in database`() =
+    fun `Given successful response And channel without clearing history Should update channel in database`() =
         runBlockingTest {
             val response = Result(Unit)
             whenever(channelClient.hide(any())).thenReturn(TestCall(response))
@@ -103,7 +104,7 @@ internal class ChannelControllerHideChannelTest {
         }
 
     @Test
-    fun `Given successful response When hiding channel with clearing history Should hide messages sent before`() =
+    fun `Given successful response And channel with clearing history Should hide messages sent before`() =
         runBlockingTest {
             val response = Result(Unit)
             whenever(channelClient.hide(any())).thenReturn(TestCall(response))
@@ -115,7 +116,7 @@ internal class ChannelControllerHideChannelTest {
         }
 
     @Test
-    fun `Given successful response When hiding channel with clearing history Should update channel in database`() =
+    fun `Given successful response And channel with clearing history Should update channel in database`() =
         runBlockingTest {
             val response = Result(Unit)
             whenever(channelClient.hide(any())).thenReturn(TestCall(response))
@@ -133,7 +134,7 @@ internal class ChannelControllerHideChannelTest {
         }
 
     @Test
-    fun `Given successful response When hiding channel with clearing history Should delete hidden messages from database`() =
+    fun `Given successful response And channel with clearing history Should delete hidden messages from database`() =
         runBlockingTest {
             val response = Result(Unit)
             whenever(channelClient.hide(any())).thenReturn(TestCall(response))
@@ -150,7 +151,7 @@ internal class ChannelControllerHideChannelTest {
         }
 
     @Test
-    fun `Given successful response When hiding channel with clearing history Should clear messages sent before channel was hidden`() =
+    fun `Given successful response And channel with clearing history Should clear messages sent before channel was hidden`() =
         runBlockingTest {
             val now = Date().time
             val response = Result(Unit)
