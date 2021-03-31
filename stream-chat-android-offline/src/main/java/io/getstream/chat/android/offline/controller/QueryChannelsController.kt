@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
@@ -46,12 +45,7 @@ internal class QueryChannelsController(
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
 ) {
-    var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { channel, filterObject ->
-        println("JcLog: Channel->${channel.type}")
-        println("JcLog: Channel->${channel.members.map(Member::getUserId)}")
-        println("JcLog: FilterObject->$filterObject")
-        filterObject.filter(channel)
-    }
+    var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { channel, filterObject -> filterObject.filter(channel) }
     var recoveryNeeded: Boolean = false
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
