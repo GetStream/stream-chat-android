@@ -21,7 +21,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatDomain.Builder#notificationConfig`<br/>*offline* | - | 2020.12.14<br/>4.4.7 | 2021.03.14 ⌛ | Configure this on `ChatClient.Builder` instead |
 | `Call#enqueue((Result<T>) -> Unit)`<br/>*core* | - | 2020.12.09<br/>4.4.7 | 2021.03.09 ⌛ | Use `enqueue(Callback<T>)` instead (only affects Java clients) |
 | `ChatUI(client, domain, context)`<br/>*ui-common* | 2020.11.09<br/>4.4.2 | 2021.02.22<br/>4.6.0 | 2021.03.22 ⌛ | Use ctor with just Context param instead |
-| `User#unreadCount`<br/>*client* | 2020.11.05<br/>4.4.2 | 2021.02.22<br/>4.6.0 | 2021.03.22 ⌛ | Use `totalUnreadCount` instead |
+| `User#unreadCount`<br/>*client* | 2020.11.05<br/>4.4.2 | 2021.02.22<br/>4.6.0 | 2021.03.22<br/>4.8.0 | Use `totalUnreadCount` instead |
 | `ChannelController`<br/>*client* | 2020.11.04<br/>4.4.1 | 2021.02.22<br/>4.6.0 | 2021.04.22 ⌛ | Renamed due to conflicting name with a type in the offline library, use `ChannelClient` instead |
 | `Chat` interface<br/>*ui-common* | 2020.10.27<br/>4.4.1 | 2021.02.22<br/>4.6.0 | 2021.04.22 ⌛ | Use `ChatUI` instead |
 | `Pagination#get`<br/>*client* | - | 2020.10.12<br/>4.3.0 | 2021.02.22<br/>4.6.0 | Use `toString` instead |
