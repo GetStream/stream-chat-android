@@ -9,18 +9,22 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomMember
+import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.getOrAwaitValue
+import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +34,6 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
-import java.util.Date
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -45,12 +48,21 @@ internal class QueryChannelsControllerImplTest {
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
         runBlockingTest {
+            val currentUser = randomUser()
+            val newChannel = randomChannel(
+                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
+            )
             val channelController = mock<ChannelControllerImpl>()
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
+            val sut = Fixture(testCoroutines.scope, currentUser = currentUser)
                 .givenNewChannelController(channelController)
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true)
+                .givenFilterObject(
+                    Filters.and(
+                        Filters.`in`("members", listOf(currentUser.id)),
+                        Filters.eq("type", newChannel.type)
+                    )
+                )
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true, newChannel.type)
                 .get()
-            val newChannel = randomChannel()
 
             sut.addChannelIfFilterMatches(newChannel)
 
@@ -60,89 +72,86 @@ internal class QueryChannelsControllerImplTest {
     @Test
     fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
         runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
+            val currentUser = randomUser()
+            val cid = randomCID()
+            val newChannel = randomChannel(
+                cid = cid,
+                id = cid.substringAfter(":"),
+                type = cid.substringBefore(":"),
+                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
+            )
+            val sut = Fixture(testCoroutines.scope, currentUser = currentUser)
                 .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true)
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true, newChannel.type)
+                .givenFilterObject(
+                    Filters.and(
+                        Filters.`in`("members", listOf(currentUser.id)),
+                        Filters.eq("type", newChannel.type)
+                    )
+                )
                 .get()
-            val newChannel = randomChannel(cid = "ChannelType:ChannelID")
 
             sut.addChannelIfFilterMatches(newChannel)
 
             val result = sut.channels.getOrAwaitValue()
             result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
+            result.first().cid shouldBeEqualTo newChannel.cid
         }
 
     @Test
     fun `when add channel twice if filter matches should post value to liveData only one value`() =
         runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
+            val currentUser = randomUser()
+            val cid = randomCID()
+            val newChannel = randomChannel(
+                cid = cid,
+                id = cid.substringAfter(":"),
+                type = cid.substringBefore(":"),
+                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
+            )
+            val sut = Fixture(testCoroutines.scope, currentUser = currentUser)
                 .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true)
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true, newChannel.type)
+                .givenFilterObject(
+                    Filters.and(
+                        Filters.`in`("members", listOf(currentUser.id)),
+                        Filters.eq("type", newChannel.type),
+                        Filters.eq("cid", newChannel.cid)
+                    )
+                )
                 .get()
-            val newChannel = randomChannel(cid = "ChannelType:ChannelID")
 
             sut.addChannelIfFilterMatches(newChannel)
             sut.addChannelIfFilterMatches(newChannel)
 
             val result = sut.channels.getOrAwaitValue()
             result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
+            result.first().cid shouldBeEqualTo newChannel.cid
         }
 
     @Test
     fun `Given messaging channel When refreshing channel which doesn't contain current user as member Should post value to liveData without this channel`() =
         runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
+            val currentUser = randomUser()
+            val channelType = randomString()
+            val sut = Fixture(testCoroutines.scope, currentUser = currentUser)
                 .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false, channelType = "messaging")
+                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false, channelType = channelType)
                 .setupChatRepositories()
+                .givenFilterObject(
+                    Filters.and(
+                        Filters.`in`("members", listOf(currentUser.id)),
+                        Filters.eq("type", channelType)
+                    )
+                )
                 .get()
-            val channel = randomChannel(type = "messaging")
+            val channel = randomChannel(type = channelType)
             sut.addChannelIfFilterMatches(channel)
 
             sut.refreshChannel(channel.cid)
 
             val result = sut.channels.getOrAwaitValue()
             result.size shouldBeEqualTo 0
-        }
-
-    @Test
-    fun `Given not messaging channel When refreshing channel which doesn't contain current user as member Should post value to liveData with this channel`() =
-        runBlockingTest {
-            val cid = "channelType:channelId"
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
-                .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = false)
-                .setupChatRepositories()
-                .get()
-            val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
-
-            sut.refreshChannel(channel.cid)
-
-            val result = sut.channels.getOrAwaitValue()
-            result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo cid
-        }
-
-    @Test
-    fun `when refreshing channel which contain current user as member should post value to liveData with channel`() =
-        runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, currentUser = randomUser())
-                .givenNewChannelController(mock())
-                .setupChatControllersInstantiation(withCurrentUserAsChannelMember = true)
-                .setupChatRepositories()
-                .get()
-            val cid = "ChannelType:ChannelID"
-            val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
-
-            sut.refreshChannel(channel.cid)
-
-            val result = sut.channels.getOrAwaitValue()
-            result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo cid
         }
 
     @Test
@@ -154,9 +163,10 @@ internal class QueryChannelsControllerImplTest {
                 .givenNewChannelController(channelController)
                 .get()
 
-            queryController.handleEvent(notificationNewMessage())
+            val channel = randomChannel()
+            queryController.handleEvent(randomNotificationMessageNewEvent(channel = channel))
 
-            verify(channelController).updateLiveDataFromChannel(any())
+            verify(channelController).updateLiveDataFromChannel(eq(channel))
         }
 
     @Test
@@ -171,30 +181,17 @@ internal class QueryChannelsControllerImplTest {
 
             queryController.queryChannelsSpec.cids = listOf(cid)
 
-            queryController.handleEvent(notificationNewMessage(cid))
+            queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
             verify(channelController, never()).updateLiveDataFromChannel(any())
         }
 }
 
-private fun notificationNewMessage(channelCid: String = "cid"): NotificationMessageNewEvent {
-    return NotificationMessageNewEvent(
-        type = "type",
-        createdAt = Date(),
-        cid = "cid",
-        channelType = "channelType",
-        channelId = "channelId",
-        channel = Channel(cid = channelCid),
-        message = Message(),
-        watcherCount = 0,
-        totalUnreadCount = 0,
-        unreadChannels = 0
-    )
-}
-
 private class Fixture(scope: CoroutineScope, private val currentUser: User = mock()) {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
+    private var filterObject: FilterObject = Filters.neutral()
+    private var querySort: QuerySort<Channel> = QuerySort()
 
     init {
         whenever(chatDomainImpl.currentUser) doReturn currentUser
@@ -202,35 +199,36 @@ private class Fixture(scope: CoroutineScope, private val currentUser: User = moc
         whenever(chatDomainImpl.scope) doReturn scope
     }
 
-    fun givenNewChannelController(channelControllerImpl: ChannelControllerImpl): Fixture {
+    fun givenNewChannelController(channelControllerImpl: ChannelControllerImpl): Fixture = apply {
         whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelControllerImpl
-        return this
+    }
+
+    fun givenFilterObject(filterObject: FilterObject): Fixture = apply {
+        this.filterObject = filterObject
     }
 
     fun setupChatControllersInstantiation(
         withCurrentUserAsChannelMember: Boolean = false,
         channelType: String? = null,
-    ): Fixture {
+    ): Fixture = apply {
         whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
             val cid = invocation.arguments[0] as String
             val mockChannelController = mock<ChannelControllerImpl>()
-            val mockChannel = mock<Channel>()
-            whenever(mockChannel.cid) doReturn cid
-            channelType?.let { type -> whenever(mockChannel.type) doReturn channelType }
-            whenever(mockChannel.members) doReturn if (withCurrentUserAsChannelMember) listOf(Member(currentUser)) else emptyList()
+            val mockChannel = randomChannel(
+                cid = cid,
+                type = channelType ?: randomString(),
+                members = if (withCurrentUserAsChannelMember) listOf(Member(currentUser)) else emptyList()
+            )
             whenever(mockChannelController.toChannel()) doReturn mockChannel
             mockChannelController
         }
         whenever(chatDomainImpl.getChannelConfig(any())) doReturn mock()
-        return this
     }
 
-    fun setupChatRepositories(): Fixture {
+    fun setupChatRepositories(): Fixture = apply {
         whenever(chatDomainImpl.repos) doReturn mock()
-
-        return this
     }
 
     fun get(): QueryChannelsControllerImpl =
-        QueryChannelsControllerImpl(mock(), QuerySort(), chatClient, chatDomainImpl)
+        QueryChannelsControllerImpl(filterObject, querySort, chatClient, chatDomainImpl)
 }
