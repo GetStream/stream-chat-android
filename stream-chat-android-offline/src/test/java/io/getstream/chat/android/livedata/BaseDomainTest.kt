@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -37,7 +36,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.NoRetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
@@ -229,16 +228,7 @@ internal open class BaseDomainTest {
             backgroundSyncEnabled,
             context
         )
-        chatDomainImpl.retryPolicy = object :
-            RetryPolicy {
-            override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
-                return false
-            }
-
-            override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
-                return 1000
-            }
-        }
+        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 
         chatDomainImpl.errorEvents.observeForever(
