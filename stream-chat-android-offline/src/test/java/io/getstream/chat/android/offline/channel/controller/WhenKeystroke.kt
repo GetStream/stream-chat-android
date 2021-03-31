@@ -31,11 +31,10 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And not null parentId And no keystroke before Should invoke keystroke with parentId to ChannelClient`() {
-        val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
             .givenParentId("parentId")
-            .givenSuccessfulResponse(channelClient)
+            .givenSuccessfulResponse()
 
         sut.keystroke("parentId")
 
@@ -44,10 +43,9 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And null parentId And no keystroke before Should invoke keystroke without parentId to ChannelClient`() {
-        val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
-            .givenSuccessfulResponse(channelClient)
+            .givenSuccessfulResponse()
 
         sut.keystroke(null)
 
@@ -59,7 +57,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
         val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
-            .givenSuccessfulResponse(channelClient)
+            .givenSuccessfulResponse()
 
         val result = sut.keystroke(null)
 
@@ -72,7 +70,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
         val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
-            .givenFailedResponse(channelClient)
+            .givenFailedResponse()
 
         val result = sut.keystroke(null)
 
@@ -103,24 +101,20 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
             this.parentId = parentId
         }
 
-        fun givenSuccessfulResponse(mockChannelClient: ChannelClient) = apply {
+        fun givenSuccessfulResponse() = apply {
             if (parentId != null) {
-                whenever(mockChannelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatEvent>()))
+                whenever(channelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatEvent>()))
             } else {
-                whenever(mockChannelClient.keystroke()) doReturn TestCall(Result(mock<ChatEvent>()))
+                whenever(channelClient.keystroke()) doReturn TestCall(Result(mock<ChatEvent>()))
             }
-
-            whenever(chatClient.channel(channelType, channelId)) doReturn mockChannelClient
         }
 
-        fun givenFailedResponse(mockChannelClient: ChannelClient) = apply {
+        fun givenFailedResponse() = apply {
             if (parentId != null) {
-                whenever(mockChannelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatError>()))
+                whenever(channelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatError>()))
             } else {
-                whenever(mockChannelClient.keystroke()) doReturn TestCall(Result(mock<ChatError>()))
+                whenever(channelClient.keystroke()) doReturn TestCall(Result(mock<ChatError>()))
             }
-
-            whenever(chatClient.channel(channelType, channelId)) doReturn mockChannelClient
         }
 
         suspend fun givenKeystrokeBefore(keystrokeBefore: Long) = givenTypingEvents(true).apply {
