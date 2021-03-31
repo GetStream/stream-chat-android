@@ -1040,14 +1040,6 @@ public class ChatClient internal constructor(
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     @CheckResult
-    @Deprecated(
-        message = "We are going to replace with flagUser()",
-        replaceWith = ReplaceWith("this.flagUser(userId)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun flag(userId: String): Call<Flag> = flagUser(userId)
-
-    @CheckResult
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
 
     @CheckResult

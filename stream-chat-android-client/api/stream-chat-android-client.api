@@ -37,7 +37,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun disconnectSocket ()V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun events ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public final fun flag (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
