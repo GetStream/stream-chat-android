@@ -31,7 +31,7 @@ public inline fun <reified T : Any> failedCall(message: String = "", cause: Thro
         override fun execute(): Result<T> = Result(ChatError(message, cause))
 
         override fun enqueue(callback: Call.Callback<T>) {
-            // Callback in never called because call failed
+            callback.onResult(Result(ChatError(message, cause)))
         }
 
         override fun cancel() {
