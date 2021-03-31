@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test
 internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
-    fun `Given config without typing events Should return false result`() {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = false)
+    fun `Given config without typing events And no keystroke before Should return false result`() {
+        Fixture().givenTypingEvents(false)
 
         val result = sut.keystroke(null)
 
@@ -31,11 +31,11 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And not null parentId And no keystroke before Should invoke keystroke with parentId to ChannelClient`() {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = true)
-        val channelClient = mock<ChannelClient> {
-            on { keystroke("parentId") } doReturn TestCall(Result(mock()))
-        }
-        whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
+        val channelClient = mock<ChannelClient>()
+        Fixture()
+            .givenTypingEvents(true)
+            .givenParentId("parentId")
+            .givenSuccessfulResponse(channelClient)
 
         sut.keystroke("parentId")
 
@@ -44,11 +44,10 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And null parentId And no keystroke before Should invoke keystroke without parentId to ChannelClient`() {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = true)
-        val channelClient = mock<ChannelClient> {
-            on { keystroke() } doReturn TestCall(Result(mock()))
-        }
-        whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
+        val channelClient = mock<ChannelClient>()
+        Fixture()
+            .givenTypingEvents(true)
+            .givenSuccessfulResponse(channelClient)
 
         sut.keystroke(null)
 
@@ -57,11 +56,10 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And successful response And no keystroke before Should return result with True`() {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = true)
-        val channelClient = mock<ChannelClient> {
-            on { keystroke() } doReturn TestCall(Result(mock<ChatEvent>()))
-        }
-        whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
+        val channelClient = mock<ChannelClient>()
+        Fixture()
+            .givenTypingEvents(true)
+            .givenSuccessfulResponse(channelClient)
 
         val result = sut.keystroke(null)
 
@@ -71,11 +69,10 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And failed response And no keystroke before Should return result with error`() {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = true)
-        val channelClient = mock<ChannelClient> {
-            on { keystroke() } doReturn TestCall(Result(mock<ChatError>()))
-        }
-        whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
+        val channelClient = mock<ChannelClient>()
+        Fixture()
+            .givenTypingEvents(true)
+            .givenFailedResponse(channelClient)
 
         val result = sut.keystroke(null)
 
@@ -85,19 +82,55 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given first keystroke less than 3 sec ago Should return result with false`() = runBlockingTest {
-        whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = true)
-        val channelClient = mock<ChannelClient> {
-            on { keystroke() } doReturn TestCall(Result(mock<ChatEvent>()))
-        }
-        whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
-        sut.keystroke(null)
-        delay(2000L)
-        reset(chatClient)
+        Fixture().givenKeystrokeBefore(keystrokeBefore = 2000L)
 
         val result = sut.keystroke(null)
 
         Truth.assertThat(result.isSuccess).isTrue()
         Truth.assertThat(result.data()).isFalse()
         verify(chatClient, never()).channel(channelType, channelId)
+    }
+
+    private inner class Fixture {
+
+        private var parentId: String? = null
+
+        fun givenTypingEvents(areSupported: Boolean) = apply {
+            whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = areSupported)
+        }
+
+        fun givenParentId(parentId: String?) = apply {
+            this.parentId = parentId
+        }
+
+        fun givenSuccessfulResponse(mockChannelClient: ChannelClient) = apply {
+            if (parentId != null) {
+                whenever(mockChannelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatEvent>()))
+            } else {
+                whenever(mockChannelClient.keystroke()) doReturn TestCall(Result(mock<ChatEvent>()))
+            }
+
+            whenever(chatClient.channel(channelType, channelId)) doReturn mockChannelClient
+        }
+
+        fun givenFailedResponse(mockChannelClient: ChannelClient) = apply {
+            if (parentId != null) {
+                whenever(mockChannelClient.keystroke(parentId!!)) doReturn TestCall(Result(mock<ChatError>()))
+            } else {
+                whenever(mockChannelClient.keystroke()) doReturn TestCall(Result(mock<ChatError>()))
+            }
+
+            whenever(chatClient.channel(channelType, channelId)) doReturn mockChannelClient
+        }
+
+        suspend fun givenKeystrokeBefore(keystrokeBefore: Long) = givenTypingEvents(true).apply {
+            val channelClient = mock<ChannelClient> {
+                on { keystroke() } doReturn TestCall(Result(mock<ChatEvent>()))
+            }
+            whenever(chatClient.channel(channelType, channelId)) doReturn channelClient
+            sut.keystroke(null)
+            delay(keystrokeBefore)
+            reset(chatClient)
+        }
     }
 }
