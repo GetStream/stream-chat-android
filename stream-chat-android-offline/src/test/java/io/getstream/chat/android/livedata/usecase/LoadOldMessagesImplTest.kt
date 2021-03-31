@@ -67,7 +67,7 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
 
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn queryChannelCall
 
-        //Load older messages using backend.
+        // Load older messages using backend.
         chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
 
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn createFailedCall()
@@ -78,7 +78,7 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
         Truth.assertThat(result.isSuccess).isTrue()
     }
 
-    private fun <T: Any> createCall(data: T) : Call<T> {
+    private fun <T : Any> createCall(data: T): Call<T> {
         return object : Call<T> {
             override fun execute(): Result<T> = Result(data)
 
@@ -92,7 +92,7 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
         }
     }
 
-    private inline fun <reified T: Any> createFailedCall() : Call<T> {
+    private inline fun <reified T : Any> createFailedCall(): Call<T> {
         return object : Call<T> {
             override fun execute(): Result<T> = Result(ChatError("this call failed"))
 
