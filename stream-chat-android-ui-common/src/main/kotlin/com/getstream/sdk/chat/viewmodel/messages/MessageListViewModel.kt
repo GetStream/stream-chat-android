@@ -210,9 +210,6 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.DownloadAttachment -> {
                 domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
             }
-            is Event.AttachmentDownload -> {
-                domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
-            }
             is Event.ShowMessage -> {
                 domain.useCases.loadMessageById(
                     cid,
@@ -386,8 +383,6 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
         public data class DownloadAttachment(val attachment: Attachment) : Event()
-        @Deprecated(replaceWith = ReplaceWith("DownloadAttachment"), message = "Deprecated class.")
-        public data class AttachmentDownload(val attachment: Attachment) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
     }

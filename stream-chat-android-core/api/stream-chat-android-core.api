@@ -2,7 +2,6 @@ public abstract interface class io/getstream/chat/android/client/call/Call {
 	public abstract fun cancel ()V
 	public abstract fun enqueue ()V
 	public abstract fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
-	public abstract fun enqueue (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun execute ()Lio/getstream/chat/android/client/utils/Result;
 }
 
@@ -12,8 +11,6 @@ public abstract interface class io/getstream/chat/android/client/call/Call$Callb
 
 public final class io/getstream/chat/android/client/call/Call$DefaultImpls {
 	public static fun enqueue (Lio/getstream/chat/android/client/call/Call;)V
-	public static fun enqueue (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun enqueue$default (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/client/call/CallKt {

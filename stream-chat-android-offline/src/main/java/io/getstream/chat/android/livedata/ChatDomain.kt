@@ -173,14 +173,6 @@ public interface ChatDomain {
             return this
         }
 
-        @Deprecated(
-            message = "This method is deprecated, you should configure it into the ChatClient",
-            level = DeprecationLevel.ERROR
-        )
-        public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
-            throw java.lang.IllegalStateException("This method is deprecated, you should configure it into the ChatClient")
-        }
-
         public fun build(): ChatDomain {
             storeNotificationConfig(client.notificationHandler.config)
             ChatDomain.instance = buildImpl()

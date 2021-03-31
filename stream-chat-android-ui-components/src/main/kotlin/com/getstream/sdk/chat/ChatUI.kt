@@ -8,8 +8,6 @@ import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.BuildConfig
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
@@ -45,19 +43,6 @@ public class ChatUI internal constructor(
         get() = BuildConfig.BUILD_TYPE + ":" + STREAM_CHAT_VERSION
 
     public class Builder(private val appContext: Context) {
-
-        @Deprecated(
-            message = "Deprecated constructor, `ChatClient` and `ChatDomain` is not needed " +
-                "anymore to build a `ChatUI` instance",
-            replaceWith = ReplaceWith("ChatUI.Builder(appContext)"),
-            level = DeprecationLevel.ERROR,
-        )
-        @Suppress("UNUSED_PARAMETER")
-        public constructor(
-            client: ChatClient,
-            chatDomain: ChatDomain,
-            appContext: Context,
-        ) : this(appContext)
 
         private var style: ChatStyle? = null
         private var navigationHandler: ChatNavigationHandler? = null

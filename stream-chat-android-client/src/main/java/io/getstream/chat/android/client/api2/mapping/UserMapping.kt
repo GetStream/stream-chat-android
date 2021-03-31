@@ -32,7 +32,6 @@ internal fun DownstreamUserDto.toDomain(): User =
         lastActive = last_active,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
-        unreadCount = unread_count,
         mutes = mutes.map(DownstreamMuteDto::toDomain),
         teams = teams,
         channelMutes = channel_mutes.map(DownstreamChannelMuteDto::toDomain),

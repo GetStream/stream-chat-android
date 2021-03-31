@@ -551,7 +551,6 @@ private fun createUserJsonString() =
             "devices": [ ],
             "mutes": [ ],
             "channel_mutes": [ ],
-            "unread_count": 26,
             "total_unread_count": 26,
             "unread_channels": 2,
             "image": "https://api.adorable.io/avatars/285/bender.png",
