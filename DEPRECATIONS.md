@@ -16,7 +16,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatDomain.Builder` constructors with user params | 2021.02.26<br/>4.7.0 | 2021.05.26 ⌛ | 2021.08.26 ⌛ | Use `ChatDomain.Builder(context, chatClient)` instead |
 | `ChatDomain#disconnect` | 2021.02.25<br/>4.7.0 | 2021.05.25 ⌛ | 2021.08.25 ⌛ | Use just `ChatClient#disconnect` instead |
 | `setUser` (and similar) methods<br/>*client* | 2021.02.03<br/>4.5.3 | 2021.05.03 ⌛ | 2021.08.03 ⌛ | Replaced by `connectUser` style methods that return `Call` objects, see the updated documentation for [Initialization & Users](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin)) |
-| `MessageListViewModel.Event.AttachmentDownload`<br/>*ui-common* | 2021.01.29<br/>4.5.2 | 2021.02.29 ⌛ | 2021.03.29 ⌛ | Use `DownloadAttachment` instead |
+| `MessageListViewModel.Event.AttachmentDownload`<br/>*ui-common* | 2021.01.29<br/>4.5.2 | 2021.02.29<br/>4.7.0 | 2021.03.29<br/>4.8.0 | Use `DownloadAttachment` instead |
 | `subscribe` methods with Kotlin function parameters<br/>*client* | 2021.01.27<br/>4.5.2 | 2021.03.27 ⌛ | 2021.05.27 ⌛ | Use methods with `ChatEventListener` parameters instead (only affects Java clients) |
 | `ChatDomain.Builder#notificationConfig`<br/>*offline* | - | 2020.12.14<br/>4.4.7 | 2021.03.14<br/>4.8.0 | Configure this on `ChatClient.Builder` instead |
 | `Call#enqueue((Result<T>) -> Unit)`<br/>*core* | - | 2020.12.09<br/>4.4.7 | 2021.03.09<br/>4.8.0 | Use `enqueue(Callback<T>)` instead (only affects Java clients) |

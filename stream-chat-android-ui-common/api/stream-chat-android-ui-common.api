@@ -1886,17 +1886,6 @@ public abstract interface class com/getstream/sdk/chat/viewmodel/messages/Messag
 public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$AttachmentDownload : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
-	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Attachment;
-	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$AttachmentDownload;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$AttachmentDownload;Lio/getstream/chat/android/client/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$AttachmentDownload;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed;
 }
