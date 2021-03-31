@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.utils.filter
 import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -37,8 +38,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
         val request = QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0)
         val queryChannelsController = chatDomainImpl.queryChannels(data.filter2, QuerySort())
         queryChannelsController.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
-            // ignore everything
-            false
+            filterObject.filter(channel)
         }
         queryChannelsController.runQuery(request)
         var channels = queryChannelsController.channels.getOrAwaitValue()
