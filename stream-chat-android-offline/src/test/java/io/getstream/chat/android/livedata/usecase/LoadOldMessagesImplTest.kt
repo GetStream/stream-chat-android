@@ -6,12 +6,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.failedCall
 import io.getstream.chat.android.test.getOrAwaitValue
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,9 +31,8 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
     @Test
     fun `when watching a channel, new messages are updated correctly for the watcher`() = runBlockingTest {
         val newMessage = data.createMessage()
-        val sendMessageCall = createCall(newMessage)
 
-        whenever(channelClientMock.sendMessage(any())) doReturn sendMessageCall
+        whenever(channelClientMock.sendMessage(any())) doReturn newMessage.asCall()
 
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val result = chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
@@ -51,9 +49,8 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
     @Test
     fun `when online request works, it is the one used instead of local cache`() = runBlockingTest {
         val desiredCid = randomString()
-        val queryChannelCall = createCall(Channel(cid = desiredCid))
 
-        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn queryChannelCall
+        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn Channel(cid = desiredCid).asCall()
 
         val result = chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
 
@@ -63,46 +60,18 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
 
     @Test
     fun `when online request does NOT work, local cache is used`() = runBlockingTest {
-        val queryChannelCall = createCall(Channel(cid = data.channel1.cid))
+        val queryChannelCall = Channel(cid = data.channel1.cid).asCall()
 
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn queryChannelCall
 
         // Load older messages using backend.
         chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn createFailedCall()
+        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn failedCall("the call failed")
 
         // Now backend fails, so the cache request must work for a successful result.
         val result = chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
 
         Truth.assertThat(result.isSuccess).isTrue()
-    }
-
-    private fun <T : Any> createCall(data: T): Call<T> {
-        return object : Call<T> {
-            override fun execute(): Result<T> = Result(data)
-
-            override fun enqueue(callback: Call.Callback<T>) {
-                TODO("Not yet implemented")
-            }
-
-            override fun cancel() {
-                TODO("Not yet implemented")
-            }
-        }
-    }
-
-    private inline fun <reified T : Any> createFailedCall(): Call<T> {
-        return object : Call<T> {
-            override fun execute(): Result<T> = Result(ChatError("this call failed"))
-
-            override fun enqueue(callback: Call.Callback<T>) {
-                TODO("Not yet implemented")
-            }
-
-            override fun cancel() {
-                TODO("Not yet implemented")
-            }
-        }
     }
 }
