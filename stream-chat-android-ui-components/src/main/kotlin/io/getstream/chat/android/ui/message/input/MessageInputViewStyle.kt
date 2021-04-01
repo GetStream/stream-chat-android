@@ -17,11 +17,49 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
+/*
+* Style for MessageInputView
+*
+* Use this class to style MessageInputView programmatically. You can pass this class to TransformStyle.messageInputStyleTransformer
+* to change the configuration of the View.
+*
+* @constructor Create the data class with all the information necessary to customize MessageInputView
+*
+* @property attachButtonEnabled Enables/disabled the attachment button. If this parameter is set as false, the button gets invisible.
+* @property attachButtonIcon Selects the icon for the attachment button.
+* @property commandsButtonEnabled Enables/disables the commands button. If this parameter is set as false, the button gets invisible.
+* @property commandsButtonIcon Selects the icon for the commands button.
+* @property messageInputTextSize Selects the size of the text in the input edit text. Deprecated - Use messageInputTextStyle
+* @property messageInputTextColor Selects the colour of the text in the input edit text. Deprecated - Use messageInputTextStyle
+* @property messageInputHintTextColor Selects the colour of the hint text in the input edit text. Deprecated - Use messageInputTextStyle
+* @property messageInputTextStyle Select the style of the EditText of the input. Use to customise size, colour, hint, hint colour, font and style (ex: bold)
+* @property messageInputScrollbarEnabled Enables/disables scroll bar
+* @property messageInputScrollbarFadingEnabled Enables/disables enables/disables FadingEdge for the EditText of the input
+* @property sendButtonEnabled Enables/disables the button to send messages.
+* @property sendButtonEnabledIcon Sets the icon for the button to send messages.
+* @property sendButtonDisabledIcon Sets the icon for the button send messages in the disabled state
+* @property showSendAlsoToChannelCheckbox Show the checkbox to send a message to the channel when inside a thread.
+* @property commandsEnabled Enables/disables commands for the MessageInputView.
+* @property commandsTitleTextStyle Sets the styles for title for the commands box. Use to customise size, colour, font and style (ex: bold)
+* @property commandsNameTextStyle Sets the styles for the name of the command in the command list. Use to customise size, colour, font and style (ex: bold)
+* @property commandsDescriptionTextStyle Sets the styles for the description of the command in the command list. Use to customise size, colour, font and style (ex: bold)
+* @property mentionsEnabled Enables/disables mentions.
+* @property mentionsUsernameTextStyle Configure the appearance for username in the mention list
+* @property mentionsNameTextStyle Configure the appearance for username in the mention list
+* @property mentionsIcon Icon for mentions. It is normally "@"
+* @property backgroundColor background color of MessageInputView
+* @property suggestionsBackground background color of the suggestions box (command and mentions)
+* @property editTextBackgroundDrawable background color of message input box inside MessageInputView
+* @property customCursorDrawable custom cursor of message input box inside MessageInputView
+* @property attachmentMaxFileSize the max attachment size. Be aware that currently the back end of Stream allow 20MB as
+* the max size, use this only if you use your own backend.
+* @property dividerBackground the background of the divider in the top of MessageInputView.
+*/
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
-    public val lightningButtonEnabled: Boolean,
-    public val lightningButtonIcon: Drawable,
+    public val commandsButtonEnabled: Boolean,
+    public val commandsButtonIcon: Drawable,
     @Deprecated("Use messageInputTextStyle") public val messageInputTextSize: Float,
     @Deprecated("Use messageInputTextStyle") @ColorInt public val messageInputTextColor: Int,
     @Deprecated("Use messageInputTextStyle") @ColorInt public val messageInputHintTextColor: Int,
@@ -335,8 +373,8 @@ public data class MessageInputViewStyle(
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
-                    lightningButtonEnabled = lightningButtonEnabled,
-                    lightningButtonIcon = lightningButtonIcon,
+                    commandsButtonEnabled = lightningButtonEnabled,
+                    commandsButtonIcon = lightningButtonIcon,
                     messageInputTextSize = messageInputTextSize,
                     messageInputTextColor = messageInputTextColor,
                     messageInputTextStyle = messageInputTextStyle,
