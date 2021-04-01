@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.stub
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -110,5 +111,16 @@ internal class MarkReadImplTest {
 
             Truth.assertThat(result.isSuccess).isTrue()
             Truth.assertThat(result.data()).isTrue()
+        }
+
+    @Test
+    fun `Given valid cid and failed ChannelController result Should not call client`() =
+        runBlockingTest {
+            channelController.stub { onBlocking { markRead() } doReturn false }
+
+            sut.invoke(cid).execute()
+
+            verify(channelController).markRead()
+            verifyZeroInteractions(client)
         }
 }
