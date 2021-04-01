@@ -30,8 +30,15 @@ internal class WhenQuery {
     }
 
     @Test
-    fun `123`() = runBlockingTest {
-        whenever(chatClient.queryChannels(any())) doReturn TestCall(Result(emptyList()))
-        sut.query()
+    fun `Given already loading state Should return error for query`() = runBlockingTest {
+        pauseDispatcher {
+            whenever(chatClient.queryChannels(any())) doReturn TestCall(Result(emptyList()))
+            sut.query()
+
+            val result = sut.query()
+
+            // TODO should return error
+            // Truth.assertThat(result.isError).isTrue()
+        }
     }
 }
