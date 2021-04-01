@@ -59,7 +59,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixed attr streamUiCopyMessageActionEnabled. From color to boolean. 
 ### ⬆️ Improved
 
 ### ✅ Added
