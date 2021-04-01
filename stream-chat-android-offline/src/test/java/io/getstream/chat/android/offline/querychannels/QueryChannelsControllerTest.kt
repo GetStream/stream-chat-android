@@ -21,7 +21,6 @@ import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -31,11 +30,9 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantTaskExecutorExtension::class)
-internal class QueryChannelsControllerImplTest {
+internal class QueryChannelsControllerTest {
 
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
