@@ -19,7 +19,6 @@ import java.util.Map;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.livedata.ChatDomain;
-import kotlin.Unit;
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
 
@@ -134,7 +133,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             reaction.setMessageId(message.getId());
             reaction.setType(type);
             if (!cid.equals("")) {
-                ChatDomain.instance().getUseCases().getSendReaction().invoke(cid, reaction, false).enqueue(reactionResult -> Unit.INSTANCE);
+                ChatDomain.instance().getUseCases().getSendReaction().invoke(cid, reaction, false).enqueue();
             }
 
         }
@@ -145,7 +144,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             reaction.setMessageId(message.getId());
             reaction.setType(type);
             if (!cid.equals("")) {
-                ChatDomain.instance().getUseCases().getDeleteReaction().invoke(cid, reaction).enqueue(reactionResult -> Unit.INSTANCE);
+                ChatDomain.instance().getUseCases().getDeleteReaction().invoke(cid, reaction).enqueue();
             }
         }
 

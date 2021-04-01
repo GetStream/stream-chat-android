@@ -131,7 +131,6 @@ internal object EventArguments {
         createdAt = date,
         updatedAt = date,
         lastActive = date,
-        unreadCount = 26,
         unreadChannels = 2,
         totalUnreadCount = 26,
         extraData = mutableMapOf("name" to "Bender", "image" to "https://api.adorable.io/avatars/285/bender.png")

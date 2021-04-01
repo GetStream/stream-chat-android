@@ -23,6 +23,7 @@ import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
+import io.getstream.chat.android.livedata.utils.filter
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +45,7 @@ internal class QueryChannelsController(
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
 ) {
-    var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
+    var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { channel, filterObject -> filterObject.filter(channel) }
     var recoveryNeeded: Boolean = false
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
@@ -221,10 +222,7 @@ internal class QueryChannelsController(
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
-            // TODO: Update after channel's filtering refactoring is done.
-            // In order to interact with messaging channel user needs to be a member so for now,
-            // we are removing only channels of messaging type
-            if (channel.type != "messaging" || channel.members.any { member -> member.getUserId() == domainImpl.currentUser.id }) {
+            if (newChannelEventFilter(channel, filter)) {
                 existingChannelMap[channel.cid] = channel
             } else {
                 domainImpl.scope.launch {

@@ -27,22 +27,6 @@ public interface Call<T : Any> {
      * Executes the call asynchronously, on a background thread. Safe to call from the main
      * thread. The [callback] will always be invoked on the main thread.
      */
-    @Suppress("DeprecatedCallableAddReplaceWith", "NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use the enqueue method with a Callback<T> parameter instead",
-    )
-    // Prevent usages from Kotlin, force call resolution to select the new enqueue function
-    @SinceKotlin("99999.9")
-    public fun enqueue(callback: (Result<T>) -> Unit = {}) {
-        // Not recursive, calls the overload with a Callback parameter
-        enqueue(callback)
-    }
-
-    /**
-     * Executes the call asynchronously, on a background thread. Safe to call from the main
-     * thread. The [callback] will always be invoked on the main thread.
-     */
     public fun enqueue(callback: Callback<T>)
 
     /**

@@ -428,7 +428,10 @@ public class ChatClient internal constructor(
         return socket.events()
     }
 
-    @Deprecated(message = "Use subscribe with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribe with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribe(
         listener: (event: ChatEvent) -> Unit,
@@ -447,7 +450,10 @@ public class ChatClient internal constructor(
      *
      * @see [io.getstream.chat.android.client.models.EventType] for type constants
      */
-    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribeFor(
         vararg eventTypes: String,
@@ -479,7 +485,10 @@ public class ChatClient internal constructor(
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
      */
-    @Deprecated(message = "Use subscribeFor with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
@@ -541,7 +550,10 @@ public class ChatClient internal constructor(
     /**
      * Subscribes to the specific [eventTypes] of the client.
      */
-    @Deprecated("Use subscribeFor with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
@@ -571,7 +583,10 @@ public class ChatClient internal constructor(
      *
      * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
      */
-    @Deprecated("Use subscribeFor with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeFor with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
@@ -633,7 +648,10 @@ public class ChatClient internal constructor(
     /**
      * Subscribes for the next event with the given [eventType].
      */
-    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeForSingle with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun subscribeForSingle(
         eventType: String,
@@ -661,7 +679,10 @@ public class ChatClient internal constructor(
     /**
      * Subscribes for the next event with the given [eventType].
      */
-    @Deprecated("Use subscribeForSingle with ChatEventListener parameter")
+    @Deprecated(
+        message = "Use subscribeForSingle with ChatEventListener parameter",
+        level = DeprecationLevel.ERROR,
+    )
     @SinceKotlin("99999.9")
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
@@ -1038,14 +1059,6 @@ public class ChatClient internal constructor(
 
     @CheckResult
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
-
-    @CheckResult
-    @Deprecated(
-        message = "We are going to replace with flagUser()",
-        replaceWith = ReplaceWith("this.flagUser(userId)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun flag(userId: String): Call<Flag> = flagUser(userId)
 
     @CheckResult
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)

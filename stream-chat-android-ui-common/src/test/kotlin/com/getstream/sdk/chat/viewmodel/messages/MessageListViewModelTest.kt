@@ -246,7 +246,6 @@ internal class MessageListViewModelTest {
             (this as MessageListViewModel.State.Result).let {
                 it.messageListItem.isThread shouldBeEqualTo true
                 it.messageListItem.items.run {
-                    println("JcLog: list -> $this")
                     first().run {
                         this shouldBeInstanceOf MessageListItem.MessageItem::class.java
                         this as MessageListItem.MessageItem
