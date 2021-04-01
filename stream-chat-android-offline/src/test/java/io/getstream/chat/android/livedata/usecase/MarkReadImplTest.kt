@@ -4,7 +4,9 @@ import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.stub
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -32,6 +34,10 @@ internal class MarkReadImplTest {
 
     private lateinit var chatDomain: ChatDomainImpl
     private lateinit var client: ChatClient
+    private lateinit var channelController: ChannelControllerImpl
+    private lateinit var cid: String
+    private lateinit var channelType: String
+    private lateinit var channelId: String
 
     private lateinit var sut: MarkReadImpl
 
@@ -42,6 +48,22 @@ internal class MarkReadImplTest {
             on { scope } doReturn testCoroutines.scope
         }
         sut = MarkReadImpl(chatDomain)
+        channelController = mock()
+        setupChannelController(channelController)
+    }
+
+    private fun setupChannelController(channelController: ChannelControllerImpl) {
+        channelType = "messaging"
+        channelId = randomString()
+        cid = randomCID()
+        whenever(chatDomain.channel(cid)) doReturn channelController
+        whenever(chatDomain.client) doReturn client
+        whenever(channelController.channelType) doReturn channelType
+        whenever(channelController.channelId) doReturn channelId
+        val markReadCall = mock<Call<Unit>>()
+        whenever(client.markRead(any(), any())) doReturn markReadCall
+        val markReadCallResult = mock<Result<Unit>>()
+        whenever(markReadCall.execute()) doReturn markReadCallResult
     }
 
     @Test
@@ -63,32 +85,42 @@ internal class MarkReadImplTest {
         val channelController = mock<ChannelControllerImpl>()
         val cid = randomCID()
         whenever(chatDomain.channel(cid)) doReturn channelController
+
         sut.invoke(cid).execute()
+
         verify(channelController).markRead()
     }
 
     @Test
-    fun `Given valid cid and successful ChannelController result Should return call client markRead() and return Result(true)`() = runBlockingTest {
-        val channelController = mock<ChannelControllerImpl> {
-            onBlocking { markRead() } doReturn true
+    fun `Given valid cid and successful ChannelController result Should call markRead() on client`() =
+        runBlockingTest {
+            channelController.stub { onBlocking { markRead() } doReturn true }
+
+            sut.invoke(cid).execute()
+
+            verify(channelController).markRead()
+            verify(client).markRead(channelType, channelId)
         }
-        val channelType = "messaging"
-        val channelId = randomString()
-        val cid = randomCID()
-        whenever(chatDomain.channel(cid)) doReturn channelController
-        whenever(chatDomain.client) doReturn client
-        whenever(channelController.channelType) doReturn channelType
-        whenever(channelController.channelId) doReturn channelId
-        val markReadCall = mock<Call<Unit>>()
-        whenever(client.markRead(any(), any())) doReturn markReadCall
-        val markReadCallResult = mock<Result<Unit>>()
-        whenever(markReadCall.execute()) doReturn markReadCallResult
 
-        val result = sut.invoke(cid).execute()
+    @Test
+    fun `Given valid cid and successful ChannelController result Should return return successful Result`() =
+        runBlockingTest {
+            channelController.stub { onBlocking { markRead() } doReturn true }
 
-        verify(channelController).markRead()
-        verify(client).markRead(channelType, channelId)
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isTrue()
-    }
+            val result = sut.invoke(cid).execute()
+
+            Truth.assertThat(result.isSuccess).isTrue()
+            Truth.assertThat(result.data()).isTrue()
+        }
+
+    @Test
+    fun `Given valid cid and failed ChannelController result Should not call client`() =
+        runBlockingTest {
+            channelController.stub { onBlocking { markRead() } doReturn false }
+
+            sut.invoke(cid).execute()
+
+            verify(channelController).markRead()
+            verifyZeroInteractions(client)
+        }
 }

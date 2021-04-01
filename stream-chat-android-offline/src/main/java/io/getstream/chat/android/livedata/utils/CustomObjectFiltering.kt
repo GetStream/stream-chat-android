@@ -32,7 +32,7 @@ internal fun <T : CustomObject> Collection<T>.filter(filterObject: FilterObject)
     filter { filterObject.filter(it) }
 
 @Suppress("UNCHECKED_CAST")
-private fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
+internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
     when (this) {
         is AndFilterObject -> filterObjects.all { it.filter(t) }
         is OrFilterObject -> filterObjects.any { it.filter(t) }

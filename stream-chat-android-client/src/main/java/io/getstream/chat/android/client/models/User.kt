@@ -41,7 +41,6 @@ public data class User(
     @SerializedName("last_active")
     var lastActive: Date? = null,
 
-    //region current user fields
     @IgnoreSerialisation
     @SerializedName("total_unread_count")
     var totalUnreadCount: Int = 0,
@@ -51,18 +50,8 @@ public data class User(
     var unreadChannels: Int = 0,
 
     @IgnoreSerialisation
-    @SerializedName("unread_count")
-    @Deprecated(
-        message = "This property is deprecated, it value could be wrong and will be removed in a future version",
-        replaceWith = ReplaceWith("this.totalUnreadCount"),
-        level = DeprecationLevel.ERROR,
-    )
-    var unreadCount: Int = 0,
-
-    @IgnoreSerialisation
     @SerializedName("mutes")
     var mutes: List<Mute> = mutableListOf(),
-    //endregion
 
     val teams: List<String> = listOf(),
 
