@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/stream_ui_default_header_height"
-    android:background="@color/stream_ui_white"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,7 +66,6 @@
         android:id="@+id/subtitleContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
         app:layout_constraintRight_toRightOf="@+id/avatar"
         app:layout_constraintTop_toBottomOf="@+id/title"
@@ -79,6 +78,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
+            android:layout_marginBottom="8dp"
             >
 
             <ProgressBar
@@ -106,6 +106,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
+            android:layout_marginBottom="8dp"
             >
 
             <TextView
@@ -135,6 +136,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
+            android:layout_marginBottom="8dp"
             >
 
             <io.getstream.chat.android.ui.typing.TypingIndicatorView
@@ -150,6 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
             >
 
             <TextView
@@ -185,4 +188,4 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
