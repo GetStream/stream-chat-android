@@ -91,7 +91,6 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun enableBackgroundSync ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
-	public final fun notificationConfig (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun offlineDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun offlineEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;

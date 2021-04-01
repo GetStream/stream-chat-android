@@ -3,13 +3,15 @@ package io.getstream.chat.android.livedata.utils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 
-internal class LiveDiffCounter<T>(var diffCallback: (List<T>, List<T>) -> DiffUtil.DiffResult) : ListUpdateCallback {
-    var counts = mutableMapOf("events" to 0, "changed" to 0, "moved" to 0, "inserted" to 0, "removed" to 0)
+internal class DiffUtilOperationCounter<T>(
+    var diffCallback: (List<T>, List<T>) -> DiffUtil.DiffResult,
+) : ListUpdateCallback {
+    var counts = UpdateOperationCounts()
     var new: List<T>? = null
     var old: List<T>? = null
 
     fun onEvent(newValues: List<T>) {
-        counts["events"] = counts["events"]!! + 1
+        counts.events++
 
         new = newValues
         if (old != null && new != null) {
@@ -20,18 +22,26 @@ internal class LiveDiffCounter<T>(var diffCallback: (List<T>, List<T>) -> DiffUt
     }
 
     override fun onChanged(position: Int, count: Int, payload: Any?) {
-        counts["changed"] = counts["changed"]!! + 1
+        counts.changed++
     }
 
     override fun onMoved(fromPosition: Int, toPosition: Int) {
-        counts["moved"] = counts["moved"]!! + 1
+        counts.moved++
     }
 
     override fun onInserted(position: Int, count: Int) {
-        counts["inserted"] = counts["inserted"]!! + 1
+        counts.inserted++
     }
 
     override fun onRemoved(position: Int, count: Int) {
-        counts["removed"] = counts["removed"]!! + 1
+        counts.removed++
     }
 }
+
+internal data class UpdateOperationCounts(
+    var events: Int = 0,
+    var changed: Int = 0,
+    var moved: Int = 0,
+    var inserted: Int = 0,
+    var removed: Int = 0,
+)

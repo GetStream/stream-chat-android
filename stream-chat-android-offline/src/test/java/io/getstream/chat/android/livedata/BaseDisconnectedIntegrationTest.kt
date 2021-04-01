@@ -5,12 +5,11 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.NoRetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import kotlinx.coroutines.runBlocking
@@ -47,16 +46,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
         chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(
             db
         ).offlineEnabled().userPresenceEnabled().recoveryDisabled().buildImpl()
-        chatDomainImpl.retryPolicy = object :
-            RetryPolicy {
-            override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
-                return false
-            }
-
-            override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
-                return 1000
-            }
-        }
+        chatDomainImpl.retryPolicy = NoRetryPolicy()
 
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
