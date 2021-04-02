@@ -19,10 +19,12 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class WhenQuery {
@@ -93,6 +95,27 @@ internal class WhenQuery {
         Truth.assertThat(result.data()).isEqualTo(dbChannels)
     }
 
+    @Test
+    fun `Given channels in DB and successful network request Should return channels from network response`() = runBlockingTest {
+        val dbChannel = randomChannel(cid = "cid", lastMessageAt = Date(1000L))
+        val networkChannels = listOf(dbChannel.copy(lastMessageAt = Date(2000L)), randomChannel(cid = "cid2"))
+        val sut = Fixture()
+            .givenQueryChannelsSpec(
+                QueryChannelsSpec(
+                    Filters.neutral(),
+                    QuerySort.Companion.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
+                )
+            )
+            .givenDBChannels(listOf(dbChannel))
+            .givenNetworkChannels(networkChannels)
+            .get()
+
+        val result = sut.query()
+
+        Truth.assertThat(result.isSuccess).isTrue()
+        Truth.assertThat(result.data()).isEqualTo(networkChannels)
+    }
+
     private class Fixture {
         private var chatClient: ChatClient = mock()
         private var repositories: RepositoryFacade = mock()
@@ -116,11 +139,7 @@ internal class WhenQuery {
         }
 
         suspend fun givenQueryChannelsSpec(queryChannelsSpec: QueryChannelsSpec) = apply {
-            whenever(repositories.selectById(any())) doReturn QueryChannelsSpec(
-                Filters.neutral(),
-                QuerySort.Companion.desc(Channel::lastMessageAt),
-                cids = listOf("cid1", "cid2")
-            )
+            whenever(repositories.selectById(any())) doReturn queryChannelsSpec
             whenever(chatDomainImpl.selectAndEnrichChannels(any(), any())) doReturn emptyList()
         }
 
@@ -138,6 +157,23 @@ internal class WhenQuery {
                 }
             }
             whenever(chatDomainImpl.selectAndEnrichChannels(any(), any())) doReturn dbChannels
+        }
+
+        fun givenNetworkChannels(channels: List<Channel>) = apply {
+            whenever(chatClient.queryChannels(any())) doReturn channels.asCall()
+
+            whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
+                val cid = invocationOnMock.arguments[0] as String
+                mock<ChannelControllerImpl> {
+                    on { toChannel() } doReturn channels.first { it.cid == cid }
+                }
+            }
+            whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
+                val channel = invocationOnMock.arguments[0] as Channel
+                mock<ChannelControllerImpl> {
+                    on { toChannel() } doReturn channel
+                }
+            }
         }
 
         fun get(): QueryChannelsController {
