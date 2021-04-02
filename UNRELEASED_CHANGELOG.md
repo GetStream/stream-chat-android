@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Provide AvatarView class
 
 ### ⚠️ Changed
 
