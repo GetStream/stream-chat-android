@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.querychannels
 
-import androidx.lifecycle.asLiveData
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -22,11 +21,8 @@ import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
@@ -128,15 +124,14 @@ internal class WhenQuery {
         }
 
     @Test
-    fun `Given DB channels and failed network response Should update channels flow value`() = runBlocking {
+    fun `Given DB channels and failed network response Should update channels flow value`() = runBlockingTest {
         val dbChannels = listOf(
             randomChannel(cid = "cid1", lastMessageAt = Date(2000L)),
             randomChannel(cid = "cid2", lastMessageAt = Date(1000L))
         )
-        val querySort = QuerySort<Channel>() // QuerySort.Companion.desc(Channel::lastMessageAt)
+        val querySort = QuerySort<Channel>()
         val sut = Fixture()
             .givenFailedNetworkRequest()
-            .givenScope(scope)
             .givenQuerySort(querySort)
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
@@ -150,11 +145,7 @@ internal class WhenQuery {
 
         sut.query()
 
-        sut.channels.filter { it.isNotEmpty() }.asLiveData().getOrAwaitValue()
-            .let { flowValue ->
-                Truth.assertThat(flowValue).isEqualTo(dbChannels)
-                scope.cleanupTestCoroutines()
-            }
+        Truth.assertThat(sut.channels.value).isEqualTo(dbChannels)
     }
 
     private class Fixture {
@@ -170,10 +161,6 @@ internal class WhenQuery {
 
         fun givenRepoFacade(repositoryFacade: RepositoryFacade) = apply {
             repositories = repositoryFacade
-        }
-
-        fun givenScope(scope: CoroutineScope) = apply {
-            this.scope = scope
         }
 
         fun givenChatDomain(chatDomainImpl: ChatDomainImpl) = apply {
