@@ -19,6 +19,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListHeaderViewBinding
@@ -310,6 +311,12 @@ public class MessageListHeaderView : ConstraintLayout {
             isVisible = showBackButton
             isClickable = showBackButton
         }
+
+        val backIcon = attrs.getDrawable(R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackButtonIcon)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_arrow_left)
+
+        binding.backButton.setImageDrawable(backIcon)
+
         binding.backButtonBadge.apply {
             isVisible =
                 attrs.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowBackButtonBadge, false)

@@ -167,6 +167,13 @@ class Android {
             // Set custom view holder factory
             channelListView.setViewHolderFactory(customFactory)
         }
+
+        fun otherCustomizations() {
+            TransformStyle.channelListStyleTransformer = StyleTransformer { defaultViewStyle ->
+                // Modify default view style
+                defaultViewStyle.copy(optionsEnabled = false)
+            }
+        }
     }
 
     /**

@@ -34,13 +34,11 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -198,6 +196,14 @@ public class Android {
 
             // Set custom view holder factory
             channelListView.setViewHolderFactory(customFactory);
+        }
+
+        public void otherCustomizations() {
+            TransformStyle.INSTANCE.setChannelListStyleTransformer(viewStyle -> {
+                        // Modify default view style
+                        return viewStyle;
+                    }
+            );
         }
     }
 
