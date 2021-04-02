@@ -1,15 +1,19 @@
 package io.getstream.chat.docs.cookbook.ui
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.StyleTransformer
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -21,6 +25,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.CustomChannelListItemBinding
 
@@ -68,7 +73,25 @@ class ChannelList : Fragment() {
         }
     }
 
-    fun customizations() {
+    fun changingChannelListViewStyle() {
+        TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                optionsEnabled = false,
+                foregroundLayoutColor = Color.LTGRAY,
+                indicatorReadIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
+                channelTitleText = TextStyle(
+                    color = Color.WHITE,
+                    size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
+                ),
+                lastMessageText = TextStyle(
+                    size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_small),
+                ),
+                unreadMessageCounterBackgroundColor = Color.BLUE,
+            )
+        }
+    }
+
+    fun changingChannelListViewComponents() {
         // Inflate loading view
         val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
         // Set loading view

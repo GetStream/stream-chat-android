@@ -7,12 +7,33 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
+/**
+ * Style for [ChannelListView].
+ * Use this class together with [TransformStyle.channelListStyleTransformer] to change [ChannelListView] styles programmatically.
+ *
+ * @property optionsIcon - icon for channel's options. Default - [R.drawable.stream_ui_ic_more]
+ * @property deleteIcon - icon for deleting channel option. Default - [R.drawable.stream_ui_ic_delete]
+ * @property optionsEnabled - enables/disables channel's options. Enabled by default
+ * @property deleteEnabled - enables/disables delete channel option. Enabled by default
+ * @property swipeEnabled - enables/disables swipe on channel list item. Enabled by default
+ * @property backgroundLayoutColor - background color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_smoke]
+ * @property channelTitleText - appearance for channel's title, displayed in [ChannelViewHolder]
+ * @property lastMessageText - appearance for last message text, displayed in [ChannelViewHolder]
+ * @property lastMessageDateText - appearance for last message date text displayed in [ChannelViewHolder]
+ * @property indicatorSentIcon - icon for indicating message sent status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_check_single]
+ * @property indicatorReadIcon - icon for indicating message read status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_check_double]
+ * @property indicatorPendingSyncIcon - icon for indicating sync pending status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_clock]
+ * @property foregroundLayoutColor - foreground color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_snow]
+ * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
+ * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
+ */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
     public val deleteIcon: Drawable,
