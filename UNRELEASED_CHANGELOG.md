@@ -59,11 +59,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
 ### ⬆️ Improved
 
 ### ✅ Added
-
+Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
 ### ⚠️ Changed
 
 ### ❌ Removed
