@@ -64,7 +64,7 @@ Now it is possible to change the color of `MessageListHeaderView` from the XML.
 ### ⬆️ Improved
 
 ### ✅ Added
-
+Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
 ### ⚠️ Changed
 
 ### ❌ Removed

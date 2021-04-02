@@ -24,6 +24,8 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.StyleTransformer
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -163,6 +165,13 @@ class Android {
 
             // Set custom view holder factory
             channelListView.setViewHolderFactory(customFactory)
+        }
+
+        fun otherCustomizations() {
+            TransformStyle.channelListStyleTransformer = StyleTransformer { defaultViewStyle ->
+                // Modify default view style
+                defaultViewStyle.copy(optionsEnabled = false)
+            }
         }
     }
 
