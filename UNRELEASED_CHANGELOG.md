@@ -35,6 +35,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix Crash on some devices that are not able to create an Encrypted SharedPreferences
 
 ### ⬆️ Improved
 
