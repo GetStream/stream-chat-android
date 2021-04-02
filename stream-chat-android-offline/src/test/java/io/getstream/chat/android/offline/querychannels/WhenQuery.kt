@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import androidx.lifecycle.asLiveData
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -18,16 +19,25 @@ import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.getOrAwaitValue
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
 
 @ExperimentalCoroutinesApi
+@ExtendWith(InstantTaskExecutorExtension::class)
 internal class WhenQuery {
+
+    private val scope: TestCoroutineScope = TestCoroutineScope()
 
     @Test
     fun `Should request query channels spec in DB`() = runBlockingTest {
@@ -96,34 +106,74 @@ internal class WhenQuery {
     }
 
     @Test
-    fun `Given channels in DB and successful network request Should return channels from network response`() = runBlockingTest {
-        val dbChannel = randomChannel(cid = "cid", lastMessageAt = Date(1000L))
-        val networkChannels = listOf(dbChannel.copy(lastMessageAt = Date(2000L)), randomChannel(cid = "cid2"))
+    fun `Given channels in DB and successful network request Should return channels from network response`() =
+        runBlockingTest {
+            val dbChannel = randomChannel(cid = "cid", lastMessageAt = Date(1000L))
+            val networkChannels = listOf(dbChannel.copy(lastMessageAt = Date(2000L)), randomChannel(cid = "cid2"))
+            val sut = Fixture()
+                .givenQueryChannelsSpec(
+                    QueryChannelsSpec(
+                        Filters.neutral(),
+                        QuerySort.Companion.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
+                    )
+                )
+                .givenDBChannels(listOf(dbChannel))
+                .givenNetworkChannels(networkChannels)
+                .get()
+
+            val result = sut.query()
+
+            Truth.assertThat(result.isSuccess).isTrue()
+            Truth.assertThat(result.data()).isEqualTo(networkChannels)
+        }
+
+    @Test
+    fun `Given DB channels and failed network response Should update channels flow value`() = runBlocking {
+        val dbChannels = listOf(
+            randomChannel(cid = "cid1", lastMessageAt = Date(2000L)),
+            randomChannel(cid = "cid2", lastMessageAt = Date(1000L))
+        )
+        val querySort = QuerySort<Channel>() // QuerySort.Companion.desc(Channel::lastMessageAt)
         val sut = Fixture()
+            .givenFailedNetworkRequest()
+            .givenScope(scope)
+            .givenQuerySort(querySort)
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    QuerySort.Companion.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
+                    querySort,
+                    cids = listOf("cid1", "cid2")
                 )
             )
-            .givenDBChannels(listOf(dbChannel))
-            .givenNetworkChannels(networkChannels)
+            .givenDBChannels(dbChannels)
             .get()
 
-        val result = sut.query()
+        sut.query()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isEqualTo(networkChannels)
+        sut.channels.filter { it.isNotEmpty() }.asLiveData().getOrAwaitValue()
+            .let { flowValue ->
+                Truth.assertThat(flowValue).isEqualTo(dbChannels)
+                scope.cleanupTestCoroutines()
+            }
     }
 
     private class Fixture {
         private var chatClient: ChatClient = mock()
         private var repositories: RepositoryFacade = mock()
-        private val scope: TestCoroutineScope = TestCoroutineScope()
+        private var scope: CoroutineScope = TestCoroutineScope()
         private var chatDomainImpl: ChatDomainImpl = mock()
+        private var querySort: QuerySort<Channel> = QuerySort()
+
+        fun givenQuerySort(querySort: QuerySort<Channel>) = apply {
+            this.querySort = querySort
+        }
 
         fun givenRepoFacade(repositoryFacade: RepositoryFacade) = apply {
             repositories = repositoryFacade
+        }
+
+        fun givenScope(scope: CoroutineScope) = apply {
+            this.scope = scope
         }
 
         fun givenChatDomain(chatDomainImpl: ChatDomainImpl) = apply {
@@ -180,7 +230,7 @@ internal class WhenQuery {
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repositories
 
-            return QueryChannelsController(Filters.neutral(), mock(), chatClient, chatDomainImpl)
+            return QueryChannelsController(Filters.neutral(), querySort, chatClient, chatDomainImpl)
         }
     }
 }
