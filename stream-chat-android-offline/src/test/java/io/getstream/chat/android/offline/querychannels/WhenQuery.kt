@@ -18,7 +18,6 @@ import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.CoroutineScope
@@ -26,14 +25,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantTaskExecutorExtension::class)
 internal class WhenQuery {
-
-    private val scope: TestCoroutineScope = TestCoroutineScope()
 
     @Test
     fun `Should request query channels spec in DB`() = runBlockingTest {
@@ -124,29 +119,53 @@ internal class WhenQuery {
         }
 
     @Test
-    fun `Given DB channels and failed network response Should update channels flow value`() = runBlockingTest {
-        val dbChannels = listOf(
-            randomChannel(cid = "cid1", lastMessageAt = Date(2000L)),
-            randomChannel(cid = "cid2", lastMessageAt = Date(1000L))
-        )
-        val querySort = QuerySort<Channel>()
-        val sut = Fixture()
-            .givenFailedNetworkRequest()
-            .givenQuerySort(querySort)
-            .givenQueryChannelsSpec(
-                QueryChannelsSpec(
-                    Filters.neutral(),
-                    querySort,
-                    cids = listOf("cid1", "cid2")
+    fun `Given DB channels and failed network response Should set channels from db to channels flow in properly sorted order`() =
+        runBlockingTest {
+            val dbChannel1 = randomChannel(cid = "cid1", lastMessageAt = Date(1000L))
+            val dbChannel2 = randomChannel(cid = "cid2", lastMessageAt = Date(2000L))
+            val querySort = QuerySort.desc(Channel::lastMessageAt)
+            val sut = Fixture()
+                .givenFailedNetworkRequest()
+                .givenQuerySort(querySort)
+                .givenQueryChannelsSpec(
+                    QueryChannelsSpec(
+                        Filters.neutral(),
+                        querySort,
+                        cids = listOf("cid1", "cid2")
+                    )
                 )
-            )
-            .givenDBChannels(dbChannels)
-            .get()
+                .givenDBChannels(listOf(dbChannel1, dbChannel2))
+                .get()
 
-        sut.query()
+            sut.query()
 
-        Truth.assertThat(sut.channels.value).isEqualTo(dbChannels)
-    }
+            Truth.assertThat(sut.channels.value).isEqualTo(listOf(dbChannel2, dbChannel1))
+        }
+
+    @Test
+    fun `Given DB channels and network channels Should set channels from network to channels flow in properly sorted order`() =
+        runBlockingTest {
+            val dbChannel = randomChannel(cid = "cid1", lastMessageAt = Date(1000L))
+            val networkChannel1 = dbChannel.copy(lastMessageAt = Date(2000L))
+            val networkChannel2 = randomChannel(cid = "cid2", lastMessageAt = Date(3000L))
+            val querySort = QuerySort.desc(Channel::lastMessageAt)
+            val sut = Fixture()
+                .givenQuerySort(querySort)
+                .givenQueryChannelsSpec(
+                    QueryChannelsSpec(
+                        Filters.neutral(),
+                        querySort,
+                        cids = listOf("cid1", "cid2")
+                    )
+                )
+                .givenDBChannels(listOf(dbChannel))
+                .givenNetworkChannels(listOf(networkChannel1, networkChannel2))
+                .get()
+
+            sut.query()
+
+            Truth.assertThat(sut.channels.value).isEqualTo(listOf(networkChannel2, networkChannel1))
+        }
 
     private class Fixture {
         private var chatClient: ChatClient = mock()
