@@ -53,6 +53,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+Added theme to all activities all the SDK. You can override then in your project by redefining the styles:
+- StreamUiAttachmentGalleryActivityStyle
+- StreamUiAttachmentMediaActivityStyle
+- StreamUiAttachmentActivityStyle
 
 ### ❌ Removed
 
