@@ -59,8 +59,9 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
-Now it is possible to change the color of `MessageListHeaderView` from the XML.
+- Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
+- Now it is possible to change the color of `MessageListHeaderView` from the XML.
+- Fixed the `MessageListView::setUserClickListener` method.
 ### ⬆️ Improved
 
 ### ✅ Added

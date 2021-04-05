@@ -426,6 +426,9 @@ public class Android {
             messageListView.setAttachmentClickListener((message, attachment) -> {
                 // Handle click on attachment
             });
+            messageListView.setUserClickListener((user) -> {
+                // Handle click on user avatar
+            });
         }
 
         public void handlers() {
