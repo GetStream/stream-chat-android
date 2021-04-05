@@ -651,7 +651,7 @@ class Android {
     /**
      * @see <a href="https://getstream.io/nessy/docs/chat_docs/unread_counts/unread_channel">Channels</a>
      */
-    class ReadCount : Fragment() {
+    class UnreadCount : Fragment() {
 
         fun unreadCountInfo() {
             // Get channel

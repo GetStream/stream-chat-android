@@ -721,7 +721,7 @@ public class Android {
     /**
      * @see <a href="https://getstream.io/nessy/docs/chat_docs/unread_counts/unread_channel">Channels</a>
      */
-    public class ReadCount extends Fragment {
+    public class UnreadCount extends Fragment {
 
         public void getUnreadCountInfo() {
             // Get channel
