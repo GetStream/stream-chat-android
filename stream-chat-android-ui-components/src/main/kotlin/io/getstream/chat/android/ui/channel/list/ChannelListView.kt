@@ -16,6 +16,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsDialogFragment
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelListItemPredicate
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelLongClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
@@ -213,7 +217,15 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun setChannels(channels: List<ChannelListItem>) {
-        simpleChannelListView.setChannels(channels.filter(channelListItemPredicate::predicate))
+        val filteredChannels = channels.filter(channelListItemPredicate::predicate)
+
+        if (filteredChannels.isEmpty()) {
+            showEmptyStateView()
+        } else {
+            hideEmptyStateView()
+        }
+
+        simpleChannelListView.setChannels(filteredChannels)
     }
 
     public fun hideLoadingView() {
@@ -221,6 +233,7 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun showLoadingView() {
+        hideEmptyStateView()
         this.loadingView.isVisible = true
     }
 
