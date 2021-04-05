@@ -35,7 +35,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-
+- Fixed the message read indicator in the message list
 ### ⬆️ Improved
 
 ### ✅ Added
