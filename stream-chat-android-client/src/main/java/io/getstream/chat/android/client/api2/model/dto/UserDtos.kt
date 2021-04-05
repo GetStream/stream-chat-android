@@ -39,7 +39,7 @@ internal data class DownstreamUserDto(
     val unread_count: Int = 0,
     val mutes: List<DownstreamMuteDto> = emptyList(),
     val teams: List<String> = emptyList(),
-    val channel_mutes: List<DownstreamChannelMuteDto> = emptyList(),
+    val channel_mutes: List<DownstreamChannelMuteDto>?,
 
     val extraData: Map<String, Any>,
 )
