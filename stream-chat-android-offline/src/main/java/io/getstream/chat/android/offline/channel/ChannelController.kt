@@ -1276,24 +1276,25 @@ internal class ChannelController(
          * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
          * to show in the channel list.
          */
-        val incomingUserRead = incomingUserIdToReadMap[currentUserId] ?: return
+        incomingUserIdToReadMap[currentUserId]?.let {
 
-        // the previous last Read date that is most current
-        val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+            // the previous last Read date that is most current
+            val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
 
-        // Use AFTER to determine if the incoming read is more current.
-        // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-        val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
-            previousLastRead,
-            OFFSET_EVENT_TIME
-        ) == true
+            // Use AFTER to determine if the incoming read is more current.
+            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+            val shouldUpdateByIncoming = previousLastRead == null || it.lastRead?.inOffsetWith(
+                previousLastRead,
+                OFFSET_EVENT_TIME
+            ) == true
 
-        if (shouldUpdateByIncoming) {
-            _read.value = incomingUserRead
-            _unreadCount.value = incomingUserRead.unreadMessages
-        } else {
-            // if the previous Read was more current, replace the item in the update map
-            incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
+            if (shouldUpdateByIncoming) {
+                _read.value = it
+                _unreadCount.value = it.unreadMessages
+            } else {
+                // if the previous Read was more current, replace the item in the update map
+                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
+            }
         }
 
         // always post the newly updated map
