@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -19,6 +20,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
@@ -641,6 +643,47 @@ class Android {
                     val events: List<ChatEvent> = result.data()
                 } else {
                     // Handle result.error()
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/unread_counts/unread_channel">Channels</a>
+     */
+    class ReadCount : Fragment() {
+
+        fun unreadCountInfo() {
+            // Get channel
+            val channel = ChatDomain.instance()
+                .useCases
+                .watchChannel(cid = "messaging:123", messageLimit = 0)
+                .execute()
+                .data()
+                .toChannel()
+
+            // readState is the list of read states for each user on the channel
+            val readState : List<ChannelUserRead> = channel.read
+        }
+
+        fun unreadCountForCurrentUser() {
+            // Get channel controller
+            val channelController = ChatDomain.instance()
+                .useCases
+                .watchChannel(cid = "messaging:123", messageLimit = 0)
+                .execute()
+                .data()
+
+            //Unread count for current user
+            val unreadCount: LiveData<Int?> = channelController.unreadCount
+        }
+
+        fun markAllRead() {
+            ChatClient.instance().markAllRead().enqueue { result ->
+                if (result.isSuccess) {
+                    //Handle success
+                } else {
+                    //Handle failure
                 }
             }
         }

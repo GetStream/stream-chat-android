@@ -34,11 +34,14 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -75,6 +78,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
+import kotlin.Unit;
 
 import static java.util.Collections.singletonList;
 
@@ -709,6 +713,49 @@ public class Android {
                     List<ChatEvent> events = result.data();
                 } else {
                     // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/unread_counts/unread_channel">Channels</a>
+     */
+    public class ReadCount extends Fragment {
+
+        public void getUnreadCountInfo() {
+            // Get channel
+            Channel channel = ChatDomain.instance()
+                    .getUseCases()
+                    .getWatchChannel()
+                    .invoke("messaging:123", 0)
+                    .execute()
+                    .data()
+                    .toChannel();
+
+            // readState is the list of read states for each user on the channel
+            List<ChannelUserRead> userReadList = channel.getRead();
+        }
+
+        public void getUnreadCountForCurrentUser() {
+            // Get channel controller
+            ChannelController channelController = ChatDomain.instance()
+                    .getUseCases()
+                    .getWatchChannel()
+                    .invoke("messaging:123", 0)
+                    .execute()
+                    .data();
+
+            //Unread count for current user
+            LiveData<Integer> unreadCount = channelController.getUnreadCount();
+        }
+
+        public void markAllRead() {
+            ChatClient.instance().markAllRead().enqueue(result -> {
+                if (result.isSuccess()) {
+                    //Handle success
+                } else {
+                    //Handle failure
                 }
             });
         }
