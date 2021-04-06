@@ -663,7 +663,7 @@ class Android {
                 .toChannel()
 
             // readState is the list of read states for each user on the channel
-            val readState : List<ChannelUserRead> = channel.read
+            val readState: List<ChannelUserRead> = channel.read
         }
 
         fun unreadCountForCurrentUser() {
@@ -674,16 +674,16 @@ class Android {
                 .execute()
                 .data()
 
-            //Unread count for current user
+            // Unread count for current user
             val unreadCount: LiveData<Int?> = channelController.unreadCount
         }
 
         fun markAllRead() {
             ChatClient.instance().markAllRead().enqueue { result ->
                 if (result.isSuccess) {
-                    //Handle success
+                    // Handle success
                 } else {
-                    //Handle failure
+                    // Handle failure
                 }
             }
         }
