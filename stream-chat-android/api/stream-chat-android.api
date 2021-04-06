@@ -488,6 +488,16 @@ public class com/getstream/sdk/chat/utils/roundedImageView/CircularImageView : a
 	public fun toggle ()V
 }
 
+public final class com/getstream/sdk/chat/view/AvatarView : androidx/appcompat/widget/AppCompatImageView {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun setChannelAndLastActiveUsers (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;Lcom/getstream/sdk/chat/view/messages/AvatarStyle;)V
+	public final fun setLastActiveUsers (Ljava/util/List;Lcom/getstream/sdk/chat/view/messages/AvatarStyle;)V
+	public final fun setUser (Lio/getstream/chat/android/client/models/User;Lcom/getstream/sdk/chat/view/messages/AvatarStyle;)V
+}
+
 public final class com/getstream/sdk/chat/view/ChannelHeaderView : android/widget/RelativeLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
