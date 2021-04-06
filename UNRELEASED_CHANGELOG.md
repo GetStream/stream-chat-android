@@ -49,6 +49,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed getting files provided by content resolver.
 
 ### ⬆️ Improved
 
