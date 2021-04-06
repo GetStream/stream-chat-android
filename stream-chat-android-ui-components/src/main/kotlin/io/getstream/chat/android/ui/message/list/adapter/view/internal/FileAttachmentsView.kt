@@ -138,7 +138,10 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
 
-            if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
+            if (attachment.uploadState == Attachment.UploadState.InProgress) {
+                actionButton.setImageDrawable(null)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
+            } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
                 val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
                 ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
