@@ -25,8 +25,17 @@
                 />
         </provider>
 
-        <activity android:name=".gallery.AttachmentGalleryActivity" />
-        <activity android:name=".gallery.AttachmentMediaActivity" />
-        <activity android:name=".gallery.AttachmentActivity" />
+        <activity
+            android:name=".gallery.AttachmentGalleryActivity"
+            android:theme="@style/StreamUiAttachmentGalleryActivityStyle"
+            />
+        <activity
+            android:name=".gallery.AttachmentMediaActivity"
+            android:theme="@style/StreamUiAttachmentMediaActivityStyle"
+            />
+        <activity
+            android:name=".gallery.AttachmentActivity"
+            android:theme="@style/StreamUiAttachmentActivityStyle"
+            />
     </application>
 </manifest>
