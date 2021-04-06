@@ -31,18 +31,17 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.channel.list.ChannelListView;
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
@@ -192,6 +191,14 @@ public class Android {
 
             // Set custom view holder factory
             channelListView.setViewHolderFactory(customFactory);
+        }
+
+        public void otherCustomizations() {
+            TransformStyle.INSTANCE.setChannelListStyleTransformer(viewStyle -> {
+                        // Modify default view style
+                        return viewStyle;
+                    }
+            );
         }
     }
 
@@ -418,6 +425,9 @@ public class Android {
             });
             messageListView.setAttachmentClickListener((message, attachment) -> {
                 // Handle click on attachment
+            });
+            messageListView.setUserClickListener((user) -> {
+                // Handle click on user avatar
             });
         }
 

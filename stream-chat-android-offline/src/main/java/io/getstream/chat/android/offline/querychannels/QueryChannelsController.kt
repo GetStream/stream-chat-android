@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,7 +44,8 @@ internal class QueryChannelsController(
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
 ) {
-    var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { channel, filterObject -> filterObject.filter(channel) }
+    var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
+        { channel, filterObject -> filterObject.filter(channel) }
     var recoveryNeeded: Boolean = false
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
@@ -54,8 +54,8 @@ internal class QueryChannelsController(
     private val _loading = MutableStateFlow(false)
     private val _loadingMore = MutableStateFlow(false)
     private val _endOfChannels = MutableStateFlow(false)
-    private val _sortedChannels = _channels.filterNotNull()
-        .map { it.values.sortedWith(sort.comparator) }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     internal val loading: StateFlow<Boolean> = _loading
     internal val loadingMore: StateFlow<Boolean> = _loadingMore

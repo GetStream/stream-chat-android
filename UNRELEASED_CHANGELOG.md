@@ -35,6 +35,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix Crash on some devices that are not able to create an Encrypted SharedPreferences
 
 ### ⬆️ Improved
 
@@ -59,11 +60,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
+- Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
+- Now it is possible to change the color of `MessageListHeaderView` from the XML.
+- Fixed the `MessageListView::setUserClickListener` method.
+- Fixed bugs in handling empty states for `ChannelListView`. Deprecated manual methods for showing/hiding empty state changes.
+
 ### ⬆️ Improved
 
 ### ✅ Added
-Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
+- Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
 ### ⚠️ Changed
 
 ### ❌ Removed

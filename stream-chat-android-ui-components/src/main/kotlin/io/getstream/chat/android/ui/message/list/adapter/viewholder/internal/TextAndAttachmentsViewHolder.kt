@@ -52,6 +52,9 @@ internal class TextAndAttachmentsViewHolder(
                 listeners.messageLongClickListener.onMessageLongClick(data.message)
                 true
             }
+            avatarView.setOnClickListener {
+                listeners.userClickListener.onUserClick(data.message.user)
+            }
             LongClickFriendlyLinkMovementMethod.set(
                 textView = messageText,
                 longClickTarget = root,

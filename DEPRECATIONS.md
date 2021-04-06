@@ -4,8 +4,9 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
-| `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use Use MessageListItemStyle::textStyleMine::colorOrNull() instead |
+| `ChannelListView's empty state methods` <br/>*ui-components* | 2021.04.05 | 2021.04.19 ⌛ | 2021.05.05 ⌛ | These methods no longer need to be called directly, `setChannel` handles empty state changes automatically |
+| `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
+| `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleMine::colorOrNull() instead |
 | `com.getstream.sdk.chat.ChatUI`<br/>*ui-components* | 2021.03.19<br/>4.8.0 | 2021.04.19 ⌛ | 2021.05.19 ⌛ | Use the new ChatUI implementation `io.getstream.chat.android.ui.ChatUI`
 | `GetTotalUnreadCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::totalUnreadCount instead |
 | `GetUnreadChannelCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::channelUnreadCount instead |
