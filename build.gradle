@@ -41,6 +41,7 @@ allprojects {
                 // Remove when https://github.com/google/ExoPlayer/issues/5246 is closed
                 includeGroup("com.google.android.exoplayer")
 
+                // Remove when https://github.com/ongakuer/PhotoDraweeView/issues/81 is closed
                 includeModule("me.relex", "photodraweeview")
 
                 // https://youtrack.jetbrains.com/issue/IDEA-261387
