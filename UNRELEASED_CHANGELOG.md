@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Provide AvatarView class
 
 ### ⚠️ Changed
 
@@ -36,7 +37,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fix Crash on some devices that are not able to create an Encrypted SharedPreferences
-
+- Fixed the message read indicator in the message list
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -55,6 +56,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+Added theme to all activities all the SDK. You can override then in your project by redefining the styles:
+- StreamUiAttachmentGalleryActivityStyle
+- StreamUiAttachmentMediaActivityStyle
+- StreamUiAttachmentActivityStyle
 
 ### ❌ Removed
 

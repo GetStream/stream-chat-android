@@ -23,17 +23,17 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
-internal class AvatarView @JvmOverloads constructor(
+public class AvatarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-    fun setLastActiveUsers(lastActiveUsers: List<User>, style: AvatarStyle) {
+    public fun setLastActiveUsers(lastActiveUsers: List<User>, style: AvatarStyle) {
         configUIs(style) { AvatarDrawable(lastActiveUsers.createBitmaps(style)) }
     }
 
-    fun setChannelAndLastActiveUsers(
+    public fun setChannelAndLastActiveUsers(
         channel: Channel?,
         lastActiveUsers: List<User>,
         style: AvatarStyle
@@ -48,7 +48,7 @@ internal class AvatarView @JvmOverloads constructor(
         }
     }
 
-    fun setUser(user: User, style: AvatarStyle) {
+    public fun setUser(user: User, style: AvatarStyle) {
         configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap(style))) }
     }
 

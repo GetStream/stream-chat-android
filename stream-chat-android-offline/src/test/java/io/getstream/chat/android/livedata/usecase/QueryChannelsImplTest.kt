@@ -1,61 +1,73 @@
 package io.getstream.chat.android.livedata.usecase
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.events.MessageReadEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.utils.calendar
-import io.getstream.chat.android.test.getOrAwaitValue
-import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
-import java.util.Date
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
-@RunWith(AndroidJUnit4::class)
-internal class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
+@ExperimentalCoroutinesApi
+internal class QueryChannelsImplTest {
 
-    @Test
-    @Ignore("mock me")
-    fun filter() = runBlocking {
-        // use case style syntax
-        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
-        assertSuccess(queryChannelResult)
-        val queryChannelsController = queryChannelResult.data()
-        val channels = queryChannelsController.channels.getOrAwaitValue()
-        Truth.assertThat(channels).isNotEmpty()
-        for (channel in channels) {
-            Truth.assertThat(channel.unreadCount).isNotNull()
-        }
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    private lateinit var domain: ChatDomainImpl
+    private lateinit var queryChannelsController: QueryChannelsControllerImpl
+
+    private lateinit var queryChannels: QueryChannelsImpl
+
+    @BeforeEach
+    fun init() {
+        queryChannelsController = mock()
+        domain = mock() { on { scope } doReturn testCoroutines.scope }
+        whenever(domain.queryChannels(any(), any())) doReturn queryChannelsController
+
+        queryChannels = QueryChannelsImpl(domain)
     }
 
     @Test
-    @Ignore("mock me")
-    fun unreadCountNewMessage() = runBlocking {
-        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
-        assertSuccess(queryChannelResult)
-        val queryChannelsController = queryChannelResult.data()
-        val channels = queryChannelsController.channels.getOrAwaitValue()
-        Truth.assertThat(channels).isNotEmpty()
-        val channel = channels.first()
-        val initialCount = channel.unreadCount!!
-        val message2 = Message().apply { text = "it's a beautiful world"; cid = channel.cid; user = data.user2; createdAt = calendar(2021, 5, 14) }
-        val messageEvent = NewMessageEvent(EventType.MESSAGE_NEW, Date(), data.user2, channel.cid, channel.type, channel.id, message2, null, null, null)
-        val channelController = chatDomainImpl.channel(channel)
-        chatDomainImpl.eventHandler.handleEvent(messageEvent)
-        // new message should increase the count by 1
-        Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(initialCount + 1)
-        Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(initialCount + 1)
-        // mark read should set it to zero
-        val readEvent = MessageReadEvent(EventType.MESSAGE_READ, Date(), data.user1, channel.cid, channel.type, channel.id, null)
-        chatDomainImpl.eventHandler.handleEvent(readEvent)
-        val read = channelController.read.getOrAwaitValue()
-        Truth.assertThat(read?.lastRead).isEqualTo(readEvent.createdAt)
-        Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(0)
-        Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(0)
+    fun `When invoked Should return result containing QueryChannelsController instance`() {
+        val anyFilter = Filters.neutral()
+
+        val result = queryChannels.invoke(anyFilter, QuerySort()).execute()
+
+        Truth.assertThat(result.data()).isInstanceOf(QueryChannelsControllerImpl::class.java)
+        Truth.assertThat(result.isSuccess).isTrue()
+    }
+
+    @Test
+    fun `Given channelsLimit = 0 When invoked Should not query controller`() {
+        val anyFilter = Filters.neutral()
+
+        queryChannels.invoke(anyFilter, QuerySort(), limit = 0).execute()
+
+        verifyZeroInteractions(queryChannelsController)
+    }
+
+    @Test
+    fun `Given channelsLimit greater than 0 When invoked Should query controller`() = runBlockingTest {
+        val anyFilter = Filters.neutral()
+        val channelsLimit = 10
+        val messagesLimit = 10
+
+        queryChannels.invoke(anyFilter, QuerySort(), limit = channelsLimit, messageLimit = messagesLimit).execute()
+
+        verify(queryChannelsController).query(channelsLimit, messagesLimit)
     }
 }
