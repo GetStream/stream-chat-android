@@ -38,28 +38,13 @@ allprojects {
         mavenLocal()
         jcenter() {
             content {
-
                 // Remove when https://github.com/google/ExoPlayer/issues/5246 is closed
                 includeGroup("com.google.android.exoplayer")
 
-                // Remove when https://github.com/facebook/flipper/issues/1775 is closed
-                includeGroup("com.facebook.flipper")
-
                 includeModule("me.relex", "photodraweeview")
+
                 // https://youtrack.jetbrains.com/issue/IDEA-261387
                 includeModule("org.jetbrains.trove4j", "trove4j")
-
-                // Remove when https://github.com/korlibs/korte/issues/13 is closed
-                includeModule("com.soywiz.korlibs.korte", "korte-jvm")
-
-                // Remove when https://github.com/Kotlin/kotlinx.html/issues/81 is closed
-                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
-
-                //Remove when https://github.com/JetBrains/markdown/issues/64 is closed
-                includeModule("org.jetbrains", "markdown")
-
-                // Remove when https://github.com/MarkusAmshove/Kluent/issues/190 is closed
-                includeGroup("org.amshove.kluent")
             }
         }
         maven {
