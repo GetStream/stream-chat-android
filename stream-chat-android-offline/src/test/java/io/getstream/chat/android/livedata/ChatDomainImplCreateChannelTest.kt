@@ -1,14 +1,15 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -22,6 +23,7 @@ import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
@@ -202,11 +204,20 @@ internal class ChatDomainImplCreateChannelTest {
             }
         }
 
-    /* @Test
-     fun `Given failed network request When create distinc channel Should return failed response And do not insert any channel to DB`()  =
-         runBlockingTest {
-             val sut = Fixture
-         }*/
+    @Test
+    fun `Given failed network request When create distinct channel Should return failed response And do not insert any channel to DB`() =
+        runBlockingTest {
+            val repositoryFacade: RepositoryFacade = mock()
+            val sut = Fixture()
+                .givenChatClientResult(Result(mock<ChatError>()))
+                .givenRepositoryFacade(repositoryFacade)
+                .get()
+
+            val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
+
+            Truth.assertThat(result.isError).isTrue()
+            verifyZeroInteractions(repositoryFacade)
+        }
 
     private inner class Fixture {
         private val context: Context = mock()
@@ -225,9 +236,9 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
         fun givenChatClientResult(result: Result<Channel>): Fixture = apply {
-            whenever(chatClient.createChannel(any(), any(), any(), any())).doAnswer {
+            whenever(chatClient.createChannel(any(), any(), any(), any())) doReturn TestCall(result)
+            whenever(chatClient.createChannel(any<String>(), any<List<String>>(), any<Map<String, Any>>())) doReturn
                 TestCall(result)
-            }
         }
 
         fun givenOnline(): Fixture = apply {
