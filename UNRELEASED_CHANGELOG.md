@@ -60,12 +60,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
-Now it is possible to change the color of `MessageListHeaderView` from the XML.
+- Fixed attr streamUiCopyMessageActionEnabled. From color to boolean.
+- Now it is possible to change the color of `MessageListHeaderView` from the XML.
+- Fixed the `MessageListView::setUserClickListener` method.
+- Fixed bugs in handling empty states for `ChannelListView`. Deprecated manual methods for showing/hiding empty state changes.
+
 ### ⬆️ Improved
 
 ### ✅ Added
-Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
+- Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
 ### ⚠️ Changed
 
 ### ❌ Removed
