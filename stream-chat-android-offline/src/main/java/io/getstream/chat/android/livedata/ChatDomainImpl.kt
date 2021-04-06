@@ -21,9 +21,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -36,8 +38,11 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
@@ -52,7 +57,38 @@ import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
+import io.getstream.chat.android.livedata.usecase.CancelMessageImpl
+import io.getstream.chat.android.livedata.usecase.CreateChannelImpl
+import io.getstream.chat.android.livedata.usecase.DeleteChannelImpl
+import io.getstream.chat.android.livedata.usecase.DeleteMessageImpl
+import io.getstream.chat.android.livedata.usecase.DeleteReactionImpl
+import io.getstream.chat.android.livedata.usecase.DownloadAttachmentImpl
+import io.getstream.chat.android.livedata.usecase.EditMessageImpl
+import io.getstream.chat.android.livedata.usecase.GetChannelControllerImpl
+import io.getstream.chat.android.livedata.usecase.GetThreadImpl
+import io.getstream.chat.android.livedata.usecase.HideChannelImpl
+import io.getstream.chat.android.livedata.usecase.KeystrokeImpl
+import io.getstream.chat.android.livedata.usecase.LeaveChannelImpl
+import io.getstream.chat.android.livedata.usecase.LoadMessageByIdImpl
+import io.getstream.chat.android.livedata.usecase.LoadNewerMessagesImpl
+import io.getstream.chat.android.livedata.usecase.LoadOlderMessagesImpl
+import io.getstream.chat.android.livedata.usecase.MarkAllReadImpl
+import io.getstream.chat.android.livedata.usecase.MarkReadImpl
+import io.getstream.chat.android.livedata.usecase.QueryChannelsImpl
+import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMoreImpl
+import io.getstream.chat.android.livedata.usecase.QueryMembers
+import io.getstream.chat.android.livedata.usecase.ReplayEventsForActiveChannelsImpl
+import io.getstream.chat.android.livedata.usecase.SearchUsersByName
+import io.getstream.chat.android.livedata.usecase.SendGiphyImpl
+import io.getstream.chat.android.livedata.usecase.SendMessageImpl
+import io.getstream.chat.android.livedata.usecase.SendReactionImpl
+import io.getstream.chat.android.livedata.usecase.SetMessageForReplyImpl
+import io.getstream.chat.android.livedata.usecase.ShowChannelImpl
+import io.getstream.chat.android.livedata.usecase.ShuffleGiphyImpl
+import io.getstream.chat.android.livedata.usecase.StopTypingImpl
+import io.getstream.chat.android.livedata.usecase.ThreadLoadMoreImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
+import io.getstream.chat.android.livedata.usecase.WatchChannelImpl
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -66,6 +102,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -850,6 +887,115 @@ internal class ChatDomainImpl internal constructor(
     override fun getChannelConfig(channelType: String): Config {
         return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
     }
+
+    // region use-case functions
+    override fun replayEventsForActiveChannelsCall(cid: String): Call<List<ChatEvent>> = ReplayEventsForActiveChannelsImpl(this).invoke(cid)
+
+    override fun getChannelControllerCall(cid: String): Call<ChannelController> = GetChannelControllerImpl(this).invoke(cid)
+
+    override fun watchChannelCall(cid: String, messageLimit: Int): Call<ChannelController> = WatchChannelImpl(this).invoke(cid, messageLimit)
+
+    override fun queryChannelsCall(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int,
+        messageLimit: Int,
+    ): Call<QueryChannelsController> = QueryChannelsImpl(this).invoke(filter, sort, limit, messageLimit)
+
+    override fun getThreadCall(cid: String, parentId: String): Call<ThreadController> = GetThreadImpl(this).invoke(cid, parentId)
+
+    override fun loadOlderMessagesCall(cid: String, messageLimit: Int): Call<Channel> = LoadOlderMessagesImpl(this).invoke(cid, messageLimit)
+
+    override fun loadNewerMessagesCall(cid: String, messageLimit: Int): Call<Channel> = LoadNewerMessagesImpl(this).invoke(cid, messageLimit)
+
+    override fun loadMessageByIdCall(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Call<Message> = LoadMessageByIdImpl(this).invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+
+    override fun queryChannelsLoadMoreCall(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int,
+        messageLimit: Int,
+    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort, limit, messageLimit)
+
+    override fun queryChannelsLoadMoreCall(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        messageLimit: Int,
+    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort, messageLimit)
+
+    override fun queryChannelsLoadMoreCall(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort)
+
+    override fun threadLoadMoreCall(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
+        ThreadLoadMoreImpl(this).invoke(cid, parentId, messageLimit)
+
+    override fun createChannelCall(channel: Channel): Call<Channel> = CreateChannelImpl(this).invoke(channel)
+
+    override fun sendMessageCall(message: Message): Call<Message> = SendMessageImpl(this).invoke(message)
+
+    override fun sendMessageCall(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
+    ): Call<Message> = SendMessageImpl(this).invoke(message, attachmentTransformer)
+
+    override fun cancelMessageCall(message: Message): Call<Boolean> = CancelMessageImpl(this).invoke(message)
+
+    override fun shuffleGiphyCall(message: Message): Call<Message> = ShuffleGiphyImpl(this).invoke(message)
+
+    override fun sendGiphyCall(message: Message): Call<Message> = SendGiphyImpl(this).invoke(message)
+
+    override fun editMessageCall(message: Message): Call<Message> = EditMessageImpl(this).invoke(message)
+
+    override fun deleteMessageCall(message: Message): Call<Message> = DeleteMessageImpl(this).invoke(message)
+
+    override fun sendReactionCall(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> = SendReactionImpl(this).invoke(cid, reaction, enforceUnique)
+
+    override fun deleteReactionCall(cid: String, reaction: Reaction): Call<Message> = DeleteReactionImpl(this).invoke(cid, reaction)
+
+    override fun keystrokeCall(cid: String, parentId: String?): Call<Boolean> = KeystrokeImpl(this).invoke(cid, parentId)
+
+    override fun stopTypingCall(cid: String, parentId: String?): Call<Boolean> = StopTypingImpl(this).invoke(cid, parentId)
+
+    override fun markReadCall(cid: String): Call<Boolean> = MarkReadImpl(this).invoke(cid)
+
+    override fun markAllReadCall(): Call<Boolean> = MarkAllReadImpl(this).invoke()
+
+    override fun hideChannelCall(cid: String, keepHistory: Boolean): Call<Unit> = HideChannelImpl(this).invoke(cid, keepHistory)
+
+    override fun showChannelCall(cid: String): Call<Unit> = ShowChannelImpl(this).invoke(cid)
+
+    override fun leaveChannelCall(cid: String): Call<Unit> = LeaveChannelImpl(this).invoke(cid)
+
+    override fun deleteChannelCall(cid: String): Call<Unit> = DeleteChannelImpl(this).invoke(cid)
+
+    override fun setMessageForReplyCall(cid: String, message: Message?): Call<Unit> = SetMessageForReplyImpl(this).invoke(cid, message)
+
+    override fun downloadAttachmentCall(attachment: Attachment): Call<Unit> = DownloadAttachmentImpl(this).invoke(attachment)
+
+    override fun searchUsersByNameCall(
+        querySearch: String,
+        offset: Int,
+        userLimit: Int,
+        userPresence: Boolean,
+    ): Call<List<User>> = SearchUsersByName(this).invoke(querySearch, offset, userLimit, userPresence)
+
+    override fun queryMembersCall(
+        cid: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+    ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
+
+    // end region
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {

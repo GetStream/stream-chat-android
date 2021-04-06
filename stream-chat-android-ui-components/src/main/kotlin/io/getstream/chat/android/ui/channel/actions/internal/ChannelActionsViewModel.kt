@@ -28,8 +28,7 @@ internal class ChannelActionsViewModel(
 
         viewModelScope.launch {
             chatDomain
-                .useCases
-                .watchChannel(cid, 0)
+                .watchChannelCall(cid, 0)
                 .await()
                 .data()
                 .let { channelController ->
