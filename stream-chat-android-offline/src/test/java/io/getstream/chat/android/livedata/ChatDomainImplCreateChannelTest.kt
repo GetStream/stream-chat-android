@@ -19,26 +19,14 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.extension.RegisterExtension
 
-@ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplCreateChannelTest {
 
-    companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
-    }
-
-    private val currentUser = User()
     private val channelId = "ChannelId"
     private val channelType = "ChannelType"
     private val channelCid = "$channelType:$channelId"
@@ -53,6 +41,7 @@ internal class ChatDomainImplCreateChannelTest {
     @Test
     fun `given offline chat domain when creating channel should mark it with sync needed and store in database`(): Unit =
         runBlocking {
+            val currentUser = randomUser()
             val repositoryFacade: RepositoryFacade = mock()
             val channel = Channel(
                 cid = channelCid,
@@ -61,7 +50,8 @@ internal class ChatDomainImplCreateChannelTest {
                 members = channelMembers,
                 extraData = channelExtraData,
             )
-            val sut = Fixture(testCoroutines.scope, currentUser)
+            val sut = Fixture()
+                .givenUser(currentUser)
                 .givenRepositoryFacade(repositoryFacade)
                 .givenOffline()
                 .get()
@@ -94,6 +84,7 @@ internal class ChatDomainImplCreateChannelTest {
     @Test
     fun `given online chat domain when creating channel should store it in database `(): Unit =
         runBlocking {
+            val currentUser = randomUser()
             val repositoryFacade: RepositoryFacade = mock()
             val channel = Channel(
                 cid = channelCid,
@@ -102,7 +93,8 @@ internal class ChatDomainImplCreateChannelTest {
                 members = channelMembers,
                 extraData = channelExtraData,
             )
-            val sut = Fixture(testCoroutines.scope, currentUser)
+            val sut = Fixture()
+                .givenUser(currentUser)
                 .givenRepositoryFacade(repositoryFacade)
                 .givenOnline()
                 .givenChatClientResult(Result(channel))
@@ -137,7 +129,7 @@ internal class ChatDomainImplCreateChannelTest {
         runBlocking {
             val repositoryFacade: RepositoryFacade = mock()
 
-            val sut = Fixture(testCoroutines.scope, currentUser)
+            val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
                 .givenOnline()
                 .givenChatClientResult(Result(channelMock))
@@ -163,7 +155,7 @@ internal class ChatDomainImplCreateChannelTest {
         runBlocking {
             val repositoryFacade: RepositoryFacade = mock()
 
-            val sut = Fixture(testCoroutines.scope, currentUser)
+            val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
                 .givenOnline()
                 .givenChatClientResult(Result(ChatError()))
@@ -189,7 +181,7 @@ internal class ChatDomainImplCreateChannelTest {
         runBlocking {
             val repositoryFacade: RepositoryFacade = mock()
 
-            val sut = Fixture(testCoroutines.scope, currentUser)
+            val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
                 .givenOnline()
                 .givenChatClientResult(Result(ChatNetworkError.create(code = ChatErrorCode.NETWORK_FAILED)))
@@ -209,41 +201,50 @@ internal class ChatDomainImplCreateChannelTest {
                 }
             }
         }
-}
 
-private class Fixture(scope: CoroutineScope, user: User) {
-    private val context: Context = mock()
-    private val chatClient: ChatClient = mock()
-    private val chatDomainImpl: ChatDomainImpl = ChatDomain.Builder(context, chatClient).buildImpl()
+    /* @Test
+     fun `Given failed network request When create distinc channel Should return failed response And do not insert any channel to DB`()  =
+         runBlockingTest {
+             val sut = Fixture
+         }*/
 
-    init {
-        chatDomainImpl.apply {
-            currentUser = user
-            this.scope = scope
+    private inner class Fixture {
+        private val context: Context = mock()
+        private val chatClient: ChatClient = mock()
+        private var user: User = randomUser()
+        private val testScope = TestCoroutineScope()
+        private var isOnline: Boolean = true
+        private var repositoryFacade: RepositoryFacade = mock()
+
+        fun givenUser(user: User) = apply {
+            this.user = user
+        }
+
+        fun givenRepositoryFacade(repositoryFacade: RepositoryFacade): Fixture = apply {
+            this.repositoryFacade = repositoryFacade
+        }
+
+        fun givenChatClientResult(result: Result<Channel>): Fixture = apply {
+            whenever(chatClient.createChannel(any(), any(), any(), any())).doAnswer {
+                TestCall(result)
+            }
+        }
+
+        fun givenOnline(): Fixture = apply {
+            isOnline = true
+        }
+
+        fun givenOffline(): Fixture = apply {
+            isOnline = false
+        }
+
+        fun get(): ChatDomainImpl {
+            return ChatDomain.Builder(context, chatClient).buildImpl().apply {
+                repos = repositoryFacade
+                currentUser = user
+                scope = testScope
+                if (isOnline) setOnline() else setOffline()
+            }
         }
     }
-
-    fun givenRepositoryFacade(repositoryFacade: RepositoryFacade): Fixture {
-        chatDomainImpl.repos = repositoryFacade
-        return this
-    }
-
-    fun givenChatClientResult(result: Result<Channel>): Fixture {
-        whenever(chatClient.createChannel(any(), any(), any(), any())).doAnswer {
-            TestCall(result)
-        }
-        return this
-    }
-
-    fun givenOnline(): Fixture {
-        chatDomainImpl.setOnline()
-        return this
-    }
-
-    fun givenOffline(): Fixture {
-        chatDomainImpl.setOffline()
-        return this
-    }
-
-    fun get(): ChatDomainImpl = chatDomainImpl
 }
