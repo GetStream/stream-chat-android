@@ -62,7 +62,7 @@ internal class MoshiChatParser : ChatParser {
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
         return builder
             .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(MoshiConverterFactory.create(moshi).withErrorLogging())
     }
 
     override fun toJson(any: Any): String {

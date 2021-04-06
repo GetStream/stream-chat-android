@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageListHeaderViewBin
 public class MessageListHeaderView : ConstraintLayout {
 
     private val binding: StreamUiMessageListHeaderViewBinding =
-        StreamUiMessageListHeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
+        StreamUiMessageListHeaderViewBinding.inflate(LayoutInflater.from(context), this)
 
     private var subtitleState: SubtitleState = SubtitleState(emptyList(), OnlineState.NONE)
 
