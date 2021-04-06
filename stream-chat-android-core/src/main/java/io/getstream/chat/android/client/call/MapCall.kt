@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class MapCall<T : Any, K : Any>(
     private val call: Call<T>,
-    private val mapper: (T) -> K
+    private val mapper: (T) -> K,
 ) : Call<K> {
 
     protected var canceled = AtomicBoolean(false)
