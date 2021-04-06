@@ -71,6 +71,8 @@ Added theme to all activities all the SDK. You can override then in your project
 - Fixed the `MessageListView::setUserClickListener` method.
 - Fixed bugs in handling empty states for `ChannelListView`. Deprecated manual methods for showing/hiding empty state changes.
 - Fix `ChannelListHeaderView`'s title position when user avatar or action button is invisible
+- Fix UI behaviour for in-progress file uploads
+- Fix extension problems with file uploads when attachment names contain spaces
 
 ### ⬆️ Improved
 
