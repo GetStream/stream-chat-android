@@ -47,7 +47,8 @@ public class StorageHelper {
     }
 
     public fun getFileAttachments(context: Context): List<AttachmentMetaData> {
-        return getFilteredAttachments(context, null)
+        // Excluding files with empty mime type just to be sure that we won't include folder and unknown files
+        return getFilteredAttachments(context, null).filterNot { it.mimeType.isNullOrEmpty() }
     }
 
     public fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
