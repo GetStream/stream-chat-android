@@ -28,7 +28,7 @@ public class StorageHelper {
 
     public fun getCachedFileFromUri(
         context: Context,
-        attachmentMetaData: AttachmentMetaData
+        attachmentMetaData: AttachmentMetaData,
     ): File {
         if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
             throw IllegalStateException("Unable to create cache file for attachment: $attachmentMetaData. Either file or URI cannot be null.")
@@ -47,7 +47,11 @@ public class StorageHelper {
     }
 
     public fun getFileAttachments(context: Context): List<AttachmentMetaData> {
-        return getFilteredAttachments(context, null)
+        // Excluding files with empty mime type just to be sure that we won't include folder and unknown files
+        return getFilteredAttachments(
+            context,
+            selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL AND ${MediaStore.Files.FileColumns.MIME_TYPE} != ''",
+        )
     }
 
     public fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
