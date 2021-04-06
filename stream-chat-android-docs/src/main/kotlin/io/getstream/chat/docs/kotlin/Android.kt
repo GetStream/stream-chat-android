@@ -391,6 +391,9 @@ class Android {
             messageListView.setAttachmentClickListener { message, attachment ->
                 // Handle long click on attachment
             }
+            messageListView.setUserClickListener { user ->
+                // Handle click on user avatar
+            }
         }
 
         fun handlers() {

@@ -34,6 +34,6 @@ internal fun DownstreamUserDto.toDomain(): User =
         unreadChannels = unread_channels,
         mutes = mutes.map(DownstreamMuteDto::toDomain),
         teams = teams,
-        channelMutes = channel_mutes.map(DownstreamChannelMuteDto::toDomain),
+        channelMutes = channel_mutes.orEmpty().map(DownstreamChannelMuteDto::toDomain),
         extraData = extraData.toMutableMap(),
     )
