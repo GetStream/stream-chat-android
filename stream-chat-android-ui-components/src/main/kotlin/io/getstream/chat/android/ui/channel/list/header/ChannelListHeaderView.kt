@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
@@ -48,7 +49,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     private fun configUserAvatar(typedArray: TypedArray) {
         val showAvatar = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowUserAvatar, true)
         binding.userAvatar.apply {
-            isVisible = showAvatar
+            isInvisible = !showAvatar
             isClickable = showAvatar
         }
     }
@@ -76,7 +77,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             val showActionButton =
                 typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowActionButton, true)
 
-            isVisible = showActionButton
+            isInvisible = !showActionButton
             isClickable = showActionButton
 
             imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)

@@ -63,6 +63,7 @@
 - Now it is possible to change the color of `MessageListHeaderView` from the XML.
 - Fixed the `MessageListView::setUserClickListener` method.
 - Fixed bugs in handling empty states for `ChannelListView`. Deprecated manual methods for showing/hiding empty state changes.
+- Fix `ChannelListHeaderView`'s title position when user avatar or action button is invisible
 
 ### ⬆️ Improved
 
