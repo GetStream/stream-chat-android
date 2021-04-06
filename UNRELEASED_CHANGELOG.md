@@ -12,6 +12,7 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
+- Fix Attachment Gravity
 
 ### ⬆️ Improved
 
