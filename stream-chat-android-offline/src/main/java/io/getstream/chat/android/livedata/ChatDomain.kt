@@ -5,7 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
@@ -95,6 +97,21 @@ public interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
+
+    /**
+     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
+     *
+     * @param channelType String represents channel type.
+     * @param members List of members' id.
+     * @param extraData Map object with custom fields and additional data.
+     *
+     * @return [Call] instance with [Channel].
+     */
+    public fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel>
 
     public data class Builder(
         private val appContext: Context,

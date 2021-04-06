@@ -378,6 +378,14 @@ internal class ChatDomainImpl internal constructor(
         return result
     }
 
+    override fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel> {
+        return client.createChannel(channelType, members, extraData)
+    }
+
     suspend fun createChannel(c: Channel): Result<Channel> =
         try {
             val online = isOnline()
