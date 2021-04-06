@@ -38,7 +38,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
 
     init {
-        chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
+        chatDomain.watchChannelCall(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 val channel: Channel = channelController.toChannel()
@@ -77,7 +77,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
-        chatDomain.useCases.sendMessage(message.apply(messageTransformer)).enqueue()
+        chatDomain.sendMessageCall(message.apply(messageTransformer)).enqueue()
     }
 
     public fun sendMessageWithAttachments(
@@ -88,7 +88,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         // Send message should not be cancelled when viewModel.onCleared is called
         val attachments = attachmentFiles.map { Attachment(upload = it) }.toMutableList()
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
-        chatDomain.useCases.sendMessage(message).enqueue()
+        chatDomain.sendMessageCall(message).enqueue()
     }
 
     /**
@@ -98,7 +98,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public fun editMessage(message: Message) {
         stopTyping()
-        chatDomain.useCases.editMessage(message).enqueue()
+        chatDomain.editMessageCall(message).enqueue()
     }
 
     /**
@@ -108,7 +108,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     @Synchronized
     public fun keystroke() {
         val parentId = activeThread.value?.id
-        chatDomain.useCases.keystroke(cid, parentId).enqueue()
+        chatDomain.keystrokeCall(cid, parentId).enqueue()
     }
 
     /**
@@ -116,12 +116,12 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public fun stopTyping() {
         val parentId = activeThread.value?.id
-        chatDomain.useCases.stopTyping(cid, parentId).enqueue()
+        chatDomain.stopTypingCall(cid, parentId).enqueue()
     }
 
     public fun dismissReply() {
         if (repliedMessage.value != null) {
-            chatDomain.useCases.setMessageForReply(cid, null).enqueue()
+            chatDomain.setMessageForReplyCall(cid, null).enqueue()
         }
     }
 }

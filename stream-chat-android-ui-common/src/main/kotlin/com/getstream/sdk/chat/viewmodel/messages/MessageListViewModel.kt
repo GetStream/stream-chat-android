@@ -80,7 +80,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        domain.useCases.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
+        domain.watchChannelCall(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
@@ -114,7 +114,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                         }
                     }
                 } else {
-                    domain.useCases.loadMessageById(
+                    domain.loadMessageByIdCall(
                         cid,
                         messageId,
                         MESSAGES_LIMIT,
@@ -170,7 +170,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.useCases.markRead(cid).enqueue()
+                domain.markReadCall(cid).enqueue()
             }
             is Event.ThreadModeEntered -> {
                 onThreadModeEntered(event.parentMessage)
@@ -179,7 +179,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.useCases.deleteMessage(event.message).enqueue()
+                domain.deleteMessageCall(event.message).enqueue()
             }
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue()
@@ -188,7 +188,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onGiphyActionSelected(event)
             }
             is Event.RetryMessage -> {
-                domain.useCases.sendMessage(event.message).enqueue()
+                domain.sendMessageCall(event.message).enqueue()
             }
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
@@ -205,13 +205,13 @@ public class MessageListViewModel @JvmOverloads constructor(
                 ).enqueue()
             }
             is Event.ReplyMessage -> {
-                domain.useCases.setMessageForReply(event.cid, event.repliedMessage).enqueue()
+                domain.setMessageForReplyCall(event.cid, event.repliedMessage).enqueue()
             }
             is Event.DownloadAttachment -> {
-                domain.useCases.downloadAttachment.invoke(event.attachment).enqueue()
+                domain.downloadAttachmentCall(event.attachment).enqueue()
             }
             is Event.ShowMessage -> {
-                domain.useCases.loadMessageById(
+                domain.loadMessageByIdCall(
                     cid,
                     event.messageId,
                     MESSAGES_LIMIT,
@@ -224,7 +224,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
-                domain.useCases.loadMessageById(
+                domain.loadMessageByIdCall(
                     cid,
                     event.messageId,
                     MESSAGES_LIMIT,
@@ -239,14 +239,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                                 it.imageUrl == attachmentToBeDeleted.imageUrl
                             }
                         }
-                        domain.useCases.editMessage(message).enqueue()
+                        domain.editMessageCall(message).enqueue()
                     }
                 }
             }
             is Event.ReplyAttachment -> {
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                domain.useCases.loadMessageById(
+                domain.loadMessageByIdCall(
                     cid,
                     messageId,
                     MESSAGES_LIMIT,
@@ -284,13 +284,13 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
         when (event.action) {
             GiphyAction.SEND -> {
-                domain.useCases.sendGiphy(event.message).enqueue()
+                domain.sendGiphyCall(event.message).enqueue()
             }
             GiphyAction.SHUFFLE -> {
-                domain.useCases.shuffleGiphy(event.message).enqueue()
+                domain.shuffleGiphyCall(event.message).enqueue()
             }
             GiphyAction.CANCEL -> {
-                domain.useCases.cancelMessage(event.message).enqueue()
+                domain.cancelMessageCall(event.message).enqueue()
             }
         }.exhaustive
     }
@@ -300,13 +300,13 @@ public class MessageListViewModel @JvmOverloads constructor(
             when (this) {
                 is Mode.Normal -> {
                     messageListData?.loadingMoreChanged(true)
-                    domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
+                    domain.loadOlderMessagesCall(cid, MESSAGES_LIMIT).enqueue {
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
                 is Mode.Thread -> {
                     threadListData?.loadingMoreChanged(true)
-                    domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT)
+                    domain.threadLoadMoreCall(cid, this.parentMessage.id, MESSAGES_LIMIT)
                         .enqueue {
                             threadListData?.loadingMoreChanged(false)
                         }
@@ -330,12 +330,12 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun onThreadModeEntered(parentMessage: Message) {
         val parentId: String = parentMessage.id
-        domain.useCases.getThread(cid, parentId).enqueue { threadControllerResult ->
+        domain.getThreadCall(cid, parentId).enqueue { threadControllerResult ->
             if (threadControllerResult.isSuccess) {
                 val threadController = threadControllerResult.data()
                 currentMode = Mode.Thread(parentMessage)
                 setThreadMessages(threadController.messages)
-                domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
+                domain.threadLoadMoreCall(cid, parentId, MESSAGES_LIMIT).enqueue()
             }
         }
     }
@@ -347,9 +347,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             score = 1
         }
         if (message.ownReactions.any { it.type == reactionType }) {
-            domain.useCases.deleteReaction(cid, reaction).enqueue()
+            domain.deleteReactionCall(cid, reaction).enqueue()
         } else {
-            domain.useCases.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue()
+            domain.sendReactionCall(cid, reaction, enforceUnique = enforceUnique).enqueue()
         }
     }
 

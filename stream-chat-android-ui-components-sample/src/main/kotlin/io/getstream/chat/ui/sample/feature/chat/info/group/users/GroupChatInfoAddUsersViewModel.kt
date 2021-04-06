@@ -29,7 +29,7 @@ class GroupChatInfoAddUsersViewModel(
 
     init {
         viewModelScope.launch {
-            val result = chatDomain.useCases.getChannelController(cid).await()
+            val result = chatDomain.getChannelControllerCall(cid).await()
             if (result.isSuccess) {
                 members = result.data().members
                 viewModelScope.launch {

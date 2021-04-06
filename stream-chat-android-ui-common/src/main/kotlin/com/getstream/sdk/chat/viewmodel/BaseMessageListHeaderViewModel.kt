@@ -32,7 +32,7 @@ public abstract class BaseMessageListHeaderViewModel constructor(
     public val typingUsers: LiveData<List<User>> = _typingUsers
 
     init {
-        chatDomain.useCases.watchChannel(cid, 0).enqueue { channelControllerResult ->
+        chatDomain.watchChannelCall(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 _members.addSource(channelController.members) { _members.value = it }

@@ -116,7 +116,7 @@ public class PushMessageSyncHandler(private val service: Service) {
         client: ChatClient,
         message: RemoteMessage,
     ) {
-        val result = domain.useCases.replayEventsForActiveChannels(cid).execute()
+        val result = domain.replayEventsForActiveChannelsCall(cid).execute()
         if (result.isSuccess) {
             logger.logD("Sync success.")
         } else {
