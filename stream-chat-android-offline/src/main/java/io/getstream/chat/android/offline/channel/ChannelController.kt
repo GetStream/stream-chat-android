@@ -1276,21 +1276,21 @@ internal class ChannelController(
          * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
          * to show in the channel list.
          */
-        incomingUserIdToReadMap[currentUserId]?.let {
+        incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
 
             // the previous last Read date that is most current
             val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
 
             // Use AFTER to determine if the incoming read is more current.
             // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-            val shouldUpdateByIncoming = previousLastRead == null || it.lastRead?.inOffsetWith(
+            val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
                 previousLastRead,
                 OFFSET_EVENT_TIME
             ) == true
 
             if (shouldUpdateByIncoming) {
-                _read.value = it
-                _unreadCount.value = it.unreadMessages
+                _read.value = incomingUserRead
+                _unreadCount.value = incomingUserRead.unreadMessages
             } else {
                 // if the previous Read was more current, replace the item in the update map
                 incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
