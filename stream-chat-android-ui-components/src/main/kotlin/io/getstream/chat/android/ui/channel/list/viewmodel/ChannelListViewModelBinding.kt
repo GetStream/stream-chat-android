@@ -9,30 +9,24 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 @JvmName("bind")
 public fun ChannelListViewModel.bindView(
     view: ChannelListView,
-    lifecycle: LifecycleOwner
+    lifecycle: LifecycleOwner,
 ) {
     state.observe(lifecycle) { channelState ->
         if (channelState.isLoading) {
-            view.hideEmptyStateView()
             view.showLoadingView()
         } else {
             view.hideLoadingView()
-            if (channelState.channels.isEmpty()) {
-                view.showEmptyStateView()
-            } else {
-                channelState
-                    .channels
-                    .map(ChannelListItem::ChannelItem)
-                    .let(view::setChannels)
-                view.hideEmptyStateView()
-            }
+            channelState
+                .channels
+                .map(ChannelListItem::ChannelItem)
+                .let(view::setChannels)
         }
     }
 
-    paginationState.observe(lifecycle) {
-        view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
+    paginationState.observe(lifecycle) { paginationState ->
+        view.setPaginationEnabled(!paginationState.endOfChannels && !paginationState.loadingMore)
 
-        if (it.loadingMore) {
+        if (paginationState.loadingMore) {
             view.showLoadingMore()
         } else {
             view.hideLoadingMore()
