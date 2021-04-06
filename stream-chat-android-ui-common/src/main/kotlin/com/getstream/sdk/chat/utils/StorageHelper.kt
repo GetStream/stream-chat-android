@@ -148,7 +148,7 @@ public class StorageHelper {
 }
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
-    val extension = MimeTypeMap.getFileExtensionFromUrl(title)
+    val extension = title?.substringAfterLast('.')
     return if (extension.isNullOrEmpty() && !mimeType.isNullOrEmpty()) {
         "$title.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
     } else {
