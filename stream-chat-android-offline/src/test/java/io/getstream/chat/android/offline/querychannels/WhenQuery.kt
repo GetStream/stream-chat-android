@@ -52,7 +52,7 @@ internal class WhenQuery {
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    QuerySort.Companion.desc(Channel::lastMessageAt),
+                    QuerySort.desc(Channel::lastMessageAt),
                     cids = listOf("cid1", "cid2")
                 )
             )
