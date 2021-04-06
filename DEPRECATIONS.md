@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatDomain.usecases` <br/>*offline* | 2021.04.6 | 2021.05.6 ⌛ | 2021.06.6 ⌛ | Replace this property call by obtaining a specific use case directly from ChatDomain |
 | `ChannelListView's empty state methods` <br/>*ui-components* | 2021.04.05 | 2021.04.19 ⌛ | 2021.05.05 ⌛ | These methods no longer need to be called directly, `setChannel` handles empty state changes automatically |
 | `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
 | `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleMine::colorOrNull() instead |
