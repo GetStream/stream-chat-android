@@ -73,6 +73,7 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun isInitialized ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
+	public abstract fun removeMembers (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setCurrentUser (Lio/getstream/chat/android/client/models/User;)V
 	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setRetryPolicy (Lio/getstream/chat/android/livedata/utils/RetryPolicy;)V
