@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -383,7 +384,13 @@ internal class ChatDomainImpl internal constructor(
         members: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        return client.createChannel(channelType, members, extraData)
+        return CoroutineCall(scope) {
+            client.createChannel(channelType, members, extraData).execute().also {
+                if (it.isSuccess) {
+                    repos.insertChannel(it.data())
+                }
+            }
+        }
     }
 
     suspend fun createChannel(c: Channel): Result<Channel> =
