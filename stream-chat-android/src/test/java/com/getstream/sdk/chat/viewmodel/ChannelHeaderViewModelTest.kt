@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createMember
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.createUser
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -16,8 +17,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import org.junit.jupiter.api.BeforeEach
@@ -34,8 +33,6 @@ private val CURRENT_USER = createUser(online = true)
 internal class ChannelHeaderViewModelTest {
 
     private val chatDomain: ChatDomain = mock()
-    private val useCases: UseCaseHelper = mock()
-    private val watchChannel: WatchChannel = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelControllerCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
@@ -43,9 +40,7 @@ internal class ChannelHeaderViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
-        whenever(chatDomain.useCases) doReturn useCases
-        whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(watchChannel.invoke(CID, 0)) doReturn channelControllerCall
+        whenever(chatDomain.watchChannelCall(any(), any())) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
     }
