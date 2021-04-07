@@ -17,8 +17,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
@@ -27,15 +27,11 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
-
-    private var coroutineScope: CoroutineScope? = null
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -78,7 +74,8 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
-    private var onUserLookupListener: OnUserLookupListener = DefaultOnUserLookupListener(emptyList())
+    private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
+    private var messageInputDebouncer: Debouncer? = null
 
     public constructor(context: Context) : super(context) {
         init(context)
@@ -94,17 +91,6 @@ public class MessageInputView : ConstraintLayout {
         defStyleAttr
     ) {
         init(context, attrs)
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        coroutineScope = CoroutineScope(DispatcherProvider.Main)
-    }
-
-    override fun onDetachedFromWindow() {
-        coroutineScope?.cancel()
-        coroutineScope = null
-        super.onDetachedFromWindow()
     }
 
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
@@ -151,15 +137,16 @@ public class MessageInputView : ConstraintLayout {
     }
 
     @Deprecated(
-        "Use setOnUserLookupListener instead of manually passing the list of users",
+        "Use setUserLookupHandler instead of manually passing the list of users",
         ReplaceWith(
-            "setOnUserLookupListener(DefaultOnUserLookupListener(members.map(Member::user)))",
-            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultOnUserLookupListener",
+            "setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))",
+            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
             "io.getstream.chat.android.client.models.Member"
-        )
+        ),
+
     )
     public fun setMembers(members: List<Member>) {
-        setOnUserLookupListener(DefaultOnUserLookupListener(members.map(Member::user)))
+        setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
     }
 
     public fun setCommands(commands: List<Command>) {
@@ -224,8 +211,8 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
-    public fun setOnUserLookupListener(listener: OnUserLookupListener) {
-        this.onUserLookupListener = listener
+    public fun setUserLookupHandler(handler: UserLookupHandler) {
+        this.userLookupHandler = handler
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
@@ -239,6 +226,17 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
         binding.messageInputFieldView.setMaxMessageLength(maxMessageLength)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
+    }
+
+    override fun onDetachedFromWindow() {
+        messageInputDebouncer?.shutdown()
+        messageInputDebouncer = null
+        super.onDetachedFromWindow()
     }
 
     @SuppressLint("CustomViewStyleable")
@@ -365,8 +363,8 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    coroutineScope?.let { scope ->
-                        suggestionListController?.showSuggestions(messageText, onUserLookupListener, scope)
+                    messageInputDebouncer?.submitSuspendable {
+                        suggestionListController?.showSuggestions(messageText, userLookupHandler)
                     }
                 }
 
@@ -477,6 +475,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private companion object {
+        private const val TYPING_DEBOUNCE_MS = 300L
         val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
             override fun sendMessage(messageText: String, messageReplyTo: Message?) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -572,15 +571,14 @@ public class MessageInputView : ConstraintLayout {
         public fun handleBigFileSelected(hasBigFile: Boolean)
     }
 
-    public interface OnUserLookupListener {
-        public suspend fun onUserLookup(input: String): List<User>
+    public interface UserLookupHandler {
+        public suspend fun handleUserLookup(input: String): List<User>
     }
 
-    private class DefaultOnUserLookupListener(private val users: List<User>) : OnUserLookupListener {
-        override suspend fun onUserLookup(input: String): List<User> {
+    internal class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
+        override suspend fun handleUserLookup(input: String): List<User> {
             val namePattern = input.substringAfterLast("@")
-            return users
-                .filter { it.name.contains(namePattern, true) }
+            return users.filter { it.name.contains(namePattern, true) }
         }
     }
 }

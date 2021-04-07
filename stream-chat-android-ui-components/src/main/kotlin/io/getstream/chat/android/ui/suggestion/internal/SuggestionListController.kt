@@ -5,8 +5,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
@@ -17,17 +16,16 @@ internal class SuggestionListController(
     var commands: List<Command> = emptyList()
         set(value) {
             field = value
-            showSuggestions(messageText)
+            runBlocking { showSuggestions(messageText) }
         }
     var mentionsEnabled: Boolean = true
     var commandsEnabled: Boolean = true
 
     private var messageText: String = String.EMPTY
 
-    fun showSuggestions(
+    suspend fun showSuggestions(
         messageText: String,
-        onUserLookupListener: MessageInputView.OnUserLookupListener? = null,
-        scope: CoroutineScope? = null,
+        userLookupHandler: MessageInputView.UserLookupHandler? = null,
     ) {
         this.messageText = messageText
         when {
@@ -35,22 +33,21 @@ internal class SuggestionListController(
                 suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
-                handleUserLookup(scope, onUserLookupListener, messageText)
+                handleUserLookup(userLookupHandler, messageText)
             }
             else -> hideSuggestionList()
         }
     }
 
-    private fun handleUserLookup(
-        scope: CoroutineScope?,
-        onUserLookupListener: MessageInputView.OnUserLookupListener?,
+    private suspend fun handleUserLookup(
+        userLookupHandler: MessageInputView.UserLookupHandler?,
         messageText: String,
     ) {
-        scope?.launch {
-            val suggestions = withContext(DispatcherProvider.IO) {
-                onUserLookupListener?.onUserLookup(messageText)
-                    ?.let(SuggestionListView.Suggestions::MentionSuggestions)
-            }
+        val suggestions = withContext(DispatcherProvider.IO) {
+            userLookupHandler?.handleUserLookup(messageText)
+                ?.let(SuggestionListView.Suggestions::MentionSuggestions)
+        }
+        withContext(DispatcherProvider.Main) {
             suggestions?.let(suggestionListView::showSuggestionList)
         }
     }
