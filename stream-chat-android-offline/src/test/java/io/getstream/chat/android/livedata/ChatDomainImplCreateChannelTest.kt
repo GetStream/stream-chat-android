@@ -205,19 +205,34 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
     @Test
-    fun `Given failed network request When create distinct channel Should return failed response And do not insert any channel to DB`() =
-        runBlockingTest {
-            val repositoryFacade: RepositoryFacade = mock()
-            val sut = Fixture()
-                .givenChatClientResult(Result(mock<ChatError>()))
-                .givenRepositoryFacade(repositoryFacade)
-                .get()
+    fun `Given failed network response When create distinct channel Should return failed response And do not insert any channel to DB`() {
+        val repositoryFacade: RepositoryFacade = mock()
+        val sut = Fixture()
+            .givenChatClientResult(Result(mock<ChatError>()))
+            .givenRepositoryFacade(repositoryFacade)
+            .get()
 
-            val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
+        val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
 
-            Truth.assertThat(result.isError).isTrue()
-            verifyZeroInteractions(repositoryFacade)
-        }
+        Truth.assertThat(result.isError).isTrue()
+        verifyZeroInteractions(repositoryFacade)
+    }
+
+    @Test
+    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() = runBlockingTest {
+        val repositoryFacade: RepositoryFacade = mock()
+        val networkChannel = randomChannel()
+        val sut = Fixture()
+            .givenChatClientResult(Result(networkChannel))
+            .givenRepositoryFacade(repositoryFacade)
+            .get()
+
+        val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
+
+        Truth.assertThat(result.isSuccess).isTrue()
+        Truth.assertThat(result.data()).isEqualTo(networkChannel)
+        verify(repositoryFacade).insertChannel(networkChannel)
+    }
 
     private inner class Fixture {
         private val context: Context = mock()
