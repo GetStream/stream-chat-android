@@ -16,6 +16,8 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
@@ -25,11 +27,15 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
+
+    private var coroutineScope: CoroutineScope? = null
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -58,7 +64,8 @@ public class MessageInputView : ConstraintLayout {
             if (attachments.isNotEmpty()) {
                 when (attachmentSource) {
                     AttachmentSource.MEDIA,
-                    AttachmentSource.CAMERA -> {
+                    AttachmentSource.CAMERA,
+                    -> {
                         binding.messageInputFieldView.mode =
                             MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                     }
@@ -70,6 +77,8 @@ public class MessageInputView : ConstraintLayout {
             }
         }
     }
+
+    private var onUserLookupListener: OnUserLookupListener = DefaultOnUserLookupListener(emptyList())
 
     public constructor(context: Context) : super(context) {
         init(context)
@@ -85,6 +94,17 @@ public class MessageInputView : ConstraintLayout {
         defStyleAttr
     ) {
         init(context, attrs)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        coroutineScope = CoroutineScope(DispatcherProvider.Main)
+    }
+
+    override fun onDetachedFromWindow() {
+        coroutineScope?.cancel()
+        coroutineScope = null
+        super.onDetachedFromWindow()
     }
 
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
@@ -130,8 +150,16 @@ public class MessageInputView : ConstraintLayout {
         this.sendMessageHandler = handler
     }
 
+    @Deprecated(
+        "Use setOnUserLookupListener instead of manually passing the list of users",
+        ReplaceWith(
+            "setOnUserLookupListener(DefaultOnUserLookupListener(members.map(Member::user)))",
+            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultOnUserLookupListener",
+            "io.getstream.chat.android.client.models.Member"
+        )
+    )
     public fun setMembers(members: List<Member>) {
-        suggestionListController?.users = members.map { it.user }
+        setOnUserLookupListener(DefaultOnUserLookupListener(members.map(Member::user)))
     }
 
     public fun setCommands(commands: List<Command>) {
@@ -194,6 +222,10 @@ public class MessageInputView : ConstraintLayout {
             it.commandsEnabled = commandsEnabled
         }
         refreshControlsState()
+    }
+
+    public fun setOnUserLookupListener(listener: OnUserLookupListener) {
+        this.onUserLookupListener = listener
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
@@ -333,7 +365,9 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    suggestionListController?.showSuggestions(messageText)
+                    coroutineScope?.let { scope ->
+                        suggestionListController?.showSuggestions(messageText, onUserLookupListener, scope)
+                    }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
@@ -536,5 +570,17 @@ public class MessageInputView : ConstraintLayout {
     @FunctionalInterface
     public interface BigFileSelectionListener {
         public fun handleBigFileSelected(hasBigFile: Boolean)
+    }
+
+    public interface OnUserLookupListener {
+        public suspend fun onUserLookup(input: String): List<User>
+    }
+
+    private class DefaultOnUserLookupListener(private val users: List<User>) : OnUserLookupListener {
+        override suspend fun onUserLookup(input: String): List<User> {
+            val namePattern = input.substringAfterLast("@")
+            return users
+                .filter { it.name.contains(namePattern, true) }
+        }
     }
 }
