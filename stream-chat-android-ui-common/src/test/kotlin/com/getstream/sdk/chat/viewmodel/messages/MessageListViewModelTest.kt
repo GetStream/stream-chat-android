@@ -25,11 +25,6 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.usecase.DeleteMessage
-import io.getstream.chat.android.livedata.usecase.GetThread
-import io.getstream.chat.android.livedata.usecase.LoadOlderMessages
-import io.getstream.chat.android.livedata.usecase.ThreadLoadMore
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.observeAll
@@ -68,18 +63,13 @@ private val THREAD_MESSAGES = createMessageList {
 internal class MessageListViewModelTest {
     private val domain: ChatDomain = mock()
     private val client: ChatClient = mock()
-    private val useCases: UseCaseHelper = mock()
-    private val watchChannel: WatchChannel = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val watchChannelCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
-    private val threadLoadMore: ThreadLoadMore = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val threadLoadMoreCall = TestCall(threadLoadMoreResult)
-    private val loadOlderMessages: LoadOlderMessages = mock()
     private val loadOlderMessagesResult: Result<Channel> = mock()
     private val loadOlderMessagesCall = TestCall(loadOlderMessagesResult)
-    private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
     private val deleteMessageResult: Result<Message> = mock()
     private val deletedMessage = createMessage()
@@ -99,9 +89,7 @@ internal class MessageListViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(domain.useCases) doReturn useCases
-        whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(watchChannel.invoke(any(), any())) doReturn watchChannelCall
+        whenever(domain.watchChannelCall(any(), any())) doReturn watchChannelCall
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(deleteMessageResult.data()) doReturn deletedMessage
@@ -112,16 +100,12 @@ internal class MessageListViewModelTest {
         whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
-        whenever(useCases.threadLoadMore) doReturn threadLoadMore
-        whenever(threadLoadMore.invoke(any(), any(), any())) doReturn threadLoadMoreCall
+        whenever(domain.threadLoadMoreCall(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
-        whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
-        whenever(useCases.loadOlderMessages.invoke(any(), any())) doReturn loadOlderMessagesCall
-        whenever(useCases.deleteMessage) doReturn deleteMessage
-        whenever(useCases.getThread) doReturn getThread
-        whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall
-        whenever(getThread.invoke(any(), any())) doReturn getThreadCall
+        whenever(domain.loadOlderMessagesCall(any(), any())) doReturn loadOlderMessagesCall
+        whenever(domain.deleteMessageCall(any())) doReturn deleteMessageCall
+        whenever(domain.getThreadCall(any(), any())) doReturn getThreadCall
         whenever(getThreadResult.isSuccess) doReturn true
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
@@ -132,9 +116,6 @@ internal class MessageListViewModelTest {
 
         messageState.value = ChannelController.MessagesState.Result(MESSAGES)
 
-        domain.useCases.shouldNotBeNull()
-        useCases.watchChannel.shouldNotBeNull()
-        watchChannel.invoke(CID, LIMIT).shouldNotBeNull()
         watchChannelCall.execute().shouldNotBeNull()
         channelControllerResult.data().shouldNotBeNull()
         domain.currentUser.shouldNotBeNull()
@@ -162,7 +143,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        verify(loadOlderMessages).invoke(CID, MESSAGES_LIMIT)
+        verify(domain).loadOlderMessagesCall(CID, MESSAGES_LIMIT)
     }
 
     @Test
@@ -172,7 +153,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
 
-        verify(deleteMessage).invoke(MESSAGE)
+        verify(domain).deleteMessageCall(MESSAGE)
     }
 
     @Test
