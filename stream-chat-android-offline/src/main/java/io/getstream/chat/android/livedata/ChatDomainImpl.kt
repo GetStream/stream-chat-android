@@ -56,6 +56,7 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -463,6 +464,14 @@ internal class ChatDomainImpl internal constructor(
 
     fun setTotalUnreadCount(newCount: Int) {
         _totalUnreadCount.value = newCount
+    }
+
+    override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
+        validateCid(cid)
+        val channelController = channel(cid)
+        return CoroutineCall(scope) {
+            channelController.removeMembers(*userIds)
+        }
     }
 
     private fun storeBgSyncDataWhenUserConnects() {

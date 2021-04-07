@@ -39,10 +39,12 @@
 ### 🐞 Fixed
 - Fix Crash on some devices that are not able to create an Encrypted SharedPreferences
 - Fixed the message read indicator in the message list
+- Added missing `team` field to `ChannelEntity` and `ChannelData`
 ### ⬆️ Improved
 
 ### ✅ Added
 - ChatDomain::createDistinctChannel function was added as a use-case for creation a channel based on it's members.
+- Add `ChatDomain::removeMembers` method
 
 ### ⚠️ Changed
 

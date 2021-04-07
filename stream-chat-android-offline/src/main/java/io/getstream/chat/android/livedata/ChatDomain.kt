@@ -97,6 +97,7 @@ public interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
+    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
     /**
      * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
