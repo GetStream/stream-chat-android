@@ -23,13 +23,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.usecase.EditMessage
-import io.getstream.chat.android.livedata.usecase.Keystroke
-import io.getstream.chat.android.livedata.usecase.SendMessage
-import io.getstream.chat.android.livedata.usecase.SendMessageWithAttachments
-import io.getstream.chat.android.livedata.usecase.StopTyping
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomCID
@@ -42,14 +35,8 @@ internal class MessageInputViewModelTest {
 
     private val CID = randomCID()
     private val chatDomain: ChatDomain = mock()
-    private val useCases: UseCaseHelper = mock()
-    private val watchChannel: WatchChannel = mock()
-    private val sendMessage: SendMessage = mock()
+
     @Suppress("DEPRECATION_ERROR")
-    private val sendMessageWithAttachments: SendMessageWithAttachments = mock()
-    private val editMessage: EditMessage = mock()
-    private val keystroke: Keystroke = mock()
-    private val stopTyping: StopTyping = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelControllerCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
@@ -58,20 +45,13 @@ internal class MessageInputViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(chatDomain.useCases) doReturn useCases
-        whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(useCases.sendMessage) doReturn sendMessage
-        whenever(useCases.sendMessageWithAttachments) doReturn sendMessageWithAttachments
-        whenever(useCases.editMessage) doReturn editMessage
-        whenever(useCases.keystroke) doReturn keystroke
-        whenever(useCases.stopTyping) doReturn stopTyping
-        whenever(watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
+        whenever(chatDomain.watchChannelCall(eq(CID), eq(0))) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(channelController.toChannel()) doReturn channel
-        whenever(editMessage(any())) doReturn mock()
-        whenever(keystroke(eq(CID), anyOrNull())) doReturn mock()
-        whenever(stopTyping(eq(CID), anyOrNull())) doReturn mock()
+        whenever(chatDomain.editMessageCall(any())) doReturn mock()
+        whenever(chatDomain.keystrokeCall(eq(CID), anyOrNull())) doReturn mock()
+        whenever(chatDomain.stopTypingCall(eq(CID), anyOrNull())) doReturn mock()
     }
 
     @Test
@@ -101,7 +81,7 @@ internal class MessageInputViewModelTest {
 
         messageInputViewModel.editMessage(message)
 
-        verify(stopTyping).invoke(eq(CID), anyOrNull())
-        verify(editMessage).invoke(eq(message))
+        verify(chatDomain).stopTypingCall(eq(CID), anyOrNull())
+        verify(chatDomain).editMessageCall(eq(message))
     }
 }
