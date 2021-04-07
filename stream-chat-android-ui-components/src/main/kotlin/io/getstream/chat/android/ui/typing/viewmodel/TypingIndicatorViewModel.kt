@@ -18,7 +18,7 @@ public class TypingIndicatorViewModel(
     init {
         _typingUsers.value = emptyList()
 
-        chatDomain.watchChannelCall(cid, 0).enqueue { channelControllerResult ->
+        chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 _typingUsers.addSource(channelController.typing) { typingEvent ->

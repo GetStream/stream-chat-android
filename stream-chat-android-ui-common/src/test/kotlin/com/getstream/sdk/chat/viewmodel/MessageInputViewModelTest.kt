@@ -45,13 +45,13 @@ internal class MessageInputViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(chatDomain.watchChannelCall(eq(CID), eq(0))) doReturn channelControllerCall
+        whenever(chatDomain.watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(channelController.toChannel()) doReturn channel
-        whenever(chatDomain.editMessageCall(any())) doReturn mock()
-        whenever(chatDomain.keystrokeCall(eq(CID), anyOrNull())) doReturn mock()
-        whenever(chatDomain.stopTypingCall(eq(CID), anyOrNull())) doReturn mock()
+        whenever(chatDomain.editMessage(any())) doReturn mock()
+        whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
+        whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
     }
 
     @Test
@@ -81,7 +81,7 @@ internal class MessageInputViewModelTest {
 
         messageInputViewModel.editMessage(message)
 
-        verify(chatDomain).stopTypingCall(eq(CID), anyOrNull())
-        verify(chatDomain).editMessageCall(eq(message))
+        verify(chatDomain).stopTyping(eq(CID), anyOrNull())
+        verify(chatDomain).editMessage(eq(message))
     }
 }

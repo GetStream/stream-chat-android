@@ -86,7 +86,7 @@ private class Fixture {
     init {
         whenever(chatDomain.currentUser) doReturn user
         whenever(
-            chatDomain.queryChannelsCall(
+            chatDomain.queryChannels(
                 any(),
                 eq(ChannelListViewModel.DEFAULT_SORT),
                 any(),
@@ -113,7 +113,7 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        whenever(chatDomain.queryChannelsLoadMoreCall(any(), any())) doReturn queryChannelsLoadMoreCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue()) doAnswer {
             val channels = (channelsLiveData.value ?: emptyList()) + moreChannels
             channelsLiveData.postValue(channels)

@@ -40,7 +40,7 @@ internal class ChannelHeaderViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
-        whenever(chatDomain.watchChannelCall(any(), any())) doReturn channelControllerCall
+        whenever(chatDomain.watchChannel(any(), any())) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
     }

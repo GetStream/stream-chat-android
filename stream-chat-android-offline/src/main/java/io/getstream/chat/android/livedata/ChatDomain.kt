@@ -123,7 +123,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtainging list of historical [ChatEvent] objects
      */
-    public fun replayEventsForActiveChannelsCall(cid: String): Call<List<ChatEvent>>
+    public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     // getting controllers
     /**
@@ -135,7 +135,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
-    public fun getChannelControllerCall(cid: String): Call<ChannelController>
+    public fun getChannelController(cid: String): Call<ChannelController>
 
     /**
      * Watches the given channel and returns a ChannelController
@@ -147,7 +147,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
-    public fun watchChannelCall(cid: String, messageLimit: Int): Call<ChannelController>
+    public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
     /**
      * Queries offline storage and the API for channels matching the filter
@@ -165,7 +165,7 @@ public interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public fun queryChannelsCall(
+    public fun queryChannels(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int = 30,
@@ -182,7 +182,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
-    public fun getThreadCall(cid: String, parentId: String): Call<ThreadController>
+    public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
     // loading more
     /**
@@ -193,7 +193,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading older messages in a channel
      */
-    public fun loadOlderMessagesCall(cid: String, messageLimit: Int): Call<Channel>
+    public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
      * Loads newer messages for the channel
@@ -203,7 +203,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading new messages in a channel
      */
-    public fun loadNewerMessagesCall(cid: String, messageLimit: Int): Call<Channel>
+    public fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
      * Loads message for a given message id and channel id
@@ -216,7 +216,7 @@ public interface ChatDomain {
      * @return executable async [Call] responsible for loading a message
      *
      */
-    public fun loadMessageByIdCall(
+    public fun loadMessageById(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int,
@@ -237,7 +237,7 @@ public interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public fun queryChannelsLoadMoreCall(
+    public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
@@ -257,7 +257,7 @@ public interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public fun queryChannelsLoadMoreCall(
+    public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
@@ -275,7 +275,7 @@ public interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public fun queryChannelsLoadMoreCall(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
+    public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**
      * Loads more messages for the specified thread
@@ -286,7 +286,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading more messages in a thread
      */
-    public fun threadLoadMoreCall(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
+    public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     // updating channel data
     /**
@@ -298,7 +298,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for creating a channel
      */
-    public fun createChannelCall(channel: Channel): Call<Channel>
+    public fun createChannel(channel: Channel): Call<Channel>
 
     /**
      * Sends the message. Immediately adds the message to local storage
@@ -310,7 +310,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun sendMessageCall(message: Message): Call<Message>
+    public fun sendMessage(message: Message): Call<Message>
 
     /**
      * Sends the message. Immediately adds the message to local storage
@@ -323,7 +323,7 @@ public interface ChatDomain {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
 
-    public fun sendMessageCall(
+    public fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
     ): Call<Message>
@@ -338,7 +338,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun cancelMessageCall(message: Message): Call<Boolean>
+    public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
@@ -351,7 +351,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun shuffleGiphyCall(message: Message): Call<Message>
+    public fun shuffleGiphy(message: Message): Call<Message>
 
     /**
      * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
@@ -364,7 +364,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun sendGiphyCall(message: Message): Call<Message>
+    public fun sendGiphy(message: Message): Call<Message>
 
     /**
      * Edits the specified message. Local storage is updated immediately
@@ -376,7 +376,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun editMessageCall(message: Message): Call<Message>
+    public fun editMessage(message: Message): Call<Message>
 
     /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain
@@ -387,7 +387,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun deleteMessageCall(message: Message): Call<Message>
+    public fun deleteMessage(message: Message): Call<Message>
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
@@ -400,7 +400,7 @@ public interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public fun sendReactionCall(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
+    public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
@@ -411,7 +411,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for deleting reaction
      */
-    public fun deleteReactionCall(cid: String, reaction: Reaction): Call<Message>
+    public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
      * Keystroke should be called whenever a user enters text into the message input
@@ -422,7 +422,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent
      */
-    public fun keystrokeCall(cid: String, parentId: String?): Call<Boolean>
+    public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
      * StopTyping should be called when the user submits the text and finishes typing
@@ -433,7 +433,7 @@ public interface ChatDomain {
      * @return executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
      * false if it wasn't sent.
      */
-    public fun stopTypingCall(cid: String, parentId: String? = null): Call<Boolean>
+    public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**
      * Marks all messages of the specified channel as read
@@ -443,14 +443,14 @@ public interface ChatDomain {
      * @return executable async [Call] which completes with [Result] having data equal to true if the mark read event
      * was sent or false if there was no need to mark read (i. e. the messages are already marked as read).
      */
-    public fun markReadCall(cid: String): Call<Boolean>
+    public fun markRead(cid: String): Call<Boolean>
 
     /**
      * Marks all messages on a channel as read.
      *
      * @return executable async [Call] responsinble for marking all messages as read
      */
-    public fun markAllReadCall(): Call<Boolean>
+    public fun markAllRead(): Call<Boolean>
 
     /**
      * Hides the channel with the specified id
@@ -462,7 +462,7 @@ public interface ChatDomain {
      *
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */
-    public fun hideChannelCall(cid: String, keepHistory: Boolean): Call<Unit>
+    public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
 
     /**
      * Shows a channel that was previously hidden
@@ -471,7 +471,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for hiding a channel
      */
-    public fun showChannelCall(cid: String): Call<Unit>
+    public fun showChannel(cid: String): Call<Unit>
 
     /**
      * Leaves the channel with the specified id
@@ -480,7 +480,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] leaving a channel
      */
-    public fun leaveChannelCall(cid: String): Call<Unit>
+    public fun leaveChannel(cid: String): Call<Unit>
 
     /**
      * Deletes the channel with the specified id
@@ -489,7 +489,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] deleting a channel
      */
-    public fun deleteChannelCall(cid: String): Call<Unit>
+    public fun deleteChannel(cid: String): Call<Unit>
 
     /**
      * Set the reply state for the channel.
@@ -499,7 +499,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call]
      */
-    public fun setMessageForReplyCall(cid: String, message: Message?): Call<Unit>
+    public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
@@ -507,7 +507,7 @@ public interface ChatDomain {
      * @param attachment the attachment to download
      * @return executable async [Call] downloading attachment
      */
-    public fun downloadAttachmentCall(attachment: Attachment): Call<Unit>
+    public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**
      * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
@@ -520,7 +520,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] querying users
      */
-    public fun searchUsersByNameCall(
+    public fun searchUsersByName(
         querySearch: String,
         offset: Int,
         userLimit: Int,
@@ -539,7 +539,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] querying members
      */
-    public fun queryMembersCall(
+    public fun queryMembers(
         cid: String,
         offset: Int = 0,
         limit: Int = 0,

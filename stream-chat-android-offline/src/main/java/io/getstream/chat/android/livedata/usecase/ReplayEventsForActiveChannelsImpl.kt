@@ -26,7 +26,7 @@ internal class ReplayEventsForActiveChannelsImpl(
         validateCid(cid)
 
         return CoroutineCall(domainImpl.scope) {
-            domainImpl.replayEventsForActiveChannels(cid)
+            domainImpl.replayEvents(cid)
         }
     }
 }

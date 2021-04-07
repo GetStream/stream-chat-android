@@ -41,7 +41,7 @@ internal class CreateChannelViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
-        whenever(chatDomain.createChannelCall(any())) doReturn createChannelCall
+        whenever(chatDomain.createChannel(any())) doReturn createChannelCall
         whenever(createChannelCall.execute()) doReturn createChannelResult
         whenever(createChannelResult.data()) doReturn CHANNEL
         whenever(createChannelResult.isError) doReturn false
