@@ -3,7 +3,7 @@ import com.getstream.sdk.chat.Dependencies
 apply plugin: 'com.pascalwelsch.gitversioner'
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
-apply plugin: 'io.codearte.nexus-staging'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
 
@@ -25,7 +25,7 @@ buildscript {
         classpath Dependencies.ktlintPlugin
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
-        classpath Dependencies.gradleNexusStagingPlugin
+        classpath Dependencies.gradleNexusPublishPlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
     }
@@ -100,3 +100,5 @@ apiValidation {
             'io.getstream.chat.android.core.internal.InternalStreamChatApi',
     ]
 }
+
+apply from: "${rootDir}/scripts/publish-root.gradle"
