@@ -20,7 +20,7 @@ public interface CreateChannel {
 internal class CreateChannelImpl(private val domainImpl: ChatDomainImpl) : CreateChannel {
     override operator fun invoke(channel: Channel): Call<Channel> {
         return CoroutineCall(domainImpl.scope) {
-            domainImpl.createChannel(channel)
+            domainImpl.createNewChannel(channel)
         }
     }
 }

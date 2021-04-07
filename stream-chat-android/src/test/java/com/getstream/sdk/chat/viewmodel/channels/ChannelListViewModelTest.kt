@@ -83,7 +83,7 @@ private class Fixture {
 
     init {
         whenever(chatDomain.currentUser) doReturn user
-        whenever(chatDomain.queryChannelsCall(any(), any(), any(), any())) doReturn queryChannelsCall
+        whenever(chatDomain.queryChannels(any(), any(), any(), any())) doReturn queryChannelsCall
         whenever(queryChannelsControllerResult.isSuccess) doReturn true
         whenever(queryChannelsControllerResult.data()) doReturn queryChannelsController
         whenever(queryChannelsController.channels) doReturn channelsLiveData
@@ -105,9 +105,9 @@ private class Fixture {
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
         val mockCall: Call<List<Channel>> = mock()
-        whenever(chatDomain.queryChannelsLoadMoreCall(any(), any(), any(), any())) doReturn mockCall
-        whenever(chatDomain.queryChannelsLoadMoreCall(any(), any(), any())) doReturn mockCall
-        whenever(chatDomain.queryChannelsLoadMoreCall(any(), any())) doReturn mockCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any())) doReturn mockCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any())) doReturn mockCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn mockCall
         whenever(mockCall.enqueue()) doAnswer {
             val channels = (channelsLiveData.value ?: emptyList()) + moreChannels
             channelsLiveData.postValue(channels)

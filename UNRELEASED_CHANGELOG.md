@@ -45,38 +45,38 @@
 ### ✅ Added
 - Add `ChatDomain::removeMembers` method
 - Added the following use case functions to `ChatDomain` which are supposed to replace `ChatDomain.useCases` property:
-* `ChatDomain::replayEventsForActiveChannelsCall`
-* `ChatDomain::getChannelControllerCall`
-* `ChatDomain::watchChannelCall`
-* `ChatDomain::queryChannelsCall`
-* `ChatDomain::getThreadCall`
-* `ChatDomain::loadOlderMessagesCall`
-* `ChatDomain::loadNewerMessagesCall`
-* `ChatDomain::loadMessageByIdCall`
-* `ChatDomain::queryChannelsLoadMoreCall`
-* `ChatDomain::threadLoadMoreCall`
-* `ChatDomain::createChannelCall`
-* `ChatDomain::sendMessageCall`
-* `ChatDomain::sendMessageCall`
-* `ChatDomain::cancelMessageCall`
-* `ChatDomain::shuffleGiphyCall`
-* `ChatDomain::sendGiphyCall`
-* `ChatDomain::editMessageCall`
-* `ChatDomain::deleteMessageCall`
-* `ChatDomain::sendReactionCall`
-* `ChatDomain::deleteReactionCall`
-* `ChatDomain::keystrokeCall`
-* `ChatDomain::stopTypingCall`
-* `ChatDomain::markReadCall`
-* `ChatDomain::markAllReadCall`
-* `ChatDomain::hideChannelCall`
-* `ChatDomain::showChannelCall`
-* `ChatDomain::leaveChannelCall`
-* `ChatDomain::deleteChannelCall`
-* `ChatDomain::setMessageForReplyCall`
-* `ChatDomain::downloadAttachmentCall`
-* `ChatDomain::searchUsersByNameCall`
-* `ChatDomain::queryMembersCall`
+* `ChatDomain::replayEventsForActiveChannels`
+* `ChatDomain::getChannelController`
+* `ChatDomain::watchChannel`
+* `ChatDomain::queryChannels`
+* `ChatDomain::getThread`
+* `ChatDomain::loadOlderMessages`
+* `ChatDomain::loadNewerMessages`
+* `ChatDomain::loadMessageById`
+* `ChatDomain::queryChannelsLoadMore`
+* `ChatDomain::threadLoadMore`
+* `ChatDomain::createChannel`
+* `ChatDomain::sendMessage`
+* `ChatDomain::sendMessage`
+* `ChatDomain::cancelMessage`
+* `ChatDomain::shuffleGiphy`
+* `ChatDomain::sendGiphy`
+* `ChatDomain::editMessage`
+* `ChatDomain::deleteMessage`
+* `ChatDomain::sendReaction`
+* `ChatDomain::deleteReaction`
+* `ChatDomain::keystroke`
+* `ChatDomain::stopTyping`
+* `ChatDomain::markRead`
+* `ChatDomain::markAllRead`
+* `ChatDomain::hideChannel`
+* `ChatDomain::showChannel`
+* `ChatDomain::leaveChannel`
+* `ChatDomain::deleteChannel`
+* `ChatDomain::setMessageForReply`
+* `ChatDomain::downloadAttachment`
+* `ChatDomain::searchUsersByName`
+* `ChatDomain::queryMembers`
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.useCases`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `ChatDomain` use case functions instead.

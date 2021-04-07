@@ -89,7 +89,7 @@ internal class MessageListViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(domain.watchChannelCall(any(), any())) doReturn watchChannelCall
+        whenever(domain.watchChannel(any(), any())) doReturn watchChannelCall
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(deleteMessageResult.data()) doReturn deletedMessage
@@ -100,12 +100,12 @@ internal class MessageListViewModelTest {
         whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
-        whenever(domain.threadLoadMoreCall(any(), any(), any())) doReturn threadLoadMoreCall
+        whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
-        whenever(domain.loadOlderMessagesCall(any(), any())) doReturn loadOlderMessagesCall
-        whenever(domain.deleteMessageCall(any())) doReturn deleteMessageCall
-        whenever(domain.getThreadCall(any(), any())) doReturn getThreadCall
+        whenever(domain.loadOlderMessages(any(), any())) doReturn loadOlderMessagesCall
+        whenever(domain.deleteMessage(any())) doReturn deleteMessageCall
+        whenever(domain.getThread(any(), any())) doReturn getThreadCall
         whenever(getThreadResult.isSuccess) doReturn true
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
@@ -143,7 +143,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        verify(domain).loadOlderMessagesCall(CID, MESSAGES_LIMIT)
+        verify(domain).loadOlderMessages(CID, MESSAGES_LIMIT)
     }
 
     @Test
@@ -153,7 +153,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
 
-        verify(domain).deleteMessageCall(MESSAGE)
+        verify(domain).deleteMessage(MESSAGE)
     }
 
     @Test

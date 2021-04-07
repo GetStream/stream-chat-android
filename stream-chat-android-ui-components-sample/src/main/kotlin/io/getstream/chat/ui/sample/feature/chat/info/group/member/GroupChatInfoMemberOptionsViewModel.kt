@@ -30,7 +30,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            val result = chatDomain.queryChannelsCall(
+            val result = chatDomain.queryChannels(
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.distinct(listOf(memberId, chatDomain.currentUser.id)),

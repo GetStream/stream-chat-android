@@ -39,7 +39,7 @@ internal class MessageListHeaderViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
-        whenever(chatDomain.watchChannelCall(CID, 0)) doReturn channelControllerCall
+        whenever(chatDomain.watchChannel(CID, 0)) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
     }

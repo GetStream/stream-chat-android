@@ -29,7 +29,7 @@ class GroupChatInfoViewModel(
 
     init {
         _state.value = INITIAL_STATE
-        chatDomain.getChannelControllerCall(cid).enqueue { result ->
+        chatDomain.getChannelController(cid).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
                 // Update channel mute status
@@ -76,7 +76,7 @@ class GroupChatInfoViewModel(
 
     private fun leaveChannel() {
         viewModelScope.launch {
-            val result = chatDomain.leaveChannelCall(cid).await()
+            val result = chatDomain.leaveChannel(cid).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.RedirectToHome)
             } else {

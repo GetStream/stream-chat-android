@@ -517,7 +517,7 @@ class Android {
         fun watchChannel() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.watchChannelCall(cid = "messaging:123", messageLimit = 0)
+            chatDomain.watchChannel(cid = "messaging:123", messageLimit = 0)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channelController = result.data()
@@ -533,7 +533,7 @@ class Android {
         fun loadMoreMessages() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.loadOlderMessagesCall("messaging:123", 10)
+            chatDomain.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channel = result.data()
@@ -545,7 +545,7 @@ class Android {
             val chatDomain = ChatDomain.instance()
             val message = Message(text = "Hello world")
 
-            chatDomain.sendMessageCall(message)
+            chatDomain.sendMessage(message)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -562,7 +562,7 @@ class Android {
             )
             val sort = QuerySort<Channel>()
 
-            chatDomain.queryChannelsCall(filter, sort)
+            chatDomain.queryChannels(filter, sort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val queryChannelsController = result.data()
@@ -584,7 +584,7 @@ class Android {
             )
             val sort = QuerySort<Channel>()
 
-            chatDomain.queryChannelsLoadMoreCall(filter, sort)
+            chatDomain.queryChannelsLoadMore(filter, sort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channels: List<Channel> = result.data()
@@ -603,7 +603,7 @@ class Android {
         fun messagesFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.getThreadCall(cid = "cid", parentId = "parentId").enqueue { result ->
+            chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
                 if (result.isSuccess) {
                     val threadController = result.data()
 
@@ -618,7 +618,7 @@ class Android {
         fun loadMoreFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.threadLoadMoreCall(cid = "cid", parentId = "parentId", messageLimit = 1)
+            chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val messages: List<Message> = result.data()
