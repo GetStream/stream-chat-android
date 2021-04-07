@@ -32,6 +32,8 @@ public data class ChannelData(
     var deletedAt: Date? = null,
     /** channel member count */
     var memberCount: Int = 0,
+    /** channel's team */
+    var team: String = "",
     /** all the custom data provided for this channel */
     var extraData: MutableMap<String, Any> = mutableMapOf()
 ) {
@@ -47,11 +49,12 @@ public data class ChannelData(
         extraData = c.extraData
 
         createdBy = c.createdBy
+        team = c.team
     }
 
     /** convert a channelEntity into a channel object */
     internal fun toChannel(messages: List<Message>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
-        val c = Channel(cooldown = cooldown)
+        val c = Channel(cooldown = cooldown, team = team)
         c.type = type
         c.id = channelId
         c.cid = cid

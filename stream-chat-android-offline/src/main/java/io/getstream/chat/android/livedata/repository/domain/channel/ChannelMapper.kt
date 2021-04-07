@@ -39,6 +39,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         lastMessageId = lastMessage?.messageInnerEntity?.id,
         lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
+        team = team,
     )
 }
 
@@ -62,5 +63,6 @@ internal suspend fun ChannelEntity.toModel(
     members = members.values.map { it.toModel(getUser) },
     messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
     read = reads.values.map { it.toModel(getUser) },
-    createdBy = getUser(createdByUserId)
+    createdBy = getUser(createdByUserId),
+    team = team,
 )
