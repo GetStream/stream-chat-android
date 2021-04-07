@@ -119,11 +119,6 @@ afterEvaluate {
                             email = 'leandro@getstream.io'
                         }
                         developer {
-                            id = 'carterhudson'
-                            name = 'Carter Hudson'
-                            email = 'carter@getstream.io'
-                        }
-                        developer {
                             id = 'bychkovdmitry'
                             name = 'Dmitrii Bychkov'
                             email = 'dmitrii@getstream.io'
