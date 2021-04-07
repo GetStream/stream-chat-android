@@ -43,7 +43,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Add `ChatDomain::removeMembers` method
 ### ⚠️ Changed
 
 ### ❌ Removed

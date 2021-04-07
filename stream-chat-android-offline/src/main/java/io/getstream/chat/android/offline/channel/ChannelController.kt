@@ -1264,6 +1264,10 @@ internal class ChannelController(
         _members.value = _members.value + members.associateBy { it.user.id }
     }
 
+    suspend fun removeMembers(vararg userIds: String): Result<Channel> {
+        return channelClient.removeMembers(*userIds).await()
+    }
+
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     private fun updateReads(reads: List<ChannelUserRead>) {

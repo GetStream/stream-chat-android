@@ -7,10 +7,8 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
@@ -20,13 +18,11 @@ import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(
-    cid: String,
+    private val cid: String,
     private val memberId: String,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _events = MutableLiveData<Event<UiEvent>>()
     private val _state: MediatorLiveData<State> = MediatorLiveData()
     val events: LiveData<Event<UiEvent>> = _events
@@ -94,7 +90,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     private fun removeFromChannel() {
         viewModelScope.launch {
-            val result = channelClient.removeMembers(memberId).await()
+            val result = chatDomain.removeMembers(cid, memberId).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {
