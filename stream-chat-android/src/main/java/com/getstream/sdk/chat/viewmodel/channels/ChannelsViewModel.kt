@@ -46,7 +46,7 @@ public class ChannelsViewModel(
 
     init {
         stateMerger.value = State.Loading
-        chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+        chatDomain.queryChannelsCall(filter, sort, limit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
                 stateMerger.addSource(
@@ -84,23 +84,23 @@ public class ChannelsViewModel(
     }
 
     public fun leaveChannel(channel: Channel) {
-        chatDomain.useCases.leaveChannel(channel.cid).enqueue()
+        chatDomain.leaveChannelCall(channel.cid).enqueue()
     }
 
     public fun deleteChannel(channel: Channel) {
-        chatDomain.useCases.deleteChannel(channel.cid).enqueue()
+        chatDomain.deleteChannelCall(channel.cid).enqueue()
     }
 
     public fun hideChannel(channel: Channel) {
-        chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
+        chatDomain.hideChannelCall(channel.cid, true).enqueue()
     }
 
     public fun markAllRead() {
-        chatDomain.useCases.markAllRead().enqueue()
+        chatDomain.markAllReadCall().enqueue()
     }
 
     private fun requestMoreChannels() {
-        chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
+        chatDomain.queryChannelsLoadMoreCall(filter, sort).enqueue()
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
