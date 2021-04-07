@@ -116,6 +116,7 @@ internal class ChannelControllerImpl(
 
     fun upsertMembers(members: List<Member>) = channelControllerStateFlow.upsertMembers(members)
     fun upsertMember(member: Member) = channelControllerStateFlow.upsertMember(member)
+    suspend fun removeMembers(vararg userIds: String): Result<Channel> = channelControllerStateFlow.removeMembers(*userIds)
 
     fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
 

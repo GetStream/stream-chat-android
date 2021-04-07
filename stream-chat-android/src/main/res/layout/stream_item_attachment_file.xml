@@ -4,6 +4,7 @@
     android:id="@+id/attachmentview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minWidth="@dimen/stream_attach_min_width"
     android:paddingTop="1dp"
     android:paddingBottom="1dp"
     >
