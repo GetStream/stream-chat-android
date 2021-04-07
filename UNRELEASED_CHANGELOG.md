@@ -39,6 +39,7 @@
 ### 🐞 Fixed
 - Fix Crash on some devices that are not able to create an Encrypted SharedPreferences
 - Fixed the message read indicator in the message list
+- Added missing `team` field to `ChannelEntity` and `ChannelData`
 ### ⬆️ Improved
 
 ### ✅ Added
