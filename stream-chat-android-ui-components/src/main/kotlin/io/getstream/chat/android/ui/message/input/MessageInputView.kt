@@ -290,7 +290,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configLightningButton() {
         binding.commandsButton.run {
-            style.lightningButtonIcon.let(this::setImageDrawable)
+            style.commandsButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
                     if (it.isSuggestionListVisible()) {
@@ -404,7 +404,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun shouldShowCommandsButton(): Boolean {
         val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
-        return hasCommands && style.lightningButtonEnabled && commandsEnabled
+        return hasCommands && style.commandsButtonEnabled && commandsEnabled
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {

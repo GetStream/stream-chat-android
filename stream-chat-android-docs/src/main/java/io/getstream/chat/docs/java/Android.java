@@ -1,5 +1,7 @@
 package io.getstream.chat.docs.java;
 
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -7,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,9 +55,11 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.ui.common.style.TextStyle;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.message.input.MessageInputView;
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle;
 import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
@@ -706,6 +711,62 @@ public class Android {
                     // Handle result.error()
                 }
             });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/message_input_view?language=java">Message Input View</a>
+     */
+    public class TransformStyleMessageInput extends Fragment {
+        public void messageInputCustomisation() {
+            TextStyle textStyleGeneric = new TextStyle(
+                    0,
+                    "fontAsserts",
+                    Typeface.NORMAL,
+                    requireContext().getResources().getDimensionPixelSize(R.dimen.stream_ui_text_medium),
+                    ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                    "some hint",
+                    ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                    Typeface.DEFAULT
+            );
+
+            Drawable genericDrawable =
+                    ContextCompat.getDrawable(getContext(), R.drawable.stream_ui_ic_command);
+
+            TransformStyle.INSTANCE.setMessageInputStyleTransformer(
+                    viewStyle ->
+                        new MessageInputViewStyle(
+                                true,
+                                genericDrawable,
+                                true,
+                                genericDrawable,
+                                requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
+                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                textStyleGeneric,
+                                true,
+                                true,
+                                true,
+                                genericDrawable,
+                                genericDrawable,
+                                true,
+                                true,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                true,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                genericDrawable,
+                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                genericDrawable,
+                                genericDrawable,
+                                20,
+                                genericDrawable
+                        )
+
+            );
         }
     }
 }

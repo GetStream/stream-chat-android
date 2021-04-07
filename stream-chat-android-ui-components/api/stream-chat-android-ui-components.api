@@ -932,6 +932,8 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun getAttachButtonIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getAttachmentMaxFileSize ()I
 	public final fun getBackgroundColor ()I
+	public final fun getCommandsButtonEnabled ()Z
+	public final fun getCommandsButtonIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getCommandsDescriptionTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getCommandsEnabled ()Z
 	public final fun getCommandsNameTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -939,8 +941,6 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun getCustomCursorDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getDividerBackground ()Landroid/graphics/drawable/Drawable;
 	public final fun getEditTextBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
-	public final fun getLightningButtonEnabled ()Z
-	public final fun getLightningButtonIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getMentionsEnabled ()Z
 	public final fun getMentionsIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getMentionsNameTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
