@@ -5,7 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
@@ -95,6 +97,7 @@ public interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
+    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
     public data class Builder(
         private val appContext: Context,
