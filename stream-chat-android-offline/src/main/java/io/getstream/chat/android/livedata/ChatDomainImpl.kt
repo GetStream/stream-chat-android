@@ -57,38 +57,7 @@ import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
-import io.getstream.chat.android.livedata.usecase.CancelMessageImpl
-import io.getstream.chat.android.livedata.usecase.CreateChannelImpl
-import io.getstream.chat.android.livedata.usecase.DeleteChannelImpl
-import io.getstream.chat.android.livedata.usecase.DeleteMessageImpl
-import io.getstream.chat.android.livedata.usecase.DeleteReactionImpl
-import io.getstream.chat.android.livedata.usecase.DownloadAttachmentImpl
-import io.getstream.chat.android.livedata.usecase.EditMessageImpl
-import io.getstream.chat.android.livedata.usecase.GetChannelControllerImpl
-import io.getstream.chat.android.livedata.usecase.GetThreadImpl
-import io.getstream.chat.android.livedata.usecase.HideChannelImpl
-import io.getstream.chat.android.livedata.usecase.KeystrokeImpl
-import io.getstream.chat.android.livedata.usecase.LeaveChannelImpl
-import io.getstream.chat.android.livedata.usecase.LoadMessageByIdImpl
-import io.getstream.chat.android.livedata.usecase.LoadNewerMessagesImpl
-import io.getstream.chat.android.livedata.usecase.LoadOlderMessagesImpl
-import io.getstream.chat.android.livedata.usecase.MarkAllReadImpl
-import io.getstream.chat.android.livedata.usecase.MarkReadImpl
-import io.getstream.chat.android.livedata.usecase.QueryChannelsImpl
-import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMoreImpl
-import io.getstream.chat.android.livedata.usecase.QueryMembers
-import io.getstream.chat.android.livedata.usecase.ReplayEventsForActiveChannelsImpl
-import io.getstream.chat.android.livedata.usecase.SearchUsersByName
-import io.getstream.chat.android.livedata.usecase.SendGiphyImpl
-import io.getstream.chat.android.livedata.usecase.SendMessageImpl
-import io.getstream.chat.android.livedata.usecase.SendReactionImpl
-import io.getstream.chat.android.livedata.usecase.SetMessageForReplyImpl
-import io.getstream.chat.android.livedata.usecase.ShowChannelImpl
-import io.getstream.chat.android.livedata.usecase.ShuffleGiphyImpl
-import io.getstream.chat.android.livedata.usecase.StopTypingImpl
-import io.getstream.chat.android.livedata.usecase.ThreadLoadMoreImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.usecase.WatchChannelImpl
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -178,6 +147,7 @@ internal class ChatDomainImpl internal constructor(
     private val _banned = MutableStateFlow(false)
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MediatorLiveData<TypingEvent>()
+    private val useCaseProvider: UseCaseHelper = UseCaseHelper(this)
 
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
@@ -890,111 +860,114 @@ internal class ChatDomainImpl internal constructor(
 
     // region use-case functions
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        ReplayEventsForActiveChannelsImpl(this).invoke(cid)
+        useCaseProvider.replayEventsForActiveChannels.invoke(cid)
 
-    override fun getChannelController(cid: String): Call<ChannelController> = GetChannelControllerImpl(this).invoke(cid)
+    override fun getChannelController(cid: String): Call<ChannelController> =
+        useCaseProvider.getChannelController.invoke(cid)
 
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
-        WatchChannelImpl(this).invoke(cid, messageLimit)
+        useCaseProvider.watchChannel.invoke(cid, messageLimit)
 
     override fun queryChannels(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<QueryChannelsController> = QueryChannelsImpl(this).invoke(filter, sort, limit, messageLimit)
+    ): Call<QueryChannelsController> = useCaseProvider.queryChannels.invoke(filter, sort, limit, messageLimit)
 
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
-        GetThreadImpl(this).invoke(cid, parentId)
+        useCaseProvider.getThread.invoke(cid, parentId)
 
     override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        LoadOlderMessagesImpl(this).invoke(cid, messageLimit)
+        useCaseProvider.loadOlderMessages.invoke(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
-        LoadNewerMessagesImpl(this).invoke(cid, messageLimit)
+        useCaseProvider.loadNewerMessages.invoke(cid, messageLimit)
 
     override fun loadMessageById(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = LoadMessageByIdImpl(this).invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> = useCaseProvider.loadMessageById.invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort, limit, messageLimit)
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort, limit, messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort, messageLimit)
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort, messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = QueryChannelsLoadMoreImpl(this).invoke(filter, sort)
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort)
 
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        ThreadLoadMoreImpl(this).invoke(cid, parentId, messageLimit)
+        useCaseProvider.threadLoadMore.invoke(cid, parentId, messageLimit)
 
-    override fun createChannel(channel: Channel): Call<Channel> = CreateChannelImpl(this).invoke(channel)
+    override fun createChannel(channel: Channel): Call<Channel> = useCaseProvider.createChannel.invoke(channel)
 
-    override fun sendMessage(message: Message): Call<Message> = SendMessageImpl(this).invoke(message)
+    override fun sendMessage(message: Message): Call<Message> = useCaseProvider.sendMessage.invoke(message)
 
     override fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = SendMessageImpl(this).invoke(message, attachmentTransformer)
+    ): Call<Message> = useCaseProvider.sendMessage.invoke(message, attachmentTransformer)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = CancelMessageImpl(this).invoke(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = useCaseProvider.cancelMessage.invoke(message)
 
-    override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphyImpl(this).invoke(message)
+    override fun shuffleGiphy(message: Message): Call<Message> = useCaseProvider.shuffleGiphy.invoke(message)
 
-    override fun sendGiphy(message: Message): Call<Message> = SendGiphyImpl(this).invoke(message)
+    override fun sendGiphy(message: Message): Call<Message> = useCaseProvider.sendGiphy.invoke(message)
 
-    override fun editMessage(message: Message): Call<Message> = EditMessageImpl(this).invoke(message)
+    override fun editMessage(message: Message): Call<Message> = useCaseProvider.editMessage.invoke(message)
 
-    override fun deleteMessage(message: Message): Call<Message> = DeleteMessageImpl(this).invoke(message)
+    override fun deleteMessage(message: Message): Call<Message> = useCaseProvider.deleteMessage.invoke(message)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
-        SendReactionImpl(this).invoke(cid, reaction, enforceUnique)
+        useCaseProvider.sendReaction.invoke(cid, reaction, enforceUnique)
 
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
-        DeleteReactionImpl(this).invoke(cid, reaction)
+        useCaseProvider.deleteReaction.invoke(cid, reaction)
 
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = KeystrokeImpl(this).invoke(cid, parentId)
+    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
+        useCaseProvider.keystroke.invoke(cid, parentId)
 
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = StopTypingImpl(this).invoke(cid, parentId)
+    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
+        useCaseProvider.stopTyping.invoke(cid, parentId)
 
-    override fun markRead(cid: String): Call<Boolean> = MarkReadImpl(this).invoke(cid)
+    override fun markRead(cid: String): Call<Boolean> = useCaseProvider.markRead.invoke(cid)
 
-    override fun markAllRead(): Call<Boolean> = MarkAllReadImpl(this).invoke()
+    override fun markAllRead(): Call<Boolean> = useCaseProvider.markAllRead.invoke()
 
     override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
-        HideChannelImpl(this).invoke(cid, keepHistory)
+        useCaseProvider.hideChannel.invoke(cid, keepHistory)
 
-    override fun showChannel(cid: String): Call<Unit> = ShowChannelImpl(this).invoke(cid)
+    override fun showChannel(cid: String): Call<Unit> = useCaseProvider.showChannel.invoke(cid)
 
-    override fun leaveChannel(cid: String): Call<Unit> = LeaveChannelImpl(this).invoke(cid)
+    override fun leaveChannel(cid: String): Call<Unit> = useCaseProvider.leaveChannel.invoke(cid)
 
-    override fun deleteChannel(cid: String): Call<Unit> = DeleteChannelImpl(this).invoke(cid)
+    override fun deleteChannel(cid: String): Call<Unit> = useCaseProvider.deleteChannel.invoke(cid)
 
     override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        SetMessageForReplyImpl(this).invoke(cid, message)
+        useCaseProvider.setMessageForReply.invoke(cid, message)
 
     override fun downloadAttachment(attachment: Attachment): Call<Unit> =
-        DownloadAttachmentImpl(this).invoke(attachment)
+        useCaseProvider.downloadAttachment.invoke(attachment)
 
     override fun searchUsersByName(
         querySearch: String,
         offset: Int,
         userLimit: Int,
         userPresence: Boolean,
-    ): Call<List<User>> = SearchUsersByName(this).invoke(querySearch, offset, userLimit, userPresence)
+    ): Call<List<User>> = useCaseProvider.searchUsersByName.invoke(querySearch, offset, userLimit, userPresence)
 
     override fun queryMembers(
         cid: String,
@@ -1003,7 +976,7 @@ internal class ChatDomainImpl internal constructor(
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member>,
-    ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
+    ): Call<List<Member>> = useCaseProvider.queryMembers.invoke(cid, offset, limit, filter, sort, members)
 
     // end region
 
