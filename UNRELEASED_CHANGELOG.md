@@ -7,6 +7,8 @@
 
 ### ⚠️ Changed
 
+- We've cleaned up the transitive dependencies that our library exposes to its clients. If you were using other libraries implicitly through our SDK, you'll now have to depend on those libraries directly instead.
+
 ### ❌ Removed
 
 
