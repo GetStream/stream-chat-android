@@ -29,15 +29,6 @@
         app:layout_constraintTop_toBottomOf="@id/gapView"
         />
 
-    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-        android:id="@+id/reactionsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
-        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
-        />
-
     <LinearLayout
         android:id="@+id/messageContainer"
         android:layout_width="0dp"
@@ -84,6 +75,15 @@
             android:textColorLink="@color/stream_ui_accent_blue"/>
 
     </LinearLayout>
+
+    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+        />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
