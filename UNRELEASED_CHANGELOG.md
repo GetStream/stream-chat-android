@@ -7,6 +7,8 @@
 
 ### ⚠️ Changed
 
+- We've cleaned up the transitive dependencies that our library exposes to its clients. If you were using other libraries implicitly through our SDK, you'll now have to depend on those libraries directly instead.
+
 ### ❌ Removed
 
 
@@ -110,11 +112,13 @@ Added theme to all activities all the SDK. You can override then in your project
 - Fix `ChannelListHeaderView`'s title position when user avatar or action button is invisible
 - Fix UI behaviour for in-progress file uploads
 - Fix extension problems with file uploads when attachment names contain spaces
+- Fix reaction bubbles which were shown behind message attachment views
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
+- Now it is possible to inject `UserLookupHandler` into `MessageInputView` in order to implement custom users' mention lookup algorithm
 ### ⚠️ Changed
 
 ### ❌ Removed
