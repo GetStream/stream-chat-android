@@ -26,6 +26,14 @@ public class Debouncer(private val debounceMs: Long) {
         }
     }
 
+    public fun submitSuspendable(work: suspend () -> Unit) {
+        job?.cancel()
+        job = scope.launch {
+            delay(debounceMs)
+            work()
+        }
+    }
+
     /**
      * Cleans up any pending work.
      *
