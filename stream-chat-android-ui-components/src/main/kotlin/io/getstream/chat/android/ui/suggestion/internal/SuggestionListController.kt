@@ -44,7 +44,7 @@ internal class SuggestionListController(
         messageText: String,
     ) {
         val suggestions = withContext(DispatcherProvider.IO) {
-            userLookupHandler?.handleUserLookup(messageText)
+            userLookupHandler?.handleUserLookup(messageText.substringAfterLast("@"))
                 ?.let(SuggestionListView.Suggestions::MentionSuggestions)
         }
         withContext(DispatcherProvider.Main) {

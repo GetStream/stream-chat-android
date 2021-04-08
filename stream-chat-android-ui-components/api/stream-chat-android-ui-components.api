@@ -833,6 +833,11 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$C
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 }
 
+public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public fun <init> (Ljava/util/List;)V
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
 }
 

@@ -576,18 +576,17 @@ public class MessageInputView : ConstraintLayout {
      */
     public interface UserLookupHandler {
         /**
-         * Performs users lookup by given [input] in suspend way. It's executed on background, so it can perform heavy operations.
+         * Performs users lookup by given [query] in suspend way. It's executed on background, so it can perform heavy operations.
          *
-         * @param input String as user input for lookup algorithm.
+         * @param query String as user input for lookup algorithm.
          * @return List of users as result of lookup.
          */
-        public suspend fun handleUserLookup(input: String): List<User>
+        public suspend fun handleUserLookup(query: String): List<User>
     }
 
-    internal class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
-        override suspend fun handleUserLookup(input: String): List<User> {
-            val namePattern = input.substringAfterLast("@")
-            return users.filter { it.name.contains(namePattern, true) }
+    public class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
+        override suspend fun handleUserLookup(query: String): List<User> {
+            return users.filter { it.name.contains(query, true) }
         }
     }
 }
