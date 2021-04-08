@@ -16,7 +16,9 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
@@ -58,7 +60,8 @@ public class MessageInputView : ConstraintLayout {
             if (attachments.isNotEmpty()) {
                 when (attachmentSource) {
                     AttachmentSource.MEDIA,
-                    AttachmentSource.CAMERA -> {
+                    AttachmentSource.CAMERA,
+                    -> {
                         binding.messageInputFieldView.mode =
                             MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                     }
@@ -70,6 +73,9 @@ public class MessageInputView : ConstraintLayout {
             }
         }
     }
+
+    private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
+    private var messageInputDebouncer: Debouncer? = null
 
     public constructor(context: Context) : super(context) {
         init(context)
@@ -130,8 +136,17 @@ public class MessageInputView : ConstraintLayout {
         this.sendMessageHandler = handler
     }
 
+    @Deprecated(
+        "Use setUserLookupHandler instead of manually passing the list of users",
+        ReplaceWith(
+            "setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))",
+            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
+            "io.getstream.chat.android.client.models.Member"
+        ),
+
+    )
     public fun setMembers(members: List<Member>) {
-        suggestionListController?.users = members.map { it.user }
+        setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
     }
 
     public fun setCommands(commands: List<Command>) {
@@ -196,6 +211,10 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
+    public fun setUserLookupHandler(handler: UserLookupHandler) {
+        this.userLookupHandler = handler
+    }
+
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
         style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
         styleCommandsName(style.commandsNameTextStyle)
@@ -207,6 +226,17 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
         binding.messageInputFieldView.setMaxMessageLength(maxMessageLength)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
+    }
+
+    override fun onDetachedFromWindow() {
+        messageInputDebouncer?.shutdown()
+        messageInputDebouncer = null
+        super.onDetachedFromWindow()
     }
 
     @SuppressLint("CustomViewStyleable")
@@ -333,7 +363,9 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    suggestionListController?.showSuggestions(messageText)
+                    messageInputDebouncer?.submitSuspendable {
+                        suggestionListController?.showSuggestions(messageText, userLookupHandler)
+                    }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
@@ -443,6 +475,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private companion object {
+        private const val TYPING_DEBOUNCE_MS = 300L
         val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
             override fun sendMessage(messageText: String, messageReplyTo: Message?) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -536,5 +569,24 @@ public class MessageInputView : ConstraintLayout {
     @FunctionalInterface
     public interface BigFileSelectionListener {
         public fun handleBigFileSelected(hasBigFile: Boolean)
+    }
+
+    /**
+     * Users lookup functional interface. Used to create custom users lookup algorithm.
+     */
+    public interface UserLookupHandler {
+        /**
+         * Performs users lookup by given [query] in suspend way. It's executed on background, so it can perform heavy operations.
+         *
+         * @param query String as user input for lookup algorithm.
+         * @return List of users as result of lookup.
+         */
+        public suspend fun handleUserLookup(query: String): List<User>
+    }
+
+    public class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
+        override suspend fun handleUserLookup(query: String): List<User> {
+            return users.filter { it.name.contains(query, true) }
+        }
     }
 }

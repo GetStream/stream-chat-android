@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.message.input.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.DIRECT_CHAT
@@ -16,7 +17,9 @@ import java.io.File
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
-    members.observe(lifecycleOwner, view::setMembers)
+    members.observe(lifecycleOwner) { members ->
+        view.setUserLookupHandler(MessageInputView.DefaultUserLookupHandler(members.map(Member::user)))
+    }
     commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
     getActiveThread().observe(lifecycleOwner) {
@@ -61,7 +64,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsFiles: List<File>
+                attachmentsFiles: List<File>,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
                     this.parentId = parentMessage.id
