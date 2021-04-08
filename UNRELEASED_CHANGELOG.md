@@ -81,6 +81,7 @@ Added theme to all activities all the SDK. You can override then in your project
 
 ### ✅ Added
 - Now it is possible to change the back button of MessageListHeaderView using `app:streamUiMessageListHeaderBackButtonIcon`
+- Now it is possible to inject `UserLookupHandler` into `MessageInputView` in order to implement custom users' mention lookup algorithm
 ### ⚠️ Changed
 
 ### ❌ Removed

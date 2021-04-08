@@ -445,6 +445,7 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public fun <init> (J)V
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
+	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/ui/common/ReactionType : java/lang/Enum {
@@ -818,6 +819,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListView (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView;)V
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
+	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$BigFileSelectionListener {
@@ -829,6 +831,11 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$C
 	public static final field GROUP_CHAT Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
+}
+
+public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public fun <init> (Ljava/util/List;)V
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
@@ -892,6 +899,10 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$TypingListener {
 	public abstract fun onKeystroke ()V
 	public abstract fun onStopTyping ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public abstract fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
