@@ -18,8 +18,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
@@ -44,12 +44,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
-    private val configuration by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
-    }
-
-    private val itemStyle by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListItemStyle
+    private val style by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListViewStyle
     }
 
     private val messageItem: MessageListItem.MessageItem by lazy {
@@ -131,7 +127,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
-            applyStyle(itemStyle.editReactionsViewStyle)
+            applyStyle(style.itemStyle.editReactionsViewStyle)
             if (isReactionsEnabled) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
@@ -147,10 +143,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(itemStyle, currentUser)
+                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, currentUser)
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
-                setMessageListItemStyle(itemStyle)
+                setMessageListItemStyle(style.itemStyle)
             }
             .createViewHolder(
                 binding.messageContainer,
@@ -180,7 +176,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageOptions() {
         with(binding.messageOptionsView) {
             isVisible = true
-            configure(configuration, messageItem.isTheirs, messageItem.message.syncStatus)
+            configure(style, messageItem.isTheirs, messageItem.message.syncStatus)
             updateLayoutParams<LinearLayout.LayoutParams> {
                 gravity = if (messageItem.isMine) Gravity.END else Gravity.START
             }
@@ -223,7 +219,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setDeleteMessageListener {
-                if (configuration.deleteConfirmationEnabled) {
+                if (style.deleteConfirmationEnabled) {
                     confirmDeleteMessageClickHandler?.onConfirmDeleteMessage(message) {
                         messageOptionsHandlers.deleteClickHandler.onMessageDelete(message)
                     }
@@ -290,7 +286,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         const val TAG = "MessageOptionsDialogFragment"
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
-        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
         private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
         private const val ARG_OPTIONS_REACTIONS_ENABLED = "optionsReactionsEnabled"
 
@@ -298,34 +293,27 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         fun newReactionOptionsInstance(
             message: Message,
-            style: MessageListItemStyle,
-            reactionsEnabled: Boolean,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, null, style, reactionsEnabled)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, style)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
-            configuration: MessageOptionsView.Configuration,
-            style: MessageListItemStyle,
-            reactionsEnabled: Boolean,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, reactionsEnabled)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, style)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
-            configuration: MessageOptionsView.Configuration?,
-            style: MessageListItemStyle,
-            reactionsEnabled: Boolean,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_OPTIONS_CONFIG to configuration,
                     ARG_OPTIONS_ITEM_STYLE to style,
-                    ARG_OPTIONS_REACTIONS_ENABLED to reactionsEnabled
                 )
                 // pass message via static field
                 messageArg = message

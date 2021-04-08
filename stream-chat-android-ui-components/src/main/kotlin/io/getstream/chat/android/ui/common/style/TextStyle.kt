@@ -9,6 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.ChatUI
+import java.io.Serializable
 
 public data class TextStyle(
     @AnyRes public val fontResource: Int = UNSET_FONT_RESOURCE,
@@ -19,7 +20,7 @@ public data class TextStyle(
     public val hint: String = UNSET_HINT,
     @ColorInt public val hintColor: Int = UNSET_HINT_COLOR,
     public val defaultFont: Typeface = Typeface.DEFAULT,
-) {
+) : Serializable {
     private companion object {
         const val UNSET_SIZE = -1
         const val UNSET_COLOR = Integer.MAX_VALUE
