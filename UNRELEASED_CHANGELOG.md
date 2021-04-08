@@ -75,6 +75,7 @@ Added theme to all activities all the SDK. You can override then in your project
 - Fix `ChannelListHeaderView`'s title position when user avatar or action button is invisible
 - Fix UI behaviour for in-progress file uploads
 - Fix extension problems with file uploads when attachment names contain spaces
+- Fix reaction bubbles which were shown behind message attachment views
 
 ### ⬆️ Improved
 
