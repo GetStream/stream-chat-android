@@ -66,7 +66,7 @@ internal class ChatDomainImplCreateChannelTest {
                 .givenOffline()
                 .get()
 
-            val result = sut.createChannel(channel)
+            val result = sut.createNewChannel(channel)
 
             argumentCaptor<Channel>().apply {
                 verify(repositoryFacade).insertChannel(capture())
@@ -108,7 +108,7 @@ internal class ChatDomainImplCreateChannelTest {
                 .givenChatClientResult(Result(channel))
                 .get()
 
-            val result = sut.createChannel(channel)
+            val result = sut.createNewChannel(channel)
 
             argumentCaptor<Channel>().apply {
                 verify(repositoryFacade, times(2)).insertChannel(capture())
@@ -143,7 +143,7 @@ internal class ChatDomainImplCreateChannelTest {
                 .givenChatClientResult(Result(channelMock))
                 .get()
 
-            val result = sut.createChannel(channelMock)
+            val result = sut.createNewChannel(channelMock)
 
             result.isSuccess `should be equal to` true
             inOrder(channelMock) {
@@ -169,7 +169,7 @@ internal class ChatDomainImplCreateChannelTest {
                 .givenChatClientResult(Result(ChatError()))
                 .get()
 
-            val result = sut.createChannel(channelMock)
+            val result = sut.createNewChannel(channelMock)
 
             result.isSuccess `should be equal to` false
             inOrder(channelMock) {
@@ -195,7 +195,7 @@ internal class ChatDomainImplCreateChannelTest {
                 .givenChatClientResult(Result(ChatNetworkError.create(code = ChatErrorCode.NETWORK_FAILED)))
                 .get()
 
-            val result = sut.createChannel(channelMock)
+            val result = sut.createNewChannel(channelMock)
 
             result.isSuccess `should be equal to` false
             inOrder(channelMock) {
