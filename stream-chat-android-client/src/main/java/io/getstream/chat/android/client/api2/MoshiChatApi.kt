@@ -83,8 +83,20 @@ internal class MoshiChatApi(
 
     val logger = ChatLogger.get("MoshiChatApi")
 
-    lateinit var userId: String
-    lateinit var connectionId: String
+    private var userId: String = ""
+        get() {
+            if (field == "") {
+                logger.logE("userId accessed before being set")
+            }
+            return field
+        }
+    private var connectionId: String = ""
+        get() {
+            if (field == "") {
+                logger.logE("connectionId accessed before being set")
+            }
+            return field
+        }
 
     override fun setConnection(userId: String, connectionId: String) {
         this.userId = userId
