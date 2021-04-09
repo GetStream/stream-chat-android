@@ -232,7 +232,7 @@ public class MessageListView : ConstraintLayout {
                         MessageOptionsView.Configuration(
                             viewStyle = messageListViewStyle,
                             channelConfig = channel.config,
-                            suppressThreads = !adapter.isThread && !message.isInThread()
+                            suppressThreads = adapter.isThread || message.isInThread()
                         ),
                         messageListViewStyle,
                     )
