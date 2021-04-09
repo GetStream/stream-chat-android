@@ -387,7 +387,7 @@ internal class ChatDomainImpl internal constructor(
         return result
     }
 
-    suspend fun createNewChannel(c: Channel): Result<Channel> =
+    internal suspend fun createNewChannel(c: Channel): Result<Channel> =
         try {
             val online = isOnline()
             c.createdAt = c.createdAt ?: Date()
@@ -602,7 +602,7 @@ internal class ChatDomainImpl internal constructor(
      *
      * @param cid ensures that the channel with this id is active
      */
-    suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> {
+    internal suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> {
         // wait for the active channel info to load
         initJob?.join()
         // make a list of all channel ids
