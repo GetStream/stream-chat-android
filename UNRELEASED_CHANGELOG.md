@@ -28,6 +28,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClient::updateChannelPartial` and `ChannelClient::updatePartial` methods for partial updates of channel data.
 
 ### ⚠️ Changed
 
