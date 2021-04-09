@@ -288,15 +288,15 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
         private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
-        private const val ARG_OPTIONS_REACTIONS_ENABLED = "optionsReactionsEnabled"
 
         var messageArg: Message? = null
 
         fun newReactionOptionsInstance(
             message: Message,
+            configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, style, null)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, style, configuration)
         }
 
         fun newMessageOptionsInstance(
@@ -311,7 +311,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             optionsMode: OptionsMode,
             message: Message,
             style: MessageListViewStyle,
-            configuration: MessageOptionsView.Configuration?
+            configuration: MessageOptionsView.Configuration
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(

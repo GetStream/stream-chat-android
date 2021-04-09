@@ -322,9 +322,11 @@ public class MessageListView : ConstraintLayout {
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
-                    messageListViewStyle.copy(
-                        reactionsEnabled = channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
+                    MessageOptionsView.Configuration(
+                        viewStyle = messageListViewStyle,
+                        channelConfig = channel.config,
                     ),
+                    messageListViewStyle,
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)

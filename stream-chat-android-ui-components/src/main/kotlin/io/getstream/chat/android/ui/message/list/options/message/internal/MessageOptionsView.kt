@@ -155,7 +155,7 @@ internal class MessageOptionsView : FrameLayout {
         val reactionsEnabled: Boolean,
     ) : Serializable {
         internal companion object {
-            operator fun invoke(viewStyle: MessageListViewStyle, channelConfig: Config, suppressThreads: Boolean) =
+            operator fun invoke(viewStyle: MessageListViewStyle, channelConfig: Config, suppressThreads: Boolean = false) =
                 Configuration(
                     replyEnabled = viewStyle.replyEnabled && channelConfig.isRepliesEnabled,
                     threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isRepliesEnabled,
