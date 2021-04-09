@@ -117,6 +117,21 @@ public interface ChatDomain {
 
     // region use-case functions
 
+    /**
+     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
+     *
+     * @param channelType String represents channel type.
+     * @param members List of members' id.
+     * @param extraData Map object with custom fields and additional data.
+     *
+     * @return [Call] instance with [Channel].
+     */
+    public fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel>
+
     // replaying events
     /**
      * Adds the provided channel to the active channels and replays events for all active channels

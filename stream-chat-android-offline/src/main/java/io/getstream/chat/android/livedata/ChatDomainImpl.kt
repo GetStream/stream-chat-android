@@ -978,6 +978,19 @@ internal class ChatDomainImpl internal constructor(
         members: List<Member>,
     ): Call<List<Member>> = useCaseProvider.queryMembers.invoke(cid, offset, limit, filter, sort, members)
 
+    override fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel> {
+        return CoroutineCall(scope) {
+            client.createChannel(channelType, members, extraData).execute().also {
+                if (it.isSuccess) {
+                    repos.insertChannel(it.data())
+                }
+            }
+        }
+    }
     // end region
 
     companion object {

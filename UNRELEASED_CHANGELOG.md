@@ -71,7 +71,9 @@
   * `ChatDomain::downloadAttachment` Downloads the selected attachment to the "Download" folder in the public external storage directory.
   * `ChatDomain::searchUsersByName` Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name in local database.
   * `ChatDomain::queryMembers` Query members of a channel.
-- Add `ChatDomain::removeMembers` method
+- Added `ChatDomain::removeMembers` method
+- Added `ChatDomain::createDistinctChannel` A use-case for creating a channel based on its members.
+- Added `ChatDomain::removeMembers` method
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.useCases`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `ChatDomain` use case functions instead.
