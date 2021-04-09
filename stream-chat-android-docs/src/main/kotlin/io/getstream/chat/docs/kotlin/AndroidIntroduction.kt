@@ -69,7 +69,7 @@ class AndroidIntroduction {
         }
 
         // Watching a channel's state using the offline library
-        chatDomain.useCases.watchChannel(cid = "messaging:travel", messageLimit = 0)
+        chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
             .enqueue { result ->
                 if (result.isSuccess) {
                     val channelController = result.data()
@@ -99,7 +99,7 @@ class AndroidIntroduction {
         }
 
         // Using the offline support library
-        chatDomain.useCases.sendMessage(message).enqueue { result ->
+        chatDomain.sendMessage(message).enqueue { result ->
             if (result.isSuccess) {
                 val message: Message = result.data()
             } else {
@@ -131,7 +131,7 @@ class AndroidIntroduction {
         }
 
         // Using the offline library to query channels
-        chatDomain.useCases.queryChannels(filter, sort)
+        chatDomain.queryChannels(filter, sort)
             .enqueue { result ->
                 if (result.isSuccess) {
                     val queryChannelsController = result.data()

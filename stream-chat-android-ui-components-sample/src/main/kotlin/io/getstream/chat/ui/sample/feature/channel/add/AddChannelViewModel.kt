@@ -44,7 +44,7 @@ class AddChannelViewModel : ViewModel() {
             _state.value = State.Loading
         }
         latestSearchCall?.cancel()
-        latestSearchCall = chatDomain.useCases.searchUsersByName.invoke(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall = chatDomain.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
         latestSearchCall?.enqueue { result ->
             if (result.isSuccess) {
                 val users = result.data()

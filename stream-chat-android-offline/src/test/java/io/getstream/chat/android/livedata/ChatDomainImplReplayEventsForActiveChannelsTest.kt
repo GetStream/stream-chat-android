@@ -37,7 +37,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
             val cid = "ChannelType:ChannelId"
             val sut = Fixture(testCoroutines.scope).givenSyncHistoryResult(Result(emptyList())).get()
 
-            sut.replayEventsForActiveChannels(cid)
+            sut.replayEvents(cid)
 
             Truth.assertThat(sut.isActiveChannel(cid)).isTrue()
         }
@@ -52,7 +52,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
                 .givenSyncHistoryResult(Result(emptyList()))
                 .get()
 
-            sut.replayEventsForActiveChannels(cid)
+            sut.replayEvents(cid)
 
             verify(chatClient).getSyncHistory(argThat { contains(cid) }, any())
         }
@@ -74,7 +74,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
                 .givenSyncHistoryResult(Result(events))
                 .get()
 
-            sut.replayEventsForActiveChannels(cid)
+            sut.replayEvents(cid)
 
             verify(eventHandlerImpl).updateOfflineStorageFromEvents(events)
         }
