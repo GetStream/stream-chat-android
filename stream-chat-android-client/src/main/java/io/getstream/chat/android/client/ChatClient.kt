@@ -940,6 +940,21 @@ public class ChatClient internal constructor(
         )
 
     @CheckResult
+    public fun updateChannelPartial(
+        channelType: String,
+        channelId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Channel> {
+        return api.updateChannelPartial(
+            channelType = channelType,
+            channelId = channelId,
+            set = set,
+            unset = unset
+        )
+    }
+
+    @CheckResult
     public fun enableSlowMode(
         channelType: String,
         channelId: String,
