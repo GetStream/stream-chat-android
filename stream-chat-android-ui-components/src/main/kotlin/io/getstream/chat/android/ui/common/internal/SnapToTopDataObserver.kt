@@ -15,7 +15,6 @@ internal class SnapToTopDataObserver(
         ?: throw IllegalStateException("Auto scroll only works with LinearLayoutManager")
 
     override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-        super.onItemRangeMoved(fromPosition, toPosition, itemCount)
         autoScrollToTopIfNecessary(minOf(fromPosition, toPosition))
     }
 
