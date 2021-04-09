@@ -39,6 +39,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- `ChatDomain::createDistinctChannel` function was added as a use-case for creating a channel based on its members.
+- Add `ChatDomain::removeMembers` method
 
 ### ⚠️ Changed
 

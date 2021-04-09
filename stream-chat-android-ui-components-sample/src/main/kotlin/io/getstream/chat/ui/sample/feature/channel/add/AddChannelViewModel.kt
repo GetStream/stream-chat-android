@@ -70,8 +70,8 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val result = ChatClient.instance()
-                .createChannel(
+            val result = chatDomain
+                .createDistinctChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map { it.id } + chatDomain.currentUser.id,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
