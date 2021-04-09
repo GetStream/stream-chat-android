@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.Cha
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelListListenerContainerImpl
 import io.getstream.chat.android.ui.common.extensions.internal.cast
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
+import io.getstream.chat.android.ui.common.internal.SnapToTopDataObserver
 
 internal class SimpleChannelListView @JvmOverloads constructor(
     context: Context,
@@ -67,6 +68,8 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         adapter = ChannelListItemAdapter(viewHolderFactory)
 
         this.setAdapter(adapter)
+
+        adapter.registerAdapterDataObserver(SnapToTopDataObserver(this))
     }
 
     internal fun currentChannelItemList(): List<ChannelListItem>? =
