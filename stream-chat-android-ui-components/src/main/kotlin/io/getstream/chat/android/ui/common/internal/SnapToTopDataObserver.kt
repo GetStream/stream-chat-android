@@ -19,7 +19,6 @@ internal class SnapToTopDataObserver(
     }
 
     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-        super.onItemRangeInserted(positionStart, itemCount)
         autoScrollToTopIfNecessary(positionStart)
     }
 
