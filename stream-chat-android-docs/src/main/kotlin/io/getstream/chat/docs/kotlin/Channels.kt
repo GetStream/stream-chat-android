@@ -282,30 +282,14 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
      * @see <a href="https://getstream.io/chat/docs/channel_update/?language=kotlin">Updating a Channel</a>
      */
     inner class UpdatingAChannel {
-        fun fullUpdate() {
-            val channelClient = client.channel("messaging", "general")
 
-            channelClient.update(
-                message = Message(
-                    text = "Thierry changed the channel color to green"
-                ),
-                extraData = mapOf(
-                    "color" to "green",
-                    "color" to "green",
-                ),
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    val channel = result.data()
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=kotlin#partial-update">Partial Update</a>
+         */
         fun partialUpdate() {
+            // Here's a channel with some custom field data that might be useful
             val channelClient = client.channel(channelType = "messaging", channelId = "general")
 
-            // here's a channel with some custom field data that might be useful
             channelClient.create(
                 members = listOf("thierry", "tomasso"),
                 mapOf(
@@ -329,6 +313,29 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 
             // and maybe we decide we no longer need a rating
             channelClient.updatePartial(unset = listOf("channel_detail.rating")).execute()
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=kotlin#full-update-(overwrite)">Full Update (overwrite)</a>
+         */
+        fun fullUpdate() {
+            val channelClient = client.channel("messaging", "general")
+
+            channelClient.update(
+                message = Message(
+                    text = "Thierry changed the channel color to green"
+                ),
+                extraData = mapOf(
+                    "color" to "green",
+                    "color" to "green",
+                ),
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    val channel = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
         }
     }
 

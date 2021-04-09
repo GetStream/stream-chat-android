@@ -296,28 +296,14 @@ public class Channels {
      * @see <a href="https://getstream.io/chat/docs/channel_update/?language=java">Updating a Channel</a>
      */
     class UpdatingAChannel {
-        public void fullUpdate() {
-            ChannelClient channelClient = client.channel("messaging", "general");
 
-            Map<String, Object> channelData = new HashMap<>();
-            channelData.put("name", "myspecialchannel");
-            channelData.put("color", "green");
-            Message updateMessage = new Message();
-            updateMessage.setText("Thierry changed the channel color to green");
-
-            channelClient.update(updateMessage, channelData).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Channel channel = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#partial-update">Partial Update</a>
+         */
         public void partialUpdate() {
+            // Here's a channel with some custom field data that might be useful
             ChannelClient channelClient = client.channel("messaging", "general");
 
-            // here's a channel with some custom field data that might be useful
             List<String> members = Arrays.asList("thierry", "tommaso");
 
             Map<String, String> channelDetail = new HashMap<>();
@@ -349,6 +335,27 @@ public class Channels {
             // and maybe we decide we no longer need a rating
             List<String> unsetNestedField = Collections.singletonList("channel_detail.rating");
             channelClient.updatePartial(emptyMap(), unsetNestedField).execute();
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#full-update-(overwrite)">Full Update (overwrite)</a>
+         */
+        public void fullUpdate() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            Map<String, Object> channelData = new HashMap<>();
+            channelData.put("name", "myspecialchannel");
+            channelData.put("color", "green");
+            Message updateMessage = new Message();
+            updateMessage.setText("Thierry changed the channel color to green");
+
+            channelClient.update(updateMessage, channelData).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
         }
     }
 
