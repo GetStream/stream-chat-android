@@ -380,6 +380,20 @@ internal class ChatDomainImpl internal constructor(
         return result
     }
 
+    override fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel> {
+        return CoroutineCall(scope) {
+            client.createChannel(channelType, members, extraData).execute().also {
+                if (it.isSuccess) {
+                    repos.insertChannel(it.data())
+                }
+            }
+        }
+    }
+
     suspend fun createChannel(c: Channel): Result<Channel> =
         try {
             val online = isOnline()
