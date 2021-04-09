@@ -34,10 +34,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val isReactionsEnabled: Boolean by lazy {
-        requireArguments().getBoolean(ARG_OPTIONS_REACTIONS_ENABLED)
-    }
-
     private val currentUser = ChatDomain.instance().currentUser
 
     private val optionsMode: OptionsMode by lazy {
@@ -46,6 +42,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private val style by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListViewStyle
+    }
+
+    private val configuration by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
     }
 
     private val messageItem: MessageListItem.MessageItem by lazy {
@@ -128,7 +128,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
             applyStyle(style.itemStyle.editReactionsViewStyle)
-            if (isReactionsEnabled) {
+            if (configuration.reactionsEnabled) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
                     reactionClickHandler?.onReactionClick(message, it)
@@ -176,7 +176,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageOptions() {
         with(binding.messageOptionsView) {
             isVisible = true
-            configure(style, messageItem.isTheirs, messageItem.message.syncStatus)
+            configure(configuration, style, messageItem.isTheirs, messageItem.message.syncStatus)
             updateLayoutParams<LinearLayout.LayoutParams> {
                 gravity = if (messageItem.isMine) Gravity.END else Gravity.START
             }
@@ -286,6 +286,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         const val TAG = "MessageOptionsDialogFragment"
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
+        private const val ARG_OPTIONS_CONFIG = "optionsConfig"
         private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
         private const val ARG_OPTIONS_REACTIONS_ENABLED = "optionsReactionsEnabled"
 
@@ -295,25 +296,28 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, style)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, style, null)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
+            configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, style)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, style, configuration)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
             style: MessageListViewStyle,
+            configuration: MessageOptionsView.Configuration?
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
                     ARG_OPTIONS_ITEM_STYLE to style,
+                    ARG_OPTIONS_CONFIG to configuration
                 )
                 // pass message via static field
                 messageArg = message

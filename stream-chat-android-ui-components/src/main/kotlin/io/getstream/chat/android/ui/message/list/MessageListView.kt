@@ -77,6 +77,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -228,10 +229,12 @@ public class MessageListView : ConstraintLayout {
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
-                        messageListViewStyle.copy(
-                            threadsEnabled = !adapter.isThread && !message.isInThread() && messageListViewStyle.threadsEnabled,
-                            reactionsEnabled = channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
-                        )
+                        MessageOptionsView.Configuration(
+                            viewStyle = messageListViewStyle,
+                            channelConfig = channel.config,
+                            suppressThreads = !adapter.isThread && !message.isInThread()
+                        ),
+                        messageListViewStyle,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->

@@ -7,11 +7,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
+import java.io.Serializable
 
 internal class MessageOptionsView : FrameLayout {
 
@@ -28,26 +30,31 @@ internal class MessageOptionsView : FrameLayout {
         defStyleAttr
     )
 
-    internal fun configure(style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus) {
+    internal fun configure(
+        configuration: Configuration,
+        style: MessageListViewStyle,
+        isMessageTheirs: Boolean,
+        syncStatus: SyncStatus,
+    ) {
         if (isMessageTheirs) {
-            configureTheirsMessage(style)
+            configureTheirsMessage(configuration, style)
         } else {
-            configureMineMessage(style, syncStatus)
+            configureMineMessage(configuration, style, syncStatus)
         }
     }
 
-    private fun configureTheirsMessage(style: MessageListViewStyle) {
+    private fun configureTheirsMessage(configuration: Configuration, style: MessageListViewStyle) {
         val iconsTint = style.iconsTint
 
-        configureReply(style, iconsTint)
+        configureReply(configuration, style, iconsTint)
 
-        if (style.threadsEnabled) {
+        if (configuration.threadsEnabled) {
             binding.threadReplyTV.configureListItem(style.threadReplyIcon, iconsTint)
         } else {
             binding.threadReplyTV.isVisible = false
         }
 
-        configureCopyMessage(iconsTint, style)
+        configureCopyMessage(iconsTint, configuration, style)
 
         binding.flagTV.configureListItem(style.flagIcon, iconsTint)
         binding.muteTV.configureListItem(style.muteIcon, iconsTint)
@@ -56,12 +63,16 @@ internal class MessageOptionsView : FrameLayout {
         binding.deleteTV.isVisible = false
     }
 
-    private fun configureMineMessage(style: MessageListViewStyle, syncStatus: SyncStatus) {
+    private fun configureMineMessage(
+        configuration: Configuration,
+        style: MessageListViewStyle,
+        syncStatus: SyncStatus,
+    ) {
         val iconsTint = style.iconsTint
 
-        configureReply(style, iconsTint)
+        configureReply(configuration, style, iconsTint)
 
-        if (style.threadsEnabled) {
+        if (configuration.threadsEnabled) {
             binding.threadReplyTV.configureListItem(style.threadReplyIcon, iconsTint)
         } else {
             binding.threadReplyTV.isVisible = false
@@ -85,18 +96,18 @@ internal class MessageOptionsView : FrameLayout {
             }
         }
 
-        configureCopyMessage(iconsTint, style)
+        configureCopyMessage(iconsTint, configuration, style)
 
-        configureEditMessage(style)
+        configureEditMessage(configuration, style)
         binding.flagTV.isVisible = false
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
-        configureDeleteMessage(style)
+        configureDeleteMessage(configuration, style)
     }
 
-    private fun configureEditMessage(style: MessageListViewStyle) {
+    private fun configureEditMessage(configuration: Configuration, style: MessageListViewStyle) {
         binding.editTV.apply {
-            if (style.editMessageEnabled) {
+            if (configuration.editMessageEnabled) {
                 isVisible = true
                 configureListItem(style.editIcon, style.iconsTint)
             } else {
@@ -105,16 +116,16 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureReply(style: MessageListViewStyle, iconTint: Int) {
-        if (style.replyEnabled) {
+    private fun configureReply(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+        if (configuration.replyEnabled) {
             binding.replyTV.configureListItem(style.replyIcon, iconTint)
         } else {
             binding.replyTV.isVisible = false
         }
     }
 
-    private fun configureCopyMessage(iconsTint: Int, style: MessageListViewStyle) {
-        if (style.copyTextEnabled) {
+    private fun configureCopyMessage(iconsTint: Int, configuration: Configuration, style: MessageListViewStyle) {
+        if (configuration.copyTextEnabled) {
             binding.copyTV.isVisible = true
             binding.copyTV.configureListItem(style.copyIcon, iconsTint)
         } else {
@@ -122,8 +133,8 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureDeleteMessage(style: MessageListViewStyle) {
-        if (style.deleteMessageEnabled) {
+    private fun configureDeleteMessage(configuration: Configuration, style: MessageListViewStyle) {
+        if (configuration.deleteMessageEnabled) {
             binding.deleteTV.apply {
                 isVisible = true
                 configureListItem(style.deleteIcon, style.iconsTint)
@@ -131,6 +142,29 @@ internal class MessageOptionsView : FrameLayout {
             }
         } else {
             binding.deleteTV.isVisible = false
+        }
+    }
+
+    internal data class Configuration(
+        val replyEnabled: Boolean,
+        val threadsEnabled: Boolean,
+        val editMessageEnabled: Boolean,
+        val deleteMessageEnabled: Boolean,
+        val copyTextEnabled: Boolean,
+        val deleteConfirmationEnabled: Boolean,
+        val reactionsEnabled: Boolean,
+    ) : Serializable {
+        internal companion object {
+            operator fun invoke(viewStyle: MessageListViewStyle, channelConfig: Config, suppressThreads: Boolean) =
+                Configuration(
+                    replyEnabled = viewStyle.replyEnabled && channelConfig.isRepliesEnabled,
+                    threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isRepliesEnabled,
+                    editMessageEnabled = viewStyle.editMessageEnabled,
+                    deleteMessageEnabled = viewStyle.deleteMessageEnabled,
+                    copyTextEnabled = viewStyle.copyTextEnabled,
+                    deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
+                    reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled
+                )
         }
     }
 
