@@ -83,7 +83,7 @@ public class AvatarView : AppCompatImageView {
         this.avatarStyle = avatarStyle
         borderPaint.color = avatarStyle.avatarBorderColor
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
-        val padding = this.avatarStyle.avatarBorderWidth - 1
+        val padding = (avatarStyle.avatarBorderWidth - AVATAR_SIZE_EXTRA).coerceAtLeast(0)
         setPadding(padding, padding, padding, padding)
         onlineIndicatorOutlinePaint.color = avatarStyle.onlineIndicatorBorderColor
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
@@ -118,6 +118,11 @@ public class AvatarView : AppCompatImageView {
     }
 
     internal companion object {
-        const val MAX_AVATAR_SECTIONS = 4
+        /**
+         * A small extra added to the avatar size to prevent anti-aliasing issues
+         */
+        internal const val AVATAR_SIZE_EXTRA = 1
+
+        internal const val MAX_AVATAR_SECTIONS = 4
     }
 }
