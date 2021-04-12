@@ -650,7 +650,7 @@ class Android {
     }
 
     /**
-    @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=kotlin">Channels</a>
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=kotlin">Channels</a>
      */
     class UnreadCount : Fragment() {
 
