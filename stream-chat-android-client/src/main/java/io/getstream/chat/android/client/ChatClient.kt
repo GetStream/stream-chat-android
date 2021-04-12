@@ -939,6 +939,14 @@ public class ChatClient internal constructor(
             updateMessage,
         )
 
+    /**
+     * Updates specific fields of channel data retaining the custom data fields which were set previously.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param set the key-value data which will be added to the existing channel data object
+     * @param unset the list of fields which will be removed from the existing channel data object
+     */
     @CheckResult
     public fun updateChannelPartial(
         channelType: String,
