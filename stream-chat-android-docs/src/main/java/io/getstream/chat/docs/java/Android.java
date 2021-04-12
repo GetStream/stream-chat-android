@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalDateTime;
@@ -34,11 +35,14 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -75,6 +79,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
+import kotlin.Unit;
 
 import static java.util.Collections.singletonList;
 
@@ -709,6 +714,77 @@ public class Android {
                     List<ChatEvent> events = result.data();
                 } else {
                     // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=java">Channels</a>
+     */
+    public class UnreadCount extends Fragment {
+
+        public void unreadCountInfo() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+
+            Channel channel = ChatClient.instance().queryChannel(
+                    "channel-type",
+                    "channel-id",
+                    queryChannelRequest
+            )
+                    .execute()
+                    .data();
+
+            // readState is the list of read states for each user on the channel
+            List<ChannelUserRead> readState = channel.getRead();
+        }
+
+        public void getUnreadCountInfoChatDomain() {
+            // Get channel
+            Channel channel = ChatDomain.instance()
+                    .watchChannel("messaging:123", 0)
+                    .execute()
+                    .data()
+                    .toChannel();
+
+            // readState is the list of read states for each user on the channel
+            List<ChannelUserRead> userReadList = channel.getRead();
+        }
+
+        public void getUnreadCountForCurrentUser() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+
+            Channel channel = ChatClient.instance().queryChannel(
+                    "channel-type",
+                    "channel-id",
+                    queryChannelRequest
+            )
+                    .execute()
+                    .data();
+
+            // Unread count for current user
+            int unreadCount = channel.getUnreadCount();
+        }
+
+        public void getUnreadCountForCurrentUserChatDomain() {
+            // Get channel controller
+            ChannelController channelController = ChatDomain.instance()
+                    .watchChannel("messaging:123", 0)
+                    .execute()
+                    .data();
+
+            //Unread count for current user
+            LiveData<Integer> unreadCount = channelController.getUnreadCount();
+        }
+
+        public void markAllRead() {
+            ChatClient.instance().markAllRead().enqueue(result -> {
+                if (result.isSuccess()) {
+                    //Handle success
+                } else {
+                    //Handle failure
                 }
             });
         }
