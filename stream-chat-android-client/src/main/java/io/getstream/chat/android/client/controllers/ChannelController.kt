@@ -192,6 +192,9 @@ public interface ChannelController {
     public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
 
     @CheckResult
+    public fun updatePartial(set: Map<String, Any> = emptyMap(), unset: List<String> = emptyList()): Call<Channel>
+
+    @CheckResult
     public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel>
 
     @CheckResult

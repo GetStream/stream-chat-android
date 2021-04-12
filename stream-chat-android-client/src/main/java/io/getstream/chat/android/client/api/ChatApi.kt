@@ -146,6 +146,14 @@ internal interface ChatApi {
     ): Call<Channel>
 
     @CheckResult
+    fun updateChannelPartial(
+        channelType: String,
+        channelId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Channel>
+
+    @CheckResult
     fun enableSlowMode(
         channelType: String,
         channelId: String,
