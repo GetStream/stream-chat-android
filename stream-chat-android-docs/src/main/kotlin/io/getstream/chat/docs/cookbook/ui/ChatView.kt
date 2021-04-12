@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.StyleTransformer
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -25,6 +28,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.CustomPlainTextItemBinding
 
 /**
@@ -116,6 +120,27 @@ class ChatView : Fragment() {
                 Gravity.CENTER
             )
         )
+    }
+
+    fun changingMessagesStyleProgrammatically() {
+        TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                scrollButtonViewStyle = defaultViewStyle.scrollButtonViewStyle.copy(
+                    scrollButtonColor = Color.RED,
+                    scrollButtonUnreadEnabled = false,
+                    scrollButtonIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
+                ),
+            )
+        }
+
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                messageBackgroundColorMine = Color.parseColor("#70AF74"),
+                messageBackgroundColorTheirs = Color.WHITE,
+                textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
+                textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
+            )
+        }
     }
 
     fun creatingCustomMessageListViewHolderFactory() {
