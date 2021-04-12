@@ -292,7 +292,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 
             channelClient.create(
                 members = listOf("thierry", "tomasso"),
-                mapOf(
+                extraData = mapOf(
                     "source" to "user",
                     "source_detail" to mapOf("user_id" to 123),
                     "channel_detail" to mapOf(
