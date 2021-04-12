@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalDateTime;
@@ -719,16 +720,30 @@ public class Android {
     }
 
     /**
-     * @see <a href="https://getstream.io/nessy/docs/chat_docs/unread_counts/unread_channel">Channels</a>
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=java">Channels</a>
      */
     public class UnreadCount extends Fragment {
 
-        public void getUnreadCountInfo() {
+        public void unreadCountInfo() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+
+            Channel channel = ChatClient.instance().queryChannel(
+                    "channel-type",
+                    "channel-id",
+                    queryChannelRequest
+            )
+                    .execute()
+                    .data();
+
+            // readState is the list of read states for each user on the channel
+            List<ChannelUserRead> readState = channel.getRead();
+        }
+
+        public void getUnreadCountInfoChatDomain() {
             // Get channel
             Channel channel = ChatDomain.instance()
-                    .getUseCases()
-                    .getWatchChannel()
-                    .invoke("messaging:123", 0)
+                    .watchChannel("messaging:123", 0)
                     .execute()
                     .data()
                     .toChannel();
@@ -738,11 +753,25 @@ public class Android {
         }
 
         public void getUnreadCountForCurrentUser() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+
+            Channel channel = ChatClient.instance().queryChannel(
+                    "channel-type",
+                    "channel-id",
+                    queryChannelRequest
+            )
+                    .execute()
+                    .data();
+
+            // Unread count for current user
+            int unreadCount = channel.getUnreadCount();
+        }
+
+        public void getUnreadCountForCurrentUserChatDomain() {
             // Get channel controller
             ChannelController channelController = ChatDomain.instance()
-                    .getUseCases()
-                    .getWatchChannel()
-                    .invoke("messaging:123", 0)
+                    .watchChannel("messaging:123", 0)
                     .execute()
                     .data();
 
