@@ -115,7 +115,6 @@ public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/appcompat/widget/AppCompatImageView {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarView$Companion;
-	public static final field MAX_AVATAR_SECTIONS I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
