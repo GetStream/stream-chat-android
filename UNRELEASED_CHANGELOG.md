@@ -94,7 +94,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fixed not perfectly rounded avatars
 ### ⬆️ Improved
 
 ### ✅ Added

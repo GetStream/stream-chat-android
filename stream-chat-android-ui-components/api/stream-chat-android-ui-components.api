@@ -115,7 +115,6 @@ public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/appcompat/widget/AppCompatImageView {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarView$Companion;
-	public static final field MAX_AVATAR_SECTIONS I
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
@@ -559,7 +558,7 @@ public final class io/getstream/chat/android/ui/common/style/ChatStyle {
 	public final fun setDefaultTextStyle (Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/common/style/TextStyle {
+public final class io/getstream/chat/android/ui/common/style/TextStyle : java/io/Serializable {
 	public static final field UNSET_COLOR I
 	public static final field UNSET_FONT_RESOURCE I
 	public static final field UNSET_HINT Ljava/lang/String;
@@ -1220,25 +1219,57 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle {
+public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle : java/io/Serializable {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/MessageListViewStyle$Companion;
-	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZI)V
+	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZIIIZIZIIZIIIIIZZZ)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()Z
+	public final fun component13 ()I
+	public final fun component14 ()I
+	public final fun component15 ()I
+	public final fun component16 ()I
+	public final fun component17 ()I
+	public final fun component18 ()Z
+	public final fun component19 ()Z
 	public final fun component2 ()Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
+	public final fun component20 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()I
-	public final fun copy (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZI)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
+	public final fun component5 ()I
+	public final fun component6 ()I
+	public final fun component7 ()Z
+	public final fun component8 ()I
+	public final fun component9 ()Z
+	public final fun copy (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZIIIZIZIIZIIIIIZZZ)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZIIIZIZIIZIIIIIZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor ()I
+	public final fun getBlockIcon ()I
+	public final fun getCopyIcon ()I
+	public final fun getCopyTextEnabled ()Z
+	public final fun getDeleteConfirmationEnabled ()Z
+	public final fun getDeleteIcon ()I
+	public final fun getDeleteMessageEnabled ()Z
+	public final fun getEditIcon ()I
+	public final fun getEditMessageEnabled ()Z
+	public final fun getFlagIcon ()I
+	public final fun getIconsTint ()I
 	public final fun getItemStyle ()Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
+	public final fun getMuteIcon ()I
 	public final fun getReactionsEnabled ()Z
+	public final fun getReplyEnabled ()Z
+	public final fun getReplyIcon ()I
+	public final fun getRetryIcon ()I
 	public final fun getScrollButtonViewStyle ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
+	public final fun getThreadReplyIcon ()I
+	public final fun getThreadsEnabled ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle {
+public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle : java/io/Serializable {
 	public fun <init> (ZZIIILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z

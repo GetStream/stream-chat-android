@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list
 import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
-import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -209,9 +207,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
-
-    private lateinit var messageOptionsConfiguration: MessageOptionsView.Configuration
-
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -234,11 +229,12 @@ public class MessageListView : ConstraintLayout {
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
-                        messageOptionsConfiguration.copy(
-                            threadsEnabled = !adapter.isThread && !message.isInThread() && messageOptionsConfiguration.threadsEnabled,
+                        MessageOptionsView.Configuration(
+                            viewStyle = messageListViewStyle,
+                            channelConfig = channel.config,
+                            suppressThreads = adapter.isThread || message.isInThread()
                         ),
-                        messageListViewStyle.itemStyle,
-                        channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
+                        messageListViewStyle,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -326,8 +322,11 @@ public class MessageListView : ConstraintLayout {
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
-                    messageListViewStyle.itemStyle,
-                    channel.config.isReactionsEnabled && messageListViewStyle.reactionsEnabled
+                    MessageOptionsView.Configuration(
+                        viewStyle = messageListViewStyle,
+                        channelConfig = channel.config,
+                    ),
+                    messageListViewStyle,
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -455,96 +454,10 @@ public class MessageListView : ConstraintLayout {
             scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
 
-        configureMessageOptions(tArray)
         tArray.recycle()
         if (background == null) {
             setBackgroundColor(messageListViewStyle.backgroundColor)
         }
-    }
-
-    private fun configureMessageOptions(tArray: TypedArray) {
-        val iconsTint = tArray.getColor(
-            R.styleable.MessageListView_streamUiMessageOptionIconColor,
-            ContextCompat.getColor(context, R.color.stream_ui_grey)
-        )
-
-        val replyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiReplyOptionIcon,
-            R.drawable.stream_ui_ic_arrow_curve_left
-        )
-
-        val replyEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
-
-        val threadReplyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
-            R.drawable.stream_ui_ic_thread_reply
-        )
-
-        val retryIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiRetryOptionIcon,
-            R.drawable.stream_ui_ic_send
-        )
-
-        val copyIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiCopyOptionIcon,
-            R.drawable.stream_ui_ic_copy
-        )
-
-        val editIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiEditOptionIcon,
-            R.drawable.stream_ui_ic_edit
-        )
-
-        val flagIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiFlagOptionIcon,
-            R.drawable.stream_ui_ic_flag
-        )
-
-        val muteIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiMuteOptionIcon,
-            R.drawable.stream_ui_ic_mute
-        )
-
-        val blockIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiBlockOptionIcon,
-            R.drawable.stream_ui_ic_user_block
-        )
-
-        val deleteIcon = tArray.getResourceId(
-            R.styleable.MessageListView_streamUiDeleteOptionIcon,
-            R.drawable.stream_ui_ic_delete
-        )
-
-        val copyTextEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
-
-        val deleteConfirmationEnabled =
-            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
-
-        val deleteMessageEnabled =
-            tArray.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
-
-        val editMessageEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
-
-        val threadsEnabled = tArray.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
-
-        messageOptionsConfiguration = MessageOptionsView.Configuration(
-            iconsTint = iconsTint,
-            replyIcon = replyIcon,
-            threadReplyIcon = threadReplyIcon,
-            retryIcon = retryIcon,
-            copyIcon = copyIcon,
-            editMessageEnabled = editMessageEnabled,
-            editIcon = editIcon,
-            flagIcon = flagIcon,
-            muteIcon = muteIcon,
-            blockIcon = blockIcon,
-            deleteIcon = deleteIcon,
-            replyEnabled = replyEnabled,
-            threadsEnabled = threadsEnabled,
-            copyTextEnabled = copyTextEnabled,
-            deleteConfirmationEnabled = deleteConfirmationEnabled,
-            deleteMessageEnabled = deleteMessageEnabled
-        )
     }
 
     override fun onAttachedToWindow() {
@@ -592,9 +505,9 @@ public class MessageListView : ConstraintLayout {
         this.channel = channel
         initAdapter()
 
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(
-            replyEnabled = messageOptionsConfiguration.replyEnabled && channel.config.isRepliesEnabled,
-            threadsEnabled = messageOptionsConfiguration.threadsEnabled && channel.config.isRepliesEnabled,
+        messageListViewStyle = messageListViewStyle.copy(
+            replyEnabled = messageListViewStyle.replyEnabled && channel.config.isRepliesEnabled,
+            threadsEnabled = messageListViewStyle.threadsEnabled && channel.config.isRepliesEnabled,
         )
     }
 
@@ -684,7 +597,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if editing a message is enabled, false otherwise.
      */
     public fun setEditMessageEnabled(enabled: Boolean) {
-        updateMessageOptionsConfiguration { copy(editMessageEnabled = enabled) }
+        messageListViewStyle = messageListViewStyle.copy(editMessageEnabled = enabled)
     }
 
     /**
@@ -693,7 +606,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
     public fun setDeleteMessageEnabled(enabled: Boolean) {
-        updateMessageOptionsConfiguration { copy(deleteMessageEnabled = enabled) }
+        messageListViewStyle = messageListViewStyle.copy(deleteMessageEnabled = enabled)
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
@@ -746,15 +659,6 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
-    }
-
-    private fun updateMessageOptionsConfiguration(
-        reducer: MessageOptionsView.Configuration.() -> MessageOptionsView.Configuration,
-    ) {
-        check(::messageOptionsConfiguration.isInitialized) {
-            "Message options configuration needs to be initialized first"
-        }
-        messageOptionsConfiguration = reducer(messageOptionsConfiguration)
     }
 
     //region Listener setters
@@ -937,11 +841,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setRepliesEnabled(enabled: Boolean) {
-        messageOptionsConfiguration = messageOptionsConfiguration.copy(replyEnabled = enabled)
+        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
     }
 
     public fun setThreadsEnabled(enabled: Boolean) {
-        updateMessageOptionsConfiguration { copy(threadsEnabled = enabled) }
+        messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
     }
 
     //endregion
