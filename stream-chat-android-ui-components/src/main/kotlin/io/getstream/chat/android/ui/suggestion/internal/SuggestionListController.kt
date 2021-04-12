@@ -1,41 +1,54 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
 import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 internal class SuggestionListController(
     private val suggestionListView: SuggestionListView,
     private val dismissListener: SuggestionListDismissListener,
 ) {
-    var users: List<User> = emptyList()
-        set(value) {
-            field = value
-            showSuggestions(messageText)
-        }
     var commands: List<Command> = emptyList()
         set(value) {
             field = value
-            showSuggestions(messageText)
+            runBlocking { showSuggestions(messageText) }
         }
     var mentionsEnabled: Boolean = true
     var commandsEnabled: Boolean = true
 
     private var messageText: String = String.EMPTY
 
-    fun showSuggestions(messageText: String) {
+    suspend fun showSuggestions(
+        messageText: String,
+        userLookupHandler: MessageInputView.UserLookupHandler? = null,
+    ) {
         this.messageText = messageText
         when {
             commandsEnabled && messageText.isCommandMessage() -> {
                 suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
-                suggestionListView.showSuggestionList(messageText.getMentionSuggestions())
+                handleUserLookup(userLookupHandler, messageText)
             }
             else -> hideSuggestionList()
+        }
+    }
+
+    private suspend fun handleUserLookup(
+        userLookupHandler: MessageInputView.UserLookupHandler?,
+        messageText: String,
+    ) {
+        val suggestions = withContext(DispatcherProvider.IO) {
+            userLookupHandler?.handleUserLookup(messageText.substringAfterLast("@"))
+                ?.let(SuggestionListView.Suggestions::MentionSuggestions)
+        }
+        withContext(DispatcherProvider.Main) {
+            suggestions?.let(suggestionListView::showSuggestionList)
         }
     }
 
@@ -63,13 +76,6 @@ internal class SuggestionListController(
         return commands
             .filter { it.name.startsWith(commandPattern) }
             .let { SuggestionListView.Suggestions.CommandSuggestions(it) }
-    }
-
-    private fun String.getMentionSuggestions(): SuggestionListView.Suggestions.MentionSuggestions {
-        val namePattern = substringAfterLast("@")
-        return users
-            .filter { it.name.contains(namePattern, true) }
-            .let { SuggestionListView.Suggestions.MentionSuggestions(it) }
     }
 
     internal fun interface SuggestionListDismissListener {

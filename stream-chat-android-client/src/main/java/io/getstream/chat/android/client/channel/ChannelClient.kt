@@ -512,6 +512,11 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
+    override fun updatePartial(set: Map<String, Any>, unset: List<String>): Call<Channel> {
+        return client.updateChannelPartial(channelType, channelId, set, unset)
+    }
+
+    @CheckResult
     override fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
         client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
 

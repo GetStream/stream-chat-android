@@ -3,18 +3,36 @@ package io.getstream.chat.android.ui.message.list
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import java.io.Serializable
 
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
-) {
+    @ColorInt val iconsTint: Int,
+    val replyIcon: Int,
+    val replyEnabled: Boolean,
+    val threadReplyIcon: Int,
+    val threadsEnabled: Boolean,
+    val retryIcon: Int,
+    val copyIcon: Int,
+    val editMessageEnabled: Boolean,
+    val editIcon: Int,
+    val flagIcon: Int,
+    val muteIcon: Int,
+    val blockIcon: Int,
+    val deleteIcon: Int,
+    val deleteMessageEnabled: Boolean,
+    val copyTextEnabled: Boolean,
+    val deleteConfirmationEnabled: Boolean,
+) : Serializable {
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -72,11 +90,91 @@ public data class MessageListViewStyle(
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
                     .build()
 
+                val iconsTint = attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageOptionIconColor,
+                    ContextCompat.getColor(context, R.color.stream_ui_grey)
+                )
+
+                val replyIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiReplyOptionIcon,
+                    R.drawable.stream_ui_ic_arrow_curve_left
+                )
+
+                val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
+
+                val threadReplyIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
+                    R.drawable.stream_ui_ic_thread_reply
+                )
+
+                val retryIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiRetryOptionIcon,
+                    R.drawable.stream_ui_ic_send
+                )
+
+                val copyIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiCopyOptionIcon,
+                    R.drawable.stream_ui_ic_copy
+                )
+
+                val editIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiEditOptionIcon,
+                    R.drawable.stream_ui_ic_edit
+                )
+
+                val flagIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiFlagOptionIcon,
+                    R.drawable.stream_ui_ic_flag
+                )
+
+                val muteIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMuteOptionIcon,
+                    R.drawable.stream_ui_ic_mute
+                )
+
+                val blockIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiBlockOptionIcon,
+                    R.drawable.stream_ui_ic_user_block
+                )
+
+                val deleteIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiDeleteOptionIcon,
+                    R.drawable.stream_ui_ic_delete
+                )
+
+                val copyTextEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+
+                val deleteConfirmationEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
+
+                val deleteMessageEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
+
+                val editMessageEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
+
+                val threadsEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     backgroundColor = backgroundColor,
+                    iconsTint = iconsTint,
+                    replyIcon = replyIcon,
+                    replyEnabled = replyEnabled,
+                    threadReplyIcon = threadReplyIcon,
+                    retryIcon = retryIcon,
+                    copyIcon = copyIcon,
+                    editIcon = editIcon,
+                    flagIcon = flagIcon,
+                    muteIcon = muteIcon,
+                    blockIcon = blockIcon,
+                    deleteIcon = deleteIcon,
+                    copyTextEnabled = copyTextEnabled,
+                    deleteConfirmationEnabled = deleteConfirmationEnabled,
+                    deleteMessageEnabled = deleteMessageEnabled,
+                    editMessageEnabled = editMessageEnabled,
+                    threadsEnabled = threadsEnabled,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

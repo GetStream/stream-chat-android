@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import io.getstream.chat.android.client.models.User;
 
 import static io.getstream.chat.android.client.api.models.Pagination.LESS_THAN;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 public class Channels {
     private ChatClient client;
@@ -294,6 +296,50 @@ public class Channels {
      * @see <a href="https://getstream.io/chat/docs/channel_update/?language=java">Updating a Channel</a>
      */
     class UpdatingAChannel {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#partial-update">Partial Update</a>
+         */
+        public void partialUpdate() {
+            // Here's a channel with some custom field data that might be useful
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            List<String> members = Arrays.asList("thierry", "tommaso");
+
+            Map<String, String> channelDetail = new HashMap<>();
+            channelDetail.put("topic", "Plants and Animals");
+            channelDetail.put("rating", "pg");
+
+            Map<String, Integer> userId = new HashMap<>();
+            userId.put("user_id", 123);
+
+            Map<String, Object> extraData = new HashMap<>();
+            extraData.put("source", "user");
+            extraData.put("source_detail", userId);
+            extraData.put("channel_detail", channelDetail);
+
+            channelClient.create(members, extraData).execute();
+
+            // let's change the source of this channel
+            Map<String, Object> setField = Collections.singletonMap("source", "system");
+            channelClient.updatePartial(setField, emptyList()).execute();
+
+            // since it's system generated we no longer need source_detail
+            List<String> unsetField = Collections.singletonList("source_detail");
+            channelClient.updatePartial(emptyMap(), unsetField).execute();
+
+            // and finally update one of the nested fields in the channel_detail
+            Map<String, Object> setNestedField = Collections.singletonMap("channel_detail.topic", "Nature");
+            channelClient.updatePartial(setNestedField, emptyList()).execute();
+
+            // and maybe we decide we no longer need a rating
+            List<String> unsetNestedField = Collections.singletonList("channel_detail.rating");
+            channelClient.updatePartial(emptyMap(), unsetNestedField).execute();
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#full-update-(overwrite)">Full Update (overwrite)</a>
+         */
         public void fullUpdate() {
             ChannelClient channelClient = client.channel("messaging", "general");
 

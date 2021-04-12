@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -21,6 +22,7 @@ import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -53,6 +55,15 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateChannelRequest,
+    ): RetrofitCall<ChannelResponse>
+
+    @PATCH("/channels/{type}/{id}")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
+    fun updateChannelPartial(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")

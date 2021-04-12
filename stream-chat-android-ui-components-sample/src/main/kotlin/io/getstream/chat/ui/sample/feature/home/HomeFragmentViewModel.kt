@@ -24,10 +24,7 @@ class HomeFragmentViewModel : ViewModel() {
             user = ChatClient.instance().getCurrentUser() ?: unauthorizedUser,
         )
 
-        val totalUnreadCount = chatDomain.useCases
-            .getTotalUnreadCount()
-            .execute()
-            .data()
+        val totalUnreadCount = chatDomain.totalUnreadCount
         _state.addSource(totalUnreadCount) { count ->
             setState { copy(totalUnreadCount = count) }
         }

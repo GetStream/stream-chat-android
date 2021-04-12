@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesResponse
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.SendEventRequest
 import io.getstream.chat.android.client.api.models.TranslateMessageRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
@@ -49,6 +50,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.OPTIONS
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -97,6 +99,15 @@ internal interface RetrofitApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateChannelRequest,
+    ): RetrofitCall<ChannelResponse>
+
+    @PATCH("/channels/{type}/{id}")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
+    fun updateChannelPartial(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")

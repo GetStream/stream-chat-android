@@ -519,7 +519,7 @@ class Android {
         fun watchChannel() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.watchChannel(cid = "messaging:123", messageLimit = 0)
+            chatDomain.watchChannel(cid = "messaging:123", messageLimit = 0)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channelController = result.data()
@@ -535,7 +535,7 @@ class Android {
         fun loadMoreMessages() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.loadOlderMessages.invoke("messaging:123", 10)
+            chatDomain.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channel = result.data()
@@ -547,7 +547,7 @@ class Android {
             val chatDomain = ChatDomain.instance()
             val message = Message(text = "Hello world")
 
-            chatDomain.useCases.sendMessage.invoke(message)
+            chatDomain.sendMessage(message)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -564,7 +564,7 @@ class Android {
             )
             val sort = QuerySort<Channel>()
 
-            chatDomain.useCases.queryChannels(filter, sort)
+            chatDomain.queryChannels(filter, sort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val queryChannelsController = result.data()
@@ -586,7 +586,7 @@ class Android {
             )
             val sort = QuerySort<Channel>()
 
-            chatDomain.useCases.queryChannelsLoadMore.invoke(filter, sort)
+            chatDomain.queryChannelsLoadMore(filter, sort)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channels: List<Channel> = result.data()
@@ -598,14 +598,14 @@ class Android {
             val chatDomain = ChatDomain.instance()
 
             // LiveData objects to observe
-            val totalUnreadCount = chatDomain.useCases.getTotalUnreadCount().execute().data()
-            val unreadChannelCount = chatDomain.useCases.getUnreadChannelCount().execute().data()
+            val totalUnreadCount = chatDomain.totalUnreadCount
+            val unreadChannelCount = chatDomain.channelUnreadCount
         }
 
         fun messagesFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
+            chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
                 if (result.isSuccess) {
                     val threadController = result.data()
 
@@ -620,7 +620,7 @@ class Android {
         fun loadMoreFromThread() {
             val chatDomain = ChatDomain.instance()
 
-            chatDomain.useCases.threadLoadMore.invoke(cid = "cid", parentId = "parentId", messageLimit = 1)
+            chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val messages: List<Message> = result.data()
