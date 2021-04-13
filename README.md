@@ -126,7 +126,7 @@ android {
 }
 
 dependencies {
-    implementation "io.getstream:stream-chat-android:$stream_version"
+    implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
 }
 ```
 
@@ -147,8 +147,7 @@ class App : Application() {
         }
 
         val client = ChatClient.Builder(apiKey, this).build()
-        val domain = ChatDomain.Builder(client, user, this).offlineEnabled().build()
-        val ui = ChatUI.Builder(this).build()
+        val domain = ChatDomain.Builder(client, this).offlineEnabled().build()
     }
 }
 ```
@@ -162,7 +161,6 @@ class MainActivity: AppCompatActivity() {
 
         val chatClient = ChatClient.instance()
         val chatDomain = ChatDomain.instance()
-        val chatUI = ChatUI.instance()
     }
 }
 ```
@@ -184,15 +182,13 @@ Markdown support is based on [Markwon 4](https://github.com/noties/Markwon). The
 - [ImagesPlugin](https://noties.io/Markwon/docs/v4/image/)
 - [StrikethroughPlugin](https://noties.io/Markwon/docs/v4/ext-strikethrough/)
 
-If you want to use a library other than Markwon or extend the Markwon plugins, you can use the code below to customize Markdown rendering when you build your `ChatUI` instance:
+If you want to use a library other than Markwon or extend the Markwon plugins, you can use the code below to customize Markdown rendering via the `ChatUI` instance:
 
 ```kotlin
-val ui = ChatUI.Builder(context)
-    .withMarkdown { textView, text ->
-        // do custom rendering here
-        textView.text = text
-    }
-    .build()
+ChatUI.markdown = ChatMarkdown { textView, text ->
+    // Do custom rendering here
+    textView.text = text
+}
 ```
 
 ## Debug and development
