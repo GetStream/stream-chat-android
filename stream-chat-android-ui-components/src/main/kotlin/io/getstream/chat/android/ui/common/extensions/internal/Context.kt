@@ -3,8 +3,8 @@ package io.getstream.chat.android.ui.common.extensions.internal
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
-import android.view.ContextThemeWrapper
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -36,7 +36,7 @@ internal fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
 internal fun Context?.getFragmentManager(): FragmentManager? {
     return when (this) {
         is AppCompatActivity -> supportFragmentManager
-        is ContextThemeWrapper -> baseContext.getFragmentManager()
+        is ContextWrapper -> baseContext.getFragmentManager()
         else -> null
     }
 }
