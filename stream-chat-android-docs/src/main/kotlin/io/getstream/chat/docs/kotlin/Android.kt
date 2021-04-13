@@ -9,16 +9,19 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
@@ -360,6 +363,18 @@ class Android {
             }
         }
 
+        fun usingTransformStyle() {
+            TransformStyle.messageListStyleTransformer = StyleTransformer { defaultMessageListViewStyle ->
+                // Modify default MessageListView style
+                defaultMessageListViewStyle.copy()
+            }
+
+            TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultMessageListItemStyle ->
+                // Modify default MessageListItem style
+                defaultMessageListItemStyle.copy()
+            }
+        }
+
         fun setNewMessageBehaviour() {
             messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
         }
@@ -641,6 +656,77 @@ class Android {
                     val events: List<ChatEvent> = result.data()
                 } else {
                     // Handle result.error()
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=kotlin">Channels</a>
+     */
+    class UnreadCount : Fragment() {
+
+        fun unreadCountInfo() {
+            // Get channel
+            val queryChannelRequest = QueryChannelRequest()
+
+            val channel = ChatClient.instance().queryChannel(
+                channelType = "channel-type",
+                channelId = "channel-id",
+                request = queryChannelRequest
+            )
+                .execute()
+                .data()
+
+            // readState is the list of read states for each user on the channel
+            val readState: List<ChannelUserRead> = channel.read
+        }
+
+        fun unreadCountInfoChatDomain() {
+            // Get channel
+            val channel = ChatDomain.instance()
+                .watchChannel(cid = "messaging:123", messageLimit = 0)
+                .execute()
+                .data()
+                .toChannel()
+
+            // readState is the list of read states for each user on the channel
+            val readState: List<ChannelUserRead> = channel.read
+        }
+
+        fun unreadCountForCurrentUser() {
+            // Get channel
+            val queryChannelRequest = QueryChannelRequest()
+
+            val channel = ChatClient.instance().queryChannel(
+                channelType = "channel-type",
+                channelId = "channel-id",
+                request = queryChannelRequest
+            )
+                .execute()
+                .data()
+
+            // Unread count for current user
+            val unreadCount: Int? = channel.unreadCount
+        }
+
+        fun unreadCountForCurrentUserChatDomain() {
+            // Get channel controller
+            val channelController = ChatDomain.instance()
+                .watchChannel(cid = "messaging:123", messageLimit = 0)
+                .execute()
+                .data()
+
+            // Unread count for current user
+            val unreadCount: LiveData<Int?> = channelController.unreadCount
+        }
+
+        fun markAllRead() {
+            ChatClient.instance().markAllRead().enqueue { result ->
+                if (result.isSuccess) {
+                    // Handle success
+                } else {
+                    // Handle failure
                 }
             }
         }
