@@ -97,7 +97,7 @@
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
 ### ⬆️ Improved
-
+- Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
 
 ### ⚠️ Changed

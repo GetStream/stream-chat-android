@@ -157,9 +157,6 @@ class ChatFragment : Fragment() {
                 editMessage.postValue(it)
             }
         }
-
-        // set external suggestion view which is displayed over message list
-        binding.messageInputView.setSuggestionListView(binding.suggestionListView)
     }
 
     private fun initMessagesViewModel() {

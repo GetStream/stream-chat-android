@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 internal class SuggestionListController(
-    private val suggestionListView: SuggestionListView,
+    private val suggestionListUi: SuggestionListUi,
     private val dismissListener: SuggestionListDismissListener,
 ) {
     var commands: List<Command> = emptyList()
@@ -30,7 +30,7 @@ internal class SuggestionListController(
         this.messageText = messageText
         when {
             commandsEnabled && messageText.isCommandMessage() -> {
-                suggestionListView.showSuggestionList(messageText.getCommandSuggestions())
+                suggestionListUi.showSuggestionList(messageText.getCommandSuggestions())
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
                 handleUserLookup(userLookupHandler, messageText)
@@ -48,23 +48,23 @@ internal class SuggestionListController(
                 ?.let(SuggestionListView.Suggestions::MentionSuggestions)
         }
         withContext(DispatcherProvider.Main) {
-            suggestions?.let(suggestionListView::showSuggestionList)
+            suggestions?.let(suggestionListUi::showSuggestionList)
         }
     }
 
     fun showAvailableCommands() {
         if (commandsEnabled) {
-            suggestionListView.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
+            suggestionListUi.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
         }
     }
 
     fun hideSuggestionList() {
-        suggestionListView.hideSuggestionList()
+        suggestionListUi.hideSuggestionList()
         dismissListener.onDismissed()
     }
 
     fun isSuggestionListVisible(): Boolean {
-        return suggestionListView.isSuggestionListVisible()
+        return suggestionListUi.isSuggestionListVisible()
     }
 
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
