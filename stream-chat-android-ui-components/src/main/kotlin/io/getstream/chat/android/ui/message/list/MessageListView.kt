@@ -609,6 +609,81 @@ public class MessageListView : ConstraintLayout {
         messageListViewStyle = messageListViewStyle.copy(deleteMessageEnabled = enabled)
     }
 
+    /**
+     * Enables or disables the message delete confiramation showing
+     *
+     * @param enabled True if deleting a message is enabled, false otherwise.
+     */
+    public fun setDeleteMessageConfirmationEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(deleteConfirmationEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the message copy feature.
+     *
+     * @param enabled True if copying a message is enabled, false otherwise.
+     */
+    public fun setCopyMessageEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(copyTextEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the user blocking feature.
+     *
+     * @param enabled True if user blocking is enabled, false otherwise.
+     */
+    public fun setBlockUserEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(blockEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the user muting feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setMuteUserEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(muteEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the message flagging feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setMessageFlagEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(flagEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the message reactions feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setReactionsEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(
+            reactionsEnabled = enabled,
+            itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
+        )
+    }
+
+    /**
+     * Enables or disables the message reply feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the message threading feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setThreadsEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
+    }
+
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -831,21 +906,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
-    }
-
-    public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(
-            reactionsEnabled = enabled,
-            itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
-        )
-    }
-
-    public fun setRepliesEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
-    }
-
-    public fun setThreadsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
     }
 
     //endregion
