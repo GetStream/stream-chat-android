@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.message.list.MessageListView
-import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
@@ -27,6 +26,7 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListLis
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
+import io.getstream.chat.android.ui.style.StylesHolder
 import java.io.Serializable
 
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
@@ -40,9 +40,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
-    private val style by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListViewStyle
-    }
+    private val style by lazy { StylesHolder.messageListViewStyle!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -287,36 +285,31 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-        private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
 
         var messageArg: Message? = null
 
         fun newReactionOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
-            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, style, configuration)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
-            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, style, configuration)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
-            style: MessageListViewStyle,
             configuration: MessageOptionsView.Configuration
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_OPTIONS_ITEM_STYLE to style,
                     ARG_OPTIONS_CONFIG to configuration
                 )
                 // pass message via static field

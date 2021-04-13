@@ -78,6 +78,7 @@ import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemP
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+import io.getstream.chat.android.ui.style.StylesHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -95,8 +96,6 @@ public class MessageListView : ConstraintLayout {
     private companion object {
         private const val LOAD_MORE_THRESHOLD = 10
     }
-
-    private lateinit var messageListViewStyle: MessageListViewStyle
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
@@ -230,11 +229,10 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = messageListViewStyle,
+                            viewStyle = StylesHolder.messageListViewStyle!!,
                             channelConfig = channel.config,
                             suppressThreads = adapter.isThread || message.isInThread()
-                        ),
-                        messageListViewStyle,
+                        )
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -323,10 +321,9 @@ public class MessageListView : ConstraintLayout {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
                     MessageOptionsView.Configuration(
-                        viewStyle = messageListViewStyle,
+                        viewStyle = StylesHolder.messageListViewStyle!!,
                         channelConfig = channel.config,
                     ),
-                    messageListViewStyle,
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -382,7 +379,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun init(context: Context, attr: AttributeSet?) {
-        messageListViewStyle = MessageListViewStyle(context, attr)
+        StylesHolder.messageListViewStyle = MessageListViewStyle(context, attr)
 
         binding = StreamUiMessageListViewBinding.inflate(context.inflater, this)
 
@@ -442,8 +439,9 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-        binding.scrollToBottomButton.setScrollButtonViewStyle(messageListViewStyle.scrollButtonViewStyle)
-        scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
+        binding.scrollToBottomButton.setScrollButtonViewStyle(StylesHolder.messageListViewStyle!!.scrollButtonViewStyle)
+        scrollHelper.scrollToBottomButtonEnabled =
+            StylesHolder.messageListViewStyle!!.scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
             tArray.getInt(
@@ -456,7 +454,7 @@ public class MessageListView : ConstraintLayout {
 
         tArray.recycle()
         if (background == null) {
-            setBackgroundColor(messageListViewStyle.backgroundColor)
+            setBackgroundColor(StylesHolder.messageListViewStyle!!.backgroundColor)
         }
     }
 
@@ -505,9 +503,10 @@ public class MessageListView : ConstraintLayout {
         this.channel = channel
         initAdapter()
 
-        messageListViewStyle = messageListViewStyle.copy(
-            replyEnabled = messageListViewStyle.replyEnabled && channel.config.isRepliesEnabled,
-            threadsEnabled = messageListViewStyle.threadsEnabled && channel.config.isRepliesEnabled,
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(
+            replyEnabled = StylesHolder.messageListViewStyle?.replyEnabled == true && channel.config.isRepliesEnabled,
+            threadsEnabled = StylesHolder.messageListViewStyle?.threadsEnabled == true &&
+                channel.config.isRepliesEnabled,
         )
     }
 
@@ -530,12 +529,12 @@ public class MessageListView : ConstraintLayout {
             currentUser = currentUser,
             dateFormatter = messageDateFormatter,
             isDirectMessage = channel.isDirectMessaging(),
-            messageListViewStyle.itemStyle,
+            StylesHolder.messageListViewStyle!!.itemStyle,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
-        messageListItemViewHolderFactory.setMessageListItemStyle(this.messageListViewStyle.itemStyle)
+        messageListItemViewHolderFactory.setMessageListItemStyle(StylesHolder.messageListViewStyle!!.itemStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -597,7 +596,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if editing a message is enabled, false otherwise.
      */
     public fun setEditMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(editMessageEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(editMessageEnabled = enabled)
     }
 
     /**
@@ -606,7 +605,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
     public fun setDeleteMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(deleteMessageEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(deleteMessageEnabled = enabled)
     }
 
     /**
@@ -906,6 +905,21 @@ public class MessageListView : ConstraintLayout {
 
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
+    }
+
+    public fun setReactionsEnabled(enabled: Boolean) {
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(
+            reactionsEnabled = enabled,
+            itemStyle = StylesHolder.messageListViewStyle!!.itemStyle.copy(reactionsEnabled = enabled)
+        )
+    }
+
+    public fun setRepliesEnabled(enabled: Boolean) {
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(replyEnabled = enabled)
+    }
+
+    public fun setThreadsEnabled(enabled: Boolean) {
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(threadsEnabled = enabled)
     }
 
     //endregion
